@@ -20,8 +20,6 @@ use CustomTables\IntegrityChecks;
 
 HTMLHelper::_('behavior.multiselect');
 
-//$loggeduser = Factory::getUser(); used fo batch
-
 ?>
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoftables'); ?>" method="post"
       name="adminForm" id="adminForm">

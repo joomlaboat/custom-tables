@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Fields;
 
@@ -217,7 +218,6 @@ class CustomtablesModelTables extends JModelAdmin
         $done = false;
 
         // Set some needed variables.
-        $this->user = Factory::getUser();
         $this->table = $this->getTable();
         $this->tableClassName = get_class($this->table);
         $this->contentType = new JUcmType;
@@ -465,8 +465,8 @@ class CustomtablesModelTables extends JModelAdmin
     protected function allowEdit($data = array(), $key = 'id')
     {
         // Check specific edit permission then general edit permission.
-
-        return Factory::getUser()->authorise('core.edit', 'com_customtables.tables.' . ((int)isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+        $user = new CTUser();
+        return $user->authorise('core.edit', 'com_customtables.tables.' . ((int)isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
     }
 
     /**

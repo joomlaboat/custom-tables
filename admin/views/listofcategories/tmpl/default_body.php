@@ -9,6 +9,7 @@
  **/
 
 // No direct access to this file access');
+use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -16,18 +17,18 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 $edit = "index.php?option=com_customtables&view=listofcategories&task=categories.edit";
-
+$user = new CTUser();
 ?>
 <?php foreach ($this->items as $i => $item): ?>
     <?php
-    $canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
-    $userChkOut = Factory::getUser($item->checked_out);
+    $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || $item->checked_out == 0;
+    $userChkOut = new CTUser($item->checked_out);
     ?>
     <tr class="row<?php echo $i % 2; ?>">
 
         <td class="nowrap center">
             <?php if ($this->canEdit): ?>
-                <?php if ($item->checked_out) : ?>
+                <?php if ($item->checked_out === 0) : ?>
                     <?php if ($canCheckin) : ?>
                         <?php echo JHtml::_('grid.id', $i, $item->id); ?>
                     <?php else: ?>

@@ -10,6 +10,7 @@
 
 // no direct access
 use CustomTables\common;
+use CustomTables\CTUser;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -125,7 +126,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
             foreach ($rows as $row) :
 
                 $checked = JHTML::_('grid.checkedout', $row, $i);
-
+                $user = new CTUser();
 
                 ?>
                 <tr class="<?php echo "row$k"; ?>">
@@ -136,7 +137,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                         <?php echo $checked; ?>
                     </td>
                     <td nowrap="nowrap">
-                        <?php if (JTable::isCheckedOut($this->user->get('id'), $row->checked_out)) : ?>
+                        <?php if (JTable::isCheckedOut($user->id, $row->checked_out)) : ?>
                             <?php echo $row->treename; ?>
                         <?php else : ?>
                             <span class="editlinktip hasTip"

@@ -50,7 +50,6 @@ class CustomtablesViewListoftables extends JViewLegacy
         $this->listDirn = $this->escape($this->state->get('list.direction'));
         $this->pagination = $this->get('Pagination');
 
-        $this->user = Factory::getUser();
         $this->filterForm = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
 

@@ -12,6 +12,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\ListOfTables;
 use Joomla\CMS\Language\Text;
@@ -23,8 +24,9 @@ $dbPrefix = database::getDBPrefix();
 
 foreach ($this->items as $i => $item): ?>
     <?php
-    $canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
-    $userChkOut = Factory::getUser($item->checked_out);
+    $user = new CTUser();
+    $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || $item->checked_out == 0;
+    $userChkOut = new CTUser($item->checked_out);
     $table_exists = ESTables::checkIfTableExists($item->realtablename);
     //$canDo = CustomtablesHelper::getActions('categories',$item,'listofcategories');
     ?>

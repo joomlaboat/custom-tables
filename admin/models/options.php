@@ -207,8 +207,8 @@ class CustomTablesModelOptions extends JModelAdmin
     protected function allowEdit($data = array(), $key = 'id')
     {
         // Check specific edit permission then general edit permission.
-
-        return Factory::getUser()->authorise('core.edit', 'com_customtables.options.' . ((int)isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+        $user = new CTUser();
+        return $user->authorise('core.edit', 'com_customtables.options.' . ((int)isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
     }
 
     protected function loadFormData()

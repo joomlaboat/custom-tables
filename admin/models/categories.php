@@ -194,7 +194,6 @@ class CustomtablesModelCategories extends JModelAdmin
         $done = false;
 
         // Set some needed variables.
-        $this->user = Factory::getUser();
         $this->table = $this->getTable();
         $this->tableClassName = get_class($this->table);
         $this->contentType = new JUcmType;
@@ -265,7 +264,6 @@ class CustomtablesModelCategories extends JModelAdmin
     {
         if (empty($this->batchSet)) {
             // Set some needed variables.
-            $this->user = Factory::getUser();
             $this->table = $this->getTable();
             $this->tableClassName = get_class($this->table);
             $this->canDo = CustomtablesHelper::getActions('categories');
@@ -294,9 +292,10 @@ class CustomtablesModelCategories extends JModelAdmin
             $pk = array_shift($pks);
 
             $this->table->reset();
+            $user = new CTUser();
 
             // only allow copy if user may edit this item.
-            if (!$this->user->authorise('core.edit', $contexts[$pk])) {
+            if (!$user->authorise('core.edit', $contexts[$pk])) {
                 // Not fatal error
                 Factory::getApplication()->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
                 continue;
@@ -408,7 +407,6 @@ class CustomtablesModelCategories extends JModelAdmin
     {
         if (empty($this->batchSet)) {
             // Set some needed variables.
-            $this->user = Factory::getUser();
             $this->table = $this->getTable();
             $this->tableClassName = get_class($this->table);
             $this->canDo = CustomtablesHelper::getActions('categories');
@@ -426,9 +424,11 @@ class CustomtablesModelCategories extends JModelAdmin
         // remove move_copy from array
         unset($values['move_copy']);
 
+        $user = new CTUser();
+
         // Parent exists so we proceed
         foreach ($pks as $pk) {
-            if (!$this->user->authorise('core.edit', $contexts[$pk])) {
+            if (!$user->authorise('core.edit', $contexts[$pk])) {
                 Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
                 return false;
             }
@@ -549,7 +549,7 @@ class CustomtablesModelCategories extends JModelAdmin
                 return false;
             }
         }
-        // In the absense of better information, revert to the component permissions.
+        // In the absence of better information, revert to the component permissions.
         return parent::canEditState($record);
     }
 
@@ -565,8 +565,8 @@ class CustomtablesModelCategories extends JModelAdmin
     protected function allowEdit($data = array(), $key = 'id')
     {
         // Check specific edit permission then general edit permission.
-
-        return Factory::getUser()->authorise('categories.edit', 'com_customtables.categories.' . ((int)isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+        $user = new CTUser();
+        return $user->authorise('categories.edit', 'com_customtables.categories.' . ((int)isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
     }
 
     /**

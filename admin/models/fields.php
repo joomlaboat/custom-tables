@@ -210,7 +210,6 @@ class CustomtablesModelFields extends JModelAdmin
         $done = false;
 
         // Set some needed variables.
-        $this->user = Factory::getUser();
         $this->table = $this->getTable();
         $this->tableClassName = get_class($this->table);
         $this->contentType = new JUcmType;
@@ -282,7 +281,6 @@ class CustomtablesModelFields extends JModelAdmin
     {
         if (empty($this->batchSet)) {
             // Set some needed variables.
-            $this->user = Factory::getUser();
             $this->table = $this->getTable();
             $this->tableClassName = get_class($this->table);
             $this->canDo = CustomtablesHelper::getActions('fields');
@@ -313,7 +311,7 @@ class CustomtablesModelFields extends JModelAdmin
             $this->table->reset();
 
             // only allow copy if user may edit this item.
-            if (!$this->user->authorise('core.edit', $contexts[$pk])) {
+            if (!$this->ct->Env->user->authorise('core.edit', $contexts[$pk])) {
                 // Not fatal error
                 $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
                 continue;
@@ -428,7 +426,6 @@ class CustomtablesModelFields extends JModelAdmin
     {
         if (empty($this->batchSet)) {
             // Set some needed variables.
-            $this->user = Factory::getUser();
             $this->table = $this->getTable();
             $this->tableClassName = get_class($this->table);
             $this->canDo = CustomtablesHelper::getActions('fields');
@@ -448,7 +445,7 @@ class CustomtablesModelFields extends JModelAdmin
 
         // Parent exists so we proceed
         foreach ($pks as $pk) {
-            if (!$this->user->authorise('core.edit', $contexts[$pk])) {
+            if (!$this->ct->Env->user->authorise('core.edit', $contexts[$pk])) {
                 $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
                 return false;
             }
@@ -561,8 +558,8 @@ class CustomtablesModelFields extends JModelAdmin
     protected function allowEdit($data = array(), $key = 'id')
     {
         // Check specific edit permission then general edit permission.
-
-        return Factory::getUser()->authorise('core.edit', 'com_customtables.fields.' . ((int)isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+        $user = new CTUser();
+        return $user->authorise('core.edit', 'com_customtables.fields.' . ((int)isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
     }
 
     /**

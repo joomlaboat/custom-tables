@@ -96,13 +96,9 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 
     protected function addToolbar_4()
     {
-        //$user  = Factory::getUser();
-
         // Get the toolbar object instance
         $toolbar = Toolbar::getInstance('toolbar');
-
         ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
-
     }
 
     public function setDocument(Joomla\CMS\Document\Document $document): void

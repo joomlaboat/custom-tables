@@ -39,7 +39,6 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state = $this->get('State');
-        $this->user = Factory::getUser();
         $this->filterForm = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
         $this->listOrder = $this->escape($this->state->get('list.ordering'));

@@ -47,7 +47,8 @@ if ($task != '') {
     $ct = new CT(null, false);
 
     /*
-    if (Factory::getUser()->authorise('core.admin', 'com_helloworld'))
+     * $user = new CTUser();
+    if ($user->authorise('core.admin', 'com_helloworld'))
                 <action name="core.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
     <action name="core.edit" title="JACTION_EDIT" description="COM_CUSTOMTABLES_ACCESS_EDIT_DESC" />
     <action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CUSTOMTABLES_ACCESS_EDITOWN_DESC" />

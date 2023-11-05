@@ -34,9 +34,9 @@ class CTUser
     var ?string $username;
     var bool $guestCanAddNew;
 
-    public function __construct()
+    public function __construct(int $id = 0)
     {
-        $this->id = 0;
+        $this->id = $id;
         $this->groups = [];
         $this->email = null;
         $this->name = null;
@@ -48,9 +48,14 @@ class CTUser
             $version = (int)$version_object->getShortVersion();
 
             if ($version < 4)
-                $user = Factory::getUser();
-            else
-                $user = Factory::getApplication()->getIdentity();
+                $user = Factory::getUser($this->id);
+            else {
+
+                if ($this->id == 0)
+                    $user = Factory::getApplication()->getIdentity();
+                else
+                    $user = Factory::getApplication()->loadIdentity($this->id);
+            }
 
             $this->id = is_null($user) ? 0 : $user->id;
 
@@ -231,7 +236,13 @@ class CTUser
         $config = Factory::getConfig();
 
         // Initialise the table with JUser.
-        $user = Factory::getUser(0);
+        $version_object = new Version;
+        $version = (int)$version_object->getShortVersion();
+
+        if ($version < 4)
+            $user = Factory::getUser(0);
+        else
+            $user = Factory::getApplication()->loadIdentity(0);
 
         $data = array();
 

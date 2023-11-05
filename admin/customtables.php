@@ -15,11 +15,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 // Access check.
-if (!Factory::getUser()->authorise('core.manage', 'com_customtables')) {
+$user = new CTUser();
+if (!$user->authorise('core.manage', 'com_customtables')) {
     Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
 };
 

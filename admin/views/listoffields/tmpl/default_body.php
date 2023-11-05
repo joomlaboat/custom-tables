@@ -12,6 +12,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\CTUser;
 use CustomTables\database;
 use Joomla\CMS\Language\Text;
 use CustomTables\Fields;
@@ -26,9 +27,9 @@ $hashRealTableName = database::realTableName($this->ct->Table->realtablename);
 
     $ordering = ($this->listOrder == 'a.ordering');
     $item->max_ordering = 0; //I am not sure if its used
-
-    $canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
-    $userChkOut = Factory::getUser($item->checked_out);
+    $user = new CTUser();
+    $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || $item->checked_out == 0;
+    $userChkOut = new CTUser($item->checked_out);
     ?>
     <tr class="row<?php echo $i % 2; ?>" sortable-group-id="<?php echo $this->tableid; ?>">
 

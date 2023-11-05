@@ -44,7 +44,6 @@ class CustomTablesViewListOfOptions extends JViewLegacy
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->lists = $this->_getViewLists();
-        $this->user = Factory::getUser();
 
         // Ensure ampersands and double quotes are encoded in item titles
         foreach ($this->items as $i => $item) {
