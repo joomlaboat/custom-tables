@@ -61,7 +61,7 @@ class CustomtablesViewCustomtables extends JViewLegacy
     {
         $canDo = ContentHelper::getActions('com_customtables', '');
         //$canDo = CustomtablesHelper::getActions('customtables');
-        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');
+        JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');
 
         // set help url for this view if found
         /*
@@ -88,7 +88,7 @@ class CustomtablesViewCustomtables extends JViewLegacy
         $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
 
         // set page title
-        $document->setTitle(Text::_('COM_CUSTOMTABLES_DASHBOARD'));
+        $document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
 
         // add manifest to page JavaScript
         //$document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . json_encode($this->manifest) . '");</script>');

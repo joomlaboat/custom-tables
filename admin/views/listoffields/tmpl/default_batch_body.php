@@ -17,5 +17,5 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 ?>
 
-<p><?php echo Text::_('COM_CUSTOMTABLES_LISTOFFIELDS_BATCH_TIP'); ?></p>
+<p><?php echo common::translate('COM_CUSTOMTABLES_LISTOFFIELDS_BATCH_TIP'); ?></p>
 <?php echo $this->batchDisplay; ?>

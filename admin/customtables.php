@@ -22,7 +22,7 @@ use Joomla\CMS\Language\Text;
 // Access check.
 $user = new CTUser();
 if (!$user->authorise('core.manage', 'com_customtables')) {
-    Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
+    Factory::getApplication()->enqueueMessage(common::translate('JERROR_ALERTNOAUTHOR'), 'error');
 };
 
 $path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;

@@ -21,12 +21,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
     <div class="span9">
         <?php echo JHtml::_('bootstrap.startAccordion', 'dashboard_left', array('active' => 'main')); ?>
-        <?php echo JHtml::_('bootstrap.addSlide', 'dashboard_left', Text::_('COM_CUSTOMTABLES_DASH'), 'main'); ?>
+        <?php echo JHtml::_('bootstrap.addSlide', 'dashboard_left', common::translate('COM_CUSTOMTABLES_DASH'), 'main'); ?>
         <?php echo $this->loadTemplate('main'); ?>
         <?php echo JHtml::_('bootstrap.endSlide'); ?>
 
 
-        <?php echo JHtml::_('bootstrap.addSlide', 'dashboard_left', Text::_('COM_CUSTOMTABLES_HOW_IT_WORKS'), 'help'); ?>
+        <?php echo JHtml::_('bootstrap.addSlide', 'dashboard_left', common::translate('COM_CUSTOMTABLES_HOW_IT_WORKS'), 'help'); ?>
         <?php echo $this->loadTemplate('help'); ?>
         <?php echo JHtml::_('bootstrap.endSlide'); ?>
 

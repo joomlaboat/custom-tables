@@ -127,7 +127,7 @@ class CustomtablesViewLayouts extends JViewLegacy
         common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
-        JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'), 'pencil-2 article-add');
+        JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'), 'pencil-2 article-add');
         // Built the actions for new and existing records.
         /*
         if ($this->refid || $this->ref)
@@ -210,7 +210,7 @@ class CustomtablesViewLayouts extends JViewLegacy
     {
         if ($this->item !== null) {
             $isNew = ($this->item->id < 1);
-            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
+            $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
             $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
             JText::script('view not acceptable. Error');
         }

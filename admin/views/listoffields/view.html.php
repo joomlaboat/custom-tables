@@ -108,9 +108,9 @@ class CustomtablesViewListoffields extends JViewLegacy
     protected function addToolBar_3()
     {
         if ($this->tableid != 0) {
-            JToolBarHelper::title('Table "' . $this->ct->Table->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title('Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
         } else
-            JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
@@ -156,9 +156,9 @@ class CustomtablesViewListoffields extends JViewLegacy
         $toolbar = Toolbar::getInstance('toolbar');
 
         if ($this->tableid != 0) {
-            JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
         } else
-            JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
@@ -214,7 +214,7 @@ class CustomtablesViewListoffields extends JViewLegacy
                 // Translate the type selection
                 $text = '987';//$model->selectionTranslation($type, 'type');
                 // Now add the type and its text to the options array
-                $_filter[] = JHtml::_('select.option', $type, Text::_($text));
+                $_filter[] = JHtml::_('select.option', $type, common::translate($text));
             }
             return $_filter;
         }

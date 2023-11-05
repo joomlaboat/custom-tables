@@ -15,5 +15,5 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-echo '<div class="ct_howitworks">' . Text::_('COM_CUSTOMTABLES_HOW_IT_WORKS_DESC') . '</div>';
+echo '<div class="ct_howitworks">' . common::translate('COM_CUSTOMTABLES_HOW_IT_WORKS_DESC') . '</div>';
 

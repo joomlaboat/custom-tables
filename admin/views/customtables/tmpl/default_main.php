@@ -23,7 +23,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                 <a class="icon" href="<?php echo $icon->url; ?>">
                     <img alt="<?php echo $icon->alt; ?>"
                          src="<?php echo JURI::root(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/icons/<?php echo $icon->image; ?>">
-                    <span class="dashboard-title"><?php echo Text::_($icon->name); ?></span>
+                    <span class="dashboard-title"><?php echo common::translate($icon->name); ?></span>
                 </a>
             </div>
         </div>
@@ -31,7 +31,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     <div class="clearfix"></div>
 <?php else: ?>
     <div class="alert alert-error"><h4
-                class="alert-heading"><?php echo Text::_("Permission denied, or not correctly set"); ?></h4>
-        <div class="alert-message"><?php echo Text::_("Please notify your System Administrator if result is unexpected."); ?></div>
+                class="alert-heading"><?php echo common::translate("Permission denied, or not correctly set"); ?></h4>
+        <div class="alert-message"><?php echo common::translate("Please notify your System Administrator if result is unexpected."); ?></div>
     </div>
 <?php endif; ?>

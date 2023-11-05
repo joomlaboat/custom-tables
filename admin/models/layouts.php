@@ -199,7 +199,7 @@ class CustomtablesModelLayouts extends JModelAdmin
         }
 
         if (empty($pks)) {
-            $this->setError(Text::_('JGLOBAL_NO_ITEM_SELECTED'));
+            $this->setError(common::translate('JGLOBAL_NO_ITEM_SELECTED'));
             return false;
         }
 
@@ -217,7 +217,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 
 
         if (!$this->canDo['core.batch'] == 0) {
-            $this->setError(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+            $this->setError(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
             return false;
         }
 
@@ -245,7 +245,7 @@ class CustomtablesModelLayouts extends JModelAdmin
         }
 
         if (!$done) {
-            $this->setError(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+            $this->setError(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
 
             return false;
         }
@@ -428,7 +428,7 @@ class CustomtablesModelLayouts extends JModelAdmin
         }
 
         if (!$this->canDo['core.edit'] && !$this->canDo['core.batch']) {
-            $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
+            $this->setError(common::translate('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
             return false;
         }
 
@@ -442,7 +442,7 @@ class CustomtablesModelLayouts extends JModelAdmin
         // Parent exists so we proceed
         foreach ($pks as $pk) {
             if (!$this->ct->Env->user->authorise('core.edit', $contexts[$pk])) {
-                $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
+                $this->setError(common::translate('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
                 return false;
             }
 

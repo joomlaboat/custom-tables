@@ -95,7 +95,7 @@ class CustomtablesViewCategories extends JViewLegacy
         common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
-        JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'), 'pencil-2 article-add');
+        JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'), 'pencil-2 article-add');
         // Built the actions for new and existing records.
         if ($this->refid || $this->ref) {
             if ($this->canCreate && $isNew) {
@@ -156,7 +156,7 @@ class CustomtablesViewCategories extends JViewLegacy
     {
         if ($this->item !== null) {
             $isNew = ($this->item->id < 1);
-            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
+            $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
 
             if ($this->version < 4)
                 $document->addCustomTag('<script src=' . JURI::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');

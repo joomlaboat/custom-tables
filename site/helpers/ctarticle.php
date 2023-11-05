@@ -29,7 +29,7 @@ class JHTMLCTArticle
         $options = array_merge(array(array(
             'id' => '',
             'data-type' => 'article',
-            'title' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT'))), $options);
+            'title' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT'))), $options);
 
         return JHTML::_('select.genericlist', $options, $control_name, 'class="' . $cssclass . '" ' . $attribute . ' ', 'id', 'title', $value, $control_name);
     }

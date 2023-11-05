@@ -29,11 +29,11 @@ class common
     public static function translate($text, $value = null)
     {
         if (defined('WPINC')) {
-            return $text;
+            return __('Custom Tables - Table', 'customtables');
         }
 
         if (is_null($value))
-            $new_text = Text::_($text);
+            $new_text = common::translate($text);
         else
             $new_text = Text::sprintf($text, $value);
 
@@ -50,7 +50,7 @@ class common
                 $lang->load($extension, JPATH_SITE);//JPATH_BASE);
 
                 if (is_null($value))
-                    return Text::_($text);
+                    return common::translate($text);
                 else
                     return Text::sprintf($text, $value);
             } else

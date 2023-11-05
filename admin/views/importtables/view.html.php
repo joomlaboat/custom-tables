@@ -30,7 +30,7 @@ class CustomTablesViewImportTables extends JViewLegacy
         $version = new Version;
         $this->version = (int)$version->getShortVersion();
 
-        JToolBarHelper::title(Text::_('Custom Tables - Import Tables', 'generic.png'));//
+        JToolBarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
 
         parent::display($tpl);
     }
