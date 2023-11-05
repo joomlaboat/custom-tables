@@ -485,7 +485,7 @@ class CT_FieldTypeTag_file
 
     public static function makeTheKey(string $filepath, string $security, string $recId, string $fieldid, string $tableid): string
     {
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         $username = $user->get('username');
         $current_user_id = (int)$user->get('id');
 

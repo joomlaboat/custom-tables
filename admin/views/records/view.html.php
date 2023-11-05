@@ -64,7 +64,7 @@ class CustomtablesViewRecords extends JViewLegacy
         if ($key != '')
             Inputbox::renderTableJoinSelectorJSON($this->ct, $key);
         else
-            $this->renderForm($tpl, $params);
+            $this->renderForm($tpl);
     }
 
     protected function renderForm($tpl): bool

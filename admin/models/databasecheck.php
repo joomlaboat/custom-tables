@@ -77,7 +77,7 @@ class CustomtablesModelDatabasecheck extends JModelList
    protected function getListQuery()
    {
        // Get the user object.
-       $user = Factory::getUser();
+       $user = Factory::getApplication()->getIdentity();
 
        $categoryname='(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
        $fieldcount='(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';

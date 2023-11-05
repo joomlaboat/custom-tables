@@ -155,7 +155,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
     protected function addToolbar_4()
     {
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Get the toolbar object instance
         $toolbar = Toolbar::getInstance('toolbar');

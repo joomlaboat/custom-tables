@@ -786,7 +786,7 @@ class Inputbox
             $fieldname = $this->field->fieldname . $postfix;
 
             $value = null;
-            if (array_key_exists($this->ct->Env->field_prefix . $fieldname, $this->row)) {
+            if (isset($this->row) and array_key_exists($this->ct->Env->field_prefix . $fieldname, $this->row)) {
                 $value = $this->row[$this->ct->Env->field_prefix . $fieldname];
             } else {
                 Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Env->field_prefix . $this->field->fieldname, $this->ct->Env->field_prefix . $fieldname);

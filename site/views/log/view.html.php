@@ -39,7 +39,7 @@ class CustomTablesViewLog extends JViewLegacy
     function display($tpl = null)
     {
         $this->ct = new CT;
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         $this->userid = $user->id;
 
         $this->action = common::inputGetString('action', '');

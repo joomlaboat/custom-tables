@@ -55,7 +55,7 @@ class CustomTablesModelOptions extends JModelAdmin
             $id = common::inputGetInt('id', 0);
         }
 
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check for existing item.
         // Modify the form based on Edit State access controls.
@@ -180,7 +180,7 @@ class CustomTablesModelOptions extends JModelAdmin
             //return;
             //}
 
-            $user = Factory::getUser();
+            $user = Factory::getApplication()->getIdentity();
             // The record has been set. Check the record permissions.
             return true;//$user->authorise('core.delete', 'com_customtables.options.' . (int) $record->id);
         }
@@ -189,7 +189,7 @@ class CustomTablesModelOptions extends JModelAdmin
 
     protected function canEditState($record)
     {
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         $recordId = (!empty($record->id)) ? $record->id : 0;
 
         if ($recordId) {

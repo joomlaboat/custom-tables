@@ -346,14 +346,16 @@ class CT
 
     function loadJSAndCSS(): void
     {
-        //JQuery and Bootstrap
-        if ($this->Env->version < 4) {
-            $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/jquery.min.js"></script>');
-            $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/bootstrap.min.js"></script>');
-        } else {
-            if (defined('_JEXEC')) {
-                HTMLHelper::_('jquery.framework');
-                $this->document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/media/system/css/fields/switcher.css">');
+        if ($this->Params->ModuleId === null or (int)$this->Params->ModuleId == 0) {
+            //JQuery and Bootstrap
+            if ($this->Env->version < 4) {
+                $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/jquery.min.js"></script>');
+                $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/bootstrap.min.js"></script>');
+            } else {
+                if (defined('_JEXEC')) {
+                    HTMLHelper::_('jquery.framework');
+                    $this->document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/media/system/css/fields/switcher.css">');
+                }
             }
         }
 

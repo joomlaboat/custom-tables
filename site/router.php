@@ -31,7 +31,7 @@ class CustomTablesRouter implements JComponentRouterInterface
 
         //Check if it's a file to download
 
-        $libraryPath = CUSTOMTABLES_LIBRARIES_PATH;
+        $libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries';
         if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
             define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);
 

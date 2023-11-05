@@ -26,7 +26,7 @@ class CustomTablesViewEditFiles extends JViewLegacy
 
     function display($tpl = null)
     {
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         $userid = $user->get('id');
         if ((int)$userid == 0) {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');

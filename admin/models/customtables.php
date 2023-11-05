@@ -32,7 +32,7 @@ class CustomtablesModelCustomtables extends JModelList
         $this->ct = new CT;
 
         // load user for access menus
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         // reset icon array
         $icons = array();
         // view groups array

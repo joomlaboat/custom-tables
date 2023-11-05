@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\database;
+use Exception;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 
@@ -66,22 +67,42 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
         return $result;
     }
 
-    protected static function getTables()
+    protected static function getTables(): ?array
     {
         // Create a new query object.
-        $query = IntegrityTables::getTablesQuery();
-        return database::loadAssocList($query);
+        $query = self::getTablesQuery();
+
+        try {
+            return database::loadAssocList($query);
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            //return null;
+        }
+
+        $query = self::getTablesQuery(true);
+        try {
+            return database::loadAssocList($query);
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            return null;
+        }
     }
 
-    protected static function getTablesQuery()
+    protected static function getTablesQuery(bool $simple = false): string
     {
-        $categoryname = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
-        $fieldcount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
-
         $selects = array();
-        $selects[] = ESTables::getTableRowSelects();
-        $selects[] = $categoryname . ' AS categoryname';
-        $selects[] = $fieldcount . ' AS fieldcount';
+
+        if ($simple) {
+            $selects[] = 'id';
+            $selects[] = 'tablename';
+        } else {
+            $categoryname = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
+            $fieldcount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
+
+            $selects[] = ESTables::getTableRowSelects();
+            $selects[] = $categoryname . ' AS categoryname';
+            $selects[] = $fieldcount . ' AS fieldcount';
+        }
 
         // Add the list ordering clause.
         $orderCol = 'tablename';

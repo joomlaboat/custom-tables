@@ -104,6 +104,7 @@ class Params
 
             if (is_null($ModuleId)) {
                 $ModuleIdInt = common::inputGetInt('ModuleId');
+
                 if ($ModuleIdInt)
                     $ModuleId = strval($ModuleIdInt);
                 else

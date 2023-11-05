@@ -638,7 +638,7 @@ class CTUser
     function authorise(string $action, ?string $assetName): bool
     {
         if (defined('_JEXEC')) {
-            $user = Factory::getUser();
+            $user = Factory::getApplication()->getIdentity();
             return $user->authorise($action, $assetName);
         } else {
 

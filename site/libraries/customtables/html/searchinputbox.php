@@ -452,7 +452,7 @@ class SearchInputBox
         else
             $cssclass = 'class="form-control ' . $cssclass . '" ';
 
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if ($default_Action != '') {
             $onchange = $default_Action;

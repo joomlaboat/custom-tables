@@ -82,7 +82,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors), 500);
+            Factory::getApplication()->enqueueMessage(implode(",", $errors), 'error');
         }
 
         $this->languages = $this->ct->Languages->LanguageList;
@@ -163,7 +163,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 
     protected function addToolbar_4()
     {
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Get the toolbar object instance
         $toolbar = Toolbar::getInstance('toolbar');

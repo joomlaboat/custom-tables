@@ -627,7 +627,13 @@ class JoomlaBasicMisc
         if ($thegroup == 0)
             return false;
 
-        $user = Factory::getUser();
+        $version_object = new Version;
+        $version = (int)$version_object->getShortVersion();
+        if ($version < 4)
+            $user = Factory::getUser();
+        else
+            $user = Factory::getApplication()->getIdentity();
+
         $isAdmin = $user->get('isRoot');
         if ($isAdmin)
             return true;

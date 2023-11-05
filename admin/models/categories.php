@@ -69,7 +69,7 @@ class CustomtablesModelCategories extends JModelAdmin
             $id = common::inputGetInt('id', 0);
         }
 
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         // Check for existing item.
         // Modify the form based on Edit State access controls.
@@ -520,7 +520,7 @@ class CustomtablesModelCategories extends JModelAdmin
     protected function canDelete($record)
     {
         if (!empty($record->id)) {
-            $user = Factory::getUser();
+            $user = Factory::getApplication()->getIdentity();
             // The record has been set. Check the record permissions.
             return $user->authorise('categories.delete', 'com_customtables.categories.' . (int)$record->id);
         }
@@ -538,7 +538,7 @@ class CustomtablesModelCategories extends JModelAdmin
      */
     protected function canEditState($record)
     {
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         $recordId = (!empty($record->id)) ? $record->id : 0;
 
         if ($recordId) {
@@ -580,7 +580,7 @@ class CustomtablesModelCategories extends JModelAdmin
     protected function prepareTable($table)
     {
         $date = Factory::getDate();
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
 
         if (isset($table->name)) {
             $table->name = htmlspecialchars_decode($table->name ?? '', ENT_QUOTES);

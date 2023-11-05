@@ -106,12 +106,14 @@ class Edit
                 require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
                 require_once($path . 'layout.php');
             }
-            HTMLHelper::_('jquery.framework');
-            jimport('joomla.html.html.bootstrap');
+            if ($this->ct->Params->ModuleId === null or $this->ct->Params->ModuleId == 0) {
+                HTMLHelper::_('jquery.framework');
+                jimport('joomla.html.html.bootstrap');
+            }
             $this->ct->loadJSAndCSS();
         }
 
-        if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading) {
+        if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
             $result .= '<div class="page-header' . strip_tags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
                 . JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle) . '</h2></div>';
         }

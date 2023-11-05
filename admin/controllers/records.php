@@ -158,7 +158,7 @@ class CustomtablesControllerRecords extends JControllerForm
         $recordId = (int)isset($data[$key]) ? $data[$key] : 0;
 
         if ($recordId) {
-            $user = Factory::getUser();
+            $user = Factory::getApplication()->getIdentity();
 
             // The record has been set. Check the record permissions.
             $permission = $user->authorise('core.edit', 'com_customtables.records.' . $recordId);

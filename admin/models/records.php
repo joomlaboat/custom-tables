@@ -99,7 +99,7 @@ class CustomtablesModelRecords extends JModelAdmin
     protected function canDelete($record)
     {
         if (!empty($record->id)) {
-            $user = Factory::getUser();
+            $user = Factory::getApplication()->getIdentity();
             // The record has been set. Check the record permissions.
             return $user->authorise('core.delete', 'com_customtables.records.' . $record->id);
         }
@@ -127,7 +127,7 @@ class CustomtablesModelRecords extends JModelAdmin
      */
     protected function canEditState($record)
     {
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         $recordId = (!empty($record->id)) ? $record->id : 0;
 
         if ($recordId) {

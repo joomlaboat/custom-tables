@@ -17,7 +17,6 @@ use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-$tables = $this->prepareTables();
 $document = Factory::getDocument();
 
 //https://github.com/DmitryBaranovskiy/raphael/releases
@@ -30,7 +29,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
     <style type="text/css">
         #canvas_container {
             width: 100%;
-            min-height: <?php echo (count($tables)>50 ? '4000' : '2000'); ?>px;
+            min-height: <?php echo (count($this->diagram->tables)>50 ? '4000' : '2000'); ?>px;
             border: 1px solid #aaa;
         }
     </style>
@@ -65,7 +64,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
         echo '<script>
 	
 	TableCategoryID = ' . (int)$this->state->get('filter.tablecategory') . ';
-	AllTables = ' . json_encode($tables) . ';
+	AllTables = ' . json_encode($this->diagram->tables) . ';
 	
 	</script>';
 

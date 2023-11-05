@@ -182,7 +182,7 @@ class CustomtablesControllerCategories extends JControllerForm
     protected function allowEdit($data = array(), $key = 'id')
     {
         // get user object.
-        $user = Factory::getUser();
+        $user = Factory::getApplication()->getIdentity();
         // get record id.
         $recordId = (int)isset($data[$key]) ? $data[$key] : 0;
 

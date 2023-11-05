@@ -1058,6 +1058,7 @@ function doExtraCodeMirrorEvent(ch, lineString, lineNumber, mousePos) {
         showModalForm(startChar, postfix, endChar, tag, mousePos.top, mousePos.left, lineNumber, positions, 0);
     } else {
         let cm = getActiveEditor();
+        let cr = cm.getCursor();
         let positionsRange = findTagInMultiline(cm, cr.ch, cr.line);
         if (positionsRange !== null) {
 
