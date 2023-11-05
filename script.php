@@ -79,8 +79,9 @@ class com_customtablesInstallerScript
         if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images'))
             mkdir(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images');
 
-        $path = JPATH_SITE . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-        $loader_file = $path . 'loader.php';
+        $loader_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR
+            . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
+
         if (file_exists($loader_file)) {
             //Do not run on uninstall
             require_once($loader_file);
@@ -90,6 +91,10 @@ class com_customtablesInstallerScript
             $result = IntegrityChecks::check($ct, true, false);
             if (count($result) > 0)
                 echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
+        } else {
+            echo '<h3>CT Loader not installed!</h3>';
+            echo '<p>Path: ' . $loader_file . '</p>';
+            return false;
         }
 
         // set the default component settings
@@ -127,8 +132,6 @@ class com_customtablesInstallerScript
             updateESTables();
         }
         */
-
-
     }
 
     /**
