@@ -144,7 +144,7 @@ class ListOfFields
 
             $iconClass = '';
             if (!$this->saveOrder)
-                $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
+                $iconClass = ' inactive" title="' . common::translate('JORDERINGDISABLED');
 
             $result .= '<span class="sortable-handler' . $iconClass . '"><span class="icon-ellipsis-v" aria-hidden="true"></span></span>';
 
@@ -200,9 +200,9 @@ class ListOfFields
                     </div>
                 </td>';
 
-        $result .= '<td>' . Text::_($item->typeLabel) . '</td>';
+        $result .= '<td>' . common::translate($item->typeLabel) . '</td>';
         $result .= '<td>' . $this->escape($item->typeparams) . $this->checkTypeParams($item->type, $item->typeparams) . '</td>';
-        $result .= '<td>' . Text::_($item->isrequired) . '</td>';
+        $result .= '<td>' . common::translate($item->isrequired) . '</td>';
         $result .= '<td>' . $this->escape($this->ct->Table->tabletitle) . '</td>';
         $result .= '<td class="text-center btns d-none d-md-table-cell">';
         if ($this->canState) {

@@ -35,7 +35,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
         <?php echo HTMLHelper::_('uitab.startTabSet', 'tablesTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
 
-        <?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'details', Text::_('COM_CUSTOMTABLES_TABLES_DETAILS')); ?>
+        <?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'details', common::translate('COM_CUSTOMTABLES_TABLES_DETAILS')); ?>
 
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">

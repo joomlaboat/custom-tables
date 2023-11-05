@@ -68,7 +68,7 @@ class CustomTablesViewOptions extends JViewLegacy
         common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
-        JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'), 'pencil-2 article-add');
+        JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'), 'pencil-2 article-add');
         // Built the actions for new and existing records.
         if ($this->refid || $this->ref) {
             if ($this->canDo->get('core.create') && $isNew) {
@@ -122,6 +122,6 @@ class CustomTablesViewOptions extends JViewLegacy
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
         $isNew = ($this->item->id < 1);
-        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'));
+        $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'));
     }
 }

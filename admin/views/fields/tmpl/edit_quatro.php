@@ -72,8 +72,8 @@ foreach ($this->allTables as $table) {
         <?php //echo JHtml::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
         <?php echo HTMLHelper::_('uitab.startTabSet', 'fieldsTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]); ?>
 
-        <?php echo HTMLHelper::_('uitab.addTab', 'fieldsTab', 'general', Text::_('COM_CUSTOMTABLES_FIELDS_GENERAL')); ?>
-        <?php //echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'general', Text::_('COM_CUSTOMTABLES_FIELDS_GENERAL', true)); ?>
+        <?php echo HTMLHelper::_('uitab.addTab', 'fieldsTab', 'general', common::translate('COM_CUSTOMTABLES_FIELDS_GENERAL')); ?>
+
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
 
@@ -89,7 +89,7 @@ foreach ($this->allTables as $table) {
 
                 <?php if ($this->table_row->customtablename != ''): ?>
                     <hr/>
-                    <p><?php echo Text::_('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD', true) . ': "' . $this->table_row->customtablename . '"'; ?></p>
+                    <p><?php echo common::translate('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD') . ': "' . $this->table_row->customtablename . '"'; ?></p>
                     <div class="control-group">
                         <div class="control-label"><?php echo $this->form->getLabel('customfieldname'); ?></div>
                         <div class="controls"><?php echo $this->form->getInput('customfieldname'); ?></div>
@@ -121,7 +121,7 @@ foreach ($this->allTables as $table) {
                         $vlu = $item_array[$id];
 
                     if ($moreThanOneLanguage)
-                        $field_label = Text::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE', true);
+                        $field_label = common::translate('COM_CUSTOMTABLES_FIELDS_FIELDTITLE');
                     else
                         $field_label = $this->form->getLabel('fieldtitle');
 
@@ -165,10 +165,9 @@ foreach ($this->allTables as $table) {
             </div>
         </div>
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
-        <?php //echo JHtml::_('bootstrap.endTab'); ?>
 
-        <?php echo HTMLHelper::_('uitab.addTab', 'fieldsTab', 'optional', Text::_('COM_CUSTOMTABLES_FIELDS_OPTIONAL')); ?>
-        <?php //echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'optional', Text::_('COM_CUSTOMTABLES_FIELDS_OPTIONAL', true)); ?>
+        <?php echo HTMLHelper::_('uitab.addTab', 'fieldsTab', 'optional', common::translate('COM_CUSTOMTABLES_FIELDS_OPTIONAL')); ?>
+
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
 
@@ -219,7 +218,7 @@ foreach ($this->allTables as $table) {
 				<div class="row-fluid form-horizontal-desktop">
 					<div class="span12">
 					
-						<h3>' . Text::_('COM_CUSTOMTABLES_FIELDS_DESCRIPTION') . ' -  <b>' . $lang->title . '</b></h3>';
+						<h3>' . common::translate('COM_CUSTOMTABLES_FIELDS_DESCRIPTION') . ' -  <b>' . $lang->title . '</b></h3>';
 
 
             $editor_name = Factory::getApplication()->get('editor');

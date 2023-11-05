@@ -109,7 +109,7 @@ class CustomtablesViewFields extends JViewLegacy
         common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
-        JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'), 'pencil-2 article-add');
+        JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'), 'pencil-2 article-add');
         // Built the actions for new and existing records.
         if ($this->refid || $this->ref) {
             if ($this->canCreate && $isNew) {
@@ -164,7 +164,7 @@ class CustomtablesViewFields extends JViewLegacy
     {
         if ($this->item !== null) {
             $isNew = ($this->item->id < 1);
-            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
+            $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
             $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/fields/submitbutton.js"></script>');
             JText::script('view not acceptable. Error');
         }

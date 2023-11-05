@@ -101,7 +101,7 @@ class CustomtablesViewTables extends JViewLegacy
         common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
-        JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'), 'pencil-2 article-add');
+        JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'), 'pencil-2 article-add');
 
         if ($isNew) {
             // For new records, check the create permission.
@@ -140,7 +140,7 @@ class CustomtablesViewTables extends JViewLegacy
     {
         if ($this->item !== null) {
             $isNew = ($this->item->id < 1);
-            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
+            $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
             $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
         }
     }

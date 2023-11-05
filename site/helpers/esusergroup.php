@@ -31,7 +31,7 @@ class JHTMLESUserGroup
 
         $query .= '#__usergroups.title';
         $options = database::loadObjectList($query);
-        $att = ['id' => '', 'data-type' => 'usergroup', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT')];
+        $att = ['id' => '', 'data-type' => 'usergroup', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT')];
         $options = array_merge(array($att), $options);
         return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);
     }

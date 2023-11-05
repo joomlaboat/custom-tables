@@ -23,9 +23,9 @@ function renderDependencies($table_id, $tablename): string
     $rows = _getTablesThatDependOnThisTable($tablename);
 
     if (count($rows) == 0)
-        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_NO_TABLES_THAT_DEPEND_ON_THIS_TABLE', true) . '</h4>';
+        $result .= '<h4>' . common::translate('COM_CUSTOMTABLES_TABLES_NO_TABLES_THAT_DEPEND_ON_THIS_TABLE') . '</h4>';
     else {
-        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLES_THAT_DEPEND_ON_THIS_TABLE', true) . '</h4>';
+        $result .= '<h4>' . common::translate('COM_CUSTOMTABLES_TABLES_TABLES_THAT_DEPEND_ON_THIS_TABLE') . '</h4>';
         $result .= _renderTableList($rows);
     }
 
@@ -33,9 +33,9 @@ function renderDependencies($table_id, $tablename): string
     $rows = _getTablesThisTableDependOn($table_id);
 
     if (count($rows) == 0)
-        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_THIS_TABLE_DOESNT_HAVE_TABLE_JOIN_TYPE_FIELDS', true) . '</h4>';
+        $result .= '<h4>' . common::translate('COM_CUSTOMTABLES_TABLES_THIS_TABLE_DOESNT_HAVE_TABLE_JOIN_TYPE_FIELDS') . '</h4>';
     else {
-        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLES_THIS_TABLE_DEPENDS_ON', true) . '</h4>';
+        $result .= '<h4>' . common::translate('COM_CUSTOMTABLES_TABLES_TABLES_THIS_TABLE_DEPENDS_ON') . '</h4>';
         $result .= _renderTableList($rows);
     }
 
@@ -43,22 +43,22 @@ function renderDependencies($table_id, $tablename): string
     $menus = _getMenuItemsThatUseThisTable($tablename);
 
     if (count($menus) == 0) {
-        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_NO_MENU_ITEMS', true) . '</h4>';
+        $result .= '<h4>' . common::translate('COM_CUSTOMTABLES_TABLES_NO_MENU_ITEMS') . '</h4>';
     } else {
-        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_MENUS_DEPENDING', true) . '</h4>';
+        $result .= '<h4>' . common::translate('COM_CUSTOMTABLES_TABLES_MENUS_DEPENDING') . '</h4>';
         $result .= _renderMenuList($menus);
     }
 
     $result .= '<hr/>';
     $layouts = _getLayoutsThatUseThisTable($table_id, $tablename);
     if (count($layouts) == 0) {
-        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_NO_LAYOUTS', true) . '</h4>';
+        $result .= '<h4>' . common::translate('COM_CUSTOMTABLES_TABLES_NO_LAYOUTS') . '</h4>';
     } else {
-        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_LAYOUTS_DEPENDING', true) . '</h4>';
+        $result .= '<h4>' . common::translate('COM_CUSTOMTABLES_TABLES_LAYOUTS_DEPENDING') . '</h4>';
         $result .= _renderLayoutList($layouts);
     }
     $result .= '<hr/>';
-    $result .= Text::_('COM_CUSTOMTABLES_TABLES_DATABASE_NORMALIZATION_EXPLAINED_IN_SIMPLE_ENGLISH', true);
+    $result .= common::translate('COM_CUSTOMTABLES_TABLES_DATABASE_NORMALIZATION_EXPLAINED_IN_SIMPLE_ENGLISH');
     return $result;
 }
 
@@ -67,9 +67,9 @@ function _renderTableList($rows): string
     $result = '
         <table class="table table-striped">
 			<thead>
-                <th>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLETITLE', true) . '</th>
-                <th>' . Text::_('COM_CUSTOMTABLES_FIELDS_FIELDNAME', true) . '</th>
-                <th>' . Text::_('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS', true) . '</th>
+                <th>' . common::translate('COM_CUSTOMTABLES_TABLES_TABLETITLE') . '</th>
+                <th>' . common::translate('COM_CUSTOMTABLES_FIELDS_FIELDNAME') . '</th>
+                <th>' . common::translate('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS') . '</th>
             </thead>
 			<tbody>
             ';

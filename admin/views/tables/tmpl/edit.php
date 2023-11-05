@@ -34,7 +34,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
         <?php echo JHtml::_('bootstrap.startTabSet', 'tablesTab', array('active' => 'details')); ?>
 
-        <?php echo JHtml::_('bootstrap.addTab', 'tablesTab', 'details', Text::_('COM_CUSTOMTABLES_TABLES_DETAILS', true)); ?>
+        <?php echo JHtml::_('bootstrap.addTab', 'tablesTab', 'details', common::translate('COM_CUSTOMTABLES_TABLES_DETAILS')); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
 
@@ -102,7 +102,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
             if ($moreThanOneLanguage)
                 $id .= '_' . $lang->sef;
 
-            echo JHtml::_('bootstrap.addTab', 'tablesTab', $id, Text::_('COM_CUSTOMTABLES_TABLES_DESCRIPTION', true) . ' <b>' . $lang->title . '</b>');
+            echo JHtml::_('bootstrap.addTab', 'tablesTab', $id, common::translate('COM_CUSTOMTABLES_TABLES_DESCRIPTION') . ' <b>' . $lang->title . '</b>');
             echo '
 			<div id="' . $id . '" class="tab-pane">
 				<div class="row-fluid form-horizontal-desktop">
@@ -133,7 +133,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
         <?php
         //if($this->ct->Env->advancedTagProcessor):
 
-        echo JHtml::_('bootstrap.addTab', 'tablesTab', 'advanced', Text::_('COM_CUSTOMTABLES_TABLES_ADVANCED', true)); ?>
+        echo JHtml::_('bootstrap.addTab', 'tablesTab', 'advanced', common::translate('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
@@ -177,7 +177,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
         if ($this->item->tablename !== null) {
 
-            echo JHtml::_('bootstrap.addTab', 'tablesTab', 'dependencies', Text::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES', true));
+            echo JHtml::_('bootstrap.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
             include('_dependencies.php');
             ?>
 

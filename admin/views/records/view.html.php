@@ -119,7 +119,7 @@ class CustomtablesViewRecords extends JViewLegacy
         common::inputSet('hidemainmenu', true);
         $isNew = $this->ct->Params->listing_id == 0;
 
-        JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'), 'pencil-2 article-add');
+        JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'), 'pencil-2 article-add');
 
         if ($isNew) {
             // For new records, check the create permission.
@@ -154,7 +154,7 @@ class CustomtablesViewRecords extends JViewLegacy
     {
         if (isset($this->ct) and $this->ct !== null) {
             $isNew = $this->ct->Params->listing_id == 0;
-            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
+            $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
         }
     }
 }

@@ -19,7 +19,7 @@ class JHTMLCTTime
 {
     static public function render($control_name, $value, $class, string $attribute, array $params, array $option_list)
     {
-        $options = array(array('id' => '', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT')));
+        $options = array(array('id' => '', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT')));
 
 
         $from = JHTMLCTTime::durationToSeconds($params[0]);

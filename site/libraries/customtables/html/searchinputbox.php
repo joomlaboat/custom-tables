@@ -377,7 +377,7 @@ class SearchInputBox
 
         $onchange = $this->getOnChangeAttributeString($default_Action, $index, $where, $whereList);
         $options = [];
-        $options[] = ['id' => '', 'data-type' => 'radio', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT') . ' ' . $this->field->title];
+        $options[] = ['id' => '', 'data-type' => 'radio', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT') . ' ' . $this->field->title];
         foreach ($this->field->params as $param)
             $options[] = ['id' => $param, 'data-type' => 'radio', 'name' => $param];
 

@@ -53,7 +53,7 @@ if (common::inputGetCmd('extratask', '') == 'updateimages') {
 
             <?php if (empty($this->items)): ?>
                 <div class="alert alert-no-items">
-                    <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                    <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
             <?php else: ?>
 

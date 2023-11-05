@@ -61,7 +61,7 @@ foreach ($this->allTables as $table) {
 
     <?php echo HTMLHelper::_('uitab.startTabSet', 'layouteditorTabs', ['active' => $this->active_tab, 'recall' => true, 'breakpoint' => 768]); ?>
 
-    <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'general', Text::_('COM_CUSTOMTABLES_LAYOUTS_GENERAL')); ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'general', common::translate('COM_CUSTOMTABLES_LAYOUTS_GENERAL')); ?>
     <div class="row-fluid form-horizontal-desktop">
         <div class="span12">
 
@@ -83,7 +83,7 @@ foreach ($this->allTables as $table) {
     </div>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-    <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcode-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML')); ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcode-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML')); ?>
 
     <?php
     $layoutCode = $this->item->layoutcode;
@@ -102,7 +102,7 @@ foreach ($this->allTables as $table) {
 
     <?php
 
-    echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutmobile-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE')); ?>
+    echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutmobile-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE')); ?>
     <?php
     if ($this->ct->Env->advancedTagProcessor) {
         $layoutCode = $this->item->layoutmobile;
@@ -117,11 +117,11 @@ foreach ($this->allTables as $table) {
         if ($this->ct->Env->folderToSaveLayouts !== null)
             echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '_mobile.html</div>';
     } else
-        echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+        echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
     ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-    <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcss-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_CSS')); ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcss-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_CSS')); ?>
     <?php
     if ($this->ct->Env->advancedTagProcessor) {
         $layoutCode = $this->item->layoutcss;
@@ -136,11 +136,11 @@ foreach ($this->allTables as $table) {
         if ($this->ct->Env->folderToSaveLayouts !== null)
             echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.css</div>';
     } else
-        echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+        echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
     ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-    <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutjs-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_JS')); ?>
+    <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutjs-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_JS')); ?>
     <?php
     if ($this->ct->Env->advancedTagProcessor) {
         $layoutCode = $this->item->layoutjs;
@@ -156,7 +156,7 @@ foreach ($this->allTables as $table) {
             echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.js</div>';
 
     } else
-        echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+        echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
     ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
@@ -175,7 +175,7 @@ foreach ($this->allTables as $table) {
     <div id="allLayoutRaw" style="display:none;"><?php echo json_encode(ListOfLayouts::getLayouts()); ?></div>
     <div id="dependencies_content" style="display:none;">
 
-        <h3><?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT', true); ?></h3>
+        <h3><?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT'); ?></h3>
         <div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">
             <?php
 

@@ -38,7 +38,7 @@ class JHTMLESFileLink
         }
 
         if (file_exists($real_path)) {
-            $options[] = array('id' => '', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT'),
+            $options[] = array('id' => '', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT'),
                 'data-type' => "filelink");
             $files = scandir($real_path);
             foreach ($files as $f) {
@@ -48,7 +48,7 @@ class JHTMLESFileLink
         } else
             $options[] = array('id' => '',
                 'data-type' => "filelink",
-                'name' => '- ' . Text::_('COM_CUSTOMTABLES_PATH') . ' (' . $path . ') ' . Text::_('COM_CUSTOMTABLES_NOTFOUND'));
+                'name' => '- ' . common::translate('COM_CUSTOMTABLES_PATH') . ' (' . $path . ') ' . common::translate('COM_CUSTOMTABLES_NOTFOUND'));
 
         return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);
 

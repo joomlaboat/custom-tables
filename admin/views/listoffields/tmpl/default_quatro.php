@@ -55,8 +55,8 @@ if ($this->ct->Table === null): ?>
                     <?php if (empty($this->items)) : ?>
                         <div class="alert alert-info">
                             <span class="icon-info-circle" aria-hidden="true"></span><span
-                                    class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
-                            <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                                    class="visually-hidden"><?php echo common::translate('INFO'); ?></span>
+                            <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                         </div>
                     <?php else : ?>
 
@@ -70,9 +70,9 @@ if ($this->ct->Table === null): ?>
 
                         <table class="table" id="userList">
                             <caption class="visually-hidden">
-                                <?php echo Text::_('COM_USERS_USERS_TABLE_CAPTION'); ?>,
-                                <span id="orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
-                                <span id="filteredBy"><?php echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
+                                <?php echo common::translate('COM_USERS_USERS_TABLE_CAPTION'); ?>,
+                                <span id="orderedBy"><?php echo common::translate('JGLOBAL_SORTED_BY'); ?> </span>,
+                                <span id="filteredBy"><?php echo common::translate('JGLOBAL_FILTERED_BY'); ?></span>
                             </caption>
                             <thead>
                             <?php include('default_quatro_head.php'); ?>
@@ -101,7 +101,7 @@ if ($this->ct->Table === null): ?>
 							'bootstrap.renderModal',
 							'collapseModal',
 							array(
-								'title'  => Text::_('COM_CUSTOMTABLES_BATCH_OPTIONS'),
+								'title'  => common::translate('COM_CUSTOMTABLES_BATCH_OPTIONS'),
 								'footer' => $this->loadTemplate('batch_footer'),
 							),
 							$this->loadTemplate('batch_body')

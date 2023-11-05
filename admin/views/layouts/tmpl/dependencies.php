@@ -41,7 +41,7 @@ function renderDependencies($layout_row): string
 
     if (count($rows) > 0) {
         $count += count($rows);
-        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLES_WITH_TABLEJOIN_FIELDS', true) . '</h3>';
+        $result .= '<h3>' . common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLES_WITH_TABLEJOIN_FIELDS') . '</h3>';
         $result .= _renderTableList($rows);
     }
 
@@ -60,7 +60,7 @@ function renderDependencies($layout_row): string
 
     if (count($rows) > 0) {
         $count += count($rows);
-        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLES_DEFAULTVALUE', true) . '</h3>';
+        $result .= '<h3>' . common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLES_DEFAULTVALUE') . '</h3>';
         $result .= _renderTableList($rows);
     }
 
@@ -68,7 +68,7 @@ function renderDependencies($layout_row): string
 
     if (count($menus) > 0) {
         $count += count($menus);
-        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_MENUS', true) . '</h3>';
+        $result .= '<h3>' . common::translate('COM_CUSTOMTABLES_LAYOUTS_MENUS') . '</h3>';
         $result .= _renderMenuList($menus);
 
     }
@@ -76,7 +76,7 @@ function renderDependencies($layout_row): string
     $modules = _getModulesThatUseThisLayout($layout_row->layoutname);
     if (count($modules) > 0) {
         $count += count($modules);
-        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_MODULES', true) . '</h3>';
+        $result .= '<h3>' . common::translate('COM_CUSTOMTABLES_LAYOUTS_MODULES') . '</h3>';
         $result .= _renderModuleList($modules);
 
     }
@@ -84,12 +84,12 @@ function renderDependencies($layout_row): string
     $layouts = _getLayoutsThatUseThisLayout($layout_row->layoutname);
     if (count($layouts) > 0) {
         $count += count($layouts);
-        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_DASHBOARD_LISTOFLAYOUTS', true) . '</h3>';
+        $result .= '<h3>' . common::translate('COM_CUSTOMTABLES_DASHBOARD_LISTOFLAYOUTS') . '</h3>';
         $result .= _renderLayoutList($layouts);
     }
 
     if ($count == 0)
-        $result .= '<p>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_THIS_LAYOUT_IS_NOT_IN_USE', true) . '</p>';
+        $result .= '<p>' . common::translate('COM_CUSTOMTABLES_LAYOUTS_THIS_LAYOUT_IS_NOT_IN_USE') . '</p>';
 
     $result .= '</div>';
     return $result;
@@ -139,9 +139,9 @@ function _renderTableList($rows): string
     $result = '
         <table class="table table-striped">
 			<thead>
-                <th>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLENAME', true) . '</th>
-                <th>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLETITLE', true) . '</th>
-                <th>' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS', true) . '</th>
+                <th>' . common::translate('COM_CUSTOMTABLES_TABLES_TABLENAME') . '</th>
+                <th>' . common::translate('COM_CUSTOMTABLES_TABLES_TABLETITLE') . '</th>
+                <th>' . common::translate('COM_CUSTOMTABLES_LISTOFFIELDS') . '</th>
             </thead>
 			<tbody>
             ';

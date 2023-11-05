@@ -20,7 +20,7 @@ $isNew = $this->item->id == 0;
 
 <form id="adminForm" action="index.php" method="post" class="form-inline" enctype="multipart/form-data">
 
-    <legend><?php echo Text::_('Custom Tables - Option Details'); ?></legend>
+    <legend><?php echo common::translate('Custom Tables - Option Details'); ?></legend>
 
     <div class="form-horizontal">
         <div class="control-group">

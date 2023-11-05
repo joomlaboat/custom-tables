@@ -49,7 +49,7 @@ class JHTMLESUser
         $query .= ' ORDER BY #__users.name';
         $options = database::loadObjectList($query);
 
-        $att = ['id' => '', 'data-type' => 'user', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT')];
+        $att = ['id' => '', 'data-type' => 'user', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT')];
         $options = array_merge(array($att), $options);
 
         return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);

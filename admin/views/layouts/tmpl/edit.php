@@ -58,7 +58,7 @@ foreach ($this->allTables as $table) {
 
     <?php echo JHtml::_('bootstrap.startTabSet', 'layoutsTab', array('active' => $this->active_tab)); ?>
 
-    <?php echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'general', Text::_('COM_CUSTOMTABLES_LAYOUTS_GENERAL', true)); ?>
+    <?php echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'general', common::translate('COM_CUSTOMTABLES_LAYOUTS_GENERAL')); ?>
 
     <div class="row-fluid form-horizontal-desktop">
         <div class="span12">
@@ -82,7 +82,7 @@ foreach ($this->allTables as $table) {
 
     <?php echo JHtml::_('bootstrap.endTab');
 
-    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcode-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML', true));
+    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcode-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML'));
 
 
     $layoutCode = $this->item->layoutcode;
@@ -98,7 +98,7 @@ foreach ($this->allTables as $table) {
 
     echo JHtml::_('bootstrap.endTab');
 
-    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutmobile-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE', true));
+    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutmobile-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE'));
 
     if ($this->ct->Env->advancedTagProcessor) {
         $layoutCode = $this->item->layoutmobile;
@@ -113,11 +113,11 @@ foreach ($this->allTables as $table) {
         if ($this->ct->Env->folderToSaveLayouts !== null)
             echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '_mobile.html</div>';
     } else
-        echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+        echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
 
     echo JHtml::_('bootstrap.endTab');
 
-    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcss-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_CSS', true));
+    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcss-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_CSS'));
 
     if ($this->ct->Env->advancedTagProcessor) {
         $layoutCode = $this->item->layoutcss;
@@ -132,11 +132,11 @@ foreach ($this->allTables as $table) {
         if ($this->ct->Env->folderToSaveLayouts !== null)
             echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.css</div>';
     } else
-        echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+        echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
 
     echo JHtml::_('bootstrap.endTab');
 
-    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutjs-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_JS', true));
+    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutjs-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_JS'));
 
     if ($this->ct->Env->advancedTagProcessor) {
         $layoutCode = $this->item->layoutjs;
@@ -152,7 +152,7 @@ foreach ($this->allTables as $table) {
             echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.js</div>';
 
     } else
-        echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+        echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
 
     echo JHtml::_('bootstrap.endTab');
     echo JHtml::_('bootstrap.endTabSet');
@@ -165,7 +165,7 @@ foreach ($this->allTables as $table) {
 
     <div id="allLayoutRaw" style="display:none;"><?php echo json_encode(ListOfLayouts::getLayouts()); ?></div>
     <div id="dependencies_content" style="display:none;">
-        <h3><?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT', true); ?></h3>
+        <h3><?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT'); ?></h3>
         <div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">
             <?php
             require('dependencies.php');

@@ -18,7 +18,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 ?>
 <!-- clear the batch values if cancel -->
 <button class="btn" type="button" onclick="" data-dismiss="modal">
-    <?php echo Text::_('JCANCEL'); ?>
+    <?php echo common::translate('JCANCEL'); ?>
 </button>
 <!-- post the batch values if process -->
 <button class="btn btn-success" type="submit" onclick="Joomla.submitbutton('fields.batch');">
