@@ -65,7 +65,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             return false;
 
         if ($this->ct->Params->userIdField != '') {
-            if (CTUser::checkIfItemBelongsToUser($this->ct, $this->ct->Params->userIdField, $this->listing_id)) {
+            if ($this->ct->checkIfItemBelongsToUser($this->listing_id, $this->ct->Params->userIdField)) {
                 if ($this->ct->Env->user->authorise('core.edit.own', 'com_customtables')) {
                     $this->isAuthorized = true;
                     return true;
@@ -314,7 +314,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     {
         if ($userIdField != '') {
             $userIdFields = array();
-            $statement_items = tagProcessor_If::ExplodeSmartParams($userIdField); //"and" and "or" as separators
+            $statement_items = common::ExplodeSmartParams($userIdField); //"and" and "or" as separators
 
             foreach ($statement_items as $item) {
                 if ($item[0] == 'or' or $item[0] == 'and') {
@@ -440,7 +440,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($this->ct->Table->published_field_found)
             $wheres[] = 'published=1';
 
-        $wheres_user = CTUser::UserIDField_BuildWheres($this->ct, $this->ct->Params->userIdField, $this->listing_id);
+        $wheres_user = $this->ct->UserIDField_BuildWheres($this->ct->Params->userIdField, $this->listing_id);
         $wheres = array_merge($wheres, $wheres_user);
         $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
 

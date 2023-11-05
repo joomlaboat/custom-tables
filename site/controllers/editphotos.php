@@ -19,8 +19,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 $ct = new CT;
 $model = $this->getModel('edititem');
+$user = new CTUser();
 
-if (!CTUser::CheckAuthorization($ct)) {
+if (!$ct->CheckAuthorization(1)) {
     //not authorized
     $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
     $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));

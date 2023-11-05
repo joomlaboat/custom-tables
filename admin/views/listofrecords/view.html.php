@@ -12,6 +12,7 @@
 // No direct access to this file
 defined('_JEXEC') or die;
 
+use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -155,7 +156,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
     protected function addToolbar_4()
     {
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
 
         // Get the toolbar object instance
         $toolbar = Toolbar::getInstance('toolbar');

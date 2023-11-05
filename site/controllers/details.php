@@ -22,11 +22,13 @@ $ct = null;
 if ($task != '')
     $ct = new CT;
 
+$user = new CTUser();
+
 switch ($task) {
     case 'publish':
 
         $model = $this->getModel('edititem');
-        if (!CTUser::CheckAuthorization($ct)) {
+        if (!$ct->CheckAuthorization(2)) {
             $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
             $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
         } else {
@@ -49,7 +51,7 @@ switch ($task) {
     case 'unpublish':
 
         $model = $this->getModel('edititem');
-        if (!CTUser::CheckAuthorization($ct)) {
+        if (!$ct->CheckAuthorization(2)) {
             if ($ct->Env->version != 1.5) $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
             else $link = JRoute::_('index.php?option=com_user&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
             $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));

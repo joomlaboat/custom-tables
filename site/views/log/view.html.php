@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Details;
 use CustomTables\TwigProcessor;
@@ -39,14 +40,13 @@ class CustomTablesViewLog extends JViewLegacy
     function display($tpl = null)
     {
         $this->ct = new CT;
-        $user = Factory::getApplication()->getIdentity();
-        $this->userid = $user->id;
+        $user = new CTUser();
 
         $this->action = common::inputGetString('action', '');
         if ($this->action == '')
             $this->action = -1;
 
-        $this->userid = common::inputGetInt('user', 0);
+        $this->userid = common::inputGetInt('user', $user->id);
         $this->tableId = common::inputGetInt('table', 0);
 
         //Is user super Admin?

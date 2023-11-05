@@ -13,6 +13,7 @@
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="F:/joomla" />
+      <path value="F:/wp" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

@@ -129,6 +129,7 @@ class ListOfTables
         return true;
     }
 
+    /*
     function save(?int $tableId): ?array
     {
         // Check if running in WordPress context
@@ -279,4 +280,5 @@ class ListOfTables
         }
         return $messages;
     }
+    */
 }

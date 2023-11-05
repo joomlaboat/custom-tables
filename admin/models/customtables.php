@@ -18,7 +18,7 @@ jimport('joomla.application.component.modellist');
 jimport('joomla.application.component.helper');
 
 use CustomTables\CT;
-use Joomla\CMS\Factory;
+use CustomTables\CTUser;
 
 /**
  * Customtables Model
@@ -32,7 +32,7 @@ class CustomtablesModelCustomtables extends JModelList
         $this->ct = new CT;
 
         // load user for access menus
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
         // reset icon array
         $icons = array();
         // view groups array

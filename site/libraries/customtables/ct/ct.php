@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTablesImageMethods;
+use ESTables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -23,6 +24,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Component\ComponentHelper;
 use CustomTablesKeywordSearch;
 use Joomla\Registry\Registry;
+use JoomlaBasicMisc;
 use mysql_xdevapi\Exception;
 use CustomTables\CustomPHP\CleanExecute;
 
@@ -330,9 +332,10 @@ class CT
         } else {
             $this->LimitStart = common::inputGetInt('start', 0);
 
-            if (defined('_JEXEC'))
+            if (defined('_JEXEC')) {
+                $limit_var = 'com_customtables.limit_' . $this->Params->ItemId;
                 $this->Limit = $this->app->getUserState($limit_var, 0);
-            else
+            } else
                 $this->Limit = 0;
 
             if ($this->Limit == 0 and (int)$this->Params->limit > 0) {
@@ -572,5 +575,177 @@ class CT
                 }
             }
         }
+    }
+
+    public function CheckAuthorization(int $action = 1): bool
+    {
+        $listing_id = $this->Params->listing_id;
+        $userIdField = $this->Params->userIdField;
+
+        if ($action == 0)
+            return true;
+
+        if ($action == 5) //force edit
+        {
+            $action = 1;
+        } else {
+            if ($action == 1 and $listing_id == 0)
+                $action = 4; //add new
+        }
+
+        if ($this->Params->guestCanAddNew == 1)
+            return true;
+
+        if ($this->Params->guestCanAddNew == -1 and $listing_id == 0)
+            return false;
+
+        //check is authorized or not
+        if ($action == 1)
+            $userGroup = $this->Params->editUserGroups;
+        elseif ($action == 2)
+            $userGroup = $this->Params->publishUserGroups;
+        elseif ($action == 3)
+            $userGroup = $this->Params->deleteUserGroups;
+        elseif ($action == 4)
+            $userGroup = $this->Params->addUserGroups;
+        else
+            $userGroup = null;
+
+        if ($this->Env->user->id == 0)
+            return false;
+
+        if ($this->Env->user->isUserAdministrator) {
+            //Super Users have access to everything
+            return true;
+        }
+
+        if ($listing_id === null or $listing_id === "" or $listing_id == 0 or $userIdField == '')
+            return $this->Env->user->checkUserGroupAccess($userGroup);
+
+        $theAnswerIs = $this->checkIfItemBelongsToUser($listing_id, $userIdField);
+
+        if (!$theAnswerIs)
+            return $this->checkUserGroupAccess($userGroup);
+
+        return true;
+    }
+
+    public function checkIfItemBelongsToUser(string $listing_id, string $userIdField): bool
+    {
+        $wheres = $this->UserIDField_BuildWheres($userIdField, $listing_id);
+        $query = 'SELECT c.' . $this->Table->realidfieldname . ' FROM ' . $this->Table->realtablename . ' AS c WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
+
+        if (database::getNumRowsOnly($query) == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public function UserIDField_BuildWheres(string $userIdField, string $listing_id): array
+    {
+        $wheres = [];
+
+        $statement_items = common::ExplodeSmartParams($userIdField); //"and" and "or" as separators
+
+        $wheres_owner = array();
+
+        foreach ($statement_items as $item) {
+            $field = $item[1];
+            if (!str_contains($field, '.')) {
+                //example: user
+                //check if the record belong to the current user
+                $user_field_row = Fields::FieldRowByName($field, $this->Table->fields);
+                $wheres_owner[] = [$item[0], $user_field_row['realfieldname'] . '=' . $this->Env->user->id];
+            } else {
+                //example: parents(children).user
+                $statement_parts = explode('.', $field);
+                if (count($statement_parts) != 2) {
+                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "." character - only one is permitted. Correct example: parent(children).user'), 'error');
+                    return [];
+                }
+
+                $table_parts = explode('(', $statement_parts[0]);
+                if (count($table_parts) != 2) {
+                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "(" character. Correct example: parent(children).user'), 'error');
+                    return [];
+                }
+
+                $parent_tablename = $table_parts[0];
+                $parent_join_field = str_replace(')', '', $table_parts[1]);
+                $parent_user_field = $statement_parts[1];
+
+                $parent_table_row = ESTables::getTableRowByName($parent_tablename);
+
+                if (!is_object($parent_table_row)) {
+                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Table "' . $parent_tablename . '" not found.'), 'error');
+                    return [];
+                }
+
+                $parent_table_fields = Fields::getFields($parent_table_row->id);
+
+                $parent_join_field_row = Fields::FieldRowByName($parent_join_field, $parent_table_fields);
+
+                if (count($parent_join_field_row) == 0) {
+                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Join field "' . $parent_join_field . '" not found.'), 'error');
+                    return [];
+                }
+
+                if ($parent_join_field_row['type'] != 'sqljoin' and $parent_join_field_row['type'] != 'records') {
+                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong join field type "' . $parent_join_field_row['type'] . '". Accepted types: "sqljoin" and "records" .'), 'error');
+                    return [];
+                }
+
+                //User field
+
+                $parent_user_field_row = Fields::FieldRowByName($parent_user_field, $parent_table_fields);
+
+                if (count($parent_user_field_row) == 0) {
+                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: User field "' . $parent_user_field . '" not found.'), 'error');
+                    return [];
+                }
+
+                if ($parent_user_field_row['type'] != 'userid' and $parent_user_field_row['type'] != 'user') {
+                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong user field type "' . $parent_join_field_row['type'] . '". Accepted types: "userid" and "user" .'), 'error');
+                    return [];
+                }
+
+                $parent_wheres = [];
+
+                $parent_wheres[] = 'p.' . $parent_user_field_row['realfieldname'] . '=' . $this->Env->user->id;
+
+                $fieldType = $parent_join_field_row['type'];
+                if ($fieldType != 'sqljoin' and $fieldType != 'records')
+                    return [];
+
+                if ($fieldType == 'sqljoin')
+                    $parent_wheres[] = 'p.' . $parent_join_field_row['realfieldname'] . '=c.listing_id';
+
+                if ($fieldType == 'records')
+                    $parent_wheres[] = 'INSTR(p.' . $parent_join_field_row['realfieldname'] . ',CONCAT(",",c.' . $this->Table->realidfieldname . ',","))';
+
+                $q = '(SELECT p.' . $parent_table_row->realidfieldname . ' FROM ' . $parent_table_row->realtablename . ' AS p WHERE ' . implode(' AND ', $parent_wheres) . ' LIMIT 1) IS NOT NULL';
+
+                $wheres_owner[] = [$item[0], $q];
+            }
+        }
+
+        $wheres_owner_str = '';
+        $index = 0;
+        foreach ($wheres_owner as $field) {
+            if ($index == 0)
+                $wheres_owner_str .= $field[1];
+            else
+                $wheres_owner_str .= ' ' . strtoupper($field[0]) . ' ' . $field[1];
+
+            $index += 1;
+        }
+
+        if ($listing_id != '' and $listing_id != 0)
+            $wheres[] = $this->Table->realidfieldname . '=' . database::quote($listing_id);
+
+        if ($wheres_owner_str != '')
+            $wheres[] = '(' . $wheres_owner_str . ')';
+
+        return $wheres;
     }
 }

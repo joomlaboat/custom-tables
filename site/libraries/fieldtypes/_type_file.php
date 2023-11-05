@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
@@ -237,7 +238,7 @@ class CT_FieldTypeTag_file
 
         if ($mime == 'application/zip' and $fileExtension != 'zip') {
             //could be docx, xlsx, pptx
-            $mime = ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
+            ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
         }
 
         $fileData = addslashes(file_get_contents($uploadedFile));
@@ -485,9 +486,9 @@ class CT_FieldTypeTag_file
 
     public static function makeTheKey(string $filepath, string $security, string $recId, string $fieldid, string $tableid): string
     {
-        $user = Factory::getApplication()->getIdentity();
-        $username = $user->get('username');
-        $current_user_id = (int)$user->get('id');
+        $user = new CTUser();
+        $username = $user->username;
+        $current_user_id = $user->id;
 
         $t = time();
         //prepare augmented timer

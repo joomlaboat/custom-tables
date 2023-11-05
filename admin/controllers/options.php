@@ -10,7 +10,7 @@
 
 // No direct access to this file
 use CustomTables\common;
-use Joomla\CMS\Factory;
+use CustomTables\CTUser;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -121,7 +121,7 @@ class CustomTablesControllerOptions extends JControllerForm
     protected function allowEdit($data = array(), $key = 'id')
     {
         // get user object.
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
         // get record id.
         $recordId = (int)isset($data[$key]) ? $data[$key] : 0;
 

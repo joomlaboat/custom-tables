@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 jimport('joomla.application.component.view');
 
 use CustomTables\CT;
-use CustomTables\database;
 use CustomTables\Diagram;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;

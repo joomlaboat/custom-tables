@@ -18,8 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use JEventDispatcher;
 use JoomlaBasicMisc;
 use JESPagination;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
 use JHTML;
 use JPluginHelper;
 
@@ -317,17 +315,18 @@ class Twig_Html_Tags
         if ($this->ct->Env->user->id != 0) {
             $publish_userGroup = (int)$this->ct->Params->publishUserGroups;
 
-            if (JoomlaBasicMisc::checkUserGroupAccess($publish_userGroup)) {
+            $user = new CTUser();
+            if ($user->checkUserGroupAccess($publish_userGroup)) {
                 $available_modes[] = 'publish';
                 $available_modes[] = 'unpublish';
             }
 
             $edit_userGroup = (int)$this->ct->Params->editUserGroups;
-            if (JoomlaBasicMisc::checkUserGroupAccess($edit_userGroup))
+            if ($user->checkUserGroupAccess($edit_userGroup))
                 $available_modes[] = 'refresh';
 
             $delete_userGroup = (int)$this->ct->Params->deleteUserGroups;
-            if (JoomlaBasicMisc::checkUserGroupAccess($delete_userGroup))
+            if ($user->checkUserGroupAccess($delete_userGroup))
                 $available_modes[] = 'delete';
         }
         return $available_modes;

@@ -13,7 +13,6 @@
 \defined('_JEXEC') or die;
 
 use CustomTables\CT;
-use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -163,8 +162,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 
     protected function addToolbar_4()
     {
-        $user = Factory::getApplication()->getIdentity();
-
         // Get the toolbar object instance
         $toolbar = Toolbar::getInstance('toolbar');
 

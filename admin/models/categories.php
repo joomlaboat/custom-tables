@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
@@ -69,7 +70,7 @@ class CustomtablesModelCategories extends JModelAdmin
             $id = common::inputGetInt('id', 0);
         }
 
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
 
         // Check for existing item.
         // Modify the form based on Edit State access controls.
@@ -520,7 +521,7 @@ class CustomtablesModelCategories extends JModelAdmin
     protected function canDelete($record)
     {
         if (!empty($record->id)) {
-            $user = Factory::getApplication()->getIdentity();
+            $user = new CTUser();
             // The record has been set. Check the record permissions.
             return $user->authorise('categories.delete', 'com_customtables.categories.' . (int)$record->id);
         }
@@ -538,7 +539,7 @@ class CustomtablesModelCategories extends JModelAdmin
      */
     protected function canEditState($record)
     {
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
         $recordId = (!empty($record->id)) ? $record->id : 0;
 
         if ($recordId) {
@@ -580,7 +581,7 @@ class CustomtablesModelCategories extends JModelAdmin
     protected function prepareTable($table)
     {
         $date = Factory::getDate();
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
 
         if (isset($table->name)) {
             $table->name = htmlspecialchars_decode($table->name ?? '', ENT_QUOTES);

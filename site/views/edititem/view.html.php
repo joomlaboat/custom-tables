@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
-use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 
 jimport('joomla.html.pane');
@@ -30,7 +29,7 @@ class CustomTablesViewEditItem extends JViewLegacy
         $Model = $this->getModel();
         $Model->load($this->ct);
 
-        if (!CTUser::CheckAuthorization($this->ct)) {
+        if (!$this->ct->CheckAuthorization(1)) {
             //not authorized
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
             return false;

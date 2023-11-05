@@ -622,30 +622,6 @@ class JoomlaBasicMisc
         return $rows[0];
     }
 
-    public static function checkUserGroupAccess($thegroup = 0): bool
-    {
-        if ($thegroup == 0)
-            return false;
-
-        $version_object = new Version;
-        $version = (int)$version_object->getShortVersion();
-        if ($version < 4)
-            $user = Factory::getUser();
-        else
-            $user = Factory::getApplication()->getIdentity();
-
-        $isAdmin = $user->get('isRoot');
-        if ($isAdmin)
-            return true;
-
-        $usergroups = JAccess::getGroupsByUser($user->id);
-
-        if (in_array($thegroup, $usergroups))
-            return true;
-
-        return false;
-    }
-
     public static function applyContentPlugins(string &$htmlresult): string
     {
         $version_object = new Version;

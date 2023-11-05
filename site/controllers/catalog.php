@@ -55,9 +55,8 @@ if ($task != '') {
     <action name="core.delete" title="JACTION_DELETE" description="COM_CUSTOMTABLES_ACCESS_DELETE_DESC" />
     <action name="core.update" title="COM_CUSTOMTABLES_REFRESH" description="COM_CUSTOMTABLES_ACCESS_REFRESH_DESC" />
 */
-    //if ($edit_model->CheckAuthorizationACL($PermissionWord))
 
-    if (CTUser::CheckAuthorization($ct, $PermissionIndex)) {
+    if ($ct->CheckAuthorization($PermissionIndex)) {
 
         $edit_model = $this->getModel('edititem');
         $redirect = doTheTask($ct, $task, $edit_model, $this);

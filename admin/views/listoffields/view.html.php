@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTUser;
 use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -150,7 +151,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 
     protected function addToolbar_4()
     {
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
 
         // Get the toolbar object instance
         $toolbar = Toolbar::getInstance('toolbar');

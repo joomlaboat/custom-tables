@@ -12,6 +12,7 @@ namespace CustomTables;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use JoomlaBasicMisc;
 use JUri;
 
 class common
@@ -296,5 +297,26 @@ class common
         } else {
             die('common::inputServer not supported in WordPress');
         }
+    }
+
+    public static function ExplodeSmartParams(string $param): array
+    {
+        $items = array();
+
+        if ($param === null)
+            return $items;
+
+        $a = JoomlaBasicMisc::csv_explode(' and ', $param, '"', true);
+        foreach ($a as $b) {
+            $c = JoomlaBasicMisc::csv_explode(' or ', $b, '"', true);
+
+            if (count($c) == 1)
+                $items[] = array('and', $b);
+            else {
+                foreach ($c as $d)
+                    $items[] = array('or', $d);
+            }
+        }
+        return $items;
     }
 }

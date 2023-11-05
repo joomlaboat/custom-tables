@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use Joomla\CMS\Factory;
 use ESTables;
 
 class Table

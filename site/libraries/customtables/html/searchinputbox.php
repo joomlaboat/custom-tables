@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use Exception;
 use Joomla\CMS\Language\Text;
 use JoomlaBasicMisc;
-use Joomla\CMS\Factory;
 use JHTML;
 
 if (defined('_JEXEC'))
@@ -452,7 +451,7 @@ class SearchInputBox
         else
             $cssclass = 'class="form-control ' . $cssclass . '" ';
 
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
 
         if ($default_Action != '') {
             $onchange = $default_Action;

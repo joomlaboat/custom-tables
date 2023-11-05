@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTUser;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -76,7 +77,7 @@ class CustomtablesModelLayouts extends JModelAdmin
             $id = common::inputGetint('id', 0);
         }
 
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
 
         // Check for existing item.
         // Modify the form based on Edit State access controls.
@@ -576,7 +577,7 @@ class CustomtablesModelLayouts extends JModelAdmin
                 return;
             }
 
-            $user = Factory::getApplication()->getIdentity();
+            $user = new CTUser();
             // The record has been set. Check the record permissions.
             return $user->authorise('core.delete', 'com_customtables.layouts.' . (int)$record->id);
         }
@@ -594,7 +595,7 @@ class CustomtablesModelLayouts extends JModelAdmin
      */
     protected function canEditState($record)
     {
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
         $recordId = (!empty($record->id)) ? $record->id : 0;
 
         if ($recordId) {
@@ -636,7 +637,7 @@ class CustomtablesModelLayouts extends JModelAdmin
     protected function prepareTable($table)
     {
         $date = Factory::getDate();
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
 
         if (isset($table->name))
             $table->name = htmlspecialchars_decode($table->name ?? '', ENT_QUOTES);

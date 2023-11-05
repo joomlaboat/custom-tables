@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
-use Joomla\CMS\Uri\Uri;
 
 class CT_FieldTypeTag_FileBox
 {

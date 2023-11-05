@@ -20,7 +20,6 @@ use JoomlaBasicMisc;
 use Joomla\CMS\Version;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Component\ComponentHelper;
 
 class Environment
@@ -97,20 +96,6 @@ class Environment
         $this->encoded_current_url_no_return = base64_encode($tmp_current_url);
 
         $this->user = new CTUser();
-
-        /*
-        if ($this->version < 4)
-            $this->user = Factory::getUser();
-        else
-            $this->user = Factory::getApplication()->getIdentity();
-
-        $this->userid = is_null($this->user) ? 0 : $this->user->id;
-
-        if ($this->user !== null)
-            $usergroups = $this->user->get('groups');
-        else
-            $usergroups = [];
-        */
 
         $this->isUserAdministrator = $this->user->isUserAdministrator;//in_array(8, $this->user->groups);//8 is Super Users
         //$this->isUserAdministrator = $this->user->authorise('core.edit', 'com_content');

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 
 // import Joomla modelform library
@@ -99,7 +100,7 @@ class CustomtablesModelRecords extends JModelAdmin
     protected function canDelete($record)
     {
         if (!empty($record->id)) {
-            $user = Factory::getApplication()->getIdentity();
+            $user = new CTUser();
             // The record has been set. Check the record permissions.
             return $user->authorise('core.delete', 'com_customtables.records.' . $record->id);
         }
@@ -127,7 +128,7 @@ class CustomtablesModelRecords extends JModelAdmin
      */
     protected function canEditState($record)
     {
-        $user = Factory::getApplication()->getIdentity();
+        $user = new CTUser();
         $recordId = (!empty($record->id)) ? $record->id : 0;
 
         if ($recordId) {

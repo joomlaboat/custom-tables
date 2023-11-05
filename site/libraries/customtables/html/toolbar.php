@@ -12,7 +12,6 @@ namespace CustomTables;
 
 use CT_FieldTypeTag_FileBox;
 use JoomlaBasicMisc;
-use Joomla\CMS\Uri\Uri;
 
 class RecordToolbar
 {

@@ -18,8 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 jimport('joomla.application.component.modellist');
 
 use CustomTables\CT;
-use CustomTables\database;
-use CustomTables\Layouts;
 use CustomTables\ListOfLayouts;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;

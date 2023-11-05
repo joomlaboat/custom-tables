@@ -43,7 +43,12 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 
     if (defined('_JEXEC')) {
         define('CUSTOMTABLES_MEDIA_WEBPATH', URI::root(false) . 'components/com_customtables/libraries/customtables/media/');
-        define('CUSTOMTABLES_MEDIA_HOME_URL', URI::root(false));
+
+        $url = URI::root(false);
+        if (strlen($url) > 0 and $url[strlen($url) - 1] == '/')
+            $url = substr($url, 0, strlen($url) - 1);
+
+        define('CUSTOMTABLES_MEDIA_HOME_URL', $url);
     } elseif (defined('WPINC')) {
         define('CUSTOMTABLES_MEDIA_WEBPATH', home_url() . '/wp-content/plugins/customtables/libraries/customtables/media/');
         define('CUSTOMTABLES_MEDIA_HOME_URL', home_url());

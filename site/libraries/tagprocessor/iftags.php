@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 
 class tagProcessor_If
@@ -63,7 +64,7 @@ class tagProcessor_If
 
             $content = $options[$i];
 
-            $statement_items = tagProcessor_If::ExplodeSmartParams($statement); //"and" and "or" as separators
+            $statement_items = common::ExplodeSmartParams($statement); //"and" and "or" as separators
             $isTrues = array();//false;
 
             foreach ($statement_items as $item) {
@@ -74,7 +75,7 @@ class tagProcessor_If
                     if ($opr != '') {
                         $pair = JoomlaBasicMisc::csv_explode($opr, $equation, '"', false);//true
                     } else {
-                        //this to process bullean values. use example {if:[paid]}<b>Paid</b>{endif} TODO: or {if:paid}<b>Paid</b>{endif}, {if:paid} exuals to {if:[_value:paid]}
+                        //this to process boolean values. use example {if:[paid]}<b>Paid</b>{endif} TODO: or {if:paid}<b>Paid</b>{endif}, {if:paid} exuals to {if:[_value:paid]}
                         $opr = '!=';
                         $pair = array($item[1], '0');//boolean
                     }
@@ -94,27 +95,8 @@ class tagProcessor_If
             else
                 $htmlresult = str_replace($fItem, '', $htmlresult);
 
-
             $i++;
-
         }
-    }
-
-    public static function ExplodeSmartParams(string $param): array
-    {
-        $items = array();
-        $a = explode(' and ', $param);
-        foreach ($a as $b) {
-            $c = explode(' or ', $b);
-            if (count($c) == 1) {
-                $items[] = array('and', $b);
-            } else {
-                foreach ($c as $d) {
-                    $items[] = array('or', $d);
-                }
-            }
-        }
-        return $items;
     }
 
     protected static function getOpr(string $str): string
@@ -206,7 +188,7 @@ class tagProcessor_If
         }
 
         return false;
-    }//function ExplodeSmartParams($param)
+    }
 
     protected static function doANDORs(array $isTrues): bool
     {

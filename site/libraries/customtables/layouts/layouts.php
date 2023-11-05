@@ -336,7 +336,7 @@ class Layouts
                         <th scope="row">
                             <label for="' . $this->ct->Env->field_input_prefix . $field['fieldname'] . '">'
                     . '{{ ' . $field['fieldname'] . '.title }}'
-                    . ((int)$field['isrequired'] == 1 ? '<span class="description">(' . __('required', $this->plugin_text_domain) . ')</span>' : '')
+                    . ((int)$field['isrequired'] == 1 ? '<span class="description">(' . __('required', 'customtables') . ')</span>' : '')
                     . '</label>
                         </th>
                         <td>

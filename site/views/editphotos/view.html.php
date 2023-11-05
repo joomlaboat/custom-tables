@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.view'); //Important to get menu parameters
@@ -20,9 +21,8 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 {
     function display($tpl = null)
     {
-        $user = Factory::getApplication()->getIdentity();
-        $userid = $user->get('id');
-        if ((int)$userid == 0) {
+        $user = new CTUser;
+        if ($user->id == 0) {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
             return false;
         }

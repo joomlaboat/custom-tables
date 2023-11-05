@@ -22,13 +22,11 @@ $ct = new CT;
 
 $model = $this->getModel('edititem');
 $model->load($ct);
-
 $model->params = Factory::getApplication()->getParams();
-
-
 $model->listing_id = common::inputGetCmd("listing_id");
+$user = new CTUser();
 
-if (!CTUser::CheckAuthorization($ct, 5)) {
+if (!$ct->CheckAuthorization(5)) {
     //not authorized
     Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 

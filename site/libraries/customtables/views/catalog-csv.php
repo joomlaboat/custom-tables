@@ -39,7 +39,7 @@ class CatalogExportCSV
 				extension=mbstring<br/><br/>
 				Then restart your webs\' server. Example:<br/>service apache2 restart';
 
-            $this->ct->app->appenqueueMessage($msg, 'error');
+            $this->ct->app->enqueueMessage($msg, 'error');
             $this->error = true;
         }
     }

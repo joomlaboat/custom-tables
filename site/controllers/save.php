@@ -55,9 +55,7 @@ function CustomTablesDelete($this_)
     $edit_model = $this_->getModel('edititem');
     $edit_model->load($ct);
 
-    $PermissionIndex = 3;//delete
-
-    if (!CTUser::CheckAuthorization($ct, $PermissionIndex)) {
+    if (!$ct->CheckAuthorization(3)) {
         // not authorized
         if ($ct->Env->clean == 1) {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
@@ -104,7 +102,7 @@ function CustomTablesSave($task, $this_)
     if (!$model->load($ct))
         return false;
 
-    if (!CTUser::CheckAuthorization($ct)) {
+    if (!$ct->CheckAuthorization(1)) {
         $link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL());
         $this_->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
     } else {

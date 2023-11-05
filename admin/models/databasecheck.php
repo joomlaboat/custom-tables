@@ -69,64 +69,6 @@ class CustomtablesModelDatabasecheck extends JModelList
     }
 
     /**
-     * Method to build an SQL query to load the list data.
-     *
-     * @return    string    An SQL query
-     */
-    /*
-   protected function getListQuery()
-   {
-       // Get the user object.
-       $user = Factory::getApplication()->getIdentity();
-
-       $categoryname='(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
-       $fieldcount='(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
-       $selects=array();
-       $selects[]=ESTables::getTableRowSelects();
-       $selects[]=$categoryname.' AS categoryname';
-       $selects[]=$fieldcount.' AS fieldcount';
-
-
-       $query = 'SELECT '.select(implode(',',$selects)).' FROM '.database::quoteName('#__customtables_tables').' AS a';
-
-       $where = [];
-       // Filter by published state
-       $published = $this->getState('filter.published');
-       if (is_numeric($published))
-           $where [] = 'a.published = ' . (int) $published;
-       elseif ($published === '')
-           $where [] = '(a.published = 0 OR a.published = 1)';
-       // Filter by search.
-       $search = $this->getState('filter.search');
-       if (!empty($search))
-       {
-           if (stripos($search, 'id:') === 0)
-               $where [] = 'a.id = ' . (int) substr($search, 3);
-           else
-           {
-               $search = database::quote('%' . $search . '%');
-               $where [] = 'a.tablename LIKE '.$search.';
-           }
-       }
-
-       $search = $this->getState('filter.tablecategory');
-       // Filter by Tableid.
-       if ($category = $this->getState('filter.tablecategory'))
-           $where [] = 'a.tablecategory = ' . (int)$category;
-
-       // Add the list ordering clause.
-       $orderCol = $this->state->get('list.ordering', 'a.id');
-       $orderDirn = $this->state->get('list.direction', 'asc');
-
-       $query .= ' WHERE '.implode(' AND ',$where);
-       if ($orderCol != '')
-           $query .= ' ORDER BY '.database::quoteName($orderCol) . ' ' . $orderDirn;
-
-       return $query;
-   }
-   */
-
-    /**
      * Method to get a store id based on model configuration state.
      *
      * @return  string  A store id.

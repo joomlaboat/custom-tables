@@ -110,7 +110,7 @@ class Filtering
 
         $param = $this->sanitizeAndParseFilter($param, true);
         $wheres = [];
-        $items = $this->ExplodeSmartParams($param);
+        $items = common::ExplodeSmartParams($param);
         $logic_operator = '';
 
         foreach ($items as $item) {
@@ -213,27 +213,6 @@ class Filtering
             else
                 $this->where[] = implode(' ' . $logic_operator . ' ', $wheres);
         }
-    }
-
-    function ExplodeSmartParams($param): array
-    {
-        $items = array();
-
-        if ($param === null)
-            return $items;
-
-        $a = JoomlaBasicMisc::csv_explode(' and ', $param, '"', true);
-        foreach ($a as $b) {
-            $c = JoomlaBasicMisc::csv_explode(' or ', $b, '"', true);
-
-            if (count($c) == 1)
-                $items[] = array('and', $b);
-            else {
-                foreach ($c as $d)
-                    $items[] = array('or', $d);
-            }
-        }
-        return $items;
     }
 
     function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname, string $value, string $field_extra_param = ''): string
