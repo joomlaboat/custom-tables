@@ -243,7 +243,7 @@ class Layouts
 
             if (defined('_JEXEC')) {
                 if ($twig->errorMessage !== null)
-                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                    $this->ct->errors[] = $twig->errorMessage;
 
                 $this->ct->document->addCustomTag($layoutContent);
             }
@@ -262,7 +262,7 @@ class Layouts
 
             if (defined('_JEXEC')) {
                 if ($twig->errorMessage !== null)
-                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                    $this->ct->errors[] = $twig->errorMessage;
 
                 $this->ct->document->addCustomTag('<script>' . $layoutContent . '</script>');
             }
@@ -331,20 +331,21 @@ class Layouts
 
             if (!in_array($field['type'], $fieldTypes_to_skip)) {
 
-                $result .= '
-            <tr class="form-field ' . ((int)$field['isrequired'] == 1 ? 'form-required' : 'form') . '">
-                        <th scope="row">
+                $label = '<th scope="row">
                             <label for="' . $this->ct->Env->field_input_prefix . $field['fieldname'] . '">'
                     . '{{ ' . $field['fieldname'] . '.title }}'
                     . ((int)$field['isrequired'] == 1 ? '<span class="description">(' . __('required', 'customtables') . ')</span>' : '')
                     . '</label>
-                        </th>
-                        <td>
-                            {{ ' . $field['fieldname'] . '.edit }}
-                        </td>
-                    </tr>
-            ';
+                        </th>';
 
+                $input = '<td>
+                            {{ ' . $field['fieldname'] . '.edit }}
+                        </td>';
+
+                $result .= '<tr class="form-field ' . ((int)$field['isrequired'] == 1 ? 'form-required' : 'form') . '">'
+                    . $label
+                    . $input
+                    . '</tr>';
             }
         }
 
@@ -412,7 +413,7 @@ class Layouts
         $content = $twig->process($this->ct->Table->record);
 
         if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $this->ct->errors[] = $twig->errorMessage;
 
         if ($applyContentPlugins and $this->ct->Params->allowContentPlugins)
             $content = JoomlaBasicMisc::applyContentPlugins($content);
@@ -458,7 +459,7 @@ class Layouts
             $this->ct->getTable($this->ct->Params->tableName);
 
             if ($this->ct->Table->tablename === null) {
-                $this->ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
+                $this->ct->errors[] = 'Catalog View: Table not selected.';
                 return 'Catalog View: Table not selected.';
             }
         }
@@ -514,7 +515,7 @@ class Layouts
         if (!$this->ct->getRecords()) {
 
             if (defined('_JEXEC'))
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
+                $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
 
             return 'CustomTables: Records not loaded.';
         }
@@ -535,7 +536,7 @@ class Layouts
 
         if (defined('_JEXEC')) {
             if ($twig->errorMessage !== null)
-                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                $this->ct->errors[] = $twig->errorMessage;
 
             if ($this->ct->Params->allowContentPlugins)
                 $pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);

@@ -209,8 +209,10 @@ class CustomTablesViewLog extends JViewLegacy
         $twig = new TwigProcessor($ct, $layoutContent);
 
         $row = $ct->Table->loadRecord($listing_id);
-        if ($twig->errorMessage !== null)
-            $ct->app->enqueueMessage($twig->errorMessage, 'error');
+        if ($twig->errorMessage !== null) {
+            $ct->errors[] = $twig->errorMessage;
+            return '';
+        }
 
         return $twig->process($row);
     }

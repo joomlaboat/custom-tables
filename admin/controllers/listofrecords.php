@@ -173,7 +173,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
             $table = ESTables::getTableRowByID($tableid);
             if (!is_object($table) and $table == 0) {
                 Factory::getApplication()->enqueueMessage('Table not found', 'error');
-                return;
+                return false;
             } else {
                 $tablename = $table->tablename;
             }
@@ -186,7 +186,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 
         $ct->getTable($tableid);
         if ($ct->Table->tablename === null) {
-            $ct->app->enqueueMessage('Export to CSV: Table not selected.', 'error');
+            $ct->errors[] = 'Export to CSV: Table not selected.';
             return false;
         }
 
@@ -218,7 +218,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
             echo $catalogCSV->render(null);
             die;
         } else {
-            $ct->app->enqueueMessage($catalogCSV->error, 'error');
+            $ct->errors[] = $catalogCSV->error;
         }
         return false;
     }

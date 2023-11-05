@@ -571,7 +571,7 @@ class CustomtablesModelLayouts extends JModelAdmin
     {
         if (!empty($record->id)) {
             if ($record->published != -2) {
-                return;
+                return false;
             }
 
             $user = new CTUser();

@@ -100,11 +100,6 @@ class SaveFieldQuerySet
                             $this->setNewValue(null);
                             return;
                         }
-                    } else {
-                        if ($value == '') {
-                            $this->setNewValue(null);
-                            return;
-                        }
                     }
                     $this->setNewValue($value);
                     return;
@@ -1017,8 +1012,10 @@ class SaveFieldQuerySet
             $twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
             $value = $twig->process($this->row_old);
 
-            if ($twig->errorMessage !== null)
-                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            if ($twig->errorMessage !== null) {
+                $this->ct->errors[] = $twig->errorMessage;
+                return;
+            }
 
             if ($value == '') {
                 $this->setNewValue(null);
@@ -1043,20 +1040,19 @@ class SaveFieldQuerySet
 
                     if ($twig->errorMessage !== null) {
                         echo $twig->errorMessage;
-                        $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                        $this->ct->errors[] = $twig->errorMessage;
                         return;
                     }
 
                 } catch (Exception $e) {
                     echo $e->getMessage();
-                    $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                    $this->ct->errors[] = $e->getMessage();
                     return;
                 }
 
                 if ($storage == "storedintegersigned" or $storage == "storedintegerunsigned") {
                     $this->setNewValue((int)$value);
-                    //$this->row_new[$this->field->realfieldname] = (int)$value;
-                    return;// $this->field->realfieldname . '=' . (int)$value;
+                    return;
                 }
 
                 $this->setNewValue($value);
@@ -1074,13 +1070,13 @@ class SaveFieldQuerySet
 
             $email = $this->ct->Env->user->email . '';
             if ($email != '') {
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS'), 'warning');
+                $this->ct->messages[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS');
                 return false; //all good, user already assigned.
             }
         }
 
         if (count($field->params) < 3) {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.'), 'error');
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.');
             return false;
         }
 
@@ -1101,7 +1097,7 @@ class SaveFieldQuerySet
             $part = $twig->process($this->ct->Table->record);
 
             if ($twig->errorMessage !== null) {
-                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                $this->ct->errors[] = $twig->errorMessage;
                 return false;
             }
 
@@ -1113,13 +1109,13 @@ class SaveFieldQuerySet
         $user_email = $new_parts[2];
 
         if ($user_groups == '') {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User group field not set.'));
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('User group field not set.');
             return false;
         } elseif ($user_name == '') {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User name field not set.'));
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('User name field not set.');
             return false;
         } elseif ($user_email == '') {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User email field not set.'));
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('User email field not set.');
             return false;
         }
 
@@ -1135,12 +1131,12 @@ class SaveFieldQuerySet
                 CTUser::UpdateUserField($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $field->realfieldname,
                     $existing_user_id, $this->ct->Table->record[$this->ct->Table->realidfieldname]);
 
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED'));
+                $this->ct->messages[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED');
             } else {
-                $this->ct->app->enqueueMessage(
+                $this->ct->errors[] =
                     JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_WITH_EMAIL')
                     . ' "' . $user_email . '" '
-                    . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS'), 'Error');
+                    . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS');
             }
         } else {
             CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $user_email, $user_name,
@@ -1166,7 +1162,7 @@ class SaveFieldQuerySet
             $value = $parsed_condition;
 
         if ($error != '') {
-            $this->ct->app->enqueueMessage($error, 'error');
+            $this->ct->errors[] = $error;
             return false;
         }
 
@@ -1261,10 +1257,10 @@ class SaveFieldQuerySet
 
             if ($sent !== true) {
                 //Something went wrong. Email not sent.
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL') . ': ' . $EmailTo . ' (' . $Subject . ')', 'error');
+                $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL') . ': ' . $EmailTo . ' (' . $Subject . ')';
                 $status = 0;
             } else {
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO') . ': ' . $EmailTo . ' (' . $Subject . ')');
+                $this->ct->messages[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO') . ': ' . $EmailTo . ' (' . $Subject . ')';
                 $status = 1;
             }
         }

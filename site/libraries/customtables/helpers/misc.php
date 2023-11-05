@@ -676,7 +676,6 @@ class JoomlaBasicMisc
                 return $file;
             }
         }
-        return null;
     }
 
     public static function generateRandomString(int $length = 32): string

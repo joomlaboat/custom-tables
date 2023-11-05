@@ -85,7 +85,7 @@ class TwigProcessor
             $pos2 = strpos($layoutContent, $tag2, $pos1 + strlen($tag1));
 
             if ($pos2 === false) {
-                $this->ct->app->enqueueMessage('{% endblock %} is missing', 'error');
+                $this->ct->errors[] = '{% endblock %} is missing';
                 return;
             }
 
@@ -662,16 +662,16 @@ class fieldObject
         if (isset($functionParams[0]))
             $fieldName = $functionParams[0];
         else {
-            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get(field_name) }} field name not specified.', 'error');
-            return '{{ ' . $this->field->fieldname . '.get(field_name) }} field name not specified.';
+            $this->ct->errors[] = '{{ ' . $this->field->fieldname . '.get(field_name) }} field name not specified.';
+            return '';
         }
 
         if ($this->field->type == 'sqljoin') {
             //2. ?array $options = null
             if (isset($functionParams[1])) {
                 if (!is_array($functionParams[1])) {
-                    $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get("' . $fieldName . '",' . $functionParams[1] . ') }} value parameters must be an array.', 'error');
-                    return '{{ ' . $this->field->fieldname . '.get(field_name) }} field name not specified.';
+                    $this->ct->errors[] = '{{ ' . $this->field->fieldname . '.get("' . $fieldName . '",' . $functionParams[1] . ') }} value parameters must be an array.';
+                    return '';
                 }
                 $options = $functionParams[1];
             } else
@@ -700,7 +700,7 @@ class fieldObject
             return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname],
                 $showPublishedString, $separatorCharacter);
         } else {
-            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.', 'error');
+            $this->ct->errors[] = '{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.';
             return '';
         }
     }
@@ -729,8 +729,8 @@ class fieldObject
         if (isset($functionParams[0]))
             $fieldName = $functionParams[0];
         else {
-            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.getvalue(field_name) }}. field_name name not specified.', 'error');
-            return '{{ ' . $this->field->fieldname . '.getvalue(field_name) }}. field_name name not specified.';
+            $this->ct->errors[] = '{{ ' . $this->field->fieldname . '.getvalue(field_name) }}. field_name name not specified.';
+            return '';
         }
 
         $layoutcode = '{{ ' . $fieldName . '.value }}';
@@ -753,7 +753,7 @@ class fieldObject
 
             return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
         } else {
-            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.getvalue }}. Wrong field type "' . $this->field->type . '". ".getvalue" method is only available for Table Join and Records filed types.', 'error');
+            $this->ct->errors[] = '{{ ' . $this->field->fieldname . '.getvalue }}. Wrong field type "' . $this->field->type . '". ".getvalue" method is only available for Table Join and Records filed types.';
             return '';
         }
     }
@@ -764,7 +764,7 @@ class fieldObject
             $showPublishedString = '';
 
         if ($this->field->type != 'sqljoin' and $this->field->type != 'records') {
-            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.', 'error');
+            $this->ct->errors[] = '{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.';
             return '';
         }
 
@@ -775,7 +775,7 @@ class fieldObject
         $layoutCode = $Layouts->getLayout($layoutName);
 
         if ($layoutCode == '') {
-            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.layout("' . $layoutName . '") }} Layout "' . $layoutName . '" not found or is empty.', 'error');
+            $this->ct->errors[] = '{{ ' . $this->field->fieldname . '.layout("' . $layoutName . '") }} Layout "' . $layoutName . '" not found or is empty.';
             return '';
         }
 

@@ -47,7 +47,7 @@ class CustomTablesViewFiles extends JViewLegacy
 
         $this->ct->getTable($this->tableid);
         if ($this->ct->Table->tablename === null) {
-            $this->ct->app->enqueueMessage('Table not selected (79).', 'error');
+            $this->ct->errors[] = 'Table not selected (79).';
             return;
         }
 
@@ -60,7 +60,7 @@ class CustomTablesViewFiles extends JViewLegacy
         }
 
         if (is_null($fieldrow)) {
-            $this->ct->app->enqueueMessage('File View: Field not found.', 'error');
+            $this->ct->errors[] = 'File View: Field not found.';
             return;
         }
 
@@ -81,7 +81,7 @@ class CustomTablesViewFiles extends JViewLegacy
         } else {
             $filepath = $this->getFilePath();
             if ($filepath == '')
-                $this->ct->app->enqueueMessage('File path not set.', 'error');
+                $this->ct->errors[] = 'File path not set.';
         }
 
         $key = $this->key;
@@ -96,13 +96,13 @@ class CustomTablesViewFiles extends JViewLegacy
             } else
                 $this->render_file_output($filepath);
         } else
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED'), 'error');
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED');
     }
 
     protected function getFilePath(): string
     {
         if (!isset($this->row[$this->field->realfieldname]))
-            $this->ct->app->enqueueMessage('Real field name not set', 'error');
+            $this->ct->errors[] = 'Real field name not set';
 
         $rowValue = $this->row[$this->field->realfieldname];
 
@@ -120,7 +120,7 @@ class CustomTablesViewFiles extends JViewLegacy
         $rows = database::loadAssocList($query);
 
         if (count($rows) < 1) {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND');
             return;
         }
 
@@ -188,7 +188,7 @@ class CustomTablesViewFiles extends JViewLegacy
             $file = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
 
         if (!file_exists($file)) {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND');
             return false;
         }
 

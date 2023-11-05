@@ -57,7 +57,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 
         $result = $twig->process($item_array);
         if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $this->ct->errors[] = $twig->errorMessage;
 
         echo str_replace('****link****', $link, $result);
 

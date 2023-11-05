@@ -35,7 +35,7 @@ class CT_FieldTypeTag_sqljoin
         $value = $twig->process($row);
 
         if ($twig->errorMessage !== null)
-            $ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $ct->errors[] = $twig->errorMessage;
 
         return $value;
     }
@@ -81,7 +81,7 @@ class CT_FieldTypeTag_sqljoin
         $value = $twig->process($row);
 
         if ($twig->errorMessage !== null)
-            $join_ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $join_ct->errors[] = $twig->errorMessage;
 
         return $value;
     }

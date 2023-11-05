@@ -24,7 +24,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
         $user = new CTUser;
         if ($user->id == 0) {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-            return false;
+            return;
         }
 
         $this->Model = $this->getModel();

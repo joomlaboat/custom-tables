@@ -132,7 +132,7 @@ class JHTMLESSqlJoin
         $ct->getTable($ct->Params->tableName);
 
         if ($ct->Table->tablename === null) {
-            $ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
+            $ct->errors[] = 'Catalog View: Table not selected.';
             return false;
         }
 
@@ -185,7 +185,7 @@ class JHTMLESSqlJoin
                 $v = $twig->process($row);
 
                 if ($twig->errorMessage !== null)
-                    $ct->app->enqueueMessage($twig->errorMessage, 'error');
+                    $ct->errors[] = $twig->errorMessage;
 
             } else
                 $v = JoomlaBasicMisc::processValue($field, $ct, $row);//TODO try to replace processValue function
@@ -286,7 +286,7 @@ class JHTMLESSqlJoin
                 $style = '';
 
             if ($dynamic_filter == '')
-                $htmlresult_select .= '<option value="' . $list_value[0] . '"' . ($list_value[0] == $current_value ? ' selected="SELECTED"' : '') . '' . $style . '>' . htmlspecialchars(strip_tags($list_value[1] ?? '')) . '</option>';
+                $htmlresult_select .= '<option value="' . $list_value[0] . '"' . ($list_value[0] == $current_value ? ' selected="SELECTED"' : '') . $style . '>' . htmlspecialchars(strip_tags($list_value[1] ?? '')) . '</option>';
         }
 
         if ($addNoValue)

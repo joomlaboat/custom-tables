@@ -240,7 +240,7 @@ class JHTMLCTTableJoin
         if (!is_null($dynamicFilter) and $dynamicFilter != '') {
 
             if ($temp_ct->Table->tablename === null) {
-                $temp_ct->app->enqueueMessage('Dynamic filter field "' . $dynamicFilter . '" : Table "' . $temp_ct->Table->tablename . '" not found.', 'error');
+                $temp_ct->errors[] = 'Dynamic filter field "' . $dynamicFilter . '" : Table "' . $temp_ct->Table->tablename . '" not found.';
                 return false;
             }
 

@@ -72,8 +72,10 @@ trait render_html
 
             $twig = new TwigProcessor($ct, $result);
             $result = $twig->process();
-            if ($twig->errorMessage !== null)
-                $ct->app->enqueueMessage($twig->errorMessage, 'error');
+            if ($twig->errorMessage !== null) {
+                $ct->errors[] = $twig->errorMessage;
+                return '';
+            }
         }
 
         //Complete record layout

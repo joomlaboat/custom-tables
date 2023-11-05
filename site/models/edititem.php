@@ -90,7 +90,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             try {
                 $rootParentName = database::loadObjectList($query);
             } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                $this->ct->errors[] = $e->getMessage();
                 return null;
             }
 
@@ -148,7 +148,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             $rows = database::loadObjectList($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return false;
         }
 
@@ -165,7 +165,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             database::setQuery($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return false;
         }
 
@@ -176,7 +176,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             try {
                 database::setQuery($query);
             } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                $this->ct->errors[] = $e->getMessage();
                 return false;
             }
 
@@ -189,7 +189,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             database::setQuery($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return false;
         }
 
@@ -200,7 +200,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             database::setQuery($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return false;
         }
 
@@ -208,7 +208,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             database::setQuery($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return false;
         }
 
@@ -225,7 +225,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             database::setQuery($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return false;
         }
         return $this->store($msg, $link, true, $new_id);
@@ -259,7 +259,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
             //Refresh menu if needed
             if ($this->ct->Params->msgItemIsSaved !== null and $this->ct->Params->msgItemIsSaved != "") {
-                $this->ct->app->enqueueMessage($this->ct->Params->msgItemIsSaved, 'notice');
+                $this->ct->errors[] = $this->ct->Params->msgItemIsSaved;
             }
 
             if ($this->ct->Env->advancedTagProcessor) {
@@ -267,7 +267,7 @@ class CustomTablesModelEditItem extends JModelLegacy
                 try {
                     CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
                 } catch (Exception $e) {
-                    $this->ct->app->enqueueMessage('Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')', 'error');
+                    $this->ct->errors[] = 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
                 }
                 $return2Link_Updated = common::inputGet('returnto', '', 'BASE64');
                 if ($return2Link != $return2Link_Updated)
@@ -286,7 +286,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         $this->row = null;
 
         if ($this->ct->Table->tablename === null) {
-            $this->ct->app->enqueueMessage('Table not selected (61).', 'error');
+            $this->ct->errors[] = 'Table not selected (61).';
             return false;
         }
 
@@ -370,7 +370,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             try {
                 $rows = database::loadAssocList($query);
             } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                $this->ct->errors[] = $e->getMessage();
                 return -1;
             }
 
@@ -395,10 +395,10 @@ class CustomTablesModelEditItem extends JModelLegacy
         $filter = $twig->process();
 
         if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $this->ct->errors[] = $twig->errorMessage;
 
         //TODO
-        $this->ct->app->enqueueMessage('Filtering not done.', 'error');
+        $this->ct->errors[] = 'Filtering not done.';
 
         $filtering = new Filtering($this->ct, $this->ct->Params->showPublished);
         $filtering->addWhereExpression($filter);
@@ -419,7 +419,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             $rows = database::loadAssocList($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return -1;
         }
 
@@ -447,7 +447,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             $rows = database::loadAssocList($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return -1;
         }
 
@@ -549,12 +549,12 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             $rows = database::loadAssocList($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return false;
         }
 
         if (count($rows) != 1) {
-            $this->ct->app->enqueueMessage('Record not saved', 'error');
+            $this->ct->errors[] = 'Record not saved';
             return false;
         }
 
@@ -571,13 +571,13 @@ class CustomTablesModelEditItem extends JModelLegacy
         try {
             $link = $twig->process($row);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $this->ct->errors[] = $e->getMessage();
+            $this->ct->errors[] = $twig->errorMessage;
             $link = '';
         }
 
         if ($twig->errorMessage !== null) {
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $this->ct->errors[] = $twig->errorMessage;
             $link = '';
         }
         return $link;
@@ -933,7 +933,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             try {
                 database::setQuery($query);
             } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                $this->ct->errors[] = $e->getMessage();
                 return false;
             }
             return true;

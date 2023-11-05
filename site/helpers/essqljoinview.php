@@ -22,7 +22,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class JHTMLESSQLJoinView
 {
-    public static function render($value, $tableName, $field, $filter)
+    public static function render($value, $tableName, $field, $filter): ?string
     {
         if ($value == 0 or $value == '')
             return '';
@@ -46,7 +46,7 @@ class JHTMLESSQLJoinView
         $ct->getTable($ct->Params->tableName);
 
         if ($ct->Table->tablename === null) {
-            $ct->app->enqueueMessage('SQL Join field: Table no set.', 'error');
+            $ct->errors[] = 'SQL Join field: Table no set.';
             return null;
         }
 
@@ -136,8 +136,10 @@ class JHTMLESSQLJoinView
                 $twig = new TwigProcessor($ct, $vlu);
                 $vlu = $twig->process($row);
 
-                if ($twig->errorMessage !== null)
-                    $ct->app->enqueueMessage($twig->errorMessage, 'error');
+                if ($twig->errorMessage !== null) {
+                    $ct->errors[] = $twig->errorMessage;
+                    return null;
+                }
 
                 if ($isTableLess)
                     $htmlresult .= $vlu;

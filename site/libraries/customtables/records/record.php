@@ -116,10 +116,9 @@ class record
             try {
                 $this->listing_id = database::insert($this->ct->Table->realtablename, $saveField->row_new);
             } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                $this->ct->errors[] = $e->getMessage();
                 die($e->getMessage());
             }
-
 
         } else {
             $this->updateLog($this->listing_id);
@@ -127,13 +126,13 @@ class record
             try {
                 database::update($this->ct->Table->realtablename, $saveField->row_new, [$this->ct->Table->realidfieldname => $this->listing_id]);
             } catch (Exception $e) {
+                $this->ct->errors[] = $e->getMessage();
                 die('Error: ' . $e->getMessage());
-                throw new Exception($e->getMessage());
             }
         }
 
         if (count($saveField->row_new) < 1) {
-            $this->ct->app->enqueueMessage('Nothing to save', 'Warning');
+            $this->ct->errors[] = 'Nothing to save';
             return false;
         }
 
@@ -247,7 +246,7 @@ class record
                     return false;
 
             } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                $this->ct->errors[] = $e->getMessage();
                 return false;
             }
             return true;
@@ -288,7 +287,7 @@ class record
         try {
             $rows = database::loadAssocList($query);
         } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $this->ct->errors[] = $e->getMessage();
             return false;
         }
 

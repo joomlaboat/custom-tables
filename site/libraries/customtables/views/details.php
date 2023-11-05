@@ -79,14 +79,16 @@ class Details
             $twig = new TwigProcessor($this->ct, $this->ct->Params->filter);
             $filter = $twig->process();
 
-            if ($twig->errorMessage !== null)
-                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            if ($twig->errorMessage !== null) {
+                $this->ct->errors[] = $twig->errorMessage;
+                return false;
+            }
         }
 
         if (!is_null($this->ct->Params->recordsTable) and !is_null($this->ct->Params->recordsUserIdField) and !is_null($this->ct->Params->recordsField)) {
             if (!$this->checkRecordUserJoin($this->ct->Params->recordsTable, $this->ct->Params->recordsUserIdField, $this->ct->Params->recordsField, $this->ct->Params->listing_id)) {
                 //YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE;
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+                $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED');
                 return false;
             }
         }
@@ -114,8 +116,10 @@ class Details
                 $twig = new TwigProcessor($this->ct, $filter);
                 $filter = $twig->process();
 
-                if ($twig->errorMessage !== null)
-                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                if ($twig->errorMessage !== null) {
+                    $this->ct->errors[] = $twig->errorMessage;
+                    return false;
+                }
             }
 
             $this->row = $this->getDataByFilter($filter);
@@ -146,7 +150,7 @@ class Details
         if ($filter != '') {
             $this->ct->setFilter($filter, 2); //2 = Show any - published and unpublished
         } else {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER'), 'error');
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER');
             return null;
         }
 
@@ -252,7 +256,7 @@ class Details
     protected function getDataById($listing_id)
     {
         if (is_numeric($listing_id) and intval($listing_id) == 0) {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER'), 'error');
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER');
             return null;
         }
 
@@ -332,7 +336,7 @@ class Details
         $layoutDetailsContent = $twig->process($this->row);
 
         if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $this->ct->errors[] = $twig->errorMessage;
 
         if ($this->ct->Params->allowContentPlugins)
             $layoutDetailsContent = JoomlaBasicMisc::applyContentPlugins($layoutDetailsContent);

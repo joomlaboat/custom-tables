@@ -612,7 +612,7 @@ class CustomTablesImageMethods
 
             $ImageID = -FindSimilarImage::find($uploadedfile, $level_identity, $realtablename, $realfieldname, $ImageFolder, $additional_filter);
 
-            if ($ImageID != 0) {
+            if ($ImageID !== null) {
                 unlink($uploadedfile);
                 unlink($thumbFileName);
                 return $ImageID;

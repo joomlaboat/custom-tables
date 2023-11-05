@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
+use CustomTables\database;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
@@ -121,9 +122,13 @@ class CustomTablesModelOptions extends JModelAdmin
             if ($moreThanOneLanguage) {
                 $id_title .= '_' . $lang->sef;
 
-                if (!in_array($id_title, $fields))
-                    Fields::addLanguageField('#__customtables_options', 'title', $id_title);
-
+                if (!in_array($id_title, $fields)) {
+                    try {
+                        Fields::addLanguageField('#__customtables_options', 'title', $id_title);
+                    } catch (Exception $e) {
+                        $this->ct->errors[] = $e->getMessage();
+                    }
+                }
             }
             $data[$id_title] = $data_extra[$id_title];
             $moreThanOneLanguage = true; //More than one language installed

@@ -137,7 +137,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                         <?php echo $checked; ?>
                     </td>
                     <td nowrap="nowrap">
-                        <?php if (JTable::isCheckedOut($user->id, $row->checked_out)) : ?>
+                        <?php
+
+                        //TODO: Should not be like this
+                        if (JTable::isCheckedOut($user->id, $row->checked_out)) : ?>
                             <?php echo $row->treename; ?>
                         <?php else : ?>
                             <span class="editlinktip hasTip"

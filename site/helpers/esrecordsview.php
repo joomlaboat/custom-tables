@@ -50,7 +50,7 @@ class JHTMLESRecordsView
         $ct->getTable($ct->Params->tableName);
 
         if ($ct->Table->tablename === null) {
-            $ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
+            $ct->errors[] = 'Catalog View: Table not selected.';
             return null;
         }
 
@@ -143,7 +143,7 @@ class JHTMLESRecordsView
             $twig = new TwigProcessor($ct, $vlu);
             $vlu = $twig->process($row);
             if ($twig->errorMessage !== null)
-                $ct->app->enqueueMessage($twig->errorMessage, 'error');
+                $ct->errors[] = $twig->errorMessage;
 
             $vArray[] = $vlu;
             $number++;
@@ -183,8 +183,10 @@ class JHTMLESRecordsView
 
             $twig = new TwigProcessor($ct, $vlu);
             $vlu = $twig->process($row);
-            if ($twig->errorMessage !== null)
-                $ct->app->enqueueMessage($twig->errorMessage, 'error');
+            if ($twig->errorMessage !== null) {
+                $ct->errors[] = $twig->errorMessage;
+                return '';
+            }
 
             $htmlresult .= '<td style="border:none;">' . $vlu . '</td>';
 

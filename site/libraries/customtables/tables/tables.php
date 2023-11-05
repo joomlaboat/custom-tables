@@ -46,7 +46,7 @@ class Tables
         $this->ct->getTable($tablename_or_id);
 
         if ($this->ct->Table->tablename === null) {
-            $this->ct->app->enqueueMessage('Table not found.', 'error');
+            $this->ct->errors[] = 'Table not found.';
             return false;
         }
 
@@ -76,21 +76,16 @@ class Tables
         $this->ct->getTable($tablename_or_id);
 
         if ($this->ct->Table->tablename === null) {
-            $this->ct->app->enqueueMessage('Table not found.', 'error');
+            $this->ct->errors[] = 'Table not found.';
             return null;
         }
-
         $this->ct->Table->recordcount = 0;
 
         $this->ct->setFilter('', 2);
         $this->ct->Filter->where[] = $this->ct->Table->realidfieldname . '=' . database::quote($recordId);
-
-
         $this->ct->Limit = 1;
         $this->ct->LimitStart = 0;
-
         $this->ct->getRecords();
-
 
         if (count($this->ct->Records) == 0)
             return null;

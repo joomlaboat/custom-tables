@@ -87,7 +87,7 @@ class Filtering
             $paramWhere = $twig->process();
 
             if ($twig->errorMessage !== null)
-                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                $this->ct->errors[] = $twig->errorMessage;
 
             if ($this->ct->Params->allowContentPlugins)
                 $paramWhere = JoomlaBasicMisc::applyContentPlugins($paramWhere);
@@ -158,8 +158,10 @@ class Filtering
                         $twig = new TwigProcessor($this->ct, $value);
                         $value = $twig->process();
 
-                        if ($twig->errorMessage !== null)
-                            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                        if ($twig->errorMessage !== null) {
+                            $this->ct->errors[] = $twig->errorMessage;
+                            return;
+                        }
 
                         foreach ($fieldNames as $fieldname_) {
                             $fieldname_parts = explode(':', $fieldname_);
@@ -203,7 +205,7 @@ class Filtering
         }
 
         if ($logic_operator == '') {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Search parameter "' . $param . '" is incorrect'), 'error');
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('Search parameter "' . $param . '" is incorrect');
             return;
         }
 

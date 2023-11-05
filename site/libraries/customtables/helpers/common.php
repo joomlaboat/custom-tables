@@ -243,6 +243,7 @@ class common
         } else {
             echo 'common::inputGet not supported in WordPress';
         }
+        return null;
     }
 
     public static function inputPost($parameter, $default = null, $filter = null)
@@ -252,6 +253,7 @@ class common
         } else {
             echo 'common::inputPost not supported in WordPress';
         }
+        return null;
     }
 
     public static function inputSet(string $parameter, string $value): void
@@ -270,6 +272,7 @@ class common
         } else {
             echo 'common::inputFiles not supported in WordPress';
         }
+        return null;
     }
 
     public static function inputCookieSet(string $parameter, $value, $time, $path, $domain): void

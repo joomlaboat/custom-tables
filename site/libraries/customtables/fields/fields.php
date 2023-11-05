@@ -122,7 +122,7 @@ class Field
                         $new_params[] = $twig->process($row);
 
                         if ($twig->errorMessage !== null)
-                            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                            $this->ct->errors[] = $twig->errorMessage;
                     }
                 }
             }
@@ -744,7 +744,6 @@ class Fields
         } else {
             $data = [];
             $data['tableid'] = $tableId;
-            $data['fieldname'] = common::inputGetString('fieldname');
 
             $moreThanOneLang = false;
             foreach ($ct->Languages->LanguageList as $lang) {
@@ -796,7 +795,7 @@ class Fields
         if ($fieldId === null) {
             $already_exists = Fields::getFieldID($tableId, $newFieldName);
             if ($already_exists == 0) {
-                $sets [] = 'fieldname=' . database::quote($newFieldName);
+                $data['fieldname'] = $newFieldName;
             } else {
                 return null; //Abort if the table with this name already exists.
             }
@@ -894,11 +893,14 @@ class Fields
                 try {
                     database::setQuery($query);
                 } catch (Exception $e) {
-                    $app = Factory::getApplication();
-                    $app->enqueueMessage($e->getMessage(), 'error');
+                    throw new Exception($e->getMessage());
                 }
             } elseif (defined('WPINC')) {
-                database::setQuery($query);
+                try {
+                    database::setQuery($query);
+                } catch (Exception $e) {
+                    throw new Exception($e->getMessage());
+                }
             }
         }
     }
@@ -959,15 +961,16 @@ class Fields
 
         if ($fieldid != 0 and $fieldFound) {
 
-            if ($PureFieldType == '') {
-                //do nothing. field can be deleted
-                $convert_ok = true;
-            } else
-                $convert_ok = Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldTitle);
-
-            if (!$convert_ok) {
-                Factory::getApplication()->enqueueMessage('Cannot convert the type.', 'error');
-                return false;
+            if ($PureFieldType != '') {
+                try {
+                    if (!Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldTitle)) {
+                        $ct->errors[] = 'Field cannot be converted to new type.';
+                        return false;
+                    }
+                } catch (Exception $e) {
+                    $ct->errors[] = 'Cannot convert the type: ' . $e->getMessage();
+                    return false;
+                }
             }
 
             $extraTask = '';
@@ -1423,6 +1426,10 @@ class Fields
         return implode(' ', $elements);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.1.8
+     */
     public static function ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldtitle): bool
     {
         if ($new_type == 'blob' or $new_type == 'text' or $new_type == 'multilangtext' or $new_type == 'image') {
@@ -1465,9 +1472,7 @@ class Fields
         try {
             database::setQuery($query);
         } catch (Exception $e) {
-            $app = Factory::getApplication();
-            $app->enqueueMessage($e->getMessage(), 'error');
-            return false;
+            throw new Exception($e->getMessage());
         }
         return true;
     }

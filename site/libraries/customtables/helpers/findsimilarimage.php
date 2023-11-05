@@ -28,8 +28,7 @@ class FindSimilarImage
             $photoid = $photorow->photoid;
 
             if ($photoid != 0) {
-                //foreach($ext_list as $ext)
-                //{
+
                 $image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $photoid . '.jpg';///.$ext;
                 if ($image_file != $uploadedfile) {
                     if (file_exists($image_file)) {
@@ -38,8 +37,8 @@ class FindSimilarImage
                             return $photoid;
                     }
                 }
-                //}//for each
-            }//if
-        }//foreach($photorows as $photorow)
-    }//function
-}//class
+            }
+        }
+        return null;
+    }
+}

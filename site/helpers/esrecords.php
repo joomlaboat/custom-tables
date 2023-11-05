@@ -212,7 +212,7 @@ class JHTMLESRecords
                 $twig = new TwigProcessor($ct, $layoutcode_tmp);
                 $htmlResult .= $twig->process($row);
                 if ($twig->errorMessage !== null)
-                    $ct->app->enqueueMessage($twig->errorMessage, 'error');
+                    $ct->errors[] = $twig->errorMessage;
 
                 $htmlResult .= '</label>';
 
@@ -240,7 +240,7 @@ class JHTMLESRecords
         $ct->getTable($ct->Params->tableName);
 
         if ($ct->Table->tablename === null) {
-            $ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
+            $ct->errors[] = 'Catalog View: Table not selected.';
             return null;
         }
 

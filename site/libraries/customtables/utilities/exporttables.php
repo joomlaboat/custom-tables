@@ -75,11 +75,11 @@ class ExportTables
     protected static function processTable($table): array
     {
         //get fields
-        $query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$table['id'] . '';
+        $query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$table['id'];
         $fields = database::loadAssocList($query);
 
         //get layouts
-        $query = 'SELECT * FROM #__customtables_layouts WHERE published=1 AND tableid=' . (int)$table['id'] . '';
+        $query = 'SELECT * FROM #__customtables_layouts WHERE published=1 AND tableid=' . (int)$table['id'];
         $layouts = database::loadAssocList($query);
 
         //Get depended menu items

@@ -79,7 +79,7 @@ class tagProcessor_General
                 $vlu = json_encode(Fields::shortFieldObjects($ct->Table->fields));
 
             if ($extraopt == 'box') {
-                $ct->app->enqueueMessage($vlu, 'notice');//, 'error'
+                $ct->messages[] = $vlu;
                 $pageLayout = str_replace($fItem, '', $pageLayout);
             } else
                 $pageLayout = str_replace($fItem, $vlu, $pageLayout);

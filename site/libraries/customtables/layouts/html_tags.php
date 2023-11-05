@@ -42,12 +42,12 @@ class Twig_Html_Tags
             return '';
 
         if (!isset($this->ct->Table)) {
-            $this->ct->app->enqueueMessage('{{ html.recordcount }} - Table not loaded.', 'error');
+            $this->ct->errors[] = '{{ html.recordcount }} - Table not loaded.';
             return '';
         }
 
         if (!isset($this->ct->Records)) {
-            $this->ct->app->enqueueMessage('{{ html.recordcount }} - Records not loaded.', 'error');
+            $this->ct->errors[] = '{{ html.recordcount }} - Records not loaded.';
             return '';
         }
 
@@ -198,7 +198,7 @@ class Twig_Html_Tags
             return '';
 
         if ($this->ct->Params->forceSortBy !== null and $this->ct->Params->forceSortBy != '')
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED'), 'error');
+            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED');
 
         return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
     }
@@ -394,7 +394,7 @@ class Twig_Html_Tags
             $list_of_fields_string_array = explode(',', $list_of_fields_string_or_array);
 
         if (count($list_of_fields_string_array) == 0) {
-            $this->ct->app->enqueueMessage('Search box: Please specify a field name.', 'error');
+            $this->ct->errors[] = 'Search box: Please specify a field name.';
             return '';
         }
 
@@ -420,7 +420,7 @@ class Twig_Html_Tags
                 $fld = Fields::FieldRowByName($field_name_string, $this->ct->Table->fields);
 
                 if (!is_array($fld)) {
-                    $this->ct->app->enqueueMessage('Search box: Field name "' . $field_name_string . '" not found.', 'error');
+                    $this->ct->errors[] = 'Search box: Field name "' . $field_name_string . '" not found.';
                     return '';
                 }
 
@@ -432,7 +432,7 @@ class Twig_Html_Tags
         }
 
         if (count($list_of_fields) == 0) {
-            $this->ct->app->enqueueMessage('Search box: Field' . (count($wrong_list_of_fields) > 0 ? 's' : '') . ' "' . implode(',', $wrong_list_of_fields) . '" not found.', 'error');
+            $this->ct->errors[] = 'Search box: Field' . (count($wrong_list_of_fields) > 0 ? 's' : '') . ' "' . implode(',', $wrong_list_of_fields) . '" not found.';
             return '';
         }
 
@@ -657,7 +657,10 @@ class Twig_Html_Tags
         if (!is_null($this->ct->Params->ModuleId))
             return '';
 
-        $this->ct->app->enqueueMessage($text, $type);
+        if ($type === 'error')
+            $this->ct->errors[] = $text;
+        else
+            $this->ct->messages[] = $text;
 
         return null;
     }
@@ -723,14 +726,14 @@ class Twig_Html_Tags
 
         $p = $this->getReCaptchaParams();
         if ($p === null) {
-            $this->ct->app->enqueueMessage('{{ html.captcha }} - Captcha plugin not enabled.', 'error');
+            $this->ct->errors[] = '{{ html.captcha }} - Captcha plugin not enabled.';
             return '';
         }
 
         $reCaptchaParams = json_decode($p->params);
 
         if ($reCaptchaParams === null or $reCaptchaParams->public_key == "" or !isset($reCaptchaParams->size)) {
-            $this->ct->app->enqueueMessage('{{ html.captcha }} - Captcha Public Key or size not set.', 'error');
+            $this->ct->errors[] = '{{ html.captcha }} - Captcha Public Key or size not set.';
             return '';
         }
 
@@ -956,12 +959,12 @@ class Twig_Html_Tags
     protected function id_list()
     {
         if (!isset($this->ct->Table)) {
-            $this->ct->app->enqueueMessage('{{ record.list }} - Table not loaded.', 'error');
+            $this->ct->errors[] = '{{ record.list }} - Table not loaded.';
             return '';
         }
 
         if (!isset($this->ct->Records)) {
-            $this->ct->app->enqueueMessage('{{ record.list }} - Records not loaded.', 'error');
+            $this->ct->errors[] = '{{ record.list }} - Records not loaded.';
             return '';
         }
 

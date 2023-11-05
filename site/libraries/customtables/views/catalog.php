@@ -53,7 +53,7 @@ class Catalog
             $this->ct->getTable($this->ct->Params->tableName);
 
             if ($this->ct->Table->tablename === null) {
-                $this->ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
+                $this->ct->errors[] = 'Catalog View: Table not selected.';
                 return 'Catalog View: Table not selected.';
             }
         }
@@ -155,7 +155,7 @@ class Catalog
         if (!$this->ct->getRecords()) {
 
             if (defined('_JEXEC'))
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
+                $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
 
             return 'CustomTables: Records not loaded.';
         }
@@ -202,8 +202,10 @@ class Catalog
         $twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
         $pageLayout = $twig->process();
 
-        if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+        if ($twig->errorMessage !== null) {
+            $this->ct->errors[] = $twig->errorMessage;
+            return '';
+        }
 
         if ($this->ct->Params->allowContentPlugins)
             $pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);

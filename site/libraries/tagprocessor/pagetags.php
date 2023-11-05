@@ -216,7 +216,7 @@ class tagProcessor_Page
         $fList = JoomlaBasicMisc::getListToReplace('search', $options, $pageLayout, '{}');
 
         if (count($fList) == 0)
-            return false;
+            return;
 
         $i = 0;
 

@@ -48,7 +48,7 @@ class Edit
             $this->pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
             if ($Layouts->layoutType === null) {
-                $this->ct->app->enqueueMessage('Layout "' . $this->ct->Params->editLayout . '" not found or the type is not set.', 'error');
+                $this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found or the type is not set.';
                 return false;
             }
             $this->layoutType = $Layouts->layoutType;
@@ -59,7 +59,7 @@ class Edit
                 die(json_encode($res));
             }
 
-            $this->ct->app->enqueueMessage('Edit Layout not set.2', 'error');
+            $this->ct->errors[] = 'Edit Layout not set.2';
             return false;
         }
         $this->ct->LayoutVariables['layout_type'] = $this->layoutType;
@@ -85,7 +85,7 @@ class Edit
         $result = $twig->process($this->row);
 
         if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $this->ct->errors[] = $twig->errorMessage;
 
         return $result;
     }
@@ -152,7 +152,7 @@ class Edit
 
         if ($twig->errorMessage !== null) {
             if (defined('_JEXEC')) {
-                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                $this->ct->errors[] = $twig->errorMessage;
             } else {
                 die($twig->errorMessage);
             }

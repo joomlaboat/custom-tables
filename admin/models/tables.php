@@ -322,11 +322,15 @@ class CustomtablesModelTables extends JModelAdmin
                 $id_title .= '_' . $lang->sef;
                 $id_desc .= '_' . $lang->sef;
 
-                if (!in_array($id_title, $fields))
-                    Fields::addLanguageField('#__customtables_tables', 'tabletitle', $id_title);
+                try {
+                    if (!in_array($id_title, $fields))
+                        Fields::addLanguageField('#__customtables_tables', 'tabletitle', $id_title);
 
-                if (!in_array($id_desc, $fields))
-                    Fields::addLanguageField('#__customtables_tables', 'description', $id_desc);
+                    if (!in_array($id_desc, $fields))
+                        Fields::addLanguageField('#__customtables_tables', 'description', $id_desc);
+                } catch (Exception $e) {
+                    $this->ct->errors[] = $e->getMessage();
+                }
             }
 
             $data[$id_title] = $data_extra[$id_title];

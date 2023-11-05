@@ -44,6 +44,8 @@ class CT
     var bool $isEditForm;
     var array $editFields;
     var array $LayoutVariables;
+    var array $errors;
+    var array $messages;
 
     //Joomla Specific
     var $app;
@@ -51,6 +53,9 @@ class CT
 
     function __construct(?Registry $menuParams = null, $blockExternalVars = true, ?string $ModuleId = null, bool $enablePlugin = true)
     {
+        $this->errors = [];
+        $this->messages = [];
+
         if (defined('_JEXEC')) {
             $this->app = Factory::getApplication();
             $this->document = $this->app->getDocument();
@@ -232,7 +237,7 @@ class CT
         $ordering = $this->GroupBy != '' ? [$this->GroupBy] : [];
 
         if (is_null($this->Table) or is_null($this->Table->tablerow)) {
-            $this->app->enqueueMessage('Table not set.', 'error');
+            $this->errors[] = 'Table not set.';
             return null;
         }
 
@@ -660,13 +665,13 @@ class CT
                 //example: parents(children).user
                 $statement_parts = explode('.', $field);
                 if (count($statement_parts) != 2) {
-                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "." character - only one is permitted. Correct example: parent(children).user'), 'error');
+                    $this->errors[] = 'Menu Item - "UserID Field name" parameter has a syntax error. Error is about "." character - only one is permitted. Correct example: parent(children).user';
                     return [];
                 }
 
                 $table_parts = explode('(', $statement_parts[0]);
                 if (count($table_parts) != 2) {
-                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "(" character. Correct example: parent(children).user'), 'error');
+                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "(" character. Correct example: parent(children).user');
                     return [];
                 }
 
@@ -677,7 +682,7 @@ class CT
                 $parent_table_row = ESTables::getTableRowByName($parent_tablename);
 
                 if (!is_object($parent_table_row)) {
-                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Table "' . $parent_tablename . '" not found.'), 'error');
+                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Table "' . $parent_tablename . '" not found.');
                     return [];
                 }
 
@@ -686,12 +691,12 @@ class CT
                 $parent_join_field_row = Fields::FieldRowByName($parent_join_field, $parent_table_fields);
 
                 if (count($parent_join_field_row) == 0) {
-                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Join field "' . $parent_join_field . '" not found.'), 'error');
+                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Join field "' . $parent_join_field . '" not found.');
                     return [];
                 }
 
                 if ($parent_join_field_row['type'] != 'sqljoin' and $parent_join_field_row['type'] != 'records') {
-                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong join field type "' . $parent_join_field_row['type'] . '". Accepted types: "sqljoin" and "records" .'), 'error');
+                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong join field type "' . $parent_join_field_row['type'] . '". Accepted types: "sqljoin" and "records" .');
                     return [];
                 }
 
@@ -700,12 +705,12 @@ class CT
                 $parent_user_field_row = Fields::FieldRowByName($parent_user_field, $parent_table_fields);
 
                 if (count($parent_user_field_row) == 0) {
-                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: User field "' . $parent_user_field . '" not found.'), 'error');
+                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: User field "' . $parent_user_field . '" not found.');
                     return [];
                 }
 
                 if ($parent_user_field_row['type'] != 'userid' and $parent_user_field_row['type'] != 'user') {
-                    $this->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong user field type "' . $parent_join_field_row['type'] . '". Accepted types: "userid" and "user" .'), 'error');
+                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong user field type "' . $parent_join_field_row['type'] . '". Accepted types: "userid" and "user" .');
                     return [];
                 }
 

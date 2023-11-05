@@ -41,7 +41,7 @@ class Twig_Fields_Tags
         $available_params = ['fieldname', 'title', 'defaultvalue', 'description', 'isrequired', 'isdisabled', 'type', 'typeparams', 'valuerule', 'valuerulecaption'];
 
         if (!in_array($param, $available_params)) {
-            $this->ct->app->enqueueMessage('{{ fields.array("' . $param . '") }} - Unknown parameter.', 'error');
+            $this->ct->errors[] = '{{ fields.array("' . $param . '") }} - Unknown parameter.';
             return [];
         }
 
@@ -372,7 +372,7 @@ class Twig_Document_Tags
     function layout($layoutName): string
     {
         if (!isset($this->ct->Table)) {
-            $this->ct->app->enqueueMessage('{{ document.layout }} - Table not loaded.', 'error');
+            $this->ct->errors[] = '{{ document.layout }} - Table not loaded.';
             return '';
         }
 
@@ -380,12 +380,12 @@ class Twig_Document_Tags
         $layout = $layouts->getLayout($layoutName);
 
         if (is_null($layouts->tableId)) {
-            $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutName . '") }} - Layout "' . $layoutName . ' not found.', 'error');
+            $this->ct->errors[] = '{{ document.layout("' . $layoutName . '") }} - Layout "' . $layoutName . ' not found.';
             return '';
         }
 
         if ($layouts->tableId != $this->ct->Table->tableid) {
-            $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutName . '") }} - Layout Table ID and Current Table ID do not match.', 'error');
+            $this->ct->errors[] = '{{ document.layout("' . $layoutName . '") }} - Layout Table ID and Current Table ID do not match.';
             return '';
         }
 
@@ -403,7 +403,7 @@ class Twig_Document_Tags
 
                     $html_result_layout = $twig->process($row);
                     if ($twig->errorMessage !== null)
-                        $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                        $this->ct->errors[] = $twig->errorMessage;
 
                     if ($this->ct->Env->legacySupport) {
                         $LayoutProc = new LayoutProcessor($this->ct);
@@ -420,7 +420,7 @@ class Twig_Document_Tags
             ///if (!is_null($this->ct->Table->record))
             $html_result = $twig->process($this->ct->Table->record);
             if ($twig->errorMessage !== null)
-                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                $this->ct->errors[] = $twig->errorMessage;
 
             if ($this->ct->Env->legacySupport) {
                 $LayoutProc = new LayoutProcessor($this->ct);

@@ -53,7 +53,7 @@ class tagProcessor_Item
         $htmlresult = $twig->process($row);
 
         if ($twig->errorMessage !== null)
-            $ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $ct->errors[] = $twig->errorMessage;
 
         if ($layoutType == 2) {
 

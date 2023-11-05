@@ -62,7 +62,7 @@ if ($task != '') {
         $edit_model = $this->getModel('edititem');
         $redirect = doTheTask($ct, $task, $edit_model, $this);
         if (is_null($redirect))
-            $ct->app->enqueueMessage('Unknown task');
+            $ct->errors[] = 'Unknown task';
         else {
             $this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
         }
@@ -240,7 +240,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
             $listing_id = common::inputGetInt("listing_id");
             $ct->Table->loadRecord($listing_id);
             if ($ct->Table->record === null) {
-                $ct->app->enqueueMessage('User record ID: "' . $listing_id . '" not found.', 'error');
+                $ct->errors[] = 'User record ID: "' . $listing_id . '" not found.';
                 return (object)array('link' => $link, 'msg' => 'User record ID: "' . $listing_id . '" not found.', 'status' => 'error');
             }
 

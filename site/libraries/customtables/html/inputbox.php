@@ -790,7 +790,7 @@ class Inputbox
                 $value = $this->row[$this->ct->Env->field_prefix . $fieldname];
             } else {
                 Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Env->field_prefix . $this->field->fieldname, $this->ct->Env->field_prefix . $fieldname);
-                $this->ct->app->enqueueMessage('Field "' . $this->ct->Env->field_prefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.', 'error');
+                $this->ct->errors[] = 'Field "' . $this->ct->Env->field_prefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.';
                 $value = '';
             }
 
@@ -1592,7 +1592,7 @@ class Inputbox
                     $value = $twig->process($row);
 
                     if ($twig->errorMessage !== null)
-                        $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                        $this->ct->errors[] = $twig->errorMessage;
 
                     if ($value != '') {
                         if ($this->ct->Params->allowContentPlugins)

@@ -84,7 +84,7 @@ class CT_FieldTypeTag_records
             $htmlresult .= $twig->process($row);
 
             if ($twig->errorMessage !== null)
-                $ct->app->enqueueMessage($twig->errorMessage, 'error');
+                $ct->errors[] = $twig->errorMessage;
 
             $number++;
         }
