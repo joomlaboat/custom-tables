@@ -35,7 +35,7 @@ class RecordToolbar
         $this->iconPath = CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/';
     }
 
-    public function render(array $row, $mode)
+    public function render(array $row, $mode): string
     {
         $this->listing_id = $row[$this->Table->realidfieldname];
         $this->rid = $this->Table->tableid . 'x' . $this->listing_id;

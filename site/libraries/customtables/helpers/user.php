@@ -85,9 +85,9 @@ class CTUser
         $this->guestCanAddNew = false;
     }
 
-    public static function ResetPassword(CT $ct, $listing_id)
+    public static function ResetPassword(CT $ct, ?string $listing_id): bool
     {
-        if ($listing_id == 0) {
+        if ($listing_id === null or $listing_id === '' or $listing_id == 0) {
             Factory::getApplication()->enqueueMessage('Table record selected.', 'error');
             return false;
         }
@@ -156,7 +156,7 @@ class CTUser
         }
 
         //clean exit
-        return false;
+        return true;
     }
 
     static protected function SetUserPassword(int $userid, string $password): int
@@ -360,7 +360,7 @@ class CTUser
         return $usergroup_ids;
     }
 
-    static public function UpdateUserField(string $realtablename, string $realidfieldname, string $useridfieldname, string $existing_user_id, $listing_id)
+    static public function UpdateUserField(string $realtablename, string $realidfieldname, string $useridfieldname, string $existing_user_id, $listing_id): void
     {
         $query = 'UPDATE ' . $realtablename . ' SET ' . $useridfieldname . '=' . $existing_user_id . ' WHERE ' . $realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
         database::setQuery($query);
@@ -402,9 +402,9 @@ class CTUser
         return false;
     }
 
-    public static function checkIfRecordBelongsToUser(CT &$ct, int $ug)
+    public static function checkIfRecordBelongsToUser(CT &$ct, int $ug): bool
     {
-        if (!isset($ct->Env->isUserAdministrator))
+        if (!isset($ct->Env->user->isUserAdministrator))
             return false;
 
         if ($ug == 1)
@@ -412,19 +412,17 @@ class CTUser
         else
             $usergroups = $ct->Env->user->groups;
 
-        $isOk = false;
-
-        if ($ct->Env->isUserAdministrator or in_array($ug, $usergroups)) {
-            $isOk = true;
+        if ($ct->Env->user->isUserAdministrator or in_array($ug, $usergroups)) {
+            return true;
         } else {
             if (isset($ct->Table->record) and isset($ct->Table->record['listing_published']) and $ct->Table->useridfieldname != '') {
                 $uid = $ct->Table->record[$ct->Table->useridrealfieldname];
 
                 if ($uid == $ct->Env->user->id and $ct->Env->user->id != 0)
-                    $isOk = true;
+                    return true;
             }
         }
-        return $isOk;
+        return false;
     }
 
     public static function showUserGroup(int $userid): string
@@ -436,8 +434,6 @@ class CTUser
 
         return '';
     }
-
-    //checkAccess
 
     public static function showUserGroups(?string $valueArrayString): string
     {
@@ -464,7 +460,6 @@ class CTUser
 
         return implode(',', $groups);
     }
-
 
     public function checkUserGroupAccess($group = 0): bool
     {

@@ -315,18 +315,17 @@ class Twig_Html_Tags
         if ($this->ct->Env->user->id != 0) {
             $publish_userGroup = (int)$this->ct->Params->publishUserGroups;
 
-            $user = new CTUser();
-            if ($user->checkUserGroupAccess($publish_userGroup)) {
+            if ($this->ct->Env->user->checkUserGroupAccess($publish_userGroup)) {
                 $available_modes[] = 'publish';
                 $available_modes[] = 'unpublish';
             }
 
             $edit_userGroup = (int)$this->ct->Params->editUserGroups;
-            if ($user->checkUserGroupAccess($edit_userGroup))
+            if ($this->ct->Env->user->checkUserGroupAccess($edit_userGroup))
                 $available_modes[] = 'refresh';
 
             $delete_userGroup = (int)$this->ct->Params->deleteUserGroups;
-            if ($user->checkUserGroupAccess($delete_userGroup))
+            if ($this->ct->Env->user->checkUserGroupAccess($delete_userGroup))
                 $available_modes[] = 'delete';
         }
         return $available_modes;

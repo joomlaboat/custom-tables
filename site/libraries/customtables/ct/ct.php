@@ -625,7 +625,7 @@ class CT
         $theAnswerIs = $this->checkIfItemBelongsToUser($listing_id, $userIdField);
 
         if (!$theAnswerIs)
-            return $this->checkUserGroupAccess($userGroup);
+            return $this->Env->user->checkUserGroupAccess($userGroup);
 
         return true;
     }

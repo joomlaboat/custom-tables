@@ -96,9 +96,7 @@ class Environment
         $this->encoded_current_url_no_return = base64_encode($tmp_current_url);
 
         $this->user = new CTUser();
-
         $this->isUserAdministrator = $this->user->isUserAdministrator;//in_array(8, $this->user->groups);//8 is Super Users
-        //$this->isUserAdministrator = $this->user->authorise('core.edit', 'com_content');
 
         $this->print = (bool)common::inputGetInt('print', 0);
         $this->clean = (bool)common::inputGetInt('clean', 0);

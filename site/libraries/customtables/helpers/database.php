@@ -140,7 +140,11 @@ class database
 
             foreach ($data as $key => $value) {
                 $columns[] = $db->quoteName($key);
-                $values[] = $db->quote($value);
+
+                if ($value === null)
+                    $values[] = 'NULL';
+                else
+                    $values[] = $db->quote($value);
             }
 
             $query->insert($db->quoteName($tableName))
