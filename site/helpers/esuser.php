@@ -24,12 +24,12 @@ class JHTMLESUser
         $query = 'SELECT #__users.id AS id, #__users.name AS name FROM #__users';
 
         if ($mysqlJoin != '')
-            $query .= 'INNER JOIN ' . $mysqlJoin;
+            $query .= ' INNER JOIN ' . $mysqlJoin;
 
         $where = [];
         if ($userGroup !== null and $userGroup != '') {
-            $query .= ' INNER JOIN #__user_usergroup_map ON user_id=id';
-            $query .= ' INNER JOIN #__usergroups ON #__usergroups.id = #__user_usergroup_map.group_id';
+            $query .= ' INNER JOIN #__user_usergroup_map ON user_id=#__users.id';
+            $query .= ' INNER JOIN #__usergroups ON #__usergroups.id=#__user_usergroup_map.group_id';
 
             $ug = explode(",", $userGroup);
             $w = array();

@@ -12,6 +12,7 @@
 // no direct access
 use CustomTables\common;
 use CustomTables\CTUser;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -51,6 +52,10 @@ if ($this->ct->Env->frmt == 'json') {
 }
 */
 echo $this->catalog->render();
+
+if (count($this->catalog->ct->errors)) {
+    Factory::getApplication()->enqueueMessage(implode(',', $this->catalog->ct->errors), 'error');
+}
 
 if ($this->ct->Env->frmt == 'html') {
     if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {

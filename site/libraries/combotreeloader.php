@@ -187,7 +187,7 @@ class ESDynamicComboTree
 
         $where = array();
 
-        $where[] = '#__customtables_options.published';
+        $where[] = '#__customtables_options.published=1';
         $where[] = '#__customtables_options.parentid=' . $parentid;
 
         if ($this->where != '')

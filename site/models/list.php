@@ -103,8 +103,6 @@ class CustomTablesModelList extends JModel
         $query .= ' FROM #__customtables_options AS m';
 
         if ($connect_with_table != '' and $connect_with_field != '') {
-            //",category",
-            //$query.=' INNER JOIN #__customtables_table_'.$connect_with_table.' AS c ON INSTR(c.es_'.$connect_with_field.',m.familytreestr)';
             $query .= ' INNER JOIN #__customtables_table_' . $connect_with_table . ' AS c ON INSTR(c.es_' . $connect_with_field . ',m.familytreestr)';
         }
 
