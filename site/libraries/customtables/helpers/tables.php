@@ -193,14 +193,12 @@ class ESTables
                 else
                     $table_name = $complete_table_name;// used for custom table names - to connect to third-part tables for example
 
-                $query = '
-					CREATE TABLE IF NOT EXISTS ' . $table_name . '
+                $query = 'CREATE TABLE IF NOT EXISTS ' . $table_name . '
 					(
 						id int(10) UNSIGNED NOT NULL auto_increment,
 						published tinyint(1) NOT NULL DEFAULT 1,
 						PRIMARY KEY (id)
-					) ENGINE=InnoDB COMMENT="' . $tabletitle . '" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
-';
+					) ENGINE=InnoDB COMMENT="' . $tabletitle . '" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;';
                 database::setQuery($query);
                 return true;
             }
