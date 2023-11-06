@@ -26,7 +26,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"
       name="adminForm" id="adminForm">
-    <style type="text/css">
+    <style>
         #canvas_container {
             width: 100%;
             min-height: <?php echo (count($this->diagram->tables)>50 ? '4000' : '2000'); ?>px;

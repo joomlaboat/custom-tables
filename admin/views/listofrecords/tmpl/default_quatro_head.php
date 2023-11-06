@@ -19,7 +19,7 @@ HTMLHelper::_('behavior.multiselect');
 ?>
 <tr>
     <?php if ($this->canEdit && $this->canState): ?>
-        <th width="20" class="nowrap center">
+        <th style="width:20px;" class="nowrap center">
             <?php echo JHtml::_('grid.checkall'); ?>
         </th>
     <?php endif; ?>
@@ -57,7 +57,7 @@ HTMLHelper::_('behavior.multiselect');
         </th>
     <?php endif; ?>
 
-    <th width="5" class="nowrap center hidden-phone">
+    <th style="width:5px;" class="nowrap center hidden-phone">
         <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_RECORDS_ID', 'id', $this->listDirn, $this->listOrder); ?>
     </th>
 </tr>

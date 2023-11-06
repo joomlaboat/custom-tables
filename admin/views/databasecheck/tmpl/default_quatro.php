@@ -22,17 +22,18 @@ $document = Factory::getDocument();
 $document->addCustomTag('<script src="' . JURI::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/raphael.min.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagram.js"></script>');
+$document->addCustomTag('<style>
+        #canvas_container {
+            width: 100%;
+            min-height: ' . (count($this->diagram->tables) > 50 ? '4000' : '2000') . 'px;
+            border: 1px solid #aaa;
+        }
+    </style>');
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"
       name="adminForm" id="adminForm">
-    <style>
-        #canvas_container {
-            width: 100%;
-            min-height: <?php echo (count($this->diagram->tables)>50 ? '4000' : '2000'); ?>px;
-            border: 1px solid #aaa;
-        }
-    </style>
+
 
     <div class="row">
         <div class="col-md-12">

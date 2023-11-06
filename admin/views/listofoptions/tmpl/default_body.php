@@ -64,10 +64,10 @@ foreach ($rows as $row) :
 
         ?>
 
-        <td align="center">
+        <td>
             <?php echo $row->isselectable; ?>
         </td>
-        <td align="left">
+        <td>
             <?php echo $row->familytreestr; ?>
         </td>
     </tr>

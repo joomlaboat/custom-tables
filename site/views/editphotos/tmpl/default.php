@@ -58,12 +58,12 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/image
 
         <div name="addphotoblock" id="addphotoblock" style="display: block;">
             <h4><?php echo common::translate("COM_CUSTOMTABLES_ADD_NEW_PHOTO"); ?></h4>
-            <table border="0" align="center" cellpadding="3" style="width:100%" class="bigtext">
+            <table style="width:100%" class="bigtext">
                 <tbody>
                 <tr>
-                    <td valign="top"><?php echo common::translate("COM_CUSTOMTABLES_UPLOAD_PHOTO"); ?>
+                    <td><?php echo common::translate("COM_CUSTOMTABLES_UPLOAD_PHOTO"); ?>
                         :<br/></td>
-                    <td valign="top">
+                    <td>
                         <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $this->max_file_size; ?>"/>
                         <input name="uploadedfile" type="file"/><input type="button" class="button"
                                                                        value="<?php echo common::translate("COM_CUSTOMTABLES_UPLOAD_PHOTO"); ?>"

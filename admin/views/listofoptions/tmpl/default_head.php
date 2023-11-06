@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted Access');
 
 
 <tr>
-    <th width="20">
+    <th style="width:20px;">
         <input type="checkbox" name="checkall-toggle" value="" title="Check All" onclick="Joomla.checkAll(this)"/>
     </th>
     <th class="title">
@@ -40,7 +40,7 @@ defined('_JEXEC') or die('Restricted Access');
 
     </th>
 
-    <th width="1%" nowrap="nowrap">
+    <th style="width:1%;" nowrap="nowrap">
         Family Tree
     </th>
 </tr>

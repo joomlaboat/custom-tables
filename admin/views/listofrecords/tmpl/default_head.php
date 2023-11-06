@@ -17,13 +17,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 ?>
 <tr>
-    <th width="20" class="nowrap center">
+    <th style="width:20px;" class="nowrap center">
         <?php echo JHtml::_('grid.checkall'); ?>
     </th>
 
     <?php if ($this->ordering_realfieldname != ''): ?>
 
-        <th width="1%" class="nowrap center hidden-phone">
+        <th style="width:1%;" class="nowrap center hidden-phone">
             <i class="icon-menu-2"></i>
         </th>
 
@@ -56,7 +56,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         </th>
     <?php endif; ?>
 
-    <th width="5" class="nowrap center hidden-phone">
+    <th style="width:5px;" class="nowrap center hidden-phone">
         <?php echo common::translate('COM_CUSTOMTABLES_RECORDS_ID'); ?>
     </th>
 

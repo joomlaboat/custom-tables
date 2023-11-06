@@ -30,11 +30,15 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
             }
         }
         if (count == 0) {
-            alert("<?php echo common::translate("Select Files First"); ?>");
+            alert("<?php echo common::translate("COM_CUSTOMTABLES_JS_SELECT_RECORDS"); ?>");
             return false;
         }
 
-        if (confirm("<?php echo common::translate("Are you sure to delete?"); ?> " + count + " <?php echo common::translate("file(s)"); ?>?")) {
+        if (confirm("<?php echo common::translate("COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE"); ?> " + count + " <?php
+
+            echo common::translate("COM_CUSTOMTABLES_FILE_S");
+
+            ?>?")) {
 
             document.getElementById("fileedit_task").value = "delete";
             document.getElementById("fileids").value = fileids;

@@ -40,7 +40,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
     <table style="width:100%">
         <tr>
-            <td align="left">
+            <td style="text-align:left;">
                 <h2>CustomTables - Structure (<?php echo($this->optionRecord->id != 0 ? 'Edit' : 'New'); ?>)</h2>
             </td>
             <td nowrap="nowrap" align="right">
@@ -50,12 +50,9 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                 <a href="#" onclick="javascript:Joomla.submitbutton('cancel')" class="toolbar"><img
                             src="<?php JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/cancel.png"
                     alt="Cancel" title="Cancel" /></a>
-
             </td>
-
         </tr>
     </table>
-
 
     <div>
         <fieldset class="adminform">
@@ -156,17 +153,17 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                         </label><br/>
                     </td>
                     <td>
-                        <table border="0" align="center" cellpadding="3" style="width:100%" class="bigtext">
+                        <table cellpadding="3" style="text-align:center;width:100%;border:none;" class="bigtext">
                             <tr>
                                 <td>
                                     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size; ?>"/>
                                     <input name="imagefile" type="file"/>
                                     <BR><BR>
-                                    <?php echo common::translate("MIN SIZE"); ?>: 10px x 10px<br/>
-                                    <?php echo common::translate("MAX SIZE"); ?>: 1000px x 1000px<br/>
+                                    <?php echo common::translate("COM_CUSTOMTABLES_MIN"); ?>: 10px x 10px<br/>
+                                    <?php echo common::translate("COM_CUSTOMTABLES_MAX"); ?>: 1000px x 1000px<br/>
                                     <?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size); ?>
                                     <br/>
-                                    <?php echo common::translate("FORMAT"); ?>: JPEG, GIF, PNG, WEBP
+                                    <?php echo common::translate("COM_CUSTOMTABLES_FORMATS"); ?>: JPEG, GIF, PNG, WEBP
                                 </td>
                                 <td>
                                     <?php

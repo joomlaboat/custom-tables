@@ -202,7 +202,7 @@ class CustomtablesModelCategories extends JModelAdmin
         $this->batchSet = true;
 
         if (!$this->canDo->get('core.batch')) {
-            Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
             return false;
         }
 
@@ -234,7 +234,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (!$done) {
-            Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
             return false;
         }
 
@@ -413,7 +413,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (!$this->canDo->get('core.edit') && !$this->canDo->get('core.batch')) {
-            Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
             return false;
         }
 
@@ -429,7 +429,7 @@ class CustomtablesModelCategories extends JModelAdmin
         // Parent exists so we proceed
         foreach ($pks as $pk) {
             if (!$user->authorise('core.edit', $contexts[$pk])) {
-                Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
+                Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
                 return false;
             }
 

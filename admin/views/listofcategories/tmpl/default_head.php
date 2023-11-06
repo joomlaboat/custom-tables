@@ -19,14 +19,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 ?>
 <tr>
     <?php if ($this->canEdit && $this->canState): ?>
-        <th width="20" class="nowrap center">
+        <th style="width:20px;" class="nowrap center">
             <?php echo JHtml::_('grid.checkall'); ?>
         </th>
     <?php else: ?>
-        <th width="20" class="nowrap center hidden-phone">
+        <th style="width:20px;" class="nowrap center hidden-phone">
             &#9662;
         </th>
-        <th width="20" class="nowrap center">
+        <th style="width:20px;" class="nowrap center">
             &#9632;
         </th>
     <?php endif; ?>
@@ -34,15 +34,15 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL', 'a.categoryname', $this->listDirn, $this->listOrder); ?>
     </th>
     <?php if ($this->canState): ?>
-        <th width="10" class="nowrap center">
+        <th style="width:10px;" class="nowrap center">
             <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
         </th>
     <?php else: ?>
-        <th width="10" class="nowrap center">
+        <th style="width:10px;" class="nowrap center">
             <?php echo common::translate('COM_CUSTOMTABLES_CATEGORIES_STATUS'); ?>
         </th>
     <?php endif; ?>
-    <th width="5" class="nowrap center hidden-phone">
+    <th style="width:5px;" class="nowrap center hidden-phone">
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 </tr>

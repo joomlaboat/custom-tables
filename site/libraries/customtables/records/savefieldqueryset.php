@@ -1076,7 +1076,7 @@ class SaveFieldQuerySet
         }
 
         if (count($field->params) < 3) {
-            $this->ct->errors[] = common::translate('User field name parameters count is less than 3.');
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_USERACCOUNT_PARAMCOUNT_ERROR');
             return false;
         }
 
@@ -1109,13 +1109,13 @@ class SaveFieldQuerySet
         $user_email = $new_parts[2];
 
         if ($user_groups == '') {
-            $this->ct->errors[] = common::translate('User group field not set.');
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_USERACCOUNT_GROUPFIELD_NOT_SET');
             return false;
         } elseif ($user_name == '') {
-            $this->ct->errors[] = common::translate('User name field not set.');
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET');
             return false;
         } elseif ($user_email == '') {
-            $this->ct->errors[] = common::translate('User email field not set.');
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_USERACCOUNT_EMAIL_NOT_SET');
             return false;
         }
 

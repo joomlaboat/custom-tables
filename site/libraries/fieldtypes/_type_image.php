@@ -237,10 +237,10 @@ class CT_FieldTypeTag_image
 
         return '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
-				' . common::translate("MIN SIZE") . ': 10px x 10px<br/>
-				' . common::translate("MAX SIZE") . ': 1000px x 1000px<br/>
+				' . common::translate("COM_CUSTOMTABLES_MIN_SIZE") . ': 10px x 10px<br/>
+				' . common::translate("COM_CUSTOMTABLES_MAX_SIZE") . ': 1000px x 1000px<br/>
 				' . common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '<br/>
-				' . common::translate("FORMAT") . ': JPEG, GIF, PNG, WEBP
+				' . common::translate("COM_CUSTOMTABLES_FORMAT") . ': JPEG, GIF, PNG, WEBP
 				</div>';
     }
 

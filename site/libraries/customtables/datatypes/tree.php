@@ -46,7 +46,7 @@ class Tree
     {
         $query = "SELECT id, optionname FROM #__customtables_options WHERE parentid=0 ORDER BY optionname";
         $available_rootparents = database::loadObjectList($query);
-        JoomlaBasicMisc::array_insert($available_rootparents, array("id" => 0, "optionname" => common::translate('-Select Parent')), 0);
+        JoomlaBasicMisc::array_insert($available_rootparents, array("id" => 0, "optionname" => '-' . common::translate('COM_CUSTOMTABLES_SELECT_PARENT')), 0);
         return $available_rootparents;
 
     }

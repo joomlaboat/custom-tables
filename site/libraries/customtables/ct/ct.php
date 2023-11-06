@@ -664,13 +664,13 @@ class CT
                 //example: parents(children).user
                 $statement_parts = explode('.', $field);
                 if (count($statement_parts) != 2) {
-                    $this->errors[] = 'Menu Item - "UserID Field name" parameter has a syntax error. Error is about "." character - only one is permitted. Correct example: parent(children).user';
+                    $this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_USERID_FIELD_ERROR');
                     return [];
                 }
 
                 $table_parts = explode('(', $statement_parts[0]);
                 if (count($table_parts) != 2) {
-                    $this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "(" character. Correct example: parent(children).user');
+                    $this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_USERID_FIELD_ERROR');
                     return [];
                 }
 
@@ -681,7 +681,7 @@ class CT
                 $parent_table_row = ESTables::getTableRowByName($parent_tablename);
 
                 if (!is_object($parent_table_row)) {
-                    $this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: Table "' . $parent_tablename . '" not found.');
+                    $this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR');
                     return [];
                 }
 
@@ -690,7 +690,7 @@ class CT
                 $parent_join_field_row = Fields::FieldRowByName($parent_join_field, $parent_table_fields);
 
                 if (count($parent_join_field_row) == 0) {
-                    $this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: Join field "' . $parent_join_field . '" not found.');
+                    $this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR');
                     return [];
                 }
 

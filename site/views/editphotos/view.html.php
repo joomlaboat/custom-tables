@@ -56,7 +56,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 		<table>
 			<thead>
 				<tr>
-					<td><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) align="left" style="vertical-align:top";></td>
+					<td><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) style="text-align:left;vertical-align:top";></td>
 					<td></td>
 					<td></td>
 				</tr>
@@ -77,15 +77,15 @@ class CustomTablesViewEditPhotos extends JViewLegacy
                 . $this->Model->ct->Table->tableid . '_' . $this->Model->galleryname . '__original_' . $image->photoid . '.' . $image->photo_ext;
 
             $htmlOut .= '
-					<td valign="top" align="center">
-						<input type="checkbox" name="esphoto' . $image->photoid . '" id="esphoto' . $image->photoid . '" align="left" style="vertical-align:top";>
+					<td style="text-align:center;vertical-align: top;">
+						<input type="checkbox" name="esphoto' . $image->photoid . '" id="esphoto' . $image->photoid . '" style="text-align:left;vertical-align:top";>
 					</td>
 
 					<td' . ($c == 0 ? ' class="MainImage" ' : '') . ' style="width:170px;text-align:center;">
 						<a href="' . $imageFileOriginal . '" rel="shadowbox"><img src="' . $imageFile . '" alt="' . $image->title . '" title="' . $image->title . '" style="border:none;width:150px;height:150px;" /></a>
 					</td>
 
-					<td valign="top" align="left">
+					<td style="text-align:left;vertical-align: top;">
 						<table border="0" cellpadding="5" style="margin-left:5px;">
 							<tbody>
 								<tr>

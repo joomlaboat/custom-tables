@@ -226,7 +226,7 @@ class CustomtablesModelTables extends JModelAdmin
         $this->batchSet = true;
 
         if (!$this->canDo->get('core.batch')) {
-            $this->setError(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+            $this->setError(common::translate('COM_CUSTOMTABLES_JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
             return false;
         }
 
@@ -259,7 +259,7 @@ class CustomtablesModelTables extends JModelAdmin
         }
 
         if (!$done) {
-            $this->setError(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+            $this->setError(common::translate('COM_CUSTOMTABLES_JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
 
             return false;
         }
