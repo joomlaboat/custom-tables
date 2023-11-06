@@ -23,7 +23,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
     function display($tpl = null)
     {
         $user = new CTUser;
-        if ($user->id == 0) {
+        if ($user->id === null) {
             Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
             return;
         }

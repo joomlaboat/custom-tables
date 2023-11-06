@@ -615,7 +615,7 @@ class CT
         else
             $userGroup = null;
 
-        if ($this->Env->user->id == 0)
+        if ($this->Env->user->id === null)
             return false;
 
         if ($this->Env->user->isUserAdministrator) {

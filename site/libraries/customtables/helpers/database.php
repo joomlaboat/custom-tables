@@ -12,6 +12,7 @@ namespace CustomTables;
 
 use Exception;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Version;
 
 class database
 {
@@ -34,7 +35,15 @@ class database
     public static function realTableName($tableName): ?string
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             return str_replace('#__', $db->getPrefix(), $tableName);
         } elseif (defined('WPINC')) {
             global $wpdb;
@@ -58,7 +67,15 @@ class database
     public static function getServerType(): ?string
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             return $db->serverType == 'postgresql';
         } elseif (defined('WPINC')) {
             if (str_contains(DB_HOST, 'mysql')) {
@@ -75,7 +92,14 @@ class database
     public static function loadObjectList($query, $limitStart = null, $limit = null)
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
 
             if ($limitStart !== null and $limit !== null)
                 $db->setQuery($query, $limitStart, $limit);
@@ -106,7 +130,15 @@ class database
     public static function setQuery($query): void
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             $db->setQuery($query);
             $db->execute();
         } elseif (defined('WPINC')) {
@@ -131,7 +163,15 @@ class database
     public static function insert(string $tableName, array $data): ?int
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDbo();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             $query = $db->getQuery(true);
 
             // Construct the insert statement
@@ -178,7 +218,15 @@ class database
     public static function quoteName($value)
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             return $db->quoteName($value);
         } elseif (defined('WPINC')) {
             return $value;
@@ -189,7 +237,15 @@ class database
     public static function quote($value, bool $row = true): ?string
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             return $db->quote($value);
         } elseif (defined('WPINC')) {
 
@@ -222,8 +278,13 @@ class database
     {
         if (defined('_JEXEC')) {
 
-            //$db = Factory::getDbo();
-            $db = Factory::getContainer()->get('DatabaseDriver');
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
 
             $query = $db->getQuery(true);
 
@@ -268,7 +329,15 @@ class database
     public static function getNumRowsOnly($query): int
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             $db->setQuery($query);
             $db->execute();
             return $db->getNumRows();
@@ -293,7 +362,15 @@ class database
     public static function loadAssocList($query, $limitStart = null, $limit = null)
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             if ($limitStart !== null and $limit !== null)
                 $db->setQuery($query, $limitStart, $limit);
             elseif ($limitStart !== null)
@@ -323,7 +400,15 @@ class database
     public static function loadRowList($query, $limitStart = null, $limit = null): ?array
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             if ($limitStart !== null and $limit !== null)
                 $db->setQuery($query, $limitStart, $limit);
             elseif ($limitStart !== null)
@@ -349,7 +434,15 @@ class database
     public static function loadColumn($query, $limitStart = null, $limit = null): ?array
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get('DatabaseDriver');
+
             if ($limitStart !== null and $limit !== null)
                 $db->setQuery($query, $limitStart, $limit);
             elseif ($limitStart !== null)

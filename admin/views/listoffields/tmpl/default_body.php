@@ -20,6 +20,8 @@ use CustomTables\Fields;
 $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=" . $this->tableid;
 $dbPrefix = database::getDBPrefix();
 $hashRealTableName = database::realTableName($this->ct->Table->realtablename);
+$hashRealTableName = str_replace($dbPrefix, '#__', $hashRealTableName);
+
 ?>
 <?php foreach ($this->items as $i => $item): ?>
     <?php

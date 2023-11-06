@@ -1032,7 +1032,7 @@ class Inputbox
         }
         $result = '';
 
-        if ($this->ct->Env->user->id == 0)
+        if ($this->ct->Env->user->id === null)
             return '';
 
         $attributes = 'class="' . $this->cssclass . '" ' . $this->attributes;
@@ -1055,7 +1055,7 @@ class Inputbox
         }
         $result = '';
 
-        if ($this->ct->Env->user->id == 0)
+        if ($this->ct->Env->user->id === null)
             return '';
 
         $attributes = 'class="' . $this->cssclass . '" ' . $this->attributes;

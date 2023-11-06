@@ -16,7 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-function renderDependencies($layout_row): string
+function renderDependencies(object $layout_row): string
 {
     $count = 0;
     $layoutname = $layout_row->layoutname;

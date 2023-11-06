@@ -888,7 +888,8 @@ class Fields
     {
         if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
             $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
-
+            echo '$query2:' . $query . '<br/>';
+            die;
             if (defined('_JEXEC')) {
                 try {
                     database::setQuery($query);
@@ -1472,6 +1473,7 @@ class Fields
         try {
             database::setQuery($query);
         } catch (Exception $e) {
+            echo '$query:' . $query . '<br/>';
             throw new Exception($e->getMessage());
         }
         return true;

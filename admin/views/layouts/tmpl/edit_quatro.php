@@ -179,7 +179,7 @@ foreach ($this->allTables as $table) {
         <div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">
             <?php
 
-            if ($this->item->layoutname !== null) {
+            if ($this->item !== null and $this->item->layoutname !== null) {
                 require('dependencies.php');
                 echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
             }

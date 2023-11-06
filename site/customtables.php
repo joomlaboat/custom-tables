@@ -16,12 +16,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 
 $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
-    . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+    . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
 
 if (!file_exists($path))
     die('CT Loader not found.');
 
-require_once($path . 'loader.php');
+require_once($path);
 CTLoader(false, $include_html = true);
 
 // Require the base controller

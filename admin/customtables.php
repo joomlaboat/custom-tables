@@ -18,15 +18,20 @@ use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 
+$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
+    . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
+
+if (!file_exists($path))
+    die('CT Loader not found.');
+
+require_once($path);
+CTLoader(true);
+
 // Access check.
 $user = new CTUser();
 if (!$user->authorise('core.manage', 'com_customtables')) {
     Factory::getApplication()->enqueueMessage(common::translate('JERROR_ALERTNOAUTHOR'), 'error');
 };
-
-$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-require_once($path . 'loader.php');
-CTLoader($include_utilities = true);
 
 // require helper files
 JLoader::register('CustomtablesHelper', dirname(__FILE__) . '/helpers/customtables.php');
@@ -39,7 +44,11 @@ jimport('joomla.application.component.controller');
 $controller = JControllerLegacy::getInstance('Customtables');
 
 // Perform the Request task
-$controller->execute(common::inputGetCmd('task'));
+try {
+    $controller->execute(common::inputGetCmd('task'));
+} catch (Exception $e) {
+    die($e->getMessage());
+}
 
 // Redirect if set by the controller
 $controller->redirect();

@@ -17,7 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\database;
 
-function renderDependencies($table_id, $tablename): string
+function renderDependencies(int $table_id, string $tablename): string
 {
     $result = '';
     $rows = _getTablesThatDependOnThisTable($tablename);

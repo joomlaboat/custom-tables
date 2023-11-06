@@ -23,7 +23,7 @@ if (!function_exists('str_contains')) {
     }
 }
 
-function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', ?bool $loadTwig = null)
+function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', ?bool $loadTwig = null): void
 {
     if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
         return;
