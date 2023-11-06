@@ -171,7 +171,7 @@ class CustomTablesModelList extends JModel
         return $items;
     }
 
-    function treerecurse($tree_id, $indent, $list, &$children, $maxlevel = 9999, $level = 0, $type = 1, $bone, $custom_spacer, $parentname = '')
+    function treerecurse($tree_id, $indent, $list, &$children, $maxlevel = 9999, $level = 0, $type = 1, string $bone = '', string $custom_spacer = '', string $parentname = '')
     {
         if (@$children[$tree_id] && $level <= $maxlevel) {
             foreach ($children[$tree_id] as $v) {

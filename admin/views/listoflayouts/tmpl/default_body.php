@@ -9,9 +9,8 @@
  **/
 
 // No direct access to this file
+use CustomTables\common;
 use CustomTables\CTUser;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -55,7 +54,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
             </div>
         </td>
         <td class="hidden-phone">
-            <?php echo Text::_($item->layouttype); ?>
+            <?php echo common::translate($item->layouttype); ?>
         </td>
         <td class="hidden-phone">
             <?php echo $item->tabletitle; ?>

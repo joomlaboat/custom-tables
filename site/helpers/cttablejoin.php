@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Field;
@@ -487,7 +488,7 @@ class JHTMLCTTableJoin
                     return '<div id="' . $control_name . 'Selector' . $index . '_' . $sub_index . '"></div>';
 
             } else
-                return JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_SELECT_NOTHING");
+                return common::translate("COM_CUSTOMTABLES_SELECT_NOTHING");
         }
 
         $result = '<div id="' . $control_name . 'Selector' . $index . '_' . $sub_index . '">';
@@ -574,10 +575,10 @@ class JHTMLCTTableJoin
                         $selectBoxParams [] = 'data-search="true" style="visibility:hidden;"';
 
                     $result .= '<select ' . implode(' ', $selectBoxParams) . ' >';
-                    $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
+                    $result .= '<option value="">- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 
                     if ($addRecordMenuAlias !== null)
-                        $result .= '<option value=" % addRecord % ">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD') . '</option>';
+                        $result .= '<option value=" % addRecord % ">- ' . common::translate('COM_CUSTOMTABLES_ADD') . '</option>';
 
                     for ($i = 0; $i < count($r); $i++) {
                         $label = htmlspecialchars_decode($r[$i]->label ?? '', ENT_HTML5);

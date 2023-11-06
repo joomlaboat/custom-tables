@@ -9,7 +9,7 @@
  **/
 
 // No direct access to this file access');
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -43,20 +43,20 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL', 'a.fieldname', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap">
-        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL'); ?>
     </th>
 
     <th class="nowrap hidden-phone">
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_TYPE_LABEL', 'a.type', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL'); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_ISREQUIRED_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_FIELDS_ISREQUIRED_LABEL'); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL'); ?>
     </th>
     <?php if ($this->canState): ?>
         <th width="10" class="nowrap center">
@@ -64,7 +64,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         </th>
     <?php else: ?>
         <th width="10" class="nowrap center">
-            <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_STATUS'); ?>
+            <?php echo common::translate('COM_CUSTOMTABLES_FIELDS_STATUS'); ?>
         </th>
     <?php endif; ?>
     <th width="5" class="nowrap center hidden-phone">

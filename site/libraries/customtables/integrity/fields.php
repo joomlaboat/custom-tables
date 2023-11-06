@@ -22,7 +22,6 @@ use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
 use ESTables;
-use JoomlaBasicMisc;
 
 class IntegrityFields extends IntegrityChecks
 {
@@ -209,8 +208,8 @@ class IntegrityFields extends IntegrityChecks
                             $real_field_name = $found_field;
 
                         if (Fields::fixMYSQLField($ct->Table->realtablename, $real_field_name, $PureFieldType, $msg)) {
-                            $result .= '<p>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD') . ' <span style="color:green;">'
-                                . $nice_field_name . '</span> ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_FIXED') . '.</p>';
+                            $result .= '<p>' . common::translate('COM_CUSTOMTABLES_FIELD') . ' <span style="color:green;">'
+                                . $nice_field_name . '</span> ' . common::translate('COM_CUSTOMTABLES_FIELD_FIXED') . '.</p>';
                         } else {
                             Factory::getApplication()->enqueueMessage($msg, 'error');
                         }
@@ -225,10 +224,10 @@ class IntegrityFields extends IntegrityChecks
 
                         $existing_field_type_string = Fields::makeProjectedFieldType($ExistingField);
 
-                        $result .= '<p>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD') . ' <span style="color:orange;">' . $nice_field_name . '</span>'
-                            . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_HAS_WRONG_TYPE') . ' <span style="color:red;">'
-                            . $existing_field_type_string . '</span> ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_INSTEAD_OF') . ' <span style="color:green;">'
-                            . $PureFieldType . '</span> <a href="' . $link . 'task=fixfieldtype&fieldname=' . $existingFieldName . '">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_TOFIX') . '</a></p>';
+                        $result .= '<p>' . common::translate('COM_CUSTOMTABLES_FIELD') . ' <span style="color:orange;">' . $nice_field_name . '</span>'
+                            . ' ' . common::translate('COM_CUSTOMTABLES_FIELD_HAS_WRONG_TYPE') . ' <span style="color:red;">'
+                            . $existing_field_type_string . '</span> ' . common::translate('COM_CUSTOMTABLES_FIELD_INSTEAD_OF') . ' <span style="color:green;">'
+                            . $PureFieldType . '</span> <a href="' . $link . 'task=fixfieldtype&fieldname=' . $existingFieldName . '">' . common::translate('COM_CUSTOMTABLES_FIELD_TOFIX') . '</a></p>';
                     }
                 }
             }

@@ -707,7 +707,7 @@ class CT_FieldTypeTag_file
 
     public static function wrong(): bool
     {
-        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+        Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
         return false;
     }
 }

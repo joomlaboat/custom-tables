@@ -272,7 +272,7 @@ class ESDynamicComboTree
             . ' data-valuerulecaption="' . str_replace('"', '&quot;', $valuerulecaption) . '"'
             . ' data-type="customtables">';
 
-        $result .= '<option value="" ' . ($value == "" ? ' SELECTED ' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . ' ' . $place_holder . '</option>';
+        $result .= '<option value="" ' . ($value == "" ? ' SELECTED ' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . ' ' . $place_holder . '</option>';
 
         $count = 0;
 

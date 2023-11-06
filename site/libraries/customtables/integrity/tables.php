@@ -32,7 +32,6 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 
         foreach ($tables as $table) {
 
-            $table['tablename'];
             //Check if table exists
             $query_check_table = 'SHOW TABLES LIKE ' . database::quote(database::realTableName($table['tablename']));
             $rows = database::loadObjectList($query_check_table);

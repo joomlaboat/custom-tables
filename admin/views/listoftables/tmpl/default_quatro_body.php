@@ -12,11 +12,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\ListOfTables;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Factory;
 use CustomTables\Fields;
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
@@ -112,7 +111,7 @@ foreach ($this->items as $i => $item): ?>
             <?php echo '<a class="btn btn-success" aria-describedby="tip-tablefields' . $item->id . '" href="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $item->id . '">'
                 . $item->fieldcount . '</a>'; ?>
             <div role="tooltip"
-                 id="tip-tablefields<?php echo $item->id; ?>"><?php echo Text::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?></div>
+                 id="tip-tablefields<?php echo $item->id; ?>"><?php echo common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?></div>
 
 
         </td>
@@ -120,13 +119,13 @@ foreach ($this->items as $i => $item): ?>
         <td class="text-center btns d-none d-md-table-cell itemnumber">
             <?php
             if (!$table_exists)
-                echo Text::_('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
+                echo common::translate('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
             elseif (($item->customtablename !== null and $item->customtablename != '') and ($item->customidfield === null or $item->customidfield == ''))
-                echo Text::_('COM_CUSTOMTABLES_TABLES_ID_FIELD_NOT_SET');
+                echo common::translate('COM_CUSTOMTABLES_TABLES_ID_FIELD_NOT_SET');
             else {
                 echo '<a class="btn btn-secondary" aria-describedby="tip-tablerecords' . $item->id . '" href="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
                     . listOfTables::getNumberOfRecords($item->realtablename, $item->realidfieldname) . '</a>'
-                    . '<div role="tooltip" id="tip-tablerecords' . $item->id . '">' . Text::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL') . '</div>';
+                    . '<div role="tooltip" id="tip-tablerecords' . $item->id . '">' . common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL') . '</div>';
             }
             ?>
         </td>

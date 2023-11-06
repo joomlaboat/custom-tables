@@ -48,7 +48,7 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
         else
             $msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_MORE';
 
-        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg, $count), 'success');
+        Factory::getApplication()->enqueueMessage(common::translate($msg, $count), 'success');
 
         // Redirect to the item screen.
         $this->setRedirect(
@@ -115,7 +115,7 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
         if (count($cid) == 1)
             $msg .= '_1';
 
-        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg, count($cid)), 'success');
+        Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
 
         // Redirect to the item screen.
         $this->setRedirect(
@@ -168,7 +168,7 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
         if (count($cid) == 1)
             $msg .= '_1';
 
-        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg, count($cid)), 'success');
+        Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
 
         // Redirect to the item screen.
         $this->setRedirect(

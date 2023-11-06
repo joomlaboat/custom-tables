@@ -96,7 +96,7 @@ class CustomTablesViewFiles extends JViewLegacy
             } else
                 $this->render_file_output($filepath);
         } else
-            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED');
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED');
     }
 
     protected function getFilePath(): string
@@ -120,7 +120,7 @@ class CustomTablesViewFiles extends JViewLegacy
         $rows = database::loadAssocList($query);
 
         if (count($rows) < 1) {
-            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND');
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND');
             return;
         }
 
@@ -188,7 +188,7 @@ class CustomTablesViewFiles extends JViewLegacy
             $file = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
 
         if (!file_exists($file)) {
-            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND');
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND');
             return false;
         }
 

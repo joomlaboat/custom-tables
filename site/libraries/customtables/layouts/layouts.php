@@ -515,7 +515,7 @@ class Layouts
         if (!$this->ct->getRecords()) {
 
             if (defined('_JEXEC'))
-                $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
+                $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
 
             return 'CustomTables: Records not loaded.';
         }

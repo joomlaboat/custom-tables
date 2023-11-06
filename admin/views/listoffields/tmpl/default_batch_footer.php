@@ -9,7 +9,7 @@
  **/
 
 // No direct access to this file
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -22,5 +22,5 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 </button>
 <!-- post the batch values if process -->
 <button class="btn btn-success" type="submit" onclick="Joomla.submitbutton('fields.batch');">
-    <?php echo Text::_('JGLOBAL_BATCH_PROCESS'); ?>
+    <?php echo common::translate('JGLOBAL_BATCH_PROCESS'); ?>
 </button>

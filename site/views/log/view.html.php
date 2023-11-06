@@ -107,7 +107,7 @@ class CustomTablesViewLog extends JViewLegacy
     {
         $actions = ['New', 'Edit', 'Publish', 'Unpublish', 'Delete', 'Image Uploaded', 'Image Deleted', 'File Uploaded', 'File Deleted', 'Refreshed'];
         $result = '<select onchange="ActionFilterChanged(this)">';
-        $result .= '<option value="-1" ' . ($action == -1 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
+        $result .= '<option value="-1" ' . ($action == -1 ? 'selected="SELECTED"' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 
         $v = 1;
         foreach ($actions as $a) {
@@ -123,7 +123,7 @@ class CustomTablesViewLog extends JViewLegacy
         $query = 'SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.userid GROUP BY #__users.id ORDER BY name';
         $rows = database::loadAssocList($query);
         $result = '<select onchange="UserFilterChanged(this)">';
-        $result .= '<option value="0" ' . ($userid == 0 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
+        $result .= '<option value="0" ' . ($userid == 0 ? 'selected="SELECTED"' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 
         foreach ($rows as $row)
             $result .= '<option value="' . $row['id'] . '" ' . ($userid == $row['id'] ? 'selected="SELECTED"' : '') . '>' . $row['name'] . '</option>';
@@ -137,7 +137,7 @@ class CustomTablesViewLog extends JViewLegacy
         $rows = database::loadAssocList('SELECT id,tablename FROM #__customtables_tables ORDER BY tablename');
 
         $result = '<select onchange="TableFilterChanged(this)">';
-        $result .= '<option value="0" ' . ($tableId == 0 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
+        $result .= '<option value="0" ' . ($tableId == 0 ? 'selected="SELECTED"' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 
         foreach ($rows as $row) {
             $result .= '<option value="' . $row['id'] . '" ' . ($tableId == $row['id'] ? 'selected="SELECTED"' : '') . '>' . $row['tablename'] . '</option>';

@@ -12,8 +12,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
 
 HTMLHelper::_('behavior.multiselect');
 
@@ -30,11 +30,11 @@ HTMLHelper::_('behavior.multiselect');
     </th>
 
     <th scope="col">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
     </th>
 
     <th scope="col">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
     </th>
 
     <th scope="col" class="text-center d-none d-md-table-cell">
@@ -46,15 +46,15 @@ HTMLHelper::_('behavior.multiselect');
     </th>
 
     <th scope="col">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
     </th>
 
     <th scope="col">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
     </th>
 
     <th scope="col">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
     </th>
 
     <th scope="col">

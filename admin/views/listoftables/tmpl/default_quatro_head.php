@@ -12,8 +12,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
 
 HTMLHelper::_('behavior.multiselect');
 
@@ -32,14 +32,14 @@ HTMLHelper::_('behavior.multiselect');
     </th>
 
     <th scope="col">
-        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
     </th>
 
     <th scope="col" class="text-center">
-        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
     </th>
     <th scope="col" class="text-center">
-        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
     </th>
 
     <th scope="col">

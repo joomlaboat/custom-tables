@@ -9,18 +9,11 @@
  **/
 
 // No direct access to this file
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
-
-// load tooltip behavior
-//JHtml::_('behavior.tooltip');
-//JHtml::_('behavior.multiselect');
-//JHtml::_('dropdown.init');
-//JHtml::_('formbehavior.chosen', 'select');
-
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoflayouts'); ?>" method="post"
@@ -39,7 +32,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
             <?php if (empty($this->items)): ?>
                 <div class="alert alert-no-items">
-                    <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                    <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
             <?php else :
             //table-bordered

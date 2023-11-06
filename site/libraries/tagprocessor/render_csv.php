@@ -40,10 +40,8 @@ trait render_csv
         return $result;
     }
 
-    protected static function get_CatalogTable_CSV(CT &$ct, $layoutType, $fields)
+    protected static function get_CatalogTable_CSV(CT &$ct, $layoutType, $fields): string
     {
-        $catalogresult = '';
-
         $fields = str_replace("\n", '', $fields);
         $fields = str_replace("\r", '', $fields);
 
@@ -79,7 +77,7 @@ trait render_csv
         //Initiate the file output
 
         $result = strip_tags($result);
-        $result .= strip_tags(self::renderCSVoutput($ct, $layoutType));
+        $result .= strip_tags(self::renderCSVoutput($ct, $layoutType, ''));
 
         if ($ct->Table->recordcount > $ct->LimitStart + $ct->Limit) {
             if ($ct->Limit > 0) {

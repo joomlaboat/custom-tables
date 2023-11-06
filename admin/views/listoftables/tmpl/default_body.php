@@ -12,12 +12,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\ListOfTables;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Factory;
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 $dbPrefix = database::getDBPrefix();
@@ -102,17 +101,17 @@ foreach ($this->items as $i => $item): ?>
 
         <td class="hidden-phone">
             <?php echo '<a href="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $item->id . '">'
-                . Text::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL')
+                . common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL')
                 . ' (' . $item->fieldcount . ')</a>'; ?>
         </td>
 
         <td class="hidden-phone">
             <?php
             if (!$table_exists)
-                echo Text::_('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
+                echo common::translate('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
             else {
                 echo '<a href="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
-                    . Text::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
+                    . common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
                     . ' (' . listOfTables::getNumberOfRecords($item->realtablename, $item->realidfieldname) . ')</a>';
             }
             ?>

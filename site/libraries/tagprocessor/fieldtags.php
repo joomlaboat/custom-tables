@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use \CustomTables\Forms;
 use \CustomTables\Field;
@@ -38,7 +39,7 @@ class tagProcessor_Field
             foreach ($ct->Table->fields as $fieldrow) {
                 if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldrow)) {
                     Factory::getApplication()->enqueueMessage(
-                        JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'), 'Error');
+                        common::translate('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'), 'Error');
                     $pageLayout = str_replace('*' . $fieldrow['fieldname'] . '*', '*fieldtitle' . $ct->Languages->Postfix . ' - not found*', $pageLayout);
                 } else {
                     $pageLayout = str_replace('*' . $fieldrow['fieldname'] . '*', $fieldrow['fieldtitle' . $ct->Languages->Postfix] ?? '', $pageLayout);

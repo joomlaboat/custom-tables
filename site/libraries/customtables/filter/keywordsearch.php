@@ -73,10 +73,10 @@ class CustomTablesKeywordSearch
         $listing_ids = array();
 
         if ($AndOrOr == 'OR')
-            $AndOrOr_text = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR');
+            $AndOrOr_text = common::translate('COM_CUSTOMTABLES_OR');
 
         if ($AndOrOr == 'AND')
-            $AndOrOr_text = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AND');
+            $AndOrOr_text = common::translate('COM_CUSTOMTABLES_AND');
 
         foreach ($mod_fieldlist as $mod_field) {
             $where = '';
@@ -91,7 +91,7 @@ class CustomTablesKeywordSearch
             if ($where != '')
                 $this->getKeywordSearch($inner, $where, $result_rows, $count, $listing_ids);
 
-            $this->PathValue[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS') . ' "' . $keywords . '"';
+            $this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . $keywords . '"';
 
             if (count($keyword_arr) > 1) //Do not search because there is only one keyword, and it's already checked
             {
@@ -120,7 +120,7 @@ class CustomTablesKeywordSearch
                 if ($where != '')
                     $this->getKeywordSearch($inner, $where, $result_rows, $count, $listing_ids);
 
-                $this->PathValue[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
+                $this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
             }
 
             $where = '';
@@ -154,7 +154,7 @@ class CustomTablesKeywordSearch
             if ($where != '')
                 $this->getKeywordSearch($inner, $where, $result_rows, $count, $listing_ids);
 
-            $this->PathValue[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
+            $this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
         }
 
         // -------------------
@@ -280,7 +280,7 @@ class CustomTablesKeywordSearch
             if ($where != '')
                 $this->getKeywordSearch($inner, $where, $result_rows, $count, $listing_ids);
 
-            $this->PathValue[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
+            $this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
         }
         return $result_rows;
     }

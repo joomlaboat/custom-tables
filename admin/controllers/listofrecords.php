@@ -72,7 +72,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
         if (count($cid) == 1)
             $msg .= '_1';
 
-        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg, count($cid)), 'success');
+        Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
 
         // Redirect to the item screen.
         $this->setRedirect(
@@ -135,7 +135,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
         if (count($cid) == 1)
             $msg .= '_1';
 
-        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg, count($cid)), 'success');
+        Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
 
         // Redirect to the item screen.
         $this->setRedirect(
@@ -157,7 +157,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
             die('Table not selected.');
         }
 
-        $ordering = new CustomTables\Ordering($ct->Table);
+        $ordering = new CustomTables\Ordering($ct->Table, $ct->Params);
 
         if (!$ordering->saveorder()) {
             header("HTTP/1.1 500 Internal Server Error");

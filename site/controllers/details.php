@@ -30,7 +30,7 @@ switch ($task) {
         $model = $this->getModel('edititem');
         if (!$ct->CheckAuthorization(2)) {
             $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
-            $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+            $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
         } else {
             $app = Factory::getApplication();
 
@@ -43,7 +43,7 @@ switch ($task) {
             if ($count == 1)
                 $msg .= '_1';
 
-            $this->setRedirect($link, JoomlaBasicMisc::JTextExtended($msg, abs($count)));
+            $this->setRedirect($link, common::translate($msg, abs($count)));
         }
 
         break;
@@ -54,7 +54,7 @@ switch ($task) {
         if (!$ct->CheckAuthorization(2)) {
             if ($ct->Env->version != 1.5) $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
             else $link = JRoute::_('index.php?option=com_user&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
-            $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+            $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
         } else {
             $model->load($ct);
             $count = $model->setPublishStatus(0);
@@ -65,7 +65,7 @@ switch ($task) {
             if ($count == 1)
                 $msg .= '_1';
 
-            $this->setRedirect($link, JoomlaBasicMisc::JTextExtended($msg, abs($count)));
+            $this->setRedirect($link, common::translate($msg, abs($count)));
         }
         break;
 
@@ -98,7 +98,7 @@ switch ($task) {
 
                 case 'cart_form_addtocart':
                     $result = $model->cart_form_addtocart();
-                    if ($$ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
+                    if ($ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
                     break;
 
                 case 'cart_setitemcount':
@@ -123,11 +123,11 @@ switch ($task) {
                 elseif ($param_msg != '')
                     $msg = $param_msg;
                 else
-                    $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED');
+                    $msg = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED');
 
                 $this->setRedirect($link, $msg);
             } else {
-                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED');
+                $msg = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED');
                 $this->setRedirect($link, $msg, 'error');
             }
         } else {

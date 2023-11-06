@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use Joomla\CMS\Factory;
 
 /**
@@ -195,7 +196,7 @@ class JESPagination extends JObject
 
         $limits[] = JHTML::_('select.option', $the_step * 10);
         $limits[] = JHTML::_('select.option', $the_step * 20);
-        //$limits[] = JHTML::_('select.option', '0', JoomlaBasicMisc::JTextExtended('JALL')); don't show all ever
+        //$limits[] = JHTML::_('select.option', '0', common::translate('JALL')); don't show all ever
 
         $selected = $this->_viewall ? 0 : $this->limit;
 
@@ -325,7 +326,7 @@ class JESPagination extends JObject
         if ($this->prefix != '')
             $query_paramsPlusPrefix .= (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . $this->prefix;
 
-        $data->all = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JLIB_HTML_VIEW_ALL'), $this->prefix);
+        $data->all = new JESPaginationObject(common::translate('JLIB_HTML_VIEW_ALL'), $this->prefix);
         if (!$this->_viewall) {
             $data->all->base = '0';
             $data->all->link = JRoute::_($query_paramsPlusPrefix);
@@ -334,11 +335,11 @@ class JESPagination extends JObject
         // Set the start and previous data objects.
 
         if ($this->icons) {
-            $data->start = new JESPaginationObject('<span class="icon-angle-double-left" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'));
-            $data->previous = new JESPaginationObject('<span class="icon-angle-left" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('JPREV'));
+            $data->start = new JESPaginationObject('<span class="icon-angle-double-left" aria-hidden="true"></span>', $this->prefix, null, null, common::translate('COM_CUSTOMTABLES_START'));
+            $data->previous = new JESPaginationObject('<span class="icon-angle-left" aria-hidden="true"></span>', $this->prefix, null, null, common::translate('JPREV'));
         } else {
-            $data->start = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'), $this->prefix);
-            $data->previous = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JPREV'), $this->prefix);
+            $data->start = new JESPaginationObject(common::translate('COM_CUSTOMTABLES_START'), $this->prefix);
+            $data->previous = new JESPaginationObject(common::translate('JPREV'), $this->prefix);
         }
 
         if ($this->get('pages.current') > 1) {
@@ -357,11 +358,11 @@ class JESPagination extends JObject
 
         // Set the next and end data objects.
         if ($this->icons) {
-            $data->next = new JESPaginationObject('<span class="icon-angle-right" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('JNEXT'));
-            $data->end = new JESPaginationObject('<span class="icon-angle-double-right" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_END'));
+            $data->next = new JESPaginationObject('<span class="icon-angle-right" aria-hidden="true"></span>', $this->prefix, null, null, common::translate('JNEXT'));
+            $data->end = new JESPaginationObject('<span class="icon-angle-double-right" aria-hidden="true"></span>', $this->prefix, null, null, common::translate('COM_CUSTOMTABLES_END'));
         } else {
-            $data->next = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JNEXT'), $this->prefix);
-            $data->end = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_END'), $this->prefix);
+            $data->next = new JESPaginationObject(common::translate('JNEXT'), $this->prefix);
+            $data->end = new JESPaginationObject(common::translate('COM_CUSTOMTABLES_END'), $this->prefix);
         }
 
         if ($this->get('pages.current') < $this->get('pages.total')) {
@@ -475,7 +476,7 @@ class JESPagination extends JObject
     {
         $html = "<div class=\"list-footer\">\n";
 
-        $html .= "\n<div class=\"limit\">" . JoomlaBasicMisc::JTextExtended('JGLOBAL_DISPLAY_NUM') . $list['limitfield'] . "</div>";
+        $html .= "\n<div class=\"limit\">" . common::translate('JGLOBAL_DISPLAY_NUM') . $list['limitfield'] . "</div>";
         $html .= $list['pageslinks'];
         $html .= "\n<div class=\"counter\">" . $list['pagescounter'] . "</div>";
 

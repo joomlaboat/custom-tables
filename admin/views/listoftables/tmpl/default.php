@@ -14,8 +14,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 JHtml::_('behavior.multiselect');
 
+use CustomTables\common;
 use CustomTables\IntegrityChecks;
-use Joomla\CMS\Language\Text;
 
 ?>
 <?php /*
@@ -51,7 +51,7 @@ use Joomla\CMS\Language\Text;
             <?php if (empty($this->items)): ?>
 
                 <div class="alert alert-no-items">
-                    <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                    <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
             <?php else : ?>
 

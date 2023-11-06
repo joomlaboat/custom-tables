@@ -24,7 +24,7 @@ $user = new CTUser();
 if (!$ct->CheckAuthorization(1)) {
     //not authorized
     $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
-    $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+    $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 } else {
     switch (common::inputGetCmd('task')) {
         case 'add' :
@@ -32,9 +32,9 @@ if (!$ct->CheckAuthorization(1)) {
             $model->load($ct);
 
             if ($model->add()) {
-                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_ADDED');
+                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_ADDED');
             } else {
-                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_NOT_ADDED');
+                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_ADDED');
             }
 
             $tableName = common::inputGetCmd('establename');
@@ -58,9 +58,9 @@ if (!$ct->CheckAuthorization(1)) {
             $model->load($ct);
 
             if ($model->delete()) {
-                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_DELETED');
+                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_DELETED');
             } else {
-                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_NOT_DELETED');
+                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_DELETED');
             }
 
             $tableName = common::inputGetCmd('establename');
@@ -84,9 +84,9 @@ if (!$ct->CheckAuthorization(1)) {
             $model->load($ct);
 
             if ($model->reorder()) {
-                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_ORDER_SAVED');
+                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_SAVED');
             } else {
-                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_ORDER_NOT_SAVED');
+                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_NOT_SAVED');
             }
 
             $returnto = common::inputGet('returnto', '', 'BASE64');
@@ -96,7 +96,7 @@ if (!$ct->CheckAuthorization(1)) {
             break;
 
         case 'cancel' :
-            $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_CANCELED');
+            $msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
             $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
             $this->setRedirect($link, $msg);
             break;

@@ -361,7 +361,7 @@ class Twig_Document_Tags
 
     function setpagetitle($pageTitle): void
     {
-        $this->ct->document->setTitle(JoomlaBasicMisc::JTextExtended($pageTitle));
+        $this->ct->document->setTitle(common::translate($pageTitle));
     }
 
     function setheadtag($tag): void

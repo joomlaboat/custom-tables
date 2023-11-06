@@ -17,7 +17,6 @@ use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
@@ -666,23 +665,5 @@ class CustomtablesModelLayouts extends JModelAdmin
             $data = $this->getItem();
         }
         return $data;
-    }
-
-    /**
-     * Method to change the title
-     *
-     * @param string $title The title.
-     *
-     * @return    array  Contains the modified title and alias.
-     *
-     */
-    protected function _generateNewTitle(string $title)
-    {
-        // Alter the title
-        $table = $this->getTable();
-        while ($table->load(array('title' => $title))) {
-            $title = StringHelper::increment($title);
-        }
-        return $title;
     }
 }

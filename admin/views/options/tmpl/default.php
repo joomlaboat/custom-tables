@@ -8,7 +8,7 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');

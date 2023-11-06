@@ -16,11 +16,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 // import Joomla view library
 jimport('joomla.application.component.view');
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Diagram;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
@@ -80,7 +80,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 
     protected function addToolBar_3()
     {
-        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
+        JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=databasecheck');
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
@@ -88,7 +88,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
         $CTCategoryOptions = $CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-            Text::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
+            common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
             'filter_tablecategory',
             JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
         );
@@ -98,12 +98,12 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
     {
         // Get the toolbar object instance
         $toolbar = Toolbar::getInstance('toolbar');
-        ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
     }
 
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
-        $document->setTitle(Text::_('COM_CUSTOMTABLES_DATABASECHECK'));
+        $document->setTitle(common::translate('COM_CUSTOMTABLES_DATABASECHECK'));
         $document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
     }
 }

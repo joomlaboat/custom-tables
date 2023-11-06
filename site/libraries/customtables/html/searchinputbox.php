@@ -15,8 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
-use Joomla\CMS\Language\Text;
-use JoomlaBasicMisc;
 use JHTML;
 
 if (defined('_JEXEC'))
@@ -219,10 +217,10 @@ class SearchInputBox
         else
             $default_class = 'form-select';
 
-        $published = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED');
-        $unpublished = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISHED');
-        $any = $published . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AND') . ' ' . $unpublished;
-        $translations = array($any, $published, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISHED'));
+        $published = common::translate('COM_CUSTOMTABLES_PUBLISHED');
+        $unpublished = common::translate('COM_CUSTOMTABLES_UNPUBLISHED');
+        $any = $published . ' ' . common::translate('COM_CUSTOMTABLES_AND') . ' ' . $unpublished;
+        $translations = array($any, $published, common::translate('COM_CUSTOMTABLES_UNPUBLISHED'));
         $onchange = $this->getOnChangeAttributeString($default_Action, $index, $where, $whereList);
 
         $result .= '<select'
@@ -263,7 +261,7 @@ class SearchInputBox
         else
             $default_class = 'form-select';
 
-        $translations = array(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ANY'), JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES'), JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO'));
+        $translations = array(common::translate('COM_CUSTOMTABLES_ANY'), common::translate('COM_CUSTOMTABLES_YES'), common::translate('COM_CUSTOMTABLES_NO'));
         $onchange = $this->getOnChangeAttributeString($default_Action, $index, $where, $whereList);
 
         $result .= '<select'

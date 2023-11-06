@@ -73,7 +73,7 @@ if ($task != '') {
             die('not authorized');
         else {
             $link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
-            $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+            $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
         }
     }
 
@@ -116,7 +116,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                     if ($count == 1)
                         $msg .= '_1';
 
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, $count), 'status' => null);
+                    return (object)array('link' => $link, 'msg' => common::translate($msg, $count), 'status' => null);
                     //COM_CUSTOMTABLES_RECORDS_DELETED
                 }
             } elseif ($count < 0) {
@@ -127,7 +127,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                     if (abs($count) == 1)
                         $msg .= '_1';
 
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, abs($count)), 'status' => 'error');
+                    return (object)array('link' => $link, 'msg' => common::translate($msg, abs($count)), 'status' => 'error');
                 }
             }
             break;
@@ -139,12 +139,12 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                 if ($ct->Env->clean == 1)
                     die('copied');
                 else
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'), 'status' => null);
+                    return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_RECORDS_COPIED'), 'status' => null);
             } else {
                 if ($ct->Env->clean == 1)
                     die('error');
                 else
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_COPIED'), 'status' => 'error');
+                    return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_RECORDS_NOT_COPIED'), 'status' => 'error');
             }
 
         case 'refresh':
@@ -158,7 +158,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                     if ($count == 1)
                         $msg .= '_1';
 
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, $count), 'status' => null);
+                    return (object)array('link' => $link, 'msg' => common::translate($msg, $count), 'status' => null);
                 }
             } else {
                 if ($ct->Env->clean == 1)
@@ -168,7 +168,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                     if (abs($count) == 1)
                         $msg .= '_1';
 
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, abs($count)), 'status' => 'error');
+                    return (object)array('link' => $link, 'msg' => common::translate($msg, abs($count)), 'status' => 'error');
                 }
             }
 
@@ -183,7 +183,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                     if ($count == 1)
                         $msg .= '_1';
 
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, $count), 'status' => null);
+                    return (object)array('link' => $link, 'msg' => common::translate($msg, $count), 'status' => null);
                 }
             } elseif ($count < 0) {
                 if ($ct->Env->clean == 1)
@@ -193,7 +193,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                     if (abs($count) == 1)
                         $msg .= '_1';
 
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, abs($count)), 'status' => 'error');
+                    return (object)array('link' => $link, 'msg' => common::translate($msg, abs($count)), 'status' => 'error');
                 }
             }
 
@@ -210,7 +210,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                     if ($count == 1)
                         $msg .= '_1';
 
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, $count), 'status' => null);
+                    return (object)array('link' => $link, 'msg' => common::translate($msg, $count), 'status' => null);
                 }
             } elseif ($count < 0) {
                 if ($ct->Env->clean == 1)
@@ -220,7 +220,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                     if (abs($count) == 1)
                         $msg .= '_1';
 
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, abs($count)), 'status' => 'error');
+                    return (object)array('link' => $link, 'msg' => common::translate($msg, abs($count)), 'status' => 'error');
                 }
             }
 
@@ -253,7 +253,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
             if ($saveField->Try2CreateUserAccount($field))
                 return (object)array('link' => $link, 'msg' => 'User create', 'status' => 'notice');
             else
-                return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
+                return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
 
         case 'resetpassword':
 
@@ -271,7 +271,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                 if ($ct->Env->clean == 1)
                     die('error');
                 else
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_USERS_RESET_COMPLETE_ERROR'), 'status' => 'error');
+                    return (object)array('link' => $link, 'msg' => common::translate('COM_USERS_RESET_COMPLETE_ERROR'), 'status' => 'error');
             }
 
         case 'setorderby':
@@ -312,7 +312,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                         die('copied');
                 } else {
                     $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_COPIED';
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg), 'status' => null);
+                    return (object)array('link' => $link, 'msg' => common::translate($msg), 'status' => null);
                 }
             } else {
                 if ($ct->Env->clean == 1) {
@@ -322,7 +322,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                         die('error');
                 } else {
                     $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_NOT_COPIED';
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg), 'status' => 'error');
+                    return (object)array('link' => $link, 'msg' => common::translate($msg), 'status' => 'error');
                 }
             }
 
@@ -397,11 +397,11 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                     $msg = common::inputGetString('msg');
 
                     if ($msg === null)
-                        return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);
+                        return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);
                     elseif ($param_msg != '')
                         return (object)array('link' => $link, 'msg' => $param_msg, 'status' => null);
                 } else
-                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED'), 'status' => 'error');
+                    return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED'), 'status' => 'error');
             } else
                 return null;
     }

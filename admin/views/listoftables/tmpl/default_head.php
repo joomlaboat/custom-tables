@@ -9,7 +9,7 @@
  **/
 
 // No direct access to this file access');
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -28,14 +28,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     </th>
 
     <th class="nowrap">
-        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
     </th>
 
     <th class="nowrap hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
     </th>
 
     <th class="nowrap hidden-phone">

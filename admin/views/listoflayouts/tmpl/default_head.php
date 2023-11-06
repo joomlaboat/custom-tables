@@ -9,7 +9,7 @@
  **/
 
 // No direct access to this file
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -26,10 +26,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
     </th>
     <?php if ($this->canState): ?>
         <th class="nowrap center">
@@ -37,22 +37,22 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         </th>
     <?php else: ?>
         <th class="nowrap center">
-            <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_STATUS'); ?>
+            <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_STATUS'); ?>
         </th>
     <?php endif; ?>
     <th class="nowrap center hidden-phone">
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap center hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
     </th>
 
     <th class="nowrap center hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
     </th>
 
     <th class="nowrap center hidden-phone">
-        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
     </th>
 
     <th scope="col" style="text-align:center;">

@@ -9,17 +9,14 @@
  **/
 
 // No direct access to this file
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-// load tooltip behavior
-//JHtml::_('behavior.tooltip');
 JHtml::_('behavior.multiselect');
-//JHtml::_('dropdown.init');
-//JHtml::_('formbehavior.chosen', 'select');
+
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post"
@@ -49,7 +46,7 @@ JHtml::_('behavior.multiselect');
 
             <?php if (empty($this->items)): ?>
                 <div class="alert alert-no-items">
-                    <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                    <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
             <?php else : ?>
             <table class="table table-striped table-hover" id="itemList" style="position: relative;">

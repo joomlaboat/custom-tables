@@ -9,9 +9,8 @@
  **/
 
 // No direct access to this file access');
+use CustomTables\common;
 use CustomTables\CTUser;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -56,7 +55,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
         </td>
 
         <td scope="row">
-            <?php echo Text::_($item->layouttype); ?>
+            <?php echo common::translate($item->layouttype); ?>
         </td>
 
         <td scope="row">

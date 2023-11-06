@@ -14,10 +14,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
@@ -119,7 +119,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 				<div class="row-fluid form-horizontal-desktop">
 					<div class="span12">
 					
-					<h3>' . Text::_('COM_CUSTOMTABLES_TABLES_DESCRIPTION') . ' -  <b>' . $lang->title . '</b></h3>';
+					<h3>' . common::translate('COM_CUSTOMTABLES_TABLES_DESCRIPTION') . ' -  <b>' . $lang->title . '</b></h3>';
 
             $editor_name = Factory::getApplication()->get('editor');
             $editor = Editor::getInstance($editor_name);
@@ -141,7 +141,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
             echo HTMLHelper::_('uitab.endTab');
         }
 
-        echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'advanced', Text::_('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
+        echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'advanced', common::translate('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
@@ -182,7 +182,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
         echo HTMLHelper::_('uitab.endTab');
 
         if ($this->item->tablename !== null) {
-            echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'dependencies', Text::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
+            echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
 
             include('_dependencies.php');
             ?>
@@ -202,7 +202,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
         <?php /* if ($this->canDo->get('core.admin')) : ?>
 	
-	<?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'permissions', Text::_('COM_CUSTOMTABLES_TABLES_PERMISSION')); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'permissions', common::translate('COM_CUSTOMTABLES_TABLES_PERMISSION')); ?>
 		<div class="row-fluid form-horizontal-desktop">
 			<div class="span12">
 				<fieldset class="adminform">

@@ -10,17 +10,15 @@
  **/
 
 // No direct access to this file
+use CustomTables\common;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-//JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
-//JHtml::_('formbehavior.chosen', 'select');
 
 $document = Factory::getDocument();
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" rel="stylesheet">');

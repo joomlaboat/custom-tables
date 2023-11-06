@@ -365,7 +365,7 @@ class tagProcessor_General
         foreach ($fList as $fItem) {
             $opt = '';
 
-            $title = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_GO_BACK');
+            $title = common::translate('COM_CUSTOMTABLES_GO_BACK');
             $pair = explode(',', $options[$i]);
 
             if (isset($pair[1]) and $pair[1] != '')

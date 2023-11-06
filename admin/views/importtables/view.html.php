@@ -17,7 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 // Import Joomla! libraries
 jimport('joomla.application.component.view');
 
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 use Joomla\CMS\Version;
 
 class CustomTablesViewImportTables extends JViewLegacy

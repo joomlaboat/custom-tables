@@ -9,6 +9,7 @@
  **/
 
 // No direct access to this file access');
+use CustomTables\common;
 use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -38,7 +39,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         </th>
     <?php else: ?>
         <th width="10" class="nowrap center">
-            <?php echo Text::_('COM_CUSTOMTABLES_CATEGORIES_STATUS'); ?>
+            <?php echo common::translate('COM_CUSTOMTABLES_CATEGORIES_STATUS'); ?>
         </th>
     <?php endif; ?>
     <th width="5" class="nowrap center hidden-phone">

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
@@ -309,7 +310,7 @@ class JHTMLESRecords
         $htmlResult_options = '';
 
         if (!str_contains($control_name, '_selector'))
-            $htmlResult_options .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . ' ' . $place_holder . '</option>';
+            $htmlResult_options .= '<option value="">- ' . common::translate('COM_CUSTOMTABLES_SELECT') . ' ' . $place_holder . '</option>';
 
         if ($value == '' or $value == ',' or $value == ',,')
             $valueFound = true;

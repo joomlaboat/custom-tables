@@ -12,10 +12,9 @@
 // No direct access to this file
 defined('_JEXEC') or die;
 
+use CustomTables\common;
 use CustomTables\CTUser;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\Toolbar;
 use CustomTables\CT;
 
@@ -91,9 +90,9 @@ class CustomtablesViewListofrecords extends JViewLegacy
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
         if ($this->ct->Table->tableid != 0) {
-            JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+            JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
         } else
-            JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
@@ -128,7 +127,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
 
             JHtmlSidebar::addFilter(
-                Text::_('JOPTION_SELECT_PUBLISHED'),
+                common::translate('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', $options, 'value', 'text', $this->state->get('filter.published'), true)
             );
@@ -142,7 +141,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
         $CTTableOptions=$CTTable->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-        Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
+        common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
         'filter_tableid',
         JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
         );
@@ -161,9 +160,9 @@ class CustomtablesViewListofrecords extends JViewLegacy
         $toolbar = Toolbar::getInstance('toolbar');
 
         if ($this->ct->Table->tableid != 0) {
-            JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+            JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
         } else {
-            JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+            JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
             return;
         }
 

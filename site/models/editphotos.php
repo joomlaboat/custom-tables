@@ -226,7 +226,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         //Check file
         if (!$this->imagemethods->CheckImage($uploadedfile, JoomlaBasicMisc::file_upload_max_size()))//$this->maxfilesize
         {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'), 'error');
             unlink($uploadedfile);
             return false;
         }

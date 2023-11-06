@@ -72,7 +72,6 @@ class CustomtablesModelCustomtables extends JModelList
                             list($type, $name, $url) = $dwd;
                             $viewName = $name;
                             $alt = $name;
-                            $url = $url;
                             $image = $name . '.' . $type;
                             $name = 'COM_CUSTOMTABLES_DASHBOARD_' . CustomtablesHelper::safeString($name, 'U');
                         }

@@ -9,7 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Fields;
 
@@ -21,7 +22,7 @@ function importCSVfile($filename, $ct_tableid)
     if (file_exists($filename))
         return importCSVdata($filename, $ct_tableid);
     else
-        return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND');
+        return common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND');
 }
 
 function getLines($filename): ?array
@@ -91,7 +92,7 @@ function importCSVdata(string $filename, $ct_tableid): string
 {
     $arrayOfLines = getLines($filename);
     if ($arrayOfLines === null)
-        return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CSV_FILE_EMPTY');
+        return common::translate('COM_CUSTOMTABLES_CSV_FILE_EMPTY');
 
     $tablerow = ESTables::getTableRowByID($ct_tableid);
     $fields = Fields::getFields($ct_tableid, true);
@@ -105,7 +106,7 @@ function importCSVdata(string $filename, $ct_tableid): string
 
     foreach ($fieldList as $f) {
         if ($f == -2)
-            return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_NAMES_DO_NOT_MATCH');
+            return common::translate('COM_CUSTOMTABLES_FIELD_NAMES_DO_NOT_MATCH');
     }
 
     $offset = 0;

@@ -251,9 +251,9 @@ class Value
 
             case 'checkbox':
                 if ((int)$rowValue)
-                    return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES');
+                    return common::translate('COM_CUSTOMTABLES_YES');
                 else
-                    return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO');
+                    return common::translate('COM_CUSTOMTABLES_NO');
 
             case 'date':
             case 'lastviewtime':

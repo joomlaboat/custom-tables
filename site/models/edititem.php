@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\Filtering;
@@ -121,7 +120,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($startFrom == 0)
             JoomlaBasicMisc::array_insert($available_categories,
                 array("id" => 0,
-                    "name" => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ROOT'),
+                    "name" => common::translate('COM_CUSTOMTABLES_ROOT'),
                     "fullpath" => ''),
                 count($available_categories));
 
@@ -293,7 +292,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         $this->ct->Params->userIdField = $this->findUserIDField($this->ct->Params->userIdField);//to make sure that the field name is real and two userid fields can be used
 
         if (is_null($ct->Params->msgItemIsSaved))
-            $ct->Params->msgItemIsSaved = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED');
+            $ct->Params->msgItemIsSaved = common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
 
         $this->listing_id = $this->ct->Params->listing_id;
         //Load the record

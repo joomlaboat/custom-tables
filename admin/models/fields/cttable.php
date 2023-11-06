@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\database;
 use Joomla\CMS\Language\Text;
 
@@ -32,7 +33,7 @@ class JFormFieldCTTable extends JFormFieldList
         $options = array();
         if ($records) {
             if ($add_empty_option)
-                $options[] = JHtml::_('select.option', '', Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
+                $options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
 
             foreach ($records as $rec)
                 $options[] = JHtml::_('select.option', $rec->id, $rec->tabletitle);

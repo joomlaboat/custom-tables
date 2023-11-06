@@ -14,14 +14,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 JHtml::_('behavior.tooltip');
-//JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('dropdown.init');
 
 use CustomTables\common;
 use CustomTables\Integrity\IntegrityFields;
-use Joomla\CMS\Language\Text;
 
 if ($this->saveOrder && !empty($this->items)) {
     $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->tableid . '&tmpl=component';

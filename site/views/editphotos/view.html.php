@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 
@@ -23,7 +24,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
     {
         $user = new CTUser;
         if ($user->id == 0) {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
             return;
         }
 
@@ -51,7 +52,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 
         $htmlOut = '
 
-		<h2>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_LIST_OF_FOTOS') . '</h2>
+		<h2>' . common::translate('COM_CUSTOMTABLES_LIST_OF_FOTOS') . '</h2>
 		<table>
 			<thead>
 				<tr>
@@ -88,11 +89,11 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 						<table border="0" cellpadding="5" style="margin-left:5px;">
 							<tbody>
 								<tr>
-									<td>' . JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_TITLE") . ': </td>
+									<td>' . common::translate("COM_CUSTOMTABLES_TITLE") . ': </td>
 									<td><input type="text"  style="width: 150px;" name="esphototitle' . $image->photoid . '" id="esphototitle' . $image->photoid . '" value="' . $image->title . '"></td>
 								</tr>
 								<tr>
-									<td>' . JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_ORDER") . ': </td>
+									<td>' . common::translate("COM_CUSTOMTABLES_ORDER") . ': </td>
 									<td><input type="text"  style="width: 100px;" name="esphotoorder' . $image->photoid . '" id="esphotoorder' . $image->photoid . '" value="' . $image->ordering . '"></td>
 								</tr>
 							</tbody>

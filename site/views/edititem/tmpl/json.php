@@ -22,10 +22,11 @@ JHtml::_('behavior.formvalidator');
 JHtml::_('behavior.calendar');
 JHtml::_('bootstrap.popover');
 
+use CustomTables\common;
 use Joomla\CMS\Session\Session;
 
 if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading)
-    $response_object['page_title'] = JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle);
+    $response_object['page_title'] = common::translate($this->ct->Params->pageTitle);
 
 if (ob_get_contents())
     ob_end_clean();

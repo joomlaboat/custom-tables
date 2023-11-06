@@ -51,8 +51,8 @@ class Twig_Html_Tags
             return '';
         }
 
-        return '<span class="ctCatalogRecordCount">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND') . ': ' . $this->ct->Table->recordcount
-            . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S') . '</span>';
+        return '<span class="ctCatalogRecordCount">' . common::translate('COM_CUSTOMTABLES_FOUND') . ': ' . $this->ct->Table->recordcount
+            . ' ' . common::translate('COM_CUSTOMTABLES_RESULT_S') . '</span>';
     }
 
     function add($Alias_or_ItemId = ''): string
@@ -90,7 +90,7 @@ class Twig_Html_Tags
         if (!is_null($this->ct->Params->ModuleId))
             $link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
-        $alt = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD');
+        $alt = common::translate('COM_CUSTOMTABLES_ADD');
 
         if ($this->ct->Env->toolbarIcons != '')
             $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-plus-circle" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-plus-circle" title="' . $alt . '"></i>';
@@ -143,7 +143,7 @@ class Twig_Html_Tags
                     </script>
                     <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectname . '" id="' . $this->ct->Env->field_input_prefix . $objectname . '" value="" />
                     <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectname . '_filename" id="' . $this->ct->Env->field_input_prefix . $objectname . '_filename" value="" />
-			' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
+			' . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
                     </form>
                 </div>
 ';
@@ -183,7 +183,7 @@ class Twig_Html_Tags
             return '';
 
         $pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '', $this->ct->Env->version);
-        return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW') . ': ' . $pagination->getLimitBox($the_step);
+        return common::translate('COM_CUSTOMTABLES_SHOW') . ': ' . $pagination->getLimitBox($the_step);
     }
 
     function orderby()
@@ -198,9 +198,9 @@ class Twig_Html_Tags
             return '';
 
         if ($this->ct->Params->forceSortBy !== null and $this->ct->Params->forceSortBy != '')
-            $this->ct->errors[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED');
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED');
 
-        return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
+        return common::translate('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
     }
 
     function goback($defaultLabel = 'COM_CUSTOMTABLES_GO_BACK', $image_icon = '', $attribute = '', $returnto = '')
@@ -208,7 +208,7 @@ class Twig_Html_Tags
         if ($defaultLabel === null)
             $defaultLabel = 'COM_CUSTOMTABLES_GO_BACK';
 
-        $label = JoomlaBasicMisc::JTextExtended($defaultLabel);
+        $label = common::translate($defaultLabel);
 
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
@@ -284,7 +284,7 @@ class Twig_Html_Tags
             } else {
                 if (in_array($mode, $available_modes)) {
                     $rid = 'esToolBar_' . $mode . '_box_' . $this->ct->Table->tableid;
-                    $alt = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_' . strtoupper($mode) . '_SELECTED');
+                    $alt = common::translate('COM_CUSTOMTABLES_' . strtoupper($mode) . '_SELECTED');
 
                     if ($this->ct->Env->toolbarIcons != '') {
                         $icons = ['publish' => 'fa-check-circle', 'unpublish' => 'fa-ban', 'refresh' => 'fa-sync', 'delete' => 'fa-trash'];
@@ -357,10 +357,10 @@ class Twig_Html_Tags
 
         $onClick = 'window.open("' . $link . '","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no");return false;';
         if ($this->ct->Env->print == 1) {
-            $vlu = '<p><a href="#" onclick="window.print();return false;"><img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/print.png" alt="' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT') . '"  /></a></p>';
+            $vlu = '<p><a href="#" onclick="window.print();return false;"><img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/print.png" alt="' . common::translate('COM_CUSTOMTABLES_PRINT') . '"  /></a></p>';
         } else {
             if ($label == '')
-                $label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT');
+                $label = common::translate('COM_CUSTOMTABLES_PRINT');
 
             if ($linktype != '')
                 $vlu = '<a href="#" onclick=\'' . $onClick . '\'><i class="ba-btn-transition fas fa-print" data-icon="fas fa-print" title="' . $label . '"></i></a>';
@@ -452,7 +452,7 @@ class Twig_Html_Tags
                     'fieldname' => '_id',
                     'type' => '_id',
                     'typeparams' => '',
-                    'fieldtitle' . $this->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID'),
+                    'fieldtitle' . $this->ct->Languages->Postfix => common::translate('COM_CUSTOMTABLES_ID'),
                     'realfieldname' => $this->ct->Table->realtablename,
                     'isrequired' => false,
                     'defaultvalue' => null,
@@ -465,7 +465,7 @@ class Twig_Html_Tags
                     'fieldname' => '_published',
                     'type' => '_published',
                     'typeparams' => '',
-                    'fieldtitle' . $this->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED'),
+                    'fieldtitle' . $this->ct->Languages->Postfix => common::translate('COM_CUSTOMTABLES_PUBLISHED'),
                     'realfieldname' => 'listing_published',
                     'isrequired' => false,
                     'defaultvalue' => null,
@@ -501,7 +501,7 @@ class Twig_Html_Tags
 
         //Add control elements
         $fieldTitles = $this->getFieldTitles($list_of_fields);
-        $field_title = implode(' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR') . ' ', $fieldTitles);
+        $field_title = implode(' ' . common::translate('COM_CUSTOMTABLES_OR') . ' ', $fieldTitles);
         $cssClass = 'ctSearchBox';
 
         if ($class != '')
@@ -538,9 +538,9 @@ class Twig_Html_Tags
             $fieldname = $fieldname_pair[0];
 
             if ($fieldname == '_id')
-                $field_titles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
+                $field_titles[] = common::translate('COM_CUSTOMTABLES_ID');
             elseif ($fieldname == '_published')
-                $field_titles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED');
+                $field_titles[] = common::translate('COM_CUSTOMTABLES_PUBLISHED');
             else {
                 foreach ($this->ct->Table->fields as $fld) {
                     if ($fld['fieldname'] == $fieldname) {
@@ -589,7 +589,7 @@ class Twig_Html_Tags
         else
             $class .= ' btn button-apply btn-primary';
 
-        $default_Label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH');
+        $default_Label = common::translate('COM_CUSTOMTABLES_SEARCH');
 
         if ($label == strip_tags($label)) {
             if ($this->ct->Env->toolbarIcons != '') {
@@ -627,7 +627,7 @@ class Twig_Html_Tags
         else
             $class .= ' btn button-apply btn-primary';
 
-        $default_Label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCHRESET');
+        $default_Label = common::translate('COM_CUSTOMTABLES_SEARCHRESET');
         if ($label == strip_tags($label)) {
             if ($this->ct->Env->toolbarIcons != '') {
                 $img = '<i class=\'' . $this->ct->Env->toolbarIcons . ' fa-times\' data-icon=\'' . $this->ct->Env->toolbarIcons . ' fa-times\' title=\'' . $label . '\'></i>';
@@ -840,7 +840,7 @@ class Twig_Html_Tags
     protected function renderSaveButton($optional_class, $title, $formName): string
     {
         if ($title == '')
-            $title = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVE');
+            $title = common::translate('COM_CUSTOMTABLES_SAVE');
 
         return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_save", $this->ct->Env->encoded_current_url,
             true, "saveandcontinue");
@@ -877,7 +877,7 @@ class Twig_Html_Tags
     protected function renderSaveAndCloseButton($optional_class, $title, $redirectlink, $formName)
     {
         if ($title == '')
-            $title = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEANDCLOSE');
+            $title = common::translate('COM_CUSTOMTABLES_SAVEANDCLOSE');
 
         return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandclose", base64_encode($redirectlink), true, "save");
     }
@@ -885,7 +885,7 @@ class Twig_Html_Tags
     protected function renderSaveAndPrintButton($optional_class, $title, $redirectlink, $formName)
     {
         if ($title == '')
-            $title = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NEXT');
+            $title = common::translate('COM_CUSTOMTABLES_NEXT');
 
         return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandprint", base64_encode($redirectlink), true, "saveandprint");
     }
@@ -893,7 +893,7 @@ class Twig_Html_Tags
     protected function renderSaveAsCopyButton($optional_class, $title, $redirectlink, $formName)
     {
         if ($title == '')
-            $title = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEASCOPYANDCLOSE');
+            $title = common::translate('COM_CUSTOMTABLES_SAVEASCOPYANDCLOSE');
 
         return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandcopy", base64_encode($redirectlink), true, "saveascopy");
     }
@@ -904,7 +904,7 @@ class Twig_Html_Tags
             return '';
 
         if ($title == '')
-            $title = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CANCEL');
+            $title = common::translate('COM_CUSTOMTABLES_CANCEL');
 
         if ($optional_class != '')
             $cancel_class = $optional_class;
@@ -917,7 +917,7 @@ class Twig_Html_Tags
     protected function renderDeleteButton($optional_class, $title, $redirectlink, $formName)
     {
         if ($title == '')
-            $title = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE');
+            $title = common::translate('COM_CUSTOMTABLES_DELETE');
 
         if ($this->ct->Env->frmt == 'json')
             return $title;
@@ -929,7 +929,7 @@ class Twig_Html_Tags
 
         return '<input id="customtables_button_delete" type="button" class="' . $class . '" value="' . $title . '"
 				onClick=\'
-                if (confirm("' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE') . '"))
+                if (confirm("' . common::translate('COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE') . '"))
                 {
                     this.form.task.value="delete";
                     ' . ($redirectlink != '' ? 'this.form.returnto.value="' . base64_encode($redirectlink) . '";' : '') . '

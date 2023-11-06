@@ -16,9 +16,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 // import Joomla view library
 jimport('joomla.application.component.view');
 
+use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\Language\Text;
 
 /**
  * Customtables View class

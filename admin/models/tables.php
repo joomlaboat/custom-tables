@@ -211,7 +211,7 @@ class CustomtablesModelTables extends JModelAdmin
         }
 
         if (empty($pks)) {
-            $this->setError(Text::_('JGLOBAL_NO_ITEM_SELECTED'));
+            $this->setError(common::translate('JGLOBAL_NO_ITEM_SELECTED'));
             return false;
         }
 
@@ -226,7 +226,7 @@ class CustomtablesModelTables extends JModelAdmin
         $this->batchSet = true;
 
         if (!$this->canDo->get('core.batch')) {
-            $this->setError(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+            $this->setError(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
             return false;
         }
 
@@ -259,7 +259,7 @@ class CustomtablesModelTables extends JModelAdmin
         }
 
         if (!$done) {
-            $this->setError(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+            $this->setError(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
 
             return false;
         }

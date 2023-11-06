@@ -115,7 +115,7 @@ class Edit
 
         if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
             $result .= '<div class="page-header' . strip_tags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
-                . JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle) . '</h2></div>';
+                . common::translate($this->ct->Params->pageTitle) . '</h2></div>';
         }
 
         $listing_id = $this->row[$this->ct->Table->realidfieldname] ?? 0;

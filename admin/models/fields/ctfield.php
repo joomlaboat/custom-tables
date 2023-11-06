@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\database;
 use CustomTables\DataTypes;
 use Joomla\CMS\Language\Text;
@@ -51,7 +52,7 @@ class JFormFieldCTField extends JFormFieldList
                 // Translate the type selection
                 $text = $translations[$type];
                 // Now add the type and its text to the options array
-                $_filter[] = JHtml::_('select.option', $type, Text::_($text));
+                $_filter[] = JHtml::_('select.option', $type, common::translate($text));
             }
         }
         return $_filter;

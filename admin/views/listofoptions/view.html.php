@@ -14,7 +14,6 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\String\StringHelper;
 
 \defined('_JEXEC') or die;
@@ -38,7 +37,7 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 
         $this->languages = $this->ct->Languages->LanguageList;
         $document = Factory::getDocument();
-        $document->setTitle(Text::_('View List Items'));
+        $document->setTitle(common::translate('View List Items'));
 
         $this->limitstart = common::inputGetInt('limitstart', '0');
         $this->items = $this->get('Items');
@@ -61,7 +60,7 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 
     protected function addToolBar()
     {
-        JToolBarHelper::title(Text::_('Custom Tables - List'), 'menu.png');
+        JToolBarHelper::title(common::translate('Custom Tables - List'), 'menu.png');
         JToolBarHelper::addNew('options.add');
         JToolBarHelper::editList('options.edit');
         JToolBarHelper::custom('listofoptions.copy', 'copy.png', 'copy_f2.png', 'Copy', true);

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 
@@ -21,8 +22,9 @@ class ESMultiSelector
     function getMultiString($parent, $prefix)
     {
         $parentid = Tree::getOptionIdFull($parent);
-        $a = $this->getMultiSelector($parentid, $parent, $prefix);
-        return implode(',', $a);
+        return $this->getMultiSelector($parentid, $parent, $prefix);
+        //$a = $this->getMultiSelector($parentid, $parent, $prefix);
+        //return implode(",", $a);
     }
 
     function getMultiSelector($parentid, $parentname, $langpostfix, $ObjectName, &$ItemList, &$count, $field_value, $place_holder = '')
@@ -67,8 +69,8 @@ class ESMultiSelector
                 if ($count_child > 1) {
                     $result .= '
 				<div style="margin-left:100px">
-				<a href=\'javascript:ESCheckAll("' . $ObjectName . '",Array(' . $temp_Ids . '))\'>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CHECK_ALL') . '</a>&nbsp;&nbsp;
-				<a href=\'javascript:ESUncheckAll("' . $ObjectName . '",Array(' . $temp_Ids . '))\'>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNCHECK_ALL') . '</a>
+				<a href=\'javascript:ESCheckAll("' . $ObjectName . '",Array(' . $temp_Ids . '))\'>' . common::translate('COM_CUSTOMTABLES_CHECK_ALL') . '</a>&nbsp;&nbsp;
+				<a href=\'javascript:ESUncheckAll("' . $ObjectName . '",Array(' . $temp_Ids . '))\'>' . common::translate('COM_CUSTOMTABLES_UNCHECK_ALL') . '</a>
 				</div>';
                 }
 

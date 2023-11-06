@@ -14,8 +14,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\database;
-use Joomla\CMS\Language\Text;
 
 function renderDependencies($table_id, $tablename): string
 {

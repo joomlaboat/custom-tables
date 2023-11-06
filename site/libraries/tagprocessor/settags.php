@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 
@@ -102,13 +103,13 @@ class tagProcessor_Set
             $opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
             if (!$ct->Env->isModal)
-                $document->setTitle(JoomlaBasicMisc::JTextExtended($opts[0]));
+                $document->setTitle(common::translate($opts[0]));
 
             $htmlresult = str_replace($fItem, '', $htmlresult);
             $i++;
         }
 
         if (count($fList) == 0 and $ct->Params->pageTitle !== null)
-            $document->setTitle(JoomlaBasicMisc::JTextExtended($ct->Params->pageTitle));
+            $document->setTitle(common::translate($ct->Params->pageTitle));
     }
 }

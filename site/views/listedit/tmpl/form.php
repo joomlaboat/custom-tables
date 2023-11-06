@@ -29,7 +29,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
         // do field validation
         if (form.optionname.value.trim() === "") {
-            alert("<?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PROVIDE_OPTION_NAME', true); ?>");
+            alert("<?php echo common::translate('COM_CUSTOMTABLES_PROVIDE_OPTION_NAME', true); ?>");
         } else {
             submitform(pressbutton);
         }
@@ -63,7 +63,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                 <tr>
                     <td style="width:150px;" class="key">
                         <label for="optionname">
-                            <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_NAME'); ?>
+                            <?php echo common::translate('COM_CUSTOMTABLES_OPTION_NAME'); ?>
 
                         </label><br/>
                         <small>This will be visible if Title not set.</small>
@@ -105,7 +105,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                     <tr>
                         <td style="width:150px;" class="key">
                             <label for="title<?php echo $postfix; ?>">
-                                <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_TITLE') . $lang->caption; ?>
+                                <?php echo common::translate('COM_CUSTOMTABLES_TITLE') . $lang->caption; ?>
                             </label><br/>
                         </td>
                         <td>
@@ -122,7 +122,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                 <tr>
                     <td style="width:150px" class="key">
                         <label for="parentid">
-                            <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PARENT_FIELD'); ?>
+                            <?php echo common::translate('COM_CUSTOMTABLES_PARENT_FIELD'); ?>
 
                         </label><br/>
                     </td>
@@ -136,23 +136,23 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                 <tr>
                     <td class="key">
                         <label for="isselectable">
-                            <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IS_SELECTABLE'); ?>
+                            <?php echo common::translate('COM_CUSTOMTABLES_IS_SELECTABLE'); ?>
                         </label>
                     </td>
                     <td>
                         <input type="radio" value="1" name="isselectable" id="isselectable"
                                size="40" <?php echo($this->optionRecord->isselectable ? 'CHECKED' : ''); ?> >
-                        <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES'); ?>
+                        <?php echo common::translate('COM_CUSTOMTABLES_YES'); ?>
 
                         <input type="radio" value="0" name="isselectable" id="isselectable"
                                size="40" <?php echo(!$this->optionRecord->isselectable ? 'CHECKED' : ''); ?> >
-                        <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO'); ?>
+                        <?php echo common::translate('COM_CUSTOMTABLES_NO'); ?>
                     </td>
                 </tr>
                 <tr>
                     <td class="key">
                         <label>
-                            <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE'); ?>
+                            <?php echo common::translate('COM_CUSTOMTABLES_IMAGE'); ?>
                         </label><br/>
                     </td>
                     <td>
@@ -162,11 +162,11 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                                     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size; ?>"/>
                                     <input name="imagefile" type="file"/>
                                     <BR><BR>
-                                    <?php echo JoomlaBasicMisc::JTextExtended("MIN SIZE"); ?>: 10px x 10px<br/>
-                                    <?php echo JoomlaBasicMisc::JTextExtended("MAX SIZE"); ?>: 1000px x 1000px<br/>
-                                    <?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size); ?>
+                                    <?php echo common::translate("MIN SIZE"); ?>: 10px x 10px<br/>
+                                    <?php echo common::translate("MAX SIZE"); ?>: 1000px x 1000px<br/>
+                                    <?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size); ?>
                                     <br/>
-                                    <?php echo JoomlaBasicMisc::JTextExtended("FORMAT"); ?>: JPEG, GIF, PNG, WEBP
+                                    <?php echo common::translate("FORMAT"); ?>: JPEG, GIF, PNG, WEBP
                                 </td>
                                 <td>
                                     <?php
@@ -226,7 +226,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                 <tr>
                     <td class="key">
                         <label for="imageparams">
-                            <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_PARAMETERS'); ?>
+                            <?php echo common::translate('COM_CUSTOMTABLES_IMAGE_PARAMETERS'); ?>
 
                         </label><br/>
                     </td>
@@ -240,7 +240,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                 <tr>
                     <td class="key">
                         <label for="optionalcode">
-                            <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTIONAL_CONTENT'); ?>
+                            <?php echo common::translate('COM_CUSTOMTABLES_OPTIONAL_CONTENT'); ?>
                             <br/><small>Used for Home Page layout.</small>
                         </label>
                     </td>
@@ -258,7 +258,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                 <tr>
                     <td class="key">
                         <label for="link">
-                            <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTIONAL_LINK'); ?>
+                            <?php echo common::translate('COM_CUSTOMTABLES_OPTIONAL_LINK'); ?>
 
                         </label><br/>
                     </td>

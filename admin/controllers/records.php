@@ -115,16 +115,16 @@ class CustomtablesControllerRecords extends JControllerForm
         $redirect = 'index.php?option=' . $this->option;
 
         if ($this->task == 'apply') {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'), 'success');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'success');
             $redirect .= '&view=records&layout=edit&id=' . $listing_id . '&tableid=' . (int)$tableId;
         } elseif ($this->task == 'save2copy') {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'), 'success');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORDS_COPIED'), 'success');
             $redirect .= '&view=records&task=records.edit&tableid=' . (int)$tableId . '&id=' . $ct->Params->listing_id;
         } elseif ($this->task == 'save2new') {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'), 'success');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'success');
             $redirect .= '&view=records&task=records.edit&tableid=' . (int)$tableId;
         } else {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'), 'success');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'success');
             $redirect .= '&view=listofrecords&tableid=' . (int)$tableId;
         }
 

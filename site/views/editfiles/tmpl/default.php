@@ -30,11 +30,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
             }
         }
         if (count == 0) {
-            alert("<?php echo JoomlaBasicMisc::JTextExtended("Select Files First"); ?>");
+            alert("<?php echo common::translate("Select Files First"); ?>");
             return false;
         }
 
-        if (confirm("<?php echo JoomlaBasicMisc::JTextExtended("Are you sure to delete?"); ?> " + count + " <?php echo JoomlaBasicMisc::JTextExtended("file(s)"); ?>?")) {
+        if (confirm("<?php echo common::translate("Are you sure to delete?"); ?> " + count + " <?php echo common::translate("file(s)"); ?>?")) {
 
             document.getElementById("fileedit_task").value = "delete";
             document.getElementById("fileids").value = fileids;
@@ -79,10 +79,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     $toolbar = '
 	<div style="height:40px;">
 		<div style="float:left;">
-			<input type="button" class="button" value="' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FINISH') . '" onClick=\'this.form.task.value="cancel";this.form.submit()\'>
+			<input type="button" class="button" value="' . common::translate('COM_CUSTOMTABLES_FINISH') . '" onClick=\'this.form.task.value="cancel";this.form.submit()\'>
 		</div>
 		<div style="float:right;">
-			<input type="button" class="button" value="' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE') . '" onClick=\'DeleteFiles()\'>
+			<input type="button" class="button" value="' . common::translate('COM_CUSTOMTABLES_DELETE') . '" onClick=\'DeleteFiles()\'>
 		</div>
 	</div>
 	';
@@ -92,24 +92,24 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     ?>
 
     <fieldset class="adminform">
-        <legend><?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_FILE_MANAGER"); ?></legend>
+        <legend><?php echo common::translate("COM_CUSTOMTABLES_FILE_MANAGER"); ?></legend>
 
         <div name="addfileblock" id="addfileblock" style="display:block;">
-            <h2><?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_ADD_NEW_FILE"); ?></h2>
+            <h2><?php echo common::translate("COM_CUSTOMTABLES_ADD_NEW_FILE"); ?></h2>
             <table class="bigtext">
                 <tr>
-                    <td><?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_ADD_NEW_FILE"); ?>:<br/></td>
+                    <td><?php echo common::translate("COM_CUSTOMTABLES_ADD_NEW_FILE"); ?>:<br/></td>
                     <td>
                         <input name="uploadedfile" type="file"/><input type="button" class="button"
-                                                                       value="<?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_UPLOAD_FILE"); ?>"
+                                                                       value="<?php echo common::translate("COM_CUSTOMTABLES_UPLOAD_FILE"); ?>"
                                                                        onClick='this.form.task.value="add";this.form.submit()'>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?>
+                        <?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?>
                         <br/>
-                        <?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_FORMATS"); ?>:
+                        <?php echo common::translate("COM_CUSTOMTABLES_FORMATS"); ?>:
                         <b><?php echo str_replace(' ', ', ', $this->allowedExtensions); ?></b>
                     </td>
                 </tr>

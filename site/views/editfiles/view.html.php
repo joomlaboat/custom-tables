@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 
@@ -30,7 +31,7 @@ class CustomTablesViewEditFiles extends JViewLegacy
         $user = new CTUser();
 
         if ($user->id == 0) {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
             return;
         }
 
@@ -54,12 +55,12 @@ class CustomTablesViewEditFiles extends JViewLegacy
     {
         $HTMLOut = '
 		
-		<h2>' . JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_FILE_LIST_OF_FILES") . '</h2>
+		<h2>' . common::translate("COM_CUSTOMTABLES_FILE_LIST_OF_FILES") . '</h2>
 		<table style="width:100%;border:none;">
 			<thead>
 				<tr>
 					<th style="vertical-align: top; text-align: center; width:40px;">
-					    <input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) style="text-align: left; vertical-align:top"> ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT_ALL') . '</th>
+					    <input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) style="text-align: left; vertical-align:top"> ' . common::translate('COM_CUSTOMTABLES_SELECT_ALL') . '</th>
 					<th style="vertical-align: top; text-align: center; "></th>
 				</tr>
 			</thead>

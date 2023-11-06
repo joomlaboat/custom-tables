@@ -12,11 +12,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CTUser;
 use CustomTables\database;
-use Joomla\CMS\Language\Text;
 use CustomTables\Fields;
-use Joomla\CMS\Factory;
 
 $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=" . $this->tableid;
 $dbPrefix = database::getDBPrefix();
@@ -123,13 +122,13 @@ $hashRealTableName = database::realTableName($this->ct->Table->realtablename);
             </div>
         </td>
         <td class="hidden-phone">
-            <?php echo Text::_($item->type); ?>
+            <?php echo common::translate($item->type); ?>
         </td>
         <td class="hidden-phone">
             <?php echo str_replace('****apos****', "'", str_replace('****quote****', '"', $this->escape($item->typeparams))); ?>
         </td>
         <td class="hidden-phone">
-            <?php echo Text::_($item->isrequired); ?>
+            <?php echo common::translate($item->isrequired); ?>
         </td>
         <td class="hidden-phone">
             <?php echo $this->escape($this->ct->Table->tabletitle); ?>

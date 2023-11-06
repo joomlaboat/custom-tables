@@ -12,7 +12,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 use CustomTables\TwigProcessor;
 
@@ -48,7 +48,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
                 <?php
                 $iconClass = '';
                 if (!$this->saveOrder)
-                    $iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
+                    $iconClass = ' inactive" title="' . common::translate('JORDERINGDISABLED');
                 ?>
 
                 <span class="sortable-handler<?php echo $iconClass; ?>">

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\database;
 use Joomla\CMS\Language\Text;
 
@@ -29,7 +30,7 @@ class JFormFieldAnyTables extends JFormFieldList
     protected function getOptions()
     {
         $options = array();
-        $options[] = JHtml::_('select.option', '', Text::_('COM_CUSTOMTABLES_SELECT'));
+        $options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_SELECT'));
 
         $tables = $this->getListOfExistingTables();
 

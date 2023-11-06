@@ -12,10 +12,9 @@
 // No direct access to this file
 \defined('_JEXEC') or die;
 
+use CustomTables\common;
 use CustomTables\CT;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
@@ -81,7 +80,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 
     protected function addToolBar_3()
     {
-        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
+        JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
 
         if ($this->canCreate) {
             JToolBarHelper::addNew('layouts.add');
@@ -121,7 +120,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 
                         /*
                         JHtmlSidebar::addFilter(
-                            Text::_('JOPTION_SELECT_PUBLISHED'),
+                            common::translate('JOPTION_SELECT_PUBLISHED'),
                             'filter_published',
                             JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
                         );
@@ -132,7 +131,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
                 $CTLayoutTypeOptions = $CTLayoutType->getOptions(); // works only if you set your field getOptions on public!!
 
                 JHtmlSidebar::addFilter(
-                    Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
+                    common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
                     'filter_layouttype',
                     JHtml::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
                 );
@@ -144,7 +143,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         $CTTableOptions = $CTTable->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-            Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
+            common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
             'filter_tableid',
             JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
         );
@@ -159,7 +158,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         // Get the toolbar object instance
         $toolbar = Toolbar::getInstance('toolbar');
 
-        ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
 
         if ($this->canCreate)
             $toolbar->addNew('layouts.add');

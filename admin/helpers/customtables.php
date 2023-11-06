@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 
 use \Joomla\CMS\Component\ComponentHelper;
@@ -116,15 +117,15 @@ abstract class CustomtablesHelper
         $ct = new CT;
 
         // load the submenus to sidebar
-        JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_DASHBOARD'), 'index.php?option=com_customtables&view=customtables', $submenu === 'customtables');
+        JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_DASHBOARD'), 'index.php?option=com_customtables&view=customtables', $submenu === 'customtables');
 
         if ($ct->Env->advancedTagProcessor)
-            JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_LISTOFCATEGORIES'), 'index.php?option=com_customtables&view=listofcategories', $submenu === 'listofcategories');
+            JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_LISTOFCATEGORIES'), 'index.php?option=com_customtables&view=listofcategories', $submenu === 'listofcategories');
 
-        JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_LISTOFTABLES'), 'index.php?option=com_customtables&view=listoftables', $submenu === 'listoftables');
-        JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_LISTOFLAYOUTS'), 'index.php?option=com_customtables&view=listoflayouts', $submenu === 'listoflayouts');
-        JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_DATABASECHECK'), 'index.php?option=com_customtables&view=databasecheck', $submenu === 'databasecheck');
-        JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_DOCUMENTATION'), 'index.php?option=com_customtables&view=documentation', $submenu === 'documentation');
+        JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_LISTOFTABLES'), 'index.php?option=com_customtables&view=listoftables', $submenu === 'listoftables');
+        JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_LISTOFLAYOUTS'), 'index.php?option=com_customtables&view=listoflayouts', $submenu === 'listoflayouts');
+        JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_DATABASECHECK'), 'index.php?option=com_customtables&view=databasecheck', $submenu === 'databasecheck');
+        JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_DOCUMENTATION'), 'index.php?option=com_customtables&view=documentation', $submenu === 'documentation');
     }
 
     /**

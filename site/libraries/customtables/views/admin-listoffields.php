@@ -18,8 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use JFilterInput;
 use JHtml;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
 
 class ListOfFields

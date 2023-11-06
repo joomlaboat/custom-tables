@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\CTUser;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 
@@ -32,7 +31,7 @@ switch ($task) {
 
     case 'cancel':
 
-        $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_CANCELED');
+        $msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
         $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
         $this->setRedirect($link, $msg);
 
@@ -58,11 +57,11 @@ function CustomTablesDelete($this_)
     if (!$ct->CheckAuthorization(3)) {
         // not authorized
         if ($ct->Env->clean == 1) {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
             return false;
         } else {
             $link = $edit_model->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $ct->Env->encoded_current_url;
-            $this_->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+            $this_->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
         }
         return true;
     } else {
@@ -79,12 +78,12 @@ function CustomTablesDelete($this_)
             if ($ct->Env->clean == 1)
                 die('deleted');
             else
-                $this_->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'));
+                $this_->setRedirect($link, common::translate('COM_CUSTOMTABLES_RECORDS_DELETED'));
         } else {
             if ($ct->Env->clean == 1)
                 die('error');
             else
-                $this_->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'));
+                $this_->setRedirect($link, common::translate('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'));
         }
     }
     return true;
@@ -104,7 +103,7 @@ function CustomTablesSave($task, $this_)
 
     if (!$ct->CheckAuthorization(1)) {
         $link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL());
-        $this_->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+        $this_->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
     } else {
         $msg_ = '';
         $isOk = true;
@@ -133,7 +132,7 @@ function CustomTablesSave($task, $this_)
             elseif ($msg_ != '')
                 $msg = $msg_;
             elseif ($ct->Params->msgItemIsSaved == '')
-                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED');
+                $msg = common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
             else
                 $msg = $ct->Params->msgItemIsSaved;
 
@@ -189,7 +188,7 @@ function CustomTablesSave($task, $this_)
                     $status = 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no';
 
                     echo '<p style="text-align:center;">
-						<input type="button" class="button" value="' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT') . '"
+						<input type="button" class="button" value="' . common::translate('COM_CUSTOMTABLES_PRINT') . '"
 					onClick=\'window.open("' . $link . '","win2","' . $status . '"); return false; \'>
 					</p>';
 
@@ -207,7 +206,7 @@ function CustomTablesSave($task, $this_)
             }
         } else {
             if ($msg_ == 'COM_CUSTOMTABLES_INCORRECT_CAPTCHA') {
-                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_INCORRECT_CAPTCHA');
+                $msg = common::translate('COM_CUSTOMTABLES_INCORRECT_CAPTCHA');
                 Factory::getApplication()->enqueueMessage($msg, 'error');
                 echo '
 				<script>
@@ -216,10 +215,10 @@ setTimeout("history.go(-1)", 2000);
 
             } else {
                 if ($link != '') {
-                    $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_NOT_SAVED');
+                    $msg = common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED');
                     $this_->setRedirect($link, $msg, 'error');
                 } else
-                    Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_NOT_SAVED'), 'error');
+                    Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'), 'error');
             }
         }
     }

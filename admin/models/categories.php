@@ -187,7 +187,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (empty($pks)) {
-            Factory::getApplication()->enqueueMessage(Text::_('JGLOBAL_NO_ITEM_SELECTED'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('JGLOBAL_NO_ITEM_SELECTED'), 'error');
             return false;
         }
 
@@ -202,7 +202,7 @@ class CustomtablesModelCategories extends JModelAdmin
         $this->batchSet = true;
 
         if (!$this->canDo->get('core.batch')) {
-            Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
             return false;
         }
 
@@ -234,7 +234,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (!$done) {
-            Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
             return false;
         }
 
@@ -260,7 +260,7 @@ class CustomtablesModelCategories extends JModelAdmin
      *
      * @since 12.2
      */
-    protected function batchCopy($values, $pks, $contexts)
+    protected function batchCopy($value, $pks, $contexts)
     {
         if (empty($this->batchSet)) {
             // Set some needed variables.
@@ -276,13 +276,13 @@ class CustomtablesModelCategories extends JModelAdmin
         // get list of unique fields
         $uniqueFields = $this->getUniqueFields();
         // remove move_copy from array
-        unset($values['move_copy']);
+        unset($value['move_copy']);
 
         // make sure published is set
         if (!isset($values['published'])) {
-            $values['published'] = 0;
+            $value['published'] = 0;
         } elseif (isset($values['published']) && !$this->canDo->get('core.edit.state')) {
-            $values['published'] = 0;
+            $value['published'] = 0;
         }
 
         $newIds = array();
@@ -320,10 +320,10 @@ class CustomtablesModelCategories extends JModelAdmin
             }
 
             // insert all set values
-            if (CustomtablesHelper::checkArray($values)) {
-                foreach ($values as $key => $value) {
-                    if (strlen($value) > 0 && isset($this->table->$key)) {
-                        $this->table->$key = $value;
+            if (CustomtablesHelper::checkArray($value)) {
+                foreach ($value as $key => $value_) {
+                    if (strlen($value_) > 0 && isset($this->table->$key)) {
+                        $this->table->$key = $value_;
                     }
                 }
             }
@@ -413,7 +413,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (!$this->canDo->get('core.edit') && !$this->canDo->get('core.batch')) {
-            Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
             return false;
         }
 
@@ -429,7 +429,7 @@ class CustomtablesModelCategories extends JModelAdmin
         // Parent exists so we proceed
         foreach ($pks as $pk) {
             if (!$user->authorise('core.edit', $contexts[$pk])) {
-                Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
+                Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
                 return false;
             }
 
@@ -441,7 +441,7 @@ class CustomtablesModelCategories extends JModelAdmin
                     return false;
                 } else {
                     // Not fatal error
-                    Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
+                    Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
                     continue;
                 }
             }
@@ -650,25 +650,5 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         return $item;
-    }
-
-    /**
-     * Method to change the title
-     *
-     * @param string $title The title.
-     *
-     * @return array Contains the modified title and alias.
-     *
-     */
-    protected function _generateNewTitle($title)
-    {
-        // Alter the title
-        $table = $this->getTable();
-
-        while ($table->load(array('title' => $title))) {
-            $title = StringHelper::increment($title);
-        }
-
-        return $title;
     }
 }

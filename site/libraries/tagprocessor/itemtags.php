@@ -166,7 +166,7 @@ class tagProcessor_Item
             elseif ($options[$i] == 'boolean')
                 $vlu = $row['listing_published'] == 1 ? 'true' : 'false';
             else
-                $vlu = $row['listing_published'] == 1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO');
+                $vlu = $row['listing_published'] == 1 ? common::translate('COM_CUSTOMTABLES_YES') : common::translate('COM_CUSTOMTABLES_NO');
 
             $htmlresult = str_replace($fItem, $vlu, $htmlresult);
             $i++;

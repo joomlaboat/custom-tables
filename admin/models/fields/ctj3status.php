@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -25,11 +26,11 @@ class JFormFieldctj3status extends JFormFieldList
     {
         $options = [];
 
-        $options[] = JHtml::_('select.option', '', Text::_('JOPTION_SELECT_PUBLISHED'));
-        $options[] = JHtml::_('select.option', 1, Text::_('JPUBLISHED'));
-        $options[] = JHtml::_('select.option', 0, Text::_('JUNPUBLISHED'));
-        $options[] = JHtml::_('select.option', -2, Text::_('JTRASHED'));
-        $options[] = JHtml::_('select.option', '*', Text::_('JALL'));
+        $options[] = JHtml::_('select.option', '', common::translate('JOPTION_SELECT_PUBLISHED'));
+        $options[] = JHtml::_('select.option', 1, common::translate('JPUBLISHED'));
+        $options[] = JHtml::_('select.option', 0, common::translate('JUNPUBLISHED'));
+        $options[] = JHtml::_('select.option', -2, common::translate('JTRASHED'));
+        $options[] = JHtml::_('select.option', '*', common::translate('JALL'));
 
         return $options;
     }

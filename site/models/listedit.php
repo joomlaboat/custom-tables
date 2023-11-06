@@ -82,14 +82,14 @@ class CustomTablesModelListEdit extends JModel
             if ($filename == '') {
                 if (common::inputGetCmd('image_delete') == 'true') {
                     if ($ExistingImage !== null)
-                        $imagemethods->DeleteExistingSingleImage($ExistingImage, $imagefolder, $imageparams, '-options', $fieldname);
+                        $imagemethods->DeleteExistingSingleImage($ExistingImage, $imagefolder, $imageparams, '-options', $fieldname, 'id');
                 }
             } else {
                 $imageparams = common::inputGetString('imageparams');
                 if (strlen($imageparams) == 0)
                     $imageparams = Tree::getHeritageInfo(common::inputGet('parentid', 0, 'INT'), 'imageparams');
 
-                $value = $imagemethods->UploadSingleImage($ExistingImage, $fieldname, $imagefolder, $imageparams, '-options');
+                $value = $imagemethods->UploadSingleImage($ExistingImage, $fieldname, $imagefolder, $imageparams, '-options' . 'id');
             }
         }
         if ($value != 0)

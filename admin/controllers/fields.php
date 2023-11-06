@@ -35,7 +35,7 @@ class CustomtablesControllerFields extends JControllerForm
 
     public function batch($model = null)
     {
-        JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        JSession::checkToken() or jexit(common::translate('JINVALID_TOKEN'));
 
         // Set the model
         $model = $this->getModel('Fields', '', array());

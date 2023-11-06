@@ -21,7 +21,6 @@ use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
 
 /**

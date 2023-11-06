@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 
@@ -31,7 +32,7 @@ class CustomTablesViewEditItem extends JViewLegacy
 
         if (!$this->ct->CheckAuthorization(1)) {
             //not authorized
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
             return false;
         }
 

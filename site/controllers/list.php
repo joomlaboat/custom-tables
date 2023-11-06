@@ -35,10 +35,10 @@ switch (common::inputGet('task', '', 'CMD')) {
 
         $link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
         if ($model->store()) {
-            $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_SAVED');
+            $msg = common::translate('COM_CUSTOMTABLES_OPTION_SAVED');
             $this->setRedirect($link, $msg);
         } else {
-            $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_NOT_SAVED');
+            $msg = common::translate('COM_CUSTOMTABLES_OPTION_NOT_SAVED');
             $this->setRedirect($link, $msg, 'error');
         }
 
@@ -69,7 +69,7 @@ switch (common::inputGet('task', '', 'CMD')) {
         ArrayHelper::toInteger($cid);
 
         if (!count($cid)) {
-            $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTIONS_NOT_SELECTED'));
+            $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_OPTIONS_NOT_SELECTED'));
             return false;
         }
 

@@ -50,14 +50,14 @@ public function getOptions()
         $translations = $Layouts->layoutTypeTranslation();
 
         $results = array_unique($results);
-        $options[] = JHtml::_('select.option', '', Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'));
+        $options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'));
 
         foreach ($results as $layoutType) {
             // Translate the layouttype selection
             if ((int)$layoutType != 0) {
                 $text = $translations[$layoutType];
                 // Now add the layouttype and its text to the options array
-                $options[] = JHtml::_('select.option', $layoutType, Text::_($text));
+                $options[] = JHtml::_('select.option', $layoutType, common::translate($text));
             }
         }
     }

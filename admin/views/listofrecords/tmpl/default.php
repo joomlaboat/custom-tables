@@ -13,7 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if ($this->ordering_realfieldname != '') {
     $saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
@@ -54,7 +54,7 @@ if ($this->ordering_realfieldname != '') {
             <?php if (empty($this->items)): ?>
                 <?php //echo $this->loadTemplate('toolbar');?>
                 <div class="alert alert-no-items">
-                    <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                    <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
             <?php else : ?>
 
@@ -69,7 +69,7 @@ if ($this->ordering_realfieldname != '') {
                 'bootstrap.renderModal',
                 'collapseModal',
                 array(
-                    'title' => Text::_('COM_CUSTOMTABLES_LISTOFRECORDS_BATCH_OPTIONS'),
+                    'title' => common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_BATCH_OPTIONS'),
                     'footer' => $this->loadTemplate('batch_footer')
                 ),
                 $this->loadTemplate('batch_body')

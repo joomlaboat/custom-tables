@@ -15,8 +15,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\database;
-use Joomla\CMS\Language\Text;
 use \JoomlaBasicMisc;
 
 class Tree
@@ -133,10 +133,9 @@ class Tree
 
         $title = "";
         foreach ($names as $optionname) {
-            $optionname = $optionname;
+
             if ($optionname == '')
                 break;
-
 
             $parentid = Tree::getOptionTitle($optionname, $parentid, $title, $langpostfix);
         }

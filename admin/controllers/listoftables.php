@@ -48,7 +48,7 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 
             $msg .= '&nbsp;&nbsp;<a href="' . $download_link . '" target="_blank">Download (Click Save Link As...)</a>';
         } else {
-            $msg = Text::_('COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT');
+            $msg = common::translate('COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT');
         }
 
         Factory::getApplication()->enqueueMessage($msg, 'success');

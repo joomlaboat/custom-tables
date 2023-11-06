@@ -127,7 +127,7 @@ class Twig_Record_Tags
         elseif ($type == 'custom')
             return $this->ct->Table->record['listing_published'] == 1 ? $customTextPositive : $customTextNegative;
         else
-            return (int)$this->ct->Table->record['listing_published'] == 1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO');
+            return (int)$this->ct->Table->record['listing_published'] == 1 ? common::translate('COM_CUSTOMTABLES_YES') : common::translate('COM_CUSTOMTABLES_NO');
     }
 
     function number(): ?int

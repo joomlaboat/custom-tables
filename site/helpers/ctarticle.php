@@ -9,8 +9,8 @@
  **/
 
 // No direct access to this file
+use CustomTables\common;
 use CustomTables\database;
-use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted Access');
 

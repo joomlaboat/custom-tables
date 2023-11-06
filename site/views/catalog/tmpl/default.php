@@ -10,6 +10,7 @@
 
 
 // no direct access
+use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\HTML\HTMLHelper;
 
@@ -23,7 +24,7 @@ if ($this->ct->Env->frmt == 'html') {
         if ($this->ct->Params->showPageHeading) {
 
             if ($this->ct->Params->pageTitle) {
-                $title = JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle);
+                $title = common::translate($this->ct->Params->pageTitle);
                 echo '<div class="page-header' . ($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">' . $title . '</h2></div>';
             }
         }

@@ -12,10 +12,10 @@
 // No direct access to this file
 \defined('_JEXEC') or die;
 
+use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
@@ -94,7 +94,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 
     protected function addToolBar_3()
     {
-        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
+        JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoftables');
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
@@ -140,7 +140,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 
                         /*
                         JHtmlSidebar::addFilter(
-                            Text::_('JOPTION_SELECT_PUBLISHED'),
+                            common::translate('JOPTION_SELECT_PUBLISHED'),
                             'filter_published',
                             JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
                         );
@@ -152,7 +152,7 @@ class CustomtablesViewListoftables extends JViewLegacy
         $CTCategoryOptions = $CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-            Text::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
+            common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
             'filter_tablecategory',
             JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
         );
@@ -164,7 +164,7 @@ class CustomtablesViewListoftables extends JViewLegacy
         // Get the toolbar object instance
         $toolbar = Toolbar::getInstance('toolbar');
 
-        ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
 
         if ($this->canCreate)
             $toolbar->addNew('tables.add');

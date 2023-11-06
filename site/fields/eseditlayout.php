@@ -8,6 +8,7 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+use CustomTables\common;
 use CustomTables\database;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -34,7 +35,7 @@ class JFormFieldESEditLayout extends JFormFieldList
         $messages = database::loadObjectList($query);
         $options = array();
 
-        $options[] = JHtml::_('select.option', '', '- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT'));
+        $options[] = JHtml::_('select.option', '', '- ' . common::translate('COM_CUSTOMTABLES_SELECT'));
 
         if ($messages) {
             foreach ($messages as $message)

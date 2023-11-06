@@ -228,7 +228,7 @@ class CT_FieldTypeTag_image
                 ' . $ct_getUploader . '
            </script>
            ' . $inputBoxFieldName . $inputBoxFieldName_FileName
-            . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '</div>';
+            . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '</div>';
     }
 
     protected static function renderUploaderLimitations(): string
@@ -237,10 +237,10 @@ class CT_FieldTypeTag_image
 
         return '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
-				' . JoomlaBasicMisc::JTextExtended("MIN SIZE") . ': 10px x 10px<br/>
-				' . JoomlaBasicMisc::JTextExtended("MAX SIZE") . ': 1000px x 1000px<br/>
-				' . JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '<br/>
-				' . JoomlaBasicMisc::JTextExtended("FORMAT") . ': JPEG, GIF, PNG, WEBP
+				' . common::translate("MIN SIZE") . ': 10px x 10px<br/>
+				' . common::translate("MAX SIZE") . ': 1000px x 1000px<br/>
+				' . common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '<br/>
+				' . common::translate("FORMAT") . ': JPEG, GIF, PNG, WEBP
 				</div>';
     }
 

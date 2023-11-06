@@ -9,7 +9,7 @@
  **/
 
 // No direct access to this file
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -17,5 +17,5 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 ?>
 
-<p><?php echo Text::_('COM_CUSTOMTABLES_LISTOFTABLES_BATCH_TIP'); ?></p>
+<p><?php echo common::translate('COM_CUSTOMTABLES_LISTOFTABLES_BATCH_TIP'); ?></p>
 <?php //echo $this->batchDisplay; ?>

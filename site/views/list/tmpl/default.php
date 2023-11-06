@@ -44,19 +44,19 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         <table>
             <tr>
                 <td>
-                    <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILTER'); ?>:
+                    <?php echo common::translate('COM_CUSTOMTABLES_FILTER'); ?>:
                     <input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>"
                            class="text_area" onchange="document.adminForm.submit();"/>
-                    <button onclick="this.form.submit();"><?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT_GO'); ?></button>
-                    <button onclick="document.getElementById('search').value='';this.form.getElementById('levellimit').value='10';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT_RESET'); ?></button>
+                    <button onclick="this.form.submit();"><?php echo common::translate('COM_CUSTOMTABLES_SELECT_GO'); ?></button>
+                    <button onclick="document.getElementById('search').value='';this.form.getElementById('levellimit').value='10';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo common::translate('COM_CUSTOMTABLES_SELECT_RESET'); ?></button>
                 </td>
                 <td nowrap="nowrap">
                     <?php
 
-                    echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ROOT_PARENT') . ':&nbsp;';
+                    echo common::translate('COM_CUSTOMTABLES_ROOT_PARENT') . ':&nbsp;';
                     echo $this->lists['rootparent'] . '&nbsp;';
 
-                    echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_MAX_LEVELS') . ':&nbsp;';
+                    echo common::translate('COM_CUSTOMTABLES_MAX_LEVELS') . ':&nbsp;';
                     echo $this->lists['levellist'] . '&nbsp;';
 
                     ?>
@@ -68,7 +68,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
             <thead>
             <tr>
                 <th>
-                    <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NUM'); ?>
+                    <?php echo common::translate('COM_CUSTOMTABLES_NUM'); ?>
                 </th>
                 <th>
                     <input type="checkbox" name="toggle" value=""
@@ -144,7 +144,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                             <?php echo $row->treename; ?>
                         <?php else : ?>
                             <span class="editlinktip hasTip"
-                                  title="<?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_MENU'); ?>::<?php echo $row->treename; ?>">
+                                  title="<?php echo common::translate('COM_CUSTOMTABLES_EDIT_MENU'); ?>::<?php echo $row->treename; ?>">
 				<a href="<?php echo JRoute::_('index.php?option=com_customtables&view=list&task=edit&cid[]=' . $row->id); ?>"><?php echo $row->treename; ?></a></span>
                         <?php endif; ?>
                     </td>

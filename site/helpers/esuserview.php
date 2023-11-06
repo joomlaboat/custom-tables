@@ -8,6 +8,7 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+use CustomTables\common;
 use CustomTables\database;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -62,7 +63,7 @@ class JHTMLESUserView
                     return $row[$field];
             } else {
                 if ((int)$value != 0)
-                    return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELDS_USER_NOT_FOUND');
+                    return common::translate('COM_CUSTOMTABLES_FIELDS_USER_NOT_FOUND');
             }
         }
         return '';

@@ -9,7 +9,7 @@
  **/
 
 // No direct access to this file
-use Joomla\CMS\Language\Text;
+use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -18,9 +18,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 ?>
 <!-- clear the batch values if cancel -->
 <button class="btn" type="button" onclick="" data-dismiss="modal">
-    <?php echo Text::_('JCANCEL'); ?>
+    <?php echo common::translate('JCANCEL'); ?>
 </button>
 <!-- post the batch values if process -->
 <button class="btn btn-success" type="submit" onclick="Joomla.submitbutton('layouts.batch');">
-    <?php echo Text::_('JGLOBAL_BATCH_PROCESS'); ?>
+    <?php echo common::translate('JGLOBAL_BATCH_PROCESS'); ?>
 </button>

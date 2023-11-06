@@ -13,9 +13,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
 $document = Factory::getDocument();
 
@@ -42,12 +42,12 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
 
         <?php echo JHtml::_('bootstrap.startTabSet', 'schemaTab', array('active' => 'diagram'));
 
-        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'diagram', Text::_('COM_CUSTOMTABLES_TABLES_DIAGRAM', true));
+        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM'));
         echo '<div id="canvas_container"></div>';
 
         echo JHtml::_('bootstrap.endTab');
 
-        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'checks', Text::_('COM_CUSTOMTABLES_TABLES_CHECKS', true));
+        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS'));
 
         $result = IntegrityChecks::check($this->ct);
 

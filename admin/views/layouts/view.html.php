@@ -19,7 +19,6 @@ use CustomTables\database;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\Language\Text;
 
 /**
  * Layouts View class

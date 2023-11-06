@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Layouts;
 use CustomTables\LinkJoinFilters;
@@ -24,12 +25,12 @@ class JHTMLESSqlJoin
     static public function render(array $typeParams, $value, $force_dropdown, $langpostfix, $control_name, $place_holder, $cssclass = '', $attribute = '', $addNoValue = false)
     {
         if (count($typeParams) < 1) {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'), 'error');
             return '';
         }
 
         if (count($typeParams) < 2) {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'), 'error');
             return '';
         }
 
@@ -55,7 +56,7 @@ class JHTMLESSqlJoin
             $selector = 'dropdown';
 
         if (ESTables::getTableID($tableName) == '') {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
             return '';
         }
 
@@ -63,7 +64,7 @@ class JHTMLESSqlJoin
             $order_by_field = $value_field;
 
         if ($place_holder == '')
-            $place_holder = '- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT');
+            $place_holder = '- ' . common::translate('COM_CUSTOMTABLES_SELECT');
 
         //Get Database records
 
@@ -157,7 +158,7 @@ class JHTMLESSqlJoin
         if (count($pair) == 2) {
             $layout_mode = true;
             if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout') {
-                Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' "' . $field . '"', 'error');
+                Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' "' . $field . '"', 'error');
                 return array();
             }
 
@@ -165,7 +166,7 @@ class JHTMLESSqlJoin
             $layoutcode = $Layouts->getLayout($pair[1]);
 
             if (!isset($layoutcode) or $layoutcode == '') {
-                Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' "' . $pair[1] . '"', 'error');
+                Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' "' . $pair[1] . '"', 'error');
                 return array();
             }
         }
@@ -277,7 +278,7 @@ class JHTMLESSqlJoin
 
         $htmlresult_select = '<SELECT ' . implode(' ', $selectBoxParams) . '>';
 
-        $htmlresult_select .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . ' ' . $place_holder . '</option>';
+        $htmlresult_select .= '<option value="">- ' . common::translate('COM_CUSTOMTABLES_SELECT') . ' ' . $place_holder . '</option>';
 
         foreach ($list_values as $list_value) {
             if ($list_value[2] == 0)//if unpublished
@@ -290,7 +291,7 @@ class JHTMLESSqlJoin
         }
 
         if ($addNoValue)
-            $htmlresult_select .= '<option value="-1"' . ((int)$current_value == -1 ? ' selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_SPECIFIED') . '</option>';
+            $htmlresult_select .= '<option value="-1"' . ((int)$current_value == -1 ? ' selected="SELECTED"' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_NOT_SPECIFIED') . '</option>';
 
         $htmlresult_select .= '</SELECT>';
 

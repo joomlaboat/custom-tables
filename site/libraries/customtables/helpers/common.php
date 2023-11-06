@@ -26,7 +26,7 @@ class common
         }
     }
 
-    public static function translate($text, $value = null)
+    public static function translate(string $text, int|float $value = null)
     {
         if (defined('WPINC')) {
             return __('Custom Tables - Table', 'customtables');

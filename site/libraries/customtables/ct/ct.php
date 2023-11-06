@@ -24,7 +24,6 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Component\ComponentHelper;
 use CustomTablesKeywordSearch;
 use Joomla\Registry\Registry;
-use JoomlaBasicMisc;
 use mysql_xdevapi\Exception;
 use CustomTables\CustomPHP\CleanExecute;
 
@@ -671,7 +670,7 @@ class CT
 
                 $table_parts = explode('(', $statement_parts[0]);
                 if (count($table_parts) != 2) {
-                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "(" character. Correct example: parent(children).user');
+                    $this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "(" character. Correct example: parent(children).user');
                     return [];
                 }
 
@@ -682,7 +681,7 @@ class CT
                 $parent_table_row = ESTables::getTableRowByName($parent_tablename);
 
                 if (!is_object($parent_table_row)) {
-                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Table "' . $parent_tablename . '" not found.');
+                    $this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: Table "' . $parent_tablename . '" not found.');
                     return [];
                 }
 
@@ -691,12 +690,12 @@ class CT
                 $parent_join_field_row = Fields::FieldRowByName($parent_join_field, $parent_table_fields);
 
                 if (count($parent_join_field_row) == 0) {
-                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Join field "' . $parent_join_field . '" not found.');
+                    $this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: Join field "' . $parent_join_field . '" not found.');
                     return [];
                 }
 
                 if ($parent_join_field_row['type'] != 'sqljoin' and $parent_join_field_row['type'] != 'records') {
-                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong join field type "' . $parent_join_field_row['type'] . '". Accepted types: "sqljoin" and "records" .');
+                    $this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: Wrong join field type "' . $parent_join_field_row['type'] . '". Accepted types: "sqljoin" and "records" .');
                     return [];
                 }
 
@@ -705,12 +704,12 @@ class CT
                 $parent_user_field_row = Fields::FieldRowByName($parent_user_field, $parent_table_fields);
 
                 if (count($parent_user_field_row) == 0) {
-                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: User field "' . $parent_user_field . '" not found.');
+                    $this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: User field "' . $parent_user_field . '" not found.');
                     return [];
                 }
 
                 if ($parent_user_field_row['type'] != 'userid' and $parent_user_field_row['type'] != 'user') {
-                    $this->errors[] = JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong user field type "' . $parent_join_field_row['type'] . '". Accepted types: "userid" and "user" .');
+                    $this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: Wrong user field type "' . $parent_join_field_row['type'] . '". Accepted types: "userid" and "user" .');
                     return [];
                 }
 

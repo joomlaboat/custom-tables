@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
 // Access check.
 $user = new CTUser();

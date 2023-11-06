@@ -95,14 +95,14 @@ class ESFileUploader
                     unlink($file["tmp_name"]);
                     $msg = 'File type (' . $mime . ') not permitted.';
                     if ($filetypes_str != '')
-                        $msg .= ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_TYPES') . ' ' . $filetypes_str;//implode(', ', $accepted_types);
+                        $msg .= ' ' . common::translate('COM_CUSTOMTABLES_PERMITTED_TYPES') . ' ' . $filetypes_str;//implode(', ', $accepted_types);
 
                     $ret = ['error' => $msg];
                 }
             }
             return json_encode($ret);
         } else
-            return json_encode(['error' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_IS_EMPTY')]);
+            return json_encode(['error' => common::translate('COM_CUSTOMTABLES_FILE_IS_EMPTY')]);
     }
 
     public static function getAcceptedFileTypes($fileExtensions): string

@@ -14,11 +14,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\ListOfLayouts;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
 $document = Factory::getDocument();
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/fieldtypes.css" rel="stylesheet">');

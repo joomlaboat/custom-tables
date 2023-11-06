@@ -18,10 +18,8 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Inputbox;
 use CustomTables\Layouts;
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\Language\Text;
 
 /**
  * Records View class

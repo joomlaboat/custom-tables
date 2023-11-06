@@ -18,7 +18,6 @@ use CustomTables\CTUser;
 use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 

@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use CustomTables\database;
 use Joomla\CMS\Language\Text;
 
@@ -39,7 +40,7 @@ class JFormFieldCTCategory extends JFormFieldList
         $options = array();
         if ($records) {
             if ($add_empty_option)
-                $options[] = JHtml::_('select.option', '', Text::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'));
+                $options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'));
 
             foreach ($records as $rec)
                 $options[] = JHtml::_('select.option', $rec->id, $rec->categoryname);

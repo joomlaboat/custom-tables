@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use Exception;
 use Joomla\CMS\Version;
-use JoomlaBasicMisc;
 use JUserHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
@@ -201,7 +200,7 @@ class CTUser
         $articleId = 0;
 
         if (!@Email::checkEmail($email)) {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"', 'error');
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"', 'error');
             return false;
         }
 
@@ -214,9 +213,9 @@ class CTUser
 
         if ($realUserId !== null) {
             CTUser::UpdateUserField($realtablename, $realidfieldname, $useridfieldname, $realUserId, $listing_id);
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'));
+            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'));
         } else {
-            $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED');
+            $msg = common::translate('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED');
             Factory::getApplication()->enqueueMessage($msg, 'error');
         }
         return true;
@@ -264,7 +263,7 @@ class CTUser
 
         // Bind the data.
         if (!$user->bind($data)) {
-            $msg = JoomlaBasicMisc::JTextExtended('COM_USERS_REGISTRATION_BIND_FAILED', $user->getError());
+            $msg = common::translate('COM_USERS_REGISTRATION_BIND_FAILED', $user->getError());
             return null;
         }
 
@@ -307,7 +306,7 @@ class CTUser
 
         $config = Factory::getConfig();
         $siteName = $config->get('sitename');
-        $subject = JoomlaBasicMisc::JTextExtended('COM_USERS_EMAIL_ACCOUNT_DETAILS');
+        $subject = common::translate('COM_USERS_EMAIL_ACCOUNT_DETAILS');
 
         $emailSubject = Text::sprintf(
             $subject,
@@ -318,7 +317,7 @@ class CTUser
         $emailSubject = str_replace('{NAME}', $fullname, $emailSubject);
         $emailSubject = str_replace('{SITENAME}', $siteName, $emailSubject);
 
-        $body = JoomlaBasicMisc::JTextExtended('COM_USERS_EMAIL_REGISTERED_BODY');
+        $body = common::translate('COM_USERS_EMAIL_REGISTERED_BODY');
         $UriBase = Uri::base();
 
         $emailBody = Text::sprintf(

@@ -45,7 +45,7 @@ class tagProcessor_CatalogTableView
             $fields = $pair[0];
 
             if ($ct->Env->frmt == 'csv') {
-                $vlu = self::get_CatalogTable_CSV($ct, $fields);
+                $vlu = self::get_CatalogTable_CSV($ct, $layoutType, $fields);
                 $pageLayout = str_replace($fItem, $new_replaceitecode, $pageLayout);
             } elseif ($ct->Env->frmt == 'json') {
                 $vlu = self::get_CatalogTable_JSON($ct, $fields);
@@ -54,7 +54,7 @@ class tagProcessor_CatalogTableView
                 $vlu = self::get_CatalogTable_XML($ct, $layoutType, $fields);
                 $pageLayout = str_replace($fItem, $new_replaceitecode, $pageLayout);
             } elseif ($ct->Env->frmt == 'xlsx') {
-                self::get_CatalogTable_XLSX($fields);
+                self::get_CatalogTable_XLSX($ct, $fields);
             } else {
                 $class = '';
                 $dragdrop = '';
