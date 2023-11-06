@@ -403,7 +403,7 @@ class JHTMLCTTableJoin
         if (!is_array($resultJSON_encoded)) {
             echo '$resultJSON_encoded is not an array: "';
             print_r($result);
-            echo '"<br/>';
+            echo '<br/>';
         }
 
         $resultJSON = [];
