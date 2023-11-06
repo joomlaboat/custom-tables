@@ -724,6 +724,10 @@ class Fields
         return null;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.1.8
+     */
     public static function saveField(?int $tableId, ?int $fieldId): ?int
     {
         if ($fieldId == 0)
@@ -787,9 +791,14 @@ class Fields
 
         if ($fieldId !== null and $task == 'save2copy') {
             //Checkout
-            $query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $fieldId;
-            database::setQuery($query);
-            $fieldId = 0;
+            try {
+                $update_data = ['checked_out' => 0, 'checked_out_time' => null];
+                $where = ['id' => $fieldId];
+                database::update('#__customtables_fields', $update_data, $where);
+            } catch (Exception $e) {
+                throw new Exception('Update field checkout problem: ' . $e->getMessage());
+            }
+            $fieldId = null; //To save the field as new
         }
 
         if ($fieldId === null) {
@@ -827,15 +836,25 @@ class Fields
         if ($table_row->customtablename == $table_row->tablename) {
             //do not create fields to third-party tables
             //Third-party table but managed by the Custom Tables
-            $sets [] = 'customfieldname=' . database::quote($newFieldName);
+            $data['customfieldname'] = $newFieldName;
         }
 
         if ($fieldId !== null) {
-            $data_old = ['id' => $fieldId];
-            ImportTables::updateRecords('#__customtables_fields', $data, $data_old, false, array(), true, true);
+
+            $where = ['id' => $fieldId];
+            try {
+                database::update('#__customtables_fields', $data, $where);
+            } catch (Exception $e) {
+                throw new Exception('Add field details: ' . $e->getMessage());
+            }
         } else {
             $data['ordering'] = self::getMaxOrdering($tableId) + 1;
-            $fieldId = ImportTables::insertRecords('#__customtables_fields', $data, false, array(), true, '', [], true);
+
+            try {
+                $fieldId = database::insert('#__customtables_fields', $data);
+            } catch (Exception $e) {
+                throw new Exception('Add field details: ' . $e->getMessage());
+            }
         }
 
         if (!self::update_physical_field($ct, $table_row, $fieldId, $data)) {
