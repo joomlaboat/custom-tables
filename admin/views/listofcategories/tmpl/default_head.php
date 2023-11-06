@@ -10,7 +10,6 @@
 
 // No direct access to this file access');
 use CustomTables\common;
-use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');

@@ -216,7 +216,7 @@ class JESPagination extends JObject
         // Initialise variables.
         $html = null;
         if ($this->get('pages.total') > 1) {
-            $html .= JText::sprintf('JLIB_HTML_PAGE_CURRENT_OF_TOTAL', $this->get('pages.current'), $this->get('pages.total'));
+            $html .= common::translate('JLIB_HTML_PAGE_CURRENT_OF_TOTAL', $this->get('pages.current'), $this->get('pages.total'));
         }
         return $html;
     }

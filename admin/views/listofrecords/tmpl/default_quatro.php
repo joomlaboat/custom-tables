@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
@@ -51,7 +50,7 @@ if ($this->saveOrder and $this->ordering_realfieldname != '') {
                 if (atLeastOnCheckBoxSelected()) {
                     Joomla.submitform(task);
                 } else {
-                    if (confirm(Joomla.JText._('Do you want to export all records?')))
+                    if (confirm(common::translate(('Do you want to export all records?')))
                         Joomla.submitform(task);
                     else
                         return false;

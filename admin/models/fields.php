@@ -21,7 +21,6 @@ use CustomTables\database;
 use CustomTables\Fields;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
@@ -313,7 +312,7 @@ class CustomtablesModelFields extends JModelAdmin
             // only allow copy if user may edit this item.
             if (!$this->ct->Env->user->authorise('core.edit', $contexts[$pk])) {
                 // Not fatal error
-                $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+                $this->setError(common::translate('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
                 continue;
             }
 
@@ -325,7 +324,7 @@ class CustomtablesModelFields extends JModelAdmin
                     return false;
                 } else {
                     // Not fatal error
-                    $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+                    $this->setError(common::translate('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
                     continue;
                 }
             }
@@ -458,7 +457,7 @@ class CustomtablesModelFields extends JModelAdmin
                     return false;
                 } else {
                     // Not fatal error
-                    $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+                    $this->setError(common::translate('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
                     continue;
                 }
             }

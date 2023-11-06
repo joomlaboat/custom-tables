@@ -75,7 +75,7 @@ switch (common::inputGet('task', '', 'CMD')) {
 
         $model = $this->getModel('List');
         if ($n = $model->delete($cid)) {
-            $msg = JText::sprintf('% COM_CUSTOMTABLES_OPTIONS_DELETED', $n);
+            $msg = common::translate('% COM_CUSTOMTABLES_OPTIONS_DELETED', $n);
         } else {
             $msg = $model->getError();
         }

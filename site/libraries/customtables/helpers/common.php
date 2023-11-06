@@ -33,7 +33,7 @@ class common
         }
 
         if (is_null($value))
-            $new_text = common::translate($text);
+            $new_text = Text::_($text);
         else
             $new_text = Text::sprintf($text, $value);
 
@@ -52,7 +52,7 @@ class common
                 if (is_null($value))
                     return common::translate($text);
                 else
-                    return Text::sprintf($text, $value);
+                    return common::translate($text, $value);
             } else
                 return $text;
         } else

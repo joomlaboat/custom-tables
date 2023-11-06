@@ -18,7 +18,6 @@ jimport('joomla.application.component.controlleradmin');
 
 use CustomTables\common;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 use CustomTables\ExportTables;
 
@@ -44,7 +43,7 @@ class CustomtablesControllerListoftables extends JControllerAdmin
             if (count($cIds) == 1)
                 $msg .= '_1';
 
-            $msg = JText::sprintf($msg, count($cIds));
+            $msg = common::translate($msg, count($cIds));
 
             $msg .= '&nbsp;&nbsp;<a href="' . $download_link . '" target="_blank">Download (Click Save Link As...)</a>';
         } else {

@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 // import Joomla modelform library
@@ -297,7 +296,7 @@ class CustomtablesModelCategories extends JModelAdmin
             // only allow copy if user may edit this item.
             if (!$user->authorise('core.edit', $contexts[$pk])) {
                 // Not fatal error
-                Factory::getApplication()->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
+                Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
                 continue;
             }
 
@@ -309,7 +308,7 @@ class CustomtablesModelCategories extends JModelAdmin
                     return false;
                 } else {
                     // Not fatal error
-                    Factory::getApplication()->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
+                    Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
                     continue;
                 }
             }

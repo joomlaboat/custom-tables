@@ -93,7 +93,7 @@ class Params
         if (defined('_JEXEC'))
             $this->constructJoomlaParams($menu_params, $blockExternalVars, $ModuleId);
         else
-            $this->constructWPParams;
+            $this->constructWPParams();
     }
 
     protected function constructJoomlaParams(?\Joomla\Registry\Registry $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void

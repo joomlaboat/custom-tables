@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CTUser;
 use CustomTables\Fields;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
 

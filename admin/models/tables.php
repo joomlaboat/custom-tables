@@ -21,7 +21,6 @@ use CustomTables\database;
 use CustomTables\Fields;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 

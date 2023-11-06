@@ -159,8 +159,6 @@ class CustomtablesViewCategories extends JViewLegacy
 
             if ($this->version < 4)
                 $document->addCustomTag('<script src=' . JURI::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
-
-            //JText::script('view not acceptable. Error');
         }
     }
 

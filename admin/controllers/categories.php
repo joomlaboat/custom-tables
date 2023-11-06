@@ -11,7 +11,6 @@
 // No direct access to this file
 use CustomTables\common;
 use CustomTables\CTUser;
-use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');

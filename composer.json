@@ -1,0 +1,9 @@
+{
+  "require": {
+    "ext-fileinfo": "*",
+    "ext-apcu": "*",
+    "ext-gd": "*",
+    "ext-simplexml": "*",
+    "ext-mysql_xdevapi": "*"
+  }
+}

@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\database;
 use CustomTables\DataTypes;
-use Joomla\CMS\Language\Text;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');

@@ -21,7 +21,6 @@ use JUserHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Access\Access;
-use Joomla\CMS\Language\Text;
 
 class CTUser
 {
@@ -273,7 +272,7 @@ class CTUser
         // Store the data.
         if (!$user->save()) {
 
-            $msg = Text::sprintf('COM_USERS_REGISTRATION_SAVE_FAILED', $user->getError());
+            $msg = common::translate('COM_USERS_REGISTRATION_SAVE_FAILED', $user->getError());
             return null;
         }
 
@@ -308,7 +307,7 @@ class CTUser
         $siteName = $config->get('sitename');
         $subject = common::translate('COM_USERS_EMAIL_ACCOUNT_DETAILS');
 
-        $emailSubject = Text::sprintf(
+        $emailSubject = common::translate(
             $subject,
             $fullname,
             $siteName
@@ -320,7 +319,7 @@ class CTUser
         $body = common::translate('COM_USERS_EMAIL_REGISTERED_BODY');
         $UriBase = Uri::base();
 
-        $emailBody = Text::sprintf(
+        $emailBody = common::translate(
             $body,
             $fullname,
             $siteName,

@@ -308,7 +308,7 @@ class CustomtablesModelLayouts extends JModelAdmin
             // only allow copy if user may edit this item.
             if (!$this->ct->Env->user->authorise('core.edit', $contexts[$pk])) {
                 // Not fatal error
-                $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+                $this->setError(common::translate('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
                 continue;
             }
 
@@ -320,7 +320,7 @@ class CustomtablesModelLayouts extends JModelAdmin
                     return false;
                 } else {
                     // Not fatal error
-                    $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+                    $this->setError(common::translate('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
                     continue;
                 }
             }
@@ -453,7 +453,7 @@ class CustomtablesModelLayouts extends JModelAdmin
                     return false;
                 } else {
                     // Not fatal error
-                    $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+                    $this->setError(common::translate('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
                     continue;
                 }
             }

@@ -45,7 +45,7 @@ class CustomtablesController extends JControllerLegacy
             if ($data['edit'] && $layout == 'edit' && !$this->checkEditId('com_customtables.edit.' . $data['view'], $id)) {
                 // Somehow the person just went to the form - we don't allow that.
 
-                Factory::getApplication()->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 'error');
+                Factory::getApplication()->enqueueMessage(common::translate('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 'error');
 
                 // check if item was opened from other than its own list view
                 $ref = common::inputGetCmd('ref', 0);

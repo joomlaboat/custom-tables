@@ -30,7 +30,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
             }
         }
         if (count == 0) {
-            alert("<?php echo common::translate("COM_CUSTOMTABLES_JS_SELECT_RECORDS"); ?>");
+            alert("<?php echo common::translate("COM_CUSTOMTABLES_JS_SELECT_FILES"); ?>");
             return false;
         }
 
