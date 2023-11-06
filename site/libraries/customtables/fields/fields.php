@@ -884,8 +884,15 @@ class Fields
         return false;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.1.8
+     */
     public static function AddMySQLFieldNotExist(string $realtablename, string $realfieldname, string $fieldType, string $options): void
     {
+        if ($realfieldname == '')
+            throw new Exception('Add New Field: Field name cannot be empty.');
+
         if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
             $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
             echo '$query2:' . $query . '<br/>';
@@ -920,7 +927,6 @@ class Fields
 
         if ($fieldid != 0) {
             $fieldRow = Fields::getFieldRow($fieldid);
-
             $ex_type = $fieldRow->type;
             $ex_typeparams = $fieldRow->typeparams;
             $realfieldname = $fieldRow->realfieldname;
@@ -929,11 +935,14 @@ class Fields
             $ex_typeparams = '';
             $realfieldname = '';
 
-            if ($table_row->customtablename === null)
+            if ($table_row->customtablename === null or $table_row->customtablename == '')//Just to be safe
                 $realfieldname = 'es_' . $data['fieldname'];
             elseif ($table_row->customtablename == $table_row->tablename)
                 $realfieldname = $data['fieldname'];
         }
+
+        if ($realfieldname === '')
+            throw new Exception('Add New Field: Field name cannot be empty.');
 
         $new_typeparams = $data['typeparams'];
         $fieldTitle = $data['fieldtitle'];
