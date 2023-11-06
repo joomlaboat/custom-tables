@@ -56,7 +56,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 		<table>
 			<thead>
 				<tr>
-					<td><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) style="text-align:left;vertical-align:top";></td>
+					<td><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) style="text-align:left;vertical-align:top"></td>
 					<td></td>
 					<td></td>
 				</tr>
@@ -78,7 +78,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 
             $htmlOut .= '
 					<td style="text-align:center;vertical-align: top;">
-						<input type="checkbox" name="esphoto' . $image->photoid . '" id="esphoto' . $image->photoid . '" style="text-align:left;vertical-align:top";>
+						<input type="checkbox" name="esphoto' . $image->photoid . '" id="esphoto' . $image->photoid . '" style="text-align:left;vertical-align:top">
 					</td>
 
 					<td' . ($c == 0 ? ' class="MainImage" ' : '') . ' style="width:170px;text-align:center;">
