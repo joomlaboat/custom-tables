@@ -28,7 +28,7 @@ use Twig\Source;
  */
 final class ArrayLoader implements LoaderInterface
 {
-    private array $templates;
+    private $templates = [];
 
     /**
      * @param array $templates An array of templates (keys are the names, and values are the source code)
@@ -63,7 +63,7 @@ final class ArrayLoader implements LoaderInterface
             throw new LoaderError(sprintf('Template "%s" is not defined.', $name));
         }
 
-        return $name . ':' . $this->templates[$name];
+        return $name.':'.$this->templates[$name];
     }
 
     public function isFresh(string $name, int $time): bool
