@@ -31,6 +31,7 @@ class ListOfFields
     var ?bool $canEdit;
     var ?bool $saveOrder;
     var string $dbPrefix;
+    var int $tableid;
 
     function __construct(CT $ct, ?array $items = null, ?bool $canState = null, ?bool $canDelete = null, ?bool $canEdit = null, ?bool $saveOrder = null)
     {
