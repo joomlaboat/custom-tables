@@ -50,9 +50,9 @@ class common
                 $lang->load($extension, JPATH_SITE);//JPATH_BASE);
 
                 if (is_null($value))
-                    return common::translate($text);
+                    return Text::_($text);
                 else
-                    return common::translate($text, $value);
+                    return Text::sprintf($text, $value);
             } else
                 return $text;
         } else
