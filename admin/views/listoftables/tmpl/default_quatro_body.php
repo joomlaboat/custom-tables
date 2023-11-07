@@ -71,7 +71,6 @@ foreach ($this->items as $i => $item): ?>
             <div class="name">
                 <ul style="list-style: none !important;margin-left:0;padding-left:0;">
                     <?php
-
                     $item_array = (array)$item;
 
                     $moreThanOneLang = false;
@@ -98,7 +97,6 @@ foreach ($this->items as $i => $item): ?>
 
                         $moreThanOneLang = true; //More than one language installed
                     }
-
                     ?>
                 </ul>
             </div>

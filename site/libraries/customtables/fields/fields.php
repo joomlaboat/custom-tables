@@ -565,11 +565,10 @@ class Fields
 
         try {
             database::setQuery($query);
-
             $msg = '';
             return true;
         } catch (Exception $e) {
-            $msg = '<p style="color:red;">Caught exception: ' . $e->getMessage() . '</p>';
+            $msg = '<p style="color:red;">Caught exception fixMYSQLField: ' . $e->getMessage() . '</p>';
             return false;
         }
     }

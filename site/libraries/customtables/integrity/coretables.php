@@ -203,7 +203,7 @@ class IntegrityCoreTables extends IntegrityChecks
         $tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
         $tables_projected_fields[] = ['name' => 'tablename', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL DEFAULT "tablename"', 'postgresql_type' => 'VARCHAR(100) NOT NULL DEFAULT \'\''];
         $tables_projected_fields[] = ['name' => 'tabletitle', 'ct_fieldtype' => 'string', 'mysql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'multilang' => true];
-        $tables_projected_fields[] = ['name' => 'description', 'ct_fieldtype' => 'string', 'mysql_type' => 'TEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL', 'multilang' => true];
+        $tables_projected_fields[] = ['name' => 'description', 'ct_fieldtype' => 'text', 'mysql_type' => 'TEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL', 'multilang' => true];
 
         //Not used inside Custom Tables
 
@@ -241,8 +241,8 @@ class IntegrityCoreTables extends IntegrityChecks
         $tables_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL', 'postgresql_type' => 'INT NOT NULL'];
 
         $tables_projected_fields[] = ['name' => 'fieldname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL', 'postgresql_type' => 'VARCHAR(100) NOT NULL'];
-        $tables_projected_fields[] = ['name' => 'fieldtitle', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(255) NULL', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'multilang' => true];
-        $tables_projected_fields[] = ['name' => 'description', 'ct_fieldtype' => '', 'mysql_type' => 'TEXT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL', 'multilang' => true];
+        $tables_projected_fields[] = ['name' => 'fieldtitle', 'ct_fieldtype' => 'string', 'mysql_type' => 'VARCHAR(255) NULL', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'multilang' => true];
+        $tables_projected_fields[] = ['name' => 'description', 'ct_fieldtype' => 'text', 'mysql_type' => 'TEXT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL', 'multilang' => true];
 
         $tables_projected_fields[] = ['name' => 'allowordering', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
         $tables_projected_fields[] = ['name' => 'isrequired', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];

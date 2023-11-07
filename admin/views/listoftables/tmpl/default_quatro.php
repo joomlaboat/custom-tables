@@ -43,7 +43,7 @@ HTMLHelper::_('behavior.multiselect');
 
                     if (count($result) > 0)
                         echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
-                    //Jomla strips html links unfortunately, so we cannot use the enqueueMessage function
+                    //Joomla strips html links unfortunately, so we cannot use the enqueueMessage function
                     //Factory::getApplication()->enqueueMessage('<ol><li>'.implode('</li><li>',$result).'</li></ol>','notice');
                     ?>
 
