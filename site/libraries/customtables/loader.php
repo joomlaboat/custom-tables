@@ -130,6 +130,7 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 
     $pathDataTypes = $path . 'records' . DIRECTORY_SEPARATOR;
     require_once($pathDataTypes . 'savefieldqueryset.php');
+    require_once($pathDataTypes . 'record.php');
 
     //$path_datatypes = $path . 'customphp' . DIRECTORY_SEPARATOR;
     //require_once($path_datatypes.'customphp.php');

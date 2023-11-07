@@ -40,19 +40,13 @@ class SaveFieldQuerySet
     var ?array $row_new;
     var bool $isCopy;
 
-    //var array $saveQuery;
-
     function __construct(CT &$ct, $row, $isCopy = false)
     {
         $this->ct = &$ct;
         $this->row_old = $row;
         $this->row_new = [];
-
         $this->isCopy = $isCopy;
-        //$this->saveQuery = [];
     }
-
-    //Return type: null|string|array
 
     function getSaveFieldSet($fieldRow): void
     {

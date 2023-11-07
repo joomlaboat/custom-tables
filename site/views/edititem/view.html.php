@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\record;
 use Joomla\CMS\Factory;
 
 jimport('joomla.html.pane');
@@ -50,11 +51,19 @@ class CustomTablesViewEditItem extends JViewLegacy
             $editForm = new Edit($this->ct);
             $editForm->load();
 
+            $row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
+
+            if (isset($row)) {
+
+                $record = new \CustomTables\record($this->ct);
+                $row = $record->getSpecificVersionIfSet($row);
+            }
+
             if ($this->ct->Env->isModal) {
-                echo $editForm->render($Model->row, $formLink, 'ctEditModalForm');
+                echo $editForm->render($row, $formLink, 'ctEditModalForm');
                 die;
             } else
-                echo $editForm->render($Model->row, $formLink, 'ctEditForm');
+                echo $editForm->render($row, $formLink, 'ctEditForm');
 
             echo '
             <!-- Modal content -->

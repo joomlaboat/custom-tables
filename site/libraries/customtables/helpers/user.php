@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\CMS\Version;
 use JUserHelper;
 use Joomla\CMS\Uri\Uri;
@@ -55,7 +56,7 @@ class CTUser
                 if ($this->id === null)
                     $user = Factory::getApplication()->getIdentity();
                 else
-                    $user = Factory::getApplication()->loadIdentity($this->id);
+                    $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->id);
             }
 
             $this->id = $user->id;

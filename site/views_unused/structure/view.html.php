@@ -39,7 +39,7 @@ class CustomTablesViewStructure extends JView
         $this->record_count = $this->Model->record_count;
         $this->linkable = $this->Model->linkable;
         $this->fieldName = $this->Model->esfieldname;
-        $this->row_break = $this->Model->row_break;
+        //$this->row_break = $this->Model->row_break;
         $this->image_prefix = $this->Model->image_prefix;
         $this->optionname = $this->Model->optionname;
 

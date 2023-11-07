@@ -305,4 +305,90 @@ class record
         }
         return true;
     }
+
+    function getSpecificVersionIfSet(array $row): array
+    {
+        if ($this->ct->Params->blockExternalVars)
+            return $row;
+
+        //get specific Version if set
+        $version = common::inputGetInt('version', 0);
+
+        if ($version != 0) {
+            //get log field
+            $log_field = $this->getTypeFieldName('log');
+            if ($log_field != '') {
+                $new_row = $this->getVersionData($row, $log_field, $version);
+                if ($new_row === null or count($new_row) > 0)
+                    return $this->makeEmptyRecord($row[$this->ct->Table->realidfieldname], $new_row['listing_published']);
+
+                $new_row2 = $row;
+
+                //Copy values
+                foreach ($this->ct->Table->fields as $fieldRow)
+                    $new_row2[$fieldRow['realfieldname']] = $new_row[$fieldRow['realfieldname']];
+
+                return $new_row2;
+            }
+        }
+        return $row;
+    }
+
+    protected function getTypeFieldName($type)
+    {
+        foreach ($this->ct->Table->fields as $fieldRow) {
+            if ($fieldRow['type'] == $type)
+                return $fieldRow['realfieldname'];
+        }
+        return '';
+    }
+
+    protected function getVersionData($row, $log_field, $version)
+    {
+        $creation_time_field = $this->getTypeFieldName('changetime');
+        $versions = explode(';', $row[$log_field]);
+
+        if ($version <= count($versions)) {
+            if (count($versions) > 1 and $version > 1)
+                $data_editor = explode(',', $versions[$version - 2]);
+            else
+                $data_editor = [''];
+
+            $data_content = explode(',', $versions[$version - 1]); // version 1, 1 - 1 = 0; where 0 is the index
+
+            if ($data_content[3] != '') {
+                //record versions stored in database table text field as base64 encoded json object
+                $obj = json_decode(base64_decode($data_content[3]), true);
+                $new_row = $obj[0];
+
+                if ($this->ct->Table->published_field_found)
+                    $new_row['listing_published'] = $row['listing_published'];
+
+                $new_row[$this->ct->Table->realidfieldname] = $row[$this->ct->Table->realidfieldname];
+
+                $new_row[$log_field] = $row[$log_field];
+
+                if ($creation_time_field) {
+                    $timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
+                    $new_row[$creation_time_field] = $timestamp; //time (int)
+                }
+                return $new_row;
+            }
+        }
+        return array();
+    }
+
+    protected function makeEmptyRecord($listing_id, $published): array
+    {
+        $row = null;
+        $row[$this->ct->Table->realidfieldname] = $listing_id;
+
+        if ($this->ct->Table->published_field_found)
+            $row['listing_published'] = $published;
+
+        foreach ($this->ct->Table->fields as $fieldRow)
+            $row[$fieldRow['realfieldname']] = '';
+
+        return $row;
+    }
 }

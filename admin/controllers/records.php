@@ -74,10 +74,7 @@ class CustomtablesControllerRecords extends JControllerForm
         $tableId = common::inputGet('tableid', 0, 'int');
         $ct->getTable($tableId);
 
-        $recordClassFilePath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'records' . DIRECTORY_SEPARATOR . 'record.php';
-        require_once($recordClassFilePath);
         $record = new record($ct);
-
         $Layouts = new Layouts($ct);
         $record->editForm->layoutContent = $Layouts->createDefaultLayout_Edit($ct->Table->fields, false);
 

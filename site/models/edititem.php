@@ -232,8 +232,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function store(&$msg, &$link, $isCopy = false, string $listing_id = ''): bool
     {
-        $twig_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'records' . DIRECTORY_SEPARATOR . 'record.php';
-        require_once($twig_file);
         $record = new record($this->ct);
 
         //IP Filter
@@ -282,7 +280,6 @@ class CustomTablesModelEditItem extends JModelLegacy
     {
         $this->ct = $ct;
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
-        $this->row = null;
 
         if ($this->ct->Table->tablename === null) {
             $this->ct->errors[] = 'Table not selected (61).';
@@ -295,17 +292,16 @@ class CustomTablesModelEditItem extends JModelLegacy
             $ct->Params->msgItemIsSaved = common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
 
         $this->listing_id = $this->ct->Params->listing_id;
+
         //Load the record
         $this->listing_id = $this->processCustomListingID();
 
-        if ($this->listing_id == 0 and $this->userIdField_UniqueUsers and $this->ct->Params->userIdField != '') {
+        if (($this->listing_id === null or $this->listing_id == '' or $this->listing_id == 0) and $this->userIdField_UniqueUsers and $this->ct->Params->userIdField != '') {
             //try to find record by userid and load it
             $this->listing_id = $this->findRecordByUserID();
         }
 
-        if (isset($this->row))
-            $this->getSpecificVersionIfSet();
-
+        $this->ct->Params->listing_id = $this->listing_id;
         return true;
     }
 
@@ -359,7 +355,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         return '';
     }
 
-    function processCustomListingID()
+    function processCustomListingID(): ?int
     {
         if ($this->listing_id !== null and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
             //Normal listing ID or CMD
@@ -370,19 +366,19 @@ class CustomTablesModelEditItem extends JModelLegacy
                 $rows = database::loadAssocList($query);
             } catch (Exception $e) {
                 $this->ct->errors[] = $e->getMessage();
-                return -1;
+                return null;
             }
 
             if (count($rows) < 1)
-                return -1;
+                return null;
 
-            $this->row = $rows[0];
             return $this->listing_id;
         }
 
-        $filter = $this->listing_id;
+        $filter = $this->ct->Params->filter;
+
         if ($filter == '')
-            return 0;
+            return null;
 
         if ($this->ct->Env->legacySupport) {
             $LayoutProc = new LayoutProcessor($this->ct);
@@ -410,7 +406,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if (count($whereArray) > 0)
             $where = ' WHERE ' . implode(" AND ", $whereArray);
 
-        $query = 'SELECT ' . $this->ct->Table->realidfieldname . ' AS listing_id FROM ' . $this->ct->Table->realtablename . ' ' . $where;
+        $query = 'SELECT ' . $this->ct->Table->realidfieldname . ' FROM ' . $this->ct->Table->realtablename . ' ' . $where;
 
         $query .= ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC'; //show last
         $query .= ' LIMIT 1';
@@ -419,16 +415,13 @@ class CustomTablesModelEditItem extends JModelLegacy
             $rows = database::loadAssocList($query);
         } catch (Exception $e) {
             $this->ct->errors[] = $e->getMessage();
-            return -1;
+            return null;
         }
 
-        if (count($rows) < 1) {
-            $this->row = array();
-            return -1;
-        }
+        if (count($rows) < 1)
+            return null;
 
-        $this->row = $rows[0];
-        $this->listing_id = $this->row[$this->ct->Table->realidfieldname];
+        $this->listing_id = $rows[0][$this->ct->Table->realidfieldname];
         return $this->listing_id;
     }
 
@@ -453,84 +446,8 @@ class CustomTablesModelEditItem extends JModelLegacy
         if (count($rows) < 1)
             return null;
 
-        $this->row = $rows[0];
-        return $this->row[$this->ct->Table->realidfieldname];
-    }
-
-    function getSpecificVersionIfSet()
-    {
-        //get specific Version if set
-        $version = common::inputGet('version', 0, 'INT');
-        if ($version != 0) {
-            //get log field
-            $log_field = $this->getTypeFieldName('log');
-            if ($log_field != '') {
-                $new_row = $this->getVersionData($this->row, $log_field, $version);
-                if (count($new_row) > 0) {
-                    $this->row = $this->makeEmptyRecord($this->listing_id, $new_row['listing_published']);
-
-                    //Copy values
-                    foreach ($this->ct->Table->fields as $fieldRow)
-                        $this->row[$fieldRow['realfieldname']] = $new_row[$fieldRow['realfieldname']];
-                }
-            }
-        }
-    }
-
-    function getTypeFieldName($type)
-    {
-        foreach ($this->ct->Table->fields as $fieldRow) {
-            if ($fieldRow['type'] == $type)
-                return $fieldRow['realfieldname'];
-        }
-        return '';
-    }
-
-    function getVersionData($row, $log_field, $version)
-    {
-        $creation_time_field = $this->getTypeFieldName('changetime');
-        $versions = explode(';', $row[$log_field]);
-
-        if ($version <= count($versions)) {
-            $data_editor = explode(',', $versions[$version - 2]);
-            $data_content = explode(',', $versions[$version - 1]);
-
-            if ($data_content[3] != '') {
-                //record versions stored in database table text field as base64 encoded json object
-                $obj = json_decode(base64_decode($data_content[3]), true);
-                $new_row = $obj[0];
-
-                if ($this->ct->Table->published_field_found)
-                    $new_row['listing_published'] = $row['listing_published'];
-
-                $new_row[$this->ct->Table->realidfieldname] = $row[$this->ct->Table->realidfieldname];
-
-                $new_row[$log_field] = $row[$log_field];
-
-                if ($creation_time_field) {
-                    $timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
-                    $new_row[$creation_time_field] = $timestamp;
-                }
-                return $new_row;
-            }
-        }
-        return array();
-    }
-
-    function makeEmptyRecord($listing_id, $published): array
-    {
-        $row = null;
-        $row[$this->ct->Table->realidfieldname] = $listing_id;
-
-        if ($this->ct->Table->published_field_found)
-            $row['listing_published'] = $published;
-
-        //$row['listing_published'] = $published;
-
-        foreach ($this->ct->Table->fields as $fieldRow)
-            $row[$fieldRow['realfieldname']] = '';
-
-        return $row;
+        $row = $rows[0];
+        return $row[$this->ct->Table->realidfieldname];
     }
 
     function PrepareAcceptReturnToLink($encoded_link): string
@@ -581,7 +498,6 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
         return $link;
     }
-
 
     /*
 	function CheckValueRule($prefix,$fieldname, $fieldType, $typeParams)
@@ -751,7 +667,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return;
 	}
 	*/
-
 
     function Refresh($save_log = 1): int
     {
