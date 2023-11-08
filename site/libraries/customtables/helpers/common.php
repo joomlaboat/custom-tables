@@ -29,7 +29,7 @@ class common
     public static function translate(string $text, int|float $value = null)
     {
         if (defined('WPINC')) {
-            return __('Custom Tables - Table', 'customtables');
+            return __($text, 'customtables');
         }
 
         if (is_null($value))
