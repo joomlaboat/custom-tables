@@ -1032,7 +1032,7 @@
         </params>
     </type>
 
-    <type ct_name="radio" label="Radio" description="" depricated="1" priority="3" proversion="1"
+    <type ct_name="radio" label="Radio" description="Radio Buttons" depricated="1" priority="3" proversion="1"
           repetitive="1"><!-- pro -->
         <params>
             <param name="params" label="Parameters" description="" default="" type="string"/>

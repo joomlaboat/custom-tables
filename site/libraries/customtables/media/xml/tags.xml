@@ -168,7 +168,7 @@
         </tag>
 
         <tag name="orderby" label="Order By (Sort By) box" startchar="{" endchar="}" proversion="1"
-             description="renders HTML Order By select box." twigclass="html"/>
+             description="Renders HTML Order By select box." twigclass="html"/>
 
         <tag name="limit" label="A select box to change the number of records per page" startchar="{" endchar="}"
              proversion="1"
@@ -700,7 +700,7 @@
         </tag>
 
         <tag name="json" label="Field Json Array" startchar="{" endchar="}" proversion="1"
-             description="Return the array of fields in JSON format" twigclass="fields"/>
+             description="Returns the array of fields in JSON format" twigclass="fields"/>
     </tagset>
 
     <!-- User Tags -->
@@ -736,7 +736,7 @@
         </tag>
 
         <tag name="lastvisitdate" label="Last Visit Date" startchar="{" endchar="}"
-             description="Returns Current User Last Visit Date." proversion="1" twigclass="user">
+             description="Returns User Last Visit Date." proversion="1" twigclass="user">
             <params>
                 <param name="userid" label="User ID"
                        description="To get the Last Visit Date of the specific user, leave it blank to get the Current User's Last Visit Date"
@@ -745,7 +745,7 @@
         </tag>
 
         <tag name="registerdate" label="Register Date" startchar="{" endchar="}"
-             description="Returns Current User Registration Date." proversion="1" twigclass="user">
+             description="Returns User Registration Date." proversion="1" twigclass="user">
             <params>
                 <param name="userid" label="User ID"
                        description="To get the Register Date of the specific user, leave it blank to get the Current User's Register Date"
@@ -753,8 +753,9 @@
             </params>
         </tag>
 
-        <tag name="usergroups" label="Returns an array of User Group names" startchar="{" endchar="}"
-             description="Use |join(',') filter to return a string" proversion="1" twigclass="user">
+        <tag name="usergroups" label="User Groups" startchar="{" endchar="}"
+             description="Returns an array of User Group names. Use |join(',') filter to return a string" proversion="1"
+             twigclass="user">
             <params>
                 <param name="userid" label="User ID"
                        description="To get the User Group Names of the specific user, leave it blank to get the Current User's User Groups Names."
@@ -893,7 +894,9 @@
         <tag name="base64" label="Base64 Encode URL" startchar="{" endchar="}"
              description="Returns base64 encoded current URL." twigclass="url" proversion="1"/>
 
-        <tag name="root" label="" startchar="{" endchar="}" description="" twigclass="url" proversion="1">
+        <tag name="root" label="Website Root URI" startchar="{" endchar="}"
+             description="Returns the root URI for the request." twigclass="url"
+             proversion="1">
 
             <params>
                 <param name="include_host" label="Include Host" description="Include Website protocol, host, port, etc."
@@ -906,7 +909,8 @@
             </params>
         </tag>
 
-        <tag name="set" label="Sets query value" startchar="{" endchar="}" description="" twigclass="url"
+        <tag name="set" label="Set query parameter" startchar="{" endchar="}"
+             description="Sets a URI query parameter value." twigclass="url"
              proversion="1">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
@@ -915,8 +919,8 @@
             </params>
         </tag>
 
-        <tag name="server" label="" startchar="{" endchar="}"
-             description="Sets query value to communicate with different modules for example." twigclass="url"
+        <tag name="server" label="Server" startchar="{" endchar="}"
+             description="Server and execution environment information" twigclass="url"
              proversion="1">
             <params>
                 <param name="option" label="Option" type="list" description="Select what information to return.">
@@ -1200,14 +1204,17 @@
 
     <tagset name="filters" label="Filters" description="Extended Twig Filters. {{ value | filter }}" priority="3"
             proversion="1">
-        <tag name="base64encode" description="Encodes the given string with base64." examplevalue="'hello world'"/>
-        <tag name="base64decode" description="Decodes a base64 encoded string." examplevalue="'aGVsbG8gd29ybGQ='"/>
-        <tag name="md5" description="Calculates the MD5 hash of string." examplevalue="'hello world'"/>
+        <tag name="base64encode" description="Encodes the given string with base64." examplevalue="'hello world'"
+             proversion="1"/>
+        <tag name="base64decode" description="Decodes a base64 encoded string." examplevalue="'aGVsbG8gd29ybGQ='"
+             proversion="1"/>
+        <tag name="md5" description="Calculates the MD5 hash of string." examplevalue="'hello world'" proversion="1"/>
         <tag name="ucwords" description="Uppercase the first character of each word in a string."
-             examplevalue="'hello world'"/>
-        <tag name="json_encode" description="Returns the JSON representation of a value." examplevalue="{a:1,b:2}"/>
+             examplevalue="'hello world'" proversion="1"/>
+        <tag name="json_encode" description="Returns the JSON representation of a value." examplevalue="{a:1,b:2}"
+             proversion="1"/>
         <tag name="json_decode" description="Decodes a JSON string."
-             examplevalue="'{&quot;a&quot;:1,&quot;b&quot;:2}'"/>
+             examplevalue="'{&quot;a&quot;:1,&quot;b&quot;:2}'" proversion="1"/>
     </tagset>
 
 </layouts>

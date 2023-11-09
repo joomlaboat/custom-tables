@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -34,472 +34,472 @@ require_once($libPath . 'valuetags.php');
 
 class CustomTablesModelEditItem extends JModelLegacy
 {
-    var CT $ct;
-    var bool $userIdField_Unique;
-    var bool $userIdField_UniqueUsers;
-    var ?string $listing_id;
-    var bool $isAuthorized;
-    var ?array $row;
-
-    function __construct()
-    {
-        $this->userIdField_Unique = false;
-        $this->userIdField_UniqueUsers = false;
-        parent::__construct();
-    }
-
-    function CheckAuthorizationACL($access): bool
-    {
-        $this->isAuthorized = false;
-
-        if ($access == 'core.edit' and $this->listing_id == 0)
-            $access = 'core.create'; //add new
-
-        if ($this->ct->Env->user->authorise($access, 'com_customtables')) {
-            $this->isAuthorized = true;
-            return true;
-        }
-
-        if ($access != 'core.edit')
-            return false;
-
-        if ($this->ct->Params->userIdField != '') {
-            if ($this->ct->checkIfItemBelongsToUser($this->listing_id, $this->ct->Params->userIdField)) {
-                if ($this->ct->Env->user->authorise('core.edit.own', 'com_customtables')) {
-                    $this->isAuthorized = true;
-                    return true;
-                } else
-                    $this->isAuthorized = false;
-            }
-        }
-        return false;
-    }
-
-    function getCustomTablesBranch($optionName, $startFrom, $langPostFix, $defaultValue): ?array
-    {
-        $optionId = 0;
-        $filterRootParent = Tree::getOptionIdFull($optionName);
-
-        if ($optionName) {
-            $available_categories = Tree::getChildren($optionId, $filterRootParent, 1);
-
-            $query = ' SELECT optionname, id, title_' . $langPostFix . ' AS title FROM #__customtables_options WHERE ';
-            $query .= ' id=' . $filterRootParent . ' LIMIT 1';
-
-            try {
-                $rootParentName = database::loadObjectList($query);
-            } catch (Exception $e) {
-                $this->ct->errors[] = $e->getMessage();
-                return null;
-            }
-
-            if ($startFrom == 0) {
-                if (count($rootParentName) == 1)
-                    JoomlaBasicMisc::array_insert(
-                        $available_categories,
-                        array(
-                            "id" => $filterRootParent,
-                            "name" => strtoupper($rootParentName[0]->title),
-                            "fullpath" => strtoupper($rootParentName[0]->optionname)
-
-                        ), 0);
-            }
-        } else {
-            $available_categories = Tree::getChildren($optionId, 0, 1);
-        }
-        if ($defaultValue)
-            JoomlaBasicMisc::array_insert(
-                $available_categories,
-                array(
-                    "id" => 0,
-                    "name" => $defaultValue,
-                    "fullpath" => ''
-
-                ), 0);
-
-        if ($startFrom == 0)
-            JoomlaBasicMisc::array_insert($available_categories,
-                array("id" => 0,
-                    "name" => common::translate('COM_CUSTOMTABLES_ROOT'),
-                    "fullpath" => ''),
-                count($available_categories));
-
-        return $available_categories;
-    }
-
-    function convertESParam2Array($par): array
-    {
-        $newParameter = [];
-        $a = explode(',', $par);
-        foreach ($a as $b) {
-            $c = trim($b);
-            if (strlen($c) > 0)
-                $newParameter[] = $c;
-        }
-        return $newParameter;
-    }
-
-    function copy(&$msg, &$link): bool
-    {
-        $listing_id = common::inputGetCmd("listing_id", 0);
-        $query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
-
-        try {
-            $rows = database::loadObjectList($query);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            return false;
-        }
-
-        if (count($rows) == 0)
-            $msg = 'Table not found or something wrong.';
-
-        $new_id = (int)($rows[0]->maxid) + 1;
-        $serverType = database::getServerType();
-        if ($serverType == 'postgresql')
-            $query = 'DROP TABLE IF EXISTS ct_tmp';
-        else
-            $query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
-
-        try {
-            database::setQuery($query);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            return false;
-        }
-
-        $serverType = database::getServerType();
-        if ($serverType == 'postgresql') {
-            $query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE ' . $this->ct->Table->realtablename . ' WITH NO DATA';
-
-            try {
-                database::setQuery($query);
-            } catch (Exception $e) {
-                $this->ct->errors[] = $e->getMessage();
-                return false;
-            }
-
-            $query = 'INSERT INTO ct_tmp (SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id) . ')';
-
-        } else {
-            $query = 'CREATE TEMPORARY TABLE ct_tmp SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id);
-        }
-
-        try {
-            database::setQuery($query);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            return false;
-        }
-
-        $sets = array();
-        $sets[] = $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
-
-        $query = 'UPDATE ct_tmp SET ' . implode(',', $sets) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
-        try {
-            database::setQuery($query);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            return false;
-        }
-
-        $query = 'INSERT INTO ' . $this->ct->Table->realtablename . ' SELECT * FROM ct_tmp WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
-        try {
-            database::setQuery($query);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            return false;
-        }
-
-        common::inputSet("listing_id", $new_id);
-        common::inputSet('old_listing_id', $listing_id);
-        $this->listing_id = $new_id;
-        $serverType = database::getServerType();
-        if ($serverType == 'postgresql') {
-            $query = 'DROP TABLE IF EXISTS ct_tmp';
-        } else {
-            $query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
-        }
-
-        try {
-            database::setQuery($query);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            return false;
-        }
-        return $this->store($msg, $link, true, $new_id);
-    }
-
-    function store(&$msg, &$link, $isCopy = false, string $listing_id = ''): bool
-    {
-        $record = new record($this->ct);
-
-        //IP Filter
-        $USER_IP = SaveFieldQuerySet::getUserIP();
-
-        $IP_Black_List = array();
-
-        if (in_array($USER_IP, $IP_Black_List))
-            return false;
-
-        $record->editForm->load();//Load Menu Item parameters
-
-        if ($record->save($listing_id, $isCopy)) {
-            $this->listing_id = $record->listing_id;
-
-            //Prepare "Accept Return To" Link
-            $return2Link = common::inputGet('returnto', '', 'BASE64');
-            if ($return2Link != '')
-                $link = $this->PrepareAcceptReturnToLink($return2Link);
-
-            //$link = str_replace('*new*', $row[$this->ct->Table->realidfieldname], $link);
-
-            //Refresh menu if needed
-            if ($this->ct->Params->msgItemIsSaved !== null and $this->ct->Params->msgItemIsSaved != "") {
-                $this->ct->errors[] = $this->ct->Params->msgItemIsSaved;
-            }
-
-            if ($this->ct->Env->advancedTagProcessor) {
-
-                try {
-                    CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
-                } catch (Exception $e) {
-                    $this->ct->errors[] = 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
-                }
-                $return2Link_Updated = common::inputGet('returnto', '', 'BASE64');
-                if ($return2Link != $return2Link_Updated)
-                    $link = base64_decode($return2Link_Updated);
-            }
-
-            common::inputSet("listing_id", $listing_id);
-        }
-        return true;
-    }
-
-    function load(CT $ct): bool
-    {
-        $this->ct = $ct;
-        $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
-
-        if ($this->ct->Table->tablename === null) {
-            $this->ct->errors[] = 'Table not selected (61).';
-            return false;
-        }
-
-        $this->ct->Params->userIdField = $this->findUserIDField($this->ct->Params->userIdField);//to make sure that the field name is real and two userid fields can be used
-
-        if (is_null($ct->Params->msgItemIsSaved))
-            $ct->Params->msgItemIsSaved = common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
-
-        $this->listing_id = $this->ct->Params->listing_id;
-
-        //Load the record
-        $this->listing_id = $this->processCustomListingID();
-
-        if (($this->listing_id === null or $this->listing_id == '' or $this->listing_id == 0) and $this->userIdField_UniqueUsers and $this->ct->Params->userIdField != '') {
-            //try to find record by userid and load it
-            $this->listing_id = $this->findRecordByUserID();
-        }
-
-        $this->ct->Params->listing_id = $this->listing_id;
-        return true;
-    }
-
-    function findUserIDField($userIdField): string
-    {
-        if ($userIdField != '') {
-            $userIdFields = array();
-            $statement_items = common::ExplodeSmartParams($userIdField); //"and" and "or" as separators
-
-            foreach ($statement_items as $item) {
-                if ($item[0] == 'or' or $item[0] == 'and') {
-                    $field = $item[1];
-                    if (!str_contains($field, '.')) {
-                        //Current table field name
-                        //find selected field
-                        foreach ($this->ct->Table->fields as $fieldrow) {
-                            if ($fieldrow['fieldname'] == $field and ($fieldrow['type'] == 'userid' or $fieldrow['type'] == 'user')) {
-                                $userIdFields[] = [$item[0], $item[1]];
-
-                                //Following apply to current table fields only and to only one (the last one in the statement)
-                                $params = $fieldrow['typeparams'];
-                                $parts = JoomlaBasicMisc::csv_explode(',', $params);
-
-                                $this->userIdField_UniqueUsers = false;
-                                if (isset($parts[4]) and $parts[4] == 'unique')
-                                    $this->userIdField_UniqueUsers = true;
-
-                                break;
-                            }
-                        }
-                    } else {
-                        //Table join
-                        //parents(children).user
-                        $userIdFields[] = [$item[0], $item[1]];
-                    }
-                }
-            }
-
-            $userIdFieldsStr = '';
-            $index = 0;
-            foreach ($userIdFields as $field) {
-                if ($index == 0)
-                    $userIdFieldsStr .= $field[1];
-                else
-                    $userIdFieldsStr .= ' ' . $field[0] . ' ' . $field[1];
-
-                $index += 1;
-            }
-            return $userIdFieldsStr;
-        }
-        return '';
-    }
-
-    function processCustomListingID(): ?int
-    {
-        if ($this->listing_id !== null and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
-            //Normal listing ID or CMD
-            $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename
-                . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
-
-            try {
-                $rows = database::loadAssocList($query);
-            } catch (Exception $e) {
-                $this->ct->errors[] = $e->getMessage();
-                return null;
-            }
-
-            if (count($rows) < 1)
-                return null;
-
-            return $this->listing_id;
-        }
-
-        $filter = $this->ct->Params->filter;
-
-        if ($filter == '')
-            return null;
-
-        if ($this->ct->Env->legacySupport) {
-            $LayoutProc = new LayoutProcessor($this->ct);
-            $LayoutProc->layout = $filter;
-            $filter = $LayoutProc->fillLayout(null, null, '[]', true);
-        }
-
-        $twig = new TwigProcessor($this->ct, $filter);
-        $filter = $twig->process();
-
-        if ($twig->errorMessage !== null)
-            $this->ct->errors[] = $twig->errorMessage;
-
-        //TODO
-        $this->ct->errors[] = 'Filtering not done.';
-
-        $filtering = new Filtering($this->ct, $this->ct->Params->showPublished);
-        $filtering->addWhereExpression($filter);
-        $whereArray = $filtering->where;
-
-        if ($this->ct->Table->published_field_found)
-            $whereArray[] = 'published=1';
-
-        $where = '';
-        if (count($whereArray) > 0)
-            $where = ' WHERE ' . implode(" AND ", $whereArray);
-
-        $query = 'SELECT ' . $this->ct->Table->realidfieldname . ' FROM ' . $this->ct->Table->realtablename . ' ' . $where;
-
-        $query .= ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC'; //show last
-        $query .= ' LIMIT 1';
-
-        try {
-            $rows = database::loadAssocList($query);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            return null;
-        }
-
-        if (count($rows) < 1)
-            return null;
-
-        $this->listing_id = $rows[0][$this->ct->Table->realidfieldname];
-        return $this->listing_id;
-    }
-
-    function findRecordByUserID(): ?string
-    {
-        $wheres = array();
-
-        if ($this->ct->Table->published_field_found)
-            $wheres[] = 'published=1';
-
-        $wheres_user = $this->ct->UserIDField_BuildWheres($this->ct->Params->userIdField, $this->listing_id);
-        $wheres = array_merge($wheres, $wheres_user);
-        $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
-
-        try {
-            $rows = database::loadAssocList($query);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            return -1;
-        }
-
-        if (count($rows) < 1)
-            return null;
-
-        $row = $rows[0];
-        return $row[$this->ct->Table->realidfieldname];
-    }
-
-    function PrepareAcceptReturnToLink($encoded_link): string
-    {
-        if ($encoded_link == '')
-            return '';
-
-        $link = base64_decode($encoded_link);
-
-        if ($link == '')
-            return '';
-
-        $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
-
-        try {
-            $rows = database::loadAssocList($query);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            return false;
-        }
-
-        if (count($rows) != 1) {
-            $this->ct->errors[] = 'Record not saved';
-            return false;
-        }
-
-        $row = $rows[0];
-
-        if ($this->ct->Env->legacySupport) {
-            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
-            $LayoutProc = new LayoutProcessor($this->ct);
-            $LayoutProc->layout = $link;
-            $link = $LayoutProc->fillLayout($row, "", '[]', true);
-        }
-
-        $twig = new TwigProcessor($this->ct, $link);
-        try {
-            $link = $twig->process($row);
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-            $this->ct->errors[] = $twig->errorMessage;
-            $link = '';
-        }
-
-        if ($twig->errorMessage !== null) {
-            $this->ct->errors[] = $twig->errorMessage;
-            $link = '';
-        }
-        return $link;
-    }
-
-    /*
+	var CT $ct;
+	var bool $userIdField_Unique;
+	var bool $userIdField_UniqueUsers;
+	var ?string $listing_id;
+	var bool $isAuthorized;
+	var ?array $row;
+
+	function __construct()
+	{
+		$this->userIdField_Unique = false;
+		$this->userIdField_UniqueUsers = false;
+		parent::__construct();
+	}
+
+	function CheckAuthorizationACL($access): bool
+	{
+		$this->isAuthorized = false;
+
+		if ($access == 'core.edit' and $this->listing_id == 0)
+			$access = 'core.create'; //add new
+
+		if ($this->ct->Env->user->authorise($access, 'com_customtables')) {
+			$this->isAuthorized = true;
+			return true;
+		}
+
+		if ($access != 'core.edit')
+			return false;
+
+		if ($this->ct->Params->userIdField != '') {
+			if ($this->ct->checkIfItemBelongsToUser($this->listing_id, $this->ct->Params->userIdField)) {
+				if ($this->ct->Env->user->authorise('core.edit.own', 'com_customtables')) {
+					$this->isAuthorized = true;
+					return true;
+				} else
+					$this->isAuthorized = false;
+			}
+		}
+		return false;
+	}
+
+	function getCustomTablesBranch($optionName, $startFrom, $langPostFix, $defaultValue): ?array
+	{
+		$optionId = 0;
+		$filterRootParent = Tree::getOptionIdFull($optionName);
+
+		if ($optionName) {
+			$available_categories = Tree::getChildren($optionId, $filterRootParent, 1);
+
+			$query = ' SELECT optionname, id, title_' . $langPostFix . ' AS title FROM #__customtables_options WHERE ';
+			$query .= ' id=' . $filterRootParent . ' LIMIT 1';
+
+			try {
+				$rootParentName = database::loadObjectList($query);
+			} catch (Exception $e) {
+				$this->ct->errors[] = $e->getMessage();
+				return null;
+			}
+
+			if ($startFrom == 0) {
+				if (count($rootParentName) == 1)
+					JoomlaBasicMisc::array_insert(
+						$available_categories,
+						array(
+							"id" => $filterRootParent,
+							"name" => strtoupper($rootParentName[0]->title),
+							"fullpath" => strtoupper($rootParentName[0]->optionname)
+
+						), 0);
+			}
+		} else {
+			$available_categories = Tree::getChildren($optionId, 0, 1);
+		}
+		if ($defaultValue)
+			JoomlaBasicMisc::array_insert(
+				$available_categories,
+				array(
+					"id" => 0,
+					"name" => $defaultValue,
+					"fullpath" => ''
+
+				), 0);
+
+		if ($startFrom == 0)
+			JoomlaBasicMisc::array_insert($available_categories,
+				array("id" => 0,
+					"name" => common::translate('COM_CUSTOMTABLES_ROOT'),
+					"fullpath" => ''),
+				count($available_categories));
+
+		return $available_categories;
+	}
+
+	function convertESParam2Array($par): array
+	{
+		$newParameter = [];
+		$a = explode(',', $par);
+		foreach ($a as $b) {
+			$c = trim($b);
+			if (strlen($c) > 0)
+				$newParameter[] = $c;
+		}
+		return $newParameter;
+	}
+
+	function copy(&$msg, &$link): bool
+	{
+		$listing_id = common::inputGetCmd("listing_id", 0);
+		$query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
+
+		try {
+			$rows = database::loadObjectList($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return false;
+		}
+
+		if (count($rows) == 0)
+			$msg = 'Table not found or something wrong.';
+
+		$new_id = (int)($rows[0]->maxid) + 1;
+		$serverType = database::getServerType();
+		if ($serverType == 'postgresql')
+			$query = 'DROP TABLE IF EXISTS ct_tmp';
+		else
+			$query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
+
+		try {
+			database::setQuery($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return false;
+		}
+
+		$serverType = database::getServerType();
+		if ($serverType == 'postgresql') {
+			$query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE ' . $this->ct->Table->realtablename . ' WITH NO DATA';
+
+			try {
+				database::setQuery($query);
+			} catch (Exception $e) {
+				$this->ct->errors[] = $e->getMessage();
+				return false;
+			}
+
+			$query = 'INSERT INTO ct_tmp (SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id) . ')';
+
+		} else {
+			$query = 'CREATE TEMPORARY TABLE ct_tmp SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id);
+		}
+
+		try {
+			database::setQuery($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return false;
+		}
+
+		$sets = array();
+		$sets[] = $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
+
+		$query = 'UPDATE ct_tmp SET ' . implode(',', $sets) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
+		try {
+			database::setQuery($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return false;
+		}
+
+		$query = 'INSERT INTO ' . $this->ct->Table->realtablename . ' SELECT * FROM ct_tmp WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
+		try {
+			database::setQuery($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return false;
+		}
+
+		common::inputSet("listing_id", $new_id);
+		common::inputSet('old_listing_id', $listing_id);
+		$this->listing_id = $new_id;
+		$serverType = database::getServerType();
+		if ($serverType == 'postgresql') {
+			$query = 'DROP TABLE IF EXISTS ct_tmp';
+		} else {
+			$query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
+		}
+
+		try {
+			database::setQuery($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return false;
+		}
+		return $this->store($msg, $link, true, $new_id);
+	}
+
+	function store(&$msg, &$link, $isCopy = false, string $listing_id = ''): bool
+	{
+		$record = new record($this->ct);
+
+		//IP Filter
+		$USER_IP = SaveFieldQuerySet::getUserIP();
+
+		$IP_Black_List = array();
+
+		if (in_array($USER_IP, $IP_Black_List))
+			return false;
+
+		$record->editForm->load();//Load Menu Item parameters
+
+		if ($record->save($listing_id, $isCopy)) {
+			$this->listing_id = $record->listing_id;
+
+			//Prepare "Accept Return To" Link
+			$return2Link = common::inputGet('returnto', '', 'BASE64');
+			if ($return2Link != '')
+				$link = $this->PrepareAcceptReturnToLink($return2Link);
+
+			//$link = str_replace('*new*', $row[$this->ct->Table->realidfieldname], $link);
+
+			//Refresh menu if needed
+			if ($this->ct->Params->msgItemIsSaved !== null and $this->ct->Params->msgItemIsSaved != "") {
+				$this->ct->messages[] = $this->ct->Params->msgItemIsSaved;
+			}
+
+			if ($this->ct->Env->advancedTagProcessor) {
+
+				try {
+					CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
+				} catch (Exception $e) {
+					$this->ct->errors[] = 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
+				}
+				$return2Link_Updated = common::inputGet('returnto', '', 'BASE64');
+				if ($return2Link != $return2Link_Updated)
+					$link = base64_decode($return2Link_Updated);
+			}
+
+			common::inputSet("listing_id", $listing_id);
+		}
+		return true;
+	}
+
+	function load(CT $ct): bool
+	{
+		$this->ct = $ct;
+		$this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
+
+		if ($this->ct->Table->tablename === null) {
+			$this->ct->errors[] = 'Table not selected (61).';
+			return false;
+		}
+
+		$this->ct->Params->userIdField = $this->findUserIDField($this->ct->Params->userIdField);//to make sure that the field name is real and two userid fields can be used
+
+		if (is_null($ct->Params->msgItemIsSaved))
+			$ct->Params->msgItemIsSaved = common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
+
+		$this->listing_id = $this->ct->Params->listing_id;
+
+		//Load the record
+		$this->listing_id = $this->processCustomListingID();
+
+		if (($this->listing_id === null or $this->listing_id == '' or $this->listing_id == 0) and $this->userIdField_UniqueUsers and $this->ct->Params->userIdField != '') {
+			//try to find record by userid and load it
+			$this->listing_id = $this->findRecordByUserID();
+		}
+
+		$this->ct->Params->listing_id = $this->listing_id;
+		return true;
+	}
+
+	function findUserIDField($userIdField): string
+	{
+		if ($userIdField != '') {
+			$userIdFields = array();
+			$statement_items = common::ExplodeSmartParams($userIdField); //"and" and "or" as separators
+
+			foreach ($statement_items as $item) {
+				if ($item[0] == 'or' or $item[0] == 'and') {
+					$field = $item[1];
+					if (!str_contains($field, '.')) {
+						//Current table field name
+						//find selected field
+						foreach ($this->ct->Table->fields as $fieldrow) {
+							if ($fieldrow['fieldname'] == $field and ($fieldrow['type'] == 'userid' or $fieldrow['type'] == 'user')) {
+								$userIdFields[] = [$item[0], $item[1]];
+
+								//Following apply to current table fields only and to only one (the last one in the statement)
+								$params = $fieldrow['typeparams'];
+								$parts = JoomlaBasicMisc::csv_explode(',', $params);
+
+								$this->userIdField_UniqueUsers = false;
+								if (isset($parts[4]) and $parts[4] == 'unique')
+									$this->userIdField_UniqueUsers = true;
+
+								break;
+							}
+						}
+					} else {
+						//Table join
+						//parents(children).user
+						$userIdFields[] = [$item[0], $item[1]];
+					}
+				}
+			}
+
+			$userIdFieldsStr = '';
+			$index = 0;
+			foreach ($userIdFields as $field) {
+				if ($index == 0)
+					$userIdFieldsStr .= $field[1];
+				else
+					$userIdFieldsStr .= ' ' . $field[0] . ' ' . $field[1];
+
+				$index += 1;
+			}
+			return $userIdFieldsStr;
+		}
+		return '';
+	}
+
+	function processCustomListingID(): ?int
+	{
+		if ($this->listing_id !== null and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
+			//Normal listing ID or CMD
+			$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename
+				. ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
+
+			try {
+				$rows = database::loadAssocList($query);
+			} catch (Exception $e) {
+				$this->ct->errors[] = $e->getMessage();
+				return null;
+			}
+
+			if (count($rows) < 1)
+				return null;
+
+			return $this->listing_id;
+		}
+
+		$filter = $this->ct->Params->filter;
+
+		if ($filter == '')
+			return null;
+
+		if ($this->ct->Env->legacySupport) {
+			$LayoutProc = new LayoutProcessor($this->ct);
+			$LayoutProc->layout = $filter;
+			$filter = $LayoutProc->fillLayout(null, null, '[]', true);
+		}
+
+		$twig = new TwigProcessor($this->ct, $filter);
+		$filter = $twig->process();
+
+		if ($twig->errorMessage !== null)
+			$this->ct->errors[] = $twig->errorMessage;
+
+		//TODO
+		$this->ct->errors[] = 'Filtering not done.';
+
+		$filtering = new Filtering($this->ct, $this->ct->Params->showPublished);
+		$filtering->addWhereExpression($filter);
+		$whereArray = $filtering->where;
+
+		if ($this->ct->Table->published_field_found)
+			$whereArray[] = 'published=1';
+
+		$where = '';
+		if (count($whereArray) > 0)
+			$where = ' WHERE ' . implode(" AND ", $whereArray);
+
+		$query = 'SELECT ' . $this->ct->Table->realidfieldname . ' FROM ' . $this->ct->Table->realtablename . ' ' . $where;
+
+		$query .= ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC'; //show last
+		$query .= ' LIMIT 1';
+
+		try {
+			$rows = database::loadAssocList($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return null;
+		}
+
+		if (count($rows) < 1)
+			return null;
+
+		$this->listing_id = $rows[0][$this->ct->Table->realidfieldname];
+		return $this->listing_id;
+	}
+
+	function findRecordByUserID(): ?string
+	{
+		$wheres = array();
+
+		if ($this->ct->Table->published_field_found)
+			$wheres[] = 'published=1';
+
+		$wheres_user = $this->ct->UserIDField_BuildWheres($this->ct->Params->userIdField, $this->listing_id);
+		$wheres = array_merge($wheres, $wheres_user);
+		$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
+
+		try {
+			$rows = database::loadAssocList($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return -1;
+		}
+
+		if (count($rows) < 1)
+			return null;
+
+		$row = $rows[0];
+		return $row[$this->ct->Table->realidfieldname];
+	}
+
+	function PrepareAcceptReturnToLink($encoded_link): string
+	{
+		if ($encoded_link == '')
+			return '';
+
+		$link = base64_decode($encoded_link);
+
+		if ($link == '')
+			return '';
+
+		$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
+
+		try {
+			$rows = database::loadAssocList($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return false;
+		}
+
+		if (count($rows) != 1) {
+			$this->ct->errors[] = 'Record not saved';
+			return false;
+		}
+
+		$row = $rows[0];
+
+		if ($this->ct->Env->legacySupport) {
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
+			$LayoutProc = new LayoutProcessor($this->ct);
+			$LayoutProc->layout = $link;
+			$link = $LayoutProc->fillLayout($row, "", '[]', true);
+		}
+
+		$twig = new TwigProcessor($this->ct, $link);
+		try {
+			$link = $twig->process($row);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			$this->ct->errors[] = $twig->errorMessage;
+			$link = '';
+		}
+
+		if ($twig->errorMessage !== null) {
+			$this->ct->errors[] = $twig->errorMessage;
+			$link = '';
+		}
+		return $link;
+	}
+
+	/*
 	function CheckValueRule($prefix,$fieldname, $fieldType, $typeParams)
 	{
 		$valuearray=array();
@@ -668,190 +668,190 @@ class CustomTablesModelEditItem extends JModelLegacy
 	}
 	*/
 
-    function Refresh($save_log = 1): int
-    {
-        $listing_ids_str = common::inputGetString('ids', '');
+	function Refresh($save_log = 1): int
+	{
+		$listing_ids_str = common::inputGetString('ids', '');
 
-        if ($listing_ids_str != '') {
-            $listing_ids_ = explode(',', $listing_ids_str);
-            foreach ($listing_ids_ as $listing_id) {
-                if ($listing_id != '') {
-                    $listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
-                    if ($this->ct->RefreshSingleRecord($listing_id, $save_log) == -1)
-                        return -count($listing_ids_); //negative value means that there is an error
-                }
-            }
-            return count($listing_ids_);
-        }
+		if ($listing_ids_str != '') {
+			$listing_ids_ = explode(',', $listing_ids_str);
+			foreach ($listing_ids_ as $listing_id) {
+				if ($listing_id != '') {
+					$listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
+					if ($this->ct->RefreshSingleRecord($listing_id, $save_log) == -1)
+						return -count($listing_ids_); //negative value means that there is an error
+				}
+			}
+			return count($listing_ids_);
+		}
 
-        $listing_id = common::inputGetCmd("listing_id", 0);
+		$listing_id = common::inputGetCmd("listing_id", 0);
 
-        if ($listing_id == 0 or $listing_id == '')
-            return 0;
+		if ($listing_id == 0 or $listing_id == '')
+			return 0;
 
-        return $this->ct->RefreshSingleRecord($listing_id, $save_log);
-    }
+		return $this->ct->RefreshSingleRecord($listing_id, $save_log);
+	}
 
-    function setPublishStatus($status): int
-    {
-        $listing_ids_str = common::inputGetString('ids', '');
-        if ($listing_ids_str != '') {
-            $listing_ids_ = explode(',', $listing_ids_str);
-            foreach ($listing_ids_ as $listing_id) {
-                if ($listing_id != '') {
-                    $listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
-                    if ($this->ct->setPublishStatusSingleRecord($listing_id, $status) == -1)
-                        return -count($listing_ids_); //negative value means that there is an error
-                }
-            }
-            return count($listing_ids_);
-        }
+	function setPublishStatus($status): int
+	{
+		$listing_ids_str = common::inputGetString('ids', '');
+		if ($listing_ids_str != '') {
+			$listing_ids_ = explode(',', $listing_ids_str);
+			foreach ($listing_ids_ as $listing_id) {
+				if ($listing_id != '') {
+					$listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
+					if ($this->ct->setPublishStatusSingleRecord($listing_id, $status) == -1)
+						return -count($listing_ids_); //negative value means that there is an error
+				}
+			}
+			return count($listing_ids_);
+		}
 
-        $listing_id = $this->listing_id;
-        if ($listing_id == '' or $listing_id == 0)
-            return 0;
+		$listing_id = $this->listing_id;
+		if ($listing_id == '' or $listing_id == 0)
+			return 0;
 
-        return $this->ct->setPublishStatusSingleRecord($listing_id, $status);
-    }
+		return $this->ct->setPublishStatusSingleRecord($listing_id, $status);
+	}
 
-    function delete(): int
-    {
-        $listing_ids_str = common::inputGetString('ids', '');
-        if ($listing_ids_str != '') {
+	function delete(): int
+	{
+		$listing_ids_str = common::inputGetString('ids', '');
+		if ($listing_ids_str != '') {
 
-            $listing_ids_ = explode(',', $listing_ids_str);
-            foreach ($listing_ids_ as $listing_id) {
-                if ($listing_id != '') {
-                    $listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
-                    if ($this->ct->deleteSingleRecord($listing_id) == -1)
-                        return -count($listing_ids_); //negative value means that there is an error
-                }
-            }
-            return count($listing_ids_);
-        }
+			$listing_ids_ = explode(',', $listing_ids_str);
+			foreach ($listing_ids_ as $listing_id) {
+				if ($listing_id != '') {
+					$listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
+					if ($this->ct->deleteSingleRecord($listing_id) == -1)
+						return -count($listing_ids_); //negative value means that there is an error
+				}
+			}
+			return count($listing_ids_);
+		}
 
-        $listing_id = common::inputGetCmd("listing_id", 0);
-        if ($listing_id == '' or $listing_id == 0)
-            return 0;
+		$listing_id = common::inputGetCmd("listing_id", 0);
+		if ($listing_id == '' or $listing_id == 0)
+			return 0;
 
-        return $this->ct->deleteSingleRecord($listing_id);
-    }
+		return $this->ct->deleteSingleRecord($listing_id);
+	}
 
-    public function copyContent($from, $to)
-    {
-        //Copy value from one cell to another (drag and drop functionality)
-        $from_parts = explode('_', $from);
-        $to_parts = explode('_', $to);
+	public function copyContent($from, $to)
+	{
+		//Copy value from one cell to another (drag and drop functionality)
+		$from_parts = explode('_', $from);
+		$to_parts = explode('_', $to);
 
-        $from_listing_id = $from_parts[0];
-        $to_listing_id = $to_parts[0];
+		$from_listing_id = $from_parts[0];
+		$to_listing_id = $to_parts[0];
 
-        $from_field = Fields::FieldRowByName($from_parts[1], $this->ct->Table->fields);
-        $to_field = Fields::FieldRowByName($to_parts[1], $this->ct->Table->fields);
+		$from_field = Fields::FieldRowByName($from_parts[1], $this->ct->Table->fields);
+		$to_field = Fields::FieldRowByName($to_parts[1], $this->ct->Table->fields);
 
-        if (!isset($from_field['type']))
-            die(json_encode(['error' => 'From field not found.']));
+		if (!isset($from_field['type']))
+			die(json_encode(['error' => 'From field not found.']));
 
-        if (!isset($to_field['type']))
-            die(json_encode(['error' => 'To field not found.']));
+		if (!isset($to_field['type']))
+			die(json_encode(['error' => 'To field not found.']));
 
-        $from_row = $this->ct->Table->loadRecord($from_listing_id);
-        $to_row = $this->ct->Table->loadRecord($to_listing_id);
+		$from_row = $this->ct->Table->loadRecord($from_listing_id);
+		$to_row = $this->ct->Table->loadRecord($to_listing_id);
 
-        $f = $from_field['type'];
-        $t = $to_field['type'];
+		$f = $from_field['type'];
+		$t = $to_field['type'];
 
-        $ok = true;
+		$ok = true;
 
-        if ($f != $t) {
-            switch ($t) {
-                case 'string':
-                    if (!($f == 'email' or $f == 'int' or $f == 'float' or $f == 'text'))
-                        $ok = false;
-                    break;
+		if ($f != $t) {
+			switch ($t) {
+				case 'string':
+					if (!($f == 'email' or $f == 'int' or $f == 'float' or $f == 'text'))
+						$ok = false;
+					break;
 
-                default:
-                    $ok = false;
-            }
-        }
+				default:
+					$ok = false;
+			}
+		}
 
-        if (!$ok)
-            die(json_encode(['error' => 'Target and destination field types do not match.']));
+		if (!$ok)
+			die(json_encode(['error' => 'Target and destination field types do not match.']));
 
-        $new_value = '';
+		$new_value = '';
 
-        switch ($to_field['type']) {
-            case 'sqljoin':
-                if ($to_row[$to_field['realfieldname']] !== '')
-                    die(json_encode(['error' => 'Target field type is the Table Join. Multiple values not allowed.']));
+		switch ($to_field['type']) {
+			case 'sqljoin':
+				if ($to_row[$to_field['realfieldname']] !== '')
+					die(json_encode(['error' => 'Target field type is the Table Join. Multiple values not allowed.']));
 
-                break;
+				break;
 
-            case 'customtables':
-                if ($to_row[$to_field['realfieldname']] !== '')
-                    die(json_encode(['error' => 'Target field type is a Tree. Multiple values not allowed.']));
+			case 'customtables':
+				if ($to_row[$to_field['realfieldname']] !== '')
+					die(json_encode(['error' => 'Target field type is a Tree. Multiple values not allowed.']));
 
-                break;
+				break;
 
-            case 'email':
+			case 'email':
 
-                if ($to_row[$to_field['realfieldname']] !== '')
-                    die(json_encode(['error' => 'Target field type is an Email. Multiple values not allowed.']));
+				if ($to_row[$to_field['realfieldname']] !== '')
+					die(json_encode(['error' => 'Target field type is an Email. Multiple values not allowed.']));
 
-                break;
+				break;
 
-            case 'string':
+			case 'string':
 
-                if (str_contains($to_row[$to_field['realfieldname']], $from_row[$from_field['realfieldname']]))
-                    die(json_encode(['error' => 'Target field already contains this value.']));
+				if (str_contains($to_row[$to_field['realfieldname']], $from_row[$from_field['realfieldname']]))
+					die(json_encode(['error' => 'Target field already contains this value.']));
 
-                $new_value = $to_row[$to_field['realfieldname']];
-                if ($new_value != '')
-                    $new_value .= ',';
+				$new_value = $to_row[$to_field['realfieldname']];
+				if ($new_value != '')
+					$new_value .= ',';
 
-                $new_value .= $from_row[$from_field['realfieldname']];
-                break;
+				$new_value .= $from_row[$from_field['realfieldname']];
+				break;
 
-            case 'records':
+			case 'records':
 
-                $new_items = [''];
-                $to_items = explode(',', $to_row[$to_field['realfieldname']]);
+				$new_items = [''];
+				$to_items = explode(',', $to_row[$to_field['realfieldname']]);
 
-                foreach ($to_items as $item) {
-                    if ($item != '' and !in_array($item, $new_items))
-                        $new_items[] = $item;
-                }
+				foreach ($to_items as $item) {
+					if ($item != '' and !in_array($item, $new_items))
+						$new_items[] = $item;
+				}
 
-                $from_items = explode(',', $from_row[$from_field['realfieldname']]);
+				$from_items = explode(',', $from_row[$from_field['realfieldname']]);
 
-                foreach ($from_items as $item) {
-                    if ($item != '' and !in_array($item, $new_items))
-                        $new_items[] = $item;
-                }
+				foreach ($from_items as $item) {
+					if ($item != '' and !in_array($item, $new_items))
+						$new_items[] = $item;
+				}
 
-                $new_items[] = '';
+				$new_items[] = '';
 
-                if (count($new_items) == count($to_items))
-                    die(json_encode(['error' => 'Target field already contains this value(s).']));
+				if (count($new_items) == count($to_items))
+					die(json_encode(['error' => 'Target field already contains this value(s).']));
 
-                $new_value = implode(',', $new_items);
+				$new_value = implode(',', $new_items);
 
-                break;
-        }
+				break;
+		}
 
-        if ($new_value != '') {
-            $query = 'UPDATE ' . $this->ct->Table->realtablename
-                . ' SET ' . $to_field['realfieldname'] . '= ' . database::quote($new_value)
-                . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($to_listing_id);
+		if ($new_value != '') {
+			$query = 'UPDATE ' . $this->ct->Table->realtablename
+				. ' SET ' . $to_field['realfieldname'] . '= ' . database::quote($new_value)
+				. ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($to_listing_id);
 
-            try {
-                database::setQuery($query);
-            } catch (Exception $e) {
-                $this->ct->errors[] = $e->getMessage();
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
+			try {
+				database::setQuery($query);
+			} catch (Exception $e) {
+				$this->ct->errors[] = $e->getMessage();
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
 }
