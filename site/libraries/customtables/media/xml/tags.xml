@@ -1216,5 +1216,4 @@
         <tag name="json_decode" description="Decodes a JSON string."
              examplevalue="'{&quot;a&quot;:1,&quot;b&quot;:2}'" proversion="1"/>
     </tagset>
-
 </layouts>

@@ -30,11 +30,9 @@ switch ($task) {
 		break;
 
 	case 'cancel':
-
 		$msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
 		$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
 		$this->setRedirect($link, $msg);
-
 		break;
 
 	case 'delete':
@@ -50,7 +48,6 @@ switch ($task) {
 function CustomTablesDelete($this_)
 {
 	$ct = new CT;
-
 	$edit_model = $this_->getModel('edititem');
 	$edit_model->load($ct);
 

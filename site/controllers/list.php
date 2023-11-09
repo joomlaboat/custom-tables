@@ -13,80 +13,63 @@ use CustomTables\common;
 use Joomla\Utilities\ArrayHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 $layout = common::inputGet('layout', '', 'CMD');
 
-
 switch (common::inputGet('task', '', 'CMD')) {
-    case 'edit':
+	case 'edit':
+		common::inputSet('view', 'listedit');
+		common::inputSet('layout', 'form');
+		parent::display();
+		break;
 
-        common::inputSet('view', 'listedit');
-        common::inputSet('layout', 'form');
+	case 'save':
+		$model = $this->getModel('listedit');
+		$link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
+		if ($model->store()) {
+			$msg = common::translate('COM_CUSTOMTABLES_OPTION_SAVED');
+			$this->setRedirect($link, $msg);
+		} else {
+			$msg = common::translate('COM_CUSTOMTABLES_OPTION_NOT_SAVED');
+			$this->setRedirect($link, $msg, 'error');
+		}
+		break;
 
-        parent::display();
+	case 'cancel':
+		$link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
+		$msg = '';
+		$this->setRedirect($link, $msg);
+		break;
 
-        break;
+	case 'remove':
+		$link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
 
-    case 'save':
+		// Check for request forgeries
+		JSession::checkToken() or jexit('COM_CUSTOMTABLES_INVALID_TOKEN');
 
-        $model = $this->getModel('listedit');
+		// Get some variables from the request
 
-        $link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
-        if ($model->store()) {
-            $msg = common::translate('COM_CUSTOMTABLES_OPTION_SAVED');
-            $this->setRedirect($link, $msg);
-        } else {
-            $msg = common::translate('COM_CUSTOMTABLES_OPTION_NOT_SAVED');
-            $this->setRedirect($link, $msg, 'error');
-        }
+		$cid = common::inputPost('cid', array(), 'array');
+		ArrayHelper::toInteger($cid);
 
-        break;
+		if (!count($cid)) {
+			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_OPTIONS_NOT_SELECTED'));
+			return false;
+		}
 
-    case 'cancel':
+		$model = $this->getModel('List');
+		if ($n = $model->delete($cid)) {
+			$msg = common::translate('% COM_CUSTOMTABLES_OPTIONS_DELETED', $n);
+		} else {
+			$msg = $model->getError();
+		}
+		$this->setRedirect($link, $msg);
+		break;
 
-        $link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
-
-        $msg = '';
-
-        $this->setRedirect($link, $msg);
-
-
-        break;
-
-    case 'remove':
-
-
-        $link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
-
-        // Check for request forgeries
-        JSession::checkToken() or jexit('COM_CUSTOMTABLES_INVALID_TOKEN');
-
-        // Get some variables from the request
-
-        $cid = common::inputPost('cid', array(), 'array');
-        ArrayHelper::toInteger($cid);
-
-        if (!count($cid)) {
-            $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_OPTIONS_NOT_SELECTED'));
-            return false;
-        }
-
-        $model = $this->getModel('List');
-        if ($n = $model->delete($cid)) {
-            $msg = common::translate('% COM_CUSTOMTABLES_OPTIONS_DELETED', $n);
-        } else {
-            $msg = $model->getError();
-        }
-        $this->setRedirect($link, $msg);
-
-        break;
-
-    default:
-
-        common::inputSet('view', 'list');
-        parent::display();
-
-        break;
+	default:
+		common::inputSet('view', 'list');
+		parent::display();
+		break;
 }
