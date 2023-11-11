@@ -90,8 +90,21 @@ function renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) {
                 result += '<input data-type="field" type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
             } else {
                 if (SQLJoinTableID === null || (typeof (param_att.currenttable) != "undefined" && param_att.currenttable === "1")) {
-                    const obj = document.getElementById('jform_tableid');
-                    const currentTableId = obj.value;
+
+                    //Get Current Table ID
+                    let currentTableId;
+                    let obj;
+                    if (typeof wp !== 'undefined') {
+                        obj = document.getElementById('table');
+                    } else if (typeof Joomla !== 'undefined') {
+                        obj = document.getElementById('jform_tableid');
+                    }
+
+                    if (!obj)
+                        return 'Table selector not found.';
+
+                    currentTableId = obj.value;
+
                     return renderInput_Field(id, param, vlu, attributes, currentTableId);
                 } else
                     return renderInput_Field(id, param, vlu, attributes, SQLJoinTableID);

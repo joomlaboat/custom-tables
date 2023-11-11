@@ -881,6 +881,17 @@ function renderTags(index, tagSet) {
     let tags = getParamOptions(tagSet, 'tag');
     let result = '<div class="dynamic_values" style="padding-left:0 !important;">';
 
+    let buttonClass = "";
+    let buttonClassPro = "";
+
+    if (typeof wp !== 'undefined') {
+        buttonClass = "button button-primary";
+        buttonClassPro = "button";
+    } else if (typeof Joomla !== 'undefined') {
+        buttonClass = "btn-primary";
+        buttonClassPro = "btn-default";
+    }
+
     for (let i = 0; i < tags.length; i++) {
         let tag_object = tags[i];
         let tag = tag_object["@attributes"];
@@ -905,21 +916,20 @@ function renderTags(index, tagSet) {
 
             result += '<div style="vertical-align:top;display:inline-block;">';
 
-            if (typeof (tag.proversion) === "undefined" || parseInt(tag.proversion) !== 1) {
-                result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(fullTagName) + '",' + params.length + ');\' class="btn-primary">' + t + '</a> ';
+            if (proversion || typeof (tag.proversion) === "undefined" || parseInt(tag.proversion) !== 1) {
+                result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(fullTagName) + '",' + params.length + ');\' class="' + buttonClass + '" title="' + tag.description + '">' + t + '</a> ';
             } else {
-                if (proversion) {
-                    result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(fullTagName) + '",' + params.length + ');\' class="btn-primary">' + t + '</a> ';
-                } else {
-                    result += '<div style="display:inline-block;"><div class="btn-default">' + t + '</div></div> ';
-                    result += '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">Available in PRO Version</a></div>';
-                }
+                result += '<div style="display:inline-block;"><div class="' + buttonClassPro + '" title="' + tag.description + '">' + t + ' *</div></div> ';
             }
-            result += tag.description;
             result += '</div>';
         }
     }
+
     result += '</div>';
+
+    if (!proversion)
+        result += '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">* Get Custom Tables PRO Version</a></div>';
+
     return result;
 }
 

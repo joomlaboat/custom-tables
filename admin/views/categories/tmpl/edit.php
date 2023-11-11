@@ -10,18 +10,17 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 if ($this->version >= 4) {
-    $wa = $this->document->getWebAssetManager();
-    $wa->useScript('keepalive')
-        ->useScript('form.validate');
+	$wa = $this->document->getWebAssetManager();
+	$wa->useScript('keepalive')->useScript('form.validate');
 } else {
-    JHtml::_('behavior.formvalidation');
-    JHtml::_('behavior.keepalive');
+	JHtml::_('behavior.formvalidation');
+	JHtml::_('behavior.keepalive');
 }
 ?>
 
@@ -42,7 +41,7 @@ if ($this->version >= 4) {
 
         <div>
             <input type="hidden" name="task" value="categories.edit"/>
-            <?php echo JHtml::_('form.token'); ?>
+			<?php echo JHtml::_('form.token'); ?>
         </div>
     </div>
 </form>

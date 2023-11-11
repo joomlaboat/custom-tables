@@ -11,32 +11,32 @@
 // no direct access
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
 
-jimport('joomla.html.html.bootstrap');
-JHtml::_('behavior.keepalive');
-JHtml::_('behavior.formvalidator');
-JHtml::_('behavior.calendar');
-JHtml::_('bootstrap.popover');
+//jimport('joomla.html.html.bootstrap');
+//JHtml::_('behavior.keepalive');
+//JHtml::_('behavior.formvalidator');
+//JHtml::_('behavior.calendar');
+//JHtml::_('bootstrap.popover');
 
 use CustomTables\common;
 use Joomla\CMS\Session\Session;
 
 if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading)
-    $response_object['page_title'] = common::translate($this->ct->Params->pageTitle);
+	$response_object['page_title'] = common::translate($this->ct->Params->pageTitle);
 
 if (ob_get_contents())
-    ob_end_clean();
+	ob_end_clean();
 
 //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 
 if (isset($this->row[$this->ct->Table->realidfieldname]))
-    $listing_id = (int)$this->row[$this->ct->Table->realidfieldname];
+	$listing_id = (int)$this->row[$this->ct->Table->realidfieldname];
 else
-    $listing_id = 0;
+	$listing_id = 0;
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 $LayoutProc = new LayoutProcessor($this->ct, $this->pageLayout);
@@ -51,8 +51,8 @@ $response_object = [];
 $encoded_returnto = base64_encode($this->ct->Params->returnTo);
 
 if ($listing_id == 0) {
-    $publishstatus = $this->params->get('publishstatus');
-    $response_object['published'] = (int)$publishstatus;
+	$publishstatus = $this->params->get('publishstatus');
+	$response_object['published'] = (int)$publishstatus;
 }
 
 $response_object['form'] = $form_items;

@@ -11,7 +11,7 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -32,20 +32,21 @@ JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
 
+
 require_once(CUSTOMTABLES_LIBRARIES_PATH
-    . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
+	. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
 
 if (in_array(common::inputGetCmd('extratask', ''), $this->extrataskOptions)) {
-    extraTasks::prepareJS();
+	extraTasks::prepareJS();
 }
 
 foreach ($this->allTables as $table) {
-    $fields = Fields::getFields($table[0], true);
-    $list = array();
-    foreach ($fields as $field)
-        $list[] = [$field->id, $field->fieldname];
+	$fields = Fields::getFields($table[0], true);
+	$list = array();
+	foreach ($fields as $field)
+		$list[] = [$field->id, $field->fieldname];
 
-    echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
+	echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
 ';
 } ?>
 <script>
@@ -70,15 +71,15 @@ foreach ($this->allTables as $table) {
         jQuery('#loading').hide();
     });
 
-    <?php
+	<?php
 
-    if ($this->ct->Env->advancedTagProcessor) {
-        echo '
+	if ($this->ct->Env->advancedTagProcessor) {
+		echo '
 		proversion=true;
 ';
-    }
-    echo 'all_tables=' . json_encode($this->allTables) . ';';
-    ?>
+	}
+	echo 'all_tables=' . json_encode($this->allTables) . ';';
+	?>
 </script>
 <div id="customtables_loader" style="display: none;">
 
@@ -87,10 +88,10 @@ foreach ($this->allTables as $table) {
 
         <div class="form-horizontal">
 
-            <?php
-            echo JHtml::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
+			<?php
+			echo JHtml::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
 
-            <?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'general', common::translate('COM_CUSTOMTABLES_FIELDS_GENERAL')); ?>
+			<?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'general', common::translate('COM_CUSTOMTABLES_FIELDS_GENERAL')); ?>
             <div class="row-fluid form-horizontal-desktop">
                 <div class="span12">
 
@@ -104,7 +105,7 @@ foreach ($this->allTables as $table) {
                         <div class="controls"><?php echo $this->form->getInput('fieldname'); ?></div>
                     </div>
 
-                    <?php if ($this->table_row->customtablename != ''): ?>
+					<?php if ($this->table_row->customtablename != ''): ?>
                         <hr/>
                         <p><?php echo common::translate('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD') . ': "' . $this->table_row->customtablename . '"'; ?></p>
                         <div class="control-group">
@@ -112,37 +113,37 @@ foreach ($this->allTables as $table) {
                             <div class="controls"><?php echo $this->form->getInput('customfieldname'); ?></div>
                         </div>
 
-                    <?php endif; ?>
+					<?php endif; ?>
 
                     <hr/>
 
-                    <?php
+					<?php
 
-                    $moreThanOneLanguage = false;
-                    foreach ($this->ct->Languages->LanguageList as $lang) {
-                        $id = 'fieldtitle';
-                        if ($moreThanOneLanguage) {
-                            $id .= '_' . $lang->sef;
+					$moreThanOneLanguage = false;
+					foreach ($this->ct->Languages->LanguageList as $lang) {
+						$id = 'fieldtitle';
+						if ($moreThanOneLanguage) {
+							$id .= '_' . $lang->sef;
 
-                            $cssclass = 'text_area';
-                            $att = '';
-                        } else {
-                            $cssclass = 'text_area required';
-                            $att = ' required aria-required="true"';
-                        }
+							$cssclass = 'text_area';
+							$att = '';
+						} else {
+							$cssclass = 'text_area required';
+							$att = ' required aria-required="true"';
+						}
 
-                        $item_array = (array)$this->item;
-                        $vlu = '';
+						$item_array = (array)$this->item;
+						$vlu = '';
 
-                        if (isset($item_array[$id]))
-                            $vlu = $item_array[$id];
+						if (isset($item_array[$id]))
+							$vlu = $item_array[$id];
 
-                        if ($moreThanOneLanguage)
-                            $field_label = common::translate('COM_CUSTOMTABLES_FIELDS_FIELDTITLE');
-                        else
-                            $field_label = $this->form->getLabel('fieldtitle');
+						if ($moreThanOneLanguage)
+							$field_label = common::translate('COM_CUSTOMTABLES_FIELDS_FIELDTITLE');
+						else
+							$field_label = $this->form->getLabel('fieldtitle');
 
-                        echo '
+						echo '
 					<div class="control-group">
 						<div class="control-label">' . $field_label . '</div>
 						<div class="controls">
@@ -153,9 +154,9 @@ foreach ($this->allTables as $table) {
 					</div>
 					';
 
-                        $moreThanOneLanguage = true; //More than one language installed
-                    }
-                    ?>
+						$moreThanOneLanguage = true; //More than one language installed
+					}
+					?>
 
                     <hr/>
                     <div class="control-group">
@@ -181,9 +182,9 @@ foreach ($this->allTables as $table) {
                     </div>
                 </div>
             </div>
-            <?php echo JHtml::_('bootstrap.endTab'); ?>
+			<?php echo JHtml::_('bootstrap.endTab'); ?>
 
-            <?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'optional', common::translate('COM_CUSTOMTABLES_FIELDS_OPTIONAL')); ?>
+			<?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'optional', common::translate('COM_CUSTOMTABLES_FIELDS_OPTIONAL')); ?>
             <div class="row-fluid form-horizontal-desktop">
                 <div class="span12">
                     <div class="control-group">
@@ -212,63 +213,63 @@ foreach ($this->allTables as $table) {
                     </div>
                 </div>
             </div>
-            <?php echo JHtml::_('bootstrap.endTab'); ?>
+			<?php echo JHtml::_('bootstrap.endTab'); ?>
 
-            <?php
+			<?php
 
-            $moreThanOneLanguage = false;
-            foreach ($this->ct->Languages->LanguageList as $lang) {
-                $id = 'description';
-                if ($moreThanOneLanguage)
-                    $id .= '_' . $lang->sef;
+			$moreThanOneLanguage = false;
+			foreach ($this->ct->Languages->LanguageList as $lang) {
+				$id = 'description';
+				if ($moreThanOneLanguage)
+					$id .= '_' . $lang->sef;
 
-                JHtml::_('bootstrap.addTab', 'fieldsTab', $id, common::translate('COM_CUSTOMTABLES_FIELDS_DESCRIPTION') . ' <b>' . $lang->title . '</b>');
-                echo '
+				JHtml::_('bootstrap.addTab', 'fieldsTab', $id, common::translate('COM_CUSTOMTABLES_FIELDS_DESCRIPTION') . ' <b>' . $lang->title . '</b>');
+				echo '
 			<div id="' . $id . '" class="tab-pane">
 				<div class="row-fluid form-horizontal-desktop">
 					<div class="span12">';
 
-                $editor = Factory::getEditor();
+				$editor = Factory::getEditor();
 
-                $item_array = (array)$this->item;
-                $vlu = '';
+				$item_array = (array)$this->item;
+				$vlu = '';
 
-                if (isset($item_array[$id]))
-                    $vlu = $item_array[$id];
+				if (isset($item_array[$id]))
+					$vlu = $item_array[$id];
 
-                echo '<textarea rows="10" cols="20" name="jform[' . $id . ']" id="jform_' . $id . '" style="width:100%;height:100%;"
+				echo '<textarea rows="10" cols="20" name="jform[' . $id . ']" id="jform_' . $id . '" style="width:100%;height:100%;"
 				class="text_area" placeholder="Field Description" >' . $vlu . '</textarea>';
 
-                echo '
+				echo '
 					</div>
 				</div>
 			</div>';
-                $moreThanOneLanguage = true; //More than one language installed
-            }
+				$moreThanOneLanguage = true; //More than one language installed
+			}
 
-            echo JHtml::_('bootstrap.endTabSet'); ?>
+			echo JHtml::_('bootstrap.endTabSet'); ?>
 
             <div>
                 <input type="hidden" name="task" value="fields.edit"/>
                 <input type="hidden" name="tableid" value="<?php echo $this->tableid; ?>"/>
-                <?php echo JHtml::_('form.token'); ?>
+				<?php echo JHtml::_('form.token'); ?>
             </div>
 
             <script>
                 updateTypeParams("jform_type", "jform_typeparams", "typeparams_box", "Joomla");
-                <?php if(!$this->ct->Env->advancedTagProcessor): ?>
+				<?php if(!$this->ct->Env->advancedTagProcessor): ?>
                 disableProField("jform_defaultvalue");
                 disableProField("jform_valuerule");
                 disableProField("jform_valuerulecaption");
-                <?php endif; ?>
+				<?php endif; ?>
             </script>
 
         </div>
 
         <div id="ct_fieldtypeeditor_box" style="display: none;"><?php
-            $attributes = array('name' => 'ct_fieldtypeeditor', 'id' => 'ct_fieldtypeeditor', 'directory' => 'images', 'recursive' => true, 'label' => 'Select Folder', 'readonly' => false);
-            echo CTTypes::getField('folderlist', $attributes, null)->input;
-            ?></div>
+			$attributes = array('name' => 'ct_fieldtypeeditor', 'id' => 'ct_fieldtypeeditor', 'directory' => 'images', 'recursive' => true, 'label' => 'Select Folder', 'readonly' => false);
+			echo CTTypes::getField('folderlist', $attributes, null)->input;
+			?></div>
 
     </form>
 </div>

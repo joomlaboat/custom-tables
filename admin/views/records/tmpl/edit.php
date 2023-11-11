@@ -11,16 +11,17 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use Joomla\CMS\Factory;
 
 if ($this->ct->Env->version >= 4) {
-
-    $wa = $this->document->getWebAssetManager();
-    $wa->useScript('keepalive')
-        ->useScript('form.validate');
+	$wa = $this->document->getWebAssetManager();
+	$wa->useScript('keepalive')->useScript('form.validate');
+} else {
+	JHtml::_('behavior.formvalidation');
+	JHtml::_('behavior.keepalive');
 }
 
 $document = Factory::getDocument();

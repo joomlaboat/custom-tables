@@ -14,297 +14,307 @@ use CT_FieldTypeTag_FileBox;
 
 class RecordToolbar
 {
-    var CT $ct;
-    var Table $Table;
-    var bool $isEditable;
-    var bool $isPublishable;
-    var bool $isDeletable;
-    var ?string $listing_id;
-    var string $rid;//Record ID
-    var array $row;
-    var string $iconPath;
+	var CT $ct;
+	var Table $Table;
+	var bool $isEditable;
+	var bool $isPublishable;
+	var bool $isDeletable;
+	var ?string $listing_id;
+	var string $rid;//Record ID
+	var array $row;
+	var string $iconPath;
 
-    function __construct(CT $ct, $isEditable, $isPublishable, $isDeletable)
-    {
-        $this->ct = $ct;
-        $this->Table = $ct->Table;
-        $this->isEditable = $isEditable;
-        $this->isPublishable = $isPublishable;
-        $this->isDeletable = $isDeletable;
-        $this->iconPath = CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/';
-    }
+	function __construct(CT $ct, $isEditable, $isPublishable, $isDeletable)
+	{
+		$this->ct = $ct;
+		$this->Table = $ct->Table;
+		$this->isEditable = $isEditable;
+		$this->isPublishable = $isPublishable;
+		$this->isDeletable = $isDeletable;
+		$this->iconPath = CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/';
+	}
 
-    public function render(array $row, $mode): string
-    {
-        $this->listing_id = $row[$this->Table->realidfieldname];
-        $this->rid = $this->Table->tableid . 'x' . $this->listing_id;
-        $this->row = $row;
+	public function render(array $row, $mode): string
+	{
+		$this->listing_id = $row[$this->Table->realidfieldname];
+		$this->rid = $this->Table->tableid . 'x' . $this->listing_id;
+		$this->row = $row;
 
-        if ($this->isEditable) {
-            switch ($mode) {
-                case 'edit':
-                    return $this->renderEditIcon();
+		if ($this->isEditable) {
+			switch ($mode) {
+				case 'edit':
+					return $this->renderEditIcon();
 
-                case 'editmodal':
-                    return $this->renderEditIcon(true);
+				case 'editmodal':
+					return $this->renderEditIcon(true);
 
-                case 'refresh':
-                    $rid = 'esRefreshIcon' . $this->rid;
-                    $alt = common::translate('COM_CUSTOMTABLES_REFRESH');
+				case 'refresh':
+					$rid = 'esRefreshIcon' . $this->rid;
+					$alt = common::translate('COM_CUSTOMTABLES_REFRESH');
 
-                    if ($this->ct->Env->toolbarIcons != '')
-                        $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-sync" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-sync" title="' . $alt . '"></i>';
-                    else
-                        $img = '<img src="' . $this->iconPath . 'refresh.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+					if ($this->ct->Env->toolbarIcons != '')
+						$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-sync" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-sync" title="' . $alt . '"></i>';
+					else
+						$img = '<img src="' . $this->iconPath . 'refresh.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-                    $href = 'javascript:ctRefreshRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',' . (int)$this->ct->Params->ModuleId . ');';
+					$href = 'javascript:ctRefreshRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',' . (int)$this->ct->Params->ModuleId . ');';
 
-                    return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
+					return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
 
-                case 'gallery':
-                    if (is_array($this->Table->imagegalleries) and count($this->Table->imagegalleries) > 0)
-                        return $this->renderImageGalleryIcon();
-                    else
-                        return '';
+				case 'gallery':
+					if (is_array($this->Table->imagegalleries) and count($this->Table->imagegalleries) > 0)
+						return $this->renderImageGalleryIcon();
+					else
+						return '';
 
-                case 'filebox':
-                    if (is_array($this->Table->fileboxes) and count($this->Table->fileboxes) > 0)
-                        return $this->renderFileBoxIcons();
-                    else
-                        return '';
+				case 'filebox':
+					if (is_array($this->Table->fileboxes) and count($this->Table->fileboxes) > 0)
+						return $this->renderFileBoxIcons();
+					else
+						return '';
 
-                case 'copy':
-                    return $this->renderCopyIcon();
+				case 'copy':
+					return $this->renderCopyIcon();
 
-                case 'resetpassword':
-                    return $this->renderResetPasswordIcon();
-            }
-        }
+				case 'resetpassword':
+					return $this->renderResetPasswordIcon();
+			}
+		}
 
-        if ($this->isDeletable and $mode == 'delete')
-            return $this->renderDeleteIcon();
-        elseif ($mode == 'publish')
-            return $this->renderPublishIcon();
-        elseif ($mode == 'checkbox')
-            return '<input type="checkbox" onClick="ctUpdateCheckboxCounter(' . $this->Table->tableid . ')" name="esCheckbox' . $this->Table->tableid . '" id="esCheckbox' . $this->rid . '" value="' . $this->listing_id . '" />';
+		if ($this->isDeletable and $mode == 'delete')
+			return $this->renderDeleteIcon();
+		elseif ($mode == 'publish')
+			return $this->renderPublishIcon();
+		elseif ($mode == 'checkbox')
+			return '<input type="checkbox" onClick="ctUpdateCheckboxCounter(' . $this->Table->tableid . ')" name="esCheckbox' . $this->Table->tableid . '" id="esCheckbox' . $this->rid . '" value="' . $this->listing_id . '" />';
 
-        return '';
-    }
+		return '';
+	}
 
-    protected function renderEditIcon($isModal = false): string
-    {
-        if (defined('WPINC'))
-            return 'CustomTables: Edit Icons not supported in WP yet.';
+	protected function renderEditIcon($isModal = false): string
+	{
+		if (defined('WPINC'))
+			return 'CustomTables: Edit Icons not supported in WP yet.';
 
-        $alt = common::translate('COM_CUSTOMTABLES_EDIT');
+		$alt = common::translate('COM_CUSTOMTABLES_EDIT');
 
-        if ($this->ct->Env->toolbarIcons != '')
-            $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-pen" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-pen" title="' . $alt . '"></i>';
-        else
-            $img = '<img src="' . $this->iconPath . 'edit.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+		if ($this->ct->Env->toolbarIcons != '')
+			$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-pen" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-pen" title="' . $alt . '"></i>';
+		else
+			$img = '<img src="' . $this->iconPath . 'edit.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-        $editLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem'
-            . '&amp;listing_id=' . $this->listing_id;
+		$editLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem'
+			. '&amp;listing_id=' . $this->listing_id;
 
-        if (common::inputGetCmd('tmpl'))
-            $editLink .= '&tmpl=' . common::inputGetCmd('tmpl', '');
+		if (common::inputGetCmd('tmpl'))
+			$editLink .= '&tmpl=' . common::inputGetCmd('tmpl', '');
 
-        if ($this->ct->Params->ItemId > 0)
-            $editLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
+		if ($this->ct->Params->ItemId > 0)
+			$editLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
 
-        if (!is_null($this->ct->Params->ModuleId))
-            $editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+		if (!is_null($this->ct->Params->ModuleId))
+			$editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
-        if ($isModal) {
-            $tmp_current_url = base64_encode($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
-            $editLink .= '&amp;returnto=' . $tmp_current_url;
-            $link = 'javascript:ctEditModal(\'' . $editLink . '\',null)';
-        } else {
-            $returnto = base64_encode($this->ct->Env->current_url);
-            $link = $editLink . '&amp;returnto=' . $returnto;
-        }
-        $a = '<a href="' . $link . '">' . $img . '</a>';
+		if ($isModal) {
+			$tmp_current_url = base64_encode($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
+			$editLink .= '&amp;returnto=' . $tmp_current_url;
+			$link = 'javascript:ctEditModal(\'' . $editLink . '\',null)';
+		} else {
+			$returnto = base64_encode($this->ct->Env->current_url);
+			$link = $editLink . '&amp;returnto=' . $returnto;
+		}
+		$a = '<a href="' . $link . '">' . $img . '</a>';
 
-        return '<div id="esEditIcon' . $this->rid . '" class="toolbarIcons">' . $a . '</div>';
-    }
+		return '<div id="esEditIcon' . $this->rid . '" class="toolbarIcons">' . $a . '</div>';
+	}
 
-    protected function renderImageGalleryIcon(): string
-    {
-        $imageGalleries = [];
-        foreach ($this->Table->imagegalleries as $gallery) {
-            $imageManagerLink = 'index.php?option=com_customtables&amp;view=editphotos'
-                . '&amp;establename=' . $this->Table->tablename
-                . '&amp;galleryname=' . $gallery[0]
-                . '&amp;listing_id=' . $this->listing_id
-                . '&amp;returnto=' . $this->ct->Env->encoded_current_url;
+	protected function renderImageGalleryIcon(): string
+	{
+		$imageGalleries = [];
+		foreach ($this->Table->imagegalleries as $gallery) {
+			$imageManagerLink = 'index.php?option=com_customtables&amp;view=editphotos'
+				. '&amp;establename=' . $this->Table->tablename
+				. '&amp;galleryname=' . $gallery[0]
+				. '&amp;listing_id=' . $this->listing_id
+				. '&amp;returnto=' . $this->ct->Env->encoded_current_url;
 
-            if (common::inputGetCmd('tmpl'))
-                $imageManagerLink .= '&tmpl=' . common::inputGetCmd('tmpl', '');
+			if (common::inputGetCmd('tmpl'))
+				$imageManagerLink .= '&tmpl=' . common::inputGetCmd('tmpl', '');
 
-            if ($this->ct->Params->ItemId > 0)
-                $imageManagerLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
+			if ($this->ct->Params->ItemId > 0)
+				$imageManagerLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
 
-            if (!is_null($this->ct->Params->ModuleId))
-                $imageManagerLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+			if (!is_null($this->ct->Params->ModuleId))
+				$imageManagerLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
-            $alt = $gallery[1];
+			$alt = $gallery[1];
 
-            if ($this->ct->Env->toolbarIcons != '')
-                $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-image" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-image" title="' . $alt . '"></i>';
-            else
-                $img = '<img src="' . $this->iconPath . 'photomanager.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+			if ($this->ct->Env->toolbarIcons != '')
+				$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-image" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-image" title="' . $alt . '"></i>';
+			else
+				$img = '<img src="' . $this->iconPath . 'photomanager.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-            $imageGalleries[] = '<div id="esImageGalleryIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $this->ct->Env->WebsiteRoot . $imageManagerLink . '">' . $img . '</a></div>';
+			$imageGalleries[] = '<div id="esImageGalleryIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $this->ct->Env->WebsiteRoot . $imageManagerLink . '">' . $img . '</a></div>';
 
-        }
-        return implode('', $imageGalleries);
-    }
+		}
+		return implode('', $imageGalleries);
+	}
 
-    protected function renderFileBoxIcons(): string
-    {
-        $fileBoxes = [];
+	protected function renderFileBoxIcons(): string
+	{
+		$fileBoxes = [];
 
-        foreach ($this->Table->fileboxes as $fileBox)
-            $fileBoxes[] = CT_FieldTypeTag_FileBox::renderFileBoxIcon($this->ct, $this->listing_id, $fileBox[0], $fileBox[1]);
+		foreach ($this->Table->fileboxes as $fileBox)
+			$fileBoxes[] = CT_FieldTypeTag_FileBox::renderFileBoxIcon($this->ct, $this->listing_id, $fileBox[0], $fileBox[1]);
 
-        return implode('', $fileBoxes);
-    }
+		return implode('', $fileBoxes);
+	}
 
-    protected function renderCopyIcon(): string
-    {
-        $Label = 'Would you like to copy (' . $this->firstFieldValueLabel() . ')?';
+	protected function renderCopyIcon(): string
+	{
+		$Label = 'Would you like to copy (' . $this->firstFieldValueLabel() . ')?';
 
-        $alt = common::translate('COM_CUSTOMTABLES_COPY');
+		$alt = common::translate('COM_CUSTOMTABLES_COPY');
 
-        if ($this->ct->Env->toolbarIcons != '')
-            $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-copy" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-copy" title="' . $alt . '"></i>';
-        else
-            $img = '<img src="' . $this->iconPath . 'copy.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+		if ($this->ct->Env->toolbarIcons != '')
+			$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-copy" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-copy" title="' . $alt . '"></i>';
+		else
+			$img = '<img src="' . $this->iconPath . 'copy.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-        $href = 'javascript:ctCopyObject("' . $Label . '", ' . $this->listing_id . ', "ctCopyIcon' . $this->rid . '",' . (int)$this->ct->Params->ModuleId . ')';
-        return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href=\'' . $href . '\'>' . $img . '</a></div>';
-    }
+		$href = 'javascript:ctCopyObject("' . $Label . '", ' . $this->listing_id . ', "ctCopyIcon' . $this->rid . '",' . (int)$this->ct->Params->ModuleId . ')';
+		return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href=\'' . $href . '\'>' . $img . '</a></div>';
+	}
 
-    protected function firstFieldValueLabel(): ?string
-    {
-        if (is_null($this->Table->fields))
-            return null;
+	protected function firstFieldValueLabel(): ?string
+	{
+		if (is_null($this->Table->fields))
+			return null;
 
-        $min_ordering = 99999999;
-        $min_ordering_field = null;
+		$min_ordering = 99999999;
+		$min_ordering_field = null;
 
-        foreach ($this->Table->fields as $mFld) {
-            $ordering = (int)$mFld['ordering'];
-            if ($mFld['type'] != 'dummy' and $ordering < $min_ordering) {
-                if ($mFld['type'] != 'virtual' and !Fields::isVirtualField($mFld)) {
-                    if ($ordering < $min_ordering) {
-                        $min_ordering = $ordering;
-                        $min_ordering_field = $mFld;
-                    }
-                }
-            }
-        }
-        if ($min_ordering_field !== null) {
-            $fieldTitleValue = $this->getFieldCleanValue4RDI($min_ordering_field);
-            return substr($fieldTitleValue, -100);
-        }
-        return null;
-    }
+		foreach ($this->Table->fields as $mFld) {
+			$ordering = (int)$mFld['ordering'];
+			if ($mFld['type'] != 'dummy' and $ordering < $min_ordering) {
+				if ($mFld['type'] != 'virtual' and !Fields::isVirtualField($mFld)) {
+					if ($ordering < $min_ordering) {
+						$min_ordering = $ordering;
+						$min_ordering_field = $mFld;
+					}
+				}
+			}
+		}
+		if ($min_ordering_field !== null) {
+			$fieldTitleValue = $this->getFieldCleanValue4RDI($min_ordering_field);
+			return substr($fieldTitleValue, -100);
+		}
+		return null;
+	}
 
-    protected function getFieldCleanValue4RDI($mFld): string
-    {
-        $titleField = $mFld['realfieldname'];
-        if (str_contains($mFld['type'], 'multi'))
-            $titleField .= $this->ct->Languages->Postfix;
+	protected function getFieldCleanValue4RDI($mFld): string
+	{
+		$titleField = $mFld['realfieldname'];
+		if (str_contains($mFld['type'], 'multi'))
+			$titleField .= $this->ct->Languages->Postfix;
 
-        $fieldTitleValue = $this->row[$titleField];
-        $deleteLabel = strip_tags($fieldTitleValue);
+		$fieldTitleValue = $this->row[$titleField];
+		$deleteLabel = strip_tags($fieldTitleValue);
 
-        $deleteLabel = trim(preg_replace("/[^a-zA-Z\d ,.]/", "", $deleteLabel));
-        return preg_replace('/\s{3,}/', ' ', $deleteLabel);
-    }
+		$deleteLabel = trim(preg_replace("/[^a-zA-Z\d ,.]/", "", $deleteLabel));
+		return preg_replace('/\s{3,}/', ' ', $deleteLabel);
+	}
 
-    protected function renderResetPasswordIcon(): string
-    {
-        $realUserId = $this->row[$this->Table->useridrealfieldname] ?? 0;
+	protected function renderResetPasswordIcon(): string
+	{
+		$realUserId = $this->row[$this->Table->useridrealfieldname] ?? 0;
 
-        if ($realUserId == 0) {
-            $rid = 'ctCreateUserIcon' . $this->rid;
-            $alt = 'Create User Account';
+		if ($realUserId == 0)
+			$userRow = null;
+		else {
+			$userRow = CTUser::GetUserRow($realUserId);
 
-            if ($this->ct->Env->toolbarIcons != '')
-                $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-user-plus" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-user-plus" title="' . $alt . '"></i>';
-            else
-                $img = '<img src="' . $this->iconPath . 'key-add.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+			if ($userRow === null) {
+				//User account deleted, null record value.
+				$data = [$this->Table->useridrealfieldname => null];
+				try {
+					database::update($this->Table->realtablename, $data, [$this->Table->realidfieldname => $this->row[$this->Table->realidfieldname]]);
+				} catch (\Exception $e) {
+					return $e->getMessage();
+				}
+			}
+		}
 
-            $resetLabel = common::translate('COM_CUSTOMTABLES_USERWILLBECREATED') . ' ' . $this->firstFieldValueLabel();
-            $action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . $this->ct->Params->ModuleId . ')';
-        } else {
-            $userRow = CTUser::GetUserRow($realUserId);
-            if ($userRow !== null) {
+		if ($userRow === null) {
+			$rid = 'ctCreateUserIcon' . $this->rid;
+			$alt = 'Create User Account';
 
-                $user_full_name = ucwords(strtolower($userRow['name']));
+			if ($this->ct->Env->toolbarIcons != '')
+				$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-user-plus" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-user-plus" title="' . $alt . '"></i>';
+			else
+				$img = '<img src="' . $this->iconPath . 'key-add.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-                $rid = 'ctResetPasswordIcon' . $this->rid;
-                $alt = 'Username: ' . $userRow['username'];
+			$resetLabel = common::translate('COM_CUSTOMTABLES_USERWILLBECREATED') . ' ' . $this->firstFieldValueLabel();
+			$action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . $this->ct->Params->ModuleId . ')';
+		} else {
+			$user_full_name = ucwords(strtolower($userRow['name']));
 
-                if ($this->ct->Env->toolbarIcons != '')
-                    $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-user" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-user" title="' . $alt . '"></i>';
-                else
-                    $img = '<img src="' . $this->iconPath . 'key.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+			$rid = 'ctResetPasswordIcon' . $this->rid;
+			$alt = 'Username: ' . $userRow['username'];
 
-                $resetLabel = 'Would you like to reset ' . $user_full_name . ' (' . $userRow['username'] . ') password?';
-                $action = 'ctResetPassword("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . $this->ct->Params->ModuleId . ')';
-            } else
-                return 'User account deleted, open and save the record.';
-        }
+			if ($this->ct->Env->toolbarIcons != '')
+				$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-user" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-user" title="' . $alt . '"></i>';
+			else
+				$img = '<img src="' . $this->iconPath . 'key.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-        return '<div id="' . $rid . '" class="toolbarIcons"><a href=\'javascript:' . $action . ' \'>' . $img . '</a></div>';
-    }
+			$resetLabel = 'Would you like to reset ' . $user_full_name . ' (' . $userRow['username'] . ') password?';
+			$action = 'ctResetPassword("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . $this->ct->Params->ModuleId . ')';
+		}
+		return '<div id="' . $rid . '" class="toolbarIcons"><a href=\'javascript:' . $action . ' \'>' . $img . '</a></div>';
+	}
 
-    protected function renderDeleteIcon(): string
-    {
-        $deleteLabel = $this->firstFieldValueLabel();
+	protected function renderDeleteIcon(): string
+	{
+		$deleteLabel = $this->firstFieldValueLabel();
 
-        $alt = common::translate('COM_CUSTOMTABLES_DELETE');
+		$alt = common::translate('COM_CUSTOMTABLES_DELETE');
 
-        if ($this->ct->Env->toolbarIcons != '')
-            $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-trash" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-trash" title="' . $alt . '"></i>';
-        else
-            $img = '<img src="' . $this->iconPath . 'delete.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+		if ($this->ct->Env->toolbarIcons != '')
+			$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-trash" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-trash" title="' . $alt . '"></i>';
+		else
+			$img = '<img src="' . $this->iconPath . 'delete.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-        $msg = 'Do you want to delete (' . $deleteLabel . ')?';
-        $href = 'javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . $this->ct->Params->ModuleId . ');';
-        return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
-    }
+		$msg = 'Do you want to delete (' . $deleteLabel . ')?';
+		$href = 'javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . $this->ct->Params->ModuleId . ');';
+		return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
+	}
 
-    protected function renderPublishIcon()
-    {
-        if ($this->isPublishable) {
-            $rid = 'esPublishIcon' . $this->rid;
+	protected function renderPublishIcon()
+	{
+		if ($this->isPublishable) {
+			$rid = 'esPublishIcon' . $this->rid;
 
-            if ($this->row['listing_published']) {
-                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',0,' . $this->ct->Params->ModuleId . ');';
-                $alt = common::translate('COM_CUSTOMTABLES_UNPUBLISH');
+			if ($this->row['listing_published']) {
+				$link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',0,' . $this->ct->Params->ModuleId . ');';
+				$alt = common::translate('COM_CUSTOMTABLES_UNPUBLISH');
 
-                if ($this->ct->Env->toolbarIcons != '')
-                    $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-check-circle" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-check-circle" title="' . $alt . '"></i>';
-                else
-                    $img = '<img src="' . $this->iconPath . 'publish.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-            } else {
-                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',1,' . $this->ct->Params->ModuleId . ');';
-                $alt = common::translate('COM_CUSTOMTABLES_PUBLISH');
+				if ($this->ct->Env->toolbarIcons != '')
+					$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-check-circle" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-check-circle" title="' . $alt . '"></i>';
+				else
+					$img = '<img src="' . $this->iconPath . 'publish.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+			} else {
+				$link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',1,' . $this->ct->Params->ModuleId . ');';
+				$alt = common::translate('COM_CUSTOMTABLES_PUBLISH');
 
-                if ($this->ct->Env->toolbarIcons != '')
-                    $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-ban" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-ban" title="' . $alt . '"></i>';
-                else
-                    $img = '<img src="' . $this->iconPath . 'unpublish.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-            }
-            return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $link . '">' . $img . '</a></div>';
-        } else {
-            if (!$this->row['listing_published'])
-                return common::translate('COM_CUSTOMTABLES_PUBLISHED');
-        }
-        return '';
-    }
+				if ($this->ct->Env->toolbarIcons != '')
+					$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-ban" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-ban" title="' . $alt . '"></i>';
+				else
+					$img = '<img src="' . $this->iconPath . 'unpublish.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+			}
+			return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $link . '">' . $img . '</a></div>';
+		} else {
+			if (!$this->row['listing_published'])
+				return common::translate('COM_CUSTOMTABLES_PUBLISHED');
+		}
+		return '';
+	}
 }
