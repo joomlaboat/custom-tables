@@ -12,7 +12,7 @@ namespace CustomTables;
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 //This function is too old and used to get the where parameter out of module select boxes

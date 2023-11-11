@@ -12,41 +12,41 @@ namespace CustomTables;
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use Exception;
 
 trait Logs
 {
-    public function saveLog($listing_id, $action): void
-    {
-        // 1 - New
-        // 2 - Edit
-        // 3 - Publish
-        // 4 - Unpublish
-        // 5 - Delete
-        // 6 - Image Uploaded
-        // 7 - Image Deleted
-        // 8 - File Uploaded
-        // 9 - File Deleted
+	public function saveLog($listing_id, $action): void
+	{
+		// 1 - New
+		// 2 - Edit
+		// 3 - Publish
+		// 4 - Unpublish
+		// 5 - Delete
+		// 6 - Image Uploaded
+		// 7 - Image Deleted
+		// 8 - File Uploaded
+		// 9 - File Deleted
 
-        $sets = array();
-        $sets[] = (int)$this->Env->user->id;
-        $sets[] = 'NOW()';
-        $sets[] = (int)$this->tableid;
-        $sets[] = (int)$listing_id;
-        $sets[] = (int)$action;
-        $sets[] = (int)common::inputGetInt('Itemid', 0);
+		$sets = array();
+		$sets[] = (int)$this->Env->user->id;
+		$sets[] = 'NOW()';
+		$sets[] = (int)$this->tableid;
+		$sets[] = (int)$listing_id;
+		$sets[] = (int)$action;
+		$sets[] = (int)common::inputGetInt('Itemid', 0);
 
-        //Value from sets
-        $fields = ['userid', 'datetime', 'tableid', 'listingid', 'action', 'Itemid'];
-        $query = 'INSERT INTO #__customtables_log (' . implode(',', $fields) . ') VALUES (' . implode(',', $sets) . ')';
+		//Value from sets
+		$fields = ['userid', 'datetime', 'tableid', 'listingid', 'action', 'Itemid'];
+		$query = 'INSERT INTO #__customtables_log (' . implode(',', $fields) . ') VALUES (' . implode(',', $sets) . ')';
 
-        try {
-            @database::setQuery($query);
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
-    }
+		try {
+			@database::setQuery($query);
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
+	}
 }

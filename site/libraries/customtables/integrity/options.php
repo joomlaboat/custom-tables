@@ -12,47 +12,48 @@
 namespace CustomTables\Integrity;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\Fields;
 
-use \Joomla\CMS\Factory;
+use CustomTables\IntegrityChecks;
+use Joomla\CMS\Factory;
 
-class IntegrityOptions extends \CustomTables\IntegrityChecks
+class IntegrityOptions extends IntegrityChecks
 {
-    public static function checkOptions(&$ct)
-    {
-        IntegrityOptions::checkOptionsTitleFields($ct);
-    }
+	public static function checkOptions(&$ct)
+	{
+		IntegrityOptions::checkOptionsTitleFields($ct);
+	}
 
-    protected static function checkOptionsTitleFields(&$ct)
-    {
-        $column_name_field = 'column_name';
-        $table_name = '#__customtables_options';
-        $g_ExistingFields = Fields::getExistingFields($table_name, false);
+	protected static function checkOptionsTitleFields(&$ct)
+	{
+		$column_name_field = 'column_name';
+		$table_name = '#__customtables_options';
+		$g_ExistingFields = Fields::getExistingFields($table_name, false);
 
-        $moreThanOneLanguage = false;
-        foreach ($ct->Languages->LanguageList as $lang) {
-            $g_fieldname = 'title';
-            if ($moreThanOneLanguage)
-                $g_fieldname .= '_' . $lang->sef;
+		$moreThanOneLanguage = false;
+		foreach ($ct->Languages->LanguageList as $lang) {
+			$g_fieldname = 'title';
+			if ($moreThanOneLanguage)
+				$g_fieldname .= '_' . $lang->sef;
 
-            $g_found = false;
+			$g_found = false;
 
-            foreach ($g_ExistingFields as $g_existing_field) {
-                $g_exst_field = $g_existing_field[$column_name_field];
-                if ($g_exst_field == $g_fieldname) {
-                    $g_found = true;
-                    break;
-                }
-            }
+			foreach ($g_ExistingFields as $g_existing_field) {
+				$g_exst_field = $g_existing_field[$column_name_field];
+				if ($g_exst_field == $g_fieldname) {
+					$g_found = true;
+					break;
+				}
+			}
 
-            if (!$g_found) {
-                Fields::AddMySQLFieldNotExist($table_name, $g_fieldname, 'varchar(100) null', '');
-                Factory::getApplication()->enqueueMessage('Options Field "' . $g_fieldname . '" added.', 'notice');
-            }
-            $moreThanOneLanguage = true;
-        }
-    }
+			if (!$g_found) {
+				Fields::AddMySQLFieldNotExist($table_name, $g_fieldname, 'varchar(100) null', '');
+				Factory::getApplication()->enqueueMessage('Options Field "' . $g_fieldname . '" added.', 'notice');
+			}
+			$moreThanOneLanguage = true;
+		}
+	}
 }

@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -21,102 +21,102 @@ use CustomTables\Fields;
 
 class updateFiles
 {
-    public static function process()
-    {
-        $ct = new CT;
+	public static function process()
+	{
+		$ct = new CT;
 
-        $stepsize = (int)common::inputGetInt('stepsize', 10);
-        $startindex = (int)common::inputGetInt('startindex', 0);
+		$stepsize = (int)common::inputGetInt('stepsize', 10);
+		$startindex = (int)common::inputGetInt('startindex', 0);
 
-        $old_typeparams = base64_decode(common::inputGetBase64('old_typeparams', ''));
-        if ($old_typeparams == '')
-            return array('error' => 'old_typeparams not set');
+		$old_typeparams = base64_decode(common::inputGetBase64('old_typeparams', ''));
+		if ($old_typeparams == '')
+			return array('error' => 'old_typeparams not set');
 
-        $old_params = JoomlaBasicMisc::csv_explode(',', $old_typeparams, '"', false);
+		$old_params = JoomlaBasicMisc::csv_explode(',', $old_typeparams, '"', false);
 
-        $new_typeparams = base64_decode(common::inputGetBase64('new_typeparams', ''));
-        if ($new_typeparams == '')
-            return array('error' => 'new_typeparams not set');
+		$new_typeparams = base64_decode(common::inputGetBase64('new_typeparams', ''));
+		if ($new_typeparams == '')
+			return array('error' => 'new_typeparams not set');
 
-        $new_params = JoomlaBasicMisc::csv_explode(',', $new_typeparams, '"', false);
+		$new_params = JoomlaBasicMisc::csv_explode(',', $new_typeparams, '"', false);
 
-        $fieldid = (int)common::inputGetInt('fieldid', 0);
-        if ($fieldid == 0)
-            return array('error' => 'fieldid not set');
+		$fieldid = (int)common::inputGetInt('fieldid', 0);
+		if ($fieldid == 0)
+			return array('error' => 'fieldid not set');
 
-        $fieldrow = Fields::getFieldRow($fieldid);
+		$fieldrow = Fields::getFieldRow($fieldid);
 
-        $ct->getTable($fieldrow->tableid);
+		$ct->getTable($fieldrow->tableid);
 
-        $count = 0;
-        if ($startindex == 0) {
-            $count = updateFiles::countFiles($ct->Table->realtablename, $fieldrow->realfieldname, $ct->Table->realidfieldname);
-            if ($stepsize > $count)
-                $stepsize = $count;
-        }
+		$count = 0;
+		if ($startindex == 0) {
+			$count = updateFiles::countFiles($ct->Table->realtablename, $fieldrow->realfieldname, $ct->Table->realidfieldname);
+			if ($stepsize > $count)
+				$stepsize = $count;
+		}
 
-        $status = updateFiles::processFiles($ct, $fieldrow, $old_params, $new_params, $startindex, $stepsize);
+		$status = updateFiles::processFiles($ct, $fieldrow, $old_params, $new_params, $startindex, $stepsize);
 
-        return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
-    }
+		return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
+	}
 
-    protected static function countFiles($realtablename, $realfieldname, $realidfieldname)
-    {
-        $query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL AND ' . $realfieldname . ' != ""';
-        $rows = database::loadAssocList($query);
-        return (int)$rows[0]['c'];
-    }
+	protected static function countFiles($realtablename, $realfieldname, $realidfieldname)
+	{
+		$query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL AND ' . $realfieldname . ' != ""';
+		$rows = database::loadAssocList($query);
+		return (int)$rows[0]['c'];
+	}
 
-    protected static function processFiles(CT &$ct, $fieldrow, array $old_params, array $new_params, $startindex, $stepsize)
-    {
-        $query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldrow->realfieldname . ' IS NOT NULL AND ' . $fieldrow->realfieldname . ' != ""';
-        $rows = database::loadAssocList($query);
+	protected static function processFiles(CT &$ct, $fieldrow, array $old_params, array $new_params, $startindex, $stepsize)
+	{
+		$query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldrow->realfieldname . ' IS NOT NULL AND ' . $fieldrow->realfieldname . ' != ""';
+		$rows = database::loadAssocList($query);
 
-        foreach ($rows as $file) {
-            $field_row_old = (array)$fieldrow;
-            $field_row_old['params'] = $old_params;
+		foreach ($rows as $file) {
+			$field_row_old = (array)$fieldrow;
+			$field_row_old['params'] = $old_params;
 
-            $field_old = new Field($ct, $field_row_old, $file);
-            $field_old->params = $old_params;
-            $field_old->parseParams($file, $field_old->type);
+			$field_old = new Field($ct, $field_row_old, $file);
+			$field_old->params = $old_params;
+			$field_old->parseParams($file, $field_old->type);
 
-            $old_FileFolder = CT_FieldTypeTag_file::getFileFolder($field_old->params[1]);
+			$old_FileFolder = CT_FieldTypeTag_file::getFileFolder($field_old->params[1]);
 
-            $old_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $old_FileFolder);
+			$old_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $old_FileFolder);
 
-            $field_row_new = (array)$fieldrow;
+			$field_row_new = (array)$fieldrow;
 
-            $field_new = new Field($ct, $field_row_new, $file);
-            $field_new->params = $new_params;
-            $field_new->parseParams($file, $field_old->type);
+			$field_new = new Field($ct, $field_row_new, $file);
+			$field_new->params = $new_params;
+			$field_new->parseParams($file, $field_old->type);
 
-            $new_FileFolder = CT_FieldTypeTag_file::getFileFolder($field_new->params[1]);
+			$new_FileFolder = CT_FieldTypeTag_file::getFileFolder($field_new->params[1]);
 
-            $new_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $new_FileFolder);
+			$new_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $new_FileFolder);
 
-            $status = updateFiles::processFile($file[$fieldrow->realfieldname], $old_FileFolder, $new_FileFolder);
-            //if $status is null then all good, status is a text string with error message if any
-            if ($status !== null)
-                return $status;
-        }
+			$status = updateFiles::processFile($file[$fieldrow->realfieldname], $old_FileFolder, $new_FileFolder);
+			//if $status is null then all good, status is a text string with error message if any
+			if ($status !== null)
+				return $status;
+		}
 
-        JoomlaBasicMisc::deleteFolderIfEmpty($old_FileFolder);
-        return null;
-    }
+		JoomlaBasicMisc::deleteFolderIfEmpty($old_FileFolder);
+		return null;
+	}
 
-    protected static function processFile($filename, $old_FileFolder, $new_FileFolder)
-    {
-        $filepath_old = JPATH_SITE . $old_FileFolder . DIRECTORY_SEPARATOR . $filename;
-        $filepath_new = JPATH_SITE . $new_FileFolder . DIRECTORY_SEPARATOR . $filename;
+	protected static function processFile($filename, $old_FileFolder, $new_FileFolder)
+	{
+		$filepath_old = JPATH_SITE . $old_FileFolder . DIRECTORY_SEPARATOR . $filename;
+		$filepath_new = JPATH_SITE . $new_FileFolder . DIRECTORY_SEPARATOR . $filename;
 
-        if (file_exists($filepath_old)) {
-            if ($filepath_old != $filepath_new) {
-                if (!@rename($filepath_old, $filepath_new))
-                    return 'cannot move file to ' . $filepath_new;
-            }
-        } else
-            return 'file "' . $old_FileFolder . DIRECTORY_SEPARATOR . $filename . '" not found';
+		if (file_exists($filepath_old)) {
+			if ($filepath_old != $filepath_new) {
+				if (!@rename($filepath_old, $filepath_new))
+					return 'cannot move file to ' . $filepath_new;
+			}
+		} else
+			return 'file "' . $old_FileFolder . DIRECTORY_SEPARATOR . $filename . '" not found';
 
-        return null;
-    }
+		return null;
+	}
 }

@@ -11,7 +11,7 @@
 namespace CustomTables;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 class Categories

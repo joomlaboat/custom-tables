@@ -12,7 +12,7 @@
 namespace CustomTables;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\Integrity\IntegrityCoreTables;
@@ -20,16 +20,16 @@ use CustomTables\Integrity\IntegrityTables;
 
 class IntegrityChecks
 {
-    public static function check(CT &$ct, $check_core_tables = true, $check_custom_tables = true): array
-    {
-        $result = []; //Status array
+	public static function check(CT &$ct, $check_core_tables = true, $check_custom_tables = true): array
+	{
+		$result = []; //Status array
 
-        if ($check_core_tables)
-            IntegrityCoreTables::checkCoreTables($ct);
+		if ($check_core_tables)
+			IntegrityCoreTables::checkCoreTables($ct);
 
-        if ($check_custom_tables)
-            $result = IntegrityTables::checkTables($ct);
+		if ($check_custom_tables)
+			$result = IntegrityTables::checkTables($ct);
 
-        return $result;
-    }
+		return $result;
+	}
 }

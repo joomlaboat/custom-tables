@@ -11,6 +11,7 @@
 namespace CustomTables;
 
 use CT_FieldTypeTag_FileBox;
+use Exception;
 
 class RecordToolbar
 {
@@ -238,7 +239,7 @@ class RecordToolbar
 				$data = [$this->Table->useridrealfieldname => null];
 				try {
 					database::update($this->Table->realtablename, $data, [$this->Table->realidfieldname => $this->row[$this->Table->realidfieldname]]);
-				} catch (\Exception $e) {
+				} catch (Exception $e) {
 					return $e->getMessage();
 				}
 			}
