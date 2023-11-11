@@ -12,7 +12,7 @@ namespace CustomTables;
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use JoomlaBasicMisc;
@@ -22,423 +22,450 @@ use LayoutProcessor;
 
 class Twig_Fields_Tags
 {
-    var CT $ct;
-    var bool $isTwig;
+	var CT $ct;
+	var bool $isTwig;
 
-    function __construct(CT &$ct, bool $isTwig = true)
-    {
-        $this->ct = &$ct;
-        $this->isTwig = $isTwig;
-    }
+	function __construct(CT &$ct, bool $isTwig = true)
+	{
+		$this->ct = &$ct;
+		$this->isTwig = $isTwig;
+	}
 
-    function json(): string
-    {
-        return json_encode(Fields::shortFieldObjects($this->ct->Table->fields));
-    }
+	function json(): string
+	{
+		return json_encode(Fields::shortFieldObjects($this->ct->Table->fields));
+	}
 
-    function list($param = 'fieldname'): array
-    {
-        $available_params = ['fieldname', 'title', 'defaultvalue', 'description', 'isrequired', 'isdisabled', 'type', 'typeparams', 'valuerule', 'valuerulecaption'];
+	function list($param = 'fieldname'): array
+	{
+		$available_params = ['fieldname', 'title', 'defaultvalue', 'description', 'isrequired', 'isdisabled', 'type', 'typeparams', 'valuerule', 'valuerulecaption'];
 
-        if (!in_array($param, $available_params)) {
-            $this->ct->errors[] = '{{ fields.array("' . $param . '") }} - Unknown parameter.';
-            return [];
-        }
+		if (!in_array($param, $available_params)) {
+			$this->ct->errors[] = '{{ fields.array("' . $param . '") }} - Unknown parameter.';
+			return [];
+		}
 
-        $fields = Fields::shortFieldObjects($this->ct->Table->fields);
-        $list = [];
-        foreach ($fields as $field)
-            $list[] = $field[$param];
+		$fields = Fields::shortFieldObjects($this->ct->Table->fields);
+		$list = [];
+		foreach ($fields as $field)
+			$list[] = $field[$param];
 
-        return $list;
-    }
+		return $list;
+	}
 
-    function count(): int
-    {
-        return count($this->ct->Table->fields);
-    }
+	function count(): int
+	{
+		return count($this->ct->Table->fields);
+	}
 }
 
 class Twig_User_Tags
 {
-    var CT $ct;
-    var int $user_id;
+	var CT $ct;
+	var int $user_id;
 
-    function __construct(&$ct)
-    {
-        $this->ct = &$ct;
-        $this->user_id = (int)$this->ct->Env->user->id;
-    }
+	function __construct(&$ct)
+	{
+		$this->ct = &$ct;
+		$this->user_id = (int)$this->ct->Env->user->id;
+	}
 
-    function name($user_id = 0): string
-    {
-        if ($user_id == 0)
-            $user_id = $this->user_id;
+	function name($user_id = 0): string
+	{
+		if ($user_id == 0)
+			$user_id = $this->user_id;
 
-        if ($user_id == 0)
-            return '';
+		if ($user_id == 0)
+			return '';
 
-        $userRow = CTUser::GetUserRow($user_id);
-        if ($userRow !== null)
-            return $userRow['name'];
+		$userRow = CTUser::GetUserRow($user_id);
+		if ($userRow !== null)
+			return $userRow['name'];
 
-        return 'user: ' . $user_id . ' not found.';
-    }
+		return 'user: ' . $user_id . ' not found.';
+	}
 
-    function username($user_id = 0): string
-    {
-        if ($user_id == 0)
-            $user_id = $this->user_id;
+	function username($user_id = 0): string
+	{
+		if ($user_id == 0)
+			$user_id = $this->user_id;
 
-        if ($user_id == 0)
-            return '';
+		if ($user_id == 0)
+			return '';
 
-        $userRow = CTUser::GetUserRow($user_id);
-        if ($userRow !== null)
-            return $userRow['username'];
+		$userRow = CTUser::GetUserRow($user_id);
+		if ($userRow !== null)
+			return $userRow['username'];
 
-        return 'user: ' . $user_id . ' not found.';
-    }
+		return 'user: ' . $user_id . ' not found.';
+	}
 
-    function email($user_id = 0): string
-    {
-        if ($user_id == 0)
-            $user_id = $this->user_id;
+	function email($user_id = 0): string
+	{
+		if ($user_id == 0)
+			$user_id = $this->user_id;
 
-        if ($user_id == 0)
-            return '';
+		if ($user_id == 0)
+			return '';
 
-        $userRow = CTUser::GetUserRow($user_id);
-        if ($userRow !== null)
-            return $userRow['email'];
+		$userRow = CTUser::GetUserRow($user_id);
+		if ($userRow !== null)
+			return $userRow['email'];
 
-        return 'user: ' . $user_id . ' not found.';
-    }
+		return 'user: ' . $user_id . ' not found.';
+	}
 
-    function id(): int
-    {
-        if ($this->user_id == 0)
-            return 0;
+	function id(): int
+	{
+		if ($this->user_id == 0)
+			return 0;
 
-        return $this->user_id;
-    }
+		return $this->user_id;
+	}
 
-    function lastvisitdate($user_id = 0): string
-    {
-        if ($user_id == 0)
-            $user_id = $this->user_id;
+	function lastvisitdate($user_id = 0): string
+	{
+		if ($user_id == 0)
+			$user_id = $this->user_id;
 
-        if ($user_id == 0)
-            return '';
+		if ($user_id == 0)
+			return '';
 
-        $userRow = CTUser::GetUserRow($user_id);
-        if ($userRow !== null) {
-            if ($userRow['lastvisitDate'] == '0000-00-00 00:00:00')
-                return 'Never';
-            else
-                return $userRow['lastvisitDate'];
-        }
+		$userRow = CTUser::GetUserRow($user_id);
+		if ($userRow !== null) {
+			if ($userRow['lastvisitDate'] == '0000-00-00 00:00:00')
+				return 'Never';
+			else
+				return $userRow['lastvisitDate'];
+		}
 
-        return 'user: ' . $user_id . ' not found.';
-    }
+		return 'user: ' . $user_id . ' not found.';
+	}
 
-    function registerdate($user_id = 0): string
-    {
-        if ($user_id == 0)
-            $user_id = $this->user_id;
+	function registerdate($user_id = 0): string
+	{
+		if ($user_id == 0)
+			$user_id = $this->user_id;
 
-        if ($user_id == 0)
-            return '';
+		if ($user_id == 0)
+			return '';
 
-        $userRow = CTUser::GetUserRow($user_id);
-        if ($userRow !== null) {
-            if ($userRow['registerDate'] == '0000-00-00 00:00:00')
-                return 'Never';
-            else
-                return $userRow['registerDate'];
-        }
+		$userRow = CTUser::GetUserRow($user_id);
+		if ($userRow !== null) {
+			if ($userRow['registerDate'] == '0000-00-00 00:00:00')
+				return 'Never';
+			else
+				return $userRow['registerDate'];
+		}
 
-        return 'user: ' . $user_id . ' not found.';
-    }
+		return 'user: ' . $user_id . ' not found.';
+	}
 
-    function usergroups($user_id = 0): array
-    {
-        if ($user_id == 0)
-            $user_id = $this->user_id;
+	function usergroups($user_id = 0): array
+	{
+		if ($user_id == 0)
+			$user_id = $this->user_id;
 
-        if ($user_id == 0)
-            return [];
+		if ($user_id == 0)
+			return [];
 
-        return explode(',', CTUser::GetUserGroups($user_id));
-    }
+		return explode(',', CTUser::GetUserGroups($user_id));
+	}
 }
 
 class Twig_Url_Tags
 {
-    var CT $ct;
-    var bool $isTwig;
+	var CT $ct;
+	var bool $isTwig;
 
-    function __construct(CT &$ct, $isTwig = true)
-    {
-        $this->ct = &$ct;
-        $this->isTwig = $isTwig;
-    }
+	function __construct(CT &$ct, $isTwig = true)
+	{
+		$this->ct = &$ct;
+		$this->isTwig = $isTwig;
+	}
 
-    function link(): string
-    {
-        return $this->ct->Env->current_url;
-    }
+	function link(): string
+	{
+		return $this->ct->Env->current_url;
+	}
 
-    function base64(): string
-    {
-        return $this->ct->Env->encoded_current_url;
-    }
+	function base64(): string
+	{
+		return $this->ct->Env->encoded_current_url;
+	}
 
-    function root(bool $include_host = false, $add_trailing_slash = true): string
-    {
-        if ($include_host)
-            $WebsiteRoot = Uri::root();
-        else
-            $WebsiteRoot = CUSTOMTABLES_MEDIA_HOME_URL;
+	function root(): string
+	{
+		if (!$this->ct->Env->advancedTagProcessor) {
+			$this->ct->errors[] = 'url.root: This Field Type available in PRO version only.';
+			return 'url.root: This Field Type available in PRO version only.';
+		}
 
-        if ($add_trailing_slash) {
-            if ($WebsiteRoot == '' or $WebsiteRoot[strlen($WebsiteRoot) - 1] != '/') //Root must have a slash character / in the end
-                $WebsiteRoot .= '/';
-        } else {
-            $l = strlen($WebsiteRoot);
-            if ($WebsiteRoot != '' and $WebsiteRoot[$l - 1] == '/')
-                $WebsiteRoot = substr($WebsiteRoot, 0, $l - 1);//delete trailing slash
-        }
+		$functionParams = func_get_args();
+		if (isset($functionParams[0])) {
 
-        return $WebsiteRoot;
-    }
+			if (!is_bool($functionParams[0])) {
+				$this->ct->errors[] = 'url.root: Argument #1 (include_host) must be of type bool, null given.';
+				return 'url.root: Argument #1 (include_host) must be of type bool, null given.';
+			}
+			$include_host = $functionParams[0];
+		} else
+			$include_host = false;
 
-    function getuint($param, $default = 0)
-    {
-        return common::inputGetUInt($param, $default);
-    }
+		if (isset($functionParams[1])) {
 
-    function getfloat($param, $default = 0): float
-    {
-        return common::inputGetFloat($param, $default);
-    }
+			if (!is_bool($functionParams[1])) {
+				$this->ct->errors[] = 'url.root: Argument #2 (add_trailing_slash) must be of type bool, null given.';
+				return 'url.root: Argument #2 (add_trailing_slash) must be of type bool, null given.';
+			}
+			$add_trailing_slash = $functionParams[1];
+		} else
+			$add_trailing_slash = true;
 
-    function getword($param, $default = ''): string
-    {
-        return common::inputGetWord($param, $default);
-    }
 
-    function getalnum($param, $default = ''): string
-    {
-        return common::inputGetCmd($param, $default);
-    }
+		if ($include_host)
+			$WebsiteRoot = Uri::root();
+		else
+			$WebsiteRoot = CUSTOMTABLES_MEDIA_HOME_URL;
 
-    function getcmd($param, $default = ''): string
-    {
-        return common::inputGetCmd($param, $default);
-    }
+		if ($add_trailing_slash) {
+			if ($WebsiteRoot == '' or $WebsiteRoot[strlen($WebsiteRoot) - 1] != '/') //Root must have a slash character / in the end
+				$WebsiteRoot .= '/';
+		} else {
+			$l = strlen($WebsiteRoot);
+			if ($WebsiteRoot != '' and $WebsiteRoot[$l - 1] == '/')
+				$WebsiteRoot = substr($WebsiteRoot, 0, $l - 1);//delete trailing slash
+		}
 
-    function getstringandencode($param, $default = ''): string
-    {
-        return base64_encode(strip_tags(common::inputGetString($param, $default)));
-    }
+		return $WebsiteRoot;
+	}
 
-    function getstring($param, $default = ''): string
-    {
-        return common::inputGetString($param, $default);
-    }
+	function getuint($param, $default = 0)
+	{
+		return common::inputGetUInt($param, $default);
+	}
 
-    function getstringanddecode($param, $default = ''): string
-    {
-        return strip_tags(base64_decode(common::inputGetString($param, $default)));
-    }
+	function getfloat($param, $default = 0): float
+	{
+		return common::inputGetFloat($param, $default);
+	}
 
-    function itemid(): int
-    {
-        return common::inputGetInt('Itemid', 0);
-    }
+	function getword($param, $default = ''): string
+	{
+		return common::inputGetWord($param, $default);
+	}
 
-    function getint($param, $default = 0): ?int
-    {
-        return common::inputGetInt($param, $default);
-    }
+	function getalnum($param, $default = ''): string
+	{
+		return common::inputGetCmd($param, $default);
+	}
 
-    function set($option, $param = ''): void
-    {
-        common::inputSet($option, $param);
-    }
+	function getcmd($param, $default = ''): string
+	{
+		return common::inputGetCmd($param, $default);
+	}
 
-    function server($param)
-    {
-        return $_SERVER[$param];
-    }
+	function getstringandencode($param, $default = ''): string
+	{
+		return base64_encode(strip_tags(common::inputGetString($param, $default)));
+	}
 
-    function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $layoutname = '', $csv_column_separator = ','): string
-    {
-        if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
-            return '';
-        //$csv_column_separator parameter is only for csv output format
+	function getstring($param, $default = ''): string
+	{
+		return common::inputGetString($param, $default);
+	}
 
-        $link = '';
-        /*
-                if ($menu_item_alias != '') {
-                    $menu_item = JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
-                    if ($menu_item != 0) {
-                        $menu_item_id = (int)$menu_item['id'];
-                        $link = $menu_item['link'];
-                        $link .= '&Itemid=' . $menu_item_id;//.'&returnto='.$returnto;
-                    }
-                } else {*/
-        $link = JoomlaBasicMisc::deleteURLQueryOption($this->ct->Env->current_url, 'frmt');
-        $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'layout');
-        //}
+	function getstringanddecode($param, $default = ''): string
+	{
+		return strip_tags(base64_decode(common::inputGetString($param, $default)));
+	}
 
-        $link = Route::_($link);
+	function itemid(): int
+	{
+		return common::inputGetInt('Itemid', 0);
+	}
 
-        //check if format supported
-        $allowed_formats = ['csv', 'json', 'xml', 'xlsx', 'pdf', 'image'];
-        if ($format == '' or !in_array($format, $allowed_formats))
-            $format = 'csv';
+	function getint($param, $default = 0): ?int
+	{
+		return common::inputGetInt($param, $default);
+	}
 
-        $link .= (!str_contains($link, '?') ? '?' : '&') . 'frmt=' . $format . '&clean=1';
+	function set($option, $param = ''): void
+	{
+		common::inputSet($option, $param);
+	}
 
-        if ($layoutname != '')
-            $link .= '&layout=' . $layoutname;
+	function server($param)
+	{
+		return $_SERVER[$param];
+	}
 
-        if ($format == 'csv' and $csv_column_separator != ',')
-            $link .= '&sep=' . $csv_column_separator;
+	function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $layoutname = '', $csv_column_separator = ','): string
+	{
+		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
+			return '';
+		//$csv_column_separator parameter is only for csv output format
 
-        if ($link_type == 'anchor' or $link_type == '') {
-            $allowed_sizes = ['16', '32', '48'];
-            if ($imagesize == '' or !in_array($imagesize, $allowed_sizes))
-                $imagesize = 32;
+		$link = '';
+		/*
+				if ($menu_item_alias != '') {
+					$menu_item = JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
+					if ($menu_item != 0) {
+						$menu_item_id = (int)$menu_item['id'];
+						$link = $menu_item['link'];
+						$link .= '&Itemid=' . $menu_item_id;//.'&returnto='.$returnto;
+					}
+				} else {*/
+		$link = JoomlaBasicMisc::deleteURLQueryOption($this->ct->Env->current_url, 'frmt');
+		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'layout');
+		//}
 
-            if ($format == 'image')
-                $format_image = 'jpg';
-            else
-                $format_image = $format;
+		$link = Route::_($link);
 
-            $alt = 'Download ' . strtoupper($format) . ' file';
+		//check if format supported
+		$allowed_formats = ['csv', 'json', 'xml', 'xlsx', 'pdf', 'image'];
+		if ($format == '' or !in_array($format, $allowed_formats))
+			$format = 'csv';
 
-            if ($image == '') {
-                if ($this->ct->Env->toolbarIcons != '' and $format == 'csv') {
-                    $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-file-csv" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-file-csv" title="' . $alt . '"></i>';
-                } else {
-                    $image = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $imagesize . 'px/' . $format_image . '.png';
-                    $img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" style="width:' . $imagesize . 'px;height:' . $imagesize . 'px;">';
-                }
-            } else
-                $img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" style="width:' . $imagesize . 'px;height:' . $imagesize . 'px;">';
+		$link .= (!str_contains($link, '?') ? '?' : '&') . 'frmt=' . $format . '&clean=1';
 
-            return '<a href="' . $link . '" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank">' . $img . '</a>';
+		if ($layoutname != '')
+			$link .= '&layout=' . $layoutname;
 
-        } elseif ($link_type == '_value' or $link_type == 'linkonly') {
-            //link only
-            return $link;
-        }
-        return '';
-    }
+		if ($format == 'csv' and $csv_column_separator != ',')
+			$link .= '&sep=' . $csv_column_separator;
+
+		if ($link_type == 'anchor' or $link_type == '') {
+			$allowed_sizes = ['16', '32', '48'];
+			if ($imagesize == '' or !in_array($imagesize, $allowed_sizes))
+				$imagesize = 32;
+
+			if ($format == 'image')
+				$format_image = 'jpg';
+			else
+				$format_image = $format;
+
+			$alt = 'Download ' . strtoupper($format) . ' file';
+
+			if ($image == '') {
+				if ($this->ct->Env->toolbarIcons != '' and $format == 'csv') {
+					$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-file-csv" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-file-csv" title="' . $alt . '"></i>';
+				} else {
+					$image = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $imagesize . 'px/' . $format_image . '.png';
+					$img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" style="width:' . $imagesize . 'px;height:' . $imagesize . 'px;">';
+				}
+			} else
+				$img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" style="width:' . $imagesize . 'px;height:' . $imagesize . 'px;">';
+
+			return '<a href="' . $link . '" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank">' . $img . '</a>';
+
+		} elseif ($link_type == '_value' or $link_type == 'linkonly') {
+			//link only
+			return $link;
+		}
+		return '';
+	}
 }
 
 class Twig_Document_Tags
 {
-    var CT $ct;
+	var CT $ct;
 
-    function __construct(CT &$ct)
-    {
-        $this->ct = &$ct;
-    }
+	function __construct(CT &$ct)
+	{
+		$this->ct = &$ct;
+	}
 
-    function setmetakeywords($metakeywords): void
-    {
-        $this->ct->document->setMetaData('keywords', $metakeywords);
-    }
+	function setmetakeywords($metakeywords): void
+	{
+		$this->ct->document->setMetaData('keywords', $metakeywords);
+	}
 
-    function setmetadescription($metadescription): void
-    {
-        $this->ct->document->setMetaData('description', $metadescription);
-    }
+	function setmetadescription($metadescription): void
+	{
+		$this->ct->document->setMetaData('description', $metadescription);
+	}
 
-    function setpagetitle($pageTitle): void
-    {
-        $this->ct->document->setTitle(common::translate($pageTitle));
-    }
+	function setpagetitle($pageTitle): void
+	{
+		$this->ct->document->setTitle(common::translate($pageTitle));
+	}
 
-    function setheadtag($tag): void
-    {
-        $this->ct->document->addCustomTag($tag);
-    }
+	function setheadtag($tag): void
+	{
+		$this->ct->document->addCustomTag($tag);
+	}
 
-    function layout($layoutName): string
-    {
-        if (!isset($this->ct->Table)) {
-            $this->ct->errors[] = '{{ document.layout }} - Table not loaded.';
-            return '';
-        }
+	function layout($layoutName): string
+	{
+		if (!isset($this->ct->Table)) {
+			$this->ct->errors[] = '{{ document.layout }} - Table not loaded.';
+			return '';
+		}
 
-        $layouts = new Layouts($this->ct);
-        $layout = $layouts->getLayout($layoutName);
+		$layouts = new Layouts($this->ct);
+		$layout = $layouts->getLayout($layoutName);
 
-        if (is_null($layouts->tableId)) {
-            $this->ct->errors[] = '{{ document.layout("' . $layoutName . '") }} - Layout "' . $layoutName . ' not found.';
-            return '';
-        }
+		if (is_null($layouts->tableId)) {
+			$this->ct->errors[] = '{{ document.layout("' . $layoutName . '") }} - Layout "' . $layoutName . ' not found.';
+			return '';
+		}
 
-        if ($layouts->tableId != $this->ct->Table->tableid) {
-            $this->ct->errors[] = '{{ document.layout("' . $layoutName . '") }} - Layout Table ID and Current Table ID do not match.';
-            return '';
-        }
+		if ($layouts->tableId != $this->ct->Table->tableid) {
+			$this->ct->errors[] = '{{ document.layout("' . $layoutName . '") }} - Layout Table ID and Current Table ID do not match.';
+			return '';
+		}
 
-        $twig = new TwigProcessor($this->ct, $layout, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
+		$twig = new TwigProcessor($this->ct, $layout, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
 
-        $number = 1;
-        $html_result = '';
+		$number = 1;
+		$html_result = '';
 
-        if ($layouts->layoutType == 6) {
-            if (!is_null($this->ct->Records)) {
+		if ($layouts->layoutType == 6) {
+			if (!is_null($this->ct->Records)) {
 
-                foreach ($this->ct->Records as $row) {
-                    $row['_number'] = $number;
-                    $row['_islast'] = $number == count($this->ct->Records);
+				foreach ($this->ct->Records as $row) {
+					$row['_number'] = $number;
+					$row['_islast'] = $number == count($this->ct->Records);
 
-                    $html_result_layout = $twig->process($row);
-                    if ($twig->errorMessage !== null)
-                        $this->ct->errors[] = $twig->errorMessage;
+					$html_result_layout = $twig->process($row);
+					if ($twig->errorMessage !== null)
+						$this->ct->errors[] = $twig->errorMessage;
 
-                    if ($this->ct->Env->legacySupport) {
-                        $LayoutProc = new LayoutProcessor($this->ct);
-                        $LayoutProc->layout = $html_result_layout;
-                        $html_result_layout = $LayoutProc->fillLayout($row);
-                    }
+					if ($this->ct->Env->legacySupport) {
+						$LayoutProc = new LayoutProcessor($this->ct);
+						$LayoutProc->layout = $html_result_layout;
+						$html_result_layout = $LayoutProc->fillLayout($row);
+					}
 
-                    $html_result .= $html_result_layout;
+					$html_result .= $html_result_layout;
 
-                    $number++;
-                }
-            }
-        } else {
-            ///if (!is_null($this->ct->Table->record))
-            $html_result = $twig->process($this->ct->Table->record);
-            if ($twig->errorMessage !== null)
-                $this->ct->errors[] = $twig->errorMessage;
+					$number++;
+				}
+			}
+		} else {
+			///if (!is_null($this->ct->Table->record))
+			$html_result = $twig->process($this->ct->Table->record);
+			if ($twig->errorMessage !== null)
+				$this->ct->errors[] = $twig->errorMessage;
 
-            if ($this->ct->Env->legacySupport) {
-                $LayoutProc = new LayoutProcessor($this->ct);
-                $LayoutProc->layout = $html_result;
-                $html_result = $LayoutProc->fillLayout($this->ct->Table->record);
-            }
-        }
+			if ($this->ct->Env->legacySupport) {
+				$LayoutProc = new LayoutProcessor($this->ct);
+				$LayoutProc->layout = $html_result;
+				$html_result = $LayoutProc->fillLayout($this->ct->Table->record);
+			}
+		}
 
-        return $html_result;
-    }
+		return $html_result;
+	}
 
-    function sitename(): string
-    {
-        return $this->ct->app->get('sitename');
-    }
+	function sitename(): string
+	{
+		return $this->ct->app->get('sitename');
+	}
 
-    function languagepostfix(): string
-    {
-        return $this->ct->Languages->Postfix;
-    }
+	function languagepostfix(): string
+	{
+		return $this->ct->Languages->Postfix;
+	}
 }

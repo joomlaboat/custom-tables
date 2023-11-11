@@ -321,6 +321,7 @@ class TwigProcessor
 				$result = @$this->twig->render($this->pageLayoutName, $this->variables);
 			} catch (Exception $e) {
 				$this->errorMessage = $e->getMessage();
+				$this->ct->errors[] = $e->getMessage();
 
 				$msg = $e->getMessage();
 				if ($this->pageLayoutLink !== null)
