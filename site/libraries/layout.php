@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\CT;
@@ -33,50 +33,50 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . 
 
 class LayoutProcessor
 {
-    var string $layout;
-    var int $layoutType;//item layout type
-    var bool $advancedtagprocessor;
-    var float $version = 0;
+	var string $layout;
+	var int $layoutType;//item layout type
+	var bool $advancedtagprocessor;
+	var float $version = 0;
 
-    var CustomTables\CT $ct;
+	var CustomTables\CT $ct;
 
-    function __construct(CT &$ct, $layout = '')
-    {
-        $this->ct = $ct;
-        $this->version = $this->ct->Env->version;
-        $this->advancedTagProcessor = $this->ct->Env->advancedTagProcessor;
-        $this->layout = $layout;
-    }
+	function __construct(CT &$ct, $layout = '')
+	{
+		$this->ct = $ct;
+		$this->version = $this->ct->Env->version;
+		$this->advancedTagProcessor = $this->ct->Env->advancedTagProcessor;
+		$this->layout = $layout;
+	}
 
-    function fillLayout(?array $row = null, $aLink = null, $tag_chars = '[]', $disable_advanced_tags = false, $add_label = false): string
-    {
-        $htmlresult = $this->layout;
+	function fillLayout(?array $row = null, $aLink = null, $tag_chars = '[]', $disable_advanced_tags = false, $add_label = false): string
+	{
+		$htmlresult = $this->layout;
 
-        if ($this->advancedTagProcessor and !$disable_advanced_tags) {
-            tagProcessor_If::process($this->ct, $htmlresult, $row);
+		if ($this->advancedTagProcessor and !$disable_advanced_tags) {
+			tagProcessor_If::process($this->ct, $htmlresult, $row);
 
-            if ($this->ct->Env->CustomPHPEnabled)
-                tagProcessor_PHP::process($this->ct, $htmlresult, $row);
-        }
+			if ($this->ct->Env->CustomPHPEnabled)
+				tagProcessor_PHP::process($this->ct, $htmlresult, $row);
+		}
 
-        if (!str_contains($htmlresult, 'ct_doc_tagset_free'))//explain what is "ct_doc_tagset_free"
-        {
-            tagProcessor_If::process($this->ct, $htmlresult, $row);
+		if (!str_contains($htmlresult, 'ct_doc_tagset_free'))//explain what is "ct_doc_tagset_free"
+		{
+			tagProcessor_If::process($this->ct, $htmlresult, $row);
 
-            //Item must be before General to let the following: currenturl:set,paymentid,{id}}
-            tagProcessor_Value::processValues($this->ct, $htmlresult, $row, $tag_chars);//to let sqljoin function work
-            tagProcessor_Item::process($this->ct, $htmlresult, $row, $add_label);
-            tagProcessor_General::process($this->ct, $htmlresult, $row);
-            tagProcessor_Page::process($this->ct, $htmlresult);
+			//Item must be before General to let the following: currenturl:set,paymentid,{id}}
+			tagProcessor_Value::processValues($this->ct, $htmlresult, $row, $tag_chars);//to let sqljoin function work
+			tagProcessor_Item::process($this->ct, $htmlresult, $row, $add_label);
+			tagProcessor_General::process($this->ct, $htmlresult, $row);
+			tagProcessor_Page::process($this->ct, $htmlresult);
 
-            if ($this->advancedTagProcessor and !$disable_advanced_tags)
-                tagProcessor_Set::process($this->ct, $htmlresult);
+			if ($this->advancedTagProcessor and !$disable_advanced_tags)
+				tagProcessor_Set::process($this->ct, $htmlresult);
 
-            if ($this->ct->Env->print == 1) {
-                $htmlresult = str_replace('<a href', '<span link', $htmlresult);
-                $htmlresult = str_replace('</a>', '</span>', $htmlresult);
-            }
-        }
-        return $htmlresult;
-    }
+			if ($this->ct->Env->print == 1) {
+				$htmlresult = str_replace('<a href', '<span link', $htmlresult);
+				$htmlresult = str_replace('</a>', '</span>', $htmlresult);
+			}
+		}
+		return $htmlresult;
+	}
 }

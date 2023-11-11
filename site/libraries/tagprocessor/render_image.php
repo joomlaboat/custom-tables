@@ -14,64 +14,64 @@ use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 trait render_image
 {
 
-    protected static function get_CatalogTable_singleline_IMAGE(CT &$ct, $layoutType, &$pageLayout)
-    {
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_imagegenerator' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'include.php');
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_imagegenerator' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'misc.php');
+	protected static function get_CatalogTable_singleline_IMAGE(CT &$ct, $layoutType, &$pageLayout)
+	{
+		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_imagegenerator' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'include.php');
+		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_imagegenerator' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'misc.php');
 
-        if (ob_get_contents()) ob_end_clean();
+		if (ob_get_contents()) ob_end_clean();
 
-        $IG = new IG();
+		$IG = new IG();
 
-        $IG->filename = JoomlaBasicMisc::makeNewFileName($ct->Params->pageTitle, '');
-        $IG->setImageGeneratorProfileFromText($pageLayout);
+		$IG->filename = JoomlaBasicMisc::makeNewFileName($ct->Params->pageTitle, '');
+		$IG->setImageGeneratorProfileFromText($pageLayout);
 
-        $image_width = $IG->width;
-        $image_height = $IG->height;
-        if (ob_get_contents()) ob_end_clean();
+		$image_width = $IG->width;
+		$image_height = $IG->height;
+		if (ob_get_contents()) ob_end_clean();
 
-        $obj = null;
+		$obj = null;
 
-        //set canvas width
-        $IG->width = $image_width * 3 + 10;
-        //set canvas height
-        $IG->height = $image_height * ceil(count($ct->Records) / 3) + 10;
+		//set canvas width
+		$IG->width = $image_width * 3 + 10;
+		//set canvas height
+		$IG->height = $image_height * ceil(count($ct->Records) / 3) + 10;
 
-        $obj = $IG->render(false, $obj);
+		$obj = $IG->render(false, $obj);
 
-        $IG->width = $image_width;
-        $IG->height = $image_height;
+		$IG->width = $image_width;
+		$IG->height = $image_height;
 
 
-        $x_offset = 5;
-        $y_offset = 5;
-        $c = 0;
+		$x_offset = 5;
+		$y_offset = 5;
+		$c = 0;
 
-        $twig = new TwigProcessor($ct, $pageLayout);
+		$twig = new TwigProcessor($ct, $pageLayout);
 
-        foreach ($ct->Records as $row) {
-            $vlu = tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row);
-            $IG->setInstructions($vlu, true);
-            $obj = $IG->render(false, $obj, $x_offset, $y_offset);
+		foreach ($ct->Records as $row) {
+			$vlu = tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row);
+			$IG->setInstructions($vlu, true);
+			$obj = $IG->render(false, $obj, $x_offset, $y_offset);
 
-            $x_offset += $image_width;
-            $c++;
-            if ($c >= 3) {
-                $c = 0;
-                $x_offset = 5;
-                $y_offset += $image_height;
-            }
-        }
+			$x_offset += $image_width;
+			$c++;
+			if ($c >= 3) {
+				$c = 0;
+				$x_offset = 5;
+				$y_offset += $image_height;
+			}
+		}
 
-        $IG->setInstructions('', false);
-        $IG->render(true, $obj);
+		$IG->setInstructions('', false);
+		$IG->render(true, $obj);
 
-        die;//clean exit
-    }
+		die;//clean exit
+	}
 }

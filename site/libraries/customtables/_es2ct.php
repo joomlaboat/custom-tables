@@ -16,198 +16,198 @@ use CustomTables\Fields;
 defined('_JEXEC') or die('Restricted access');
 
 $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
-    . 'customtables' . DIRECTORY_SEPARATOR;
+	. 'customtables' . DIRECTORY_SEPARATOR;
 require_once($path . 'helpers' . DIRECTORY_SEPARATOR . 'misc.php');
 require_once($path . 'tables' . DIRECTORY_SEPARATOR . 'tables.php');
 require_once($path . 'fields' . DIRECTORY_SEPARATOR . 'fields.php');
 
 function updateESTables()
 {
-    getESTables();
+	getESTables();
 }
 
 function getESTables()
 {
-    $query = 'SHOW TABLES';
-    $tables = database::loadAssocList($query);
-    $database = database::getDataBaseName();
+	$query = 'SHOW TABLES';
+	$tables = database::loadAssocList($query);
+	$database = database::getDataBaseName();
 
-    foreach ($tables as $table) {
-        $tablename = $table['Tables_in_' . $database];
+	foreach ($tables as $table) {
+		$tablename = $table['Tables_in_' . $database];
 
-        if (str_contains($tablename, '_extrasearch_'))//dont change this line _e x t r a  s e a r c h_
-        {
-            $new_tablename = str_replace('_extrasearch_', '_customtables_', $tablename);//dont change this line. First must be _e x t r a  s e a r c h_
-            $query = 'DROP TABLE IF EXISTS ' . $new_tablename;
-            database::setQuery($query);
-            $query = 'RENAME TABLE ' . $tablename . ' TO ' . $new_tablename;
-            database::setQuery($query);
+		if (str_contains($tablename, '_extrasearch_'))//dont change this line _e x t r a  s e a r c h_
+		{
+			$new_tablename = str_replace('_extrasearch_', '_customtables_', $tablename);//dont change this line. First must be _e x t r a  s e a r c h_
+			$query = 'DROP TABLE IF EXISTS ' . $new_tablename;
+			database::setQuery($query);
+			$query = 'RENAME TABLE ' . $tablename . ' TO ' . $new_tablename;
+			database::setQuery($query);
 
-            if (fixFields($new_tablename)) {
-                //	die;
-            }
-        } elseif (str_contains($tablename, '_customtables_')) {
-            updateFields($tablename);
-        }
-    }
+			if (fixFields($new_tablename)) {
+				//	die;
+			}
+		} elseif (str_contains($tablename, '_customtables_')) {
+			updateFields($tablename);
+		}
+	}
 
-    updateMenuItems();
+	updateMenuItems();
 
-    updateLayouts();
+	updateLayouts();
 
-    addCetegoriesTable();
+	addCetegoriesTable();
 
-    updateImageFieldTypeParama();
+	updateImageFieldTypeParama();
 
-    updatefieldTypes();
+	updatefieldTypes();
 
-    updateContent();
+	updateContent();
 
-    updateLayoutVerticalBarTags();
+	updateLayoutVerticalBarTags();
 
-    fixTableCategory();
+	fixTableCategory();
 }
 
 function fixTableCategory()
 {
-    $tablename = '#__customtables_tables';
-    $fields = getExistingFields($tablename);
+	$tablename = '#__customtables_tables';
+	$fields = getExistingFields($tablename);
 
-    $catid = findFileByName($fields, 'catid');
-    $tablecategory = findFileByName($fields, 'tablecategory');
+	$catid = findFileByName($fields, 'catid');
+	$tablecategory = findFileByName($fields, 'tablecategory');
 
-    if ($tablecategory == null and is_array($catid)) {
-        //rename field
-        $query = 'ALTER TABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
-        database::setQuery($query);
+	if ($tablecategory == null and is_array($catid)) {
+		//rename field
+		$query = 'ALTER TABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
+		database::setQuery($query);
 
-    } elseif (is_array($tablecategory) and is_array($catid)) {
-        //delete tablecategory
-        $query = 'ALTER TABLE `' . $tablename . '` DROP column `tablecategory`';
-        database::setQuery($query);
+	} elseif (is_array($tablecategory) and is_array($catid)) {
+		//delete tablecategory
+		$query = 'ALTER TABLE `' . $tablename . '` DROP column `tablecategory`';
+		database::setQuery($query);
 
-        $query = 'ALTER TABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
-        database::setQuery($query);
-    }
+		$query = 'ALTER TABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
+		database::setQuery($query);
+	}
 }
 
 function findFileByName($fields, $fieldname)
 {
-    foreach ($fields as $field) {
-        $fn = $field['Field'];
-        if ($fn == $fieldname)
-            return $field;
-    }
-    return null;
+	foreach ($fields as $field) {
+		$fn = $field['Field'];
+		if ($fn == $fieldname)
+			return $field;
+	}
+	return null;
 }
 
 function updateLayoutVerticalBarTags()
 {
-    $query = 'SELECT id, layoutcode FROM #__customtables_layouts WHERE INSTR(layoutcode,"|toolbar") OR INSTR(layoutcode,"|search")';
-    $records = database::loadAssocList($query);
+	$query = 'SELECT id, layoutcode FROM #__customtables_layouts WHERE INSTR(layoutcode,"|toolbar") OR INSTR(layoutcode,"|search")';
+	$records = database::loadAssocList($query);
 
-    foreach ($records as $record) {
-        $c = str_replace('|toolbar', '|batchtoolbar', $record['layoutcode']);
+	foreach ($records as $record) {
+		$c = str_replace('|toolbar', '|batchtoolbar', $record['layoutcode']);
 
-        $c = fixToolBarTags($c, 'toolbar');
-        $c = fixToolBarTags($c, 'search');
-        $c = fixToolBarTags($c, 'checkbox');
-        $c = fixToolBarTags($c, '(id)');
-        $c = fixToolBarTags($c, 'batchtoolbar');
+		$c = fixToolBarTags($c, 'toolbar');
+		$c = fixToolBarTags($c, 'search');
+		$c = fixToolBarTags($c, 'checkbox');
+		$c = fixToolBarTags($c, '(id)');
+		$c = fixToolBarTags($c, 'batchtoolbar');
 
-        if ($c != $record['layoutcode']) {
-            //update
-            $query = 'UPDATE `#__customtables_layouts` SET
+		if ($c != $record['layoutcode']) {
+			//update
+			$query = 'UPDATE `#__customtables_layouts` SET
 				layoutcode=' . database::quote($c) . ' WHERE id=' . $record['id'];
 
-            database::setQuery($query);
+			database::setQuery($query);
 
-            echo '<p>Layout #' . $record['id'] . ' updated.</p>';
-        }
-    }
+			echo '<p>Layout #' . $record['id'] . ' updated.</p>';
+		}
+	}
 }
 
 function fixToolBarTags($htmlresult, $w)
 {
-    $options = array();
-    $fList = JoomlaBasicMisc::getListToReplace($w, $options, $htmlresult, '||');
+	$options = array();
+	$fList = JoomlaBasicMisc::getListToReplace($w, $options, $htmlresult, '||');
 
 
-    //$changed=false;
-    $i = 0;
-    foreach ($fList as $fItem) {
+	//$changed=false;
+	$i = 0;
+	foreach ($fList as $fItem) {
 
-        $vlu = str_replace('|' . $w, '{' . $w, $fItem);
-        $vlu = str_replace('|', '}', $vlu);
+		$vlu = str_replace('|' . $w, '{' . $w, $fItem);
+		$vlu = str_replace('|', '}', $vlu);
 
-        if ($fItem != $vlu) {
-            $htmlresult = str_replace($fItem, $vlu, $htmlresult);
-        }
+		if ($fItem != $vlu) {
+			$htmlresult = str_replace($fItem, $vlu, $htmlresult);
+		}
 
-        $i++;
-    }
+		$i++;
+	}
 
-    $vlu = str_replace('|(', '{', $htmlresult);
-    if ($vlu != $htmlresult) {
-        //	$changed=true;
-        $htmlresult = $vlu;
-    }
+	$vlu = str_replace('|(', '{', $htmlresult);
+	if ($vlu != $htmlresult) {
+		//	$changed=true;
+		$htmlresult = $vlu;
+	}
 
-    $vlu = str_replace(')|', '}', $htmlresult);
-    if ($vlu != $htmlresult) {
-        //$changed=true;
-        $htmlresult = $vlu;
-    }
-    return $htmlresult;
+	$vlu = str_replace(')|', '}', $htmlresult);
+	if ($vlu != $htmlresult) {
+		//$changed=true;
+		$htmlresult = $vlu;
+	}
+	return $htmlresult;
 }
 
 
 function updateImageFieldTypeParama()
 {
-    $query = 'UPDATE `#__customtables_fields` SET typeparams=CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\')) WHERE (`type`="image" OR `type`="imagegallery") AND INSTR(typeparams,\'|\')';
-    database::setQuery($query);
+	$query = 'UPDATE `#__customtables_fields` SET typeparams=CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\')) WHERE (`type`="image" OR `type`="imagegallery") AND INSTR(typeparams,\'|\')';
+	database::setQuery($query);
 }
 
 function updateMenuItems()
 {
-    $sets = array();
+	$sets = array();
 
-    $sets[] = 'link=replace(link,"com_extrasearch","com_customtables")';
-    $sets[] = 'component_id=(SELECT extension_id FROM `#__extensions` where element="com_customtables" LIMIT 1)';
+	$sets[] = 'link=replace(link,"com_extrasearch","com_customtables")';
+	$sets[] = 'component_id=(SELECT extension_id FROM `#__extensions` where element="com_customtables" LIMIT 1)';
 
-    $query = 'UPDATE #__menu SET ' . implode(',', $sets)
-        . ' WHERE instr(link,"com_extrasearch")';
+	$query = 'UPDATE #__menu SET ' . implode(',', $sets)
+		. ' WHERE instr(link,"com_extrasearch")';
 
-    database::setQuery($query);
+	database::setQuery($query);
 
-    $sets = array();
+	$sets = array();
 
-    $sets[] = 'params=replace(params,\'layout":"layout:\',\'layout":"\')';
-    $sets[] = 'params=replace(params,\'"detailslayout":"\',\'"esdetailslayout":"\')';
-    $sets[] = 'params=replace(params,\'"editlayout":"\',\'"eseditlayout":"\')';
+	$sets[] = 'params=replace(params,\'layout":"layout:\',\'layout":"\')';
+	$sets[] = 'params=replace(params,\'"detailslayout":"\',\'"esdetailslayout":"\')';
+	$sets[] = 'params=replace(params,\'"editlayout":"\',\'"eseditlayout":"\')';
 
-    $query = 'UPDATE #__menu SET ' . implode(',', $sets)
-        . ' WHERE instr(link,"com_customtables")';
+	$query = 'UPDATE #__menu SET ' . implode(',', $sets)
+		. ' WHERE instr(link,"com_customtables")';
 
-    database::setQuery($query);
+	database::setQuery($query);
 }
 
 function updatefieldTypes()
 {
-    $query = 'UPDATE #__customtables_fields SET `type`="customtables" WHERE INSTR(`type`,"extrasearch")';
-    database::setQuery($query);
+	$query = 'UPDATE #__customtables_fields SET `type`="customtables" WHERE INSTR(`type`,"extrasearch")';
+	database::setQuery($query);
 }
 
 function updateLayouts()
 {
-    $query = 'UPDATE #__customtables_layouts set layoutcode=replace(layoutcode,"extrasearch","customtables") where instr(layoutcode,"extrasearch")';
-    database::setQuery($query);
+	$query = 'UPDATE #__customtables_layouts set layoutcode=replace(layoutcode,"extrasearch","customtables") where instr(layoutcode,"extrasearch")';
+	database::setQuery($query);
 }
 
 function updateContent()
 {
-    $query = 'UPDATE #__content set introtext=replace(introtext,"{extrasearch","{customtables") where INSTR(introtext,"extrasearch")';
-    database::setQuery($query);
+	$query = 'UPDATE #__content set introtext=replace(introtext,"{extrasearch","{customtables") where INSTR(introtext,"extrasearch")';
+	database::setQuery($query);
 }
 
 
@@ -234,7 +234,7 @@ function fixNewCTTables($mysqltable)
 
 function addCetegoriesTable()
 {
-    $query = 'CREATE TABLE IF NOT EXISTS `#__customtables_categories` (
+	$query = 'CREATE TABLE IF NOT EXISTS `#__customtables_categories` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`published` TINYINT(3) NOT NULL DEFAULT 1,
 	`categoryname` VARCHAR(255) NOT NULL DEFAULT "",
@@ -252,118 +252,118 @@ function addCetegoriesTable()
 	KEY `idx_categoryname` (`categoryname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
 
-    database::setQuery($query);
+	database::setQuery($query);
 }
 
 function updateFields($new_tablename)
 {
-    $dbPrefix = database::getDBPrefix();
+	$dbPrefix = database::getDBPrefix();
 
-    if ($new_tablename == $dbPrefix . 'customtables_tables') {
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'created_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'modified_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'created', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'modified', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out', 'int(11) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out_time', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'version', 'INT(10) unsigned NOT NULL DEFAULT 1', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'hits', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'tablecategory', 'INT(11) NOT NULL DEFAULT 0', '');
+	if ($new_tablename == $dbPrefix . 'customtables_tables') {
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'created_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'modified_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'created', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'modified', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out', 'int(11) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out_time', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'version', 'INT(10) unsigned NOT NULL DEFAULT 1', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'hits', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'tablecategory', 'INT(11) NOT NULL DEFAULT 0', '');
 
-    } elseif ($new_tablename == database::getDBPrefix() . 'customtables_layouts') {
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'created_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'modified_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'created', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'modified', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out', 'int(11) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out_time', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'version', 'INT(10) unsigned NOT NULL DEFAULT 1', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'hits', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
+	} elseif ($new_tablename == database::getDBPrefix() . 'customtables_layouts') {
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'created_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'modified_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'created', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'modified', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out', 'int(11) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out_time', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'version', 'INT(10) unsigned NOT NULL DEFAULT 1', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'hits', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
 
-    } elseif ($new_tablename == database::getDBPrefix() . 'customtables_fields') {
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'created_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'modified_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'created', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'modified', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out', 'int(11) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out_time', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'version', 'INT(10) unsigned NOT NULL DEFAULT 1', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'hits', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
+	} elseif ($new_tablename == database::getDBPrefix() . 'customtables_fields') {
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'created_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'modified_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'created', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'modified', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out', 'int(11) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out_time', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'version', 'INT(10) unsigned NOT NULL DEFAULT 1', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'hits', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
 
-        Fields::AddMySQLFieldNotExist($new_tablename, 'description', 'VARCHAR(1024) NOT NULL DEFAULT ""', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'isdisabled', 'tinyint(1) NOT NULL default "0"', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'phponadd', 'text NULL', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'phponchange', 'text NULL', '');
-    } elseif ($new_tablename == database::getDBPrefix() . 'customtables_categories') {
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'created_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'modified_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'created', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'modified', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out', 'int(11) unsigned NOT NULL DEFAULT 0', '');
-        Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out_time', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'version', 'INT(10) unsigned NOT NULL DEFAULT 1', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'hits', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
-        //Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
-    }
+		Fields::AddMySQLFieldNotExist($new_tablename, 'description', 'VARCHAR(1024) NOT NULL DEFAULT ""', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'isdisabled', 'tinyint(1) NOT NULL default "0"', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'phponadd', 'text NULL', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'phponchange', 'text NULL', '');
+	} elseif ($new_tablename == database::getDBPrefix() . 'customtables_categories') {
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'created_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'modified_by', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'created', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'modified', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out', 'int(11) unsigned NOT NULL DEFAULT 0', '');
+		Fields::AddMySQLFieldNotExist($new_tablename, 'checked_out_time', 'DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'version', 'INT(10) unsigned NOT NULL DEFAULT 1', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'hits', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
+		//Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
+	}
 
 }
 
 function fixFields($tablename)
 {
-    $found = false;
-    $a = array('_10', '_1', '_2', '_3', '_4', '_5', '_6', '_7', '_8', '_9');
-    $fields = getExistingFields($tablename);
+	$found = false;
+	$a = array('_10', '_1', '_2', '_3', '_4', '_5', '_6', '_7', '_8', '_9');
+	$fields = getExistingFields($tablename);
 
-    foreach ($fields as $field) {
+	foreach ($fields as $field) {
 
-        $fn = $field['Field'];
-        $type = $field['Type'];
-        $null = $field['Null'];
+		$fn = $field['Field'];
+		$type = $field['Type'];
+		$null = $field['Null'];
 
-        foreach ($a as $b) {
+		foreach ($a as $b) {
 
-            if (str_contains($fn, $b)) {
-                //Do something
+			if (str_contains($fn, $b)) {
+				//Do something
 
-                if ($b == '_1' and !str_contains($fn, '_10')) {
-                    //rename
-                    $newcolumnname = str_replace('_1', '', $field['Field']);
-                    $query = 'ALTER TABLE `' . $tablename . '` CHANGE `' . $fn . '` `' . $newcolumnname . '` ' . $type . ' ' . ($null != 'NO' ? 'NULL' : '') . ';';
-                } elseif ($b == '_2') {
-                    //rename
-                    $newcolumnname = str_replace('_2', '_es', $field['Field']);
-                    $query = 'ALTER TABLE `' . $tablename . '` CHANGE `' . $fn . '` `' . $newcolumnname . '` ' . $type . ' ' . ($null != 'NO' ? 'NULL' : '') . ';';
-                } else {
-                    //delete
-                    $query = 'ALTER TABLE `' . $tablename . '` DROP column `' . $fn . '`';
-                }
+				if ($b == '_1' and !str_contains($fn, '_10')) {
+					//rename
+					$newcolumnname = str_replace('_1', '', $field['Field']);
+					$query = 'ALTER TABLE `' . $tablename . '` CHANGE `' . $fn . '` `' . $newcolumnname . '` ' . $type . ' ' . ($null != 'NO' ? 'NULL' : '') . ';';
+				} elseif ($b == '_2') {
+					//rename
+					$newcolumnname = str_replace('_2', '_es', $field['Field']);
+					$query = 'ALTER TABLE `' . $tablename . '` CHANGE `' . $fn . '` `' . $newcolumnname . '` ' . $type . ' ' . ($null != 'NO' ? 'NULL' : '') . ';';
+				} else {
+					//delete
+					$query = 'ALTER TABLE `' . $tablename . '` DROP column `' . $fn . '`';
+				}
 
-                database::setQuery($query);
-                $found = true;
-                break;
-            }
-        }
-    }
-    return $found;
+				database::setQuery($query);
+				$found = true;
+				break;
+			}
+		}
+	}
+	return $found;
 }
 
 function getExistingFields($tablename)
 {
-    $query = 'SHOW COLUMNS FROM ' . $tablename;
-    return database::loadAssocList($query);
+	$query = 'SHOW COLUMNS FROM ' . $tablename;
+	return database::loadAssocList($query);
 }

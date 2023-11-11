@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\CT;
@@ -18,101 +18,101 @@ use CustomTables\TwigProcessor;
 
 trait render_csv
 {
-    public static function get_CatalogTable_singleline_CSV(CT &$ct, $layoutType, $layout)
-    {
-        if (ob_get_contents())
-            ob_clean();
+	public static function get_CatalogTable_singleline_CSV(CT &$ct, $layoutType, $layout)
+	{
+		if (ob_get_contents())
+			ob_clean();
 
-        //Prepare line layout
-        $layout = str_replace("\n", '', $layout);
-        $layout = str_replace("\r", '', $layout);
+		//Prepare line layout
+		$layout = str_replace("\n", '', $layout);
+		$layout = str_replace("\r", '', $layout);
 
-        $twig = new TwigProcessor($ct, $layout);
+		$twig = new TwigProcessor($ct, $layout);
 
-        $records = [];
+		$records = [];
 
-        foreach ($ct->Records as $row)
-            $records[] = trim(strip_tags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row)));//TO DO
+		foreach ($ct->Records as $row)
+			$records[] = trim(strip_tags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row)));//TO DO
 
-        $result = implode('
+		$result = implode('
 ', $records);
 
-        return $result;
-    }
+		return $result;
+	}
 
-    protected static function get_CatalogTable_CSV(CT &$ct, $layoutType, $fields): string
-    {
-        $fields = str_replace("\n", '', $fields);
-        $fields = str_replace("\r", '', $fields);
+	protected static function get_CatalogTable_CSV(CT &$ct, $layoutType, $fields): string
+	{
+		$fields = str_replace("\n", '', $fields);
+		$fields = str_replace("\r", '', $fields);
 
-        $fieldarray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
+		$fieldarray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
-        //prepare header and record layouts
-        $result = '';
+		//prepare header and record layouts
+		$result = '';
 
-        $recordline = '';
+		$recordline = '';
 
-        $header_fields = array();
-        $line_fields = array();
-        foreach ($fieldarray as $field) {
-            $fieldpair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
-            $header_fields[] = trim(strip_tags(html_entity_decode($fieldpair[0])));//header
-            if (isset($fieldpair[1]))
-                $vlu = str_replace('"', '', $fieldpair[1]);
-            else
-                $vlu = "";
+		$header_fields = array();
+		$line_fields = array();
+		foreach ($fieldarray as $field) {
+			$fieldpair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
+			$header_fields[] = trim(strip_tags(html_entity_decode($fieldpair[0])));//header
+			if (isset($fieldpair[1]))
+				$vlu = str_replace('"', '', $fieldpair[1]);
+			else
+				$vlu = "";
 
-            $line_fields[] = $vlu;//content
-        }
+			$line_fields[] = $vlu;//content
+		}
 
-        $recordline .= '"' . implode('","', $line_fields) . '"';
-        $result .= '"' . implode('","', $header_fields) . '"';//."\r\n";
+		$recordline .= '"' . implode('","', $line_fields) . '"';
+		$result .= '"' . implode('","', $header_fields) . '"';//."\r\n";
 
-        //Parse Header
-        $LayoutProc = new LayoutProcessor($ct);
-        $LayoutProc->layout = $result;
-        $result = $LayoutProc->fillLayout();
-        $result = str_replace('&&&&quote&&&&', '"', $result);
+		//Parse Header
+		$LayoutProc = new LayoutProcessor($ct);
+		$LayoutProc->layout = $result;
+		$result = $LayoutProc->fillLayout();
+		$result = str_replace('&&&&quote&&&&', '"', $result);
 
-        //Initiate the file output
+		//Initiate the file output
 
-        $result = strip_tags($result);
-        $result .= strip_tags(self::renderCSVoutput($ct, $layoutType, ''));
+		$result = strip_tags($result);
+		$result .= strip_tags(self::renderCSVoutput($ct, $layoutType, ''));
 
-        if ($ct->Table->recordcount > $ct->LimitStart + $ct->Limit) {
-            if ($ct->Limit > 0) {
-                for ($limitstart = $ct->LimitStart + $ct->Limit; $limitstart < $ct->Table->recordcount; $limitstart += $ct->Limit) {
-                    $ct->LimitStart = $limitstart;
+		if ($ct->Table->recordcount > $ct->LimitStart + $ct->Limit) {
+			if ($ct->Limit > 0) {
+				for ($limitstart = $ct->LimitStart + $ct->Limit; $limitstart < $ct->Table->recordcount; $limitstart += $ct->Limit) {
+					$ct->LimitStart = $limitstart;
 
-                    $ct->getRecords();//get records
+					$ct->getRecords();//get records
 
-                    if (count($ct->Records) == 0)
-                        break;//no records left - escape
+					if (count($ct->Records) == 0)
+						break;//no records left - escape
 
-                    $result .= self::renderCSVoutput($ct, $layoutType, $recordline);//output next chunk
-                }
-            }
-        }
+					$result .= self::renderCSVoutput($ct, $layoutType, $recordline);//output next chunk
+				}
+			}
+		}
 
-        return strip_tags($result);
-    }
+		return strip_tags($result);
+	}
 
-    protected static function renderCSVoutput(CT &$ct, int $layoutType, string $itemLayout)
-    {
-        $twig = new TwigProcessor($ct, $itemLayout);
+	protected static function renderCSVoutput(CT &$ct, int $layoutType, string $itemLayout)
+	{
+		$twig = new TwigProcessor($ct, $itemLayout);
 
-        $number = 1 + $ct->LimitStart; //table row number, it can be used in the layout as {number}
-        $tablecontent = '';
+		$number = 1 + $ct->LimitStart; //table row number, it can be used in the layout as {number}
+		$tablecontent = '';
 
-        foreach ($ct->Records as $row) {
-            $row['_number'] = $number;
-            $row['_islast'] = $number == count($ct->Records);
+		foreach ($ct->Records as $row) {
+			$row['_number'] = $number;
+			$row['_islast'] = $number == count($ct->Records);
 
-            $tablecontent .= '
+			$tablecontent .= '
 ' . strip_tags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row));//TODO
 
-            $number++;
-        }
-        return $tablecontent;
-    }
+			$number++;
+		}
+		return $tablecontent;
+	}
 }

@@ -13,46 +13,46 @@ namespace CustomTables;
 use JoomlaBasicMisc;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 class ViewJSON
 {
-    var CT $ct;
+	var CT $ct;
 
-    function __construct(CT &$ct)
-    {
-        $this->ct = &$ct;
-    }
+	function __construct(CT &$ct)
+	{
+		$this->ct = &$ct;
+	}
 
-    function render(string $pageLayoutContent, bool $obEndClean = true): ?string
-    {
-        $twig = new TwigProcessor($this->ct, $pageLayoutContent, false, true);
-        $pageLayoutContent = $twig->process();
+	function render(string $pageLayoutContent, bool $obEndClean = true): ?string
+	{
+		$twig = new TwigProcessor($this->ct, $pageLayoutContent, false, true);
+		$pageLayoutContent = $twig->process();
 
-        if ($twig->errorMessage !== null)
-            return (object)array('msg' => $twig->errorMessage, 'status' => 'error');
+		if ($twig->errorMessage !== null)
+			return (object)array('msg' => $twig->errorMessage, 'status' => 'error');
 
-        if ($this->ct->Params->allowContentPlugins)
-            JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);
+		if ($this->ct->Params->allowContentPlugins)
+			JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);
 
-        if ($obEndClean) {
+		if ($obEndClean) {
 
-            if (ob_get_contents()) ob_end_clean();
+			if (ob_get_contents()) ob_end_clean();
 
-            $filename = $this->ct->Params->pageTitle;
-            if (is_null($filename))
-                $filename = 'ct';
+			$filename = $this->ct->Params->pageTitle;
+			if (is_null($filename))
+				$filename = 'ct';
 
-            $filename = JoomlaBasicMisc::makeNewFileName($filename, 'json');
+			$filename = JoomlaBasicMisc::makeNewFileName($filename, 'json');
 
-            header('Content-Disposition: attachment; filename="' . $filename . '"');
-            header('Content-Type: application/json; charset=utf-8');
-            header("Pragma: no-cache");
-            header("Expires: 0");
+			header('Content-Disposition: attachment; filename="' . $filename . '"');
+			header('Content-Type: application/json; charset=utf-8');
+			header("Pragma: no-cache");
+			header("Expires: 0");
 
-            die($pageLayoutContent);
-        }
-        return $pageLayoutContent;
-    }
+			die($pageLayoutContent);
+		}
+		return $pageLayoutContent;
+	}
 }

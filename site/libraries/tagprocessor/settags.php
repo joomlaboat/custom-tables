@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -21,95 +21,95 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Set
 {
-    public static function process(CT &$ct, &$pageLayout)
-    {
-        tagProcessor_Set::setHeadTag($ct, $pageLayout);
-        tagProcessor_Set::setMetaDescription($ct, $pageLayout);
-        tagProcessor_Set::setMetaKeywords($ct, $pageLayout);
-        tagProcessor_Set::setPageTitle($ct, $pageLayout);
-    }
+	public static function process(CT &$ct, &$pageLayout)
+	{
+		tagProcessor_Set::setHeadTag($ct, $pageLayout);
+		tagProcessor_Set::setMetaDescription($ct, $pageLayout);
+		tagProcessor_Set::setMetaKeywords($ct, $pageLayout);
+		tagProcessor_Set::setPageTitle($ct, $pageLayout);
+	}
 
-    protected static function setHeadTag(CT &$ct, string &$htmlresult)
-    {
-        $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('headtag', $options, $htmlresult, '{}');
+	protected static function setHeadTag(CT &$ct, string &$htmlresult)
+	{
+		$options = array();
+		$fList = JoomlaBasicMisc::getListToReplace('headtag', $options, $htmlresult, '{}');
 
-        $i = 0;
-        foreach ($fList as $fItem) {
-            $opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+		$i = 0;
+		foreach ($fList as $fItem) {
+			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
-            if ($ct->Env->isModal) {
-                $htmlresult = str_replace($fItem, $opts[0], $htmlresult);
-            } else {
-                $document = Factory::getDocument();
-                $document->addCustomTag($opts[0]);
-                $htmlresult = str_replace($fItem, '', $htmlresult);
-            }
-            $i++;
-        }
-    }
+			if ($ct->Env->isModal) {
+				$htmlresult = str_replace($fItem, $opts[0], $htmlresult);
+			} else {
+				$document = Factory::getDocument();
+				$document->addCustomTag($opts[0]);
+				$htmlresult = str_replace($fItem, '', $htmlresult);
+			}
+			$i++;
+		}
+	}
 
-    protected static function setMetaDescription(CT &$ct, string &$htmlresult)
-    {
-        $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('metadescription', $options, $htmlresult, '{}');
+	protected static function setMetaDescription(CT &$ct, string &$htmlresult)
+	{
+		$options = array();
+		$fList = JoomlaBasicMisc::getListToReplace('metadescription', $options, $htmlresult, '{}');
 
-        $i = 0;
-        foreach ($fList as $fItem) {
-            $opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
-            if ($ct->Env->isModal) {
-            } else {
-                $doc = Factory::getDocument();
-                $doc->setMetaData('description', $opts[0]);
-            }
+		$i = 0;
+		foreach ($fList as $fItem) {
+			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+			if ($ct->Env->isModal) {
+			} else {
+				$doc = Factory::getDocument();
+				$doc->setMetaData('description', $opts[0]);
+			}
 
-            $htmlresult = str_replace($fItem, '', $htmlresult);
+			$htmlresult = str_replace($fItem, '', $htmlresult);
 
-            $i++;
-        }
+			$i++;
+		}
 
-    }
+	}
 
-    protected static function setMetaKeywords(CT &$ct, string &$htmlresult)
-    {
-        $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('metakeywords', $options, $htmlresult, '{}');
+	protected static function setMetaKeywords(CT &$ct, string &$htmlresult)
+	{
+		$options = array();
+		$fList = JoomlaBasicMisc::getListToReplace('metakeywords', $options, $htmlresult, '{}');
 
-        $i = 0;
-        foreach ($fList as $fItem) {
-            $opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+		$i = 0;
+		foreach ($fList as $fItem) {
+			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
-            if ($ct->Env->isModal) {
+			if ($ct->Env->isModal) {
 
-            } else {
-                $doc = Factory::getDocument();
-                $doc->setMetaData('keywords', $opts[0]);
-            }
+			} else {
+				$doc = Factory::getDocument();
+				$doc->setMetaData('keywords', $opts[0]);
+			}
 
-            $htmlresult = str_replace($fItem, '', $htmlresult);
+			$htmlresult = str_replace($fItem, '', $htmlresult);
 
-            $i++;
-        }
+			$i++;
+		}
 
-    }
+	}
 
-    protected static function setPageTitle(CT &$ct, string &$htmlresult)
-    {
-        $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('pagetitle', $options, $htmlresult, '{}');
-        $document = Factory::getDocument();
-        $i = 0;
-        foreach ($fList as $fItem) {
-            $opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+	protected static function setPageTitle(CT &$ct, string &$htmlresult)
+	{
+		$options = array();
+		$fList = JoomlaBasicMisc::getListToReplace('pagetitle', $options, $htmlresult, '{}');
+		$document = Factory::getDocument();
+		$i = 0;
+		foreach ($fList as $fItem) {
+			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
-            if (!$ct->Env->isModal)
-                $document->setTitle(common::translate($opts[0]));
+			if (!$ct->Env->isModal)
+				$document->setTitle(common::translate($opts[0]));
 
-            $htmlresult = str_replace($fItem, '', $htmlresult);
-            $i++;
-        }
+			$htmlresult = str_replace($fItem, '', $htmlresult);
+			$i++;
+		}
 
-        if (count($fList) == 0 and $ct->Params->pageTitle !== null)
-            $document->setTitle(common::translate($ct->Params->pageTitle));
-    }
+		if (count($fList) == 0 and $ct->Params->pageTitle !== null)
+			$document->setTitle(common::translate($ct->Params->pageTitle));
+	}
 }

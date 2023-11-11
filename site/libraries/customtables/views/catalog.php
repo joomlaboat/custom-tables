@@ -10,6 +10,7 @@
 
 namespace CustomTables;
 
+use Exception;
 use JoomlaBasicMisc;
 use LayoutProcessor;
 use tagProcessor_Catalog;
@@ -203,7 +204,7 @@ class Catalog
 			$twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
 
 			$pageLayout = @$twig->process();
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 		}
 
