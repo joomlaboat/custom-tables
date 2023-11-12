@@ -13,7 +13,7 @@ use CustomTables\common;
 use CustomTables\CTUser;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 ?>
@@ -44,22 +44,22 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         <table>
             <tr>
                 <td>
-                    <?php echo common::translate('COM_CUSTOMTABLES_FILTER'); ?>:
+					<?php echo common::translate('COM_CUSTOMTABLES_FILTER'); ?>:
                     <input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>"
                            class="text_area" onchange="document.adminForm.submit();"/>
                     <button onclick="this.form.submit();"><?php echo common::translate('COM_CUSTOMTABLES_SELECT_GO'); ?></button>
                     <button onclick="document.getElementById('search').value='';this.form.getElementById('levellimit').value='10';this.form.getElementById('filter_state').value='';this.form.submit();"><?php echo common::translate('COM_CUSTOMTABLES_SELECT_RESET'); ?></button>
                 </td>
                 <td nowrap="nowrap">
-                    <?php
+					<?php
 
-                    echo common::translate('COM_CUSTOMTABLES_ROOT_PARENT') . ':&nbsp;';
-                    echo $this->lists['rootparent'] . '&nbsp;';
+					echo common::translate('COM_CUSTOMTABLES_ROOT_PARENT') . ':&nbsp;';
+					echo $this->lists['rootparent'] . '&nbsp;';
 
-                    echo common::translate('COM_CUSTOMTABLES_MAX_LEVELS') . ':&nbsp;';
-                    echo $this->lists['levellist'] . '&nbsp;';
+					echo common::translate('COM_CUSTOMTABLES_MAX_LEVELS') . ':&nbsp;';
+					echo $this->lists['levellist'] . '&nbsp;';
 
-                    ?>
+					?>
                 </td>
             </tr>
         </table>
@@ -68,39 +68,39 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
             <thead>
             <tr>
                 <th>
-                    <?php echo common::translate('COM_CUSTOMTABLES_NUM'); ?>
+					<?php echo common::translate('COM_CUSTOMTABLES_NUM'); ?>
                 </th>
                 <th>
                     <input type="checkbox" name="toggle" value=""
                            onclick="checkAll(<?php echo count($this->items); ?>);"/>
                 </th>
                 <th class="title">
-                    <?php echo JHTML::_('grid.sort', 'Name', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+					<?php echo JHTML::_('grid.sort', 'Name', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                 </th>
 
-                <?php
+				<?php
 
 
-                $firstlanguage = true;
-                foreach ($this->ct->Languages->LanguageList as $lang) {
-                    if ($firstlanguage) {
-                        $postfix = '';
-                        $firstlanguage = false;
-                    } else
-                        $postfix = '_' . $lang->sef;
+				$firstlanguage = true;
+				foreach ($this->ct->Languages->LanguageList as $lang) {
+					if ($firstlanguage) {
+						$postfix = '';
+						$firstlanguage = false;
+					} else
+						$postfix = '_' . $lang->sef;
 
-                    echo '<th class="title" nowrap="nowrap">';
-                    echo JHTML::_('grid.sort', $lang->caption, 'title' . $postfix, @$this->lists['order_Dir'], @$this->lists['order']);
-                    echo '</th>';
+					echo '<th class="title" nowrap="nowrap">';
+					echo JHTML::_('grid.sort', $lang->caption, 'title' . $postfix, @$this->lists['order_Dir'], @$this->lists['order']);
+					echo '</th>';
 
-                }
+				}
 
-                ?>
+				?>
 
 
                 <th nowrap="nowrap">
-                    <?php echo JHTML::_('grid.sort', 'Order by', 'm.ordering', @$this->lists['order_Dir'], @$this->lists['order']); ?>
-                    <?php if ($this->ordering) echo JHTML::_('grid.order', $this->items); ?>
+					<?php echo JHTML::_('grid.sort', 'Order by', 'm.ordering', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+					<?php if ($this->ordering) echo JHTML::_('grid.order', $this->items); ?>
                 </th>
 
 
@@ -110,82 +110,75 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
             <tr>
                 <td colspan="12">
                     <div class="pagination" style="margin-top:20px;">
-                        <?php echo $this->pagination->getListFooter(); ?>
+						<?php echo $this->pagination->getListFooter(); ?>
                     </div>
                 </td>
             </tr>
             </tfoot>
             <tbody>
-            <?php
-            $k = 0;
-            $i = 0;
-            $n = count($this->items);
-            $rows = $this->items;
-            //$filter_rootparent = $mainframe->getUserStateFromRequest( "com_customtables.filter_rootparent",'filter_rootparent','','int' );
-            //&rootid='.$filter_rootparent.'
-            foreach ($rows as $row) :
+			<?php
+			$k = 0;
+			$i = 0;
+			$n = count($this->items);
+			$rows = $this->items;
+			//$filter_rootparent = $mainframe->getUserStateFromRequest( "com_customtables.filter_rootparent",'filter_rootparent','','int' );
+			//&rootid='.$filter_rootparent.'
+			foreach ($rows as $row) :
 
-                $checked = JHTML::_('grid.checkedout', $row, $i);
-                $user = new CTUser();
+				$checked = JHTML::_('grid.checkedout', $row, $i);
+				$user = new CTUser();
 
-                ?>
+				?>
                 <tr class="<?php echo "row$k"; ?>">
                     <td>
-                        <?php echo $i + 1 + $this->pagination->limitstart; ?>
+						<?php echo $i + 1 + $this->pagination->limitstart; ?>
                     </td>
                     <td>
-                        <?php echo $checked; ?>
+						<?php echo $checked; ?>
                     </td>
                     <td nowrap="nowrap">
-                        <?php
-
-                        //TODO: Should not be like this
-                        if (JTable::isCheckedOut($user->id, $row->checked_out)) : ?>
-                            <?php echo $row->treename; ?>
-                        <?php else : ?>
                             <span class="editlinktip hasTip"
-                                  title="<?php echo common::translate('COM_CUSTOMTABLES_EDIT_MENU'); ?>::<?php echo $row->treename; ?>">
+                                  title="<?php echo common::translate('COM_CUSTOMTABLES_EDIT_LIST'); ?>::<?php echo $row->treename; ?>">
 				<a href="<?php echo JRoute::_('index.php?option=com_customtables&view=list&task=edit&cid[]=' . $row->id); ?>"><?php echo $row->treename; ?></a></span>
-                        <?php endif; ?>
                     </td>
 
-                    <?php
+					<?php
 
-                    $row_array = (array)$row;
+					$row_array = (array)$row;
 
-                    $firstlanguage = true;
-                    foreach ($this->ct->Languages->LanguageList as $lang) {
-                        if ($firstlanguage) {
-                            $postfix = '';
-                            $firstlanguage = false;
-                        } else
-                            $postfix = '_' . $lang->sef;
+					$firstlanguage = true;
+					foreach ($this->ct->Languages->LanguageList as $lang) {
+						if ($firstlanguage) {
+							$postfix = '';
+							$firstlanguage = false;
+						} else
+							$postfix = '_' . $lang->sef;
 
-                        $vlu = $row_array['title' . $postfix];
+						$vlu = $row_array['title' . $postfix];
 
-                        echo '<td nowrap="nowrap">' . $vlu . '</td>';
-                    }
+						echo '<td nowrap="nowrap">' . $vlu . '</td>';
+					}
 
-                    ?>
+					?>
 
 
                     <td class="order" nowrap="nowrap">
 				<span><?php
-                    echo $this->pagination->orderUpIcon($i, $row->parentid == 0 || $row->parentid == @$rows[$i - 1]->parentid, 'orderup', 'Move Up', $this->ordering); ?></span>
+					echo $this->pagination->orderUpIcon($i, $row->parentid == 0 || $row->parentid == @$rows[$i - 1]->parentid, 'orderup', 'Move Up', $this->ordering); ?></span>
                         <span><?php echo $this->pagination->orderDownIcon($i, $n, $row->parentid == 0 || $row->parentid == @$rows[$i + 1]->parentid, 'orderdown', 'Move Down', $this->ordering); ?></span>
 
 
-                        <?php $disabled = $this->ordering ? '' : 'disabled="disabled"'; ?>
+						<?php $disabled = $this->ordering ? '' : 'disabled="disabled"'; ?>
                         <input type="text" name="order[]" size="5"
                                value="<?php echo $row->ordering; ?>" <?php echo $disabled ?> class="text_area"
                                style="text-align: center"/>
                     </td>
                 </tr>
-                <?php
-                $k = 1 - $k;
-                $i++;
-                ?>
-            <?php endforeach; ?>
+				<?php
+				$k = 1 - $k;
+				$i++;
+				?>
+			<?php endforeach; ?>
             </tbody>
         </table>
 
@@ -198,7 +191,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         <input type="hidden" name="Itemid"
                value="<?php echo common::inputGetInt('Itemid', 0); ?>"/>
 
-        <?php echo JHTML::_('form.token'); ?>
+		<?php echo JHTML::_('form.token'); ?>
     </form>
 
 </div>
