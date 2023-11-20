@@ -27,7 +27,7 @@ Joomla.submitbutton = function (task) {
             Joomla.submitform(task);
             return true;
         } else {
-            alert(Joomla.JText._('categories, some values are not acceptable.', 'Some values are unacceptable'));
+            alert(TranslateText('COM_CUSTOMTABLES_INVALID_VALUE'));
             return false;
         }
     }

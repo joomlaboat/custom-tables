@@ -50,7 +50,6 @@ Joomla.submitbutton = function (task) {
             return true;
         } else {
             event.preventDefault();
-            //Joomla.JText._('layouts, some values are not acceptable.','Some values are unacceptable');
             return false;
         }
     }

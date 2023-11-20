@@ -24,7 +24,6 @@ Joomla.submitbutton = function (task) {
             Joomla.submitform(task);
             return true;
         } else {
-            //(Joomla.JText._('fields, some values are not acceptable.','Some values are unacceptable'));
             return false;
         }
     }

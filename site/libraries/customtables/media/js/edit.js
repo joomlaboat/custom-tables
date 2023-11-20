@@ -113,7 +113,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
                     if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
                         alert('Nothing to save. Check Edit From layout.');
                     else if (http.response.indexOf('view-login') !== -1)
-                        alert('Session expired. Please login again.');
+                        alert(TranslateText('COM_CUSTOMTABLES_JS_SESSION_EXPIRED'));
                     else
                         alert(http.response);
                 }
@@ -253,17 +253,17 @@ function doFilters(obj, label, filters_string) {
             let lastDotPos = value.lastIndexOf('.');
             let isEmailValid = (lastAtPos < lastDotPos && lastAtPos > 0 && value.indexOf('@@') === -1 && lastDotPos > 2 && (value.length - lastDotPos) > 2);
             if (!isEmailValid) {
-                alert('The ' + label + ' "' + value + '" is not a valid Email.');
+                alert(TranslateText('COM_CUSTOMTABLES_JS_EMAIL_INVALID', label, value));
                 return false;
             }
         } else if (filter === 'url') {
             if (!isValidURL(value)) {
-                alert('The ' + label + ' "' + value + '" is not a valid URL.');
+                alert(TranslateText('COM_CUSTOMTABLES_JS_URL_INVALID', label, value));
                 return false;
             }
         } else if (filter === 'https') {
             if (value.indexOf("https") !== 0) {
-                alert('The ' + label + ' "' + value + '" must be secure - must start with "https://".');
+                alert(TranslateText('COM_CUSTOMTABLES_JS_SECURE_URL_INVALID', label, value));
                 return false;
             }
         } else if (filter === 'domain' && filter_parts.length > 1) {
@@ -273,7 +273,7 @@ function doFilters(obj, label, filters_string) {
             try {
                 hostname = (new URL(value)).hostname;
             } catch (err) {
-                alert('The ' + label + ' "' + value + '" is not a valid URL link.');
+                alert(TranslateText('COM_CUSTOMTABLES_JS_URL_INVALID', label, value));
                 return false;
             }
 
@@ -287,7 +287,8 @@ function doFilters(obj, label, filters_string) {
             }
 
             if (!found) {
-                alert('The ' + label + ' domain "' + hostname + '" must match to "' + filter_parts[1] + '".');
+
+                alert(TranslateText('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID', value, label, filter_parts[1]));
                 return false;
             }
         }
@@ -334,7 +335,7 @@ function checkRequiredFields(formObject) {
                     if (imageObject)
                         return true;
 
-                    alert(label + " required.");
+                    alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
                     return false;
                 }
             }
@@ -356,30 +357,28 @@ function checkRequiredFields(formObject) {
                 if (requiredFields[i].type === "text") {
                     let obj = document.getElementById(objName);
                     if (obj.value === '') {
-                        alert(label + " required.");
+                        alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
                         return false;
                     }
                 } else if (requiredFields[i].type === "select-one") {
                     let obj = document.getElementById(objName);
-                    //let v = obj.value;
 
                     if (obj.value === null || obj.value === '') {
-                        alert(label + " not selected.");
+                        alert(TranslateText('COM_CUSTOMTABLES_NOT_SELECTED', label));
                         return false;
                     }
                 } else if (requiredFields[i].type === "select-multiple") {
                     let count_multiple_obj = document.getElementById(lbln);
-
                     let options = count_multiple_obj.options;
-
                     let count_multiple = 0;
+
                     for (let i2 = 0; i2 < options.length; i2++) {
                         if (options[i2].selected)
                             count_multiple++;
                     }
 
                     if (count_multiple === 0) {
-                        alert(label + " not selected.");
+                        alert(TranslateText('COM_CUSTOMTABLES_NOT_SELECTED', label));
                         return false;
                     }
                 }
@@ -387,6 +386,21 @@ function checkRequiredFields(formObject) {
         }
     }
     return true;
+}
+
+function TranslateText() {
+    if (arguments.length == 0)
+        return 'Nothing to translate';
+
+    let str = Joomla.JText._(arguments[0]);
+
+    if (arguments.length == 1)
+        return str;
+
+    for (let i = 1; i < arguments.length; i++)
+        str = str.replace('%s', arguments[i]);
+
+    return str;
 }
 
 function SetUnsetInvalidClass(id, isValid) {
@@ -425,7 +439,7 @@ function CheckSQLJoinRadioSelections(id) {
     if (!selected) {
         let labelObject = document.getElementById(obj_name + "-lbl");
         let label = labelObject.innerHTML;
-        alert(label + " not selected.");
+        alert(Joomla.JText._('COM_CUSTOMTABLES_NOT_SELECTED', label));
         return false;
     }
 
@@ -519,10 +533,10 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
             if (typeof wrapper.dataset.addrecordmenualias !== 'undefined' && wrapper.dataset.addrecordmenualias !== '') {
                 let js = 'ctTableJoinAddRecordModalForm(\'' + control_name + '\',' + sub_index + ');';
-                let addText = Joomla.JText._('COM_CUSTOMTABLES_ADD');
+                let addText = TranslateText('COM_CUSTOMTABLES_ADD');
                 NoItemsText = addText + '<a href="javascript:' + js + '" className="toolbarIcons"><img src="/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="' + addText + '" title="' + addText + '"></a>';
             } else
-                NoItemsText = Joomla.JText._('COM_CUSTOMTABLES_SELECT_NOTHING')
+                NoItemsText = TranslateText('COM_CUSTOMTABLES_SELECT_NOTHING')
 
             document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = NoItemsText;
             return false;
@@ -545,10 +559,10 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         let onChangeAttribute = ' onChange="' + onChangeFunction + onchange + '"';
         //[' + index + ',' + filters.length + ']
         result += '<select id="' + current_object_id + '"' + onChangeAttribute + ' class="' + cssClass + '">';
-        result += '<option value="">- ' + Joomla.JText._('COM_CUSTOMTABLES_SELECT') + '</option>';
+        result += '<option value="">- ' + TranslateText('COM_CUSTOMTABLES_SELECT') + '</option>';
 
         if (typeof wrapper.dataset.addrecordmenualias !== 'undefined' && wrapper.dataset.addrecordmenualias !== '')
-            result += '<option value="%addRecord%">- ' + Joomla.JText._('COM_CUSTOMTABLES_ADD') + '</option>';
+            result += '<option value="%addRecord%">- ' + TranslateText('COM_CUSTOMTABLES_ADD') + '</option>';
 
         for (let i = 0; i < r.length; i++) {
             let optionLabel = decodeHtml(r[i].label);
