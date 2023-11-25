@@ -295,7 +295,7 @@ class CustomTablesImageMethods
 
 			//Delete
 			if ($ExistingImage !== null) {
-				$this->DeleteExistingSingleImage($ExistingImage, $ImageFolder, $params[0], $realtablename, $realfieldname, $realidfieldname);
+				$this->DeleteExistingSingleImage($ExistingImage, $ImageFolder, $params[0] ?? '', $realtablename, $realfieldname, $realidfieldname);
 			}
 
 			$new_photo_ext = $this->FileExtension($uploadedFile);
@@ -350,7 +350,7 @@ class CustomTablesImageMethods
 
 			//custom images
 			if ($isOk) {
-				$customSizes = $this->getCustomImageOptions($params[0]);
+				$customSizes = $this->getCustomImageOptions($params[0] ?? '');
 
 				foreach ($customSizes as $imagesize) {
 					$prefix = $imagesize[0];
