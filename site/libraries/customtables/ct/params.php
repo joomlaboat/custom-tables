@@ -274,10 +274,13 @@ class Params
 		$this->guestCanAddNew = $menu_params->get('guestcanaddnew');
 		$this->publishStatus = $menu_params->get('publishstatus');
 
-		if (!$blockExternalVars and is_null($this->publishStatus))
-			$this->publishStatus = common::inputGetInt('published');
-		else
-			$this->publishStatus = 1;
+		if ($this->publishStatus === null) {
+			if (!$blockExternalVars)
+				$this->publishStatus = common::inputGetInt('published');
+			else
+				$this->publishStatus = 1;
+		} else
+			$this->publishStatus = (int)$this->publishStatus;
 
 		//Emails
 		$this->onRecordAddSendEmail = (int)$menu_params->get('onrecordaddsendemail');
