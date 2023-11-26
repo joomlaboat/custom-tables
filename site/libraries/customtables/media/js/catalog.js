@@ -632,3 +632,12 @@ function ctValue_googlemapcoordinates(boxId, lat, long, zoom) {
     let infoWindow = new google.maps.InfoWindow;
     return false;
 }
+
+function ctSearchBarDateRangeUpdate(fieldName) {
+    setTimeout(function () {
+        let obj = document.getElementById("es_search_box_" + fieldName);
+        let date_start = document.getElementById("es_search_box_" + fieldName + "_start").value
+        let date_end = document.getElementById("es_search_box_" + fieldName + "_end").value;
+        obj.value = date_start + "-to-" + date_end;
+    }, 300)
+}

@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\DataTypes\Tree;
+use DateTime;
 use ESTables;
 use JoomlaBasicMisc;
 use LayoutProcessor;
@@ -185,12 +186,15 @@ class Filtering
 									'realfieldname' => 'listing_published'
 								);
 							} else {
-								$fieldrow = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
+
+								//Check if it's a range filter
+								$fieldNameParts = explode('_r_', $fieldname);
+								$fieldrow = Fields::FieldRowByName($fieldNameParts[0], $this->ct->Table->fields);
 							}
 
 							if (!is_null($fieldrow)) {
 								$w = $this->processSingleFieldWhereSyntax($fieldrow, $comparison_operator, $fieldname, $value, $field_extra_param);
-								if ($w != '')
+								if ($w !== null and $w != '')
 									$multi_field_where[] = $w;
 							}
 						}
@@ -217,8 +221,12 @@ class Filtering
 		}
 	}
 
-	function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname, string $value, string $field_extra_param = ''): string
+	function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname_, string $value, string $field_extra_param = ''): ?string
 	{
+		//Check if it's a range filter
+		$fieldNameParts = explode('_r_', $fieldname_);
+		$isRange = count($fieldNameParts) == 2;
+		$fieldname = $fieldNameParts[0];
 		$c = '';
 
 		switch ($fieldrow['type']) {
@@ -326,9 +334,10 @@ class Filtering
 			case 'changetime':
 			case 'creationtime':
 			case 'date':
-
-				$c = $this->Search_Date($fieldname, $value, $comparison_operator);
-				break;
+				if ($isRange)
+					return $this->Search_DateRange($fieldname, $value);
+				else
+					return $this->Search_Date($fieldname, $value, $comparison_operator);
 
 			case 'multilangtext':
 			case 'multilangstring':
@@ -817,7 +826,7 @@ class Filtering
 			return '(' . implode(' AND ', $cArr) . ')';
 	}
 
-	function Search_Date($fieldname, $value, $comparison_operator): string
+	function Search_DateRange(string $fieldname, string $valueRaw): ?string
 	{
 		$fieldrow1 = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
 
@@ -826,30 +835,71 @@ class Filtering
 		} else
 			$title1 = $fieldname;
 
-		$fieldrow2 = Fields::FieldRowByName($value, $this->ct->Table->fields);
+		$valueParts = explode('-to-', $valueRaw);
 
-		if (!is_null($fieldrow2))
-			$title2 = $fieldrow2['fieldtitle' . $this->ct->Languages->Postfix];
-		else
-			$title2 = $value;
+		$valueStart = isset($valueParts[0]) ? trim($valueParts[0]) : null;
+		if ($valueStart === '')
+			$valueStart = null;
 
-		//Breadcrumbs
-		$this->PathValue[] = $title1 . ' ' . $comparison_operator . ' ' . $title2;
+		$valueEnd = isset($valueParts[1]) ? trim($valueParts[1]) : null;
+		if ($valueEnd === '')
+			$valueEnd = null;
 
-		$value1 = $this->processDateSearchTags($fieldname, $fieldrow1, $this->ct->Table->realtablename);
-		$value2 = $this->processDateSearchTags($value, $fieldrow2, $this->ct->Table->realtablename);
+		// Sanitize and validate date format
+		$dateFormat = 'Y-m-d'; // Adjust the format according to your needs
 
-		if ($value2 == 'NULL' and $comparison_operator == '=')
-			$query = $value1 . ' IS NULL';
-		elseif ($value2 == 'NULL' and $comparison_operator == '!=')
-			$query = $value1 . ' IS NOT NULL';
-		else
-			$query = $value1 . ' ' . $comparison_operator . ' ' . $value2;
+		if ($valueStart) {
+			$startDateTime = DateTime::createFromFormat($dateFormat, $valueStart);
 
-		return $query;
+			if ($startDateTime !== false) {
+				$valueStart = database::quote($startDateTime->format($dateFormat));
+				$titleStart = $startDateTime->format($dateFormat);
+			} else {
+				// Invalid date format, handle the error or set a default value
+				$fieldrowStart = Fields::FieldRowByName($valueStart, $this->ct->Table->fields);
+				$answer = $this->processDateSearchTags($valueStart, $fieldrowStart, $this->ct->Table->realtablename);
+				$valueStart = $answer['query'];
+				$titleStart = $answer['caption'];
+			}
+		}
+
+		if ($valueEnd) {
+			$endDateTime = DateTime::createFromFormat($dateFormat, $valueEnd);
+
+			if ($endDateTime !== false) {
+				$valueEnd = database::quote($endDateTime->format($dateFormat));
+				$titleEnd = $endDateTime->format($dateFormat);
+			} else {
+				// Invalid date format, handle the error or set a default value
+				$fieldrowEnd = Fields::FieldRowByName($valueEnd, $this->ct->Table->fields);
+				$answer = $this->processDateSearchTags($valueEnd, $fieldrowEnd, $this->ct->Table->realtablename);
+				$valueEnd = $answer['query'];
+				$titleEnd = $answer['caption'];
+			}
+		}
+
+		if ($valueStart and $valueEnd) {
+			//Breadcrumbs
+			$this->PathValue[] = $title1 . ' '
+				. common::translate('COM_CUSTOMTABLES_DATE_FROM') . ' ' . $titleStart . ' '
+				. common::translate('COM_CUSTOMTABLES_DATE_TO') . ' ' . $titleEnd;
+
+			return '(' . $fieldrow1['realfieldname'] . '>=' . $valueStart . ' AND ' . $fieldrow1['realfieldname'] . '<=' . $valueEnd . ')';
+		} elseif ($valueStart and $valueEnd === null) {
+			$this->PathValue[] = $title1 . ' '
+				. common::translate('COM_CUSTOMTABLES_FROM') . ' ' . $titleStart;
+
+			return $fieldrow1['realfieldname'] . '>=' . $valueStart;
+		} elseif ($valueStart === null and $valueEnd) {
+			$this->PathValue[] = $title1 . ' '
+				. common::translate('COM_CUSTOMTABLES_TO') . ' ' . $valueEnd;
+
+			return $fieldrow1['realfieldname'] . '<=' . $valueEnd;
+		}
+		return null;
 	}
 
-	function processDateSearchTags($value, $fieldrow, $esr_table_full): string
+	protected function processDateSearchTags(string $value, ?array $fieldrow, $esr_table_full): array
 	{
 		$v = str_replace('"', '', $value);
 		$v = str_replace("'", '', $v);
@@ -864,45 +914,97 @@ class Filtering
 			if (isset($options[1]) and $options[1] != '') {
 				$option = trim(preg_replace("/[^a-zA-Z-+% ,_]/", "", $options[1]));
 				//https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_date-format
-				return 'DATE_FORMAT(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ', ' . database::quote($option) . ')';//%m/%d/%Y %H:%i
-			} else
-				return $esr_table_full . '.' . $fieldrow['realfieldname'];
+				return ['query' => 'DATE_FORMAT(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ', ' . database::quote($option) . ')',
+					'caption' => $fieldrow['fieldtitle' . $this->ct->Languages->Postfix]];//%m/%d/%Y %H:%i
+			} else {
+				return ['query' => $esr_table_full . '.' . $fieldrow['realfieldname'],
+					'caption' => $fieldrow['fieldtitle' . $this->ct->Languages->Postfix]];
+			}
 		} else {
 			//value
-			if ($value == '{year}')
-				return 'year()';
+			if ($value == '{year}') {
+				return ['query' => 'year()',
+					'caption' => common::translate('COM_CUSTOMTABLES_THIS_YEAR')];
+			}
 
-			if ($value == '{month}')
-				return 'month()';
+			if ($value == '{month}') {
+				return ['query' => 'month()',
+					'caption' => common::translate('COM_CUSTOMTABLES_THIS_MONTH')];
+			}
 
-			if ($value == '{day}')
-				return 'day()';
+			if ($value == '{day}') {
+				return ['query' => 'day()',
+					'caption' => common::translate('COM_CUSTOMTABLES_THIS_DAY')];
+			}
 
-			if (trim(strtolower($value)) == 'null')
-				return 'NULL';
+			if (trim(strtolower($value)) == 'null') {
+				return ['query' => 'NULL',
+					'caption' => common::translate('COM_CUSTOMTABLES_DATE_NOT_SET')];
+			}
 
 			$options = array();
 			$fList = JoomlaBasicMisc::getListToReplace('now', $options, $value, '{}');
-			$i = 0;
 
-			foreach ($fList as $fItem) {
-				$option = trim(preg_replace("/[^a-zA-Z-+% ,_]/", "", $options[$i]));
-
-				//https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_date-format
-				if ($option != '')
-					$v = 'DATE_FORMAT(now(), ' . database::quote($option) . ')';//%m/%d/%Y %H:%i
-				else
-					$v = 'now()';
-
-				$value = str_replace($fItem, $v, $value);
-				$i++;
+			if (count($fList) == 0) {
+				return ['query' => database::quote($value),
+					'caption' => $value];
 			}
 
-			if (count($fList) > 0)
-				return $value;
-			else
-				return database::quote($value);
+			$option = trim(preg_replace("/[^a-zA-Z-+% ,_]/", "", $options[0]));
+
+			//https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_date-format
+			if ($option != '') {
+				//%m/%d/%Y %H:%i
+				return ['query' => 'DATE_FORMAT(now(), ' . database::quote($option) . ')',
+					'caption' => common::translate('COM_CUSTOMTABLES_DATE_NOW') . ' (' . $option . ')'];
+			} else {
+				return ['query' => 'now()',
+					'caption' => common::translate('COM_CUSTOMTABLES_DATE_NOW')];
+			}
 		}
+	}
+
+	function Search_Date(string $fieldname, string $valueRaw, string $comparison_operator): ?string
+	{
+		//field 1
+		$fieldrow1 = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
+		$answer = $this->processDateSearchTags($fieldname, $fieldrow1, $this->ct->Table->realtablename);
+		$value1 = $answer['query'];
+		$title1 = $answer['caption'];
+
+		//field 2
+		// Sanitize and validate date format
+		$dateFormat = 'Y-m-d'; // Adjust the format according to your needs
+
+		if ($valueRaw) {
+			$valueDateTime = DateTime::createFromFormat($dateFormat, $valueRaw);
+
+			if ($valueDateTime !== false) {
+				$value = $valueDateTime->format($dateFormat);
+			} else {
+				// Invalid date format, handle the error or set a default value
+				return null;
+			}
+		} else
+			return null;
+
+		$fieldrow2 = Fields::FieldRowByName($value, $this->ct->Table->fields);
+		$answer = $this->processDateSearchTags($value, $fieldrow2, $this->ct->Table->realtablename);
+		$value2 = $answer['query'];
+		$title2 = $answer['caption'];
+
+		//Breadcrumbs
+		$this->PathValue[] = $title1 . ' ' . $comparison_operator . ' ' . $title2;
+
+		//Query condition
+		if ($value2 == 'NULL' and $comparison_operator == '=')
+			$query = $value1 . ' IS NULL';
+		elseif ($value2 == 'NULL' and $comparison_operator == '!=')
+			$query = $value1 . ' IS NOT NULL';
+		else
+			$query = $value1 . ' ' . $comparison_operator . ' ' . $value2;
+
+		return $query;
 	}
 
 	function getInt_vL($vL)

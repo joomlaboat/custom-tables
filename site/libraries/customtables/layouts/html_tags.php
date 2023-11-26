@@ -472,13 +472,6 @@ class Twig_Html_Tags
 					'valuerule' => null,
 					'valuerulecaption' => null
 				);
-			} else {
-				//Date search no implemented yet. It will be range search
-				$fld = Fields::FieldRowByName($field_name_string, $this->ct->Table->fields);
-				if ($fld['type'] == 'date') {
-					$fld['typeparams'] = 'date';
-					$fld['type'] = 'range';
-				}
 			}
 
 			if ($first_field_type == '') {

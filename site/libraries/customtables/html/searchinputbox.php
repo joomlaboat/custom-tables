@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use DateTime;
 use Exception;
 use JHTML;
 
@@ -168,8 +169,7 @@ class SearchInputBox
 				break;
 
 			case 'date';
-				$result .= JHTML::calendar($value, $objName_, $objName_);
-				break;
+				return $this->getDateRangeBox($objName_, $value, $cssclass, $default_class);
 		}
 		return $result;
 	}
@@ -290,12 +290,12 @@ class SearchInputBox
 		$value_min = ''; //TODO: Check this
 		$value_max = '';
 
-		if ($this->field->params == 'date')
+		if ($this->field->type == 'date' or $this->field->type == 'range')
 			$d = '-to-';
-		elseif ($this->field->params == 'float')
+		elseif ($this->field->type == 'int' or $this->field->type == 'float')
 			$d = '-';
 		else
-			return 'Cannot search by date';
+			return 'Cannot search by "' . $this->field->type . '"';
 
 		$values = explode($d, $value);
 		$value_min = $values[0];
@@ -561,5 +561,69 @@ class SearchInputBox
 			die;
 		}
 		return $result;
+	}
+
+	protected function getDateRangeBox($objName_, $value, $cssclass, $default_class): string
+	{
+		JHtml::_('jquery.framework');
+		JHtml::_('script', 'https://code.jquery.com/ui/1.13.2/jquery-ui.js');
+		JHtml::_('stylesheet', 'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
+
+		$this->ct->document->addCustomTag('<script>
+
+jQuery(document).ready(function($) {
+    $("#' . $objName_ . '_start").datepicker({
+        dateFormat: "yy-mm-dd",
+        onSelect: function(selectedDate) {
+            $("#' . $objName_ . '_end").datepicker("option", "minDate", selectedDate);
+        }
+    });
+
+    $("#' . $objName_ . '_end").datepicker({
+        dateFormat: "yy-mm-dd",
+        onSelect: function(selectedDate) {
+            $("#' . $objName_ . '_start").datepicker("option", "maxDate", selectedDate);
+        }
+    });
+});
+
+</script>');
+
+		$valueParts = explode('-to-', $value);
+
+		$valueStart = isset($valueParts[0]) ? trim($valueParts[0]) : '';
+		$valueEnd = isset($valueParts[1]) ? trim($valueParts[1]) : '';
+
+		// Sanitize and validate date format
+		$dateFormat = 'Y-m-d'; // Adjust the format according to your needs
+
+		if ($valueStart) {
+			$startDateTime = DateTime::createFromFormat($dateFormat, $valueStart);
+
+			if ($startDateTime !== false) {
+				$valueStart = $startDateTime->format($dateFormat);
+			} else {
+				// Invalid date format, handle the error or set a default value
+				$valueStart = ''; // Set to default or perform error handling
+			}
+		}
+
+		if ($valueEnd) {
+			$endDateTime = DateTime::createFromFormat($dateFormat, $valueEnd);
+
+			if ($endDateTime !== false) {
+				$valueEnd = $endDateTime->format($dateFormat);
+			} else {
+				// Invalid date format, handle the error or set a default value
+				$valueEnd = ''; // Set to default or perform error handling
+			}
+		}
+
+		$jsOnChange = 'ctSearchBarDateRangeUpdate(\'' . $this->field->fieldname . '\')';
+		return '<input type="hidden" name="' . $objName_ . '" id="' . $objName_ . '" value="' . $valueStart . '-to-' . $valueEnd . '">'
+			. '<div>'
+			. '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueStart . '" type="text" class="' . $cssclass . ' ' . $default_class . '" id="' . $objName_ . '_start" placeholder="' . $field_title . ' - ' . common::translate('COM_CUSTOMTABLES_START') . '" style="display: inline-block;width:48%;margin:auto 0 auto 0;">'
+			. '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueEnd . '" type="text" class="' . $cssclass . ' ' . $default_class . '" id="' . $objName_ . '_end" placeholder="' . $field_title . ' - ' . common::translate('COM_CUSTOMTABLES_END') . '" style="display: inline-block;width:48%;margin:auto 0 auto 0;">'
+			. '</div>';
 	}
 }
