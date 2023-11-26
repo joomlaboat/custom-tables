@@ -1435,10 +1435,43 @@ class Inputbox
 
 		$attributes['required'] = ($this->field->isrequired == 1 ? 'required' : ''); //not working, don't know why.
 
+		if (isset($this->option_list[2]) and $this->option_list[2] != "")
+			$format = $this->phpToJsDateFormat($this->option_list[2]);
+		else
+			$format = null;
+
+		if ($this->field->params !== null and $this->field->params[0] == 'datetime') {
+			$attributes['showTime'] = true;
+			if ($format === null)
+				$format = '%Y-%m-%d %H:%M:%S';
+		} else {
+			if ($format === null)
+				$format = '%Y-%m-%d';
+		}
+
 		$result .= JHTML::calendar($value, $this->prefix . $this->field->fieldname, $this->prefix . $this->field->fieldname,
-			'%Y-%m-%d', $attributes);
+			$format, $attributes);
 
 		return $result;
+	}
+
+	protected function phpToJsDateFormat($phpFormat)
+	{
+		$formatConversion = array(
+			'Y' => '%Y',  // Year
+			'y' => '%y',  // Year
+			'm' => '%m',  // Month
+			'n' => '%n',  // Month without leading zeros
+			'd' => '%d',  // Day of the month
+			'j' => '%e',  // Day of the month without leading zeros
+			'H' => '%H',  // Hours in 24-hour format
+			'i' => '%M',  // Minutes
+			's' => '%S',  // Seconds
+			// Add more format conversions as needed
+		);
+
+		$jsFormat = strtr($phpFormat, $formatConversion);
+		return $jsFormat;
 	}
 
 	protected function render_time(?string $value): string

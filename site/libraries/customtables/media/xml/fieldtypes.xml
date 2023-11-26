@@ -252,12 +252,22 @@
         </params>
     </type>
 
-    <type ct_name="date" label="Date" description="Date Picker" priority="1">
+    <type ct_name="date" label="Date" description="Date ot Date/Time Picker" priority="1">
+        <params>
+            <param name="type" example="date" label="Type" description="Date or Date / Time"
+                   default="date" type="list">
+                <option value="date" label="Date Only"
+                        description="A date, supported range is 1000-01-01 to 9999-12-31"/>
+                <option value="datetime" label="Date and Time"
+                        description="A date and time combination, supported range is 1000-01-01 00:00:00 to 9999-12-31 23:59:59"/>
+            </param>
+        </params>
+
         <valueparams name="date" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
                 <param name="format" example="Y-m-d" label="Format" type="string"
-                       description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
+                       description="PHP date format i.e. 'Y-m-d H:i:s' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
             </params>
         </valueparams>
 
@@ -267,6 +277,8 @@
                 <param name="attributes" label="Attributes"
                        description="Optional attributes like: disabled, onclick, onchange etc." default=""
                        type="string"/>
+                <param name="format" example="Y-m-d" label="Format" type="string"
+                       description="PHP date format i.e. 'Y-m-d H:i:s'"/>
             </params>
         </editparams>
     </type>

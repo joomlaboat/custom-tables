@@ -175,7 +175,7 @@
             <option value="phponview">COM_CUSTOMTABLES_FIELDS_PHP_ONVIEW_SCRIPT</option>
         </field>
         <!-- Typeparams Field. Type: Text. (joomla)-->
-        <field type="text"
+        <field type="hidden"
                name="typeparams"
                label="COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL"
                maxlength="255"

@@ -418,10 +418,10 @@ class Fields
 		return false;
 	}
 
-	public static function convertMySQLFieldTypeToCT($data_type, $column_type): array
+	public static function convertMySQLFieldTypeToCT(string $data_type, ?string $column_type): array
 	{
-		$type = '';
-		$typeParams = '';
+		$type = null;
+		$typeParams = null;
 
 		switch (strtolower(trim($data_type))) {
 			case 'bit':
@@ -474,12 +474,10 @@ class Fields
 				break;
 
 			case 'datetime':
-				$type = 'creationtime';
-				break;
+				return ['type' => 'date', 'typeparams' => 'datetime'];
 
 			case 'date':
-				$type = 'date';
-				break;
+				return ['type' => 'date'];
 		}
 		return ['type' => $type, 'typeparams' => $typeParams];
 	}
@@ -1145,6 +1143,11 @@ class Fields
 	public static function getProjectedFieldType(string $ct_fieldType, ?string $typeParams): array
 	{
 		//Returns an array of mysql column parameters
+		if ($typeParams !== null)
+			$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
+		else
+			$typeParamsArray = null;
+
 		switch (trim($ct_fieldType)) {
 			case '_id':
 				return ['data_type' => 'int', 'is_nullable' => false, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => 'auto_increment'];
@@ -1165,7 +1168,6 @@ class Fields
 				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 1024))), 'default' => null, 'extra' => null];
 			case 'signature':
 
-				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
 				$format = $typeParamsArray[3] ?? 'svg';
 
 				if ($format == 'svg-db')
@@ -1174,7 +1176,6 @@ class Fields
 					return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'blob':
-				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
 
 				if ($typeParamsArray[0] == 'tiny')
 					$type = 'tinyblob';
@@ -1190,7 +1191,6 @@ class Fields
 			case 'text':
 			case 'multilangtext':
 
-				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
 				$type = 'text';
 				if (isset($typeParamsArray[2])) {
 					if ($typeParamsArray[2] == 'tiny')
@@ -1213,8 +1213,6 @@ class Fields
 				return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
 			case 'float':
 
-				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
-
 				if (count($typeParamsArray) == 1)
 					$l = '20,' . (int)$typeParamsArray[0];
 				elseif (count($typeParamsArray) == 2)
@@ -1224,7 +1222,6 @@ class Fields
 				return ['data_type' => 'decimal', 'is_nullable' => true, 'is_unsigned' => false, 'length' => $l, 'default' => null, 'extra' => null];
 
 			case 'customtables':
-				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
 
 				if (count($typeParamsArray) < 255)
 					$l = 255;
@@ -1245,9 +1242,6 @@ class Fields
 				return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'image':
-
-				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
-
 				$fileNameType = $typeParamsArray[3] ?? '';
 				$length = null;
 
@@ -1264,7 +1258,10 @@ class Fields
 				return ['data_type' => 'tinyint', 'is_nullable' => false, 'is_unsigned' => false, 'length' => null, 'default' => 0, 'extra' => null];
 
 			case 'date':
-				return ['data_type' => 'date', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+				if ($typeParamsArray !== null and $typeParamsArray[0] == 'datetime')
+					return ['data_type' => 'datetime', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+				else
+					return ['data_type' => 'date', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'creationtime':
 			case 'changetime':
@@ -1284,8 +1281,6 @@ class Fields
 				return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'virtual':
-
-				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
 				$storage = $typeParamsArray[1] ?? '';
 
 				if ($storage == 'storedstring') {
@@ -1304,8 +1299,6 @@ class Fields
 			case 'phponadd':
 			case 'phponchange':
 			case 'phponview':
-				$typeParamsArray = explode(',', $typeParams);
-
 				if (isset($typeParamsArray[1]) and $typeParamsArray[1] == 'dynamic')
 					return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null]; //do not store field values
 				else

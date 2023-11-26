@@ -279,7 +279,7 @@ class ESTables
 				$set_values = [];
 
 				$ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type, $field->column_type);
-				if ($ct_field_type['type'] == '') {
+				if ($ct_field_type['type'] === null) {
 					Factory::getApplication()->enqueueMessage('third-party table field type "' . $field->data_type . '" is unknown.', 'error');
 					return false;
 				}
@@ -289,7 +289,10 @@ class ESTables
 				$set_values['fieldtitle'] = database::quote(ucwords(strtolower($field->column_name)));
 				$set_values['allowordering'] = 'true';
 				$set_values['type'] = database::quote($ct_field_type['type']);
-				$set_values['typeparams'] = database::quote($ct_field_type['typeparams']);
+
+				if (key_exists('typeparams', $ct_field_type))
+					$set_values['typeparams'] = database::quote($ct_field_type['typeparams']);
+
 				$set_values['ordering'] = $ordering;
 				$set_values['defaultvalue'] = $field->column_default != '' ? database::quote($field->column_default) : 'NULL';
 				$set_values['description'] = $field->column_comment != '' ? database::quote($field->column_comment) : 'NULL';
