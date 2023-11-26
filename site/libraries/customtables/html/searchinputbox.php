@@ -169,7 +169,7 @@ class SearchInputBox
 				break;
 
 			case 'date';
-				return $this->getDateRangeBox($objName_, $value, $cssclass, $default_class);
+				return $this->getDateRangeBox($objName_, $value, $cssclass, $default_class, $field_title);
 		}
 		return $result;
 	}
@@ -563,7 +563,7 @@ class SearchInputBox
 		return $result;
 	}
 
-	protected function getDateRangeBox($objName_, $value, $cssclass, $default_class): string
+	protected function getDateRangeBox(string $objName_, $value, $cssclass, $default_class, string $field_title): string
 	{
 		JHtml::_('jquery.framework');
 		JHtml::_('script', 'https://code.jquery.com/ui/1.13.2/jquery-ui.js');
@@ -621,9 +621,9 @@ jQuery(document).ready(function($) {
 
 		$jsOnChange = 'ctSearchBarDateRangeUpdate(\'' . $this->field->fieldname . '\')';
 		return '<input type="hidden" name="' . $objName_ . '" id="' . $objName_ . '" value="' . $valueStart . '-to-' . $valueEnd . '">'
-			. '<div>'
-			. '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueStart . '" type="text" class="' . $cssclass . ' ' . $default_class . '" id="' . $objName_ . '_start" placeholder="' . $field_title . ' - ' . common::translate('COM_CUSTOMTABLES_START') . '" style="display: inline-block;width:48%;margin:auto 0 auto 0;">'
-			. '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueEnd . '" type="text" class="' . $cssclass . ' ' . $default_class . '" id="' . $objName_ . '_end" placeholder="' . $field_title . ' - ' . common::translate('COM_CUSTOMTABLES_END') . '" style="display: inline-block;width:48%;margin:auto 0 auto 0;">'
+			. '<div style="position: relative;">'
+			. '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueStart . '" type="text" class="' . $cssclass . ' ' . $default_class . '" id="' . $objName_ . '_start" placeholder="' . $field_title . ' - ' . common::translate('COM_CUSTOMTABLES_START') . '" style="display:inline-block;width:49%;margin-left:0;margin-right:0;float:left;">'
+			. '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueEnd . '" type="text" class="' . $cssclass . ' ' . $default_class . '" id="' . $objName_ . '_end" placeholder="' . $field_title . ' - ' . common::translate('COM_CUSTOMTABLES_END') . '" style="display:inline-block;width:49%;margin-left:0;margin-right:0;float:right;">'
 			. '</div>';
 	}
 }
