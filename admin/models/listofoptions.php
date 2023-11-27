@@ -18,11 +18,13 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 use CustomTables\Table;
+
 use Joomla\CMS\Factory;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\MVC\Model\ListModel;
 
-class CustomTablesModelListOfOptions extends JModelList
+class CustomTablesModelListOfOptions extends ListModel
 {
 	var CT $ct;
 	var $_table = null;

@@ -18,15 +18,17 @@ jimport('joomla.application.component.modellist');
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\ListOfFields;
+use CustomTables\DataTypes;
+
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use CustomTables\DataTypes;
 use Joomla\CMS\Version;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Listoffields Model
  */
-class CustomtablesModelListoffields extends JModelList
+class CustomtablesModelListoffields extends ListModel
 {
 	var $tableid;
 	var CT $ct;

@@ -19,13 +19,12 @@ use CustomTables\database;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 
-// import the Joomla modellist library
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Listofcategories Model
  */
-class CustomtablesModelListofcategories extends JModelList
+class CustomtablesModelListofcategories extends ListModel
 {
 	var CT $ct;
 

@@ -13,9 +13,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use Joomla\CMS\MVC\Model\ListModel;
 
-jimport('joomla.application.component.modeladmin');
-
-class CustomTablesModelDocumentation extends JModelList
+class CustomTablesModelDocumentation extends ListModel
 {
 }

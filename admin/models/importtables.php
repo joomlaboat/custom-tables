@@ -20,12 +20,11 @@ use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 use CustomTables\ImportTables;
 
-// Import Joomla! libraries
-jimport('joomla.application.component.model');
+use Joomla\CMS\MVC\Model\ListModel;
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
 
-class CustomTablesModelImportTables extends JModelList
+class CustomTablesModelImportTables extends ListModel
 {
 	var CT $ct;
 

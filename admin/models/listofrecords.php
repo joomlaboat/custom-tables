@@ -16,16 +16,15 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
+
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-
-// import the Joomla modellist library
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Listofrecords Model
  */
-class CustomtablesModelListOfRecords extends JModelList
+class CustomtablesModelListOfRecords extends ListModel
 {
 	var CT $ct;
 	var $ordering_realfieldname;

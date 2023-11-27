@@ -19,13 +19,15 @@ jimport('joomla.application.component.modellist');
 
 use CustomTables\CT;
 use CustomTables\ListOfLayouts;
+
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Listoflayouts Model
  */
-class CustomtablesModelListOfLayouts extends JModelList
+class CustomtablesModelListOfLayouts extends ListModel
 {
 	var CT $ct;
 	var $helperListOfLayout;

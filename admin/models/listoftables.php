@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 use CustomTables\ListOfTables;
+
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -24,7 +25,7 @@ use Joomla\CMS\Version;
 /**
  * Listoftables Model
  */
-class CustomtablesModelListOfTables extends ListModel//JModelList
+class CustomtablesModelListOfTables extends ListModel
 {
 	var CT $ct;
 	var $helperListOfTables;

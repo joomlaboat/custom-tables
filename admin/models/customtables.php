@@ -21,7 +21,7 @@ use Joomla\CMS\MVC\Model\ListModel;
 /**
  * Customtables Model
  */
-class CustomtablesModelCustomtables extends ListModel//JModelList
+class CustomtablesModelCustomtables extends ListModel
 {
 	var CT $ct;
 

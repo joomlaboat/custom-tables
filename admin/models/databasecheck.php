@@ -17,14 +17,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\CT;
 
 use Joomla\CMS\Component\ComponentHelper;
-
-// import the Joomla modellist library
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Listoftables Model
  */
-class CustomtablesModelDatabasecheck extends JModelList
+class CustomtablesModelDatabasecheck extends ListModel
 {
 	var CT $ct;
 
