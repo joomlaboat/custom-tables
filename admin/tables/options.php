@@ -13,10 +13,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-// Include library dependencies
-jimport('joomla.filter.input');
+use Joomla\CMS\Table\Table;
 
-class CustomtablesTableOptions extends JTable
+class CustomtablesTableOptions extends Table
 {
 	var $id = null;
 	var $optionname = null;

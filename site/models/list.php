@@ -17,6 +17,7 @@ use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Fields;
 use \Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 
@@ -215,17 +216,13 @@ class CustomTablesModelList extends JModel
 
 	function orderItem($item, $movement)
 	{
-
-
-		$row = JTable::getInstance('List', 'Table');
+		$row = Table::getInstance('List', 'Table');
 		$row->load($item);
 
 		if (!$row->move($movement, ' parentid = ' . (int)$row->parentid)) {
 			$this->setError($row->getError());
 			return false;
 		}
-
-
 		return true;
 	}
 
@@ -233,21 +230,16 @@ class CustomTablesModelList extends JModel
 	function setOrder($items)
 	{
 		$total = count($items);
-		$row = JTable::getInstance('List', 'Table');
+		$row = Table::getInstance('List', 'Table');
 
 		$groupings = array();
-
 
 		$order = common::inputPost('order', array(), 'array');
 		ArrayHelper::toInteger($order);
 
-
 		// update ordering values
-
 		for ($i = 0; $i < $total; $i++) {
-
 			$row->load($items[$i]);
-
 
 			// track parents
 			$groupings[] = $row->parentid;
@@ -258,10 +250,8 @@ class CustomTablesModelList extends JModel
 					$this->setError($row->getError());
 					return false;
 				}
-			} // if
-		} // for
-
-
+			}
+		}
 		// execute updateOrder for each parentid group
 		$groupings = array_unique($groupings);
 		foreach ($groupings as $group) {
@@ -269,8 +259,6 @@ class CustomTablesModelList extends JModel
 		}
 
 		// clean cache
-		//MenusHelper::cleanCache();
-
 		return true;
 	}
 

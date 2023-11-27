@@ -16,12 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
 
-//jimport('joomla.html.html.bootstrap');
-//JHtml::_('behavior.keepalive');
-//JHtml::_('behavior.formvalidator');
-//JHtml::_('behavior.calendar');
-//JHtml::_('bootstrap.popover');
-
 use CustomTables\common;
 use Joomla\CMS\Session\Session;
 

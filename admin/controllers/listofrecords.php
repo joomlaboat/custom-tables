@@ -13,15 +13,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-jimport('joomla.application.component.controlleradmin');
-
 use CustomTables\Catalog;
 use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\AdminController;
 
-class CustomtablesControllerListofRecords extends JControllerAdmin
+class CustomtablesControllerListOfRecords extends AdminController
 {
 	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFRECORDS';
 

@@ -18,9 +18,6 @@ use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 
-// import Joomla controller library
-//jimport('joomla.application.component.controller');
-
 /**
  * General Controller of Customtables component
  */

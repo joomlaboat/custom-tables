@@ -15,14 +15,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use Joomla\CMS\Factory;
-
-// import Joomla table library
-jimport('joomla.database.table');
+use Joomla\CMS\Table\Table;
 
 /**
  * Listofrecords Table class
  */
-class CustomtablesTableRecords extends JTable
+class CustomtablesTableRecords extends Table
 {
 	var $id = null;
 

@@ -54,7 +54,6 @@ class CustomtablesViewListoftables extends HtmlView//JViewLegacy
 		$this->filterForm = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
 
-
 		// get global action permissions
 		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
 		$this->canCreate = $this->canDo->get('tables.create');

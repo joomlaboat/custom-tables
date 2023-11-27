@@ -21,17 +21,17 @@ use CustomTables\database;
 use CustomTables\Fields;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\MVC\Model\AdminModel;
 
-// import Joomla modelform library
-jimport('joomla.application.component.modeladmin');
 
 /**
  * Customtables Fields Model
  */
-class CustomtablesModelFields extends JModelAdmin
+class CustomtablesModelFields extends AdminModel
 {
 	var CT $ct;
 	/**
@@ -262,7 +262,7 @@ class CustomtablesModelFields extends JModelAdmin
 
 	public function getTable($type = 'fields', $prefix = 'CustomtablesTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**

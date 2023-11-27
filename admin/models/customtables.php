@@ -13,10 +13,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-// import the Joomla modellist library
-//jimport('joomla.application.component.modellist');
-//jimport('joomla.application.component.helper');
-
 use CustomTables\CT;
 use CustomTables\CTUser;
 

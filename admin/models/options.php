@@ -18,13 +18,11 @@ use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
+use Joomla\CMS\MVC\Model\AdminModel;
 
-// Import Joomla! libraries
-
-jimport('joomla.application.component.modeladmin');
-
-class CustomTablesModelOptions extends JModelAdmin
+class CustomTablesModelOptions extends AdminModel
 {
 	var CT $ct;
 	public $typeAlias = 'com_customtables.options';
@@ -165,7 +163,7 @@ class CustomTablesModelOptions extends JModelAdmin
 
 	public function getTable($type = 'options', $prefix = 'CustomtablesTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	public function delete(&$pks)

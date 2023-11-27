@@ -37,12 +37,9 @@ if (!$user->authorise('core.manage', 'com_customtables')) {
 JLoader::register('CustomtablesHelper', dirname(__FILE__) . '/helpers/customtables.php');
 JLoader::register('JHtmlBatch_', dirname(__FILE__) . '/helpers/html/batch_.php');
 
-// import joomla controller library
-//jimport('joomla.application.component.controller');
 use Joomla\CMS\MVC\Controller\BaseController;
 
 // Get an instance of the controller prefixed by Customtables
-//$controller = JControllerLegacy::getInstance('Customtables');
 $controller = BaseController::getInstance('Customtables');
 
 // Perform the Request task

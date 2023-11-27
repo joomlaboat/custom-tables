@@ -23,11 +23,10 @@ use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
 
-// import Joomla modelform library
-jimport('joomla.application.component.modeladmin');
-
-class CustomtablesModelTables extends JModelAdmin
+class CustomtablesModelTables extends AdminModel
 {
 	var CT $ct;
 	/**
@@ -117,7 +116,6 @@ class CustomtablesModelTables extends JModelAdmin
 				$form->setValue($redirectedField, null, $redirectedValue);
 			}
 		}
-
 		return $form;
 	}
 
@@ -183,7 +181,6 @@ class CustomtablesModelTables extends JModelAdmin
 		if (!parent::publish($pks, $value)) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -259,19 +256,17 @@ class CustomtablesModelTables extends JModelAdmin
 
 		if (!$done) {
 			$this->setError(common::translate('COM_CUSTOMTABLES_JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
-
 			return false;
 		}
 
 		// Clear the cache
 		$this->cleanCache();
-
 		return true;
 	}
 
 	public function getTable($type = 'tables', $prefix = 'CustomtablesTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -516,7 +511,6 @@ class CustomtablesModelTables extends JModelAdmin
 		if (empty($data)) {
 			$data = $this->getItem();
 		}
-
 		return $data;
 	}
 
@@ -545,16 +539,7 @@ class CustomtablesModelTables extends JModelAdmin
 				$registry->loadString($item->metadata);
 				$item->metadata = $registry->toArray();
 			}
-
-			/*
-			if (!empty($item->id))
-			{
-				$item->tags = new JHelperTags;
-				$item->tags->getTagIds($item->id, 'com_customtables.tables');
-			}
-			*/
 		}
-
 		return $item;
 	}
 }

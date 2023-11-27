@@ -13,16 +13,15 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-jimport('joomla.application.component.controlleradmin');
-
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\MVC\Controller\AdminController;
 
-class CustomtablesControllerListOfFields extends JControllerAdmin
+class CustomtablesControllerListOfFields extends AdminController
 {
 	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFFIELDS';
 

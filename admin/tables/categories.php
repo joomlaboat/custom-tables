@@ -14,13 +14,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-// import Joomla table library
-jimport('joomla.database.table');
+use Joomla\CMS\Table\Table;
 
 /**
- * Listofcategories Table class
+ * ListOfCategories Table class
  */
-class CustomtablesTableCategories extends JTable
+class CustomtablesTableCategories extends Table
 {
 	var $id = null;
 	var $categoryname = null;

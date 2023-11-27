@@ -15,19 +15,18 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CTUser;
+
 use Joomla\CMS\Factory;
+use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
-
-// import Joomla modelform library
-jimport('joomla.application.component.modeladmin');
-
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\MVC\Model\AdminModel;
 
 /**
  * Customtables Categories Model
  */
-class CustomtablesModelCategories extends JModelAdmin
+class CustomtablesModelCategories extends AdminModel
 {
 	/**
 	 * The type alias for this content type.
@@ -112,7 +111,6 @@ class CustomtablesModelCategories extends JModelAdmin
 				$form->setValue($redirectedField, null, $redirectedValue);
 			}
 		}
-
 		return $form;
 	}
 
@@ -140,7 +138,6 @@ class CustomtablesModelCategories extends JModelAdmin
 		if (!parent::delete($pks)) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -159,7 +156,6 @@ class CustomtablesModelCategories extends JModelAdmin
 		if (!parent::publish($pks, $value)) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -228,7 +224,6 @@ class CustomtablesModelCategories extends JModelAdmin
 			} elseif ($cmd == 'm' && !$this->batchMove($commands, $pks, $contexts)) {
 				return false;
 			}
-
 			$done = true;
 		}
 
@@ -236,16 +231,14 @@ class CustomtablesModelCategories extends JModelAdmin
 			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
 			return false;
 		}
-
 		// Clear the cache
 		$this->cleanCache();
-
 		return true;
 	}
 
 	public function getTable($type = 'categories', $prefix = 'CustomtablesTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -365,7 +358,6 @@ class CustomtablesModelCategories extends JModelAdmin
 
 		// Clean the cache
 		$this->cleanCache();
-
 		return $newIds;
 	}
 
@@ -473,10 +465,8 @@ class CustomtablesModelCategories extends JModelAdmin
 				return false;
 			}
 		}
-
 		// Clean the cache
 		$this->cleanCache();
-
 		return true;
 	}
 
@@ -647,7 +637,6 @@ class CustomtablesModelCategories extends JModelAdmin
 				$item->metadata = $registry->toArray();
 			}
 		}
-
 		return $item;
 	}
 }

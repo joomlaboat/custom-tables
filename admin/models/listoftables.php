@@ -21,8 +21,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Version;
 
-//jimport('joomla.application.component.modellist');
-
 /**
  * Listoftables Model
  */

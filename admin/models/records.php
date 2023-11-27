@@ -14,14 +14,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 use CustomTables\CTUser;
-
-// import Joomla modelform library
-jimport('joomla.application.component.modeladmin');
+use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
 
 /**
  * Customtables Records Model
  */
-class CustomtablesModelRecords extends JModelAdmin
+class CustomtablesModelRecords extends AdminModel
 {
 	var CT $ct;
 	/**
@@ -39,7 +38,7 @@ class CustomtablesModelRecords extends JModelAdmin
 
 	public function getTable($type = 'records', $prefix = 'CustomtablesTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	public function getItem($pk = null)

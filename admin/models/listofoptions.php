@@ -17,6 +17,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\DataTypes\Tree;
+use CustomTables\Table;
 use Joomla\CMS\Factory;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
@@ -178,7 +179,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
 	function orderItem($item, $movement)
 	{
-		$row = JTable::getInstance('List', 'Table');
+		$row = Table::getInstance('List', 'Table');
 		$row->load($item);
 
 		if (!$row->move($movement, ' parentid = ' . (int)$row->parentid)) {
@@ -191,7 +192,7 @@ class CustomTablesModelListOfOptions extends JModelList
 	function setOrder($items)
 	{
 		$total = count($items);
-		$row = JTable::getInstance('List', 'Table');
+		$row = Table::getInstance('List', 'Table');
 		$groupings = array();
 		$order = common::inputPost('order', array(), 'ARRAY');
 

@@ -18,15 +18,14 @@ use CustomTables\CTUser;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Table\Table;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
-
-jimport('joomla.application.component.modeladmin');
 
 /**
  * Customtables Layouts Model
  */
-class CustomtablesModelLayouts extends JModelAdmin
+class CustomtablesModelLayouts extends AdminModel
 {
 	var CT $ct;
 	/**
@@ -257,7 +256,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 
 	public function getTable($type = 'layouts', $prefix = 'CustomtablesTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**

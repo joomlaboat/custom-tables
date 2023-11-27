@@ -13,13 +13,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-// import Joomla controllerAdmin library
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\MVC\Controller\AdminController;
+
 
 /**
  * Customtables Controller
  */
-class CustomtablesControllerCustomtables extends JControllerAdmin
+class CustomtablesControllerCustomtables extends AdminController
 {
 
 }

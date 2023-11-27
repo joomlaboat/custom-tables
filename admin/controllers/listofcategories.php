@@ -13,9 +13,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-jimport('joomla.application.component.controlleradmin');
+use Joomla\CMS\MVC\Controller\AdminController;
 
-class CustomtablesControllerListOfCategories extends JControllerAdmin
+class CustomtablesControllerListOfCategories extends AdminController
 {
 	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFCATEGORIES';
 

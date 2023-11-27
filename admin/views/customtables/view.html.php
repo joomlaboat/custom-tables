@@ -13,14 +13,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-// import Joomla view library
-//jimport('joomla.application.component.view');
-use Joomla\CMS\MVC\View\HtmlView;
-
 use CustomTables\common;
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
-
+use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Version;
 

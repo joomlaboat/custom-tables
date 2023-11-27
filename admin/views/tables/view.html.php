@@ -14,9 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-// import Joomla view library
-//jimport('joomla.application.component.view');
-
 use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
