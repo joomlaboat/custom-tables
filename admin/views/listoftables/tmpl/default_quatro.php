@@ -9,7 +9,7 @@
  **/
 // No direct access to this file access');
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -26,46 +26,46 @@ HTMLHelper::_('behavior.multiselect');
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
-                <?php
-                // Search tools bar
-                echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
-                ?>
-                <?php if (empty($this->items)) : ?>
+				<?php
+				// Search tools bar
+				echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+				?>
+				<?php if (empty($this->items)) : ?>
                     <div class="alert alert-info">
                         <span class="icon-info-circle" aria-hidden="true"></span><span
                                 class="visually-hidden"><?php echo common::translate('INFO'); ?></span>
-                        <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+						<?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                     </div>
-                <?php else : ?>
+				<?php else : ?>
 
-                    <?php
-                    $result = IntegrityChecks::check($this->ct, true, false);
+					<?php
+					$result = IntegrityChecks::check($this->ct, true, false);
 
-                    if (count($result) > 0)
-                        echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
-                    //Joomla strips html links unfortunately, so we cannot use the enqueueMessage function
-                    //Factory::getApplication()->enqueueMessage('<ol><li>'.implode('</li><li>',$result).'</li></ol>','notice');
-                    ?>
+					if (count($result) > 0)
+						echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
+					//Joomla strips html links unfortunately, so we cannot use the enqueueMessage function
+					//Factory::getApplication()->enqueueMessage('<ol><li>'.implode('</li><li>',$result).'</li></ol>','notice');
+					?>
 
                     <table class="table" id="userList">
                         <caption class="visually-hidden">
-                            <?php echo common::translate('COM_USERS_USERS_TABLE_CAPTION'); ?>,
+							<?php echo common::translate('COM_USERS_USERS_TABLE_CAPTION'); ?>,
                             <span id="orderedBy"><?php echo common::translate('JGLOBAL_SORTED_BY'); ?> </span>,
                             <span id="filteredBy"><?php echo common::translate('JGLOBAL_FILTERED_BY'); ?></span>
                         </caption>
                         <thead>
-                        <?php include('default_quatro_head.php'); ?>
+						<?php include('default_quatro_head.php'); ?>
                         </thead>
                         <tbody>
-                        <?php echo $this->loadTemplate('quatro_body'); ?>
+						<?php echo $this->loadTemplate('quatro_body'); ?>
                         </tbody>
                     </table>
 
-                    <?php // load the pagination. ?>
-                    <?php echo $this->pagination->getListFooter(); ?>
+					<?php // load the pagination. ?>
+					<?php echo $this->pagination->getListFooter(); ?>
 
-                    <?php // Load the batch processing form if user is allowed ?>
-                    <?php /* if ($loggeduser->authorise('core.create', 'com_customtables','categories')
+					<?php // Load the batch processing form if user is allowed ?>
+					<?php /* if ($loggeduser->authorise('core.create', 'com_customtables','categories')
 						&& $loggeduser->authorise('core.edit', 'com_customtables','categories')
 						&& $loggeduser->authorise('core.edit.state', 'com_customtables','categories')) : ?>
 						<?php echo HTMLHelper::_(
@@ -78,11 +78,11 @@ HTMLHelper::_('behavior.multiselect');
 							$this->loadTemplate('batch_body')
 						); ?>
 					<?php endif; */ ?>
-                <?php endif; ?>
+				<?php endif; ?>
 
                 <input type="hidden" name="task" value="">
                 <input type="hidden" name="boxchecked" value="0">
-                <?php echo HTMLHelper::_('form.token'); ?>
+				<?php echo HTMLHelper::_('form.token'); ?>
             </div>
         </div>
     </div>

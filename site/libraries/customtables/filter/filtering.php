@@ -19,10 +19,12 @@ use DateTime;
 use ESTables;
 use JoomlaBasicMisc;
 use LayoutProcessor;
+
+//Joomla 3 support
 use JHTML;
 
-if (defined('_JEXEC'))
-	JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+//Joomla 4+ support
+use Joomla\CMS\HTML\HtmlHelper;
 
 class Filtering
 {
@@ -33,6 +35,13 @@ class Filtering
 
 	function __construct(CT $ct, int $showPublished = 0)
 	{
+		if (defined('_JEXEC')) {
+			if ($ct->Env->version < 4)
+				JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+			else
+				HtmlHelper::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+		}
+
 		$this->ct = $ct;
 		$this->PathValue = [];
 		$this->where = [];

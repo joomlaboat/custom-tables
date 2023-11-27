@@ -15,7 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use Joomla\Registry\Registry;
+
 use tagProcessor_General;
 use tagProcessor_Item;
 use tagProcessor_If;
@@ -27,17 +27,19 @@ use CT_FieldTypeTag_imagegallery;
 use CT_FieldTypeTag_FileBox;
 
 use CustomTables\DataTypes\Tree;
+use CTTypes;
 
+use Joomla\Registry\Registry;
 use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Editor\Editor;
+
+//Joomla 3 support
 use JHTML;
 
-use CTTypes;
-
-if (defined('_JEXEC'))
-	JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+//Joomla 4+ support
+use Joomla\CMS\HTML\HtmlHelper;
 
 class Inputbox
 {
@@ -58,6 +60,13 @@ class Inputbox
 
 	function __construct(CT &$ct, $fieldRow, array $option_list = [], $isTwig = true, string $onchange = '')
 	{
+		if (defined('_JEXEC')) {
+			if ($ct->Env->version < 4)
+				JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+			else
+				HtmlHelper::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+		}
+
 		$this->ct = &$ct;
 		$this->isTwig = $isTwig;
 

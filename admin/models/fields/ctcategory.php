@@ -9,41 +9,84 @@
  **/
 
 // no direct access
+if (!defined('_JEXEC') and !defined('WPINC')) {
+	die('Restricted access');
+}
+
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Version;
 use CustomTables\common;
 use CustomTables\database;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
-}
+$versionObject = new Version;
+$version = (int)$versionObject->getShortVersion();
 
-jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+if ($version < 4) {
 
-//https://docs.joomla.org/Creating_a_custom_form_field_type
-class JFormFieldCTCategory extends JFormFieldList
-{
-    /**
-     * Element name
-     *
-     * @access    public
-     * @var        string
-     *
-     */
-    public $type = 'ctcategory';
+	JFormHelper::loadFieldClass('list');
 
-    public function getOptions($add_empty_option = true)
-    {
-        $query = 'SELECT id,categoryname FROM #__customtables_categories WHERE published=1 ORDER BY categoryname';
-        $records = database::loadObjectList($query);
+	/**
+	 * Element name
+	 * https://docs.joomla.org/Creating_a_custom_form_field_type
+	 * @access    public
+	 * @var        string
+	 * @since   1.0.0
+	 */
+	class JFormFieldCTCategory extends JFormFieldList
+	{
+		public $type = 'ctcategory';
 
-        $options = array();
-        if ($records) {
-            if ($add_empty_option)
-                $options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'));
+		public function getOptions($add_empty_option = true)
+		{
+			$query = 'SELECT id,categoryname FROM #__customtables_categories WHERE published=1 ORDER BY categoryname';
+			$records = database::loadObjectList($query);
 
-            foreach ($records as $rec)
-                $options[] = JHtml::_('select.option', $rec->id, $rec->categoryname);
-        }
-        return $options;
-    }
+			$options = array();
+			if ($records) {
+				if ($add_empty_option)
+					$options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'));
+
+				foreach ($records as $rec)
+					$options[] = JHtml::_('select.option', $rec->id, $rec->categoryname);
+			}
+			return $options;
+		}
+	}
+
+} else {
+	class JFormFieldCTCategory extends FormField
+	{
+		/**
+		 * Element name
+		 * @access    public
+		 * @var        string
+		 * @since   3.1.9
+		 */
+		public $type = 'ctcategory';
+		protected $layout = 'joomla.form.field.list';
+
+		protected function getInput()
+		{
+			$data = $this->getLayoutData();
+			$data['options'] = $this->getOptions();
+			return $this->getRenderer($this->layout)->render($data);
+		}
+
+		public function getOptions($add_empty_option = true)
+		{
+			$query = 'SELECT id,categoryname FROM #__customtables_categories WHERE published=1 ORDER BY categoryname';
+			$records = database::loadObjectList($query);
+
+			$options = array();
+			if ($records) {
+				if ($add_empty_option)
+					$options[] = ['value' => '', 'text' => common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT')];
+
+				foreach ($records as $rec)
+					$options[] = ['value' => $rec->id, 'text' => $rec->categoryname];
+			}
+			return $options;
+		}
+	}
 }

@@ -13,7 +13,9 @@ namespace CustomTables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use JoomlaBasicMisc;
-use JUri;
+
+//use JUri;
+use Joomla\CMS\Uri\Uri;
 
 class common
 {
@@ -62,7 +64,7 @@ class common
 	public static function curPageURL(): string
 	{
 		if (defined('_JEXEC')) {
-			$WebsiteRoot = str_replace(JURI::root(true), '', JURI::root());
+			$WebsiteRoot = str_replace(Uri::root(true), '', Uri::root());
 			$RequestURL = $_SERVER["REQUEST_URI"];
 
 			if ($WebsiteRoot != '' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/') {

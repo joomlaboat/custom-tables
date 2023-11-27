@@ -24,7 +24,7 @@ use Joomla\CMS\Factory;
  * @subpackage  HTML
  * @since       11.1
  */
-class JESPagination extends JObject
+class JESPagination// extends JObject
 {
 	/**
 	 * The record number to start displaying from.
@@ -548,7 +548,7 @@ class JESPagination extends JObject
  * @subpackage  HTML
  * @since       11.1
  */
-class JESPaginationObject extends JObject
+class JESPaginationObject// extends JObject
 {
 	/**
 	 *

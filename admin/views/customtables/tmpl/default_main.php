@@ -10,24 +10,25 @@
 
 // No direct access to this file
 use CustomTables\common;
+use Joomla\CMS\Uri\Uri;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 ?>
 <?php if (isset($this->icons['main']) && is_array($this->icons['main'])) : ?>
-    <?php foreach ($this->icons['main'] as $icon): ?>
+	<?php foreach ($this->icons['main'] as $icon): ?>
         <div class="dashboard-wraper">
             <div class="dashboard-content">
                 <a class="icon" href="<?php echo $icon->url; ?>">
                     <img alt="<?php echo $icon->alt; ?>"
-                         src="<?php echo JURI::root(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/icons/<?php echo $icon->image; ?>">
+                         src="<?php echo Uri::root(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/icons/<?php echo $icon->image; ?>">
                     <span class="dashboard-title"><?php echo common::translate($icon->name); ?></span>
                 </a>
             </div>
         </div>
-    <?php endforeach; ?>
+	<?php endforeach; ?>
     <div class="clearfix"></div>
 <?php else: ?>
     <div class="alert alert-error"><h4

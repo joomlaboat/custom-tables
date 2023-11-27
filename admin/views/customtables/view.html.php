@@ -10,87 +10,97 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 // import Joomla view library
-jimport('joomla.application.component.view');
+//jimport('joomla.application.component.view');
+use Joomla\CMS\MVC\View\HtmlView;
 
 use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Version;
+
 /**
  * Customtables View class
  */
-class CustomtablesViewCustomtables extends JViewLegacy
+class CustomtablesViewCustomtables extends HtmlView//JViewLegacy
 {
-    /**
-     * View display method
-     * @return void
-     */
-    function display($tpl = null)
-    {
-        // Assign data to the view
-        $this->icons = $this->get('Icons');
-        $this->contributors = CustomtablesHelper::getContributors();
+	/**
+	 * View display method
+	 * @return void
+	 */
+	function display($tpl = null)
+	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
 
-        // get the manifest details of the component
-        $this->manifest = CustomtablesHelper::manifest();
+		// Assign data to the view
+		$this->icons = $this->get('Icons');
+		$this->contributors = CustomtablesHelper::getContributors();
 
-        // Set the toolbar
-        $this->addToolBar();
+		// get the manifest details of the component
+		$this->manifest = CustomtablesHelper::manifest();
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors), 500);
-        }
+		// Set the toolbar
+		$this->addToolBar();
 
-        // Display the template
-        parent::display($tpl);
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			throw new Exception(implode("\n", $errors), 500);
+		}
 
-        // Set the document
-        $document = Factory::getDocument();
-        $this->setDocument($document);
-    }
+		// Display the template
+		if ($this->version < 4)
+			parent::display($tpl);
+		else
+			parent::display('quatro');
 
-    /**
-     * Setting the toolbar
-     */
-    protected function addToolBar()
-    {
-        $canDo = ContentHelper::getActions('com_customtables', '');
-        //$canDo = CustomtablesHelper::getActions('customtables');
-        JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');
+		// Set the document
+		$document = Factory::getDocument();
+		$this->setDocument($document);
+	}
 
-        // set help url for this view if found
-        /*
-        $help_url = CustomtablesHelper::getHelpUrl('customtables');
-        if (CustomtablesHelper::checkString($help_url))
-        {
-            JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-        }
-        */
+	/**
+	 * Setting the toolbar
+	 */
+	protected function addToolBar()
+	{
+		$canDo = ContentHelper::getActions('com_customtables', '');
+		//$canDo = CustomtablesHelper::getActions('customtables');
+		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');//JToolBarHelper::title
 
-        if ($canDo->get('core.admin') || $canDo->get('core.options')) {
-            JToolBarHelper::preferences('com_customtables');
-        }
-    }
+		// set help url for this view if found
+		/*
+		$help_url = CustomtablesHelper::getHelpUrl('customtables');
+		if (CustomtablesHelper::checkString($help_url))
+		{
+			JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
+		}
+		*/
 
-    /**
-     * Method to set up the document properties
-     *
-     * @return void
-     */
-    public function setDocument(Joomla\CMS\Document\Document $document): void
-    {
-        // add dashboard style sheets
-        $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
+		if ($canDo->get('core.admin') || $canDo->get('core.options')) {
+			ToolbarHelper::preferences('com_customtables');//JToolBarHelper
+		}
+	}
 
-        // set page title
-        $document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
+	/**
+	 * Method to set up the document properties
+	 *
+	 * @return void
+	 */
+	public function setDocument(Joomla\CMS\Document\Document $document): void
+	{
+		// add dashboard style sheets
+		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
 
-        // add manifest to page JavaScript
-        //$document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . json_encode($this->manifest) . '");</script>');
-    }
+		// set page title
+		$document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
+
+		// add manifest to page JavaScript
+		//$document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . json_encode($this->manifest) . '");</script>');
+	}
 }

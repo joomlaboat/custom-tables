@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Component\ComponentHelper;
 
 if (!function_exists('str_contains')) {
 	function str_contains($haystack, $needle): bool
@@ -29,7 +30,7 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 		return;
 
 	if ($loadTwig === null and defined('_JEXEC')) {
-		$params = JComponentHelper::getParams($componentName);
+		$params = ComponentHelper::getParams($componentName);
 		$loadTwig = $params->get('loadTwig');
 	}
 
