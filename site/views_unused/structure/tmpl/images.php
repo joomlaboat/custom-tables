@@ -15,8 +15,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\DataTypes\Tree;
+use Joomla\CMS\Uri\Uri;
 
-JHTML::stylesheet("default.css", JURI::root(true) . "/components/com_customtables/views/catalog/tmpl/");
+JHTML::stylesheet("default.css", Uri::root(true) . "/components/com_customtables/views/catalog/tmpl/");
 
 $catalogResult = '<table style="width:100%;text-align:center">';
 

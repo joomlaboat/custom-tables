@@ -18,9 +18,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 jimport('joomla.application.component.view');
 
 use CustomTables\common;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Version;
 
-class CustomTablesViewImportTables extends JViewLegacy
+class CustomTablesViewImportTables extends HtmlView
 {
 	var $catalogview;
 	var $version;
@@ -30,7 +32,7 @@ class CustomTablesViewImportTables extends JViewLegacy
 		$version = new Version;
 		$this->version = (int)$version->getShortVersion();
 
-		JToolBarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
+		ToolbarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
 
 		parent::display($tpl);
 	}

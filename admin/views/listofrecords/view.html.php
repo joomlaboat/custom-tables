@@ -15,13 +15,15 @@ defined('_JEXEC') or die;
 use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use CustomTables\CT;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * Customtables View class for the Listoffields
  */
-class CustomtablesViewListofrecords extends JViewLegacy
+class CustomtablesViewListofrecords extends HtmlView
 {
 	/**
 	 * Listoffields view display method
@@ -90,30 +92,30 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
 		if ($this->ct->Table->tableid != 0) {
-			JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+			ToolbarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 		} else
-			JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+			ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
 
 		if ($this->canCreate) {
-			JToolBarHelper::addNew('records.add');
+			ToolbarHelper::addNew('records.add');
 		}
 
 		// Only load if there are items
 		if (CustomtablesHelper::checkArray($this->items)) {
 			if ($this->canEdit) {
-				JToolBarHelper::editList('records.edit');
+				ToolbarHelper::editList('records.edit');
 			}
 
 			if ($this->canState) {
-				JToolBarHelper::publishList('listofrecords.publish');
-				JToolBarHelper::unpublishList('listofrecords.unpublish');
+				ToolbarHelper::publishList('listofrecords.publish');
+				ToolbarHelper::unpublishList('listofrecords.unpublish');
 			}
 
 			if ($this->canDelete) {
-				JToolbarHelper::deleteList('', 'listofrecords.delete', 'JTOOLBAR_DELETE');
+				ToolbarHelper::deleteList('', 'listofrecords.delete', 'JTOOLBAR_DELETE');
 			}
 		}
 
@@ -160,16 +162,16 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		$toolbar = Toolbar::getInstance('toolbar');
 
 		if ($this->ct->Table->tableid != 0) {
-			JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+			ToolbarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 		} else {
-			JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+			ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 			return;
 		}
 
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
 
-		JToolBarHelper::back('COM_CUSTOMTABLES_BUTTON_BACK2TABLES', 'index.php?option=com_customtables&view=listoftables');
+		ToolbarHelper::back('COM_CUSTOMTABLES_BUTTON_BACK2TABLES', 'index.php?option=com_customtables&view=listoftables');
 
 		if ($this->canCreate)
 			$toolbar->addNew('records.add');

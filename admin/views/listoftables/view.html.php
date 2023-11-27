@@ -94,39 +94,39 @@ class CustomtablesViewListoftables extends HtmlView//JViewLegacy
 
 	protected function addToolBar_3()
 	{
-		JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
+		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoftables');
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
 		if ($this->canCreate) {
-			JToolBarHelper::addNew('tables.add');
+			ToolbarHelper::addNew('tables.add');
 		}
 
 		// Only load if there are items
 		if (CustomtablesHelper::checkArray($this->items)) {
 			if ($this->canEdit) {
-				JToolBarHelper::editList('tables.edit');
+				ToolbarHelper::editList('tables.edit');
 			}
 
 			if ($this->canState) {
-				JToolBarHelper::publishList('listoftables.publish');
-				JToolBarHelper::unpublishList('listoftables.unpublish');
+				ToolbarHelper::publishList('listoftables.publish');
+				ToolbarHelper::unpublishList('listoftables.unpublish');
 			}
 
 			if ($this->canDo->get('core.admin')) {
-				JToolBarHelper::checkin('listoftables.checkin');
+				ToolbarHelper::checkin('listoftables.checkin');
 			}
 
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
-				JToolbarHelper::deleteList('', 'listoftables.delete', 'JTOOLBAR_EMPTY_TRASH');
+				ToolbarHelper::deleteList('', 'listoftables.delete', 'JTOOLBAR_EMPTY_TRASH');
 			} elseif ($this->canState && $this->canDelete) {
-				JToolbarHelper::trash('listoftables.trash');
+				ToolbarHelper::trash('listoftables.trash');
 			}
 		}
 
 		if ($this->ct->Env->advancedTagProcessor)
 			if (!$this->isEmptyState and $this->state->get('filter.published') != -2 and $this->ct->Env->advancedTagProcessor)
-				JToolBarHelper::custom('listoftables.export', 'download.png', '', 'Export');
+				ToolbarHelper::custom('listoftables.export', 'download.png', '', 'Export');
 
 		if ($this->canState) {
 			/*

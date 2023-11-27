@@ -20,6 +20,8 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Diagram;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -27,7 +29,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 /**
  * Tables View class
  */
-class CustomtablesViewDataBaseCheck extends JViewLegacy
+class CustomtablesViewDataBaseCheck extends HtmlView
 {
 	/**
 	 * display method of View
@@ -80,7 +82,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 
 	protected function addToolBar_3()
 	{
-		JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
+		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=databasecheck');
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
@@ -104,6 +106,6 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 	public function setDocument(Joomla\CMS\Document\Document $document): void
 	{
 		$document->setTitle(common::translate('COM_CUSTOMTABLES_DATABASECHECK'));
-		$document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
+		$document->addStyleSheet(Uri::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 	}
 }

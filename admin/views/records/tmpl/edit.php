@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 if ($this->ct->Env->version >= 4) {
 	$wa = $this->document->getWebAssetManager();
@@ -25,7 +26,7 @@ if ($this->ct->Env->version >= 4) {
 }
 
 $document = Factory::getDocument();
-$document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/style.css");
+$document->addStyleSheet(Uri::root(true) . "/components/com_customtables/libraries/customtables/media/css/style.css");
 
 $editForm = new Edit($this->ct);
 $editForm->layoutContent = $this->pageLayout;

@@ -15,11 +15,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 use CustomTables\Details;
+use Joomla\CMS\MVC\View\HtmlView;
 
 jimport('joomla.html.pane');
 jimport('joomla.application.component.view'); //Important to get menu parameters
 
-class CustomTablesViewDetails extends JViewLegacy
+class CustomTablesViewDetails extends HtmlView
 {
 	var CT $ct;
 	var Details $details;

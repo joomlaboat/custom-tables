@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 $document = Factory::getDocument();
 
@@ -53,7 +54,7 @@ foreach ($this->allTables as $table) {
 
     var outerDiv = jQuery('body');
     jQuery('<div id="loading"></div>')
-        .css("background", "rgba(255, 255, 255, .8) url('<?php echo JURI::root(true); ?>/components/com_customtables/libraries/images/controlpanel/images/import.gif') 50% 15% no-repeat")
+        .css("background", "rgba(255, 255, 255, .8) url('<?php echo Uri::root(true); ?>/components/com_customtables/libraries/images/controlpanel/images/import.gif') 50% 15% no-repeat")
         .css("top", outerDiv.position().top - jQuery(window).scrollTop())
         .css("left", outerDiv.position().left - jQuery(window).scrollLeft())
         .css("width", outerDiv.width())

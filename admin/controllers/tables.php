@@ -10,20 +10,19 @@
  **/
 
 // No direct access to this file
-use CustomTables\common;
-use CustomTables\CTUser;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-// import Joomla controllerform library
-jimport('joomla.application.component.controllerform');
+use CustomTables\common;
+use CustomTables\CTUser;
+
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Tables Controller
  */
-class CustomtablesControllerTables extends JControllerForm
+class CustomtablesControllerTables extends FormController
 {
 	/**
 	 * Current or most recently performed task.

@@ -21,6 +21,7 @@ use CustomTables\database;
 use CustomTables\Fields;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Model\AdminModel;
@@ -121,7 +122,7 @@ class CustomtablesModelTables extends AdminModel
 
 	public function getScript()
 	{
-		return JURI::root(true) . '/administrator/components/com_customtables/models/forms/tables.js';
+		return Uri::root(true) . '/administrator/components/com_customtables/models/forms/tables.js';
 	}
 
 	/**

@@ -11,6 +11,7 @@
 // no direct access
 use CustomTables\common;
 use CustomTables\CTUser;
+use Joomla\CMS\Uri\Uri;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -28,11 +29,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                 </td>
                 <td nowrap="nowrap">
                     <a href="index.php?option=com_customtables&view=list&task=edit"><img
-                                src="<?php echo JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/new.png"
+                                src="<?php echo Uri::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/new.png"
                         alt="New" title="New" /></a>
                     <a href="#"
                        onclick="javascript:if (document.adminForm.boxchecked.value==0){alert('Please first make a selection from the list');}else{ Joomla.submitbutton('remove')}"
-                       class="toolbar"><img src="<?php echo JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/delete.png"
+                       class="toolbar"><img src="<?php echo Uri::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/delete.png"
                         alt="Delete" title="Delete" /></a>
 
                 </td>

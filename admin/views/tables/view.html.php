@@ -18,12 +18,15 @@ use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 /**
  * Tables View class
  */
-class CustomtablesViewTables extends JViewLegacy
+class CustomtablesViewTables extends HtmlView//JViewLegacy
 {
 	var CT $ct;
 	var $state;
@@ -97,34 +100,33 @@ class CustomtablesViewTables extends JViewLegacy
 		common::inputSet('hidemainmenu', true);
 		$isNew = $this->item->id == 0;
 
-		JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'), 'pencil-2 article-add');
+		ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'), 'pencil-2 article-add');
 
 		if ($isNew) {
 			// For new records, check the create permission.
 			if ($this->canCreate) {
-				JToolBarHelper::apply('tables.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('tables.save', 'JTOOLBAR_SAVE');
-				JToolBarHelper::custom('tables.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+				ToolbarHelper::apply('tables.apply', 'JTOOLBAR_APPLY');
+				ToolbarHelper::save('tables.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::custom('tables.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 			};
-			JToolBarHelper::cancel('tables.cancel', 'JTOOLBAR_CANCEL');
+			ToolbarHelper::cancel('tables.cancel', 'JTOOLBAR_CANCEL');
 		} else {
 			if ($this->canEdit) {
 				// We can save the new record
-				JToolBarHelper::apply('tables.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('tables.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::apply('tables.apply', 'JTOOLBAR_APPLY');
+				ToolbarHelper::save('tables.save', 'JTOOLBAR_SAVE');
 				// We can save this record, but check the create permission to see
 				// if we can return to make a new one.
 				if ($this->canCreate) {
-					JToolBarHelper::custom('tables.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+					ToolbarHelper::custom('tables.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 				}
 			}
 			if ($this->canCreate) {
-				JToolBarHelper::custom('tables.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+				ToolbarHelper::custom('tables.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 			}
-			JToolBarHelper::cancel('tables.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('tables.cancel', 'JTOOLBAR_CLOSE');
 		}
-		//}
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	/**
@@ -137,7 +139,7 @@ class CustomtablesViewTables extends JViewLegacy
 		if ($this->item !== null) {
 			$isNew = ($this->item->id < 1);
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
-			$document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
+			$document->addCustomTag('<script src="' . Uri::root(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
 		}
 	}
 

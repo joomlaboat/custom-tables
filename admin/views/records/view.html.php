@@ -20,13 +20,16 @@ use CustomTables\Inputbox;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Records View class
  */
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'edititem.php');
 
-class CustomtablesViewRecords extends JViewLegacy
+class CustomtablesViewRecords extends HtmlView
 {
 	var CT $ct;
 	var int $tableId;
@@ -102,7 +105,7 @@ class CustomtablesViewRecords extends JViewLegacy
 		}
 
 		// Display the template
-		$this->formLink = JURI::root(false) . 'administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableId . '&id=' . $this->ct->Params->listing_id;
+		$this->formLink = Uri::root(false) . 'administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableId . '&id=' . $this->ct->Params->listing_id;
 
 		// Set the document
 		$this->document = Factory::getDocument();
@@ -117,35 +120,35 @@ class CustomtablesViewRecords extends JViewLegacy
 		common::inputSet('hidemainmenu', true);
 		$isNew = $this->ct->Params->listing_id == 0;
 
-		JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'), 'pencil-2 article-add');
+		ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'), 'pencil-2 article-add');
 
 		if ($isNew) {
 			// For new records, check the create permission.
 			if ($this->canCreate) {
-				JToolBarHelper::apply('records.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('records.save', 'JTOOLBAR_SAVE');
-				JToolBarHelper::custom('records.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+				ToolbarHelper::apply('records.apply', 'JTOOLBAR_APPLY');
+				ToolbarHelper::save('records.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::custom('records.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 			}
-			JToolBarHelper::cancel('records.cancel', 'JTOOLBAR_CANCEL');
+			ToolbarHelper::cancel('records.cancel', 'JTOOLBAR_CANCEL');
 		} else {
 			if ($this->canEdit) {
 				// We can save the new record
-				JToolBarHelper::apply('records.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('records.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::apply('records.apply', 'JTOOLBAR_APPLY');
+				ToolbarHelper::save('records.save', 'JTOOLBAR_SAVE');
 				// We can save this record, but check the create permission to see
 				// if we can return to make a new one.
 
 				if ($this->canCreate) {
-					JToolBarHelper::custom('records.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+					ToolbarHelper::custom('records.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 				}
 
 			}
 			if ($this->canCreate) {
-				JToolBarHelper::custom('records.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+				ToolbarHelper::custom('records.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 			}
-			JToolBarHelper::cancel('records.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('records.cancel', 'JTOOLBAR_CLOSE');
 		}
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	public function setDocument(Joomla\CMS\Document\Document $document): void

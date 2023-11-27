@@ -14,13 +14,15 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\String\StringHelper;
 
 \defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
-class CustomTablesViewListOfOptions extends JViewLegacy
+class CustomTablesViewListOfOptions extends HtmlView
 {
 	var $languages;
 	var CT $ct;
@@ -60,11 +62,11 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 
 	protected function addToolBar()
 	{
-		JToolBarHelper::title(common::translate('Custom Tables - List'), 'menu.png');
-		JToolBarHelper::addNew('options.add');
-		JToolBarHelper::editList('options.edit');
-		JToolBarHelper::custom('listofoptions.copy', 'copy.png', 'copy_f2.png', 'Copy', true);
-		JToolBarHelper::deleteList('', 'listofoptions.delete');
+		ToolbarHelper::title(common::translate('Custom Tables - List'), 'menu.png');
+		ToolbarHelper::addNew('options.add');
+		ToolbarHelper::editList('options.edit');
+		ToolbarHelper::custom('listofoptions.copy', 'copy.png', 'copy_f2.png', 'Copy', true);
+		ToolbarHelper::deleteList('', 'listofoptions.delete');
 	}
 
 	function &_getViewLists()

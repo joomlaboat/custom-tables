@@ -18,6 +18,7 @@ use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
@@ -27,7 +28,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
 ?>
 
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
+<form action="<?php echo Route::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
       method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
     <div id="jform_title"></div>
     <div class="form-horizontal">

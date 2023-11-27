@@ -20,6 +20,7 @@ use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php'))
 	require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
@@ -581,7 +582,7 @@ class CT_FieldTypeTag_file
 		$max_file_size = JoomlaBasicMisc::file_upload_max_size($custom_max_size);
 
 		$file_id = JoomlaBasicMisc::generateRandomString();
-		$urlstr = JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
+		$urlstr = Uri::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
 			. '_fileid=' . $file_id
 			. '&Itemid=' . $field->ct->Params->ItemId
 			. (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)

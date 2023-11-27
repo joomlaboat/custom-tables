@@ -18,6 +18,7 @@ use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\ListOfTables;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 $dbPrefix = database::getDBPrefix();
@@ -103,7 +104,7 @@ foreach ($this->items as $i => $item): ?>
         </td>
 
         <td class="hidden-phone">
-			<?php echo '<a href="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $item->id . '">'
+			<?php echo '<a href="' . Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $item->id . '">'
 				. common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL')
 				. ' (' . $item->fieldcount . ')</a>'; ?>
         </td>
@@ -113,7 +114,7 @@ foreach ($this->items as $i => $item): ?>
 			if (!$table_exists)
 				echo common::translate('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
 			else {
-				echo '<a href="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
+				echo '<a href="' . Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
 					. common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
 					. ' (' . listOfTables::getNumberOfRecords($item->realtablename, $item->realidfieldname) . ')</a>';
 			}

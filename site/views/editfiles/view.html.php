@@ -16,9 +16,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
 jimport('joomla.application.component.view'); //Important to get menu parameters
-class CustomTablesViewEditFiles extends JViewLegacy
+class CustomTablesViewEditFiles extends HtmlView
 {
 	var int $max_file_size;
 	var $FileBoxTitle;

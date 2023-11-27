@@ -16,13 +16,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CTUser;
 use CustomTables\Fields;
+
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\FormController;
 
-// import Joomla controllerform library
-jimport('joomla.application.component.controllerform');
-
-class CustomtablesControllerFields extends JControllerForm
+class CustomtablesControllerFields extends FormController
 {
 	protected $task;
 

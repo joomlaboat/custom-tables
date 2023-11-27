@@ -19,6 +19,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use CustomTables\Integrity\IntegrityFields;
+use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::_('behavior.multiselect');
 
@@ -62,7 +63,7 @@ if ($this->ct->Table === null): ?>
 						<?php
 
 						if ($this->tableid != 0) {
-							$link = JURI::root() . 'administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid;
+							$link = Uri::root() . 'administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid;
 							echo IntegrityFields::checkFields($this->ct, $link);
 						}
 						?>

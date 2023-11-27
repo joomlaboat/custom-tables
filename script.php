@@ -21,6 +21,7 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Script File of Customtables Component
@@ -115,13 +116,13 @@ class com_customtablesInstallerScript
 			database::setQuery($query);
 
 			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
-				<img src="' . JURI::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>
+				<img src="' . Uri::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>
 				</a>';
 		}
 		// do any updates needed
 		if ($type == 'update') {
 			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
-				<img src="' . JURI::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>
+				<img src="' . Uri::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>
 				</a>
 				<h3>Upgrade was Successful!</h3>';
 		}

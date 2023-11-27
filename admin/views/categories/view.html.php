@@ -18,12 +18,15 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 /**
  * Categories View class
  */
-class CustomtablesViewCategories extends JViewLegacy
+class CustomtablesViewCategories extends HtmlView
 {
 	var $document;
 	var $version;
@@ -94,55 +97,55 @@ class CustomtablesViewCategories extends JViewLegacy
 		common::inputSet('hidemainmenu', true);
 		$isNew = $this->item->id == 0;
 
-		JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'), 'pencil-2 article-add');
+		ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'), 'pencil-2 article-add');
 		// Built the actions for new and existing records.
 		if ($this->refid || $this->ref) {
 			if ($this->canCreate && $isNew) {
 				// We can create the record.
-				JToolBarHelper::save('categories.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::save('categories.save', 'JTOOLBAR_SAVE');
 			} elseif ($this->canEdit) {
 				// We can save the record.
-				JToolBarHelper::save('categories.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::save('categories.save', 'JTOOLBAR_SAVE');
 			}
 			if ($isNew) {
 				// Do not creat but cancel.
-				JToolBarHelper::cancel('categories.cancel', 'JTOOLBAR_CANCEL');
+				ToolbarHelper::cancel('categories.cancel', 'JTOOLBAR_CANCEL');
 			} else {
 				// We can close it.
-				JToolBarHelper::cancel('categories.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('categories.cancel', 'JTOOLBAR_CLOSE');
 			}
 		} else {
 			if ($isNew) {
 				// For new records, check the create permission.
 				if ($this->canCreate) {
-					JToolBarHelper::apply('categories.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('categories.save', 'JTOOLBAR_SAVE');
-					JToolBarHelper::custom('categories.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+					ToolbarHelper::apply('categories.apply', 'JTOOLBAR_APPLY');
+					ToolbarHelper::save('categories.save', 'JTOOLBAR_SAVE');
+					ToolbarHelper::custom('categories.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 				};
-				JToolBarHelper::cancel('categories.cancel', 'JTOOLBAR_CANCEL');
+				ToolbarHelper::cancel('categories.cancel', 'JTOOLBAR_CANCEL');
 			} else {
 				if ($this->canEdit) {
 					// We can save the new record
-					JToolBarHelper::apply('categories.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('categories.save', 'JTOOLBAR_SAVE');
+					ToolbarHelper::apply('categories.apply', 'JTOOLBAR_APPLY');
+					ToolbarHelper::save('categories.save', 'JTOOLBAR_SAVE');
 					// We can save this record, but check the create permission to see
 					// if we can return to make a new one.
 					if ($this->canCreate) {
-						JToolBarHelper::custom('categories.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+						ToolbarHelper::custom('categories.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 					}
 				}
 				if ($this->canCreate) {
-					JToolBarHelper::custom('categories.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+					ToolbarHelper::custom('categories.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 				}
-				JToolBarHelper::cancel('categories.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('categories.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 		// set help url for this view if found
 		//$help_url = CustomtablesHelper::getHelpUrl('categories');
 		//if (CustomtablesHelper::checkString($help_url))
 		//{
-		//JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
+		//ToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
 		//}
 	}
 
@@ -158,7 +161,7 @@ class CustomtablesViewCategories extends JViewLegacy
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
 
 			if ($this->version < 4)
-				$document->addCustomTag('<script src=' . JURI::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
+				$document->addCustomTag('<script src=' . Uri::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
 		}
 	}
 

@@ -17,9 +17,10 @@ use CustomTables\common;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
 
 $document = Factory::getDocument();
-$document->addCustomTag('<script src="' . JURI::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
+$document->addCustomTag('<script src="' . Uri::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/raphael.min.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagram.js"></script>');
 $document->addCustomTag('<style>

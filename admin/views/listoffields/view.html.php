@@ -18,7 +18,9 @@ use CustomTables\CTUser;
 use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoffields.php');
@@ -26,7 +28,7 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' 
 /**
  * Customtables View class for the Listoffields
  */
-class CustomtablesViewListoffields extends JViewLegacy
+class CustomtablesViewListoffields extends HtmlView
 {
 	/**
 	 * Listoffields view display method
@@ -107,41 +109,41 @@ class CustomtablesViewListoffields extends JViewLegacy
 	protected function addToolBar_3()
 	{
 		if ($this->tableid != 0) {
-			JToolBarHelper::title('Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+			ToolbarHelper::title('Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 		} else
-			JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+			ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
 		if ($this->canCreate) {
-			JToolBarHelper::addNew('fields.add');
+			ToolbarHelper::addNew('fields.add');
 		}
 
 		// Only load if there are items
 		if (CustomtablesHelper::checkArray($this->items)) {
 			if ($this->canEdit) {
-				JToolBarHelper::editList('fields.edit');
+				ToolbarHelper::editList('fields.edit');
 			}
 
 			if ($this->canState) {
-				JToolBarHelper::publishList('listoffields.publish');
-				JToolBarHelper::unpublishList('listoffields.unpublish');
+				ToolbarHelper::publishList('listoffields.publish');
+				ToolbarHelper::unpublishList('listoffields.unpublish');
 			}
 
 			if ($this->canDo->get('core.admin')) {
-				JToolBarHelper::checkin('listoffields.checkin');
+				ToolbarHelper::checkin('listoffields.checkin');
 			}
 
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
-				JToolbarHelper::deleteList('', 'listoffields.delete', 'JTOOLBAR_EMPTY_TRASH');
+				ToolbarHelper::deleteList('', 'listoffields.delete', 'JTOOLBAR_EMPTY_TRASH');
 			} elseif ($this->canState && $this->canDelete) {
-				JToolbarHelper::trash('listoffields.trash');
+				ToolbarHelper::trash('listoffields.trash');
 			}
 		}
 
 		// add the options comp button
 		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options')) {
-			JToolBarHelper::preferences('com_customtables');
+			ToolbarHelper::preferences('com_customtables');
 		}
 
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
@@ -155,16 +157,16 @@ class CustomtablesViewListoffields extends JViewLegacy
 		$toolbar = Toolbar::getInstance('toolbar');
 
 		if ($this->tableid != 0) {
-			JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+			ToolbarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 		} else
-			JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+			ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
 		//https://api.joomla.org/cms-3/classes/Joomla.CMS.Toolbar.ToolbarHelper.html
 
-		JToolBarHelper::back('COM_CUSTOMTABLES_BUTTON_BACK2TABLES', 'index.php?option=com_customtables&view=listoftables');
+		ToolbarHelper::back('COM_CUSTOMTABLES_BUTTON_BACK2TABLES', 'index.php?option=com_customtables&view=listoftables');
 
 		if ($this->canCreate)
 			$toolbar->addNew('fields.add');

@@ -18,6 +18,7 @@ use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 use CustomTables\Field;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 class CT_FieldTypeTag_image
 {
@@ -40,7 +41,7 @@ class CT_FieldTypeTag_image
 			$prefix = '_esthumb';
 
 			$imageFileExtension = 'jpg';
-			$imageFileWeb = JURI::root() . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
+			$imageFileWeb = Uri::root() . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
 			$imageFile = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
 			if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile)) {
 				$imageTag = '<img src="' . $imageFileWeb . '" style="width:150px;height:150px;" alt="' . $sitename . '" title="' . $sitename . '" />';
@@ -57,7 +58,7 @@ class CT_FieldTypeTag_image
 			$imageFileExtension = $imgMethods->getImageExtension(JPATH_SITE . DIRECTORY_SEPARATOR . $imageName);
 
 			if ($imageFileExtension != '') {
-				$imageFileWeb = JURI::root() . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
+				$imageFileWeb = Uri::root() . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
 				$imageTag = '<img src="' . $imageFileWeb . '" alt="' . $sitename . '" title="' . $sitename . '" />';
 
 				$imageSrc = $imageFileWeb;
@@ -72,7 +73,7 @@ class CT_FieldTypeTag_image
 
 		$imageFileExtension = $imgMethods->getImageExtension(JPATH_SITE . DIRECTORY_SEPARATOR . $imageName);
 		//--- WARNING - ERROR -- REAL EXT NEEDED - IT COMES FROM OPTIONS
-		$imageFile = JURI::root() . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
+		$imageFile = Uri::root() . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
 		$imageSizes = $imgMethods->getCustomImageOptions($params[0]);
 
 		foreach ($imageSizes as $img) {
@@ -169,7 +170,7 @@ class CT_FieldTypeTag_image
 			$imageSrc = '';
 		}
 
-		return JURI::root() . $imageSrc;
+		return Uri::root() . $imageSrc;
 	}
 
 	protected static function renderImageAndDeleteOption(Field $field, string $prefix, string $imageSrc, bool $isShortcut): string
@@ -193,7 +194,7 @@ class CT_FieldTypeTag_image
 		$style = 'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
 		$element_id = 'ct_uploadfile_box_' . $field->fieldname;
 
-		$urlString = JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname . '_fileid=' . $fileId
+		$urlString = Uri::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname . '_fileid=' . $fileId
 			. '&Itemid=' . $field->ct->Params->ItemId
 			. (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
 			. '&fieldname=' . $field->fieldname;

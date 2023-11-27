@@ -18,16 +18,15 @@ use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\Layouts;
 use CustomTables\record;
+
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
-
-// import Joomla controllerform library
-jimport('joomla.application.component.controllerform');
+use Joomla\CMS\MVC\Controller\FormController;
 
 /**
  * Records Controller
  */
-class CustomtablesControllerRecords extends JControllerForm
+class CustomtablesControllerRecords extends FormController
 {
 	/**
 	 * Current or most recently performed task.

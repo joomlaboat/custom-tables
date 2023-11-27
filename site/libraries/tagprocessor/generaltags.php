@@ -18,6 +18,7 @@ use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\CTUser;
+use Joomla\CMS\Uri\Uri;
 
 /* All tags already implemented using Twig */
 
@@ -330,9 +331,9 @@ class tagProcessor_General
 			$option = explode(',', $options[$i]);
 
 			if ($option[0] == 'includehost')
-				$WebsiteRoot = JURI::root(false);
+				$WebsiteRoot = Uri::root(false);
 			else
-				$WebsiteRoot = JURI::root(true);
+				$WebsiteRoot = Uri::root(true);
 
 			$noTrailingSlash = false;
 			if (isset($option[1]) and $option[1] == 'notrailingslash')

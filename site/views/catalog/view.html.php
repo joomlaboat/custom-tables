@@ -19,8 +19,9 @@ use CustomTables\CT;
 use CustomTables\Catalog;
 use CustomTables\database;
 use CustomTables\Inputbox;
+use Joomla\CMS\MVC\View\HtmlView;
 
-class CustomTablesViewCatalog extends JViewLegacy
+class CustomTablesViewCatalog extends HtmlView
 {
 	var CT $ct;
 	var string $listing_id;

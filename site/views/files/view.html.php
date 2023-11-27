@@ -21,8 +21,9 @@ use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
-class CustomTablesViewFiles extends JViewLegacy
+class CustomTablesViewFiles extends HtmlView
 {
 	var CT $ct;
 

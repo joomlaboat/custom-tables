@@ -18,6 +18,7 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 $independat = false;
 
@@ -231,7 +232,7 @@ class ESDynamicComboTree
 
 		$result = '';
 
-		$WebsiteRoot = JURI::root(true);
+		$WebsiteRoot = Uri::root(true);
 		$WebsiteRoot = str_replace("/components/com_customtables/libraries/", "", $WebsiteRoot);
 		$WebsiteRoot = str_replace("/components/com_customtables/libraries", "", $WebsiteRoot);
 

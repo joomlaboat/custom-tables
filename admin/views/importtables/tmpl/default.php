@@ -11,6 +11,7 @@
 // no direct access
 use CustomTables\common;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -25,7 +26,7 @@ JHtml::_('behavior.formvalidator');
 $document = Factory::getDocument();
 
 if ($this->version >= 4) {
-	$document->addCustomTag('<script src="' . JURI::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
+	$document->addCustomTag('<script src="' . Uri::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
 }
 
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/uploadfile.css" rel="stylesheet">');
@@ -41,7 +42,7 @@ echo '<form method="post" action="" id="esFileUploaderForm_Tables">';
 echo '<h2>Import Tables</h2>';
 echo '<p>This may import Table Structure from .txt (json encoded) file.</p>';
 
-$urlString = JURI::root(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileId;
+$urlString = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileId;
 echo '
 
     

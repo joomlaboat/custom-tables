@@ -14,11 +14,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use Joomla\CMS\MVC\View\HtmlView;
 
 // Import Joomla! libraries
 jimport('joomla.application.component.view');
 
-class CustomTablesViewFileUploader extends JViewLegacy
+class CustomTablesViewFileUploader extends HtmlView
 {
 	function display($tpl = null)
 	{

@@ -11,6 +11,8 @@
 
 use CustomTables\common;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -18,7 +20,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 jimport('joomla.application.component.view');
 
-class CustomTablesViewOptions extends JViewLegacy
+class CustomTablesViewOptions extends HtmlView
 {
 	function display($tpl = null)
 	{
@@ -66,54 +68,54 @@ class CustomTablesViewOptions extends JViewLegacy
 		common::inputSet('hidemainmenu', true);
 		$isNew = $this->item->id == 0;
 
-		JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'), 'pencil-2 article-add');
+		ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'), 'pencil-2 article-add');
 		// Built the actions for new and existing records.
 		if ($this->refid || $this->ref) {
 			if ($this->canDo->get('core.create') && $isNew) {
 				// We can create the record.
-				JToolBarHelper::save('options.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::save('options.save', 'JTOOLBAR_SAVE');
 			} elseif ($this->canDo->get('core.edit')) {
 				// We can save the record.
-				JToolBarHelper::save('options.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::save('options.save', 'JTOOLBAR_SAVE');
 			}
 			if ($isNew) {
 				// Do not creat but cancel.
-				JToolBarHelper::cancel('options.cancel', 'JTOOLBAR_CANCEL');
+				ToolbarHelper::cancel('options.cancel', 'JTOOLBAR_CANCEL');
 			} else {
 				// We can close it.
-				JToolBarHelper::cancel('options.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('options.cancel', 'JTOOLBAR_CLOSE');
 			}
 		} else {
 			if ($isNew) {
 				// For new records, check the create permission.
 				if ($this->canDo->get('core.create')) {
-					JToolBarHelper::apply('options.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('options.save', 'JTOOLBAR_SAVE');
-					JToolBarHelper::custom('options.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+					ToolbarHelper::apply('options.apply', 'JTOOLBAR_APPLY');
+					ToolbarHelper::save('options.save', 'JTOOLBAR_SAVE');
+					ToolbarHelper::custom('options.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 				};
-				JToolBarHelper::cancel('options.cancel', 'JTOOLBAR_CANCEL');
+				ToolbarHelper::cancel('options.cancel', 'JTOOLBAR_CANCEL');
 			} else {
 				if ($this->canDo->get('core.edit')) {
 					// We can save the new record
-					JToolBarHelper::apply('options.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('options.save', 'JTOOLBAR_SAVE');
+					ToolbarHelper::apply('options.apply', 'JTOOLBAR_APPLY');
+					ToolbarHelper::save('options.save', 'JTOOLBAR_SAVE');
 					// We can save this record, but check the create permission to see
 					// if we can return to make a new one.
 					if ($this->canDo->get('core.create')) {
-						JToolBarHelper::custom('options.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+						ToolbarHelper::custom('options.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 					}
 				}
 				if ($this->canDo->get('core.create')) {
-					JToolBarHelper::custom('options.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+					ToolbarHelper::custom('options.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 				}
-				JToolBarHelper::cancel('options.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('options.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 		// set help url for this view if found
 		$help_url = CustomtablesHelper::getHelpUrl('options');
 		if (CustomtablesHelper::checkString($help_url)) {
-			JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
+			ToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
 		}
 	}
 

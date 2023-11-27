@@ -19,11 +19,14 @@ use CustomTables\database;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Layouts View class
  */
-class CustomtablesViewLayouts extends JViewLegacy
+class CustomtablesViewLayouts extends HtmlView
 {
 	/**
 	 * display method of View
@@ -126,7 +129,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 		common::inputSet('hidemainmenu', true);
 		$isNew = $this->item->id == 0;
 
-		JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'), 'pencil-2 article-add');
+		ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'), 'pencil-2 article-add');
 		// Built the actions for new and existing records.
 		/*
 		if ($this->refid || $this->ref)
@@ -134,22 +137,22 @@ class CustomtablesViewLayouts extends JViewLegacy
 			if ($this->canCreate && $isNew)
 			{
 				// We can create the record.
-				JToolBarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
 			}
 			elseif ($this->canEdit)
 			{
 				// We can save the record.
-				JToolBarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
 			}
 			if ($isNew)
 			{
 				// Do not creat but cancel.
-				JToolBarHelper::cancel('layouts.cancel', 'JTOOLBAR_CANCEL');
+				ToolbarHelper::cancel('layouts.cancel', 'JTOOLBAR_CANCEL');
 			}
 			else
 			{
 				// We can close it.
-				JToolBarHelper::cancel('layouts.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('layouts.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
 		else
@@ -158,45 +161,45 @@ class CustomtablesViewLayouts extends JViewLegacy
 		if ($isNew) {
 			// For new records, check the create permission.
 			if ($this->canCreate) {
-				JToolBarHelper::apply('layouts.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
-				JToolBarHelper::custom('layouts.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+				ToolbarHelper::apply('layouts.apply', 'JTOOLBAR_APPLY');
+				ToolbarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::custom('layouts.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 			};
 
-			JToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'COM_CUSTOMTABLES_BUTTON_LAYOUTAUTOCREATE', false);//Layout Wizard
-			JToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'COM_CUSTOMTABLES_BUTTON_ADDFIELDTAG', false);
-			JToolbarHelper::custom('addlayouttag', 'layouttagbutton', 'layouttagutton', 'COM_CUSTOMTABLES_BUTTON_ADDLAYOUTTAG', false);
+			ToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'COM_CUSTOMTABLES_BUTTON_LAYOUTAUTOCREATE', false);//Layout Wizard
+			ToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'COM_CUSTOMTABLES_BUTTON_ADDFIELDTAG', false);
+			ToolbarHelper::custom('addlayouttag', 'layouttagbutton', 'layouttagutton', 'COM_CUSTOMTABLES_BUTTON_ADDLAYOUTTAG', false);
 
-			JToolBarHelper::cancel('layouts.cancel', 'JTOOLBAR_CANCEL');
+			ToolbarHelper::cancel('layouts.cancel', 'JTOOLBAR_CANCEL');
 		} else {
 			if ($this->canEdit) {
 				// We can save the new record
-				JToolBarHelper::apply('layouts.apply', 'JTOOLBAR_APPLY');
-				JToolBarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::apply('layouts.apply', 'JTOOLBAR_APPLY');
+				ToolbarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
 				// We can save this record, but check the create permission to see
 				// if we can return to make a new one.
 				if ($this->canCreate) {
-					JToolBarHelper::custom('layouts.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+					ToolbarHelper::custom('layouts.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 				}
 			}
 			if ($this->canCreate) {
-				JToolBarHelper::custom('layouts.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+				ToolbarHelper::custom('layouts.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 			}
 
-			JToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'COM_CUSTOMTABLES_BUTTON_LAYOUTAUTOCREATE', false);//Layout Wizard
-			JToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'COM_CUSTOMTABLES_BUTTON_ADDFIELDTAG', false);
-			JToolbarHelper::custom('addlayouttag', 'layouttagbutton', 'layouttagutton', 'COM_CUSTOMTABLES_BUTTON_ADDLAYOUTTAG', false);
-			JToolbarHelper::custom('dependencies', 'dependencies', 'dependencies', 'COM_CUSTOMTABLES_BUTTON_DEPENDENCIES', false);
+			ToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'COM_CUSTOMTABLES_BUTTON_LAYOUTAUTOCREATE', false);//Layout Wizard
+			ToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'COM_CUSTOMTABLES_BUTTON_ADDFIELDTAG', false);
+			ToolbarHelper::custom('addlayouttag', 'layouttagbutton', 'layouttagutton', 'COM_CUSTOMTABLES_BUTTON_ADDLAYOUTTAG', false);
+			ToolbarHelper::custom('dependencies', 'dependencies', 'dependencies', 'COM_CUSTOMTABLES_BUTTON_DEPENDENCIES', false);
 
-			JToolBarHelper::cancel('layouts.cancel', 'JTOOLBAR_CLOSE');
+			ToolbarHelper::cancel('layouts.cancel', 'JTOOLBAR_CLOSE');
 		}
 		//}
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 		// set help url for this view if found
 		//$help_url = CustomtablesHelper::getHelpUrl('layouts');
 		//if (CustomtablesHelper::checkString($help_url))
 		//{
-		//JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
+		//ToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
 		//}
 	}
 
@@ -210,7 +213,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 		if ($this->item !== null) {
 			$isNew = ($this->item->id < 1);
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
-			$document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
+			$document->addCustomTag('<script src="' . Uri::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
 		}
 	}
 

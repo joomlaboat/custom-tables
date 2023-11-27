@@ -15,13 +15,14 @@
 use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 use CustomTables\Fields;
 
-class CustomtablesViewListoflayouts extends JViewLegacy
+class CustomtablesViewListoflayouts extends HtmlView
 {
 	var CT $ct;
 
@@ -80,31 +81,31 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 
 	protected function addToolBar_3()
 	{
-		JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
+		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
 
 		if ($this->canCreate) {
-			JToolBarHelper::addNew('layouts.add');
+			ToolbarHelper::addNew('layouts.add');
 		}
 
 		// Only load if there are items
 		if (CustomtablesHelper::checkArray($this->items)) {
 			if ($this->canEdit) {
-				JToolBarHelper::editList('layouts.edit');
+				ToolbarHelper::editList('layouts.edit');
 			}
 
 			if ($this->canState) {
-				JToolBarHelper::publishList('listoflayouts.publish');
-				JToolBarHelper::unpublishList('listoflayouts.unpublish');
+				ToolbarHelper::publishList('listoflayouts.publish');
+				ToolbarHelper::unpublishList('listoflayouts.unpublish');
 			}
 
 			if ($this->canDo->get('core.admin')) {
-				JToolBarHelper::checkin('listoflayouts.checkin');
+				ToolbarHelper::checkin('listoflayouts.checkin');
 			}
 
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
-				JToolbarHelper::deleteList('', 'listoflayouts.delete', 'JTOOLBAR_EMPTY_TRASH');
+				ToolbarHelper::deleteList('', 'listoflayouts.delete', 'JTOOLBAR_EMPTY_TRASH');
 			} elseif ($this->canState && $this->canDelete) {
-				JToolbarHelper::trash('listoflayouts.trash');
+				ToolbarHelper::trash('listoflayouts.trash');
 			}
 		}
 

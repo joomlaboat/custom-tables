@@ -13,10 +13,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-// import Joomla controllerform library
-jimport('joomla.application.component.controllerform');
+use Joomla\CMS\MVC\Controller\FormController;
 
-class CustomTablesControllerDatabaseCheck extends JControllerForm
+class CustomTablesControllerDatabaseCheck extends FormController
 {
 	protected $task;
 

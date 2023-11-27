@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\Fields;
+use Joomla\CMS\MVC\View\HtmlView;
 
 // import Joomla view library
 jimport('joomla.application.component.view');
@@ -30,7 +31,7 @@ require_once($path . 'updatefilebox.php');
 /**
  * Customtables View class for the Listoftables
  */
-class CustomtablesViewAPI extends JViewLegacy
+class CustomtablesViewAPI extends HtmlView
 {
 	/**
 	 * Listoftables view display method

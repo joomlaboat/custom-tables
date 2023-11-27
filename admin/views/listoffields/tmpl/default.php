@@ -20,6 +20,7 @@ JHtml::_('dropdown.init');
 
 use CustomTables\common;
 use CustomTables\Integrity\IntegrityFields;
+use Joomla\CMS\Uri\Uri;
 
 if ($this->saveOrder && !empty($this->items)) {
 	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->tableid . '&tmpl=component';
@@ -57,7 +58,7 @@ if (common::inputGetCmd('extratask', '') == 'updateimages') {
 
 				<?php
 				if ($this->tableid != 0) {
-					$link = JURI::root() . 'administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid;
+					$link = Uri::root() . 'administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid;
 					echo IntegrityFields::checkFields($this->ct, $link);
 				}
 				//table-bordered

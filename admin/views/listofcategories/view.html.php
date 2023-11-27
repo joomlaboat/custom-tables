@@ -16,6 +16,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
@@ -23,7 +24,7 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 /**
  * Customtables View class for the Listofcategories
  */
-class CustomtablesViewListofcategories extends JViewLegacy
+class CustomtablesViewListofcategories extends HtmlView
 {
 	/**
 	 * Listofcategories view display method
@@ -89,32 +90,32 @@ class CustomtablesViewListofcategories extends JViewLegacy
 
 	protected function addToolBar_3()
 	{
-		JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
+		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
 		//JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
 		if ($this->canCreate)
-			JToolBarHelper::addNew('categories.add');
+			ToolbarHelper::addNew('categories.add');
 
 		// Only load if there are items
 		if (CustomtablesHelper::checkArray($this->items)) {
 			if ($this->canEdit) {
-				JToolBarHelper::editList('categories.edit');
+				ToolbarHelper::editList('categories.edit');
 			}
 
 			if ($this->canState) {
-				JToolBarHelper::publishList('listofcategories.publish');
-				JToolBarHelper::unpublishList('listofcategories.unpublish');
+				ToolbarHelper::publishList('listofcategories.publish');
+				ToolbarHelper::unpublishList('listofcategories.unpublish');
 			}
 
 			if ($this->canDo->get('core.admin')) {
-				JToolBarHelper::checkin('listofcategories.checkin');
+				ToolbarHelper::checkin('listofcategories.checkin');
 			}
 
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
-				JToolbarHelper::deleteList('', 'listofcategories.delete', 'JTOOLBAR_EMPTY_TRASH');
+				ToolbarHelper::deleteList('', 'listofcategories.delete', 'JTOOLBAR_EMPTY_TRASH');
 			} elseif ($this->canState && $this->canDelete) {
-				JToolbarHelper::trash('listofcategories.trash');
+				ToolbarHelper::trash('listofcategories.trash');
 			}
 		}
 

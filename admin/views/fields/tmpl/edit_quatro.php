@@ -19,6 +19,7 @@ use CustomTables\Fields;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
@@ -31,7 +32,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/modal
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_j4.js"></script>');
-$document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/media/system/css/fields/switcher.css">');
+$document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/media/system/css/fields/switcher.css">');
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH
 	. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');

@@ -19,6 +19,9 @@ jimport('joomla.application.component.view');
 use CustomTables\common;
 use CustomTables\Documentation;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-documentation.php');
@@ -26,7 +29,7 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' 
 /**
  * Tables View class
  */
-class CustomtablesViewDocumentation extends JViewLegacy
+class CustomtablesViewDocumentation extends HtmlView
 {
 	/**
 	 * display method of View
@@ -63,14 +66,14 @@ class CustomtablesViewDocumentation extends JViewLegacy
 
 	protected function addToolBar()
 	{
-		JToolBarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
+		ToolbarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
 	}
 
 	public function setDocument(Joomla\CMS\Document\Document $document): void
 	{
 		$document->setTitle(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'));
-		$document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
+		$document->addStyleSheet(Uri::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 
 		$script = '
 		<script>

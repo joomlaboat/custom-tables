@@ -20,8 +20,9 @@ use CustomTables\database;
 use CustomTables\Details;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
-class CustomTablesViewLog extends JViewLegacy
+class CustomTablesViewLog extends HtmlView
 {
 	var CT $ct;
 	var Details $details;

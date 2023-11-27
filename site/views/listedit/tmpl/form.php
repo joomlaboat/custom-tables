@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 ?>
@@ -45,10 +46,10 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
             </td>
             <td nowrap="nowrap" align="right">
                 <a href="#" onclick="javascript:Joomla.submitbutton('save')" class="toolbar"><img
-                            src="<?php JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/save.png"
+                            src="<?php Uri::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/save.png"
                     alt="Save" title="Save" /></a>
                 <a href="#" onclick="javascript:Joomla.submitbutton('cancel')" class="toolbar"><img
-                            src="<?php JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/cancel.png"
+                            src="<?php Uri::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/cancel.png"
                     alt="Cancel" title="Cancel" /></a>
             </td>
         </tr>

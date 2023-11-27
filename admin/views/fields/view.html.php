@@ -19,12 +19,15 @@ use CustomTables\CT;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 /**
  * Fields View class
  */
-class CustomtablesViewFields extends JViewLegacy
+class CustomtablesViewFields extends HtmlView
 {
 	/**
 	 * display method of View
@@ -108,50 +111,50 @@ class CustomtablesViewFields extends JViewLegacy
 		common::inputSet('hidemainmenu', true);
 		$isNew = $this->item->id == 0;
 
-		JToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'), 'pencil-2 article-add');
+		ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'), 'pencil-2 article-add');
 		// Built the actions for new and existing records.
 		if ($this->refid || $this->ref) {
 			if ($this->canCreate && $isNew) {
 				// We can create the record.
-				JToolBarHelper::save('fields.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
 			} elseif ($this->canEdit) {
 				// We can save the record.
-				JToolBarHelper::save('fields.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
 			}
 			if ($isNew) {
 				// Do not creat but cancel.
-				JToolBarHelper::cancel('fields.cancel', 'JTOOLBAR_CANCEL');
+				ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CANCEL');
 			} else {
 				// We can close it.
-				JToolBarHelper::cancel('fields.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CLOSE');
 			}
 		} else {
 			if ($isNew) {
 				// For new records, check the create permission.
 				if ($this->canCreate) {
-					JToolBarHelper::apply('fields.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('fields.save', 'JTOOLBAR_SAVE');
-					JToolBarHelper::custom('fields.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+					ToolbarHelper::apply('fields.apply', 'JTOOLBAR_APPLY');
+					ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
+					ToolbarHelper::custom('fields.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 				};
-				JToolBarHelper::cancel('fields.cancel', 'JTOOLBAR_CANCEL');
+				ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CANCEL');
 			} else {
 				if ($this->canEdit) {
 					// We can save the new record
-					JToolBarHelper::apply('fields.apply', 'JTOOLBAR_APPLY');
-					JToolBarHelper::save('fields.save', 'JTOOLBAR_SAVE');
+					ToolbarHelper::apply('fields.apply', 'JTOOLBAR_APPLY');
+					ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
 					// We can save this record, but check the create permission to see
 					// if we can return to make a new one.
 					if ($this->canCreate) {
-						JToolBarHelper::custom('fields.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+						ToolbarHelper::custom('fields.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 					}
 				}
 				if ($this->canCreate) {
-					JToolBarHelper::custom('fields.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+					ToolbarHelper::custom('fields.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 				}
-				JToolBarHelper::cancel('fields.cancel', 'JTOOLBAR_CLOSE');
+				ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CLOSE');
 			}
 		}
-		JToolbarHelper::divider();
+		ToolbarHelper::divider();
 	}
 
 	/**
@@ -164,7 +167,7 @@ class CustomtablesViewFields extends JViewLegacy
 		if ($this->item !== null) {
 			$isNew = ($this->item->id < 1);
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
-			$document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/fields/submitbutton.js"></script>');
+			$document->addCustomTag('<script src="' . Uri::root(true) . '/administrator/components/com_customtables/views/fields/submitbutton.js"></script>');
 		}
 	}
 

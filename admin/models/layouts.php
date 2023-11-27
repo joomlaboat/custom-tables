@@ -18,7 +18,9 @@ use CustomTables\CTUser;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Uri\Uri;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 
@@ -128,7 +130,7 @@ class CustomtablesModelLayouts extends AdminModel
 	 */
 	public function getScript()
 	{
-		return JURI::root(true) . '/administrator/components/com_customtables/models/forms/layouts.js';
+		return Uri::root(true) . '/administrator/components/com_customtables/models/forms/layouts.js';
 	}
 
 	/**

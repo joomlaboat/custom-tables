@@ -9,21 +9,19 @@
  **/
 
 // no direct access
-use CustomTables\common;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-jimport('joomla.application.component.controller');
+use CustomTables\common;
 
-class CustomTablesControllerImportTables extends JControllerForm
+use Joomla\CMS\MVC\Controller\FormController;
+
+class CustomTablesControllerImportTables extends FormController
 {
-
 	function __construct()
 	{
 		parent::__construct();
-
 	}
 
 	function display($cachable = false, $urlparams = array())

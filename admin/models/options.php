@@ -105,7 +105,7 @@ class CustomTablesModelOptions extends AdminModel
 
 	public function getScript()
 	{
-		//return JURI::root(true).'/administrator/components/com_customtables/models/forms/options.js';
+		//return Uri::root(true).'/administrator/components/com_customtables/models/forms/options.js';
 	}
 
 	public function save($data)//;//store($data)
