@@ -67,9 +67,7 @@ class JHTMLESSqlJoin
 			$place_holder = '- ' . common::translate('COM_CUSTOMTABLES_SELECT');
 
 		//Get Database records
-
-		$_params = new JRegistry;
-		$_params->loadArray([]);
+		$_params = new Registry;
 
 		$ct = new CT($_params, true);
 		self::getSearchResult($ct, $filter, $tableName, $order_by_field, $allowunpublished);
@@ -123,8 +121,7 @@ class JHTMLESSqlJoin
 		else
 			$paramsArray['filter'] = ''; //!IMPORTANT - NO FILTER
 
-		$_params = new JRegistry;
-		$_params->loadArray($paramsArray);
+		$_params = new Registry($paramsArray);
 
 		$ct->setParams($_params, true);
 

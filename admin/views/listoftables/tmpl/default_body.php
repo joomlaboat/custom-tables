@@ -35,12 +35,12 @@ foreach ($this->items as $i => $item): ?>
 			<?php if ($this->canState or $this->canDelete): ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
-						<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+						<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
 					<?php else: ?>
                         &#9633;
 					<?php endif; ?>
 				<?php else: ?>
-					<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+					<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
 				<?php endif; ?>
 			<?php else: ?>
                 &#9633;

@@ -330,7 +330,7 @@ class JESPagination// extends JObject
 		$data->all = new JESPaginationObject(common::translate('JLIB_HTML_VIEW_ALL'), $this->prefix);
 		if (!$this->_viewall) {
 			$data->all->base = '0';
-			$data->all->link = JRoute::_($query_paramsPlusPrefix);
+			$data->all->link = Route::_($query_paramsPlusPrefix);
 		}
 
 		// Set the start and previous data objects.
@@ -348,13 +348,13 @@ class JESPagination// extends JObject
 
 			// Set the empty for removal from route
 			$data->start->base = '0';
-			$data->start->link = JRoute::_($query_paramsPlusPrefix);
+			$data->start->link = Route::_($query_paramsPlusPrefix);
 			$data->previous->base = $page;
 
 			if ($page == 0)
-				$data->previous->link = JRoute::_($query_paramsPlusPrefix);
+				$data->previous->link = Route::_($query_paramsPlusPrefix);
 			else
-				$data->previous->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $page);
+				$data->previous->link = Route::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $page);
 		}
 
 		// Set the next and end data objects.
@@ -371,9 +371,9 @@ class JESPagination// extends JObject
 			$end = ($this->get('pages.total') - 1) * $this->limit;
 
 			$data->next->base = $next;
-			$data->next->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $next);
+			$data->next->link = Route::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $next);
 			$data->end->base = $end;
-			$data->end->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $end);
+			$data->end->link = Route::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $end);
 		}
 
 		$data->pages = array();
@@ -387,9 +387,9 @@ class JESPagination// extends JObject
 			if ($i != $this->get('pages.current') || $this->_viewall) {
 				$data->pages[$i]->base = $offset;
 				if ($offset == 0)
-					$data->pages[$i]->link = JRoute::_($query_paramsPlusPrefix);
+					$data->pages[$i]->link = Route::_($query_paramsPlusPrefix);
 				else
-					$data->pages[$i]->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $offset);
+					$data->pages[$i]->link = Route::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $offset);
 			}
 		}
 		return $data;

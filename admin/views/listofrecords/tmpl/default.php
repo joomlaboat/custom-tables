@@ -38,7 +38,7 @@ if ($this->ordering_realfieldname != '') {
     }
 </script>
 
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofrecords'); ?>" method="post"
+<form action="<?php echo Route::_('index.php?option=com_customtables&view=listofrecords'); ?>" method="post"
       name="adminForm" id="adminForm">
 	<?php if (!empty($this->sidebar)): ?>
     <div id="j-sidebar-container" class="span2">

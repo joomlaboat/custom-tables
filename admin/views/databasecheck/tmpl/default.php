@@ -25,7 +25,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/rapha
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagram.js"></script>');
 
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"
+<form action="<?php echo Route::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"
       name="adminForm" id="adminForm">
     <style>
         #canvas_container {

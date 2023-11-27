@@ -40,8 +40,8 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
     <tr class="row<?php echo $i % 2; ?>" data-draggable-group="<?php echo $this->ct->Table->tableid; ?>">
 
 		<?php if ($this->canState or $this->canDelete): ?>
-            <td scope="row" class="text-center">
-				<?php echo JHtml::_('grid.id', $i, $item_array[$this->ct->Table->realidfieldname]); ?>
+            <td class="text-center">
+				<?php echo HtmlHelper::_('grid.id', $i, $item_array[$this->ct->Table->realidfieldname]); ?>
             </td>
 		<?php endif; ?>
 

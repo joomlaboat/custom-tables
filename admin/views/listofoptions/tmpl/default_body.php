@@ -42,7 +42,7 @@ foreach ($rows as $row) :
 
 				*/ ?>
 
-            <a href="<?php echo JRoute::_('index.php?option=com_customtables&view=options&layout=edit&id=' . $row->id); ?>"><?php echo $row->treename; ?></a>
+            <a href="<?php echo Route::_('index.php?option=com_customtables&view=options&layout=edit&id=' . $row->id); ?>"><?php echo $row->treename; ?></a>
 			<?php //endif;
 			?>
         </td>

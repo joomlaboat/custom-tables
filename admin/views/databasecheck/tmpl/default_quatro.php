@@ -32,7 +32,7 @@ $document->addCustomTag('<style>
     </style>');
 ?>
 
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"
+<form action="<?php echo Route::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"
       name="adminForm" id="adminForm">
 
 

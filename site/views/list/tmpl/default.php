@@ -141,7 +141,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                     <td nowrap="nowrap">
                             <span class="editlinktip hasTip"
                                   title="<?php echo common::translate('COM_CUSTOMTABLES_EDIT_LIST'); ?>::<?php echo $row->treename; ?>">
-				<a href="<?php echo JRoute::_('index.php?option=com_customtables&view=list&task=edit&cid[]=' . $row->id); ?>"><?php echo $row->treename; ?></a></span>
+				<a href="<?php echo Route::_('index.php?option=com_customtables&view=list&task=edit&cid[]=' . $row->id); ?>"><?php echo $row->treename; ?></a></span>
                     </td>
 
 					<?php

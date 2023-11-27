@@ -50,8 +50,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$cid = common::inputPost('cid', array(), 'array');
 		$paramsArray = $this->getRecordParams($tableid, $tablename, 0);
 
-		$_params = new JRegistry;
-		$_params->loadArray($paramsArray);
+		$_params = new Registry($paramsArray);
 
 		$ct = new CT($_params, false);
 		$ct->setTable($tableRow);
@@ -75,7 +74,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 
 		// Redirect to the item screen.
 		$this->setRedirect(
-			JRoute::_(
+			Route::_(
 				$redirect, false
 			)
 		);
@@ -112,8 +111,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$cid = common::inputPost('cid', array(), 'array');
 		$paramsArray = $this->getRecordParams($tableid, $tablename, 0);
 
-		$_params = new JRegistry;
-		$_params->loadArray($paramsArray);
+		$_params = new Registry($paramsArray);
 
 		$ct = new CT($_params, false);
 		$ct->setTable($tableRow);
@@ -138,7 +136,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 
 		// Redirect to the item screen.
 		$this->setRedirect(
-			JRoute::_(
+			Route::_(
 				$redirect, false
 			)
 		);

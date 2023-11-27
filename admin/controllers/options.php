@@ -46,7 +46,7 @@ class CustomTablesControllerOptions extends FormController
 
 			// Redirect to the item screen.
 			$this->setRedirect(
-				JRoute::_(
+				Route::_(
 					'index.php?option=' . $this->option . $redirect, false
 				)
 			);
@@ -55,7 +55,7 @@ class CustomTablesControllerOptions extends FormController
 
 			// Redirect to the list screen.
 			$this->setRedirect(
-				JRoute::_(
+				Route::_(
 					'index.php?option=' . $this->option . $redirect, false
 				)
 			);
@@ -77,7 +77,7 @@ class CustomTablesControllerOptions extends FormController
 
 				// Redirect to the item screen.
 				$this->setRedirect(
-					JRoute::_(
+					Route::_(
 						'index.php?option=' . $this->option . $redirect, false
 					)
 				);
@@ -86,7 +86,7 @@ class CustomTablesControllerOptions extends FormController
 
 				// Redirect to the list screen.
 				$this->setRedirect(
-					JRoute::_(
+					Route::_(
 						'index.php?option=' . $this->option . $redirect, false
 					)
 				);
@@ -94,7 +94,7 @@ class CustomTablesControllerOptions extends FormController
 		} else {
 			// Redirect to the items screen.
 			$this->setRedirect(
-				JRoute::_(
+				Route::_(
 					'index.php?option=' . $this->option . '&view=' . $this->view_list, false
 				)
 			);

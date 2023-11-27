@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use CustomTables\CT;
@@ -156,8 +157,6 @@ class CustomtablesViewListofrecords extends HtmlView
 
 	protected function addToolbar_4()
 	{
-		$user = new CTUser();
-
 		// Get the toolbar object instance
 		$toolbar = Toolbar::getInstance('toolbar');
 
@@ -168,8 +167,14 @@ class CustomtablesViewListofrecords extends HtmlView
 			return;
 		}
 
-		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
-		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
+		// Example sidebar link
+		//$link = 'index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid;
+		//$isActive = true;//$this->getActive() === 'com_customtables';
+
+		//echo HTMLHelper::_('sidebar.link', $link, 'List of Records', true);
+
+		//JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
+		//JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
 
 		ToolbarHelper::back('COM_CUSTOMTABLES_BUTTON_BACK2TABLES', 'index.php?option=com_customtables&view=listoftables');
 

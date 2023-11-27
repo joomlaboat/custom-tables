@@ -9,24 +9,56 @@
  **/
 
 // no direct access
-use CustomTables\common;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-JFormHelper::loadFieldClass('list');
+use CustomTables\common;
 
-class JFormFieldctj3statusrecord extends JFormFieldList
-{
-	public $type = 'ctj3statusrecord';
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Version;
 
-	public function getOptions()
+$versionObject = new Version;
+$version = (int)$versionObject->getShortVersion();
+
+if ($version < 4) {
+
+	JFormHelper::loadFieldClass('list');
+
+	class JFormFieldctj3statusrecord extends JFormFieldList
 	{
-		$options = [];
-		$options[] = JHtml::_('select.option', '', common::translate('JOPTION_SELECT_PUBLISHED'));
-		$options[] = JHtml::_('select.option', 1, common::translate('JPUBLISHED'));
-		$options[] = JHtml::_('select.option', 0, common::translate('JUNPUBLISHED'));
-		return $options;
+		public $type = 'ctj3statusrecord';
+
+		public function getOptions()
+		{
+			$options = [];
+			$options[] = JHtml::_('select.option', '', common::translate('JOPTION_SELECT_PUBLISHED'));
+			$options[] = JHtml::_('select.option', 1, common::translate('JPUBLISHED'));
+			$options[] = JHtml::_('select.option', 0, common::translate('JUNPUBLISHED'));
+			return $options;
+		}
+	}
+
+} else {
+	class JFormFieldctj3statusrecord extends FormField
+	{
+		public $type = 'ctj3statusrecord';
+		protected $layout = 'joomla.form.field.list';
+
+		protected function getInput()
+		{
+			$data = $this->getLayoutData();
+			$data['options'] = $this->getOptions();
+			return $this->getRenderer($this->layout)->render($data);
+		}
+
+		public function getOptions()
+		{
+			$options = [];
+			$options[] = ['value' => '', 'text' => common::translate('JOPTION_SELECT_PUBLISHED')];
+			$options[] = ['value' => '1', 'text' => common::translate('JPUBLISHED')];
+			$options[] = ['value' => '0', 'text' => common::translate('JOPTION_SELECT_PUBLISHED')];
+			return $options;
+		}
 	}
 }

@@ -39,7 +39,7 @@ class CustomtablesControllerFields extends FormController
 		$model = $this->getModel('Fields', '', array());
 
 		// Preset the redirect
-		$this->setRedirect(JRoute::_('index.php?option=com_customtables&view=listoffields' . $this->getRedirectToListAppend(), false));
+		$this->setRedirect(Route::_('index.php?option=com_customtables&view=listoffields' . $this->getRedirectToListAppend(), false));
 
 		return parent::batch($model);
 	}
@@ -49,7 +49,7 @@ class CustomtablesControllerFields extends FormController
 		$tableid = common::inputGet('tableid', 0, 'int');
 		$cancel = parent::cancel($key);
 		$this->setRedirect(
-			JRoute::_(
+			Route::_(
 				'index.php?option=' . $this->option . '&view=listoffields&tableid=' . (int)$tableid, false
 			)
 		);
@@ -132,7 +132,7 @@ class CustomtablesControllerFields extends FormController
 		if ($fieldId != null) {
 			// Redirect to the item screen.
 			$this->setRedirect(
-				JRoute::_($redirect, false)
+				Route::_($redirect, false)
 			);
 			return true;
 		}

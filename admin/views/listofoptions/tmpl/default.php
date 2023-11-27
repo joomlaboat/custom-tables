@@ -37,7 +37,7 @@ echo '</div>';
     }
 </script>
 
-<form action="<?php echo JRoute::_('index.php?option=com_customtables'); ?>" method="post" name="adminForm"
+<form action="<?php echo Route::_('index.php?option=com_customtables'); ?>" method="post" name="adminForm"
       id="adminForm">
 	<?php
 	$s = common::inputGetString('search');

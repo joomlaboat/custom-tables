@@ -53,16 +53,16 @@ class CustomtablesController extends BaseController//JControllerLegacy
 					// redirect to item of ref
 					if ($ref == 'records') {
 						$refid = common::inputGetCmd('refid', 0);
-						$this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));
+						$this->setRedirect(Route::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));
 					} else
-						$this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));
+						$this->setRedirect(Route::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));
 				} elseif (CustomtablesHelper::checkString($ref)) {
 
 					// redirect to ref
-					$this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $ref, false));
+					$this->setRedirect(Route::_('index.php?option=com_customtables&view=' . $ref, false));
 				} else {
 					// normal redirect back to the list view
-					$this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $data['views'], false));
+					$this->setRedirect(Route::_('index.php?option=com_customtables&view=' . $data['views'], false));
 				}
 
 				return false;

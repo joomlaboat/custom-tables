@@ -114,7 +114,7 @@ class Params
 
 			if (!is_null($ModuleId)) {
 				$module = ModuleHelper::getModuleById($ModuleId);
-				$menu_params = new JRegistry;
+				$menu_params = new Registry;
 				$menu_params->loadString($module->params);
 				$blockExternalVars = false;
 				//Do not block external var parameters because this is the edit form or a task
@@ -123,9 +123,9 @@ class Params
 					if ($this->app->getLanguage() !== null)
 						$menu_params = @$this->app->getParams();
 					else
-						$menu_params = new JRegistry;
+						$menu_params = new Registry;
 				} catch (Exception $e) {
-					$menu_params = new JRegistry;
+					$menu_params = new Registry;
 				}
 			}
 		}
@@ -153,7 +153,7 @@ class Params
 				try {
 					$menu_params = $this->app->getParams();
 				} catch (Exception $e) {
-					$menu_params = new JRegistry;
+					$menu_params = new Registry;
 				}
 
 			} else {

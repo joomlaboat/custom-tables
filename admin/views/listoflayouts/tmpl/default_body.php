@@ -32,12 +32,12 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
             <td class="nowrap center">
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
-						<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+						<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
 					<?php else: ?>
                         &#9633;
 					<?php endif; ?>
 				<?php else: ?>
-					<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+					<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
 				<?php endif; ?>
             </td>
 		<?php endif; ?>

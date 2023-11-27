@@ -278,10 +278,7 @@ class JHTMLESRecords
 		elseif (!str_contains($field, ':')) //cannot sort by layout only by field name
 			$paramsArray['forcesortby'] = $field;
 
-		$_params = new JRegistry;
-		$_params->loadArray($paramsArray);
-
-		return $_params;
+		return new Registry($paramsArray);
 	}
 
 	static protected function getSingle(CT &$ct, CT &$ct_noFilter, $valueArray,

@@ -19,13 +19,14 @@ use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\Inputbox;
+use Joomla\Registry\Registry;
 
 class JHTMLCTTableJoin
 {
 	static public function render($control_name, Field $field, $listing_is, $value, $option_list, $onchange, $attributes): string
 	{
-		$params = new JRegistry;
-		$params->loadArray([]);
+		$params = new Registry;
+		//$params->loadArray([]);
 		$ct = new CT($params, true);
 
 		//Check if Value exists
@@ -221,8 +222,7 @@ class JHTMLCTTableJoin
 
 	public static function parseTypeParams($field, &$filter, &$parent_filter_table_name, &$parent_filter_field_name): bool
 	{
-		$params = new JRegistry;
-		$params->loadArray([]);
+		$params = new Registry;
 		$temp_ct = new CT($params, true);
 
 		//Table Join

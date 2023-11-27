@@ -51,7 +51,7 @@ class CustomtablesControllerListOfFields extends AdminController
 
 		// Redirect to the item screen.
 		$this->setRedirect(
-			JRoute::_(
+			Route::_(
 				$redirect, false
 			)
 		);
@@ -118,7 +118,7 @@ class CustomtablesControllerListOfFields extends AdminController
 
 		// Redirect to the item screen.
 		$this->setRedirect(
-			JRoute::_(
+			Route::_(
 				$redirect, false
 			)
 		);
@@ -171,7 +171,7 @@ class CustomtablesControllerListOfFields extends AdminController
 
 		// Redirect to the item screen.
 		$this->setRedirect(
-			JRoute::_(
+			Route::_(
 				$redirect, false
 			)
 		);

@@ -20,7 +20,7 @@ JHtml::_('behavior.multiselect');
 
 ?>
 
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post"
+<form action="<?php echo Route::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post"
       name="adminForm" id="adminForm">
 	<?php if (!empty($this->sidebar)): ?>
     <div id="j-sidebar-container" class="span2">

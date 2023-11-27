@@ -345,7 +345,7 @@ class ListOfFields
 		if ($fieldid != null) {
 			// Redirect to the item screen.
 			$this->setRedirect(
-				JRoute::_($redirect, false)
+				Route::_($redirect, false)
 			);
 			return true;
 		}

@@ -164,15 +164,13 @@ class ListOfLayouts
 		if (isset($data['metadata']) && isset($data['metadata']['author'])) {
 			$data['metadata']['author'] = $filter->clean($data['metadata']['author'], 'TRIM');
 
-			$metadata = new JRegistry;
-			$metadata->loadArray($data['metadata']);
+			$metadata = new Registry($data['metadata']);
 			$data['metadata'] = (string)$metadata;
 		}
 
 		// Set the Params Items to data
 		if (isset($data['params']) && is_array($data['params'])) {
-			$params = new JRegistry;
-			$params->loadArray($data['params']);
+			$params = new Registry($data['params']);
 			$data['params'] = (string)$params;
 		}
 */

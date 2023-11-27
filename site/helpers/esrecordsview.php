@@ -39,8 +39,7 @@ class JHTMLESRecordsView
 		$paramsArray['shownavigation'] = 0;
 		$paramsArray['sortby'] = $sortByField;
 
-		$_params = new JRegistry;
-		$_params->loadArray($paramsArray);
+		$_params = new JRegistry($paramsArray);
 
 		$ct = new CT;
 		$ct->setParams($_params, true);

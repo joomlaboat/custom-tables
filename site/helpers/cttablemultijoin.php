@@ -20,8 +20,7 @@ class JHTMLCTTableMultiJoin
 {
 	static public function render($control_name, Field $field, $listing_is, $value, $option_list, $onchange, $attributes): string
 	{
-		$params = new JRegistry;
-		$params->loadArray([]);
+		$params = new Registry;
 		$ct = new CT($params, true);
 
 		$filter = [];

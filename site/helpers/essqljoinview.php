@@ -37,8 +37,7 @@ class JHTMLESSQLJoinView
 		$paramsArray['shownavigation'] = 0;
 		$paramsArray['sortby'] = '';
 
-		$_params = new JRegistry;
-		$_params->loadArray($paramsArray);
+		$_params = new JRegistry($paramsArray);
 
 		$ct = new CT($_params, true);
 

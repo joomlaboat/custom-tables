@@ -21,6 +21,7 @@ use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 
@@ -525,16 +526,14 @@ class CustomtablesModelLayouts extends AdminModel
 		// set the metadata to the Item Data
 		if (isset($data['metadata']) && isset($data['metadata']['author'])) {
 			$data['metadata']['author'] = $filter->clean($data['metadata']['author'], 'TRIM');
-
-			$metadata = new JRegistry;
-			$metadata->loadArray($data['metadata']);
+			$metadata = new Registry($data['metadata']);
 			$data['metadata'] = (string)$metadata;
 		}
 
 		// Set the Params Items to data
 		if (isset($data['params']) && is_array($data['params'])) {
-			$params = new JRegistry;
-			$params->loadArray($data['params']);
+			$params = new Registry($data['params']);
+			//$params->loadArray($data['params']);
 			$data['params'] = (string)$params;
 		}
 

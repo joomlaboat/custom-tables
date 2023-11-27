@@ -56,7 +56,7 @@ class CustomtablesControllerTables extends FormController
 		$model = $this->getModel('Tables', '', array());
 
 		// Preset the redirect
-		$this->setRedirect(JRoute::_('index.php?option=com_customtables&view=listoftables' . $this->getRedirectToListAppend(), false));
+		$this->setRedirect(Route::_('index.php?option=com_customtables&view=listoftables' . $this->getRedirectToListAppend(), false));
 
 		return parent::batch($model);
 	}
@@ -84,7 +84,7 @@ class CustomtablesControllerTables extends FormController
 
 				// Redirect to the item screen.
 				$this->setRedirect(
-					JRoute::_(
+					Route::_(
 						'index.php?option=' . $this->option . $redirect, false
 					)
 				);
@@ -93,7 +93,7 @@ class CustomtablesControllerTables extends FormController
 
 				// Redirect to the list screen.
 				$this->setRedirect(
-					JRoute::_(
+					Route::_(
 						'index.php?option=' . $this->option . $redirect, false
 					)
 				);
@@ -101,7 +101,7 @@ class CustomtablesControllerTables extends FormController
 		} else {
 			// Redirect to the items screen.
 			$this->setRedirect(
-				JRoute::_(
+				Route::_(
 					'index.php?option=' . $this->option . '&view=' . $this->view_list, false
 				)
 			);
@@ -137,7 +137,7 @@ class CustomtablesControllerTables extends FormController
 
 			// Redirect to the item screen.
 			$this->setRedirect(
-				JRoute::_(
+				Route::_(
 					'index.php?option=' . $this->option . $redirect, false
 				)
 			);
@@ -146,7 +146,7 @@ class CustomtablesControllerTables extends FormController
 
 			// Redirect to the list screen.
 			$this->setRedirect(
-				JRoute::_(
+				Route::_(
 					'index.php?option=' . $this->option . $redirect, false
 				)
 			);

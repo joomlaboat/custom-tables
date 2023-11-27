@@ -57,7 +57,7 @@ class CustomtablesControllerListOfTables extends AdminController
 
 		// Redirect to the item screen.
 		$this->setRedirect(
-			JRoute::_(
+			Route::_(
 				$redirect, false
 			)
 		);

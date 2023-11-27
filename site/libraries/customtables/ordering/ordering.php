@@ -113,8 +113,7 @@ class Ordering
 		if ($fieldRow === null)
 			return null;
 
-		$params = new JRegistry;
-		$params->loadArray([]);
+		$params = new Registry;
 		$temp_ct = new CT($params, true);
 		$temp_ct->Table = $Table;
 		$field = new Field($temp_ct, $fieldRow);
@@ -132,8 +131,7 @@ class Ordering
 			case 'sqljoin':
 
 				$join_table = $field->params[0];
-				$params = new JRegistry;
-				$params->loadArray([]);
+				$params = new Registry;
 				$sqljoin_temp_ct = new CT($params, true);
 				$sqljoin_temp_ct->getTable($join_table);
 

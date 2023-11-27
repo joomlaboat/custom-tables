@@ -20,6 +20,7 @@ use CustomTables\Layouts;
 use CustomTables\record;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Controller\FormController;
 
@@ -61,7 +62,7 @@ class CustomtablesControllerRecords extends FormController
 
 		// Redirect to the items screen.
 		$this->setRedirect(
-			JRoute::_(
+			Route::_(
 				'index.php?option=' . $this->option . '&view=listofrecords&tableid=' . (int)$tableId, false)
 		);
 		return $cancel;
@@ -83,10 +84,7 @@ class CustomtablesControllerRecords extends FormController
 
 
 		/*
-
-
-		$params = new JRegistry;
-		$params->loadArray(['listingid' => $listing_id]);
+		$params = new Registry(['listingid' => $listing_id]);
 		$ct->setParams($params, true);
 
 		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'edititem.php');
@@ -127,7 +125,7 @@ class CustomtablesControllerRecords extends FormController
 		if ($saved) {
 			// Redirect to the item screen.
 			$this->setRedirect(
-				JRoute::_($redirect, false)
+				Route::_($redirect, false)
 			);
 		}
 

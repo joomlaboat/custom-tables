@@ -54,7 +54,7 @@ foreach ($this->allTables as $table) {
 	<?php echo 'all_tables=' . json_encode($this->allTables) . ';'; ?>
 </script>
 
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
+<form action="<?php echo Route::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
       method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
 	<?php echo JHtml::_('bootstrap.startTabSet', 'layoutsTab', array('active' => $this->active_tab)); ?>

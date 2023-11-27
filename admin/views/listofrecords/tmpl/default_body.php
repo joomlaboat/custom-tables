@@ -39,7 +39,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 
         <td class="nowrap center">
 			<?php if ($this->canEdit): ?>
-				<?php echo JHtml::_('grid.id', $i, $item_array[$this->ct->Table->realidfieldname]); ?>
+				<?php echo HtmlHelper::_('grid.id', $i, $item_array[$this->ct->Table->realidfieldname]); ?>
 			<?php endif; ?>
         </td>
 
