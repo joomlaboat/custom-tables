@@ -9,6 +9,8 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\HTML\HTMLHelper;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
@@ -41,7 +43,7 @@ if ($this->version >= 4) {
 
         <div>
             <input type="hidden" name="task" value="categories.edit"/>
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
         </div>
     </div>
 </form>

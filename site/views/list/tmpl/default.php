@@ -11,6 +11,7 @@
 // no direct access
 use CustomTables\common;
 use CustomTables\CTUser;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -192,7 +193,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         <input type="hidden" name="Itemid"
                value="<?php echo common::inputGetInt('Itemid', 0); ?>"/>
 
-		<?php echo JHTML::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
 </div>

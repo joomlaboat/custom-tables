@@ -11,6 +11,7 @@
 // no direct access
 
 use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -70,7 +71,7 @@ echo '</div>';
     <input type="hidden" name="boxchecked" value="0"/>
     <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>"/>
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>"/>
-	<?php echo JHTML::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>
 
 <p><a href="index.php?option=com_customtables&view=listofoptions&task=RefreshFamily">Refresh Family Tree</a></p>

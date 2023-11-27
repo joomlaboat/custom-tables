@@ -12,6 +12,7 @@
 // No direct access to this file
 use CustomTables\common;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -197,7 +198,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
         <div>
             <input type="hidden" name="task" value="tables.edit"/>
             <input type="hidden" name="originaltableid" value="<?php echo $this->item->id; ?>"/>
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
         </div>
     </div>
 

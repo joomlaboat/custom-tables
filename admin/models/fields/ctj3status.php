@@ -29,11 +29,6 @@ if ($version < 4) {
 	{
 		public $type = 'ctj3table';
 
-		function __construct($form = null)
-		{
-			parent::__construct($form);
-		}
-
 		public function getOptions()
 		{
 			$options = [];

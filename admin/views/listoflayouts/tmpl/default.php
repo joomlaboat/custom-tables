@@ -10,6 +10,7 @@
 
 // No direct access to this file
 use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -48,5 +49,5 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	<?php endif; ?>
         <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="task" value=""/>
-		<?php echo JHtml::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 </form>

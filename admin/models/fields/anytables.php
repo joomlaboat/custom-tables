@@ -15,67 +15,142 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\database;
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Version;
 
-jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+$versionObject = new Version;
+$version = (int)$versionObject->getShortVersion();
 
-class JFormFieldAnyTables extends JFormFieldList
-{
+//Returns the Options object with the list of tables (specified by table id in url)
 
-	protected $type = 'anytables';
+if ($version < 4) {
 
-	//Returns the Options object with the list of tables (specified by table id in url)
+	//jimport('joomla.form.helper');
+	JFormHelper::loadFieldClass('list');
 
-	protected function getOptions()
+	class JFormFieldAnyTables extends JFormFieldList
 	{
-		$options = array();
-		$options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_SELECT'));
 
-		$tables = $this->getListOfExistingTables();
+		protected $type = 'anytables';
 
-		foreach ($tables as $table)
-			$options[] = JHtml::_('select.option', $table, $table);
+		protected function getOptions()
+		{
+			$options = array();
+			$options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_SELECT'));
 
-		$options[] = JHtml::_('select.option', '-new-', '- Create New Table');
+			$tables = $this->getListOfExistingTables();
 
-		return $options;
-	}
+			foreach ($tables as $table)
+				$options[] = JHtml::_('select.option', $table, $table);
 
-	protected function getListOfExistingTables()
-	{
-		$prefix = database::getDBPrefix();
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql') {
-			$wheres = array();
-			$wheres[] = 'table_type = \'BASE TABLE\'';
-			$wheres[] = 'table_schema NOT IN (\'pg_catalog\', \'information_schema\')';
-			$wheres[] = 'POSITION(\'' . $prefix . 'customtables_\' IN table_name)!=1';
-			$wheres[] = 'table_name!=\'' . $prefix . 'user_keys\'';
-			$wheres[] = 'table_name!=\'' . $prefix . 'user_usergroup_map\'';
-			$wheres[] = 'table_name!=\'' . $prefix . 'usergroups\'';
-			$wheres[] = 'table_name!=\'' . $prefix . 'users\'';
+			$options[] = JHtml::_('select.option', '-new-', '- Create New Table');
 
-			$query = 'SELECT table_name FROM information_schema.tables WHERE ' . implode(' AND ', $wheres) . ' ORDER BY table_name';
-		} else {
-			$database = database::getDataBaseName();
-
-			$wheres = array();
-			$wheres[] = 'table_schema=\'' . $database . '\'';
-			$wheres[] = '!INSTR(TABLE_NAME,\'' . $prefix . 'customtables_\')';
-			$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'user_keys\'';
-			$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'user_usergroup_map\'';
-			$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'usergroups\'';
-			$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'users\'';
-
-			$query = 'SELECT TABLE_NAME AS table_name FROM information_schema.tables WHERE ' . implode(' AND ', $wheres) . ' ORDER BY TABLE_NAME';
+			return $options;
 		}
 
-		$list = array();
-		$rows = database::loadAssocList($query);
+		protected function getListOfExistingTables()
+		{
+			$prefix = database::getDBPrefix();
+			$serverType = database::getServerType();
+			if ($serverType == 'postgresql') {
+				$wheres = array();
+				$wheres[] = 'table_type = \'BASE TABLE\'';
+				$wheres[] = 'table_schema NOT IN (\'pg_catalog\', \'information_schema\')';
+				$wheres[] = 'POSITION(\'' . $prefix . 'customtables_\' IN table_name)!=1';
+				$wheres[] = 'table_name!=\'' . $prefix . 'user_keys\'';
+				$wheres[] = 'table_name!=\'' . $prefix . 'user_usergroup_map\'';
+				$wheres[] = 'table_name!=\'' . $prefix . 'usergroups\'';
+				$wheres[] = 'table_name!=\'' . $prefix . 'users\'';
 
-		foreach ($rows as $row)
-			$list[] = $row['table_name'];
+				$query = 'SELECT table_name FROM information_schema.tables WHERE ' . implode(' AND ', $wheres) . ' ORDER BY table_name';
+			} else {
+				$database = database::getDataBaseName();
 
-		return $list;
+				$wheres = array();
+				$wheres[] = 'table_schema=\'' . $database . '\'';
+				$wheres[] = '!INSTR(TABLE_NAME,\'' . $prefix . 'customtables_\')';
+				$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'user_keys\'';
+				$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'user_usergroup_map\'';
+				$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'usergroups\'';
+				$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'users\'';
+
+				$query = 'SELECT TABLE_NAME AS table_name FROM information_schema.tables WHERE ' . implode(' AND ', $wheres) . ' ORDER BY TABLE_NAME';
+			}
+
+			$list = array();
+			$rows = database::loadAssocList($query);
+
+			foreach ($rows as $row)
+				$list[] = $row['table_name'];
+
+			return $list;
+		}
+	}
+} else {
+
+	class JFormFieldAnyTables extends FormField
+	{
+		protected $type = 'anytables';
+		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
+
+		protected function getInput()
+		{
+			$data = $this->getLayoutData();
+			$data['options'] = $this->getOptions();
+			return $this->getRenderer($this->layout)->render($data);
+		}
+
+		protected function getOptions($add_empty_option = true)
+		{
+			$tables = $this->getListOfExistingTables();
+
+			$options = array();
+			if ($tables) {
+				if ($add_empty_option)
+					$options[] = ['value' => '', 'text' => common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT')];
+
+				foreach ($tables as $table)
+					$options[] = ['value' => $table, 'text' => $table];
+			}
+			return $options;
+		}
+
+		protected function getListOfExistingTables()
+		{
+			$prefix = database::getDBPrefix();
+			$serverType = database::getServerType();
+			if ($serverType == 'postgresql') {
+				$wheres = array();
+				$wheres[] = 'table_type = \'BASE TABLE\'';
+				$wheres[] = 'table_schema NOT IN (\'pg_catalog\', \'information_schema\')';
+				$wheres[] = 'POSITION(\'' . $prefix . 'customtables_\' IN table_name)!=1';
+				$wheres[] = 'table_name!=\'' . $prefix . 'user_keys\'';
+				$wheres[] = 'table_name!=\'' . $prefix . 'user_usergroup_map\'';
+				$wheres[] = 'table_name!=\'' . $prefix . 'usergroups\'';
+				$wheres[] = 'table_name!=\'' . $prefix . 'users\'';
+
+				$query = 'SELECT table_name FROM information_schema.tables WHERE ' . implode(' AND ', $wheres) . ' ORDER BY table_name';
+			} else {
+				$database = database::getDataBaseName();
+
+				$wheres = array();
+				$wheres[] = 'table_schema=\'' . $database . '\'';
+				$wheres[] = '!INSTR(TABLE_NAME,\'' . $prefix . 'customtables_\')';
+				$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'user_keys\'';
+				$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'user_usergroup_map\'';
+				$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'usergroups\'';
+				$wheres[] = 'TABLE_NAME!=\'' . $prefix . 'users\'';
+
+				$query = 'SELECT TABLE_NAME AS table_name FROM information_schema.tables WHERE ' . implode(' AND ', $wheres) . ' ORDER BY TABLE_NAME';
+			}
+
+			$list = array();
+			$rows = database::loadAssocList($query);
+
+			foreach ($rows as $row)
+				$list[] = $row['table_name'];
+
+			return $list;
+		}
 	}
 }

@@ -185,7 +185,7 @@ class Edit
 
 		if (defined('_JEXEC')) {
 			$result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '');
-			$result .= JHtml::_('form.token');
+			$result .= HTMLHelper::_('form.token');
 
 		} elseif (defined('WPINC')) {
 			//$result .= wp_nonce_field('create-record', '_wpnonce_create-record'); Plugin calls it

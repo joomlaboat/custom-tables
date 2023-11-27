@@ -163,7 +163,7 @@ foreach ($this->allTables as $table) {
 
 
     <input type="hidden" name="task" value="layouts.edit"/>
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 
     <div class="clearfix"></div>
 	<?php echo JLayoutHelper::render('layouts.details_under', $this);

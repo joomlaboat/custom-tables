@@ -11,6 +11,7 @@
 // no direct access
 use CustomTables\common;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -66,6 +67,6 @@ echo '
 	<!--<input type="hidden" name="controller" value="importtables" />-->
 	<input type="hidden" name="task" value="importtables.importtables" />
 ' . common::translate('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
-    ' . JHtml::_('form.token') . '
+    ' . HTMLHelper::_('form.token') . '
 	</form>
 	';

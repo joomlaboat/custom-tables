@@ -10,6 +10,7 @@
 
 // No direct access to this file
 use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -60,5 +61,5 @@ JHtml::_('behavior.multiselect');
         <input type="hidden" name="filter_order_Dir" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="task" value=""/>
-		<?php echo JHtml::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 </form>

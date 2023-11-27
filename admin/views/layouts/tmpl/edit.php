@@ -19,6 +19,7 @@ use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\ListOfLayouts;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $document = Factory::getDocument();
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/fieldtypes.css" rel="stylesheet">');
@@ -156,7 +157,7 @@ foreach ($this->allTables as $table) {
 
 	echo JHtml::_('bootstrap.endTab');
 	echo JHtml::_('bootstrap.endTabSet');
-	echo JHtml::_('form.token');
+	echo HTMLHelper::_('form.token');
 	echo render_onPageLoads($onPageLoads, 3);
 
 	$this->getMenuItems();

@@ -9,6 +9,7 @@
  **/
 
 use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -75,7 +76,7 @@ $isNew = $this->item->id == 0;
 
 
     <input type="hidden" name="option" value="com_customtables"/>
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 	<?php
 
 	?>

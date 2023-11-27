@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $document = Factory::getDocument();
 
@@ -71,5 +72,5 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
 		?></div>
 
     <input type="hidden" name="task" value=""/>
-	<?php echo JHtml::_('form.token'); ?>
+	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

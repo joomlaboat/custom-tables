@@ -16,6 +16,7 @@ JHtml::_('behavior.multiselect');
 
 use CustomTables\common;
 use CustomTables\IntegrityChecks;
+use Joomla\CMS\HTML\HTMLHelper;
 
 ?>
 <?php /*
@@ -70,5 +71,5 @@ use CustomTables\IntegrityChecks;
         <input type="hidden" name="filter_order_Dir" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="task" value=""/>
-		<?php echo JHtml::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 </form>

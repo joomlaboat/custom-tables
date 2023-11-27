@@ -246,7 +246,7 @@ foreach ($this->allTables as $table) {
         <div>
             <input type="hidden" name="task" value="fields.edit"/>
             <input type="hidden" name="tableid" value="<?php echo $this->tableid; ?>"/>
-			<?php echo JHtml::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
         </div>
 
 

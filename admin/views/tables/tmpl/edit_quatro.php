@@ -230,12 +230,14 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
         <div>
             <input type="hidden" name="task" value="tables.edit"/>
             <input type="hidden" name="originaltableid" value="<?php echo $this->item->id; ?>"/>
-			<?php echo JHtml::_('form.token'); ?>
+			<?php
+			echo HTMLHelper::_('form.token');
+			//echo HTMLHelper::_('form.token'); ?>
         </div>
     </div>
 
     <div class="clearfix"></div>
-	<?php echo JLayoutHelper::render('tables.details_under', $this); ?>
+	<?php //echo JLayoutHelper::render('tables.details_under', $this); ?>
 
 	<?php if (!$this->ct->Env->advancedTagProcessor): ?>
         <script>

@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if ($this->ordering_realfieldname != '') {
 	$saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
@@ -89,5 +90,5 @@ if ($this->ordering_realfieldname != '') {
         <input type="hidden" name="task" value=""/>
         <input type="hidden" name="tableid" value="<?php echo $this->ct->Table->tableid; ?>"/>
 
-		<?php echo JHtml::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 </form>
