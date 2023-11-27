@@ -9,20 +9,21 @@
  **/
 // No direct access to this file access');
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\TwigProcessor;
+use Joomla\CMS\HTML\HTMLHelper;
 
 $recordLayout = '';
 
 foreach ($this->ct->Table->fields as $field) {
-    if ($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering') {
-        if ($field['type'] == 'text' or $field['type'] == 'multilangtext' or $field['type'] == 'string' or $field['type'] == 'multilangstring')
-            $recordLayout .= '<td><a href="****link****">{{ ' . $field['fieldname'] . '("words",20) }}</a></td>';
-        else
-            $recordLayout .= '<td><a href="****link****">{{ ' . $field['fieldname'] . '}}</a></td>';
-    }
+	if ($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering') {
+		if ($field['type'] == 'text' or $field['type'] == 'multilangtext' or $field['type'] == 'string' or $field['type'] == 'multilangstring')
+			$recordLayout .= '<td><a href="****link****">{{ ' . $field['fieldname'] . '("words",20) }}</a></td>';
+		else
+			$recordLayout .= '<td><a href="****link****">{{ ' . $field['fieldname'] . '}}</a></td>';
+	}
 }
 
 $twig = new TwigProcessor($this->ct, $recordLayout);
@@ -30,18 +31,18 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 ?>
 <?php foreach ($this->items as $i => $item):
 
-    $item_array = (array)$item;
-    ?>
+	$item_array = (array)$item;
+	?>
 
     <tr class="row<?php echo $i % 2; ?>">
 
         <td class="nowrap center">
-            <?php if ($this->canEdit): ?>
-                <?php echo JHtml::_('grid.id', $i, $item_array[$this->ct->Table->realidfieldname]); ?>
-            <?php endif; ?>
+			<?php if ($this->canEdit): ?>
+				<?php echo JHtml::_('grid.id', $i, $item_array[$this->ct->Table->realidfieldname]); ?>
+			<?php endif; ?>
         </td>
 
-        <?php if ($this->ordering_realfieldname != ''): ?>
+		<?php if ($this->ordering_realfieldname != ''): ?>
             <td class="order nowrap center hidden-phone">
 			<span class="sortable-handler">
 				<i class="icon-menu"></i>
@@ -49,32 +50,32 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
                 <input type="text" style="display:none" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
                        class="width-20 text-area-order "/>
             </td>
-        <?php endif; ?>
+		<?php endif; ?>
 
-        <?php
+		<?php
 
-        $link = JURI::root(false) . 'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item_array[$this->ct->Table->realidfieldname];
+		$link = JURI::root(false) . 'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item_array[$this->ct->Table->realidfieldname];
 
-        $result = $twig->process($item_array);
-        if ($twig->errorMessage !== null)
-            $this->ct->errors[] = $twig->errorMessage;
+		$result = $twig->process($item_array);
+		if ($twig->errorMessage !== null)
+			$this->ct->errors[] = $twig->errorMessage;
 
-        echo str_replace('****link****', $link, $result);
+		echo str_replace('****link****', $link, $result);
 
-        ?>
+		?>
 
-        <?php if ($this->ct->Table->published_field_found): ?>
+		<?php if ($this->ct->Table->published_field_found): ?>
             <td class="center">
-                <?php if ($this->canState) : ?>
-                    <?php echo JHtml::_('jgrid.published', $item->listing_published, $i, 'listofrecords.', true, 'cb'); ?>
-                <?php else: ?>
-                    <?php echo JHtml::_('jgrid.published', $item->listing_published, $i, 'listofrecords.', false, 'cb'); ?>
-                <?php endif; ?>
+				<?php if ($this->canState) : ?>
+					<?php echo HtmlHelper::_('jgrid.published', $item->listing_published, $i, 'listofrecords.', true, 'cb'); ?>
+				<?php else: ?>
+					<?php echo HtmlHelper::_('jgrid.published', $item->listing_published, $i, 'listofrecords.', false, 'cb'); ?>
+				<?php endif; ?>
             </td>
-        <?php endif; ?>
+		<?php endif; ?>
 
         <td class="nowrap center hidden-phone">
-            <?php echo $item_array[$this->ct->Table->realidfieldname]; ?>
+			<?php echo $item_array[$this->ct->Table->realidfieldname]; ?>
         </td>
     </tr>
 <?php endforeach; ?>

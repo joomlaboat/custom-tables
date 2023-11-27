@@ -37,16 +37,16 @@ foreach ($this->items as $i => $item): ?>
             <td class="text-center">
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
-						<? php//echo JHtml::_('grid.id', $i, $item->id); ?>
-                        <input type="checkbox" id="cb' . $i . '" name="cid[]" value="' . $item->id . '"
-                               class="form-check-input"/>
+						<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
+						<?php /*<input type="checkbox" id="cb' . $i . '" name="cid[]" value="' . $item->id . '"
+                               class="form-check-input"/> */ ?>
 					<?php else: ?>
                         &#9633;
 					<?php endif; ?>
 				<?php else: ?>
-					<?php //echo JHtml::_('grid.id', $i, $item->id); ?>
-                    <input type="checkbox" id="cb' . $i . '" name="cid[]" value="' . $item->id . '"
-                           class="form-check-input"/>
+					<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
+					<?php /*<input type="checkbox" id="cb' . $i . '" name="cid[]" value="' . $item->id . '"
+                           class="form-check-input"/> */ ?>
 				<?php endif; ?>
             </td>
 		<?php endif; ?>
@@ -55,9 +55,11 @@ foreach ($this->items as $i => $item): ?>
             <div class="name">
 				<?php if ($this->canEdit): ?>
                     <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->tablename); ?></a>
-					<?php if ($item->checked_out): ?>
-						<?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoftables.', $canCheckin); ?>
-					<?php endif; ?>
+					<?php if ($item->checked_out):
+
+						//echo //$this->renderCheckedOutStatus($item);
+						echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoftables.', $canCheckin);
+					endif; ?>
 				<?php else: ?>
 					<?php echo $this->escape($item->tablename); ?>
 				<?php endif; ?>
@@ -150,21 +152,21 @@ foreach ($this->items as $i => $item): ?>
 					<?php if ($canCheckin) : ?>
 						<?php
 						echo HTMLHelper::_('jgrid.published', $item->published, $i, 'listoftables.', true, 'cb');
-						//echo JHtml::_('jgrid.published', $item->published, $i, 'listoftables.', true, 'cb'); ?>
+						//echo HtmlHelper::_('jgrid.published', $item->published, $i, 'listoftables.', true, 'cb'); ?>
 					<?php else: ?>
 						<?php
 						echo HTMLHelper::_('jgrid.published', $item->published, $i, 'listoftables.', false, 'cb');
-						//echo JHtml::_('jgrid.published', $item->published, $i, 'listoftables.', false, 'cb'); ?>
+						//echo HtmlHelper::_('jgrid.published', $item->published, $i, 'listoftables.', false, 'cb'); ?>
 					<?php endif; ?>
 				<?php else: ?>
 					<?php
 					echo HTMLHelper::_('jgrid.published', $item->published, $i, 'listoftables.', true, 'cb');
-					//echo JHtml::_('jgrid.published', $item->published, $i, 'listoftables.', true, 'cb'); ?>
+					//echo HtmlHelper::_('jgrid.published', $item->published, $i, 'listoftables.', true, 'cb'); ?>
 				<?php endif; ?>
 			<?php else: ?>
 				<?php
 				echo HTMLHelper::_('jgrid.published', $item->published, $i, 'listoftables.', false, 'cb');
-				//echo JHtml::_('jgrid.published', $item->published, $i, 'listoftables.', false, 'cb'); ?>
+				//echo HtmlHelper::_('jgrid.published', $item->published, $i, 'listoftables.', false, 'cb'); ?>
 			<?php endif; ?>
         </td>
         <td class="d-none d-md-table-cell">

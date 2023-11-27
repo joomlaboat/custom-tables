@@ -158,7 +158,7 @@ class ListOfFields
 		if ($this->canEdit) {
 			$result .= '<a href="' . $this->editLink . '&id=' . $item->id . '">' . $this->escape($item->fieldname) . '</a>';
 			if ($item->checked_out)
-				$result .= JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoffields.', $canCheckin);
+				$result .= HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoffields.', $canCheckin);
 		} else
 			$result .= $this->escape($item->fieldname);
 
@@ -207,16 +207,16 @@ class ListOfFields
 		if ($this->canState) {
 			if ($item->checked_out) {
 				if ($canCheckin)
-					$result .= JHtml::_('jgrid.published', $item->published, $i, 'listoffields.', true, 'cb');
+					$result .= HtmlHelper::_('jgrid.published', $item->published, $i, 'listoffields.', true, 'cb');
 				else
-					$result .= JHtml::_('jgrid.published', $item->published, $i, 'listoffields.', false, 'cb');
+					$result .= HtmlHelper::_('jgrid.published', $item->published, $i, 'listoffields.', false, 'cb');
 
 			} else {
 
-				$result .= JHtml::_('jgrid.published', $item->published, $i, 'listoffields.', true, 'cb');
+				$result .= HtmlHelper::_('jgrid.published', $item->published, $i, 'listoffields.', true, 'cb');
 			}
 		} else {
-			$result .= JHtml::_('jgrid.published', $item->published, $i, 'listoffields.', false, 'cb');
+			$result .= HtmlHelper::_('jgrid.published', $item->published, $i, 'listoffields.', false, 'cb');
 		}
 		$result .= '</td>';
 

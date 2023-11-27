@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * Pagination Class.  Provides a common interface for content pagination for the
@@ -511,7 +512,7 @@ class JESPagination// extends JObject
 	public function orderUpIcon($i, $condition = true, $task = 'orderup', $alt = 'JLIB_HTML_MOVE_UP', $enabled = true, $checkbox = 'cb')
 	{
 		if (($i > 0 || ($i + $this->limitstart > 0)) && $condition) {
-			return JHtml::_('jgrid.orderUp', $i, $task, '', $alt, $enabled, $checkbox);
+			return HtmlHelper::_('jgrid.orderUp', $i, $task, '', $alt, $enabled, $checkbox);
 		} else {
 			return '&#160;';
 		}
@@ -534,7 +535,7 @@ class JESPagination// extends JObject
 	public function orderDownIcon($i, $n, $condition = true, $task = 'orderdown', $alt = 'JLIB_HTML_MOVE_DOWN', $enabled = true, $checkbox = 'cb')
 	{
 		if (($i < $n - 1 || $i + $this->limitstart < $this->total - 1) && $condition) {
-			return JHtml::_('jgrid.orderDown', $i, $task, '', $alt, $enabled, $checkbox);
+			return HtmlHelper::_('jgrid.orderDown', $i, $task, '', $alt, $enabled, $checkbox);
 		} else {
 			return '&#160;';
 		}

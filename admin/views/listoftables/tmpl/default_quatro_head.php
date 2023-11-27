@@ -21,8 +21,8 @@ HTMLHelper::_('behavior.multiselect');
 <tr>
 	<?php if ($this->canEdit && $this->canState): ?>
         <th style="width:20px;" class="nowrap center">
-			<?php //echo JHtml::_('grid.checkall'); ?>
-            <input type="checkbox" id="check-all" class="form-check-input" onclick="Joomla.isChecked(this.checked);"/>
+			<?php echo HtmlHelper::_('grid.checkall'); ?>
+			<?php /* <input type="checkbox" id="check-all" class="form-check-input" onclick="Joomla.isChecked(this.checked);"/> */ ?>
         </th>
 	<?php endif; ?>
 

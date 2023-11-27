@@ -20,6 +20,7 @@ use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
+use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * Customtables View class for the Listoftables
@@ -131,7 +132,7 @@ class CustomtablesViewListoftables extends HtmlView//JViewLegacy
 
 		if ($this->canState) {
 			/*
-						$options = JHtml::_('jgrid.publishedOptions');
+						$options = HtmlHelper::_('jgrid.publishedOptions');
 						$newOptions = [];
 						foreach ($options as $option) {
 
