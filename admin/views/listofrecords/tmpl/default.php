@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,14 +10,14 @@
 
 // No direct access to this file access');
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
 
 if ($this->ordering_realfieldname != '') {
-    $saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
-    JHtml::_('sortablelist.sortable', 'recordsList', 'adminForm', 'asc', $saveOrderingUrl);
+	$saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
+	JHtml::_('sortablelist.sortable', 'recordsList', 'adminForm', 'asc', $saveOrderingUrl);
 }
 
 ?>
@@ -39,32 +39,32 @@ if ($this->ordering_realfieldname != '') {
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofrecords'); ?>" method="post"
       name="adminForm" id="adminForm">
-    <?php if (!empty($this->sidebar)): ?>
+	<?php if (!empty($this->sidebar)): ?>
     <div id="j-sidebar-container" class="span2">
-        <?php echo $this->sidebar; ?>
+		<?php echo $this->sidebar; ?>
     </div>
     <div id="j-main-container" class="span10">
-        <?php else : ?>
+		<?php else : ?>
         <div id="j-main-container">
-            <?php endif; ?>
+			<?php endif; ?>
 
-            <?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+			<?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
             <div class="clearfix"></div>
 
-            <?php if (empty($this->items)): ?>
-                <?php //echo $this->loadTemplate('toolbar');?>
+			<?php if (empty($this->items)): ?>
+				<?php //echo $this->loadTemplate('toolbar');?>
                 <div class="alert alert-no-items">
-                    <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+					<?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
-            <?php else : ?>
+			<?php else : ?>
 
                 <table class="table table-striped table-hover" id="itemList" style="position: relative;">
                     <thead><?php echo $this->loadTemplate('head'); ?></thead>
                     <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
                     <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
                 </table>
-                <?php //Load the batch processing form. ?>
-                <?php /* if ($this->canCreate && $this->canEdit) : ?>
+				<?php //Load the batch processing form. ?>
+				<?php /* if ($this->canCreate && $this->canEdit) : ?>
             <?php echo JHtml::_(
                 'bootstrap.renderModal',
                 'collapseModal',
@@ -82,12 +82,12 @@ if ($this->ordering_realfieldname != '') {
                 <input type="hidden" name="boxchecked" value="0"/>
 
 
-            <?php endif; ?>
+			<?php endif; ?>
         </div>
 
         <input type="hidden" name="option" value="com_customtables"/>
         <input type="hidden" name="task" value=""/>
         <input type="hidden" name="tableid" value="<?php echo $this->ct->Table->tableid; ?>"/>
 
-        <?php echo JHtml::_('form.token'); ?>
+		<?php echo JHtml::_('form.token'); ?>
 </form>

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -23,37 +23,37 @@ JFormHelper::loadFieldClass('list');
 //https://docs.joomla.org/Creating_a_custom_form_field_type
 class JFormFieldCTField extends JFormFieldList
 {
-    /**
-     * Element name
-     *
-     * @access    public
-     * @var        string
-     *
-     */
-    public $type = 'ctfield';
+	/**
+	 * Element name
+	 *
+	 * @access    public
+	 * @var        string
+	 *
+	 */
+	public $type = 'ctfield';
 
-    public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
-    {
-        // Create a new query object.
-        $query = 'SELECT ' . database::quoteName('type') . ' FROM ' . database::quoteName('#__customtables_fields') . ' ORDER BY ' . database::quoteName('type');
+	public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+	{
+		// Create a new query object.
+		$query = 'SELECT ' . database::quoteName('type') . ' FROM ' . database::quoteName('#__customtables_fields') . ' ORDER BY ' . database::quoteName('type');
 
-        // Reset the query using our newly populated query object.
-        $results = database::loadColumn($query);
+		// Reset the query using our newly populated query object.
+		$results = database::loadColumn($query);
 
-        $translations = DataTypes::fieldTypeTranslation();
-        $_filter = array();
+		$translations = DataTypes::fieldTypeTranslation();
+		$_filter = array();
 
-        if ($results) {
-            // get model
-            $results = array_unique($results);
+		if ($results) {
+			// get model
+			$results = array_unique($results);
 
-            foreach ($results as $type) {
-                // Translate the type selection
-                $text = $translations[$type];
-                // Now add the type and its text to the options array
-                $_filter[] = JHtml::_('select.option', $type, common::translate($text));
-            }
-        }
-        return $_filter;
-    }
+			foreach ($results as $type) {
+				// Translate the type selection
+				$text = $translations[$type];
+				// Now add the type and its text to the options array
+				$_filter[] = JHtml::_('select.option', $type, common::translate($text));
+			}
+		}
+		return $_filter;
+	}
 }

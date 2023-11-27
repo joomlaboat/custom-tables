@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 $currentURL = JoomlaBasicMisc::curPageURL();
@@ -18,9 +18,9 @@ $cleanURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'action');
 $cleanURL = JoomlaBasicMisc::deleteURLQueryOption($cleanURL, 'user');
 
 if (!str_contains($cleanURL, "?"))
-    $cleanURL .= '?';
+	$cleanURL .= '?';
 else
-    $cleanURL .= '&';
+	$cleanURL .= '&';
 
 echo '
 <script>
@@ -43,24 +43,24 @@ echo $this->userSelector;
 echo $this->tableSelector;
 
 echo '<div class="datagrid">'
-    . '<table>'
-    . '<thead>'
-    . '<tr>'
-    . '<th>A</th>'
-    . '<th style="text-align:left;">User</th>'
-    . '<th style="text-align:left;">Time</th>'
-    . '<th style="text-align:left;">Table</th>'
-    . '<th style="text-align:left;">Record</th>'
-    . '<th style="text-align:left;">Action</th>'
-    . '</tr>'
-    . '</thead>'
-    . '<tbody>';
+	. '<table>'
+	. '<thead>'
+	. '<tr>'
+	. '<th>A</th>'
+	. '<th style="text-align:left;">User</th>'
+	. '<th style="text-align:left;">Time</th>'
+	. '<th style="text-align:left;">Table</th>'
+	. '<th style="text-align:left;">Record</th>'
+	. '<th style="text-align:left;">Action</th>'
+	. '</tr>'
+	. '</thead>'
+	. '<tbody>';
 //Content
 foreach ($this->records as $rec) {
-    echo $this->renderLogLine($rec);
+	echo $this->renderLogLine($rec);
 }
 echo '</tbody></table>'
-    . '</div>';
+	. '</div>';
 
 
 

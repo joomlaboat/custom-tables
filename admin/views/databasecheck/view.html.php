@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 // import Joomla view library
@@ -29,81 +29,81 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class CustomtablesViewDataBaseCheck extends JViewLegacy
 {
-    /**
-     * display method of View
-     * @return void
-     */
-    var CT $ct;
+	/**
+	 * display method of View
+	 * @return void
+	 */
+	var CT $ct;
 
-    var $tables = false;
-    public $activeFilters;
-    public $diagram;
+	var $tables = false;
+	public $activeFilters;
+	public $diagram;
 
-    public function display($tpl = null)
-    {
-        $version = new Version;
-        $this->version = (int)$version->getShortVersion();
-        $this->ct = new CT;
-        $this->state = $this->get('State');
+	public function display($tpl = null)
+	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
+		$this->ct = new CT;
+		$this->state = $this->get('State');
 
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-diagram.php');
-        if ($this->version < 4)
-            $this->diagram = new Diagram($this->state->get('filter.tablecategory'));
-        else
-            $this->diagram = new Diagram($this->state->get('list.tablecategory'));
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-diagram.php');
+		if ($this->version < 4)
+			$this->diagram = new Diagram($this->state->get('filter.tablecategory'));
+		else
+			$this->diagram = new Diagram($this->state->get('list.tablecategory'));
 
-        if ($this->ct->Env->version >= 4) {
-            $this->filterForm = $this->get('FilterForm');
-            $this->activeFilters = $this->get('ActiveFilters');
-        }
+		if ($this->ct->Env->version >= 4) {
+			$this->filterForm = $this->get('FilterForm');
+			$this->activeFilters = $this->get('ActiveFilters');
+		}
 
-        if ($this->getLayout() !== 'modal') {
-            // Include helper submenu
-            CustomtablesHelper::addSubmenu('databasecheck');
-            //$this->addToolBar();
-            if ($this->version < 4) {
-                $this->addToolbar_3();
-                $this->sidebar = JHtmlSidebar::render();
-            } else
-                $this->addToolbar_4();
-        }
+		if ($this->getLayout() !== 'modal') {
+			// Include helper submenu
+			CustomtablesHelper::addSubmenu('databasecheck');
+			//$this->addToolBar();
+			if ($this->version < 4) {
+				$this->addToolbar_3();
+				$this->sidebar = JHtmlSidebar::render();
+			} else
+				$this->addToolbar_4();
+		}
 
-        if ($this->version < 4)
-            parent::display($tpl);
-        else
-            parent::display('quatro');
+		if ($this->version < 4)
+			parent::display($tpl);
+		else
+			parent::display('quatro');
 
-        // Set the document
-        $document = Factory::getDocument();
-        $this->setDocument($document);
-    }
+		// Set the document
+		$document = Factory::getDocument();
+		$this->setDocument($document);
+	}
 
-    protected function addToolBar_3()
-    {
-        JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
-        JHtmlSidebar::setAction('index.php?option=com_customtables&view=databasecheck');
-        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+	protected function addToolBar_3()
+	{
+		JToolBarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
+		JHtmlSidebar::setAction('index.php?option=com_customtables&view=databasecheck');
+		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
-        $CTCategory = JFormHelper::loadFieldType('CTCategory', false);
-        $CTCategoryOptions = $CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
+		$CTCategory = JFormHelper::loadFieldType('CTCategory', false);
+		$CTCategoryOptions = $CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
 
-        JHtmlSidebar::addFilter(
-            common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
-            'filter_tablecategory',
-            JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
-        );
-    }
+		JHtmlSidebar::addFilter(
+			common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
+			'filter_tablecategory',
+			JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
+		);
+	}
 
-    protected function addToolbar_4()
-    {
-        // Get the toolbar object instance
-        $toolbar = Toolbar::getInstance('toolbar');
-        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
-    }
+	protected function addToolbar_4()
+	{
+		// Get the toolbar object instance
+		$toolbar = Toolbar::getInstance('toolbar');
+		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
+	}
 
-    public function setDocument(Joomla\CMS\Document\Document $document): void
-    {
-        $document->setTitle(common::translate('COM_CUSTOMTABLES_DATABASECHECK'));
-        $document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
-    }
+	public function setDocument(Joomla\CMS\Document\Document $document): void
+	{
+		$document->setTitle(common::translate('COM_CUSTOMTABLES_DATABASECHECK'));
+		$document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
+	}
 }

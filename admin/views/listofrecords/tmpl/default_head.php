@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,52 +12,52 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 ?>
 <tr>
     <th style="width:20px;" class="nowrap center">
-        <?php echo JHtml::_('grid.checkall'); ?>
+		<?php echo JHtml::_('grid.checkall'); ?>
     </th>
 
-    <?php if ($this->ordering_realfieldname != ''): ?>
+	<?php if ($this->ordering_realfieldname != ''): ?>
 
         <th style="width:1%;" class="nowrap center hidden-phone">
             <i class="icon-menu-2"></i>
         </th>
 
-    <?php endif; ?>
+	<?php endif; ?>
 
-    <?php
+	<?php
 
-    foreach ($this->ct->Table->fields as $field) {
-        if ($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering') {
-            $id = 'fieldtitle';
-            $title = $field[$id];
+	foreach ($this->ct->Table->fields as $field) {
+		if ($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering') {
+			$id = 'fieldtitle';
+			$title = $field[$id];
 
-            if ($this->ct->Languages->Postfix != '')
-                $id .= '_' . $this->ct->Languages->Postfix;
+			if ($this->ct->Languages->Postfix != '')
+				$id .= '_' . $this->ct->Languages->Postfix;
 
-            if (isset($field[$id]))
-                $title = $field[$id];
+			if (isset($field[$id]))
+				$title = $field[$id];
 
-            echo '
+			echo '
 						<th class="nowrap" >' . $title . '</th>
 					';
-        }
-    }
+		}
+	}
 
-    ?>
+	?>
 
-    <?php if ($this->ct->Table->published_field_found): ?>
+	<?php if ($this->ct->Table->published_field_found): ?>
         <th class="nowrap hidden-phone center">
-            <?php echo common::translate('COM_CUSTOMTABLES_RECORDS_STATUS'); ?>
+			<?php echo common::translate('COM_CUSTOMTABLES_RECORDS_STATUS'); ?>
         </th>
-    <?php endif; ?>
+	<?php endif; ?>
 
     <th style="width:5px;" class="nowrap center hidden-phone">
-        <?php echo common::translate('COM_CUSTOMTABLES_RECORDS_ID'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_RECORDS_ID'); ?>
     </th>
 
 </tr>

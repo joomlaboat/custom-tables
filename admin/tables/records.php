@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -24,33 +24,33 @@ jimport('joomla.database.table');
  */
 class CustomtablesTableRecords extends JTable
 {
-    var $id = null;
+	var $id = null;
 
-    /**
-     * Constructor
-     *
-     * @param object Database connector object
-     */
+	/**
+	 * Constructor
+	 *
+	 * @param object Database connector object
+	 */
 
-    function __construct(&$db)
-    {
-        $tableid = common::inputGetInt('tableid', 0);
-        if ($tableid != 0) {
-            $table = ESTables::getTableRowByID($tableid);
-            if (!is_object($table) and $table == 0) {
-                Factory::getApplication()->enqueueMessage('Table not found.', 'error');
-                return null;
-            }
-        } else {
-            Factory::getApplication()->enqueueMessage('Table ID cannot be 0.', 'error');
-            return null;
-        }
+	function __construct(&$db)
+	{
+		$tableid = common::inputGetInt('tableid', 0);
+		if ($tableid != 0) {
+			$table = ESTables::getTableRowByID($tableid);
+			if (!is_object($table) and $table == 0) {
+				Factory::getApplication()->enqueueMessage('Table not found.', 'error');
+				return null;
+			}
+		} else {
+			Factory::getApplication()->enqueueMessage('Table ID cannot be 0.', 'error');
+			return null;
+		}
 
-        if ($table->customtablename != '')
-            $realtablename = $table->customtablename;
-        else
-            $realtablename = '#__customtables_table_' . $table->tablename;
+		if ($table->customtablename != '')
+			$realtablename = $table->customtablename;
+		else
+			$realtablename = '#__customtables_table_' . $table->tablename;
 
-        parent::__construct($realtablename, 'id', $db);
-    }
+		parent::__construct($realtablename, 'id', $db);
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -15,7 +15,7 @@ use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 $ct = new CT;
@@ -27,97 +27,97 @@ $model->listing_id = common::inputGetCmd("listing_id");
 $user = new CTUser();
 
 if (!$ct->CheckAuthorization(5)) {
-    //not authorized
-    Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+	//not authorized
+	Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 
 
-    $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
-    $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
-    return;
+	$link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
+	$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+	return;
 } else {
-    switch (common::inputGetCmd('task')) {
+	switch (common::inputGetCmd('task')) {
 
-        case 'add' :
+		case 'add' :
 
-            $model = $this->getModel('editfiles');
+			$model = $this->getModel('editfiles');
 
-            if ($model->add()) {
-                $msg = common::translate('COM_CUSTOMTABLES_FILE_ADDED');
-            } else {
-                $msg = common::translate('COM_CUSTOMTABLES_FILE_NOT_ADDED');
-            }
+			if ($model->add()) {
+				$msg = common::translate('COM_CUSTOMTABLES_FILE_ADDED');
+			} else {
+				$msg = common::translate('COM_CUSTOMTABLES_FILE_NOT_ADDED');
+			}
 
-            $fileboxname = common::inputGetCmd('fileboxname');
-            $listing_id = common::inputGet("listing_id", 0, 'INT');
-            $returnto = common::inputGet('returnto', '', 'BASE64');
-            $Itemid = common::inputGet('Itemid', 0, 'INT');
+			$fileboxname = common::inputGetCmd('fileboxname');
+			$listing_id = common::inputGet("listing_id", 0, 'INT');
+			$returnto = common::inputGet('returnto', '', 'BASE64');
+			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
-            $link = 'index.php?option=com_customtables&view=editfiles'
+			$link = 'index.php?option=com_customtables&view=editfiles'
 
-                . '&fileboxname=' . $fileboxname
-                . '&listing_id=' . $listing_id
-                . '&returnto=' . $returnto
-                . '&Itemid=' . $Itemid;
+				. '&fileboxname=' . $fileboxname
+				. '&listing_id=' . $listing_id
+				. '&returnto=' . $returnto
+				. '&Itemid=' . $Itemid;
 
-            $this->setRedirect($link, $msg);
+			$this->setRedirect($link, $msg);
 
-            break;
+			break;
 
-        case 'delete' :
+		case 'delete' :
 
-            $model = $this->getModel('editfiles');
+			$model = $this->getModel('editfiles');
 
-            if ($model->delete()) {
-                $msg = common::translate('COM_CUSTOMTABLES_FILE_DELETED');
-            } else {
-                $msg = common::translate('COM_CUSTOMTABLES_FILE_NOT_DELETED');
-            }
-            //$establename=common::inputGetCmd( 'establename');
-            $fileboxname = common::inputGetCmd('fileboxname');
-            $listing_id = common::inputGet("listing_id", 0, 'INT');
-            $returnto = common::inputGet('returnto', '', 'BASE64');
-            $Itemid = common::inputGet('Itemid', 0, 'INT');
+			if ($model->delete()) {
+				$msg = common::translate('COM_CUSTOMTABLES_FILE_DELETED');
+			} else {
+				$msg = common::translate('COM_CUSTOMTABLES_FILE_NOT_DELETED');
+			}
+			//$establename=common::inputGetCmd( 'establename');
+			$fileboxname = common::inputGetCmd('fileboxname');
+			$listing_id = common::inputGet("listing_id", 0, 'INT');
+			$returnto = common::inputGet('returnto', '', 'BASE64');
+			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
-            $link = 'index.php?option=com_customtables&view=editfiles'
+			$link = 'index.php?option=com_customtables&view=editfiles'
 
-                . '&fileboxname=' . $fileboxname
-                . '&listing_id=' . $listing_id
-                . '&returnto=' . $returnto
-                . '&Itemid=' . $Itemid;
+				. '&fileboxname=' . $fileboxname
+				. '&listing_id=' . $listing_id
+				. '&returnto=' . $returnto
+				. '&Itemid=' . $Itemid;
 
-            $this->setRedirect($link, $msg);
+			$this->setRedirect($link, $msg);
 
-            break;
+			break;
 
-        case 'saveorder' :
+		case 'saveorder' :
 
-            $model = $this->getModel('editfiles');
-
-
-            if ($model->reorder()) {
-                $msg = common::translate('COM_CUSTOMTABLES_FILE_ORDER_SAVED');
-            } else {
-                $msg = common::translate('COM_CUSTOMTABLES_FILE_ORDER_NOT_SAVED');
-            }
-            $returnto = common::inputGet('returnto', '', 'BASE64');
-
-            $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+			$model = $this->getModel('editfiles');
 
 
-            $this->setRedirect($link, $msg);
+			if ($model->reorder()) {
+				$msg = common::translate('COM_CUSTOMTABLES_FILE_ORDER_SAVED');
+			} else {
+				$msg = common::translate('COM_CUSTOMTABLES_FILE_ORDER_NOT_SAVED');
+			}
+			$returnto = common::inputGet('returnto', '', 'BASE64');
 
-            break;
+			$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
 
-        case 'cancel' :
 
-            $msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
-            $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+			$this->setRedirect($link, $msg);
 
-            $this->setRedirect($link, $msg);
+			break;
 
-            break;
-        default:
+		case 'cancel' :
 
-            parent::display();
-    }
+			$msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
+			$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+
+			$this->setRedirect($link, $msg);
+
+			break;
+		default:
+
+			parent::display();
+	}
 }

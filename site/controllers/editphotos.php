@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -14,7 +14,7 @@ use CustomTables\CT;
 use CustomTables\CTUser;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 $ct = new CT;
@@ -22,85 +22,85 @@ $model = $this->getModel('edititem');
 $user = new CTUser();
 
 if (!$ct->CheckAuthorization(1)) {
-    //not authorized
-    $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
-    $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+	//not authorized
+	$link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
+	$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 } else {
-    switch (common::inputGetCmd('task')) {
-        case 'add' :
-            $model = $this->getModel('editphotos');
-            $model->load($ct);
+	switch (common::inputGetCmd('task')) {
+		case 'add' :
+			$model = $this->getModel('editphotos');
+			$model->load($ct);
 
-            if ($model->add()) {
-                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_ADDED');
-            } else {
-                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_ADDED');
-            }
+			if ($model->add()) {
+				$msg = common::translate('COM_CUSTOMTABLES_IMAGE_ADDED');
+			} else {
+				$msg = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_ADDED');
+			}
 
-            $tableName = common::inputGetCmd('establename');
-            $galleryName = common::inputGet('galleryname', '', 'CMD');
-            $listing_id = common::inputGet("listing_id", 0, 'INT');
-            $returnto = common::inputGet('returnto', '', 'BASE64');
-            $Itemid = common::inputGet('Itemid', 0, 'INT');
+			$tableName = common::inputGetCmd('establename');
+			$galleryName = common::inputGet('galleryname', '', 'CMD');
+			$listing_id = common::inputGet("listing_id", 0, 'INT');
+			$returnto = common::inputGet('returnto', '', 'BASE64');
+			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
-            $link = 'index.php?option=com_customtables&view=editphotos'
-                . '&establename=' . $tableName
-                . '&galleryname=' . $galleryName
-                . '&listing_id=' . $listing_id
-                . '&returnto=' . $returnto
-                . '&Itemid=' . $Itemid;
+			$link = 'index.php?option=com_customtables&view=editphotos'
+				. '&establename=' . $tableName
+				. '&galleryname=' . $galleryName
+				. '&listing_id=' . $listing_id
+				. '&returnto=' . $returnto
+				. '&Itemid=' . $Itemid;
 
-            $this->setRedirect($link, $msg);
-            break;
+			$this->setRedirect($link, $msg);
+			break;
 
-        case 'delete' :
-            $model = $this->getModel('editphotos');
-            $model->load($ct);
+		case 'delete' :
+			$model = $this->getModel('editphotos');
+			$model->load($ct);
 
-            if ($model->delete()) {
-                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_DELETED');
-            } else {
-                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_DELETED');
-            }
+			if ($model->delete()) {
+				$msg = common::translate('COM_CUSTOMTABLES_IMAGE_DELETED');
+			} else {
+				$msg = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_DELETED');
+			}
 
-            $tableName = common::inputGetCmd('establename');
-            $galleryName = common::inputGet('galleryname', '', 'CMD');
-            $listing_id = common::inputGet("listing_id", 0, 'INT');
-            $returnto = common::inputGet('returnto', '', 'BASE64');
-            $Itemid = common::inputGet('Itemid', 0, 'INT');
+			$tableName = common::inputGetCmd('establename');
+			$galleryName = common::inputGet('galleryname', '', 'CMD');
+			$listing_id = common::inputGet("listing_id", 0, 'INT');
+			$returnto = common::inputGet('returnto', '', 'BASE64');
+			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
-            $link = 'index.php?option=com_customtables&view=editphotos'
-                . '&establename=' . $tableName
-                . '&galleryname=' . $galleryName
-                . '&listing_id=' . $listing_id
-                . '&returnto=' . $returnto
-                . '&Itemid=' . $Itemid;
+			$link = 'index.php?option=com_customtables&view=editphotos'
+				. '&establename=' . $tableName
+				. '&galleryname=' . $galleryName
+				. '&listing_id=' . $listing_id
+				. '&returnto=' . $returnto
+				. '&Itemid=' . $Itemid;
 
-            $this->setRedirect($link, $msg);
-            break;
+			$this->setRedirect($link, $msg);
+			break;
 
-        case 'saveorder' :
-            $model = $this->getModel('editphotos');
-            $model->load($ct);
+		case 'saveorder' :
+			$model = $this->getModel('editphotos');
+			$model->load($ct);
 
-            if ($model->reorder()) {
-                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_SAVED');
-            } else {
-                $msg = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_NOT_SAVED');
-            }
+			if ($model->reorder()) {
+				$msg = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_SAVED');
+			} else {
+				$msg = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_NOT_SAVED');
+			}
 
-            $returnto = common::inputGet('returnto', '', 'BASE64');
+			$returnto = common::inputGet('returnto', '', 'BASE64');
 
-            $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
-            $this->setRedirect($link, $msg);
-            break;
+			$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+			$this->setRedirect($link, $msg);
+			break;
 
-        case 'cancel' :
-            $msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
-            $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
-            $this->setRedirect($link, $msg);
-            break;
-        default:
-            parent::display();
-    }
+		case 'cancel' :
+			$msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
+			$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+			$this->setRedirect($link, $msg);
+			break;
+		default:
+			parent::display();
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,7 +12,7 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 ?>
@@ -36,9 +36,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
         if (confirm("<?php echo common::translate("COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE"); ?> " + count + " <?php
 
-            echo common::translate("COM_CUSTOMTABLES_FILE_S");
+			echo common::translate("COM_CUSTOMTABLES_FILE_S");
 
-            ?>?")) {
+			?>?")) {
 
             document.getElementById("fileedit_task").value = "delete";
             document.getElementById("fileids").value = fileids;
@@ -79,8 +79,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 <form action="index.php?Itemid=<?php echo common::inputGet('Itemid', 0, 'INT'); ?>" method="POST" name="eseditfiles"
       id="eseditfiles" enctype="multipart/form-data">
-    <?php
-    $toolbar = '
+	<?php
+	$toolbar = '
 	<div style="height:40px;">
 		<div style="float:left;">
 			<input type="button" class="button" value="' . common::translate('COM_CUSTOMTABLES_FINISH') . '" onClick=\'this.form.task.value="cancel";this.form.submit()\'>
@@ -91,9 +91,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	</div>
 	';
 
-    echo $toolbar;
+	echo $toolbar;
 
-    ?>
+	?>
 
     <fieldset class="adminform">
         <legend><?php echo common::translate("COM_CUSTOMTABLES_FILE_MANAGER"); ?></legend>
@@ -111,9 +111,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?>
+						<?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?>
                         <br/>
-                        <?php echo common::translate("COM_CUSTOMTABLES_FORMATS"); ?>:
+						<?php echo common::translate("COM_CUSTOMTABLES_FORMATS"); ?>:
                         <b><?php echo str_replace(' ', ', ', $this->allowedExtensions); ?></b>
                     </td>
                 </tr>
@@ -121,7 +121,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
             <br/>
         </div>
 
-        <?php echo $this->drawFiles(); ?>
+		<?php echo $this->drawFiles(); ?>
 
         <input type="hidden" name="option" value="com_customtables"/>
         <input type="hidden" name="view" value="editfiles"/>

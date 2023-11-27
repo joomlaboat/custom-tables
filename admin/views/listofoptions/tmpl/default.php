@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -13,7 +13,7 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 echo '<div id="j-sidebar-container" class="span2">';
@@ -38,9 +38,9 @@ echo '</div>';
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables'); ?>" method="post" name="adminForm"
       id="adminForm">
-    <?php
-    $s = common::inputGetString('search');
-    ?>
+	<?php
+	$s = common::inputGetString('search');
+	?>
     <div id="j-main-container">
         <div id="filter-bar" class="btn-toolbar">
 
@@ -59,7 +59,7 @@ echo '</div>';
 
         <table class="table table-bordered table-striped table-hover" id="itemList" style="position: relative;">
             <thead><?php echo $this->loadTemplate('head'); ?></thead>
-            <?php //<tfoot>echo $this->loadTemplate('foot');</tfoot>?>
+			<?php //<tfoot>echo $this->loadTemplate('foot');</tfoot>?>
             <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
         </table>
     </div>
@@ -70,7 +70,7 @@ echo '</div>';
     <input type="hidden" name="boxchecked" value="0"/>
     <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>"/>
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>"/>
-    <?php echo JHTML::_('form.token'); ?>
+	<?php echo JHTML::_('form.token'); ?>
 </form>
 
 <p><a href="index.php?option=com_customtables&view=listofoptions&task=RefreshFamily">Refresh Family Tree</a></p>

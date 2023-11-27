@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,17 +10,17 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 jimport('joomla.application.component.controlleradmin');
 
 class CustomtablesControllerListOfLayouts extends JControllerAdmin
 {
-    protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFLAYOUTS';
+	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFLAYOUTS';
 
-    public function getModel($name = 'Layouts', $prefix = 'CustomtablesModel', $config = array())
-    {
-        return parent::getModel($name, $prefix, array('ignore_request' => true));
-    }
+	public function getModel($name = 'Layouts', $prefix = 'CustomtablesModel', $config = array())
+	{
+		return parent::getModel($name, $prefix, array('ignore_request' => true));
+	}
 }

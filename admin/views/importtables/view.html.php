@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @subpackage view.html.php
  * @author Ivan Komlev <support@joomlaboat.com>
@@ -11,7 +11,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 // Import Joomla! libraries
@@ -22,27 +22,27 @@ use Joomla\CMS\Version;
 
 class CustomTablesViewImportTables extends JViewLegacy
 {
-    var $catalogview;
-    var $version;
+	var $catalogview;
+	var $version;
 
-    function display($tpl = null)
-    {
-        $version = new Version;
-        $this->version = (int)$version->getShortVersion();
+	function display($tpl = null)
+	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
 
-        JToolBarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
+		JToolBarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
 
-        parent::display($tpl);
-    }
+		parent::display($tpl);
+	}
 
-    function generateRandomString($length = 32)
-    {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++)
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+	function generateRandomString($length = 32)
+	{
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++)
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
 
-        return $randomString;
-    }
+		return $randomString;
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,27 +12,27 @@ use CustomTables\common;
 use CustomTables\database;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'catalog.php');
 
 class JHTMLESUserGroup
 {
-    static public function render($control_name, $value, $style, $cssclass, $attribute = '', $mysqlwhere = '', $mysqljoin = '')
-    {
-        $query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
+	static public function render($control_name, $value, $style, $cssclass, $attribute = '', $mysqlwhere = '', $mysqljoin = '')
+	{
+		$query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
 
-        if ($mysqljoin != '')
-            $query .= ' INNER ' . $mysqljoin;
+		if ($mysqljoin != '')
+			$query .= ' INNER ' . $mysqljoin;
 
-        if ($mysqlwhere != '')
-            $query .= 'WHERE ' . $mysqlwhere;
+		if ($mysqlwhere != '')
+			$query .= 'WHERE ' . $mysqlwhere;
 
-        $query .= '#__usergroups.title';
-        $options = database::loadObjectList($query);
-        $att = ['id' => '', 'data-type' => 'usergroup', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT')];
-        $options = array_merge(array($att), $options);
-        return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);
-    }
+		$query .= '#__usergroups.title';
+		$options = database::loadObjectList($query);
+		$att = ['id' => '', 'data-type' => 'usergroup', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT')];
+		$options = array_merge(array($att), $options);
+		return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);
+	}
 }

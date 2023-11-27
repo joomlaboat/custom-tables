@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,7 +12,7 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 jimport('joomla.application.component.controller');
@@ -20,34 +20,34 @@ jimport('joomla.application.component.controller');
 class CustomTablesControllerImportTables extends JControllerForm
 {
 
-    function __construct()
-    {
-        parent::__construct();
+	function __construct()
+	{
+		parent::__construct();
 
-    }
+	}
 
-    function display($cachable = false, $urlparams = array())
-    {
-        $task = common::inputGetCmd('task', '');
+	function display($cachable = false, $urlparams = array())
+	{
+		$task = common::inputGetCmd('task', '');
 
-        if ($task == 'importtables')
-            $this->importtables();
-        else {
-            common::inputSet('view', 'importtables');
-            parent::display();
-        }
-    }
+		if ($task == 'importtables')
+			$this->importtables();
+		else {
+			common::inputSet('view', 'importtables');
+			parent::display();
+		}
+	}
 
-    function importtables()
-    {
-        $model = $this->getModel('importtables');
+	function importtables()
+	{
+		$model = $this->getModel('importtables');
 
-        $link = 'index.php?option=com_customtables&view=importtables';
-        $msg = '';
-        if ($model->importTables($msg)) {
-            $this->setRedirect($link, common::translate('Tables Imported Successfully'));
-        } else {
-            $this->setRedirect($link, common::translate('Tables was Unabled to Import: ' . $msg), 'error');
-        }
-    }
+		$link = 'index.php?option=com_customtables&view=importtables';
+		$msg = '';
+		if ($model->importTables($msg)) {
+			$this->setRedirect($link, common::translate('Tables Imported Successfully'));
+		} else {
+			$this->setRedirect($link, common::translate('Tables was Unabled to Import: ' . $msg), 'error');
+		}
+	}
 }

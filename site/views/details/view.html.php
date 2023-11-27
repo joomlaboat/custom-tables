@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\CT;
@@ -21,28 +21,28 @@ jimport('joomla.application.component.view'); //Important to get menu parameters
 
 class CustomTablesViewDetails extends JViewLegacy
 {
-    var CT $ct;
-    var Details $details;
+	var CT $ct;
+	var Details $details;
 
-    function display($tpl = null)
-    {
-        $this->ct = new CT(null, false);
+	function display($tpl = null)
+	{
+		$this->ct = new CT(null, false);
 
-        $this->details = new Details($this->ct);
+		$this->details = new Details($this->ct);
 
-        if ($this->ct->Env->print)
-            $this->ct->document->setMetaData('robots', 'noindex, nofollow');
+		if ($this->ct->Env->print)
+			$this->ct->document->setMetaData('robots', 'noindex, nofollow');
 
-        if ($this->details->load()) {
+		if ($this->details->load()) {
 
-            if ($this->details->layoutType == 8)
-                $this->ct->Env->frmt = 'xml';
-            elseif ($this->details->layoutType == 9)
-                $this->ct->Env->frmt = 'csv';
-            elseif ($this->details->layoutType == 10)
-                $this->ct->Env->frmt = 'json';
+			if ($this->details->layoutType == 8)
+				$this->ct->Env->frmt = 'xml';
+			elseif ($this->details->layoutType == 9)
+				$this->ct->Env->frmt = 'csv';
+			elseif ($this->details->layoutType == 10)
+				$this->ct->Env->frmt = 'json';
 
-            parent::display($tpl);
-        }
-    }
+			parent::display($tpl);
+		}
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -20,32 +20,32 @@ jimport('joomla.application.component.view');
 
 class CustomTablesViewFileUploader extends JViewLegacy
 {
-    function display($tpl = null)
-    {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
+	function display($tpl = null)
+	{
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
 
-        if (ob_get_contents()) ob_end_clean();
+		if (ob_get_contents()) ob_end_clean();
 
-        $fieldname = common::inputGetCmd('fieldname', '');
-        $fileid = common::inputGetCmd($fieldname . '_fileid', '');
+		$fieldname = common::inputGetCmd('fieldname', '');
+		$fileid = common::inputGetCmd($fieldname . '_fileid', '');
 
-        $task = common::inputGetCmd('op', '');
+		$task = common::inputGetCmd('op', '');
 
-        if ($task == 'delete') {
-            $file = str_replace('/', '', common::inputGetString('name', ''));
-            $file = str_replace('..', '', $file);
-            $file = str_replace('index.', '', $file);
+		if ($task == 'delete') {
+			$file = str_replace('/', '', common::inputGetString('name', ''));
+			$file = str_replace('..', '', $file);
+			$file = str_replace('index.', '', $file);
 
-            $output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
+			$output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
 
-            if ($file != '' and file_exists($output_dir . $file)) {
-                unlink($output_dir . $file);
-                echo json_encode(['status' => 'Deleted']);
-            } else
-                echo json_encode(['error' => 'File not found. Code: FU-1']);
-        } else
-            echo ESFileUploader::uploadFile($fileid);
+			if ($file != '' and file_exists($output_dir . $file)) {
+				unlink($output_dir . $file);
+				echo json_encode(['status' => 'Deleted']);
+			} else
+				echo json_encode(['error' => 'File not found. Code: FU-1']);
+		} else
+			echo ESFileUploader::uploadFile($fileid);
 
-        die; //to stop rendering template and staff
-    }
+		die; //to stop rendering template and staff
+	}
 }

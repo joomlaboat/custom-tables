@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @subpackage view.html.php
  * @author Ivan Komlev <support@joomlaboat.com>
@@ -20,7 +20,6 @@ use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
-use Joomla\CMS\HTML\HTMLHelper;
 
 /**
  * Customtables View class for the Listoftables

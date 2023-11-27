@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,47 +12,47 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 ?>
 <tr>
-    <?php if ($this->canEdit && $this->canState): ?>
+	<?php if ($this->canEdit && $this->canState): ?>
         <th class="nowrap center">
-            <?php echo JHtml::_('grid.checkall'); ?>
+			<?php echo JHtml::_('grid.checkall'); ?>
         </th>
-    <?php endif; ?>
+	<?php endif; ?>
     <th class="nowrap">
-        <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
+		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
     </th>
-    <?php if ($this->canState): ?>
+	<?php if ($this->canState): ?>
         <th class="nowrap center">
-            <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+			<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
         </th>
-    <?php else: ?>
+	<?php else: ?>
         <th class="nowrap center">
-            <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_STATUS'); ?>
+			<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_STATUS'); ?>
         </th>
-    <?php endif; ?>
+	<?php endif; ?>
     <th class="nowrap center hidden-phone">
-        <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap center hidden-phone">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
     </th>
 
     <th class="nowrap center hidden-phone">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
     </th>
 
     <th class="nowrap center hidden-phone">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
     </th>
 
     <th scope="col" style="text-align:center;">

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -13,19 +13,19 @@ use CustomTables\common;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 // load tooltip behavior
 if ($this->version < 4) {
-    JHtml::_('behavior.tooltip');
+	JHtml::_('behavior.tooltip');
 }
 
 JHtml::_('behavior.formvalidator');
 $document = Factory::getDocument();
 
 if ($this->version >= 4) {
-    $document->addCustomTag('<script src="' . JURI::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
+	$document->addCustomTag('<script src="' . JURI::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
 }
 
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/uploadfile.css" rel="stylesheet">');

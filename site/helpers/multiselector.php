@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,25 +10,25 @@
 
 // Check to ensure this file is included in Joomla!
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'multiselector.php');
 
 class JHTMLMultiSelector
 {
-    public static function render($prefix, $parentid, $parentname, $langpostfix, $tableName, $fieldName, $field_value, $attribute = '', $place_holder = '')
-    {
-        $ObjectName = $prefix . 'esmulti_' . $tableName . '_' . $fieldName;
-        $ms = new ESMultiSelector;
-        $result = '';
-        $ItemList = "";
-        $count = 0;
-        $listHTML = $ms->getMultiSelector($parentid, $parentname, $langpostfix, $ObjectName, $ItemList, $count, $field_value, $place_holder);
+	public static function render($prefix, $parentid, $parentname, $langpostfix, $tableName, $fieldName, $field_value, $attribute = '', $place_holder = '')
+	{
+		$ObjectName = $prefix . 'esmulti_' . $tableName . '_' . $fieldName;
+		$ms = new ESMultiSelector;
+		$result = '';
+		$ItemList = "";
+		$count = 0;
+		$listHTML = $ms->getMultiSelector($parentid, $parentname, $langpostfix, $ObjectName, $ItemList, $count, $field_value, $place_holder);
 
-        if ($count > 0)
-            $result .= $listHTML;
+		if ($count > 0)
+			$result .= $listHTML;
 
-        return $result;
-    }
+		return $result;
+	}
 }

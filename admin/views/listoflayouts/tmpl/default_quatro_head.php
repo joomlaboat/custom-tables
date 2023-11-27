@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -9,7 +9,7 @@
  **/
 // No direct access to this file access');
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -19,42 +19,42 @@ HTMLHelper::_('behavior.multiselect');
 
 ?>
 <tr>
-    <?php if ($this->canEdit && $this->canState): ?>
+	<?php if ($this->canEdit && $this->canState): ?>
         <th style="width:20px;" class="nowrap center">
-            <?php echo JHtml::_('grid.checkall'); ?>
+			<?php echo JHtml::_('grid.checkall'); ?>
         </th>
-    <?php endif; ?>
+	<?php endif; ?>
 
     <th scope="col">
-        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
     </th>
 
     <th scope="col">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
     </th>
 
     <th scope="col" class="text-center d-none d-md-table-cell">
-        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col" class="w-12 d-none d-xl-table-cell">
-        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
     </th>
 
     <th scope="col">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
     </th>
 
     <th scope="col">
-        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
+		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
     </th>
 
     <th scope="col">

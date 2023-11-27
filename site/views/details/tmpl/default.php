@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,55 +12,55 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 $this->ct->loadJSAndCSS();
 $results = $this->details->render();
 
 if ($this->ct->Env->frmt == 'csv') {
-    $filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'csv');
+	$filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'csv');
 
-    if (ob_get_contents())
-        ob_end_clean();
+	if (ob_get_contents())
+		ob_end_clean();
 
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    header('Content-Type: text/csv; charset=utf-8');
-    header("Pragma: no-cache");
-    header("Expires: 0");
+	header('Content-Disposition: attachment; filename="' . $filename . '"');
+	header('Content-Type: text/csv; charset=utf-8');
+	header("Pragma: no-cache");
+	header("Expires: 0");
 
-    echo mb_convert_encoding($results, 'UTF-16LE', 'UTF-8');
+	echo mb_convert_encoding($results, 'UTF-16LE', 'UTF-8');
 
-    die;//clean exit
+	die;//clean exit
 } elseif ($this->ct->Env->frmt == 'xml') {
-    $filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'xml');
+	$filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'xml');
 
-    ob_end_clean();
+	ob_end_clean();
 
-    if (ob_get_contents())
-        ob_end_clean();
+	if (ob_get_contents())
+		ob_end_clean();
 
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    header('Content-Type: text/xml; charset=utf-8');
-    header("Pragma: no-cache");
-    header("Expires: 0");
-    ob_start();
-    echo $results;
-    ob_flush();
-    die;//clean exit
+	header('Content-Disposition: attachment; filename="' . $filename . '"');
+	header('Content-Type: text/xml; charset=utf-8');
+	header("Pragma: no-cache");
+	header("Expires: 0");
+	ob_start();
+	echo $results;
+	ob_flush();
+	die;//clean exit
 } elseif ($this->ct->Env->clean) {
-    echo $results;
-    die;//clean exit
+	echo $results;
+	die;//clean exit
 }
 
 if ($this->ct->Params->showPageHeading) {
-    if (isset($this->ct->Params->pageClassSFX)) {
-        echo '<div class="page-header' . $this->escape($this->ct->Params->pageClassSFX) . '"><h2 itemprop="headline">'
-            . common::translate($this->ct->document->getTitle()) . '</h2></div>';
-    } else {
-        echo '<div class="page-header"><h2 itemprop="headline">'
-            . common::translate($this->ct->document->getTitle()) . '</h2></div>';
-    }
+	if (isset($this->ct->Params->pageClassSFX)) {
+		echo '<div class="page-header' . $this->escape($this->ct->Params->pageClassSFX) . '"><h2 itemprop="headline">'
+			. common::translate($this->ct->document->getTitle()) . '</h2></div>';
+	} else {
+		echo '<div class="page-header"><h2 itemprop="headline">'
+			. common::translate($this->ct->document->getTitle()) . '</h2></div>';
+	}
 }
 echo $results;
 ?>

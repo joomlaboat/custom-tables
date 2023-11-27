@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,7 +12,7 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 // Import Joomla! libraries
@@ -20,15 +20,15 @@ jimport('joomla.application.component.view');
 
 class CustomTablesViewFileUploader extends JViewLegacy
 {
-    function display($tpl = null)
-    {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
+	function display($tpl = null)
+	{
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
 
-        if (ob_get_contents()) ob_end_clean();
+		if (ob_get_contents()) ob_end_clean();
 
-        $fileid = common::inputGetCmd('fileid', '');
-        echo ESFileUploader::uploadFile($fileid, 'txt html');
+		$fileid = common::inputGetCmd('fileid', '');
+		echo ESFileUploader::uploadFile($fileid, 'txt html');
 
-        die; //to stop rendering template and staff
-    }
+		die; //to stop rendering template and staff
+	}
 }

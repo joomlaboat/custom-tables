@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -9,7 +9,7 @@
  **/
 // No direct access to this file access');
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use Joomla\CMS\HTML\HTMLHelper;
@@ -18,21 +18,21 @@ HTMLHelper::_('behavior.multiselect');
 
 ?>
 <tr>
-    <?php if ($this->canState or $this->canDelete): ?>
+	<?php if ($this->canState or $this->canDelete): ?>
         <th class="w-1 text-center">
-            <?php echo JHtml::_('grid.checkall'); ?>
+			<?php echo JHtml::_('grid.checkall'); ?>
         </th>
-    <?php endif; ?>
+	<?php endif; ?>
 
     <th scope="col">
-        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL', 'a.categoryname', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL', 'a.categoryname', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col" class="text-center d-none d-md-table-cell">
-        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col" class="w-12 d-none d-xl-table-cell">
-        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 </tr>

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @subpackage administrator/components/com_customtables/tables/categories.php
  * @author Ivan Komlev <support@joomlaboat.com>
@@ -11,7 +11,7 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 // import Joomla table library
@@ -22,16 +22,16 @@ jimport('joomla.database.table');
  */
 class CustomtablesTableCategories extends JTable
 {
-    var $id = null;
-    var $categoryname = null;
+	var $id = null;
+	var $categoryname = null;
 
-    /**
-     * Constructor
-     *
-     * @param object Database connector object
-     */
-    function __construct(&$db)
-    {
-        parent::__construct('#__customtables_categories', 'id', $db);
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param object Database connector object
+	 */
+	function __construct(&$db)
+	{
+		parent::__construct('#__customtables_categories', 'id', $db);
+	}
 }

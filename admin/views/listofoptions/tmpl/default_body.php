@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -19,20 +19,20 @@ $rows = &$this->items;
 foreach ($rows as $row) :
 
 
-    $checked = JHTML::_('grid.checkedout', $row, $i);
+	$checked = JHTML::_('grid.checkedout', $row, $i);
 
 
-    ?>
+	?>
     <tr class="<?php echo "row$k"; ?>">
         <!--<td>
 				<?php echo $i + 1 + $this->pagination->limitstart; ?>
 			</td>-->
         <td>
-            <?php echo $checked; ?>
+			<?php echo $checked; ?>
         </td>
         <td nowrap="nowrap">
 
-            <?php /*
+			<?php /*
 
                 $user = new CTUser();
                 if (  JTable::isCheckedOut($user->get('id'), $row->checked_out ) ) : ?>
@@ -43,36 +43,36 @@ foreach ($rows as $row) :
 				*/ ?>
 
             <a href="<?php echo JRoute::_('index.php?option=com_customtables&view=options&layout=edit&id=' . $row->id); ?>"><?php echo $row->treename; ?></a>
-            <?php //endif;
-            ?>
+			<?php //endif;
+			?>
         </td>
 
-        <?php
-        $row_lang = (array)$row;
-        $moreThanOneLanguage = false;
-        foreach ($this->languages as $lang) {
-            $id = 'title';
-            if ($moreThanOneLanguage)
-                $id .= '_' . $lang->sef;
-            else
-                $moreThanOneLanguage = true; //More than one language installed
+		<?php
+		$row_lang = (array)$row;
+		$moreThanOneLanguage = false;
+		foreach ($this->languages as $lang) {
+			$id = 'title';
+			if ($moreThanOneLanguage)
+				$id .= '_' . $lang->sef;
+			else
+				$moreThanOneLanguage = true; //More than one language installed
 
-            echo '<td nowrap="nowrap">' . $row_lang[$id] . '</td>';
+			echo '<td nowrap="nowrap">' . $row_lang[$id] . '</td>';
 
 
-        }
+		}
 
-        ?>
+		?>
 
         <td>
-            <?php echo $row->isselectable; ?>
+			<?php echo $row->isselectable; ?>
         </td>
         <td>
-            <?php echo $row->familytreestr; ?>
+			<?php echo $row->familytreestr; ?>
         </td>
     </tr>
-    <?php
-    $k = 1 - $k;
-    $i++;
-    ?>
+	<?php
+	$k = 1 - $k;
+	$i++;
+	?>
 <?php endforeach; ?>

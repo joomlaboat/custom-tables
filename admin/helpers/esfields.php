@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -11,24 +11,24 @@
 use CustomTables\database;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 class JHTMLCTFields
 {
-    public static function fields($tableid, $currentFieldId, $control_name, $value)
-    {
-        $query = 'SELECT id, fieldname '
-            . ' FROM #__customtables_fields '
-            . ' WHERE published=1 AND tableid=' . (int)$tableid . ' AND id!=' . (int)$currentFieldId
-            . ' AND type="checkbox"'
-            . ' ORDER BY fieldname';
+	public static function fields($tableid, $currentFieldId, $control_name, $value)
+	{
+		$query = 'SELECT id, fieldname '
+			. ' FROM #__customtables_fields '
+			. ' WHERE published=1 AND tableid=' . (int)$tableid . ' AND id!=' . (int)$currentFieldId
+			. ' AND type="checkbox"'
+			. ' ORDER BY fieldname';
 
-        $fields = database::loadAssocList($query);
-        if (!$fields) $fields = array();
+		$fields = database::loadAssocList($query);
+		if (!$fields) $fields = array();
 
-        $fields[] = array('id' => '0', 'fieldname' => '- ROOT');
+		$fields[] = array('id' => '0', 'fieldname' => '- ROOT');
 
-        return JHTML::_('select.genericlist', $fields, $control_name, 'class="inputbox"', 'id', 'fieldname', $value);
-    }
+		return JHTML::_('select.genericlist', $fields, $control_name, 'class="inputbox"', 'id', 'fieldname', $value);
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,37 +12,37 @@
 use CustomTables\CT;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 jimport('joomla.application.component.view');
 
 class CustomTablesViewStructure extends JView
 {
-    var CT $ct;
-    var $Model;
-    var array $rows;
-    var $pagination;
-    var int $record_count;
-    var $linkable;
-    var string $fieldName;
-    var $row_break;
-    var $image_prefix;
-    var string $optionname;
+	var CT $ct;
+	var $Model;
+	var array $rows;
+	var $pagination;
+	var int $record_count;
+	var $linkable;
+	var string $fieldName;
+	var $row_break;
+	var $image_prefix;
+	var string $optionname;
 
-    function display($tpl = null)
-    {
-        $this->Model = $this->getModel();
-        $this->ct = $this->Model->ct;
-        $this->rows = $this->Model->getStructure();
-        $this->pagination = $this->Model->getPagination();
-        $this->record_count = $this->Model->record_count;
-        $this->linkable = $this->Model->linkable;
-        $this->fieldName = $this->Model->esfieldname;
-        //$this->row_break = $this->Model->row_break;
-        $this->image_prefix = $this->Model->image_prefix;
-        $this->optionname = $this->Model->optionname;
+	function display($tpl = null)
+	{
+		$this->Model = $this->getModel();
+		$this->ct = $this->Model->ct;
+		$this->rows = $this->Model->getStructure();
+		$this->pagination = $this->Model->getPagination();
+		$this->record_count = $this->Model->record_count;
+		$this->linkable = $this->Model->linkable;
+		$this->fieldName = $this->Model->esfieldname;
+		//$this->row_break = $this->Model->row_break;
+		$this->image_prefix = $this->Model->image_prefix;
+		$this->optionname = $this->Model->optionname;
 
-        parent::display($tpl);
-    }
+		parent::display($tpl);
+	}
 }

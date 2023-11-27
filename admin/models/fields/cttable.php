@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -22,21 +22,21 @@ JFormHelper::loadFieldClass('list');
 //https://docs.joomla.org/Creating_a_custom_form_field_type
 class JFormFieldCTTable extends JFormFieldList
 {
-    public $type = 'cttable';
+	public $type = 'cttable';
 
-    public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
-    {
-        $query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
-        $records = database::loadObjectList((string)$query);
+	public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+	{
+		$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
+		$records = database::loadObjectList((string)$query);
 
-        $options = array();
-        if ($records) {
-            if ($add_empty_option)
-                $options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
+		$options = array();
+		if ($records) {
+			if ($add_empty_option)
+				$options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
 
-            foreach ($records as $rec)
-                $options[] = JHtml::_('select.option', $rec->id, $rec->tabletitle);
-        }
-        return $options;
-    }
+			foreach ($records as $rec)
+				$options[] = JHtml::_('select.option', $rec->id, $rec->tabletitle);
+		}
+		return $options;
+	}
 }

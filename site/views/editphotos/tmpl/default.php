@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -35,9 +35,9 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/image
 
 <form action="index.php?option=com_customtables&view=editphotos&Itemid=<?php echo common::inputGetInt('Itemid', 0); ?>"
       method="POST" name="eseditphotos" id="eseditphotos" enctype="multipart/form-data">
-    <?php
+	<?php
 
-    $toolbar = '
+	$toolbar = '
 	<div style="height:40px;">
 	<div style="float:left;">
 	<!--<input type="button" class="button" value="' . common::translate('COM_CUSTOMTABLES_ADD_PHOTO') . '" onClick=\'ShowAddPhoto()\'>-->
@@ -51,7 +51,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/image
 	';
 
 
-    ?>
+	?>
 
     <fieldset class="adminform">
         <legend><?php echo common::translate("COM_CUSTOMTABLES_PHOTO_MANAGER"); ?></legend>
@@ -74,9 +74,9 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/image
                     <td colspan="2">
                         <!--<?php //echo common::translate("COM_CUSTOMTABLES_MIN_SIZE"); ?>: 90px x 90px<br/>
                         <?php //echo common::translate("COM_CUSTOMTABLES_MAX_SIZE"); ?>: 1000px x 1000px<br/>-->
-                        <?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?>
+						<?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?>
                         <br/>
-                        <?php echo common::translate("COM_CUSTOMTABLES_FORMAT"); ?>: JPEG, GIF, PNG, WEBP
+						<?php echo common::translate("COM_CUSTOMTABLES_FORMAT"); ?>: JPEG, GIF, PNG, WEBP
                     </td>
                 </tr>
                 </tbody>
@@ -84,7 +84,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/image
             <br/>
         </div>
 
-        <?php echo $this->drawPhotos(); ?>
+		<?php echo $this->drawPhotos(); ?>
 
         <input type="hidden" name="option" value="com_customtables"/>
         <input type="hidden" name="view" value="editphotos"/>
@@ -99,7 +99,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/image
 
     </fieldset>
     <br/>
-    <?php
-    echo $toolbar;
-    ?>
+	<?php
+	echo $toolbar;
+	?>
 </form>

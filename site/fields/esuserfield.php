@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -11,7 +11,7 @@
 use CustomTables\database;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 jimport('joomla.form.helper');
@@ -20,29 +20,29 @@ JFormHelper::loadFieldClass('list');
 
 class JFormFieldESTable extends JFormFieldList
 {
-    /**
-     * Element name
-     *
-     * @access    protected
-     * @var        string
-     *
-     */
-    protected $type = 'estable';
+	/**
+	 * Element name
+	 *
+	 * @access    protected
+	 * @var        string
+	 *
+	 */
+	protected $type = 'estable';
 
-    protected function getOptions()//$name, $value, &$node, $control_name)
-    {
-        $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-        require_once($path . 'loader.php');
-        CTLoader();
+	protected function getOptions()//$name, $value, &$node, $control_name)
+	{
+		$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+		require_once($path . 'loader.php');
+		CTLoader();
 
-        $query = 'SELECT id,tablename FROM #__customtables_tables ORDER BY tablename';
+		$query = 'SELECT id,tablename FROM #__customtables_tables ORDER BY tablename';
 
-        $messages = database::loadObjectList($query);
-        $options = array();
-        if ($messages) {
-            foreach ($messages as $message)
-                $options[] = JHtml::_('select.option', $message->tablename, $message->tablename);
-        }
-        return $options;
-    }
+		$messages = database::loadObjectList($query);
+		$options = array();
+		if ($messages) {
+			foreach ($messages as $message)
+				$options[] = JHtml::_('select.option', $message->tablename, $message->tablename);
+		}
+		return $options;
+	}
 }

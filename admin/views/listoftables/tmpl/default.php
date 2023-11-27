@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -9,7 +9,7 @@
  **/
 // No direct access to this file access');
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 JHtml::_('behavior.multiselect');
@@ -36,39 +36,39 @@ use CustomTables\IntegrityChecks;
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoftables'); ?>" method="post"
       name="adminForm" id="adminForm">
-    <?php if (!empty($this->sidebar)): ?>
+	<?php if (!empty($this->sidebar)): ?>
     <div id="j-sidebar-container" class="span2">
-        <?php echo $this->sidebar; ?>
+		<?php echo $this->sidebar; ?>
     </div>
     <div id="j-main-container" class="span10">
-        <?php else : ?>
+		<?php else : ?>
         <div id="j-main-container">
-            <?php endif; ?>
+			<?php endif; ?>
 
-            <?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+			<?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
             <div class="clearfix"></div>
 
-            <?php if (empty($this->items)): ?>
+			<?php if (empty($this->items)): ?>
 
                 <div class="alert alert-no-items">
-                    <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+					<?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
-            <?php else : ?>
+			<?php else : ?>
 
-                <?php
-                $result = IntegrityChecks::check($this->ct, true, false);
-                //table-bordered
-                ?>
+				<?php
+				$result = IntegrityChecks::check($this->ct, true, false);
+				//table-bordered
+				?>
                 <table class="table table-striped table-hover" id="itemList" style="position: relative;">
                     <thead><?php echo $this->loadTemplate('head'); ?></thead>
                     <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
                     <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
                 </table>
-            <?php endif; ?>
+			<?php endif; ?>
         </div>
         <input type="hidden" name="filter_order" value=""/>
         <input type="hidden" name="filter_order_Dir" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="task" value=""/>
-        <?php echo JHtml::_('form.token'); ?>
+		<?php echo JHtml::_('form.token'); ?>
 </form>

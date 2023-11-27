@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -20,40 +20,40 @@ use Joomla\CMS\Factory;
 jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditFiles extends JViewLegacy
 {
-    var int $max_file_size;
-    var $FileBoxTitle;
-    var $listing_id;
-    var $fileboxname;
-    var $allowedExtensions;
+	var int $max_file_size;
+	var $FileBoxTitle;
+	var $listing_id;
+	var $fileboxname;
+	var $allowedExtensions;
 
-    function display($tpl = null)
-    {
-        $user = new CTUser();
+	function display($tpl = null)
+	{
+		$user = new CTUser();
 
-        if ($user->id === null) {
-            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-            return;
-        }
+		if ($user->id === null) {
+			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			return;
+		}
 
-        $this->Model = $this->getModel();
-        $this->files = $this->Model->getFileList();
+		$this->Model = $this->getModel();
+		$this->files = $this->Model->getFileList();
 
-        $this->idList = array();
+		$this->idList = array();
 
-        foreach ($this->files as $file)
-            $this->idList[] = $file->fileid;
+		foreach ($this->files as $file)
+			$this->idList[] = $file->fileid;
 
-        $this->max_file_size = JoomlaBasicMisc::file_upload_max_size();
-        $this->FileBoxTitle = $this->Model->FileBoxTitle;
-        $this->listing_id = $this->Model->ct->Params->listing_id;
-        $this->fileboxname = $this->Model->fileboxname;
-        $this->allowedExtensions = $this->Model->allowedExtensions;
-        parent::display($tpl);
-    }
+		$this->max_file_size = JoomlaBasicMisc::file_upload_max_size();
+		$this->FileBoxTitle = $this->Model->FileBoxTitle;
+		$this->listing_id = $this->Model->ct->Params->listing_id;
+		$this->fileboxname = $this->Model->fileboxname;
+		$this->allowedExtensions = $this->Model->allowedExtensions;
+		parent::display($tpl);
+	}
 
-    function drawFiles(): string
-    {
-        $HTMLOut = '
+	function drawFiles(): string
+	{
+		$HTMLOut = '
 		
 		<h2>' . common::translate("COM_CUSTOMTABLES_FILE_LIST_OF_FILES") . '</h2>
 		<table style="width:100%;border:none;">
@@ -67,31 +67,31 @@ class CustomTablesViewEditFiles extends JViewLegacy
 			<tbody>
 		';
 
-        $c = 0;
-        foreach ($this->files as $file) {
-            $HTMLOut .= '
+		$c = 0;
+		foreach ($this->files as $file) {
+			$HTMLOut .= '
 				<tr>';
 
-            $filename = $this->Model->ct->Table->tableid . '_' . $this->fileboxname . '_' . $file->fileid . '.' . $file->file_ext;
-            $filepath = $this->Model->fileboxfolderweb . '/' . $filename;
+			$filename = $this->Model->ct->Table->tableid . '_' . $this->fileboxname . '_' . $file->fileid . '.' . $file->file_ext;
+			$filepath = $this->Model->fileboxfolderweb . '/' . $filename;
 
-            $HTMLOut .= '
+			$HTMLOut .= '
 					<td  style="vertical-align: top; text-align: center; ">
 						<input type="checkbox" name="esfile' . $file->fileid . '" id="esfile' . $file->fileid . '" style="text-align: left;" style="vertical-align:top">
 					</td>
 					<td style="text-align: left;"><a href="' . $filepath . '" target="_blank">' . $filename . '</a></td>
 			';
 
-            $c++;
-            $HTMLOut .= '
+			$c++;
+			$HTMLOut .= '
 				</tr>';
-        }
+		}
 
-        $HTMLOut .= '
+		$HTMLOut .= '
 			</tbody>
 		</table>
 		';
 
-        return $HTMLOut;
-    }
+		return $HTMLOut;
+	}
 }

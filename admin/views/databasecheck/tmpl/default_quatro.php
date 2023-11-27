@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -39,32 +39,32 @@ $document->addCustomTag('<style>
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
 
-                <?php
-                //$this->filterForm = $this->get('FilterForm');
-                //echo $this->filterForm->renderField('tablecategory'); ?>
+				<?php
+				//$this->filterForm = $this->get('FilterForm');
+				//echo $this->filterForm->renderField('tablecategory'); ?>
 
-                <?php echo HTMLHelper::_('uitab.startTabSet', 'schemaTab', ['active' => 'diagram', 'recall' => true, 'breakpoint' => 768]); ?>
+				<?php echo HTMLHelper::_('uitab.startTabSet', 'schemaTab', ['active' => 'diagram', 'recall' => true, 'breakpoint' => 768]); ?>
 
-                <?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM')); ?>
+				<?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM')); ?>
 
                 <div id="canvas_container"></div>
 
-                <?php echo HTMLHelper::_('uitab.endTab'); ?>
+				<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-                <?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS')); ?>
+				<?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS')); ?>
 
-                <?php
-                $result = IntegrityChecks::check($this->ct);
+				<?php
+				$result = IntegrityChecks::check($this->ct);
 
-                if (count($result) > 0)
-                    echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
-                else
-                    echo '<p>Database table structure is up-to-date.</p>';
+				if (count($result) > 0)
+					echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
+				else
+					echo '<p>Database table structure is up-to-date.</p>';
 
-                ?>
+				?>
 
-                <?php echo HTMLHelper::_('uitab.endTab'); ?>
-                <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
+				<?php echo HTMLHelper::_('uitab.endTab'); ?>
+				<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
                 <script>
 
@@ -74,7 +74,7 @@ $document->addCustomTag('<style>
                 </script>
 
                 <input type="hidden" name="task" value=""/>
-                <?php echo JHtml::_('form.token'); ?>
+				<?php echo JHtml::_('form.token'); ?>
             </div>
         </div>
     </div>

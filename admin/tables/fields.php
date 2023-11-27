@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @subpackage administrator/components/com_customtables/tables/categories.php
  * @author Ivan Komlev <support@joomlaboat.com>
@@ -11,7 +11,7 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 // import Joomla table library
@@ -22,39 +22,39 @@ jimport('joomla.database.table');
  */
 class CustomtablesTableFields extends JTable
 {
-    var $id = null;
-    var $tableid = null;
-    var $allowordering = null;
-    var $defaultvalue = null;
-    var $fieldname = null;
-    var $customfieldname = null;
-    var $fieldtitle = null;
-    var $description = null;
-    var $isrequired = null;
-    var $isdisabled = null;
-    var $savevalue = null;
-    var $alwaysupdatevalue = null;
-    var $type = null;
-    var $typeParams = null;
-    var $valuerule = null;
-    var $valuerulecaption = null;
-    var $published = null;
-    var $parentid = null;
-    var $created_by = null;
-    var $modified_by = null;
-    var $created = null;
-    var $modified = null;
-    var $checked_out = null;
-    var $checked_out_time = null;
-    var $ordering = null;
+	var $id = null;
+	var $tableid = null;
+	var $allowordering = null;
+	var $defaultvalue = null;
+	var $fieldname = null;
+	var $customfieldname = null;
+	var $fieldtitle = null;
+	var $description = null;
+	var $isrequired = null;
+	var $isdisabled = null;
+	var $savevalue = null;
+	var $alwaysupdatevalue = null;
+	var $type = null;
+	var $typeParams = null;
+	var $valuerule = null;
+	var $valuerulecaption = null;
+	var $published = null;
+	var $parentid = null;
+	var $created_by = null;
+	var $modified_by = null;
+	var $created = null;
+	var $modified = null;
+	var $checked_out = null;
+	var $checked_out_time = null;
+	var $ordering = null;
 
-    /**
-     * Constructor
-     *
-     * @param object Database connector object
-     */
-    function __construct(&$db)
-    {
-        parent::__construct('#__customtables_fields', 'id', $db);
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param object Database connector object
+	 */
+	function __construct(&$db)
+	{
+		parent::__construct('#__customtables_fields', 'id', $db);
+	}
 }

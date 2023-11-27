@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @subpackage listoftables.php
  * @author Ivan Komlev <support@joomlaboat.com>
@@ -11,7 +11,7 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\CT;
@@ -26,59 +26,59 @@ jimport('joomla.application.component.modellist');
  */
 class CustomtablesModelDatabasecheck extends JModelList
 {
-    var CT $ct;
+	var CT $ct;
 
-    public function __construct($config = array())
-    {
-        if (empty($config['filter_fields'])) {
-            $config['filter_fields'] = array(
-                'a.tablecategory', 'tablecategory'
-            );
-        }
+	public function __construct($config = array())
+	{
+		if (empty($config['filter_fields'])) {
+			$config['filter_fields'] = array(
+				'a.tablecategory', 'tablecategory'
+			);
+		}
 
-        parent::__construct($config);
+		parent::__construct($config);
 
-        $this->ct = new CT;
-    }
+		$this->ct = new CT;
+	}
 
-    /**
-     * Method to get an array of data items.
-     *
-     * @return  mixed  An array of data items on success, false on failure.
-     */
-    public function getItems()
-    {
-        // load parent items
-        $items = parent::getItems();
+	/**
+	 * Method to get an array of data items.
+	 *
+	 * @return  mixed  An array of data items on success, false on failure.
+	 */
+	public function getItems()
+	{
+		// load parent items
+		$items = parent::getItems();
 
-        return $items;
-    }
+		return $items;
+	}
 
-    protected function populateState($ordering = 'a.id', $direction = 'asc')
-    {
-        if ($this->ct->Env->version < 4) {
-            $category = $this->getUserStateFromRequest($this->context . '.filter.tablecategory', 'filter_tablecategory');
-            $this->setState('filter.tablecategory', $category);
-        }
+	protected function populateState($ordering = 'a.id', $direction = 'asc')
+	{
+		if ($this->ct->Env->version < 4) {
+			$category = $this->getUserStateFromRequest($this->context . '.filter.tablecategory', 'filter_tablecategory');
+			$this->setState('filter.tablecategory', $category);
+		}
 
-        // Load the parameters.
-        $this->setState('params', ComponentHelper::getParams('com_customtables'));
+		// Load the parameters.
+		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
-        // List state information.
-        parent::populateState($ordering, $direction);
-    }
+		// List state information.
+		parent::populateState($ordering, $direction);
+	}
 
-    /**
-     * Method to get a store id based on model configuration state.
-     *
-     * @return  string  A store id.
-     *
-     */
-    protected function getStoreId($id = '')
-    {
-        // Compile the store id.
-        $id .= ':' . $this->getState('filter.tablecategory');
+	/**
+	 * Method to get a store id based on model configuration state.
+	 *
+	 * @return  string  A store id.
+	 *
+	 */
+	protected function getStoreId($id = '')
+	{
+		// Compile the store id.
+		$id .= ':' . $this->getState('filter.tablecategory');
 
-        return parent::getStoreId($id);
-    }
+		return parent::getStoreId($id);
+	}
 }

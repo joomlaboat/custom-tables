@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,15 +12,15 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 ?>
 <!-- clear the batch values if cancel -->
 <button class="btn" type="button" onclick="" data-dismiss="modal">
-    <?php echo common::translate('JCANCEL'); ?>
+	<?php echo common::translate('JCANCEL'); ?>
 </button>
 <!-- post the batch values if process -->
 <button class="btn btn-success" type="submit" onclick="Joomla.submitbutton('fields.batch');">
-    <?php echo common::translate('JGLOBAL_BATCH_PROCESS'); ?>
+	<?php echo common::translate('JGLOBAL_BATCH_PROCESS'); ?>
 </button>

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // Check to ensure this file is included in Joomla!
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\database;
@@ -20,18 +20,18 @@ JFormHelper::loadFieldClass('list');
 
 class JFormFieldCTUserGroup extends JFormFieldList
 {
-    public $type = 'CTUserGroup';
+	public $type = 'CTUserGroup';
 
-    protected function getOptions()
-    {
-        $query = 'SELECT id,title FROM #__usergroups ORDER BY title';
-        $records = database::loadObjectList($query);
-        $options = [];
+	protected function getOptions()
+	{
+		$query = 'SELECT id,title FROM #__usergroups ORDER BY title';
+		$records = database::loadObjectList($query);
+		$options = [];
 
-        if ($records) {
-            foreach ($records as $record)
-                $options[] = JHtml::_('select.option', $record->id, $record->title);
-        }
-        return $options;
-    }
+		if ($records) {
+			foreach ($records as $record)
+				$options[] = JHtml::_('select.option', $record->id, $record->title);
+		}
+		return $options;
+	}
 }

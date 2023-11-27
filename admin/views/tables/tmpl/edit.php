@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @subpackage edit.php
  * @author Ivan Komlev <support@joomlaboat.com>
@@ -14,7 +14,7 @@ use CustomTables\common;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 JHtml::_('behavior.formvalidation');
@@ -30,9 +30,9 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
     <div id="jform_title"></div>
     <div class="form-horizontal">
 
-        <?php echo JHtml::_('bootstrap.startTabSet', 'tablesTab', array('active' => 'details')); ?>
+		<?php echo JHtml::_('bootstrap.startTabSet', 'tablesTab', array('active' => 'details')); ?>
 
-        <?php echo JHtml::_('bootstrap.addTab', 'tablesTab', 'details', common::translate('COM_CUSTOMTABLES_TABLES_DETAILS')); ?>
+		<?php echo JHtml::_('bootstrap.addTab', 'tablesTab', 'details', common::translate('COM_CUSTOMTABLES_TABLES_DETAILS')); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
 
@@ -43,28 +43,28 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
                 <hr/>
 
-                <?php
+				<?php
 
-                $moreThanOneLanguage = false;
-                foreach ($this->ct->Languages->LanguageList as $lang) {
-                    $id = 'tabletitle';
-                    if ($moreThanOneLanguage) {
-                        $id .= '_' . $lang->sef;
+				$moreThanOneLanguage = false;
+				foreach ($this->ct->Languages->LanguageList as $lang) {
+					$id = 'tabletitle';
+					if ($moreThanOneLanguage) {
+						$id .= '_' . $lang->sef;
 
-                        $cssclass = 'text_area';
-                        $att = '';
-                    } else {
-                        $cssclass = 'text_area required';
-                        $att = ' required aria-required="true"';
-                    }
+						$cssclass = 'text_area';
+						$att = '';
+					} else {
+						$cssclass = 'text_area required';
+						$att = ' required aria-required="true"';
+					}
 
-                    $item_array = (array)$this->item;
-                    $vlu = '';
+					$item_array = (array)$this->item;
+					$vlu = '';
 
-                    if (isset($item_array[$id]))
-                        $vlu = $item_array[$id];
+					if (isset($item_array[$id]))
+						$vlu = $item_array[$id];
 
-                    echo '
+					echo '
 					<div class="control-group">
 						<div class="control-label">' . $this->form->getLabel('tabletitle') . '</div>
 						<div class="controls">
@@ -75,63 +75,63 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 					</div>
 					';
 
-                    $moreThanOneLanguage = true; //More than one language installed
-                }
-                ?>
+					$moreThanOneLanguage = true; //More than one language installed
+				}
+				?>
                 <hr/>
                 <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('tablecategory'); ?></div>
                     <div class="controls"><?php
-                        if (!$this->ct->Env->advancedTagProcessor)
-                            echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
-                        else
-                            echo $this->form->getInput('tablecategory');
-                        ?></div>
+						if (!$this->ct->Env->advancedTagProcessor)
+							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
+						else
+							echo $this->form->getInput('tablecategory');
+						?></div>
                 </div>
             </div>
         </div>
-        <?php echo JHtml::_('bootstrap.endTab'); ?>
+		<?php echo JHtml::_('bootstrap.endTab'); ?>
 
 
-        <?php
-        $moreThanOneLanguage = false;
-        foreach ($this->ct->Languages->LanguageList as $lang) {
-            $id = 'description';
-            if ($moreThanOneLanguage)
-                $id .= '_' . $lang->sef;
+		<?php
+		$moreThanOneLanguage = false;
+		foreach ($this->ct->Languages->LanguageList as $lang) {
+			$id = 'description';
+			if ($moreThanOneLanguage)
+				$id .= '_' . $lang->sef;
 
-            echo JHtml::_('bootstrap.addTab', 'tablesTab', $id, common::translate('COM_CUSTOMTABLES_TABLES_DESCRIPTION') . ' <b>' . $lang->title . '</b>');
-            echo '
+			echo JHtml::_('bootstrap.addTab', 'tablesTab', $id, common::translate('COM_CUSTOMTABLES_TABLES_DESCRIPTION') . ' <b>' . $lang->title . '</b>');
+			echo '
 			<div id="' . $id . '" class="tab-pane">
 				<div class="row-fluid form-horizontal-desktop">
 					<div class="span12">';
 
 
-            $editor = Factory::getEditor();
+			$editor = Factory::getEditor();
 
-            $item_array = (array)$this->item;
-            $vlu = '';
+			$item_array = (array)$this->item;
+			$vlu = '';
 
-            if (isset($item_array[$id]))
-                $vlu = $item_array[$id];
+			if (isset($item_array[$id]))
+				$vlu = $item_array[$id];
 
-            echo $editor->display('jform[' . $id . ']', $vlu, '100%', '300', '60', '5');
+			echo $editor->display('jform[' . $id . ']', $vlu, '100%', '300', '60', '5');
 
-            echo '
+			echo '
 					</div>
 				</div>
 			</div>';
-            $moreThanOneLanguage = true; //More than one language installed
+			$moreThanOneLanguage = true; //More than one language installed
 
-            echo JHtml::_('bootstrap.endTab');
-        }
+			echo JHtml::_('bootstrap.endTab');
+		}
 
-        ?>
+		?>
 
-        <?php
-        //if($this->ct->Env->advancedTagProcessor):
+		<?php
+		//if($this->ct->Env->advancedTagProcessor):
 
-        echo JHtml::_('bootstrap.addTab', 'tablesTab', 'advanced', common::translate('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
+		echo JHtml::_('bootstrap.addTab', 'tablesTab', 'advanced', common::translate('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
@@ -140,12 +140,12 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
                     <div class="control-label"><?php echo $this->form->getLabel('customphp'); ?></div>
                     <div class="controls"><?php
 
-                        if (!$this->ct->Env->advancedTagProcessor)
-                            echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
-                        else
-                            echo $this->form->getInput('customphp');
+						if (!$this->ct->Env->advancedTagProcessor)
+							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
+						else
+							echo $this->form->getInput('customphp');
 
-                        ?></div>
+						?></div>
                 </div>
 
                 <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
@@ -167,48 +167,48 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
             </div>
         </div>
 
-        <?php echo JHtml::_('bootstrap.endTab');
-        //endif;
-        ?>
+		<?php echo JHtml::_('bootstrap.endTab');
+		//endif;
+		?>
 
-        <?php
+		<?php
 
-        if ($this->item->tablename !== null) {
+		if ($this->item->tablename !== null) {
 
-            echo JHtml::_('bootstrap.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
-            include('_dependencies.php');
-            ?>
+			echo JHtml::_('bootstrap.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
+			include('_dependencies.php');
+			?>
 
             <div class="row-fluid form-horizontal-desktop">
                 <div class="span12">
 
-                    <?php
-                    echo renderDependencies($this->item->id, $this->item->tablename);
-                    ?>
+					<?php
+					echo renderDependencies($this->item->id, $this->item->tablename);
+					?>
 
                 </div>
             </div>
-            <?php echo JHtml::_('bootstrap.endTab');
-        }
-        ?>
+			<?php echo JHtml::_('bootstrap.endTab');
+		}
+		?>
 
-        <?php echo JHtml::_('bootstrap.endTabSet'); ?>
+		<?php echo JHtml::_('bootstrap.endTabSet'); ?>
 
         <div>
             <input type="hidden" name="task" value="tables.edit"/>
             <input type="hidden" name="originaltableid" value="<?php echo $this->item->id; ?>"/>
-            <?php echo JHtml::_('form.token'); ?>
+			<?php echo JHtml::_('form.token'); ?>
         </div>
     </div>
 
     <div class="clearfix"></div>
-    <?php echo JLayoutHelper::render('tables.details_under', $this); ?>
+	<?php echo JLayoutHelper::render('tables.details_under', $this); ?>
 
-    <?php if (!$this->ct->Env->advancedTagProcessor): ?>
+	<?php if (!$this->ct->Env->advancedTagProcessor): ?>
         <script>
             disableProField("jform_customtablename");
             disableProField("jform_customidfield");
         </script>
-    <?php endif; ?>
+	<?php endif; ?>
 
 </form>

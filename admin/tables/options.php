@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 // Include library dependencies
@@ -18,22 +18,22 @@ jimport('joomla.filter.input');
 
 class CustomtablesTableOptions extends JTable
 {
-    var $id = null;
-    var $optionname = null;
-    var $title = null;
-    var $image = null;
-    var $imageparams = null;
-    var $ordering = null;
-    var $parentid = null;
-    var $sublevel = null;
-    var $isselectable = true;
-    var $optionalcode = null;
-    var $link = null;
-    var $familytree = null;
+	var $id = null;
+	var $optionname = null;
+	var $title = null;
+	var $image = null;
+	var $imageparams = null;
+	var $ordering = null;
+	var $parentid = null;
+	var $sublevel = null;
+	var $isselectable = true;
+	var $optionalcode = null;
+	var $link = null;
+	var $familytree = null;
 
-    function __construct(&$db)
-    {
-        parent::__construct('#__customtables_options', 'id', $db);
-    }
+	function __construct(&$db)
+	{
+		parent::__construct('#__customtables_options', 'id', $db);
+	}
 
 }

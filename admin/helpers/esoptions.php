@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -11,24 +11,24 @@
 use CustomTables\database;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 
 class JHTMLESOptions
 {
 
-    public static function options($currentOptionId, $control_name, $value)
-    {
-        $query = 'SELECT id, optionname '
-            . ' FROM #__customtables_options '
-            . ' WHERE id!=' . (int)$currentOptionId
-            . ' ORDER BY optionname';
-        $optionlist = database::loadAssocList($query);
-        if (!$optionlist) $optionlist = array();
+	public static function options($currentOptionId, $control_name, $value)
+	{
+		$query = 'SELECT id, optionname '
+			. ' FROM #__customtables_options '
+			. ' WHERE id!=' . (int)$currentOptionId
+			. ' ORDER BY optionname';
+		$optionlist = database::loadAssocList($query);
+		if (!$optionlist) $optionlist = array();
 
-        $optionlist[] = array('id' => '0', 'optionname' => '- ROOT');
+		$optionlist[] = array('id' => '0', 'optionname' => '- ROOT');
 
-        return JHTML::_('select.genericlist', $optionlist, $control_name, 'class="inputbox"', 'id', 'optionname', $value);
-    }
+		return JHTML::_('select.genericlist', $optionlist, $control_name, 'class="inputbox"', 'id', 'optionname', $value);
+	}
 }

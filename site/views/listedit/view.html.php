@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\CT;
@@ -20,22 +20,22 @@ jimport('joomla.application.component.view');
 
 class CustomTablesViewListEdit extends JView
 {
-    var CT $ct;
+	var CT $ct;
 
-    function display($tpl = null)
-    {
-        $this->ct = new CT;
+	function display($tpl = null)
+	{
+		$this->ct = new CT;
 
-        $mainframe = Factory::getApplication();
+		$mainframe = Factory::getApplication();
 
-        $this->optionRecord = $this->get('Data');
+		$this->optionRecord = $this->get('Data');
 
-        $this->isNew = ($this->optionRecord->id < 1);
+		$this->isNew = ($this->optionRecord->id < 1);
 
-        $this->ListEditModel = $this->getModel();
+		$this->ListEditModel = $this->getModel();
 
-        $filter_rootparent = $mainframe->getUserStateFromRequest("com_customtables.filter_rootparent", 'filter_rootparent', '', 'int');
+		$filter_rootparent = $mainframe->getUserStateFromRequest("com_customtables.filter_rootparent", 'filter_rootparent', '', 'int');
 
-        parent::display($tpl);
-    }
+		parent::display($tpl);
+	}
 }

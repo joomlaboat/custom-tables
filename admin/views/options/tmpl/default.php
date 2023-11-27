@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -11,7 +11,7 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 JHTML::addIncludePath(JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
@@ -28,28 +28,28 @@ $isNew = $this->item->id == 0;
             <div class="controls"><?php echo($isNew ? $this->form->getInput('optionname') : $this->item->optionname); ?></div>
         </div>
 
-        <?php
-        $row_lang = (array)$this->item;
-        $moreThanOneLanguage = false;
-        foreach ($this->languages as $lang) {
-            $id = 'title';
-            if ($moreThanOneLanguage)
-                $id .= '_' . $lang->sef;
-            else
-                $moreThanOneLanguage = true; //More than one language installed
+		<?php
+		$row_lang = (array)$this->item;
+		$moreThanOneLanguage = false;
+		foreach ($this->languages as $lang) {
+			$id = 'title';
+			if ($moreThanOneLanguage)
+				$id .= '_' . $lang->sef;
+			else
+				$moreThanOneLanguage = true; //More than one language installed
 
-            ?>
+			?>
             <div class="control-group">
                 <div class="control-label"><?php echo $this->form->getLabel('title') . ' (' . $lang->caption . ')'; ?></div>
-                <?php echo '<div class="controls"><input type="text" name="jform[' . $id . ']" id="jform_' . $id . '"
+				<?php echo '<div class="controls"><input type="text" name="jform[' . $id . ']" id="jform_' . $id . '"
                                              class="inputbox" size="40" value="' . $row_lang[$id] . '"/></div>';
-                ?>
+				?>
             </div>
 
-            <?php
-        }
+			<?php
+		}
 
-        ?>
+		?>
 
         <div class="control-group">
             <div class="control-label"><?php echo $this->form->getLabel('parentid'); ?></div>
@@ -75,10 +75,10 @@ $isNew = $this->item->id == 0;
 
 
     <input type="hidden" name="option" value="com_customtables"/>
-    <?php echo JHtml::_('form.token'); ?>
-    <?php
+	<?php echo JHtml::_('form.token'); ?>
+	<?php
 
-    ?>
+	?>
 
     <input type="hidden" name="task" value="options.edit"/>
     <input type="hidden" name="id" value="<?php echo $this->item->id; ?>"/>

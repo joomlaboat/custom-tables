@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -12,7 +12,7 @@
 use CustomTables\common;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 JHtml::_('behavior.multiselect');
@@ -21,14 +21,14 @@ JHtml::_('behavior.multiselect');
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post"
       name="adminForm" id="adminForm">
-    <?php if (!empty($this->sidebar)): ?>
+	<?php if (!empty($this->sidebar)): ?>
     <div id="j-sidebar-container" class="span2">
-        <?php echo $this->sidebar; ?>
+		<?php echo $this->sidebar; ?>
     </div>
     <div id="j-main-container" class="span10">
-        <?php else : ?>
+		<?php else : ?>
         <div id="j-main-container">
-            <?php endif; ?>
+			<?php endif; ?>
 
             <h3>Categories provide an optional method for organizing your Tables.</h3>
 
@@ -39,26 +39,26 @@ JHtml::_('behavior.multiselect');
                 For example, on the Custom Tables/Tables page, you can filter tables based on Category. So if you have
                 100 tables in your site, you can find a Tables more easily if you know its Category.
             </p>
-            <?php if (!$this->ct->Env->advancedTagProcessor): ?><p>AVAILABLE IN PRO VERSION ONLY</p><?php endif; ?>
+			<?php if (!$this->ct->Env->advancedTagProcessor): ?><p>AVAILABLE IN PRO VERSION ONLY</p><?php endif; ?>
 
-            <?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+			<?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
             <div class="clearfix"></div>
 
-            <?php if (empty($this->items)): ?>
+			<?php if (empty($this->items)): ?>
                 <div class="alert alert-no-items">
-                    <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+					<?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
-            <?php else : ?>
+			<?php else : ?>
             <table class="table table-striped table-hover" id="itemList" style="position: relative;">
                 <thead><?php echo $this->loadTemplate('head'); ?></thead>
                 <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
                 <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
             </table>
         </div>
-    <?php endif; ?>
+	<?php endif; ?>
         <input type="hidden" name="filter_order" value=""/>
         <input type="hidden" name="filter_order_Dir" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="task" value=""/>
-        <?php echo JHtml::_('form.token'); ?>
+		<?php echo JHtml::_('form.token'); ?>
 </form>

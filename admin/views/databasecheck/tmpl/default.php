@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -35,41 +35,41 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
     </style>
 
     <div id="j-sidebar-container" class="span2">
-        <?php echo $this->sidebar; ?>
+		<?php echo $this->sidebar; ?>
 
     </div>
     <div id="j-main-container" class="ct_doc">
 
-        <?php echo JHtml::_('bootstrap.startTabSet', 'schemaTab', array('active' => 'diagram'));
+		<?php echo JHtml::_('bootstrap.startTabSet', 'schemaTab', array('active' => 'diagram'));
 
-        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM'));
-        echo '<div id="canvas_container"></div>';
+		echo JHtml::_('bootstrap.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM'));
+		echo '<div id="canvas_container"></div>';
 
-        echo JHtml::_('bootstrap.endTab');
+		echo JHtml::_('bootstrap.endTab');
 
-        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS'));
+		echo JHtml::_('bootstrap.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS'));
 
-        $result = IntegrityChecks::check($this->ct);
+		$result = IntegrityChecks::check($this->ct);
 
-        if (count($result) > 0)
-            echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
-        else
-            echo '<p>Database table structure is up-to-date.</p>';
+		if (count($result) > 0)
+			echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
+		else
+			echo '<p>Database table structure is up-to-date.</p>';
 
-        echo JHtml::_('bootstrap.endTab');
+		echo JHtml::_('bootstrap.endTab');
 
-        echo JHtml::_('bootstrap.endTabSet');
+		echo JHtml::_('bootstrap.endTabSet');
 
 
-        echo '<script>
+		echo '<script>
 	
 	TableCategoryID = ' . (int)$this->state->get('filter.tablecategory') . ';
 	AllTables = ' . json_encode($this->diagram->tables) . ';
 	
 	</script>';
 
-        ?></div>
+		?></div>
 
     <input type="hidden" name="task" value=""/>
-    <?php echo JHtml::_('form.token'); ?>
+	<?php echo JHtml::_('form.token'); ?>
 </form>

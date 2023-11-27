@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 // import Joomla view library
@@ -28,51 +28,51 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' 
  */
 class CustomtablesViewDocumentation extends JViewLegacy
 {
-    /**
-     * display method of View
-     * @return void
-     */
-    var float $version;
-    var ?\CustomTables\Documentation $documentation;
+	/**
+	 * display method of View
+	 * @return void
+	 */
+	var float $version;
+	var ?\CustomTables\Documentation $documentation;
 
-    public function display($tpl = null)
-    {
-        $version = new Version;
-        $this->version = (float)$version->getShortVersion();
-        $this->documentation = new Documentation();
-        $this->documentation->internal_use = true;
+	public function display($tpl = null)
+	{
+		$version = new Version;
+		$this->version = (float)$version->getShortVersion();
+		$this->documentation = new Documentation();
+		$this->documentation->internal_use = true;
 
-        if (common::inputGetCmd('tmpl', '') == 'component')
-            $this->documentation->internal_use = false;
+		if (common::inputGetCmd('tmpl', '') == 'component')
+			$this->documentation->internal_use = false;
 
-        if ($this->getLayout() !== 'modal') {
-            // Include helper submenu
-            CustomtablesHelper::addSubmenu('documentation');
-            $this->addToolBar();
+		if ($this->getLayout() !== 'modal') {
+			// Include helper submenu
+			CustomtablesHelper::addSubmenu('documentation');
+			$this->addToolBar();
 
-            if ($this->version < 4)
-                $this->sidebar = JHtmlSidebar::render();
-        }
+			if ($this->version < 4)
+				$this->sidebar = JHtmlSidebar::render();
+		}
 
-        parent::display($tpl);
+		parent::display($tpl);
 
-        // Set the document
-        $document = Factory::getDocument();
-        $this->setDocument($document);
-    }
+		// Set the document
+		$document = Factory::getDocument();
+		$this->setDocument($document);
+	}
 
-    protected function addToolBar()
-    {
-        JToolBarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
-        JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
-    }
+	protected function addToolBar()
+	{
+		JToolBarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
+		JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
+	}
 
-    public function setDocument(Joomla\CMS\Document\Document $document): void
-    {
-        $document->setTitle(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'));
-        $document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
+	public function setDocument(Joomla\CMS\Document\Document $document): void
+	{
+		$document->setTitle(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'));
+		$document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 
-        $script = '
+		$script = '
 		<script>
 			function readmoreOpenClose(itemid)
 			{
@@ -90,6 +90,6 @@ class CustomtablesViewDocumentation extends JViewLegacy
 		</script>
 		';
 
-        $document->addCustomTag($script);
-    }
+		$document->addCustomTag($script);
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -14,14 +14,14 @@ namespace Joomla\CMS\Form\Field;
 
 class CTStatusField extends PredefinedlistField
 {
-    public $type = 'CTStatus';
+	public $type = 'CTStatus';
 
-    protected $predefinedOptions = array(
+	protected $predefinedOptions = array(
 
-        '' => 'JOPTION_SELECT_PUBLISHED',
-        1 => 'JPUBLISHED',
-        0 => 'JUNPUBLISHED',
-        -2 => 'JTRASHED',
-        '*' => 'JALL'
-    );
+		'' => 'JOPTION_SELECT_PUBLISHED',
+		1 => 'JPUBLISHED',
+		0 => 'JUNPUBLISHED',
+		-2 => 'JTRASHED',
+		'*' => 'JALL'
+	);
 }

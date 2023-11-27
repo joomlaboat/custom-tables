@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -10,7 +10,7 @@
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 use CustomTables\common;
@@ -20,37 +20,37 @@ use Joomla\CMS\Factory;
 jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditPhotos extends JViewLegacy
 {
-    function display($tpl = null)
-    {
-        $user = new CTUser;
-        if ($user->id === null) {
-            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-            return;
-        }
+	function display($tpl = null)
+	{
+		$user = new CTUser;
+		if ($user->id === null) {
+			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			return;
+		}
 
-        $this->Model = $this->getModel();
-        $this->Model->load();
-        $this->images = $this->Model->getPhotoList();
+		$this->Model = $this->getModel();
+		$this->Model->load();
+		$this->images = $this->Model->getPhotoList();
 
-        $this->idList = array();
+		$this->idList = array();
 
-        foreach ($this->images as $image)
-            $this->idList[] = $image->photoid;
+		foreach ($this->images as $image)
+			$this->idList[] = $image->photoid;
 
-        $this->max_file_size = JoomlaBasicMisc::file_upload_max_size();
-        $this->Listing_Title = $this->Model->Listing_Title;
-        $this->listing_id = $this->Model->listing_id;
-        $this->galleryname = $this->Model->galleryname;
+		$this->max_file_size = JoomlaBasicMisc::file_upload_max_size();
+		$this->Listing_Title = $this->Model->Listing_Title;
+		$this->listing_id = $this->Model->listing_id;
+		$this->galleryname = $this->Model->galleryname;
 
-        parent::display($tpl);
-    }
+		parent::display($tpl);
+	}
 
-    function drawPhotos()
-    {
-        if (count($this->images) == 0)
-            return '';
+	function drawPhotos()
+	{
+		if (count($this->images) == 0)
+			return '';
 
-        $htmlOut = '
+		$htmlOut = '
 
 		<h2>' . common::translate('COM_CUSTOMTABLES_LIST_OF_FOTOS') . '</h2>
 		<table>
@@ -65,18 +65,18 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 			<tbody>
 		';
 
-        $c = 0;
-        foreach ($this->images as $image) {
-            $htmlOut .= '
+		$c = 0;
+		foreach ($this->images as $image) {
+			$htmlOut .= '
 				<tr>';
 
-            $imageFile = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix . $this->Model->ct->Table->tableid . '_'
-                . $this->Model->galleryname . '__esthumb_' . $image->photoid . '.jpg';
+			$imageFile = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix . $this->Model->ct->Table->tableid . '_'
+				. $this->Model->galleryname . '__esthumb_' . $image->photoid . '.jpg';
 
-            $imageFileOriginal = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix
-                . $this->Model->ct->Table->tableid . '_' . $this->Model->galleryname . '__original_' . $image->photoid . '.' . $image->photo_ext;
+			$imageFileOriginal = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix
+				. $this->Model->ct->Table->tableid . '_' . $this->Model->galleryname . '__original_' . $image->photoid . '.' . $image->photo_ext;
 
-            $htmlOut .= '
+			$htmlOut .= '
 					<td style="text-align:center;vertical-align: top;">
 						<input type="checkbox" name="esphoto' . $image->photoid . '" id="esphoto' . $image->photoid . '" style="text-align:left;vertical-align:top">
 					</td>
@@ -100,17 +100,17 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 						</table>
 					</td>';
 
-            $c++;
+			$c++;
 
-            $htmlOut .= '
+			$htmlOut .= '
 				</tr>
 				<tr><td colspan="3"><hr></td></tr>';
-        }
+		}
 
-        $htmlOut .= '
+		$htmlOut .= '
 			</tbody>
 		</table>';
 
-        return $htmlOut;
-    }
+		return $htmlOut;
+	}
 }

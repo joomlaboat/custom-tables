@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -11,33 +11,33 @@
 use CustomTables\database;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
-    die('Restricted access');
+	die('Restricted access');
 }
 
 class JHTMLESUserGroupsView
 {
-    public static function render($valuearray_str, $field = '')
-    {
-        $query = 'SELECT #__usergroups.title AS name FROM #__usergroups';
-        $where = [];
-        $valueArray = explode(',', $valuearray_str);
+	public static function render($valuearray_str, $field = '')
+	{
+		$query = 'SELECT #__usergroups.title AS name FROM #__usergroups';
+		$where = [];
+		$valueArray = explode(',', $valuearray_str);
 
-        foreach ($valueArray as $value) {
-            if ($value != '') {
-                $where[] = 'id=' . (int)$value;
-            }
-        }
+		foreach ($valueArray as $value) {
+			if ($value != '') {
+				$where[] = 'id=' . (int)$value;
+			}
+		}
 
-        $query .= ' WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
-        $options = database::loadObjectList($query);
+		$query .= ' WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
+		$options = database::loadObjectList($query);
 
-        if (count($options) == 0)
-            return '';
+		if (count($options) == 0)
+			return '';
 
-        $groups = array();
-        foreach ($options as $opt)
-            $groups[] = $opt->name;
+		$groups = array();
+		foreach ($options as $opt)
+			$groups[] = $opt->name;
 
-        return implode(',', $groups);
-    }
+		return implode(',', $groups);
+	}
 }

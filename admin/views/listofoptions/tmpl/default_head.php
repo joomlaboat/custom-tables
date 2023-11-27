@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -18,25 +18,25 @@ defined('_JEXEC') or die('Restricted Access');
         <input type="checkbox" name="checkall-toggle" value="" title="Check All" onclick="Joomla.checkAll(this)"/>
     </th>
     <th class="title">
-        <?php echo JHTML::_('grid.sort', 'Option Name', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+		<?php echo JHTML::_('grid.sort', 'Option Name', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
     </th>
 
-    <?php
+	<?php
 
-    foreach ($this->languages as $lang) {
-        ?>
+	foreach ($this->languages as $lang) {
+		?>
 
         <th class="title">
-            <?php echo JHTML::_('grid.sort', 'Option Title (' . $lang->caption . ')', 'title_' . $lang->id, @$this->lists['order_Dir'], @$this->lists['order']); ?>
+			<?php echo JHTML::_('grid.sort', 'Option Title (' . $lang->caption . ')', 'title_' . $lang->id, @$this->lists['order_Dir'], @$this->lists['order']); ?>
         </th>
 
-        <?php
-    }
+		<?php
+	}
 
-    ?>
+	?>
 
     <th width="8%" nowrap="nowrap">
-        <?php echo JHTML::_('grid.sort', 'Is Selectable', 'm.isselectable', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+		<?php echo JHTML::_('grid.sort', 'Is Selectable', 'm.isselectable', @$this->lists['order_Dir'], @$this->lists['order']); ?>
 
     </th>
 
