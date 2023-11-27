@@ -18,6 +18,8 @@ use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
+use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Controller\AdminController;
 
 class CustomtablesControllerListOfRecords extends AdminController

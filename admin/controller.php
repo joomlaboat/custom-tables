@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Router\Route;
 
 /**
  * General Controller of Customtables component

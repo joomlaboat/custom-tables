@@ -15,10 +15,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 
 jimport('joomla.application.component.view');
 
-class CustomTablesViewListEdit extends JView
+class CustomTablesViewListEdit extends HtmlView
 {
 	var CT $ct;
 

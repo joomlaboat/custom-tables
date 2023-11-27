@@ -10,6 +10,7 @@
 
 // no direct access
 use CustomTables\CT;
+use Joomla\CMS\MVC\View\HtmlView;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -17,7 +18,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 jimport('joomla.application.component.view');
 
-class CustomTablesViewStructure extends JView
+class CustomTablesViewStructure extends HtmlView
 {
 	var CT $ct;
 	var $Model;

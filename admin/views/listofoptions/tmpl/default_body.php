@@ -9,6 +9,8 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Router\Route;
+
 defined('_JEXEC') or die('Restricted Access');
 
 $k = 0;

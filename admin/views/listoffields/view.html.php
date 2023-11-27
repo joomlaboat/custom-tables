@@ -161,8 +161,8 @@ class CustomtablesViewListoffields extends HtmlView
 		} else
 			ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
-		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
-		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+		//JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
+		//JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
 		//https://api.joomla.org/cms-3/classes/Joomla.CMS.Toolbar.ToolbarHelper.html
 

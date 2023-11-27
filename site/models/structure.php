@@ -19,10 +19,11 @@ use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 
 use \Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 
 jimport('joomla.application.component.model');
 
-class CustomTablesModelStructure extends JModel
+class CustomTablesModelStructure extends ListModel
 {
 	var CT $ct;
 

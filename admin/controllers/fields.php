@@ -219,7 +219,7 @@ class CustomtablesControllerFields extends FormController
 		return $append;
 	}
 
-	protected function postSaveHook(JModelLegacy $model, $validData = array())
+	protected function postSaveHook(Joomla\CMS\MVC\Model\BaseDatabaseModel $model, $validData = [])
 	{
 	}
 }

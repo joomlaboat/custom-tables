@@ -18,6 +18,7 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Controller\AdminController;
 

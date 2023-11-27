@@ -19,6 +19,7 @@ use CustomTables\Layouts;
 use CustomTables\LinkJoinFilters;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 
 class JHTMLESSqlJoin
 {

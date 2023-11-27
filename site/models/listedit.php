@@ -15,10 +15,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\DataTypes\Tree;
+use Joomla\CMS\MVC\Model\ListModel;
 
 jimport('joomla.application.component.model');
 
-class CustomTablesModelListEdit extends JModel
+class CustomTablesModelListEdit extends ListModel
 {
 	var string $imagefolder = "images/esoptimages";
 

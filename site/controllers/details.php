@@ -1,10 +1,12 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component
+ * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
- * @license GNU/GPL *
- */
+ * @copyright (C) 2018-2023. Ivan Komlev
+ * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
+ **/
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -15,6 +17,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 
 $task = common::inputGetCmd('task', '');
 

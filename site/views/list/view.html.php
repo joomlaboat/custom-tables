@@ -16,11 +16,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\String\StringHelper;
 
 jimport('joomla.application.component.view');
 
-class CustomTablesViewList extends JView
+class CustomTablesViewList extends HtmlView
 {
 	var $_name = 'list';
 

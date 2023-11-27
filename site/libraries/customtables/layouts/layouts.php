@@ -331,8 +331,9 @@ class Layouts
 
 			if (!in_array($field['type'], $fieldTypes_to_skip)) {
 
+				$attribute = 'for="' . $this->ct->Env->field_input_prefix . $field['fieldname'] . '"';
 				$label = '<th scope="row">
-                            <label for="' . $this->ct->Env->field_input_prefix . $field['fieldname'] . '">'
+                            <label ' . $attribute . '>'
 					. '{{ ' . $field['fieldname'] . '.title }}'
 					. ((int)$field['isrequired'] == 1 ? '<span class="description">(' . __('required', 'customtables') . ')</span>' : '')
 					. '</label>

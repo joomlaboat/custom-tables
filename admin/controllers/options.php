@@ -17,6 +17,7 @@ use CustomTables\common;
 use CustomTables\CTUser;
 
 use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Router\Route;
 
 class CustomTablesControllerOptions extends FormController
 {

@@ -13,6 +13,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');

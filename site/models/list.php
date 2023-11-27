@@ -17,13 +17,14 @@ use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Fields;
 use \Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Table\Table;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 
 jimport('joomla.html.html.menu');
 
-class CustomTablesModelList extends JModel
+class CustomTablesModelList extends ListModel
 {
 	/** @var object JTable object */
 	var $_table = null;

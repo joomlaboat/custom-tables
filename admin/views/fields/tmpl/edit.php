@@ -18,6 +18,7 @@ use CustomTables\common;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 $document = Factory::getDocument();

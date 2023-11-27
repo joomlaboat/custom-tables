@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 use CustomTables\Field;
+use Joomla\Registry\Registry;
 
 class JHTMLCTTableMultiJoin
 {

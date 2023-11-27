@@ -16,7 +16,6 @@ use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use JoomlaBasicMisc;
-use JRegistry;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');

@@ -17,6 +17,7 @@ JHtml::_('behavior.multiselect');
 use CustomTables\common;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 
 ?>
 <?php /*

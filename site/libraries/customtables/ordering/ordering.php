@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 use JoomlaBasicMisc;
 use Joomla\Utilities\ArrayHelper;
 use JRegistry;

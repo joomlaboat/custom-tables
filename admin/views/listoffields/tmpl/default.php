@@ -21,6 +21,7 @@ JHtml::_('dropdown.init');
 use CustomTables\common;
 use CustomTables\Integrity\IntegrityFields;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 if ($this->saveOrder && !empty($this->items)) {

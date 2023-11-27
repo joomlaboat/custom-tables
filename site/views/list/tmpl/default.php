@@ -12,6 +12,7 @@
 use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
