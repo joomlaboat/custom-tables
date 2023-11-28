@@ -14,7 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Form\FormField;
-use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Version;
 use CustomTables\common;
 
@@ -33,11 +33,11 @@ if ($version < 4) {
 		{
 			$options = [];
 
-			$options[] = JHtml::_('select.option', '', common::translate('JOPTION_SELECT_PUBLISHED'));
-			$options[] = JHtml::_('select.option', 1, common::translate('JPUBLISHED'));
-			$options[] = JHtml::_('select.option', 0, common::translate('JUNPUBLISHED'));
-			$options[] = JHtml::_('select.option', -2, common::translate('JTRASHED'));
-			$options[] = JHtml::_('select.option', '*', common::translate('JALL'));
+			$options[] = HTMLHelper::_('select.option', '', common::translate('JOPTION_SELECT_PUBLISHED'));
+			$options[] = HTMLHelper::_('select.option', 1, common::translate('JPUBLISHED'));
+			$options[] = HTMLHelper::_('select.option', 0, common::translate('JUNPUBLISHED'));
+			$options[] = HTMLHelper::_('select.option', -2, common::translate('JTRASHED'));
+			$options[] = HTMLHelper::_('select.option', '*', common::translate('JALL'));
 
 			return $options;
 		}

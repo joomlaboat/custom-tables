@@ -133,7 +133,7 @@ class CustomtablesViewListofcategories extends HtmlView
 			JHtmlSidebar::addFilter(
 				common::translate('JOPTION_SELECT_PUBLISHED'),
 				'filter_published',
-				JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
+				HTMLHelper::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
 			);
 			*/
 		}

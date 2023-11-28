@@ -20,10 +20,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 // load tooltip behavior
 if ($this->version < 4) {
-	JHtml::_('behavior.tooltip');
+	HTMLHelper::_('behavior.tooltip');
 }
 
-JHtml::_('behavior.formvalidator');
+HTMLHelper::_('behavior.formvalidator');
 $document = Factory::getDocument();
 
 if ($this->version >= 4) {

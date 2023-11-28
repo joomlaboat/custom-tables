@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 $max_file_size = JoomlaBasicMisc::file_upload_max_size();
@@ -44,7 +45,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
             <td style="text-align:left;">
                 <h2>CustomTables - Structure (<?php echo($this->optionRecord->id != 0 ? 'Edit' : 'New'); ?>)</h2>
             </td>
-            <td nowrap="nowrap" align="right">
+            <td nowrap="nowrap" style="text-align:right;">
                 <a href="#" onclick="javascript:Joomla.submitbutton('save')" class="toolbar"><img
                             src="<?php Uri::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/save.png"
                     alt="Save" title="Save" /></a>
@@ -126,9 +127,8 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                     </td>
                     <td>
 						<?php
-						echo JHTML::_('ESOptions.options', $this->row->id, 'parentid', $this->optionRecord->parentid);
+						echo HTMLHelper::_('ESOptions.options', $this->row->id, 'parentid', $this->optionRecord->parentid);
 						?>
-
                     </td>
                 </tr>
                 <tr>
@@ -197,7 +197,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
 									?>
                                 </td>
-                                <td valign="top">
+                                <td style="vertical-align:top;">
 
 									<?php
 									if ($imagefile != '') {

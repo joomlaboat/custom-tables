@@ -29,8 +29,8 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
 
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
+HTMLHelper::_('behavior.formvalidation');
+HTMLHelper::_('behavior.keepalive');
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
 	. 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'layouteditor' . DIRECTORY_SEPARATOR . 'layouteditor.php');
@@ -58,9 +58,9 @@ foreach ($this->allTables as $table) {
 <form action="<?php echo Route::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
       method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
-	<?php echo JHtml::_('bootstrap.startTabSet', 'layoutsTab', array('active' => $this->active_tab)); ?>
+	<?php echo HTMLHelper::_('bootstrap.startTabSet', 'layoutsTab', array('active' => $this->active_tab)); ?>
 
-	<?php echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'general', common::translate('COM_CUSTOMTABLES_LAYOUTS_GENERAL')); ?>
+	<?php echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'general', common::translate('COM_CUSTOMTABLES_LAYOUTS_GENERAL')); ?>
 
     <div class="row-fluid form-horizontal-desktop">
         <div class="span12">
@@ -82,9 +82,9 @@ foreach ($this->allTables as $table) {
         </div>
     </div>
 
-	<?php echo JHtml::_('bootstrap.endTab');
+	<?php echo HTMLHelper::_('bootstrap.endTab');
 
-	echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcode-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML'));
+	echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'layoutcode-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML'));
 
 
 	$layoutCode = $this->item->layoutcode;
@@ -98,9 +98,9 @@ foreach ($this->allTables as $table) {
 	if ($this->ct->Env->folderToSaveLayouts !== null)
 		echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.html</div>';
 
-	echo JHtml::_('bootstrap.endTab');
+	echo HTMLHelper::_('bootstrap.endTab');
 
-	echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutmobile-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE'));
+	echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'layoutmobile-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE'));
 
 	if ($this->ct->Env->advancedTagProcessor) {
 		$layoutCode = $this->item->layoutmobile;
@@ -117,9 +117,9 @@ foreach ($this->allTables as $table) {
 	} else
 		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
 
-	echo JHtml::_('bootstrap.endTab');
+	echo HTMLHelper::_('bootstrap.endTab');
 
-	echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcss-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_CSS'));
+	echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'layoutcss-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_CSS'));
 
 	if ($this->ct->Env->advancedTagProcessor) {
 		$layoutCode = $this->item->layoutcss;
@@ -136,9 +136,9 @@ foreach ($this->allTables as $table) {
 	} else
 		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
 
-	echo JHtml::_('bootstrap.endTab');
+	echo HTMLHelper::_('bootstrap.endTab');
 
-	echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutjs-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_JS'));
+	echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'layoutjs-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_JS'));
 
 	if ($this->ct->Env->advancedTagProcessor) {
 		$layoutCode = $this->item->layoutjs;
@@ -156,8 +156,8 @@ foreach ($this->allTables as $table) {
 	} else
 		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
 
-	echo JHtml::_('bootstrap.endTab');
-	echo JHtml::_('bootstrap.endTabSet');
+	echo HTMLHelper::_('bootstrap.endTab');
+	echo HTMLHelper::_('bootstrap.endTabSet');
 	echo HTMLHelper::_('form.token');
 	echo render_onPageLoads($onPageLoads, 3);
 

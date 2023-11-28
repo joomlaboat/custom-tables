@@ -21,7 +21,7 @@ HTMLHelper::_('behavior.multiselect');
 <tr>
 	<?php if ($this->canEdit && $this->canState): ?>
         <th style="width:20px;" class="nowrap center">
-			<?php echo JHtml::_('grid.checkall'); ?>
+			<?php echo HTMLHelper::_('grid.checkall'); ?>
         </th>
 	<?php endif; ?>
 

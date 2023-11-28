@@ -15,28 +15,66 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\database;
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Version;
 
-jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+$versionObject = new Version;
+$version = (int)$versionObject->getShortVersion();
 
-//https://docs.joomla.org/Creating_a_custom_form_field_type
-class JFormFieldCTTable extends JFormFieldList
-{
-	public $type = 'cttable';
+if ($version < 4) {
 
-	public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+	JFormHelper::loadFieldClass('list');
+
+	class JFormFieldCTTable extends JFormFieldList
 	{
-		$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
-		$records = database::loadObjectList((string)$query);
+		public $type = 'cttable';
 
-		$options = array();
-		if ($records) {
-			if ($add_empty_option)
-				$options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
+		public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+		{
+			$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
+			$records = database::loadObjectList((string)$query);
 
-			foreach ($records as $rec)
-				$options[] = JHtml::_('select.option', $rec->id, $rec->tabletitle);
+			$options = array();
+			if ($records) {
+				if ($add_empty_option)
+					$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
+
+				foreach ($records as $rec)
+					$options[] = HTMLHelper::_('select.option', $rec->id, $rec->tabletitle);
+			}
+			return $options;
 		}
-		return $options;
+	}
+
+} else {
+
+	class JFormFieldCTTable extends FormField
+	{
+		public $type = 'cttable';
+		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
+
+		protected function getInput()
+		{
+			$data = $this->getLayoutData();
+			$data['options'] = $this->getOptions();
+			return $this->getRenderer($this->layout)->render($data);
+		}
+
+		public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+		{
+			$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
+			$records = database::loadObjectList((string)$query);
+
+			$options = array();
+			if ($records) {
+				if ($add_empty_option)
+					$options[] = ['value' => '', 'text' => common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT')];
+
+				foreach ($records as $rec)
+					$options[] = ['value' => $rec->id, 'text' => $rec->tabletitle];
+			}
+			return $options;
+		}
 	}
 }

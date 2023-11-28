@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\CT;
 use CustomTables\Field;
 use CustomTables\TwigProcessor;
+use Joomla\CMS\HTML\HTMLHelper;
 
 class CT_FieldTypeTag_sqljoin
 {
@@ -68,7 +69,7 @@ class CT_FieldTypeTag_sqljoin
 			$esr_filter = '';
 
 		//Old method - slow
-		$result = JHTML::_('ESSQLJoinView.render', $listing_id, $esr_table, $esr_field, $esr_filter);
+		$result = HTMLHelper::_('ESSQLJoinView.render', $listing_id, $esr_table, $esr_field, $esr_filter);
 
 		//New method - fast and secure
 		$join_ct = new CT;

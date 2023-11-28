@@ -78,7 +78,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                            onclick="checkAll(<?php echo count($this->items); ?>);"/>
                 </th>
                 <th class="title">
-					<?php echo JHTML::_('grid.sort', 'Name', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+					<?php echo HTMLHelper::_('grid.sort', 'Name', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                 </th>
 
 				<?php
@@ -93,7 +93,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 						$postfix = '_' . $lang->sef;
 
 					echo '<th class="title" nowrap="nowrap">';
-					echo JHTML::_('grid.sort', $lang->caption, 'title' . $postfix, @$this->lists['order_Dir'], @$this->lists['order']);
+					echo HTMLHelper::_('grid.sort', $lang->caption, 'title' . $postfix, @$this->lists['order_Dir'], @$this->lists['order']);
 					echo '</th>';
 
 				}
@@ -102,8 +102,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 
                 <th nowrap="nowrap">
-					<?php echo JHTML::_('grid.sort', 'Order by', 'm.ordering', @$this->lists['order_Dir'], @$this->lists['order']); ?>
-					<?php if ($this->ordering) echo JHTML::_('grid.order', $this->items); ?>
+					<?php echo HTMLHelper::_('grid.sort', 'Order by', 'm.ordering', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+					<?php if ($this->ordering) echo HTMLHelper::_('grid.order', $this->items); ?>
                 </th>
 
 
@@ -128,7 +128,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 			//&rootid='.$filter_rootparent.'
 			foreach ($rows as $row) :
 
-				$checked = JHTML::_('grid.checkedout', $row, $i);
+				$checked = HTMLHelper::_('grid.checkedout', $row, $i);
 				$user = new CTUser();
 
 				?>

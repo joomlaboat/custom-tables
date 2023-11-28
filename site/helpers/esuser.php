@@ -10,6 +10,7 @@
 
 use CustomTables\common;
 use CustomTables\database;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -52,6 +53,6 @@ class JHTMLESUser
 		$att = ['id' => '', 'data-type' => 'user', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT')];
 		$options = array_merge(array($att), $options);
 
-		return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);
+		return HTMLHelper::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);
 	}
 }

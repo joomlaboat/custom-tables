@@ -9,6 +9,8 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\HTML\HTMLHelper;
+
 defined('_JEXEC') or die('Restricted Access');
 ?>
 
@@ -18,7 +20,7 @@ defined('_JEXEC') or die('Restricted Access');
         <input type="checkbox" name="checkall-toggle" value="" title="Check All" onclick="Joomla.checkAll(this)"/>
     </th>
     <th class="title">
-		<?php echo JHTML::_('grid.sort', 'Option Name', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'Option Name', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
     </th>
 
 	<?php
@@ -27,7 +29,7 @@ defined('_JEXEC') or die('Restricted Access');
 		?>
 
         <th class="title">
-			<?php echo JHTML::_('grid.sort', 'Option Title (' . $lang->caption . ')', 'title_' . $lang->id, @$this->lists['order_Dir'], @$this->lists['order']); ?>
+			<?php echo HTMLHelper::_('grid.sort', 'Option Title (' . $lang->caption . ')', 'title_' . $lang->id, @$this->lists['order_Dir'], @$this->lists['order']); ?>
         </th>
 
 		<?php
@@ -35,8 +37,8 @@ defined('_JEXEC') or die('Restricted Access');
 
 	?>
 
-    <th width="8%" nowrap="nowrap">
-		<?php echo JHTML::_('grid.sort', 'Is Selectable', 'm.isselectable', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+    <th style="width:8%;" nowrap="nowrap">
+		<?php echo HTMLHelper::_('grid.sort', 'Is Selectable', 'm.isselectable', @$this->lists['order_Dir'], @$this->lists['order']); ?>
 
     </th>
 

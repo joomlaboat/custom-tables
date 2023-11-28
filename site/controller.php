@@ -14,8 +14,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use Joomla\CMS\MVC\Controller\BaseController;
 
-class CustomTablesController extends JControllerLegacy
+class CustomTablesController extends BaseController
 {
 	function display($cachable = false, $urlparams = array())
 	{

@@ -42,14 +42,14 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
     </div>
     <div id="j-main-container" class="ct_doc">
 
-		<?php echo JHtml::_('bootstrap.startTabSet', 'schemaTab', array('active' => 'diagram'));
+		<?php echo HTMLHelper::_('bootstrap.startTabSet', 'schemaTab', array('active' => 'diagram'));
 
-		echo JHtml::_('bootstrap.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM'));
+		echo HTMLHelper::_('bootstrap.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM'));
 		echo '<div id="canvas_container"></div>';
 
-		echo JHtml::_('bootstrap.endTab');
+		echo HTMLHelper::_('bootstrap.endTab');
 
-		echo JHtml::_('bootstrap.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS'));
+		echo HTMLHelper::_('bootstrap.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS'));
 
 		$result = IntegrityChecks::check($this->ct);
 
@@ -58,9 +58,9 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
 		else
 			echo '<p>Database table structure is up-to-date.</p>';
 
-		echo JHtml::_('bootstrap.endTab');
+		echo HTMLHelper::_('bootstrap.endTab');
 
-		echo JHtml::_('bootstrap.endTabSet');
+		echo HTMLHelper::_('bootstrap.endTabSet');
 
 
 		echo '<script>

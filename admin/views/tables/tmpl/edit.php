@@ -19,8 +19,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
+HTMLHelper::_('behavior.formvalidation');
+HTMLHelper::_('behavior.keepalive');
 
 $document = Factory::getDocument();
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" rel="stylesheet">');
@@ -32,9 +32,9 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
     <div id="jform_title"></div>
     <div class="form-horizontal">
 
-		<?php echo JHtml::_('bootstrap.startTabSet', 'tablesTab', array('active' => 'details')); ?>
+		<?php echo HTMLHelper::_('bootstrap.startTabSet', 'tablesTab', array('active' => 'details')); ?>
 
-		<?php echo JHtml::_('bootstrap.addTab', 'tablesTab', 'details', common::translate('COM_CUSTOMTABLES_TABLES_DETAILS')); ?>
+		<?php echo HTMLHelper::_('bootstrap.addTab', 'tablesTab', 'details', common::translate('COM_CUSTOMTABLES_TABLES_DETAILS')); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
 
@@ -92,7 +92,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
                 </div>
             </div>
         </div>
-		<?php echo JHtml::_('bootstrap.endTab'); ?>
+		<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
 
 
 		<?php
@@ -102,7 +102,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 			if ($moreThanOneLanguage)
 				$id .= '_' . $lang->sef;
 
-			echo JHtml::_('bootstrap.addTab', 'tablesTab', $id, common::translate('COM_CUSTOMTABLES_TABLES_DESCRIPTION') . ' <b>' . $lang->title . '</b>');
+			echo HTMLHelper::_('bootstrap.addTab', 'tablesTab', $id, common::translate('COM_CUSTOMTABLES_TABLES_DESCRIPTION') . ' <b>' . $lang->title . '</b>');
 			echo '
 			<div id="' . $id . '" class="tab-pane">
 				<div class="row-fluid form-horizontal-desktop">
@@ -125,7 +125,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 			</div>';
 			$moreThanOneLanguage = true; //More than one language installed
 
-			echo JHtml::_('bootstrap.endTab');
+			echo HTMLHelper::_('bootstrap.endTab');
 		}
 
 		?>
@@ -133,7 +133,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 		<?php
 		//if($this->ct->Env->advancedTagProcessor):
 
-		echo JHtml::_('bootstrap.addTab', 'tablesTab', 'advanced', common::translate('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
+		echo HTMLHelper::_('bootstrap.addTab', 'tablesTab', 'advanced', common::translate('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
@@ -169,7 +169,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
             </div>
         </div>
 
-		<?php echo JHtml::_('bootstrap.endTab');
+		<?php echo HTMLHelper::_('bootstrap.endTab');
 		//endif;
 		?>
 
@@ -177,7 +177,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
 		if ($this->item->tablename !== null) {
 
-			echo JHtml::_('bootstrap.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
+			echo HTMLHelper::_('bootstrap.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
 			include('_dependencies.php');
 			?>
 
@@ -190,11 +190,11 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
                 </div>
             </div>
-			<?php echo JHtml::_('bootstrap.endTab');
+			<?php echo HTMLHelper::_('bootstrap.endTab');
 		}
 		?>
 
-		<?php echo JHtml::_('bootstrap.endTabSet'); ?>
+		<?php echo HTMLHelper::_('bootstrap.endTabSet'); ?>
 
         <div>
             <input type="hidden" name="task" value="tables.edit"/>

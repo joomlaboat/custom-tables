@@ -193,17 +193,17 @@ class JESPagination// extends JObject
 
 		// Make the option list.
 		for ($i = $the_step; $i <= $the_step * 6; $i += $the_step) {
-			$limits[] = JHTML::_('select.option', "$i");
+			$limits[] = HTMLHelper::_('select.option', "$i");
 		}
 
-		$limits[] = JHTML::_('select.option', $the_step * 10);
-		$limits[] = JHTML::_('select.option', $the_step * 20);
-		//$limits[] = JHTML::_('select.option', '0', common::translate('JALL')); don't show all ever
+		$limits[] = HTMLHelper::_('select.option', $the_step * 10);
+		$limits[] = HTMLHelper::_('select.option', $the_step * 20);
+		//$limits[] = HTMLHelper::_('select.option', '0', common::translate('JALL')); don't show all ever
 
 		$selected = $this->_viewall ? 0 : $this->limit;
 
 		// Build the select list.
-		$html = JHtml::_('select.genericlist', $limits, $this->prefix . 'limit', 'class="inputbox" size="1" onchange="ctLimitChanged(this);"', 'value', 'text', $selected);
+		$html = HTMLHelper::_('select.genericlist', $limits, $this->prefix . 'limit', 'class="inputbox" size="1" onchange="ctLimitChanged(this);"', 'value', 'text', $selected);
 		return $html;
 	}
 

@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\database;
 use CustomTables\DataTypes;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
@@ -51,7 +52,7 @@ class JFormFieldCTField extends JFormFieldList
 				// Translate the type selection
 				$text = $translations[$type];
 				// Now add the type and its text to the options array
-				$_filter[] = JHtml::_('select.option', $type, common::translate($text));
+				$_filter[] = HTMLHelper::_('select.option', $type, common::translate($text));
 			}
 		}
 		return $_filter;

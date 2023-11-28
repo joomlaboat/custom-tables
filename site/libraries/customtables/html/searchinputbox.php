@@ -16,10 +16,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use DateTime;
 use Exception;
-use JHTML;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (defined('_JEXEC'))
-	JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+	HTMLHelper::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
 
 class SearchInputBox
 {
@@ -338,7 +338,7 @@ class SearchInputBox
 
 		//From
 		if ($fieldrow['typeparams'] == 'date') {
-			$result .= JHTML::calendar($value_min, $objectName . '_min', $objectName . '_min', '%Y-%m-%d', $attribs);
+			$result .= HTMLHelper::calendar($value_min, $objectName . '_min', $objectName . '_min', '%Y-%m-%d', $attribs);
 		} else {
 			$result .= '<input type="text"'
 				. ' id="' . $objectName . '_min" '
@@ -353,7 +353,7 @@ class SearchInputBox
 
 		//TODO: check if this is correct
 		if ($fieldrow['typeparams'] == 'date') {
-			$result .= JHTML::calendar($value_max, $objectName . '_max', $objectName . '_max', '%Y-%m-%d', $attribs);
+			$result .= HTMLHelper::calendar($value_max, $objectName . '_max', $objectName . '_max', '%Y-%m-%d', $attribs);
 		} else {
 			$result .= '<input type="text"'
 				. ' id="' . $objectName . '_max"'
@@ -379,7 +379,7 @@ class SearchInputBox
 		foreach ($this->field->params as $param)
 			$options[] = ['id' => $param, 'data-type' => 'radio', 'name' => $param];
 
-		return JHTML::_('select.genericlist', $options, $objName, $cssclass . ' ' . $onchange . ' ', 'id', 'name', $value, $objName);
+		return HTMLHelper::_('select.genericlist', $options, $objName, $cssclass . ' ' . $onchange . ' ', 'id', 'name', $value, $objName);
 	}
 
 	protected function getCustomTablesBox($prefix, $innerJoin, $default_Action, $index, $where, $whereList, $value, $cssclass, $place_holder = ''): string
@@ -403,7 +403,7 @@ class SearchInputBox
 			$requirementDepth = 0;
 		}
 
-		$result .= JHTML::_('ESComboTree.render',
+		$result .= HTMLHelper::_('ESComboTree.render',
 			$prefix,
 			$this->ct->Table->tablename,
 			$this->field->fieldname,
@@ -433,7 +433,7 @@ class SearchInputBox
 			$default_class = 'form-control';
 
 		if ($this->ct->Env->user->id != 0)
-			$result = JHTML::_('ESUser.render', $objName, $value, '', 'class="' . $cssclass . ' ' . $default_class . '" ',
+			$result = HTMLHelper::_('ESUser.render', $objName, $value, '', 'class="' . $cssclass . ' ' . $default_class . '" ',
 				($this->field->params[0] ?? ''), $onchange, $where, $mysqlJoin);
 
 		return $result;
@@ -465,7 +465,7 @@ class SearchInputBox
 		}
 
 		if ($user->id != 0)
-			$result = JHTML::_('ESUserGroup.render', $objectName, $value, '', $cssclass, $onchange, $where, $mysqlJoin);
+			$result = HTMLHelper::_('ESUserGroup.render', $objectName, $value, '', $cssclass, $onchange, $where, $mysqlJoin);
 
 		return $result;
 	}
@@ -521,7 +521,7 @@ class SearchInputBox
 		$real_selector = $esr_selector;//TODO: check if this is correct
 		$real_selector = 'single';
 
-		$result .= JHTML::_('ESRecords.render', $this->field->params, $objectName,
+		$result .= HTMLHelper::_('ESRecords.render', $this->field->params, $objectName,
 			$value, $esr_table, $esr_field, $real_selector, $esr_filter, '',
 			$cssclass, $onchange, $dynamic_filter, $sortByField,
 			$this->ct->Languages->Postfix, $this->field->title);
@@ -553,7 +553,7 @@ class SearchInputBox
 			$this->field->params[1] = 'tablelesslayout:' . $this->field->layout;
 
 		try {
-			$result .= JHTML::_('ESSQLJoin.render', $this->field->params, $value, true, $this->ct->Languages->Postfix, $objectName,
+			$result .= HTMLHelper::_('ESSQLJoin.render', $this->field->params, $value, true, $this->ct->Languages->Postfix, $objectName,
 				$this->field->title,
 				' ' . $cssclass . ' es_class_sqljoin', $onchange, true);
 		} catch (Exception $e) {
@@ -565,9 +565,9 @@ class SearchInputBox
 
 	protected function getDateRangeBox(string $objName_, $value, $cssclass, $default_class, string $field_title): string
 	{
-		JHtml::_('jquery.framework');
-		JHtml::_('script', 'https://code.jquery.com/ui/1.13.2/jquery-ui.js');
-		JHtml::_('stylesheet', 'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
+		HTMLHelper::_('jquery.framework');
+		HTMLHelper::_('script', 'https://code.jquery.com/ui/1.13.2/jquery-ui.js');
+		HTMLHelper::_('stylesheet', 'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
 
 		$this->ct->document->addCustomTag('<script>
 

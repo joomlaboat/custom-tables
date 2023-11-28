@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use JFilterInput;
-use JHtml;
 use Joomla\CMS\HTML\HTMLHelper;
 use JoomlaBasicMisc;
 

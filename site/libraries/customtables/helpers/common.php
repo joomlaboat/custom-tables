@@ -16,6 +16,8 @@ use JoomlaBasicMisc;
 
 //use JUri;
 use Joomla\CMS\Uri\Uri;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class common
 {
@@ -323,5 +325,28 @@ class common
 			}
 		}
 		return $items;
+	}
+
+	public static function folderList(string $directory): ?array
+	{
+		$folders = [];
+		$directoryLength = strlen($directory);
+
+		if ($directory > 0 and $directory[$directoryLength - 1] !== DIRECTORY_SEPARATOR)
+			$directoryLength += 1;
+
+		if (is_dir($directory)) {
+			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
+
+			foreach ($iterator as $item) {
+				if ($item->isDir())
+					$folders[] = substr($item->getPathname(), $directoryLength);
+			}
+		} else {
+			// Handle the case when $directory is not a valid directory
+			// You can throw an exception, return an error message, etc.
+			return null;
+		}
+		return $folders;
 	}
 }

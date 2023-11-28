@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\String\StringHelper;
 
@@ -46,7 +47,7 @@ class CustomTablesViewList extends HtmlView
 		//Ordering allowed ?
 		$this->ordering = ($this->lists['order'] == 'm.ordering');
 
-		JHTML::_('behavior.tooltip');
+		HTMLHelper::_('behavior.tooltip');
 
 		parent::display($tpl);
 	}
@@ -66,14 +67,14 @@ class CustomTablesViewList extends HtmlView
 		$search = StringHelper::strtolower($search);
 
 		// level limit filter
-		$lists['levellist'] = JHTML::_('select.integerlist', 1, 20, 1, 'levellimit', 'size="1" onchange="document.adminForm.submit();"', $levelLimit);
+		$lists['levellist'] = HTMLHelper::_('select.integerlist', 1, 20, 1, 'levellimit', 'size="1" onchange="document.adminForm.submit();"', $levelLimit);
 
 
 		// Category List
 		$javascript = 'onchange="document.adminForm.submit();"';
 
 		$available_rootparents = Tree::getAllRootParents();
-		$lists['rootparent'] = JHTML::_('select.genericlist', $available_rootparents, 'filter_rootparent', $javascript, 'id', 'optionname', $filterRootParent);
+		$lists['rootparent'] = HTMLHelper::_('select.genericlist', $available_rootparents, 'filter_rootparent', $javascript, 'id', 'optionname', $filterRootParent);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;

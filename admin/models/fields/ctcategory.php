@@ -14,7 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Form\FormField;
-use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Version;
 use CustomTables\common;
 use CustomTables\database;
@@ -45,10 +45,10 @@ if ($version < 4) {
 			$options = array();
 			if ($records) {
 				if ($add_empty_option)
-					$options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'));
+					$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'));
 
 				foreach ($records as $rec)
-					$options[] = JHtml::_('select.option', $rec->id, $rec->categoryname);
+					$options[] = HTMLHelper::_('select.option', $rec->id, $rec->categoryname);
 			}
 			return $options;
 		}

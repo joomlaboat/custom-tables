@@ -18,6 +18,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\DataTypes\Tree;
 use CustomTablesImageMethods;
 use Exception;
+use Joomla\CMS\HTML\HTMLHelper;
 use JoomlaBasicMisc;
 use JHTMLCTTime;
 
@@ -32,8 +33,6 @@ use CT_FieldTypeTag_ct;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
-
-use JHTML;
 
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
 
@@ -232,7 +231,7 @@ class Value
 
 			case 'user':
 			case 'userid':
-				return JHTML::_('ESUserView.render', $rowValue, $option_list[0] ?? '');
+				return HTMLHelper::_('ESUserView.render', $rowValue, $option_list[0] ?? '');
 
 			case 'usergroup':
 				return CTUser::showUserGroup((int)$rowValue);
@@ -297,7 +296,7 @@ class Value
 		if ($orderby_pair[0] == $this->field->realfieldname and $isEditable)
 			$iconClass = '';
 		else
-			$iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
+			$iconClass = ' inactive tip-top hasTooltip" title="' . HTMLHelper::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
 
 		if ($this->ct->Env->version < 4)
 			$result = '<span class="sortable-handler' . $iconClass . '"><i class="ctIconOrdering"></i></span>';
@@ -503,7 +502,7 @@ class Value
 
 			return date($option_list[0], $PHPDate);
 		} else
-			return JHTML::date($PHPDate);
+			return HTMLHelper::date($PHPDate);
 	}
 
 	protected function timeProcess($value, array $option_list): string
@@ -518,7 +517,7 @@ class Value
 			if ($value == '0000-00-00 00:00:00')
 				return '';
 
-			return JHTML::date($PHPDate);
+			return HTMLHelper::date($PHPDate);
 		}
 	}
 

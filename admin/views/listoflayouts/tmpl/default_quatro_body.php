@@ -42,7 +42,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
             </td>
 		<?php endif; ?>
 
-        <td scope="row">
+        <td>
             <div class="name">
 				<?php if ($this->canEdit): ?>
                     <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->layoutname); ?></a>
@@ -55,11 +55,11 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
             </div>
         </td>
 
-        <td scope="row">
+        <td>
 			<?php echo common::translate($item->layouttype); ?>
         </td>
 
-        <td scope="row">
+        <td>
 			<?php echo $item->tabletitle; ?>
         </td>
 

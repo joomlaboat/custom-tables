@@ -19,7 +19,7 @@ use Joomla\CMS\Router\Route;
 
 if ($this->ordering_realfieldname != '') {
 	$saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'recordsList', 'adminForm', 'asc', $saveOrderingUrl);
+	HTMLHelper::_('sortablelist.sortable', 'recordsList', 'adminForm', 'asc', $saveOrderingUrl);
 }
 
 ?>
@@ -67,7 +67,7 @@ if ($this->ordering_realfieldname != '') {
                 </table>
 				<?php //Load the batch processing form. ?>
 				<?php /* if ($this->canCreate && $this->canEdit) : ?>
-            <?php echo JHtml::_(
+            <?php echo HTMLHelper::_(
                 'bootstrap.renderModal',
                 'collapseModal',
                 array(

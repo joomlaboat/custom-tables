@@ -11,6 +11,7 @@
 // No direct access to this file
 use CustomTables\common;
 use CustomTables\database;
+use Joomla\CMS\HTML\HTMLHelper;
 
 defined('_JEXEC') or die('Restricted Access');
 
@@ -31,6 +32,6 @@ class JHTMLCTArticle
 			'data-type' => 'article',
 			'title' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT'))), $options);
 
-		return JHTML::_('select.genericlist', $options, $control_name, 'class="' . $cssclass . '" ' . $attribute . ' ', 'id', 'title', $value, $control_name);
+		return HTMLHelper::_('select.genericlist', $options, $control_name, 'class="' . $cssclass . '" ' . $attribute . ' ', 'id', 'title', $value, $control_name);
 	}
 }

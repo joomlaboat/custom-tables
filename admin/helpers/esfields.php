@@ -9,6 +9,7 @@
  **/
 
 use CustomTables\database;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -29,6 +30,6 @@ class JHTMLCTFields
 
 		$fields[] = array('id' => '0', 'fieldname' => '- ROOT');
 
-		return JHTML::_('select.genericlist', $fields, $control_name, 'class="inputbox"', 'id', 'fieldname', $value);
+		return HTMLHelper::_('select.genericlist', $fields, $control_name, 'class="inputbox"', 'id', 'fieldname', $value);
 	}
 }

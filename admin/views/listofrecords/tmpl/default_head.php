@@ -10,6 +10,7 @@
 
 // No direct access to this file access');
 use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -18,7 +19,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 ?>
 <tr>
     <th style="width:20px;" class="nowrap center">
-		<?php echo JHtml::_('grid.checkall'); ?>
+		<?php echo HTMLHelper::_('grid.checkall'); ?>
     </th>
 
 	<?php if ($this->ordering_realfieldname != ''): ?>

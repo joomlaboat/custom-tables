@@ -18,6 +18,7 @@ use CustomTables\CTUser;
 use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -215,7 +216,7 @@ class CustomtablesViewListoffields extends HtmlView
 				// Translate the type selection
 				$text = '987';//$model->selectionTranslation($type, 'type');
 				// Now add the type and its text to the options array
-				$_filter[] = JHtml::_('select.option', $type, common::translate($text));
+				$_filter[] = HTMLHelper::_('select.option', $type, common::translate($text));
 			}
 			return $_filter;
 		}

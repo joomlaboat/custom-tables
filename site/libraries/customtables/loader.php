@@ -34,9 +34,12 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 		$loadTwig = $params->get('loadTwig');
 	}
 
-	if (defined('_JEXEC'))
+	if (defined('_JEXEC')) {
 		$libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'libraries';
-	else
+
+		if (!defined('CUSTOMTABLES_IMAGES_PATH'))
+			define('CUSTOMTABLES_IMAGES_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'images');
+	} else
 		$libraryPath = $PLUGIN_NAME_DIR . 'libraries';
 
 	if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))

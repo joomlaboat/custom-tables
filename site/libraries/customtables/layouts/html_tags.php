@@ -16,9 +16,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use JEventDispatcher;
+use Joomla\CMS\HTML\HTMLHelper;
 use JoomlaBasicMisc;
 use JESPagination;
-use JHTML;
 use JPluginHelper;
 
 class Twig_Html_Tags
@@ -122,7 +122,7 @@ class Twig_Html_Tags
 		$fieldid = '9999999';//some unique number. TODO
 		$objectname = 'importcsv';
 
-		JHtml::_('behavior.formvalidator');
+		HTMLHelper::_('behavior.formvalidator');
 
 		$urlstr = '/index.php?option=com_customtables&amp;view=fileuploader&amp;tmpl=component&'
 			. 'tableid=' . $this->ct->Table->tableid . '&'
@@ -720,8 +720,8 @@ class Twig_Html_Tags
 				$wa = $this->document->getWebAssetManager();
 				$wa->useScript('keepalive')->useScript('form.validate');
 			} else {
-				JHtml::_('behavior.formvalidation');
-				JHtml::_('behavior.keepalive');
+				HTMLHelper::_('behavior.formvalidation');
+				HTMLHelper::_('behavior.keepalive');
 			}
 		}
 

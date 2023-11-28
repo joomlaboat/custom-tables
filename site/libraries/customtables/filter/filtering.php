@@ -37,7 +37,7 @@ class Filtering
 	{
 		if (defined('_JEXEC')) {
 			if ($ct->Env->version < 4)
-				JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+				HTMLHelper::_addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
 			else
 				HtmlHelper::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
 		}
@@ -423,7 +423,7 @@ class Filtering
 					else
 						$esr_filter = '';
 
-					$filterTitle .= JHTML::_('ESRecordsView.render',
+					$filterTitle .= HTMLHelper::_('ESRecordsView.render',
 						$vL,
 						$esr_table,
 						$esr_field,
@@ -506,7 +506,7 @@ class Filtering
 					foreach ($vList as $vL) {
 						$valueNew = $vL;
 
-						$filterTitle .= JHTML::_('ESSQLJoinView.render',
+						$filterTitle .= HTMLHelper::_('ESSQLJoinView.render',
 							$vL,
 							$esr_table,
 							$esr_field,
@@ -591,7 +591,7 @@ class Filtering
 					$cArr[] = '(SELECT m.group_id FROM #__user_usergroup_map AS m WHERE user_id=' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ' AND '
 						. $select1 . $comparison_operator . database::quote($v) . ')';
 
-					$filterTitle = JHTML::_('ESUserView.render', $vL);
+					$filterTitle = HTMLHelper::_('ESUserView.render', $vL);
 					$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 				}
 			}
@@ -603,7 +603,7 @@ class Filtering
 					else
 						$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
 
-					$filterTitle = JHTML::_('ESUserView.render', $vL);
+					$filterTitle = HTMLHelper::_('ESUserView.render', $vL);
 					$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 				}
 			}
@@ -643,7 +643,7 @@ class Filtering
 		foreach ($vList as $vL) {
 			if ($vL != '') {
 				$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
-				$filterTitle = JHTML::_('ESUserGroupView.render', $vL);
+				$filterTitle = HTMLHelper::_('ESUserGroupView.render', $vL);
 				$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 			}
 		}

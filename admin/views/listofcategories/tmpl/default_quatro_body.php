@@ -39,7 +39,7 @@ $user = new CTUser();
 				<?php endif; ?>
             </td>
 		<?php endif; ?>
-        <td scope="row">
+        <td>
             <div class="name">
 				<?php if ($this->canEdit): ?>
                     <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->categoryname); ?></a>

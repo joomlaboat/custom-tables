@@ -142,7 +142,7 @@ class CustomtablesViewListoftables extends HtmlView//JViewLegacy
 						JHtmlSidebar::addFilter(
 							common::translate('JOPTION_SELECT_PUBLISHED'),
 							'filter_published',
-							JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
+							HTMLHelper::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
 						);
 						*/
 		}
@@ -154,7 +154,7 @@ class CustomtablesViewListoftables extends HtmlView//JViewLegacy
 		JHtmlSidebar::addFilter(
 			common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
 			'filter_tablecategory',
-			JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
+			HTMLHelper::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
 		);
 		*/
 	}

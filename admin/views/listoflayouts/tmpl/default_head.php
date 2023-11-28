@@ -10,6 +10,7 @@
 
 // No direct access to this file
 use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -19,11 +20,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 <tr>
 	<?php if ($this->canEdit && $this->canState): ?>
         <th class="nowrap center">
-			<?php echo JHtml::_('grid.checkall'); ?>
+			<?php echo HTMLHelper::_('grid.checkall'); ?>
         </th>
 	<?php endif; ?>
     <th class="nowrap">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap hidden-phone">
 		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
@@ -33,7 +34,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     </th>
 	<?php if ($this->canState): ?>
         <th class="nowrap center">
-			<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+			<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
         </th>
 	<?php else: ?>
         <th class="nowrap center">
@@ -41,7 +42,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         </th>
 	<?php endif; ?>
     <th class="nowrap center hidden-phone">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap center hidden-phone">
 		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>

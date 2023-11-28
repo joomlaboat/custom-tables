@@ -40,14 +40,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     </th>
 
     <th class="nowrap hidden-phone">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL', 'a.tablecategory', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL', 'a.tablecategory', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th style="width:10px;" class="nowrap center">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th style="width:5px;" class="nowrap center hidden-phone">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 </tr>

@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\Fields;
 use CustomTables\Inputbox;
+use Joomla\CMS\HTML\HTMLHelper;
 
 class ESInputBox
 {
@@ -51,7 +52,7 @@ class ESInputBox
 				$place_holder = '';
 				$class = '';
 
-				$list_of_values = JHTML::_('ESSQLJoin.render',
+				$list_of_values = HTMLHelper::_('ESSQLJoin.render',
 					$typeParams,
 					$value,
 					false,

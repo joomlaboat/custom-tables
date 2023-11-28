@@ -58,7 +58,7 @@ $hashRealTableName = str_replace($dbPrefix, '#__', $hashRealTableName);
 				$iconClass = '';
 
 				if (!$this->saveOrder)
-					$iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'JORDERINGDISABLED');
+					$iconClass = ' inactive tip-top hasTooltip" title="' . HTMLHelper::_('tooltipText', 'JORDERINGDISABLED');
 				?>
                 <span class="sortable-handler<?php echo $iconClass; ?>">
 				<i class="icon-menu"></i>

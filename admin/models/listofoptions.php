@@ -20,6 +20,7 @@ use CustomTables\DataTypes\Tree;
 use CustomTables\Table;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -115,7 +116,7 @@ class CustomTablesModelListOfOptions extends ListModel
 		}
 
 		// second pass - get an indent list of the items
-		$list = JHTML::_('menu.treerecurse', 0, '', array(), $children, max(0, $levellimit - 1));
+		$list = HTMLHelper::_('menu.treerecurse', 0, '', array(), $children, max(0, $levellimit - 1));
 		$list = $this->treerecurse(0, '', array(), $children, max(0, $levellimit - 1));
 
 		// eventually only pick out the searched items.

@@ -123,7 +123,7 @@ class CustomtablesViewListoflayouts extends HtmlView
 						JHtmlSidebar::addFilter(
 							common::translate('JOPTION_SELECT_PUBLISHED'),
 							'filter_published',
-							JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
+							HTMLHelper::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
 						);
 						*/
 		}
@@ -134,7 +134,7 @@ class CustomtablesViewListoflayouts extends HtmlView
 				JHtmlSidebar::addFilter(
 					common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
 					'filter_layouttype',
-					JHtml::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
+					HTMLHelper::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
 				);
 		*/
 		// Set Tableid Selection
@@ -146,7 +146,7 @@ class CustomtablesViewListoflayouts extends HtmlView
 		JHtmlSidebar::addFilter(
 			common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
 			'filter_tableid',
-			JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
+			HTMLHelper::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
 		);
 
 		*/

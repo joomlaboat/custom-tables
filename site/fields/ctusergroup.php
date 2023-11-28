@@ -30,7 +30,8 @@ class JFormFieldCTUserGroup extends JFormFieldList
 
 		if ($records) {
 			foreach ($records as $record)
-				$options[] = JHtml::_('select.option', $record->id, $record->title);
+				$options[] = '<option value="' . htmlspecialchars($record->id) . '">' . htmlspecialchars($record->title) . '</option>';
+			//$options[] = HTMLHelper::_('select.option', $record->id, $record->title);
 		}
 		return $options;
 	}

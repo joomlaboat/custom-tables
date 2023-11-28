@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Version;
+use Joomla\CMS\Form\FormHelper;
 
 class CTTypes
 {
@@ -22,8 +23,7 @@ class CTTypes
 		$version_object = new Version;
 		$version = (int)$version_object->getShortVersion();
 
-		jimport('joomla.form.helper');
-		JFormHelper::loadFieldClass($type);
+		FormHelper::loadFieldClass($type);
 
 		try {
 
@@ -42,7 +42,9 @@ class CTTypes
 				$xml->addAttribute($key, $value);
 			}
 
-			$class = 'JFormField' . $type;
+			//$class = 'FormHelper' . $type;
+			$class = $type;
+
 			$field = new $class();
 			$field->setup($xml, $field_value);
 
@@ -51,4 +53,39 @@ class CTTypes
 			return false;
 		}
 	}
+
+	public static function filelink(string $elementId, string $folderPath, ?string $value = null, array $attributes = [])
+	{
+		// Check if the folder exists
+		if (is_dir($folderPath)) {
+			// Get the list of files in the folder
+			$files = scandir($folderPath);
+
+			// Start building the select element with attributes
+			$select = '<select id="' . htmlspecialchars($elementId) . '" name="' . htmlspecialchars($elementId) . '"';
+
+			foreach ($attributes as $key => $attr) {
+				$select .= ' ' . htmlspecialchars($key) . '="' . htmlspecialchars($attr) . '"';
+			}
+
+			$select .= '>';
+			$select .= '<option value="">Select a file</option>'; // Optional default option
+
+			// Generate options for each file in the folder
+			foreach ($files as $file) {
+				if ($file !== '.' && $file !== '..' && !is_dir($folderPath . '/' . $file)) {
+					$fileValue = htmlspecialchars($file);
+					$selected = ($fileValue === $value) ? ' selected' : '';
+					$select .= '<option value="' . $fileValue . '"' . $selected . '>' . $fileValue . '</option>';
+				}
+			}
+
+			$select .= '</select>';
+
+			return $select;
+		} else {
+			return 'Folder does not exist.';
+		}
+	}
+
 }

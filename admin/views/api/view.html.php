@@ -91,7 +91,7 @@ class CustomtablesViewAPI extends HtmlView
 			echo json_encode($result);
 		} elseif ($frmt == 'xml') {
 			header('Content-Type: text/xml');
-			$xml_data = new SimpleXMLElement('<?xml version="1.0"?><data></data>');
+			$xml_data = new SimpleXMLElement('<?xml version="1.0"?><data value=""></data>');
 
 			// function call to convert array to xml
 			$this->array_to_xml($result, $xml_data);

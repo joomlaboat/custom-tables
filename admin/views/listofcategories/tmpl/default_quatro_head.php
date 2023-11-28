@@ -20,7 +20,7 @@ HTMLHelper::_('behavior.multiselect');
 <tr>
 	<?php if ($this->canState or $this->canDelete): ?>
         <th class="w-1 text-center">
-			<?php echo JHtml::_('grid.checkall'); ?>
+			<?php echo HTMLHelper::_('grid.checkall'); ?>
         </th>
 	<?php endif; ?>
 

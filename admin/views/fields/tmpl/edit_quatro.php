@@ -68,7 +68,7 @@ foreach ($this->allTables as $table) {
 
     <div class="form-horizontal">
 
-		<?php //echo JHtml::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
+		<?php //echo HTMLHelper::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
 		<?php echo HTMLHelper::_('uitab.startTabSet', 'fieldsTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]); ?>
 
 		<?php echo HTMLHelper::_('uitab.addTab', 'fieldsTab', 'general', common::translate('COM_CUSTOMTABLES_FIELDS_GENERAL')); ?>
@@ -198,7 +198,7 @@ foreach ($this->allTables as $table) {
             </div>
         </div>
 		<?php echo HTMLHelper::_('uitab.endTab'); ?>
-		<?php //echo JHtml::_('bootstrap.endTab'); ?>
+		<?php //echo HTMLHelper::_('bootstrap.endTab'); ?>
 
 		<?php
 
@@ -250,7 +250,6 @@ foreach ($this->allTables as $table) {
 			<?php echo HTMLHelper::_('form.token'); ?>
         </div>
 
-
         <script>
             updateTypeParams("jform_type", "jform_typeparams", "typeparams_box", "Joomla");
 			<?php if(!$this->ct->Env->advancedTagProcessor): ?>
@@ -261,10 +260,8 @@ foreach ($this->allTables as $table) {
         </script>
     </div>
 
-    <div id="ct_fieldtypeeditor_box" style="display: none;"><?php
-		$attributes = array('name' => 'ct_fieldtypeeditor', 'id' => 'ct_fieldtypeeditor', 'directory' => 'images', 'recursive' => true, 'label' => 'Select Folder', 'readonly' => false);
-		echo CTTypes::getField('folderlist', $attributes, null)->input;
-		?></div>
+    <div id="ct_fieldtypeeditor_box"
+         style="display: none;"><?php echo implode(',', common::folderList(CUSTOMTABLES_IMAGES_PATH)); ?></div>
 
 </form>
 

@@ -19,6 +19,7 @@ use CustomTables\Layouts;
 use CustomTables\LinkJoinFilters;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
 
 class JHTMLESSqlJoin
@@ -251,7 +252,7 @@ class JHTMLESSqlJoin
 
 	static protected function renderDropdownSelector_Box_improved($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue = false)
 	{
-		JHtml::_('formbehavior.chosen', '.ct_improved_selectbox');
+		HTMLHelper::_('formbehavior.chosen', '.ct_improved_selectbox');
 		return self::renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue);
 	}
 

@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-
 use tagProcessor_General;
 use tagProcessor_Item;
 use tagProcessor_If;
@@ -62,7 +61,7 @@ class Inputbox
 	{
 		if (defined('_JEXEC')) {
 			if ($ct->Env->version < 4)
-				JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+				HTMLHelper::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
 			else
 				HtmlHelper::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
 		}
@@ -366,7 +365,7 @@ class Inputbox
 						$value = $this->defaultValue;
 				}
 
-				return JHTML::_('ESUserGroups.render',
+				return HTMLHelper::_('ESUserGroups.render',
 					$this->prefix . $this->field->fieldname,
 					$value,
 					$this->field->params
@@ -403,7 +402,8 @@ class Inputbox
 						$value = $this->defaultValue;
 				}
 
-				return JHTML::_('ESFileLink.render', $this->prefix . $this->field->fieldname, $value, $this->cssStyle, $this->cssclass, $this->field->params[0], $this->attributes);
+				$folderPath = CUSTOMTABLES_IMAGES_PATH . DIRECTORY_SEPARATOR . $this->field->params[0];
+				return CTTypes::filelink($this->prefix . $this->field->fieldname, $folderPath, $value);
 
 			case 'customtables':
 				return $this->render_customtables($value);
@@ -420,7 +420,7 @@ class Inputbox
 					if ($value == '')
 						$value = $this->defaultValue;
 				}
-				return JHTML::_('GoogleMapCoordinates.render', $this->prefix . $this->field->fieldname, $value);
+				return HTMLHelper::_('GoogleMapCoordinates.render', $this->prefix . $this->field->fieldname, $value);
 
 			case 'email'://dok
 				if ($value === null) {
@@ -462,7 +462,7 @@ class Inputbox
 						$value = (int)$this->defaultValue;
 				}
 
-				return JHTML::_('CTArticle.render',
+				return HTMLHelper::_('CTArticle.render',
 					$this->prefix . $this->field->fieldname,
 					$value,
 					$this->cssclass,
@@ -1051,7 +1051,7 @@ class Inputbox
 		if (isset($this->field->params[3]))
 			$where = 'INSTR(name,"' . $this->field->params[3] . '")';
 
-		$result .= JHTML::_('ESUser.render', $this->prefix . $this->field->fieldname, $value ?? '', '', $attributes, $userGroup, '', $where);
+		$result .= HTMLHelper::_('ESUser.render', $this->prefix . $this->field->fieldname, $value ?? '', '', $attributes, $userGroup, '', $where);
 		return $result;
 	}
 
@@ -1080,7 +1080,7 @@ class Inputbox
 			}
 			$where_string = '(' . implode(' OR ', $where) . ')';
 		}
-		$result .= JHTML::_('ESUserGroup.render', $this->prefix . $this->field->fieldname, $value, '', $attributes, $where_string);
+		$result .= HTMLHelper::_('ESUserGroup.render', $this->prefix . $this->field->fieldname, $value, '', $attributes, $where_string);
 		return $result;
 	}
 
@@ -1168,7 +1168,7 @@ class Inputbox
 		}
 
 		if ($this->field->params[1] == 'multi') {
-			$result .= JHTML::_('MultiSelector.render',
+			$result .= HTMLHelper::_('MultiSelector.render',
 				$this->prefix,
 				$parentId, $optionName,
 				$this->ct->Languages->Postfix,
@@ -1179,7 +1179,7 @@ class Inputbox
 				$this->place_holder);
 		} elseif ($this->field->params[1] == 'single') {
 			$result .= '<div style="float:left;">';
-			$result .= JHTML::_('ESComboTree.render',
+			$result .= HTMLHelper::_('ESComboTree.render',
 				$this->prefix,
 				$this->ct->Table->tablename,
 				$this->field->fieldname,
@@ -1228,7 +1228,7 @@ class Inputbox
 			//Twig Tag
 			//Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
 
-			$result .= JHTML::_('CTTableJoin.render',
+			$result .= HTMLHelper::_('CTTableJoin.render',
 				$this->prefix . $this->field->fieldname,
 				$this->field,
 				($this->row !== null ? $this->row[$this->ct->Table->realidfieldname] : null),
@@ -1243,7 +1243,7 @@ class Inputbox
 
 			$sqljoin_attributes .= ' onchange="' . $this->onchange . '"';
 
-			$result .= JHTML::_('ESSQLJoin.render',
+			$result .= HTMLHelper::_('ESSQLJoin.render',
 				$this->field->params,
 				$value,
 				false,
@@ -1280,7 +1280,7 @@ class Inputbox
 					//Twig Tag
 					//Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
 
-					$result .= JHTML::_('CTTableMultiJoin.render',
+					$result .= HTMLHelper::_('CTTableMultiJoin.render',
 						$this->prefix . $this->field->fieldname,
 						$this->field,
 						($this->row !== null ? $this->row[$this->ct->Table->realidfieldname] : null),
@@ -1348,7 +1348,7 @@ class Inputbox
 				$value = $this->defaultValue;
 		}
 
-		$result .= JHTML::_('ESRecords.render',
+		$result .= HTMLHelper::_('ESRecords.render',
 			$this->field->params,
 			$this->prefix . $this->field->fieldname,
 			$value,
@@ -1458,7 +1458,7 @@ class Inputbox
 				$format = '%Y-%m-%d';
 		}
 
-		$result .= JHTML::calendar($value, $this->prefix . $this->field->fieldname, $this->prefix . $this->field->fieldname,
+		$result .= HTMLHelper::calendar($value, $this->prefix . $this->field->fieldname, $this->prefix . $this->field->fieldname,
 			$format, $attributes);
 
 		return $result;
@@ -1500,7 +1500,7 @@ class Inputbox
 			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
 			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
 
-		$result .= JHTML::_('CTTime.render', $this->prefix . $this->field->fieldname, $value, $this->cssclass, $time_attributes, $this->field->params, $this->option_list);
+		$result .= HTMLHelper::_('CTTime.render', $this->prefix . $this->field->fieldname, $value, $this->cssclass, $time_attributes, $this->field->params, $this->option_list);
 		return $result;
 	}
 
@@ -1593,7 +1593,7 @@ class Inputbox
 					<td>:</td>
 					<td>';
 
-			$result .= JHTML::_('CTArticle.render',
+			$result .= HTMLHelper::_('CTArticle.render',
 				$this->prefix . $fieldname,
 				$value,
 				$this->cssclass,

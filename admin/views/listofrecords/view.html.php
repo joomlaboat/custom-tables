@@ -13,9 +13,7 @@
 defined('_JEXEC') or die;
 
 use CustomTables\common;
-use CustomTables\CTUser;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use CustomTables\CT;
@@ -124,15 +122,15 @@ class CustomtablesViewListofrecords extends HtmlView
 			// Build the active state filter options.
 			/*
 			$options = array();
-			$options[] = JHtml::_('select.option', '1', 'COM_CUSTOMTABLES_PUBLISHED');
-			$options[] = JHtml::_('select.option', '0', 'COM_CUSTOMTABLES_UNPUBLISHED');
-			$options[] = JHtml::_('select.option', '*', 'COM_CUSTOMTABLES_ALL');
+			$options[] = HTMLHelper::_('select.option', '1', 'COM_CUSTOMTABLES_PUBLISHED');
+			$options[] = HTMLHelper::_('select.option', '0', 'COM_CUSTOMTABLES_UNPUBLISHED');
+			$options[] = HTMLHelper::_('select.option', '*', 'COM_CUSTOMTABLES_ALL');
 
 
 			JHtmlSidebar::addFilter(
 				common::translate('JOPTION_SELECT_PUBLISHED'),
 				'filter_published',
-				JHtml::_('select.options', $options, 'value', 'text', $this->state->get('filter.published'), true)
+				HTMLHelper::_('select.options', $options, 'value', 'text', $this->state->get('filter.published'), true)
 			);
 			*/
 			// only load if batch allowed
@@ -146,7 +144,7 @@ class CustomtablesViewListofrecords extends HtmlView
 		JHtmlSidebar::addFilter(
 		common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
 		'filter_tableid',
-		JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
+		HTMLHelper::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
 		);
 		*/
 	}

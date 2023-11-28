@@ -9,6 +9,7 @@
  **/
 
 use CustomTables\database;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -34,7 +35,7 @@ class JFormFieldESTable extends JFormFieldList
 		$options = array();
 		if ($messages) {
 			foreach ($messages as $message)
-				$options[] = JHtml::_('select.option', $message->tablename, $message->tablename);
+				$options[] = HTMLHelper::_('select.option', $message->tablename, $message->tablename);
 		}
 		return $options;
 	}

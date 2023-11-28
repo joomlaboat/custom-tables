@@ -9,6 +9,7 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die('Restricted Access');
@@ -20,8 +21,7 @@ $rows = &$this->items;
 
 foreach ($rows as $row) :
 
-
-	$checked = JHTML::_('grid.checkedout', $row, $i);
+	$checked = HTMLHelper::_('grid.checkedout', $row, $i);
 
 
 	?>

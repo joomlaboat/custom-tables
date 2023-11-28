@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\database;
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
+use Joomla\CMS\HTML\HTMLHelper;
 
 class CT_FieldTypeTag_records
 {
@@ -130,6 +131,6 @@ class CT_FieldTypeTag_records
 		else
 			$separator = '';
 
-		return JHTML::_('ESRecordsView.render', $rowValue, $esr_table, $esr_field, $esr_selector, $esr_filter, $sortByField, $separator);
+		return HTMLHelper::_('ESRecordsView.render', $rowValue, $esr_table, $esr_field, $esr_selector, $esr_filter, $sortByField, $separator);
 	}
 }

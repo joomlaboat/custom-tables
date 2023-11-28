@@ -11,6 +11,7 @@
 // no direct access
 use CustomTables\common;
 use CustomTables\database;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -42,9 +43,9 @@ class JFormFieldCTOption extends JFormFieldList
 
 		$options = array();
 		if ($records) {
-			$options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
+			$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
 			foreach ($records as $rec)
-				$options[] = JHtml::_('select.option', $rec->id, $rec->title);
+				$options[] = HTMLHelper::_('select.option', $rec->id, $rec->title);
 		}
 		return $options;
 	}

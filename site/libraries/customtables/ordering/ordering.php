@@ -19,7 +19,6 @@ use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use JoomlaBasicMisc;
 use Joomla\Utilities\ArrayHelper;
-use JRegistry;
 
 class Ordering
 {

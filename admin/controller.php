@@ -22,7 +22,7 @@ use Joomla\CMS\Router\Route;
 /**
  * General Controller of Customtables component
  */
-class CustomtablesController extends BaseController//JControllerLegacy
+class CustomtablesController extends BaseController
 {
 	public function __construct($config = array())
 	{

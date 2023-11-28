@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\Fields;
+use Joomla\CMS\HTML\HTMLHelper;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
@@ -28,7 +29,7 @@ class JFormFieldAnyTableFields extends JFormFieldList
 	protected function getOptions()
 	{
 		$options = array();
-		$options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
+		$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
 		$tableid = common::inputGetInt('tableid', 0);
 		if ($tableid != 0) {
 			$table_row = ESTables::getTableRowByID($tableid);
@@ -36,7 +37,7 @@ class JFormFieldAnyTableFields extends JFormFieldList
 				$fields = Fields::getExistingFields($table_row->customtablename, false);
 
 				foreach ($fields as $field)
-					$options[] = JHtml::_('select.option', $field['column_name'], $field['column_name'] . ' (' . $field['data_type'] . ')');
+					$options[] = HTMLHelper::_('select.option', $field['column_name'], $field['column_name'] . ' (' . $field['data_type'] . ')');
 			}
 		}
 		return $options;

@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\database;
 use Joomla\CMS\Form\FormField;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Version;
 
 $versionObject = new Version;
@@ -36,14 +37,14 @@ if ($version < 4) {
 		protected function getOptions()
 		{
 			$options = array();
-			$options[] = JHtml::_('select.option', '', common::translate('COM_CUSTOMTABLES_SELECT'));
+			$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_SELECT'));
 
 			$tables = $this->getListOfExistingTables();
 
 			foreach ($tables as $table)
-				$options[] = JHtml::_('select.option', $table, $table);
+				$options[] = HTMLHelper::_('select.option', $table, $table);
 
-			$options[] = JHtml::_('select.option', '-new-', '- Create New Table');
+			$options[] = HTMLHelper::_('select.option', '-new-', '- Create New Table');
 
 			return $options;
 		}

@@ -14,6 +14,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\String\StringHelper;
@@ -54,7 +55,7 @@ class CustomTablesViewListOfOptions extends HtmlView
 			$this->items[$i]->treename = $treename;
 		}
 
-		JHTML::_('behavior.tooltip');
+		HTMLHelper::_('behavior.tooltip');
 		$this->isselectable = true;
 
 		parent::display($tpl);
@@ -87,14 +88,14 @@ class CustomTablesViewListOfOptions extends HtmlView
 		$search = StringHelper::strtolower($search);
 
 		// level limit filter
-		$lists['levellist'] = JHTML::_('select.integerlist', 1, 20, 1, 'levellimit', 'size="1" onchange="document.adminForm.submit();"', $levellimit);
+		$lists['levellist'] = HTMLHelper::_('select.integerlist', 1, 20, 1, 'levellimit', 'size="1" onchange="document.adminForm.submit();"', $levellimit);
 
 
 		// Category List
 		$javascript = 'onchange="document.adminForm.submit();"';
 
 		$available_rootparents = Tree::getAllRootParents();
-		$lists['rootparent'] = JHTML::_('select.genericlist', $available_rootparents, 'filter_rootparent', $javascript, 'id', 'optionname', $filter_rootparent);
+		$lists['rootparent'] = HTMLHelper::_('select.genericlist', $available_rootparents, 'filter_rootparent', $javascript, 'id', 'optionname', $filter_rootparent);
 
 		// table ordering
 		$lists['order_Dir'] = $filter_order_Dir;

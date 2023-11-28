@@ -15,14 +15,15 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 if ($this->ct->Env->version >= 4) {
 	$wa = $this->document->getWebAssetManager();
 	$wa->useScript('keepalive')->useScript('form.validate');
 } else {
-	JHtml::_('behavior.formvalidation');
-	JHtml::_('behavior.keepalive');
+	HTMLHelper::_('behavior.formvalidation');
+	HTMLHelper::_('behavior.keepalive');
 }
 
 $document = Factory::getDocument();

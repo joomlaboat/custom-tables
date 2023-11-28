@@ -30,10 +30,10 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
 
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
+HTMLHelper::_('behavior.formvalidation');
+HTMLHelper::_('behavior.keepalive');
 
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH
@@ -92,9 +92,9 @@ foreach ($this->allTables as $table) {
         <div class="form-horizontal">
 
 			<?php
-			echo JHtml::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
+			echo HTMLHelper::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
 
-			<?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'general', common::translate('COM_CUSTOMTABLES_FIELDS_GENERAL')); ?>
+			<?php echo HTMLHelper::_('bootstrap.addTab', 'fieldsTab', 'general', common::translate('COM_CUSTOMTABLES_FIELDS_GENERAL')); ?>
             <div class="row-fluid form-horizontal-desktop">
                 <div class="span12">
 
@@ -185,9 +185,9 @@ foreach ($this->allTables as $table) {
                     </div>
                 </div>
             </div>
-			<?php echo JHtml::_('bootstrap.endTab'); ?>
+			<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
 
-			<?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'optional', common::translate('COM_CUSTOMTABLES_FIELDS_OPTIONAL')); ?>
+			<?php echo HTMLHelper::_('bootstrap.addTab', 'fieldsTab', 'optional', common::translate('COM_CUSTOMTABLES_FIELDS_OPTIONAL')); ?>
             <div class="row-fluid form-horizontal-desktop">
                 <div class="span12">
                     <div class="control-group">
@@ -216,7 +216,7 @@ foreach ($this->allTables as $table) {
                     </div>
                 </div>
             </div>
-			<?php echo JHtml::_('bootstrap.endTab'); ?>
+			<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
 
 			<?php
 
@@ -226,7 +226,7 @@ foreach ($this->allTables as $table) {
 				if ($moreThanOneLanguage)
 					$id .= '_' . $lang->sef;
 
-				JHtml::_('bootstrap.addTab', 'fieldsTab', $id, common::translate('COM_CUSTOMTABLES_FIELDS_DESCRIPTION') . ' <b>' . $lang->title . '</b>');
+				HTMLHelper::_('bootstrap.addTab', 'fieldsTab', $id, common::translate('COM_CUSTOMTABLES_FIELDS_DESCRIPTION') . ' <b>' . $lang->title . '</b>');
 				echo '
 			<div id="' . $id . '" class="tab-pane">
 				<div class="row-fluid form-horizontal-desktop">
@@ -250,7 +250,7 @@ foreach ($this->allTables as $table) {
 				$moreThanOneLanguage = true; //More than one language installed
 			}
 
-			echo JHtml::_('bootstrap.endTabSet'); ?>
+			echo HTMLHelper::_('bootstrap.endTabSet'); ?>
 
             <div>
                 <input type="hidden" name="task" value="fields.edit"/>
@@ -269,10 +269,8 @@ foreach ($this->allTables as $table) {
 
         </div>
 
-        <div id="ct_fieldtypeeditor_box" style="display: none;"><?php
-			$attributes = array('name' => 'ct_fieldtypeeditor', 'id' => 'ct_fieldtypeeditor', 'directory' => 'images', 'recursive' => true, 'label' => 'Select Folder', 'readonly' => false);
-			echo CTTypes::getField('folderlist', $attributes, null)->input;
-			?></div>
+        <div id="ct_fieldtypeeditor_box"
+             style="display: none;"><?php echo implode(',', common::folderList(CUSTOMTABLES_IMAGES_PATH)); ?></div>
 
     </form>
 </div>

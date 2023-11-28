@@ -9,6 +9,7 @@
  **/
 
 use CustomTables\database;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -29,6 +30,6 @@ class JHTMLESOptions
 
 		$optionlist[] = array('id' => '0', 'optionname' => '- ROOT');
 
-		return JHTML::_('select.genericlist', $optionlist, $control_name, 'class="inputbox"', 'id', 'optionname', $value);
+		return HTMLHelper::_('select.genericlist', $optionlist, $control_name, 'class="inputbox"', 'id', 'optionname', $value);
 	}
 }

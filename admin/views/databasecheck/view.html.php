@@ -20,6 +20,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Diagram;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
@@ -92,7 +93,7 @@ class CustomtablesViewDataBaseCheck extends HtmlView
 		JHtmlSidebar::addFilter(
 			common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
 			'filter_tablecategory',
-			JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
+			HTMLHelper::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
 		);
 	}
 

@@ -13,10 +13,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.multiselect');
-JHtml::_('formbehavior.chosen', 'select');
-JHtml::_('dropdown.init');
+HTMLHelper::_('behavior.tooltip');
+HTMLHelper::_('behavior.multiselect');
+HTMLHelper::_('formbehavior.chosen', 'select');
+HTMLHelper::_('dropdown.init');
 
 use CustomTables\common;
 use CustomTables\Integrity\IntegrityFields;
@@ -26,7 +26,7 @@ use Joomla\CMS\Uri\Uri;
 
 if ($this->saveOrder && !empty($this->items)) {
 	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->tableid . '&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'fieldList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
+	HTMLHelper::_('sortablelist.sortable', 'fieldList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
 }
 
 if (common::inputGetCmd('extratask', '') == 'updateimages') {

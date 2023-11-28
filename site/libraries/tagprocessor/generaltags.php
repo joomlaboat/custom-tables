@@ -18,6 +18,7 @@ use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\CTUser;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 /* All tags already implemented using Twig */
@@ -100,8 +101,7 @@ class tagProcessor_General
 			if ($options[$i] != '')
 				$vlu = date($options[$i]);//,$phpdate );
 			else
-				$vlu = JHTML::date();
-
+				$vlu = HTMLHelper::date();
 
 			$pageLayout = str_replace($fItem, $vlu, $pageLayout);
 			$i++;

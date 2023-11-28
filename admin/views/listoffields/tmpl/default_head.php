@@ -10,6 +10,7 @@
 
 // No direct access to this file access');
 use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -19,13 +20,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 <tr>
 	<?php if ($this->canEdit && $this->canState): ?>
         <th style="width:20px;" class="nowrap center">
-			<?php echo JHtml::_('grid.checkall'); ?>
+			<?php echo HTMLHelper::_('grid.checkall'); ?>
         </th>
 
         <th style="width:1%" class="nowrap center hidden-phone">
-			<?php echo JHtml::_('grid.sort', '<i class="icon-menu-2"></i>', 'a.ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING'); ?>
-			<?php //echo JHtml::_('searchtools.sort', '', 'a.ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
-			<?php //echo JHtml::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
+			<?php echo HTMLHelper::_('grid.sort', '<i class="icon-menu-2"></i>', 'a.ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING'); ?>
+			<?php //echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
+			<?php //echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
         </th>
 
 	<?php else: ?>
@@ -40,14 +41,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	<?php endif; ?>
 
     <th class="nowrap hidden-phone">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL', 'a.fieldname', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL', 'a.fieldname', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap">
 		<?php echo common::translate('COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL'); ?>
     </th>
 
     <th class="nowrap hidden-phone">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_TYPE_LABEL', 'a.type', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_TYPE_LABEL', 'a.type', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap hidden-phone">
 		<?php echo common::translate('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL'); ?>
@@ -60,7 +61,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     </th>
 	<?php if ($this->canState): ?>
         <th style="width:10px;" class="nowrap center">
-			<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+			<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
         </th>
 	<?php else: ?>
         <th style="width:10px;" class="nowrap center">
@@ -68,6 +69,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         </th>
 	<?php endif; ?>
     <th style="width:5px;" class="nowrap center hidden-phone">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 </tr>

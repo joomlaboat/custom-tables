@@ -11,6 +11,7 @@
 // no direct access
 use CustomTables\common;
 use CustomTables\database;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -36,11 +37,11 @@ class JFormFieldESCatalogLayout extends JFormFieldList
 		$messages = database::loadObjectList($query);
 		$options = array();
 
-		$options[] = JHtml::_('select.option', '', '- ' . common::translate('COM_CUSTOMTABLES_SELECT'));
+		$options[] = HTMLHelper::_('select.option', '', '- ' . common::translate('COM_CUSTOMTABLES_SELECT'));
 
 		if ($messages) {
 			foreach ($messages as $message)
-				$options[] = JHtml::_('select.option', $message->layoutname, $message->tablename . ': ' . $message->layoutname);
+				$options[] = HTMLHelper::_('select.option', $message->layoutname, $message->tablename . ': ' . $message->layoutname);
 		}
 		return $options;
 	}

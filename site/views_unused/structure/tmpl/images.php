@@ -15,9 +15,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\DataTypes\Tree;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
-JHTML::stylesheet("default.css", Uri::root(true) . "/components/com_customtables/views/catalog/tmpl/");
+HTMLHelper::stylesheet("default.css", Uri::root(true) . "/components/com_customtables/views/catalog/tmpl/");
 
 $catalogResult = '<table style="width:100%;text-align:center">';
 
@@ -83,7 +84,7 @@ foreach ($this->rows as $row) {
 			if ($row['optionname'] != '')
 				$aLink .= '.' . $row['optionname'];
 
-			$catalogResult .= '<a href="' . $aLink . '"><img src="' . $imageFile . '" border="0" /></a>';
+			$catalogResult .= '<a href="' . $aLink . '"><img src="' . $imageFile . '" style="border:none;" /></a>';
 		} else
 			$catalogResult .= '<img src="' . $imageFile . '" border="0" />';
 

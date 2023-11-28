@@ -19,6 +19,7 @@ use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\Inputbox;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
 
 class JHTMLCTTableJoin
@@ -505,7 +506,7 @@ class JHTMLCTTableJoin
 			$onChangeAttribute .= $onchange;
 
 			if (str_contains($cssClass, ' ct_improved_selectbox'))
-				JHtml::_('formbehavior.chosen', '.ct_improved_selectbox');
+				HTMLHelper::_('formbehavior.chosen', '.ct_improved_selectbox');
 
 			if ($parentElementNotSelected) {
 				$result .= '<div>Selected value does not have a parent.</div>';

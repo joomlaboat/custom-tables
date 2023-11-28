@@ -10,6 +10,7 @@
 
 // No direct access to this file access');
 use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -19,7 +20,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 <tr>
 	<?php if ($this->canEdit && $this->canState): ?>
         <th style="width:20px;" class="nowrap center">
-			<?php echo JHtml::_('grid.checkall'); ?>
+			<?php echo HTMLHelper::_('grid.checkall'); ?>
         </th>
 	<?php else: ?>
         <th style="width:20px;" class="nowrap center hidden-phone">
@@ -30,11 +31,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         </th>
 	<?php endif; ?>
     <th class="nowrap">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL', 'a.categoryname', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL', 'a.categoryname', $this->listDirn, $this->listOrder); ?>
     </th>
 	<?php if ($this->canState): ?>
         <th style="width:10px;" class="nowrap center">
-			<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+			<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
         </th>
 	<?php else: ?>
         <th style="width:10px;" class="nowrap center">
@@ -42,6 +43,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         </th>
 	<?php endif; ?>
     <th style="width:5px;" class="nowrap center hidden-phone">
-		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 </tr>
