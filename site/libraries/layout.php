@@ -19,9 +19,6 @@ use CustomTables\CT;
 $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers';
 set_include_path(get_include_path() . PATH_SEPARATOR . $path);
 
-//Vry old method
-//HTMLHelper::_(addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
-
 // Include library dependencies
 
 $libpath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR;

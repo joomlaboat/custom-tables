@@ -81,10 +81,7 @@ class SaveFieldQuerySet
 				if (isset($value)) {
 					$value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
 
-					if ($value === null)
-						return;
-
-					if ($value == '') {
+					if ($value === null or $value == '') {
 						$this->setNewValue(null);
 						return;
 					}
@@ -112,10 +109,12 @@ class SaveFieldQuerySet
 			case 'filelink':
 			case 'googlemapcoordinates':
 				$value = common::inputGetString($this->field->comesfieldname);
+
 				if (isset($value)) {
 					$this->setNewValue($value);
 					return;// $this->field->realfieldname . '=' . database::quote($value);
 				}
+				die;
 				break;
 
 			case 'color':

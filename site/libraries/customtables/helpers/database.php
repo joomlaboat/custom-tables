@@ -276,6 +276,9 @@ class database
 	 */
 	public static function update(string $tableName, array $data, array $where): bool
 	{
+		if (count($data) == 0)
+			throw new Exception('Nothing to save');
+
 		if (defined('_JEXEC')) {
 
 			$version_object = new Version;

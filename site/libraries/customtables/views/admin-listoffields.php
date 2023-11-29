@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use JFilterInput;
 use Joomla\CMS\HTML\HTMLHelper;
 use JoomlaBasicMisc;
 

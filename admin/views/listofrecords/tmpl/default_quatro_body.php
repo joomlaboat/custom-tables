@@ -94,7 +94,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 		<?php endif; ?>
 
         <td class="d-none d-md-table-cell">
-			<?php echo $item_array[$this->ct->Table->realidfieldname]; ?>
+            <a href="<?php echo $link; ?>"><?php echo $item_array[$this->ct->Table->realidfieldname]; ?></a>
         </td>
     </tr>
 <?php endforeach; ?>

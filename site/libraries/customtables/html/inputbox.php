@@ -38,7 +38,7 @@ use Joomla\CMS\Editor\Editor;
 use JHTML;
 
 //Joomla 4+ support
-use Joomla\CMS\HTML\HtmlHelper;
+use Joomla\CMS\HTML\HTMLHelper;
 
 class Inputbox
 {

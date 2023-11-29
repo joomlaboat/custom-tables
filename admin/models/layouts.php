@@ -512,12 +512,6 @@ class CustomtablesModelLayouts extends AdminModel
 	 */
 	public function save($data)
 	{
-		//$filter = JFilterInput::getInstance();
-		//$author = $filter->clean($data['metadata']['author'], 'TRIM');
-
-		//$input = Factory::getApplication()->input;
-		//$filter = $input->getString('input_name', 'default_value', 'filter_type');
-
 		if (function_exists("transliterator_transliterate"))
 			$layoutName = transliterator_transliterate("Any-Latin; Latin-ASCII;", $data['layoutname']);
 		else

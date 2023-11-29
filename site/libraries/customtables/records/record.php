@@ -184,6 +184,7 @@ class record
 	{
 		$this->ct->isEditForm = true; //These changes input box prefix
 		$pageLayout = $this->editForm->processLayout($row);
+
 		$backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];
 		$fieldsToEdit = [];
 

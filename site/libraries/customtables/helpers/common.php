@@ -366,12 +366,14 @@ class common
 	public static function htmlEscape($var, $charset = 'UTF-8', $shorten = false, $length = 40)
 	{
 		if (self::checkString($var)) {
-			if (class_exists("JFilterInput")) {
-				$filter = new JFilterInput();
-				$string = $filter->clean(html_entity_decode(htmlentities($var, ENT_COMPAT, $charset)), 'HTML');
-			} else {
-				$string = html_entity_decode(htmlentities($var, ENT_COMPAT, $charset));
-			}
+			// Encode special characters to HTML entities
+			$encoded = htmlentities($var, ENT_COMPAT, $charset);
+
+			// Decode HTML entities to their corresponding characters
+			$decoded = html_entity_decode($encoded, ENT_COMPAT, $charset);
+
+			// Remove any potential scripting or dangerous content
+			$string = strip_tags($decoded);
 
 			if ($shorten) {
 				return self::shorten($string, $length);
