@@ -48,8 +48,8 @@ class CustomtablesViewListofcategories extends HtmlView
 		$this->state = $this->get('State');
 		$this->filterForm = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
-		$this->listOrder = $this->escape($this->state->get('list.ordering'));
-		$this->listDirn = $this->escape($this->state->get('list.direction'));
+		$this->listOrder = common::escape($this->state->get('list.ordering'));
+		$this->listDirn = common::escape($this->state->get('list.direction'));
 		$this->saveOrder = $this->listOrder == 'ordering';
 
 		// get global action permissions

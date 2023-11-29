@@ -114,7 +114,7 @@ class CustomTablesViewOptions extends HtmlView
 		ToolbarHelper::divider();
 		// set help url for this view if found
 		$help_url = CustomtablesHelper::getHelpUrl('options');
-		if (CustomtablesHelper::checkString($help_url)) {
+		if (common::checkString($help_url)) {
 			ToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
 		}
 	}

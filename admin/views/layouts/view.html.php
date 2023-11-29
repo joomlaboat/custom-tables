@@ -195,12 +195,6 @@ class CustomtablesViewLayouts extends HtmlView
 		}
 		//}
 		ToolbarHelper::divider();
-		// set help url for this view if found
-		//$help_url = CustomtablesHelper::getHelpUrl('layouts');
-		//if (CustomtablesHelper::checkString($help_url))
-		//{
-		//ToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-		//}
 	}
 
 	/**
@@ -215,23 +209,6 @@ class CustomtablesViewLayouts extends HtmlView
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
 			$document->addCustomTag('<script src="' . Uri::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
 		}
-	}
-
-	/**
-	 * Escapes a value for output in a view script.
-	 *
-	 * @param mixed $var The output to escape.
-	 *
-	 * @return  mixed  The escaped value.
-	 */
-	public function escape($var)
-	{
-		if (strlen($var) > 30) {
-			// use the helper htmlEscape method instead and shorten the string
-			return CustomtablesHelper::htmlEscape($var, $this->_charset, true, 30);
-		}
-		// use the helper htmlEscape method instead.
-		return CustomtablesHelper::htmlEscape($var, $this->_charset);
 	}
 
 	public function renderTextArea($value, $id, $typeBoxId, &$onPageLoads)

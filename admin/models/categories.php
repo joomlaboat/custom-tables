@@ -308,7 +308,7 @@ class CustomtablesModelCategories extends AdminModel
 			}
 
 			// Only for strings
-			if (CustomtablesHelper::checkString($this->table->categoryname) && !is_numeric($this->table->categoryname)) {
+			if (common::checkString($this->table->categoryname) && !is_numeric($this->table->categoryname)) {
 				$this->table->categoryname = $this->generateUnique('categoryname', $this->table->categoryname);
 			}
 

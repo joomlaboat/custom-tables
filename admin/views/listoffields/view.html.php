@@ -59,8 +59,8 @@ class CustomtablesViewListoffields extends HtmlView
 			throw new Exception(implode("\n", $errors), 500);
 		}
 
-		$this->listOrder = $this->escape($this->state->get('list.ordering'));
-		$this->listDirn = $this->escape($this->state->get('list.direction'));
+		$this->listOrder = common::escape($this->state->get('list.ordering'));
+		$this->listDirn = common::escape($this->state->get('list.direction'));
 		$this->saveOrder = $this->listOrder == 'ordering' || $this->listOrder == 'a.ordering';
 
 		// get global action permissions

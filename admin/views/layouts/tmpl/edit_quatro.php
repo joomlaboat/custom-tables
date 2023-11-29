@@ -167,7 +167,7 @@ foreach ($this->allTables as $table) {
 	<?php echo HTMLHelper::_('form.token'); ?>
 
     <div class="clearfix"></div>
-	<?php echo JLayoutHelper::render('layouts.details_under', $this);
+	<?php //echo JLayoutHelper::render('layouts.details_under', $this);
 	echo render_onPageLoads($onPageLoads, 4);
 	$this->getMenuItems();
 	?>
@@ -184,4 +184,5 @@ foreach ($this->allTables as $table) {
 				echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
 			}
 			?>
+        </div>
 </form>

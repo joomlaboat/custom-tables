@@ -155,11 +155,11 @@ class ListOfFields
 		$result .= '<td><div class="name">';
 
 		if ($this->canEdit) {
-			$result .= '<a href="' . $this->editLink . '&id=' . $item->id . '">' . $this->escape($item->fieldname) . '</a>';
+			$result .= '<a href="' . $this->editLink . '&id=' . $item->id . '">' . common::escape($item->fieldname) . '</a>';
 			if ($item->checked_out)
 				$result .= HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoffields.', $canCheckin);
 		} else
-			$result .= $this->escape($item->fieldname);
+			$result .= common::escape($item->fieldname);
 
 		if ($this->ct->Env->advancedTagProcessor and $this->ct->Table->realtablename != '')
 			$result .= '<br/><span style="color:grey;">' . $hashRealTableName . '.' . $item->realfieldname . '</span>';
@@ -189,7 +189,7 @@ class ListOfFields
 				}
 			}
 
-			$result .= '<li>' . (count($this->ct->Languages->LanguageList) > 1 ? $lang->title . ': ' : '') . '<b>' . $this->escape($item_array[$fieldTitle]) . '</b></li>';
+			$result .= '<li>' . (count($this->ct->Languages->LanguageList) > 1 ? $lang->title . ': ' : '') . '<b>' . common::escape($item_array[$fieldTitle]) . '</b></li>';
 			$moreThanOneLang = true; //More than one language installed
 		}
 
@@ -199,9 +199,9 @@ class ListOfFields
                 </td>';
 
 		$result .= '<td>' . common::translate($item->typeLabel) . '</td>';
-		$result .= '<td>' . $this->escape($item->typeparams) . $this->checkTypeParams($item->type, $item->typeparams) . '</td>';
+		$result .= '<td>' . common::escape($item->typeparams) . $this->checkTypeParams($item->type, $item->typeparams) . '</td>';
 		$result .= '<td>' . common::translate($item->isrequired) . '</td>';
-		$result .= '<td>' . $this->escape($this->ct->Table->tabletitle) . '</td>';
+		$result .= '<td>' . common::escape($this->ct->Table->tabletitle) . '</td>';
 		$result .= '<td class="text-center btns d-none d-md-table-cell">';
 		if ($this->canState) {
 			if ($item->checked_out) {
@@ -225,73 +225,6 @@ class ListOfFields
 		return $result;
 	}
 
-	public function escape($var)
-	{
-		if ($var === null)
-			$var = '';
-
-		if (strlen($var) > 50) {
-			// use the helper htmlEscape method instead and shorten the string
-			return self::htmlEscape($var, 'UTF-8', true);
-		}
-		// use the helper htmlEscape method instead.
-		return self::htmlEscape($var);
-	}
-
-	public static function htmlEscape($var, $charset = 'UTF-8', $shorten = false, $length = 40)
-	{
-		if (self::checkString($var)) {
-			if (class_exists("JFilterInput")) {
-				$filter = new JFilterInput();
-				$string = $filter->clean(html_entity_decode(htmlentities($var, ENT_COMPAT, $charset)), 'HTML');
-			} else {
-				$string = html_entity_decode(htmlentities($var, ENT_COMPAT, $charset));
-			}
-
-			if ($shorten) {
-				return self::shorten($string, $length);
-			}
-			return $string;
-		} else {
-			return '';
-		}
-	}
-
-	public static function checkString($string)
-	{
-		if (isset($string) && is_string($string) && strlen($string) > 0) {
-			return true;
-		}
-		return false;
-	}
-
-	public static function shorten($string, $length = 40, $addTip = true)
-	{
-		if (self::checkString($string)) {
-			$initial = strlen($string);
-			$words = preg_split('/([\s\n\r]+)/', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
-			$words_count = count((array)$words);
-
-			$word_length = 0;
-			$last_word = 0;
-			for (; $last_word < $words_count; ++$last_word) {
-				$word_length += strlen($words[$last_word]);
-				if ($word_length > $length) {
-					break;
-				}
-			}
-
-			$newString = implode(array_slice($words, 0, $last_word));
-			$final = strlen($newString);
-			if ($initial != $final && $addTip) {
-				$title = self::shorten($string, 400, false);
-				return '<span class="hasTip" title="' . $title . '" style="cursor:help">' . trim($newString) . '...</span>';
-			} elseif ($initial != $final && !$addTip) {
-				return trim($newString) . '...';
-			}
-		}
-		return $string;
-	}
 
 	protected function checkTypeParams(string $type, string $typeParams): string
 	{

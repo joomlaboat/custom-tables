@@ -330,7 +330,7 @@ class CustomtablesModelFields extends AdminModel
 			}
 
 			// Only for strings
-			if (CustomtablesHelper::checkString($this->table->fieldtitle) && !is_numeric($this->table->fieldtitle)) {
+			if (common::checkString($this->table->fieldtitle) && !is_numeric($this->table->fieldtitle)) {
 				$this->table->fieldtitle = $this->generateUnique('fieldtitle', $this->table->fieldtitle);
 			}
 

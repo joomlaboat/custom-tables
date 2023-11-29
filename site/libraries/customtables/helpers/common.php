@@ -349,4 +349,72 @@ class common
 		}
 		return $folders;
 	}
+
+	public static function escape($var)
+	{
+		if ($var === null)
+			$var = '';
+
+		if (strlen($var) > 50) {
+			// use the helper htmlEscape method instead and shorten the string
+			return self::htmlEscape($var, 'UTF-8', true);
+		}
+		// use the helper htmlEscape method instead.
+		return self::htmlEscape($var);
+	}
+
+	public static function htmlEscape($var, $charset = 'UTF-8', $shorten = false, $length = 40)
+	{
+		if (self::checkString($var)) {
+			if (class_exists("JFilterInput")) {
+				$filter = new JFilterInput();
+				$string = $filter->clean(html_entity_decode(htmlentities($var, ENT_COMPAT, $charset)), 'HTML');
+			} else {
+				$string = html_entity_decode(htmlentities($var, ENT_COMPAT, $charset));
+			}
+
+			if ($shorten) {
+				return self::shorten($string, $length);
+			}
+			return $string;
+		} else {
+			return '';
+		}
+	}
+
+	public static function checkString($string): bool
+	{
+		if (isset($string) && is_string($string) && strlen($string) > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public static function shorten($string, $length = 40, $addTip = true)
+	{
+		if (self::checkString($string)) {
+			$initial = strlen($string);
+			$words = preg_split('/([\s\n\r]+)/', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+			$words_count = count((array)$words);
+
+			$word_length = 0;
+			$last_word = 0;
+			for (; $last_word < $words_count; ++$last_word) {
+				$word_length += strlen($words[$last_word]);
+				if ($word_length > $length) {
+					break;
+				}
+			}
+
+			$newString = implode(array_slice($words, 0, $last_word));
+			$final = strlen($newString);
+			if ($initial != $final && $addTip) {
+				$title = self::shorten($string, 400, false);
+				return '<span class="hasTip" title="' . $title . '" style="cursor:help">' . trim($newString) . '...</span>';
+			} elseif ($initial != $final && !$addTip) {
+				return trim($newString) . '...';
+			}
+		}
+		return $string;
+	}
 }

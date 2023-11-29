@@ -50,14 +50,14 @@ class CustomtablesController extends BaseController
 				$ref = common::inputGetCmd('ref', 0);
 				$refid = common::inputGetInt('refid', 0);
 				// set redirect
-				if ($refid > 0 && CustomtablesHelper::checkString($ref)) {
+				if ($refid > 0 && common::checkString($ref)) {
 					// redirect to item of ref
 					if ($ref == 'records') {
 						$refid = common::inputGetCmd('refid', 0);
 						$this->setRedirect(Route::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));
 					} else
 						$this->setRedirect(Route::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));
-				} elseif (CustomtablesHelper::checkString($ref)) {
+				} elseif (common::checkString($ref)) {
 
 					// redirect to ref
 					$this->setRedirect(Route::_('index.php?option=com_customtables&view=' . $ref, false));
@@ -75,7 +75,7 @@ class CustomtablesController extends BaseController
 
 	protected function getViewRelation($view)
 	{
-		if (CustomtablesHelper::checkString($view)) {
+		if (common::checkString($view)) {
 			// the view relationships
 			$views = array(
 				'categories' => 'listofcategories',

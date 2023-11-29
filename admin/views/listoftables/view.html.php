@@ -48,7 +48,7 @@ class CustomtablesViewListoftables extends HtmlView//JViewLegacy
 
 		$this->state = $this->get('State');
 		$this->listOrder = $this->state->get('list.ordering');
-		$this->listDirn = $this->escape($this->state->get('list.direction'));
+		$this->listDirn = common::escape($this->state->get('list.direction'));
 		$this->pagination = $this->get('Pagination');
 
 		$this->filterForm = $this->get('FilterForm');

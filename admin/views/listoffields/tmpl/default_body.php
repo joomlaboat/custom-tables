@@ -75,12 +75,12 @@ $hashRealTableName = str_replace($dbPrefix, '#__', $hashRealTableName);
         <td class="hidden-phone">
 
 			<?php if ($this->canEdit): ?>
-                <a href="<?php echo $edit; ?>&tableid=<?php echo $this->tableid; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->fieldname); ?></a>
+                <a href="<?php echo $edit; ?>&tableid=<?php echo $this->tableid; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->fieldname); ?></a>
 				<?php if ($item->checked_out): ?>
 					<?php echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoffields.', $canCheckin); ?>
 				<?php endif; ?>
 			<?php else: ?>
-				<?php echo $this->escape($item->fieldname); ?>
+				<?php echo common::escape($item->fieldname); ?>
 			<?php endif; ?>
 
 			<?php
@@ -116,7 +116,7 @@ $hashRealTableName = str_replace($dbPrefix, '#__', $hashRealTableName);
 							}
 						}
 
-						echo '<li>' . (count($this->languages) > 1 ? $lang->title . ': ' : '') . '<b>' . $this->escape($item_array[$fieldTitle]) . '</b></li>';
+						echo '<li>' . (count($this->languages) > 1 ? $lang->title . ': ' : '') . '<b>' . common::escape($item_array[$fieldTitle]) . '</b></li>';
 
 						$moreThanOneLang = true; //More than one language installed
 					}
@@ -128,13 +128,13 @@ $hashRealTableName = str_replace($dbPrefix, '#__', $hashRealTableName);
 			<?php echo common::translate($item->type); ?>
         </td>
         <td class="hidden-phone">
-			<?php echo str_replace('****apos****', "'", str_replace('****quote****', '"', $this->escape($item->typeparams))); ?>
+			<?php echo str_replace('****apos****', "'", str_replace('****quote****', '"', common::escape($item->typeparams))); ?>
         </td>
         <td class="hidden-phone">
 			<?php echo common::translate($item->isrequired); ?>
         </td>
         <td class="hidden-phone">
-			<?php echo $this->escape($this->ct->Table->tabletitle); ?>
+			<?php echo common::escape($this->ct->Table->tabletitle); ?>
         </td>
         <td class="center">
 			<?php if ($this->canState) : ?>

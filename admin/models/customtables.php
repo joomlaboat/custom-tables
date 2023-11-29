@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 
@@ -123,11 +124,11 @@ class CustomtablesModelCustomtables extends ListModel
 						$accessTo = '';
 						$accessAdd = '';
 						// access checking start
-						$accessCreate = (isset($viewAccess[$viewName . '.create'])) ? CustomtablesHelper::checkString($viewAccess[$viewName . '.create']) : false;
-						$accessAccess = (isset($viewAccess[$viewName . '.access'])) ? CustomtablesHelper::checkString($viewAccess[$viewName . '.access']) : false;
+						$accessCreate = (isset($viewAccess[$viewName . '.create'])) ? common::checkString($viewAccess[$viewName . '.create']) : false;
+						$accessAccess = (isset($viewAccess[$viewName . '.access'])) ? common::checkString($viewAccess[$viewName . '.access']) : false;
 						// set main controllers
-						$accessDashboard_add = (isset($viewAccess[$viewName . '.dashboard_add'])) ? CustomtablesHelper::checkString($viewAccess[$viewName . '.dashboard_add']) : false;
-						$accessDashboard_list = (isset($viewAccess[$viewName . '.dashboard_list'])) ? CustomtablesHelper::checkString($viewAccess[$viewName . '.dashboard_list']) : false;
+						$accessDashboard_add = (isset($viewAccess[$viewName . '.dashboard_add'])) ? common::checkString($viewAccess[$viewName . '.dashboard_add']) : false;
+						$accessDashboard_list = (isset($viewAccess[$viewName . '.dashboard_list'])) ? common::checkString($viewAccess[$viewName . '.dashboard_list']) : false;
 						// check for adding access
 						if ($add && $accessCreate) {
 							$accessAdd = $viewAccess[$viewName . '.create'];
@@ -145,7 +146,7 @@ class CustomtablesModelCustomtables extends ListModel
 						if ($accessDashboard_list) {
 							$dashboard_list = $user->authorise($viewAccess[$viewName . '.dashboard_list'], 'com_customtables');
 						}
-						if (CustomtablesHelper::checkString($accessAdd) && CustomtablesHelper::checkString($accessTo)) {
+						if (common::checkString($accessAdd) && common::checkString($accessTo)) {
 							// check access
 							if ($user->authorise($accessAdd, 'com_customtables') && $user->authorise($accessTo, 'com_customtables') && $dashboard_add) {
 								$icons[$group][$i] = new StdClass;
@@ -154,7 +155,7 @@ class CustomtablesModelCustomtables extends ListModel
 								$icons[$group][$i]->image = $image;
 								$icons[$group][$i]->alt = $alt;
 							}
-						} elseif (CustomtablesHelper::checkString($accessTo)) {
+						} elseif (common::checkString($accessTo)) {
 							// check access
 							if ($user->authorise($accessTo, 'com_customtables') && $dashboard_list) {
 								$icons[$group][$i] = new StdClass;
@@ -163,7 +164,7 @@ class CustomtablesModelCustomtables extends ListModel
 								$icons[$group][$i]->image = $image;
 								$icons[$group][$i]->alt = $alt;
 							}
-						} elseif (CustomtablesHelper::checkString($accessAdd)) {
+						} elseif (common::checkString($accessAdd)) {
 							// check access
 							if ($user->authorise($accessAdd, 'com_customtables') && $dashboard_add) {
 								$icons[$group][$i] = new StdClass;

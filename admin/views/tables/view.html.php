@@ -142,21 +142,4 @@ class CustomtablesViewTables extends HtmlView//JViewLegacy
 			$document->addCustomTag('<script src="' . Uri::root(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
 		}
 	}
-
-	/**
-	 * Escapes a value for output in a view script.
-	 *
-	 * @param mixed $var The output to escape.
-	 *
-	 * @return  mixed  The escaped value.
-	 */
-	public function escape($var)
-	{
-		if (strlen($var) > 30) {
-			// use the helper htmlEscape method instead and shorten the string
-			return CustomtablesHelper::htmlEscape($var, $this->_charset, true, 30);
-		}
-		// use the helper htmlEscape method instead.
-		return CustomtablesHelper::htmlEscape($var, $this->_charset);
-	}
 }

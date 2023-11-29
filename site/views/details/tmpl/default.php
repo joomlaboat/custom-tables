@@ -55,7 +55,7 @@ if ($this->ct->Env->frmt == 'csv') {
 
 if ($this->ct->Params->showPageHeading) {
 	if (isset($this->ct->Params->pageClassSFX)) {
-		echo '<div class="page-header' . $this->escape($this->ct->Params->pageClassSFX) . '"><h2 itemprop="headline">'
+		echo '<div class="page-header' . common::escape($this->ct->Params->pageClassSFX) . '"><h2 itemprop="headline">'
 			. common::translate($this->ct->document->getTitle()) . '</h2></div>';
 	} else {
 		echo '<div class="page-header"><h2 itemprop="headline">'

@@ -70,15 +70,6 @@ class CustomtablesViewCustomtables extends HtmlView//JViewLegacy
 		//$canDo = CustomtablesHelper::getActions('customtables');
 		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');//ToolbarHelper::title
 
-		// set help url for this view if found
-		/*
-		$help_url = CustomtablesHelper::getHelpUrl('customtables');
-		if (CustomtablesHelper::checkString($help_url))
-		{
-			ToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-		}
-		*/
-
 		if ($canDo->get('core.admin') || $canDo->get('core.options')) {
 			ToolbarHelper::preferences('com_customtables');//ToolbarHelper
 		}

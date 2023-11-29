@@ -141,12 +141,6 @@ class CustomtablesViewCategories extends HtmlView
 			}
 		}
 		ToolbarHelper::divider();
-		// set help url for this view if found
-		//$help_url = CustomtablesHelper::getHelpUrl('categories');
-		//if (CustomtablesHelper::checkString($help_url))
-		//{
-		//ToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-		//}
 	}
 
 	/**
@@ -163,22 +157,5 @@ class CustomtablesViewCategories extends HtmlView
 			if ($this->version < 4)
 				$document->addCustomTag('<script src=' . Uri::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
 		}
-	}
-
-	/**
-	 * Escapes a value for output in a view script.
-	 *
-	 * @param mixed $var The output to escape.
-	 *
-	 * @return  mixed  The escaped value.
-	 */
-	public function escape($var)
-	{
-		if (strlen($var) > 30) {
-			// use the helper htmlEscape method instead and shorten the string
-			return CustomtablesHelper::htmlEscape($var, $this->_charset, true, 30);
-		}
-		// use the helper htmlEscape method instead.
-		return CustomtablesHelper::htmlEscape($var, $this->_charset);
 	}
 }

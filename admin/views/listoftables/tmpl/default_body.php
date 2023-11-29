@@ -49,7 +49,7 @@ foreach ($this->items as $i => $item): ?>
 
         <td class="hidden-phone"><a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>">
 				<?php
-				echo $this->escape($item->tablename);
+				echo common::escape($item->tablename);
 
 				if ($this->ct->Env->advancedTagProcessor) {
 					$hashRealTableName = database::realTableName($item->realtablename);
@@ -93,7 +93,7 @@ foreach ($this->items as $i => $item): ?>
 							}
 						}
 
-						echo '<li>' . (count($this->languages) > 1 ? $lang->title . ': ' : '') . '<b>' . $this->escape($item_array[$tableTitle]) . '</b></li>';
+						echo '<li>' . (count($this->languages) > 1 ? $lang->title . ': ' : '') . '<b>' . common::escape($item_array[$tableTitle]) . '</b></li>';
 
 						$moreThanOneLang = true; //More than one language installed
 					}
@@ -122,7 +122,7 @@ foreach ($this->items as $i => $item): ?>
         </td>
 
         <td class="hidden-phone">
-			<?php echo $this->escape($item->categoryname); ?>
+			<?php echo common::escape($item->categoryname); ?>
         </td>
 
         <td class="center">

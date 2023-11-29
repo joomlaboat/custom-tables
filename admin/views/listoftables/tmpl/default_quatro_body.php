@@ -54,14 +54,14 @@ foreach ($this->items as $i => $item): ?>
         <td>
             <div class="name">
 				<?php if ($this->canEdit): ?>
-                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->tablename); ?></a>
+                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->tablename); ?></a>
 					<?php if ($item->checked_out):
 
 						//echo //$this->renderCheckedOutStatus($item);
 						echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoftables.', $canCheckin);
 					endif; ?>
 				<?php else: ?>
-					<?php echo $this->escape($item->tablename); ?>
+					<?php echo common::escape($item->tablename); ?>
 				<?php endif; ?>
 
 				<?php
@@ -101,7 +101,7 @@ foreach ($this->items as $i => $item): ?>
 							}
 						}
 
-						echo '<li>' . (count($this->languages) > 1 ? $lang->title . ': ' : '') . '<b>' . $this->escape($item_array[$tableTitle]) . '</b></li>';
+						echo '<li>' . (count($this->languages) > 1 ? $lang->title . ': ' : '') . '<b>' . common::escape($item_array[$tableTitle]) . '</b></li>';
 
 						$moreThanOneLang = true; //More than one language installed
 					}
@@ -139,9 +139,9 @@ foreach ($this->items as $i => $item): ?>
         <td>
             <div class="name">
 				<?php if ($this->canEdit): ?>
-                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->categoryname); ?></a>
+                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->categoryname); ?></a>
 				<?php else: ?>
-					<?php echo $this->escape($item->categoryname); ?>
+					<?php echo common::escape($item->categoryname); ?>
 				<?php endif; ?>
             </div>
         </td>

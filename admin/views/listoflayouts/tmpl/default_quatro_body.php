@@ -45,12 +45,12 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
         <td>
             <div class="name">
 				<?php if ($this->canEdit): ?>
-                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->layoutname); ?></a>
+                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->layoutname); ?></a>
 					<?php if ($item->checked_out): ?>
 						<?php echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoflayouts.', $canCheckin); ?>
 					<?php endif; ?>
 				<?php else: ?>
-					<?php echo $this->escape($item->layoutname); ?>
+					<?php echo common::escape($item->layoutname); ?>
 				<?php endif; ?>
             </div>
         </td>
