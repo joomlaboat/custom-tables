@@ -64,7 +64,8 @@ class DataTypes
 			'log' => 'COM_CUSTOMTABLES_FIELDS_MODIFICATION_LOG',
 			'usergroup' => 'COM_CUSTOMTABLES_FIELDS_USER_GROUP',
 			'usergroups' => 'COM_CUSTOMTABLES_FIELDS_USER_GROUPS',
-			'blob' => 'COM_CUSTOMTABLES_FIELDS_BLOB'
+			'blob' => 'COM_CUSTOMTABLES_FIELDS_BLOB',
+			'language' => 'COM_CUSTOMTABLES_FIELDS_LANGUAGE'
 		);
 
 		return $typeArray;

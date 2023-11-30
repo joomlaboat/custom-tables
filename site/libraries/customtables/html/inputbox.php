@@ -390,7 +390,7 @@ class Inputbox
 					'data-type' => "language",
 					'label' => $this->field->title, 'readonly' => false);
 
-				return CTTypes::getField('language', $lang_attributes, $value)->input;
+				return CTTypes::language($this->prefix . $this->field->fieldname, (int)$value, $lang_attributes);
 
 			case 'color':
 				return $this->render_color($value);

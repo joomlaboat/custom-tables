@@ -22,6 +22,7 @@ use CustomTables\database;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Version;
 
 /**
  * Script File of Customtables Component
@@ -57,8 +58,8 @@ class com_customtablesInstallerScript
 			return true;
 		}
 		// the default for both install and update
-		$jVersion = new JVersion();
-		if (!$jVersion->isCompatible('3.6.0')) {
+		$VersionObject = new Version();
+		if (!$VersionObject->isCompatible('3.6.0')) {
 			$app->enqueueMessage('Please upgrade to at least Joomla! 3.6.0 before continuing!', 'error');
 			return false;
 		}

@@ -70,12 +70,15 @@ class CustomtablesModelListoffields extends ListModel
 
 		// set selection value to a translatable value
 		if (CustomtablesHelper::checkArray($items)) {
-			foreach ($items as $nr => &$item) {
+			foreach ($items as $item) {
 				// convert type
 				if (isset($translations[$item->type])) {
 					$item->typeLabel = $translations[$item->type];
 				} else {
-					$item->typeLabel = '<span style="color:red;">NOT SELECTED</span>';
+					if ($item->type == '')
+						$item->typeLabel = '<span style="color:red;">NOT SELECTED</span>';
+					else
+						$item->typeLabel = '<span style="color:red;">UNKNOWN "' . $item->type . '" TYPE</span>';
 				}
 
 				// convert isrequired
