@@ -499,12 +499,7 @@ class Filtering
 					foreach ($vList as $vL) {
 						$valueNew = $vL;
 
-						$filterTitle .= HTMLHelper::_('ESSQLJoinView.render',
-							$vL,
-							$esr_table,
-							$esr_field,
-							$esr_filter,
-							$this->ct->Languages->Postfix);
+						TypeView::tableJoin($esr_field, '{{ ' . $vL . ' }}', $this->ct->Table->record[$this->field->realfieldname]);
 
 						if ($valueNew != '') {
 							if ($comparison_operator == '!=') {
