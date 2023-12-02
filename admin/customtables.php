@@ -35,7 +35,6 @@ if (!$user->authorise('core.manage', 'com_customtables')) {
 
 // require helper files
 JLoader::register('CustomtablesHelper', dirname(__FILE__) . '/helpers/customtables.php');
-JLoader::register('JHtmlBatch_', dirname(__FILE__) . '/helpers/html/batch_.php');
 
 use Joomla\CMS\MVC\Controller\BaseController;
 

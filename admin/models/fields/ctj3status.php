@@ -43,6 +43,7 @@ if ($version < 4) {
 		}
 	}
 } else {
+
 	class JFormFieldCTj3status extends FormField
 	{
 		public $type = 'ctj3table';

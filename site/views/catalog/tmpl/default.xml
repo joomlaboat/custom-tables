@@ -15,7 +15,7 @@
                   label="Table &amp; Layouts" description="Basic menu item parameters needed to render the page.">
             <field type="estable" name="establename" default="" label="Table"
                    description="Select the Table to read the records from. You can create a new table at Components/Custom Tables/Tables."/>
-            required="true"/>
+            required="true" />
 
             <field type="escataloglayout" name="escataloglayout" default="" label="Page Layout"
                    description="Select Catalog Page Layout. This parameter is available on Custom Tables - Records menu item type."/>

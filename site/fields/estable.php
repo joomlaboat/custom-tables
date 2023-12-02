@@ -8,35 +8,74 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-use CustomTables\database;
-use Joomla\CMS\HTML\HTMLHelper;
-
+// no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-//jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Version;
 
-class JFormFieldESTable extends JFormFieldList
+$versionObject = new Version;
+$version = (int)$versionObject->getShortVersion();
+
+trait JFormFieldESTableCommon
 {
-
-	protected $type = 'estable';
-
-	protected function getOptions()//$name, $value, &$node, $control_name)
+	protected static function getOptionList(): array
 	{
-		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
-			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-		require_once($path . 'loader.php');
-		CTLoader();
+		$versionObject = new Version;
+		$version = (int)$versionObject->getShortVersion();
+
+		if ($version < 4)
+			$db = Factory::getDbo();
+		else
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = 'SELECT id,tablename FROM #__customtables_tables WHERE published=1 ORDER BY tablename';
-		$messages = database::loadObjectList($query);
-		$options = array();
-		if ($messages) {
-			foreach ($messages as $message)
-				$options[] = HTMLHelper::_('select.option', $message->tablename, $message->tablename);
+		$db->setQuery($query);
+		$tables = $db->loadObjectList();
+
+		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT')];
+
+		if ($tables) {
+			foreach ($tables as $table)
+				$options[] = HTMLHelper::_('select.option', $table->tablename, $table->tablename);
 		}
 		return $options;
+	}
+}
+
+if ($version < 4) {
+
+	JFormHelper::loadFieldClass('list');
+
+	class JFormFieldESTable extends JFormFieldList
+	{
+		use JFormFieldESTableCommon;
+
+		protected $type = 'estable';
+
+		protected function getOptions()//$name, $value, &$node, $control_name)
+		{
+			return self::getOptionList();
+		}
+	}
+} else {
+	class JFormFieldESTable extends FormField
+	{
+		use JFormFieldESTableCommon;
+
+		public $type = 'estable';
+		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
+
+		protected function getInput()
+		{
+			$data = $this->getLayoutData();
+			$data['options'] = self::getOptionList();
+			return $this->getRenderer($this->layout)->render($data);
+		}
 	}
 }

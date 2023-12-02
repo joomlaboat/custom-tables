@@ -69,11 +69,6 @@ class CustomtablesViewListofcategories extends HtmlView
 				$this->sidebar = JHtmlSidebar::render();
 			} else
 				$this->addToolbar_4();
-
-			// load the batch html
-			if ($this->canCreate && $this->canEdit && $this->canState) {
-				$this->batchDisplay = JHtmlBatch_::render();
-			}
 		}
 
 		// Check for errors.

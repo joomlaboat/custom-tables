@@ -8,40 +8,78 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-use CustomTables\common;
-use CustomTables\database;
-use Joomla\CMS\HTML\HTMLHelper;
-
+// no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-//jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Version;
 
-class JFormFieldESEmailLayout extends JFormFieldList
+trait JFormFieldESEmailLayoutCommon
 {
-	protected $type = 'esemaillayout';
-
-	protected function getOptions()
+	protected static function getOptionList(): array
 	{
-		$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-		require_once($path . 'loader.php');
-		CTLoader();
+		$versionObject = new Version;
+		$version = (int)$versionObject->getShortVersion();
+
+		if ($version < 4)
+			$db = Factory::getDbo();
+		else
+			$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename FROM #__customtables_layouts'
 			. ' WHERE published=1 AND layouttype=7'
 			. ' ORDER BY tablename,layoutname';
 
-		$messages = database::loadObjectList((string)$query);
-		$options = array();
+		$db->setQuery($query);
+		$layouts = $db->loadObjectList();
 
-		$options[] = HTMLHelper::_('select.option', '', '- ' . common::translate('COM_CUSTOMTABLES_SELECT'));
+		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_DEFAULT')];
 
-		if ($messages) {
-			foreach ($messages as $message)
-				$options[] = HTMLHelper::_('select.option', $message->layoutname, $message->tablename . ': ' . $message->layoutname);
+		if ($layouts) {
+			foreach ($layouts as $layout)
+				$options[] = HTMLHelper::_('select.option', $layout->tablename, $layout->tablename);
 		}
 		return $options;
+	}
+}
+
+$versionObject = new Version;
+$version = (int)$versionObject->getShortVersion();
+
+if ($version < 4) {
+
+	JFormHelper::loadFieldClass('list');
+
+	class JFormFieldESEmailLayout extends JFormFieldList
+	{
+		use JFormFieldESEmailLayoutCommon;
+
+		protected $type = 'esemaillayout';
+
+		protected function getOptions(): array
+		{
+			return self::getOptionList();
+		}
+	}
+} else {
+
+	class JFormFieldESEmailLayout extends FormField
+	{
+		use JFormFieldESEmailLayoutCommon;
+
+		protected $type = 'esemaillayout';
+		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
+
+		protected function getInput()
+		{
+			$data = $this->getLayoutData();
+			$data['options'] = self::getOptionList();
+			return $this->getRenderer($this->layout)->render($data);
+		}
 	}
 }
