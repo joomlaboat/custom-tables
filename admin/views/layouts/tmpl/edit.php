@@ -29,8 +29,13 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
 
-HTMLHelper::_('behavior.formvalidation');
-HTMLHelper::_('behavior.keepalive');
+if ($this->version >= 4) {
+	$wa = $this->document->getWebAssetManager();
+	$wa->useScript('keepalive')->useScript('form.validate');
+} else {
+	HTMLHelper::_('behavior.formvalidation');
+	HTMLHelper::_('behavior.keepalive');
+}
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
 	. 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'layouteditor' . DIRECTORY_SEPARATOR . 'layouteditor.php');

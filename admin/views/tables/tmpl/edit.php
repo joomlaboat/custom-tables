@@ -19,8 +19,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-HTMLHelper::_('behavior.formvalidation');
-HTMLHelper::_('behavior.keepalive');
+if ($this->version >= 4) {
+	$wa = $this->document->getWebAssetManager();
+	$wa->useScript('keepalive')->useScript('form.validate');
+} else {
+	HTMLHelper::_('behavior.formvalidation');
+	HTMLHelper::_('behavior.keepalive');
+}
 
 $document = Factory::getDocument();
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" rel="stylesheet">');

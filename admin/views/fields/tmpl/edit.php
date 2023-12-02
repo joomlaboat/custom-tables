@@ -32,9 +32,13 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typep
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
-HTMLHelper::_('behavior.formvalidation');
-HTMLHelper::_('behavior.keepalive');
-
+if ($this->version >= 4) {
+	$wa = $this->document->getWebAssetManager();
+	$wa->useScript('keepalive')->useScript('form.validate');
+} else {
+	HTMLHelper::_('behavior.formvalidation');
+	HTMLHelper::_('behavior.keepalive');
+}
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH
 	. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');

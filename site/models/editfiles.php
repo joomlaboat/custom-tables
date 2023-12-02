@@ -22,8 +22,6 @@ use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-JTable::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'tables');
-
 class CustomTablesModelEditFiles extends BaseDatabaseModel
 {
 	var CT $ct;

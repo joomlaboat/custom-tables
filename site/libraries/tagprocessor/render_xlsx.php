@@ -56,7 +56,7 @@ trait render_xlsx
 
 			$fieldPair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
 
-			$pos = ESCustomCatalogLayout::num2alpha($column) . '1';
+			$pos = self::num2alpha($column) . '1';
 
 			$value = $fieldPair[0];
 

@@ -716,8 +716,8 @@ class Twig_Html_Tags
 			return '';
 
 		if (defined('_JEXEC')) {
-			if ($this->version >= 4) {
-				$wa = $this->document->getWebAssetManager();
+			if ($this->ct->Env->version >= 4) {
+				$wa = $this->ct->document->getWebAssetManager();
 				$wa->useScript('keepalive')->useScript('form.validate');
 			} else {
 				HTMLHelper::_('behavior.formvalidation');

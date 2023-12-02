@@ -26,7 +26,6 @@ use CT_FieldTypeTag_file;
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_imagegallery;
 use CT_FieldTypeTag_FileBox;
-use CT_FieldTypeTag_sqljoin;
 use CT_FieldTypeTag_records;
 use CT_FieldTypeTag_log;
 use CT_FieldTypeTag_ct;
@@ -57,6 +56,9 @@ class Value
 		$this->ct = &$ct;
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	function renderValue(array $fieldrow, ?array $row, array $option_list, bool $parseParams = true)
 	{
 		$this->field = new Field($this->ct, $fieldrow, $row, $parseParams);
@@ -229,12 +231,26 @@ class Value
 			case 'sqljoin':
 
 				if (count($option_list) == 0)
-					$layoutcode = '{{ ' . $this->field->params[1] . ' }}';
+					$fieldName = $this->field->params[1];
 				else
-					$layoutcode = '{{ ' . $option_list[0] . ' }}';
+					$fieldName = $option_list[0];
 
-				return TypeView::tableJoin($this->field, $layoutcode, $rowValue);
-				return CT_FieldTypeTag_sqljoin::resolveSQLJoinType($rowValue, $this->field->params, $option_list);
+				$fieldNameParts = explode(':', $fieldName);
+
+				if (count($fieldNameParts) == 2) {
+					//It's not a fieldname but layout. Example: tablelesslayout:PersonName
+					if ($fieldNameParts[0] == 'tablelesslayout' or $fieldNameParts[0] == 'layout') {
+						$Layouts = new Layouts($this->ct);
+						$layoutCode = $Layouts->getLayout($fieldNameParts[1]);
+
+						if ($layoutCode == '')
+							throw new Exception('TableJoin value layout not found. (' . $fieldName . ')');
+					} else
+						throw new Exception('TableJoin value layout syntax invalid. (' . $fieldName . ')');
+				} else
+					$layoutCode = '{{ ' . $fieldName . ' }}';
+
+				return TypeView::tableJoin($this->field, $layoutCode, $rowValue);
 
 			case 'user':
 			case 'userid':

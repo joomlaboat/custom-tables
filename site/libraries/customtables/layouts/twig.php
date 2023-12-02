@@ -20,7 +20,6 @@ use CT_FieldTypeTag_imagegallery;
 use Exception;
 use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
-use CT_FieldTypeTag_sqljoin;
 use CT_FieldTypeTag_records;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFilter;
