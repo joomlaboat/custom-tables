@@ -51,7 +51,7 @@ class Field
 		$this->ct = &$ct;
 
 		if (!array_key_exists('id', $fieldRow)) {
-			echo 'Field not found.';
+			echo 'FieldRaw: Empty.';
 			return;
 		}
 

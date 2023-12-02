@@ -201,27 +201,24 @@ class Twig_Url_Tags
 			return 'url.root: This Field Type available in PRO version only.';
 		}
 
+		$include_host = false;
+
 		$functionParams = func_get_args();
 		if (isset($functionParams[0])) {
 
-			if (!is_bool($functionParams[0])) {
-				$this->ct->errors[] = 'url.root: Argument #1 (include_host) must be of type bool, null given.';
-				return 'url.root: Argument #1 (include_host) must be of type bool, null given.';
-			}
-			$include_host = $functionParams[0];
-		} else
-			$include_host = false;
+			if (is_bool($functionParams[0]))
+				$include_host = $functionParams[0];
+			elseif ($functionParams[0] == 'includehost')
+				$include_host = true;
+		}
 
+		$add_trailing_slash = true;
 		if (isset($functionParams[1])) {
-
-			if (!is_bool($functionParams[1])) {
-				$this->ct->errors[] = 'url.root: Argument #2 (add_trailing_slash) must be of type bool, null given.';
-				return 'url.root: Argument #2 (add_trailing_slash) must be of type bool, null given.';
-			}
-			$add_trailing_slash = $functionParams[1];
-		} else
-			$add_trailing_slash = true;
-
+			if (is_bool($functionParams[1]))
+				$add_trailing_slash = $functionParams[1];
+			elseif ($functionParams[0] == 'notrailingslash')
+				$add_trailing_slash = false;
+		}
 
 		if ($include_host)
 			$WebsiteRoot = Uri::root();

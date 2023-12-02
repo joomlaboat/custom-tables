@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\DataTypes\Tree;
 use DateTime;
 use ESTables;
+use Exception;
 use JoomlaBasicMisc;
 use LayoutProcessor;
 
@@ -106,6 +107,10 @@ class Filtering
 		return str_ireplace('insert ', '', $paramWhere);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.1.9
+	 */
 	function addWhereExpression(?string $param): void
 	{
 		if ($param === null or $param == '')
@@ -194,7 +199,7 @@ class Filtering
 								$fieldrow = Fields::FieldRowByName($fieldNameParts[0], $this->ct->Table->fields);
 							}
 
-							if (!is_null($fieldrow)) {
+							if (!is_null($fieldrow) and array_key_exists('id', $fieldrow)) {
 								$w = $this->processSingleFieldWhereSyntax($fieldrow, $comparison_operator, $fieldname, $value, $field_extra_param);
 								if ($w !== null and $w != '')
 									$multi_field_where[] = $w;
@@ -225,6 +230,11 @@ class Filtering
 
 	function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname_, string $value, string $field_extra_param = ''): ?string
 	{
+		if (!array_key_exists('id', $fieldrow)) {
+			throw new Exception('processSingleFieldWhereSyntax: Field not set');
+		}
+
+		$field = new Field($this->ct, $fieldrow);
 		//Check if it's a range filter
 		$fieldNameParts = explode('_r_', $fieldname_);
 		$isRange = count($fieldNameParts) == 2;
@@ -481,7 +491,7 @@ class Filtering
 				$cArr = array();
 
 				// Filter Title
-				$typeParamsArray = explode(',', $fieldrow['typeparams']);
+				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams'], '"');
 				$filterTitle = '';
 
 				if (count($typeParamsArray) < 2)
@@ -490,16 +500,14 @@ class Filtering
 				if (count($typeParamsArray) < 1)
 					$filterTitle = 'table not specified';
 
-				$esr_table = $typeParamsArray[0];
 				$esr_table_full = $this->ct->Table->realtablename;
-				$esr_field = $typeParamsArray[1];
-				$esr_filter = $typeParamsArray[2] ?? '';
+				$esr_field_name = $typeParamsArray[1];
 
 				if (count($typeParamsArray) >= 2) {
 					foreach ($vList as $vL) {
 						$valueNew = $vL;
 
-						TypeView::tableJoin($esr_field, '{{ ' . $vL . ' }}', $this->ct->Table->record[$this->field->realfieldname]);
+						$filterTitle .= TypeView::tableJoin($field, '{{ ' . $esr_field_name . ' }}', $valueNew);
 
 						if ($valueNew != '') {
 							if ($comparison_operator == '!=') {
@@ -543,7 +551,6 @@ class Filtering
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				$field = new Field($this->ct, $fieldrow);
 				$storage = $field->params[1] ?? null;
 
 				if ($storage == 'storedstring')
