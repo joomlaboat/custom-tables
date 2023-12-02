@@ -51,16 +51,12 @@ class Edit
 				$this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found or the type is not set.';
 				return false;
 			}
-			$this->layoutType = $Layouts->layoutType;
+
 		} else {
-
-			if (common::inputGetInt('clean', 0) == 1) {
-				$res = ['status' => 'error', 'message' => 'Edit Layout not set.'];
-				die(json_encode($res));
-			}
-
-			$this->ct->errors[] = 'Edit Layout not set.2';
-			return false;
+			$Layouts = new Layouts($this->ct);
+			$this->layoutContent = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, true);
+			$this->pageLayoutNameString = 'Default Edit Layout';
+			$this->pageLayoutLink = null;
 		}
 		$this->ct->LayoutVariables['layout_type'] = $this->layoutType;
 		return true;

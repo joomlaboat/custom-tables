@@ -57,6 +57,11 @@ class Details
 				}
 
 				$this->layoutType = $Layouts->layoutType;
+			} else {
+				$Layouts = new Layouts($this->ct);
+				$this->layoutDetailsContent = $Layouts->createDefaultLayout_Details($this->ct->Table->fields);
+				$this->pageLayoutNameString = 'Default Details Layout';
+				$this->pageLayoutLink = null;
 			}
 		} else $this->layoutDetailsContent = $layoutDetailsContent;
 

@@ -289,10 +289,10 @@ class Layouts
 		return true;
 	}
 
-	function createDefaultLayout_Edit($fields, $addToolbar = true): string
+	function createDefaultLayout_Edit(array $fields, bool $addToolbar = true): string
 	{
 		$this->layoutType = 2;
-		$result = '<div class="form-horizontal">';
+		$result = '<legend>{{ table.title }}</legend>{{ html.goback() }}<div class="form-horizontal">';
 
 		$fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];
 
@@ -308,15 +308,33 @@ class Layouts
 
 		foreach ($fields as $field) {
 			if ($field['type'] === "dummy") {
-				$result .= '<p><span style="color: #FB1E3D; ">*</span> {{ ' . $field['fieldname'] . ' }}</p>
-';
+				$result .= '<p><span style="color: #FB1E3D; ">*</span> {{ ' . $field['fieldname'] . ' }}</p>';
 				break;
 			}
 		}
 
 		if ($addToolbar)
-			$result .= '<div style="text-align:center;">{{ button("save") }} {{ button("saveandclose") }} {{ button("saveascopy") }} {{ button("cancel") }}</div>
-';
+			$result .= '<div style="text-align:center;">{{ html.button("save") }} {{ html.button("saveandclose") }} {{ html.button("saveascopy") }} {{ html.button("cancel") }}</div>';
+		return $result;
+	}
+
+	function createDefaultLayout_Details(array $fields): string
+	{
+		$this->layoutType = 4;
+		$result = '<legend>{{ table.title }}</legend>{{ html.goback() }}<div class="form-horizontal">';
+
+		$fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];
+
+		foreach ($fields as $field) {
+			if (!in_array($field['type'], $fieldTypes_to_skip)) {
+				$result .= '<div class="control-group">';
+				$result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.title }}</div><div class="controls">{{ ' . $field['fieldname'] . ' }}</div>';
+				$result .= '</div>';
+			}
+		}
+
+		$result .= '</div>';
+
 		return $result;
 	}
 
