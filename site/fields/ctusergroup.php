@@ -39,7 +39,7 @@ trait JFormFieldCTUserGroupCommon
 
 		if ($userGroups) {
 			foreach ($userGroups as $userGroup)
-				$options[] = HTMLHelper::_('select.option', $userGroup->tablename, $userGroup->tablename);
+				$options[] = HTMLHelper::_('select.option', $userGroup->id, $userGroup->title);
 		}
 		return $options;
 	}
