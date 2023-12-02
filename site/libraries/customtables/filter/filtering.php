@@ -35,13 +35,6 @@ class Filtering
 
 	function __construct(CT $ct, int $showPublished = 0)
 	{
-		if (defined('_JEXEC')) {
-			if ($ct->Env->version < 4)
-				HTMLHelper::_addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
-			else
-				HtmlHelper::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
-		}
-
 		$this->ct = $ct;
 		$this->PathValue = [];
 		$this->where = [];
