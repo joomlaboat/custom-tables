@@ -19,19 +19,21 @@ use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Version;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
  * Customtables View class for the Listoftables
  */
-class CustomtablesViewListoftables extends HtmlView//JViewLegacy
-{
-	/**
-	 * Listoftables view display method
-	 * @return void
-	 */
-	var CT $ct;
 
+//$versionObject = new Version;
+//$version = (int)$versionObject->getShortVersion();
+
+//trait CustomTablesViewListOfTablesCommonFunctionality
+//{
+class CustomTablesViewListOfTables extends HtmlView
+{
+	var CT $ct;
 	var $languages;
 
 	function display($tpl = null)
@@ -206,3 +208,23 @@ class CustomtablesViewListoftables extends HtmlView//JViewLegacy
 		}
 	}
 }
+/*
+// Define the CustomtablesViewListoftables class using the trait and conditional inheritance
+if ($version >= 4) {
+	class CustomTablesViewListOfTables extends HtmlView
+	{
+		use CustomTablesViewListOfTablesCommonFunctionality;
+
+		var CT $ct;
+		var $languages;
+	}
+} else {
+	class CustomTablesViewListOfTables extends JViewLegacy
+	{
+		use CustomTablesViewListOfTablesCommonFunctionality;
+
+		var CT $ct;
+		var $languages;
+	}
+}
+*/

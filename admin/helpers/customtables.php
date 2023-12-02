@@ -130,7 +130,7 @@ abstract class CustomtablesHelper
 			$string = self::replaceNumbers($string);
 		}
 		// 0nly continue if we have a string
-		if (self::checkString($string)) {
+		if (common::checkString($string)) {
 			// create file name without the extention that is safe
 			if ($type === 'filename') {
 				// make sure VDM is not in the string

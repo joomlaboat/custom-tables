@@ -15,7 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\database;
 
-jimport('joomla.form.helper');
+//jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
 class JFormFieldCTUserGroup extends JFormFieldList

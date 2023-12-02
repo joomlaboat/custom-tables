@@ -18,9 +18,10 @@ use CustomTables\Field;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\HTML\HTMLHelper;
 
-class CT_FieldTypeTag_sqljoin
+class CT_FieldTypeTag_sqljoin_UNUSED
 {
 	//New function
+	/*
 	public static function resolveSQLJoinTypeValue(Field &$field, string $layoutcode, $listing_id): string
 	{
 		$ct = new CT;
@@ -40,8 +41,10 @@ class CT_FieldTypeTag_sqljoin
 
 		return $value;
 	}
+	*/
 
 	//Old function
+	/*
 	public static function resolveSQLJoinType($listing_id, $typeParams, $option_list): string
 	{
 		if ($listing_id == '')
@@ -86,4 +89,5 @@ class CT_FieldTypeTag_sqljoin
 
 		return $value;
 	}
+	*/
 }

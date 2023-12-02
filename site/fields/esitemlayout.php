@@ -16,7 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-jimport('joomla.form.helper');
+//jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
 class JFormFieldESItemLayout extends JFormFieldList

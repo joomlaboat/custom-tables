@@ -18,7 +18,7 @@ use CustomTables\database;
 use CustomTables\DataTypes;
 use Joomla\CMS\HTML\HTMLHelper;
 
-jimport('joomla.form.helper');
+//jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
 //https://docs.joomla.org/Creating_a_custom_form_field_type

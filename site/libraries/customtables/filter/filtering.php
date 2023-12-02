@@ -591,7 +591,7 @@ class Filtering
 					$cArr[] = '(SELECT m.group_id FROM #__user_usergroup_map AS m WHERE user_id=' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ' AND '
 						. $select1 . $comparison_operator . database::quote($v) . ')';
 
-					$filterTitle = HTMLHelper::_('ESUserView.render', $vL);
+					$filterTitle = TypeView::user($vL);
 					$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 				}
 			}
@@ -603,7 +603,7 @@ class Filtering
 					else
 						$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
 
-					$filterTitle = HTMLHelper::_('ESUserView.render', $vL);
+					$filterTitle = TypeView::user($vL);
 					$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 				}
 			}
@@ -643,7 +643,7 @@ class Filtering
 		foreach ($vList as $vL) {
 			if ($vL != '') {
 				$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
-				$filterTitle = HTMLHelper::_('ESUserGroupView.render', $vL);
+				$filterTitle = TypeView::userGroup($vL);
 				$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 			}
 		}

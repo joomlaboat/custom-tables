@@ -82,30 +82,6 @@ class CustomtablesControllerRecords extends FormController
 		$saved = $record->save($listing_id, false);
 		$listing_id = $record->listing_id;
 
-
-		/*
-		$params = new Registry(['listingid' => $listing_id]);
-		$ct->setParams($params, true);
-
-		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'edititem.php');
-		$editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $params);
-		$editModel->ct = $ct;
-		$editModel->editForm = new Edit($ct);
-		$editModel->listing_id = $listing_id;
-
-
-
-		$msg_ = '';
-		$link = '';
-
-		*/
-
-
-		//if ($this->task == 'save2copy')
-		//    $saved = $editModel->copy($msg_, $link);
-		//elseif ($this->task == 'save' or $this->task == 'apply' or $this->task == 'save2new')
-		//$saved = $editModel->store($msg_, $link);
-
 		$redirect = 'index.php?option=' . $this->option;
 
 		if ($this->task == 'apply') {

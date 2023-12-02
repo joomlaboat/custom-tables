@@ -43,7 +43,7 @@ if (file_exists($types_path . '_type_ct.php')) {
 	require_once($types_path . '_type_image.php');
 	require_once($types_path . '_type_log.php');
 	require_once($types_path . '_type_records.php');
-	require_once($types_path . '_type_sqljoin.php');
+	//require_once($types_path . '_type_sqljoin.php');
 }
 
 class Value
@@ -227,11 +227,18 @@ class Value
 				return CT_FieldTypeTag_records::resolveRecordType($rowValue, $this->field, $option_list);
 
 			case 'sqljoin':
+
+				if (count($option_list) == 0)
+					$layoutcode = '{{ ' . $this->field->params[1] . ' }}';
+				else
+					$layoutcode = '{{ ' . $option_list[0] . ' }}';
+
+				return TypeView::tableJoin($this->field, $layoutcode, $rowValue);
 				return CT_FieldTypeTag_sqljoin::resolveSQLJoinType($rowValue, $this->field->params, $option_list);
 
 			case 'user':
 			case 'userid':
-				return HTMLHelper::_('ESUserView.render', $rowValue, $option_list[0] ?? '');
+				return TypeView::user($rowValue, $option_list[0] ?? '');
 
 			case 'usergroup':
 				return CTUser::showUserGroup((int)$rowValue);

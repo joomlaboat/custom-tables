@@ -17,8 +17,8 @@ use CustomTables\CT;
 use CustomTables\Details;
 use Joomla\CMS\MVC\View\HtmlView;
 
-jimport('joomla.html.pane');
-jimport('joomla.application.component.view'); //Important to get menu parameters
+//jimport('joomla.html.pane');
+//jimport('joomla.application.component.view'); //Important to get menu parameters
 
 class CustomTablesViewDetails extends HtmlView
 {

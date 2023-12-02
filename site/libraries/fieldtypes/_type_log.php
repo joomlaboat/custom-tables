@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
+use CustomTables\TypeView;
 use Joomla\CMS\HTML\HTMLHelper;
 
 class CT_FieldTypeTag_log
@@ -46,7 +47,7 @@ class CT_FieldTypeTag_log
 		//get original author
 		foreach ($ct->Table->fields as $fieldRow) {
 			if ($fieldRow['type'] == 'userid') {
-				$version_author = HTMLHelper::_('ESUserView.render', $row[$ct->Env->field_prefix . $fieldRow['fieldname']], '');
+				$version_author = TypeView::user($row[$ct->Env->field_prefix . $fieldRow['fieldname']], '');
 				break;
 			}
 		}
@@ -118,7 +119,7 @@ class CT_FieldTypeTag_log
 
 				if (isset($data[1])) //last comma is empty so no element number 1
 				{
-					$version_author = HTMLHelper::_('ESUserView.render', $data[1], '');
+					$version_author = TypeView::user($data[1], '');
 
 					if (isset($data[3])) //last comma is empty so no element number 1
 					{

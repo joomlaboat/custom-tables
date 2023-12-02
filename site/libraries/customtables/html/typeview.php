@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component and WordPress 6.x Plugin
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -8,18 +8,16 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-use CustomTables\common;
-use CustomTables\database;
+namespace CustomTables;
 
+// No direct access to this file
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'catalog.php');
-
-class JHTMLESUserView
+class TypeView
 {
-	public static function render($value, $field = '')
+	public static function user($value, $field = '')
 	{
 		if ($field == 'online') {
 			$query = 'SELECT userid FROM #__session WHERE userid=' . (int)$value . ' LIMIT 1';
@@ -67,5 +65,62 @@ class JHTMLESUserView
 			}
 		}
 		return '';
+	}
+
+	public static function userGroup($value): string
+	{
+		$query = 'SELECT #__usergroups.title AS name FROM #__usergroups WHERE id=' . (int)$value . ' LIMIT 1';
+		$options = database::loadObjectList($query);
+
+		if (count($options) == 0)
+			return '';
+
+		return $options[0]->name;
+	}
+
+	//Unused
+	public static function userGroups($valueArrayString): string
+	{
+		$query = 'SELECT #__usergroups.title AS name FROM #__usergroups';
+		$where = [];
+		$valueArray = explode(',', $valueArrayString);
+
+		foreach ($valueArray as $value) {
+			if ($value != '') {
+				$where[] = 'id=' . (int)$value;
+			}
+		}
+
+		$query .= ' WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
+		$options = database::loadObjectList($query);
+
+		if (count($options) == 0)
+			return '';
+
+		$groups = array();
+		foreach ($options as $opt)
+			$groups[] = $opt->name;
+
+		return implode(',', $groups);
+	}
+
+	public static function tableJoin(Field &$field, string $layoutcode, $listing_id): string
+	{
+		$ct = new CT;
+		$ct->getTable($field->params[0]);
+
+		//TODO: add selector to the output box
+		//$selector = $field->params[6] ?? 'dropdown';
+
+		$row = $ct->Table->loadRecord($listing_id);
+
+		$twig = new TwigProcessor($ct, $layoutcode);
+
+		$value = $twig->process($row);
+
+		if ($twig->errorMessage !== null)
+			$ct->errors[] = $twig->errorMessage;
+
+		return $value;
 	}
 }

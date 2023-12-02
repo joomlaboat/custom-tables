@@ -15,17 +15,16 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
-
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
-use Joomla\CMS\Factory;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 JTable::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'tables');
 
-class CustomTablesModelEditPhotos extends JModelLegacy
+class CustomTablesModelEditPhotos extends BaseDatabaseModel
 {
 	var CT $ct;
 	var $imagemethods;

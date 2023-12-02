@@ -683,7 +683,7 @@ class fieldObject
 			} else
 				$layoutcode = '{{ ' . $fieldName . ' }}';
 
-			return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
+			return TypeView::tableJoin($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
 		} elseif ($this->field->type == 'records') {
 			//2. ?string $showPublishedString = ''
 			if (isset($functionParams[1]) and is_array($functionParams[1]))
@@ -737,7 +737,7 @@ class fieldObject
 		$layoutcode = '{{ ' . $fieldName . '.value }}';
 
 		if ($this->field->type == 'sqljoin') {
-			return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
+			return TypeView::tableJoin($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
 		} elseif ($this->field->type == 'records') {
 
 			//2. ?string $showPublishedString = ''
@@ -781,7 +781,7 @@ class fieldObject
 		}
 
 		if ($this->field->type == 'sqljoin') {
-			return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname]);
+			return TypeView::tableJoin($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname]);
 		} elseif ($this->field->type == 'records') {
 			return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
 		}

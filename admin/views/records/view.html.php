@@ -71,16 +71,11 @@ class CustomtablesViewRecords extends HtmlView
 
 	protected function renderForm($tpl): bool
 	{
-		//$Model = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $params);
-		//$Model->load($this->ct);
 		$Layouts = new Layouts($this->ct);
 		$this->ct->LayoutVariables['layout_type'] = 2;
 		$this->pageLayout = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, false);
-		//$this->row = $Model->row;
 
-		//$this->state = $this->get('State');
 		// get action permissions
-
 		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
 		$this->canCreate = $this->canDo->get('tables.edit');
 		$this->canEdit = $this->canDo->get('tables.edit');

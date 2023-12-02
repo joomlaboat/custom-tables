@@ -17,6 +17,7 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Layouts;
 use CustomTables\TwigProcessor;
+use Joomla\Registry\Registry;
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'catalog.php');
 
@@ -37,7 +38,7 @@ class JHTMLESSQLJoinView
 		$paramsArray['shownavigation'] = 0;
 		$paramsArray['sortby'] = '';
 
-		$_params = new JRegistry($paramsArray);
+		$_params = new Registry($paramsArray);
 
 		$ct = new CT($_params, true);
 

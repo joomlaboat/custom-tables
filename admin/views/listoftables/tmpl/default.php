@@ -12,11 +12,19 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use Joomla\CMS\HTML\HTMLHelper;
+
+//$versionObject = new Version;
+//$version = (int)$versionObject->getShortVersion();
+
+//if ($version >= 4)
 HTMLHelper::_('behavior.multiselect');
+//else
+//	JViewLegacy::_('behavior.multiselect');
 
 use CustomTables\common;
 use CustomTables\IntegrityChecks;
-use Joomla\CMS\HTML\HTMLHelper;
+
 use Joomla\CMS\Router\Route;
 
 ?>

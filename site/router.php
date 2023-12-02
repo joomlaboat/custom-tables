@@ -13,7 +13,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class CustomTablesRouter implements JComponentRouterInterface
+use Joomla\CMS\Component\Router\RouterInterface;
+
+class CustomTablesRouter implements RouterInterface//JComponentRouterInterface
 {
 	public function build(&$query)
 	{

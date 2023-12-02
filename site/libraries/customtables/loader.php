@@ -147,6 +147,7 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 	require_once($pathDataTypes . 'forms.php');
 	require_once($pathDataTypes . 'inputbox.php');
 	require_once($pathDataTypes . 'value.php');
+	require_once($pathDataTypes . 'typeview.php');
 
 	if (defined('_JEXEC'))
 		require_once($pathDataTypes . 'pagination.php');

@@ -17,7 +17,7 @@ use CustomTables\common;
 use CustomTables\Fields;
 use Joomla\CMS\HTML\HTMLHelper;
 
-jimport('joomla.form.helper');
+//jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
 class JFormFieldAnyTableFields extends JFormFieldList

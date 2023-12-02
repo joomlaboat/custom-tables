@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\CT;
 use CustomTables\Layouts;
 use CustomTables\TwigProcessor;
+use Joomla\Registry\Registry;
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'catalog.php');
 
@@ -39,7 +40,7 @@ class JHTMLESRecordsView
 		$paramsArray['shownavigation'] = 0;
 		$paramsArray['sortby'] = $sortByField;
 
-		$_params = new JRegistry($paramsArray);
+		$_params = new Registry($paramsArray);
 
 		$ct = new CT;
 		$ct->setParams($_params, true);

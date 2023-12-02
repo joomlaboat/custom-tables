@@ -16,8 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-HTMLHelper::_addIncludePath(JPATH_COMPONENT . '/helpers/html');
-
 if ($this->version >= 4) {
 	$wa = $this->document->getWebAssetManager();
 	$wa->useScript('keepalive')->useScript('form.validate');

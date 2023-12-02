@@ -23,7 +23,7 @@ require_once($types_path . '_type_gallery.php');
 require_once($types_path . '_type_image.php');
 require_once($types_path . '_type_log.php');
 require_once($types_path . '_type_records.php');
-require_once($types_path . '_type_sqljoin.php');
+//require_once($types_path . '_type_sqljoin.php');
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');

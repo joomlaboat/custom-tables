@@ -16,12 +16,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 $siteLib = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
 require_once($siteLib . 'layout.php');
 
-class CustomTablesModelCatalog extends JModelLegacy
+class CustomTablesModelCatalog extends BaseDatabaseModel
 {
 	var CT $ct;
 

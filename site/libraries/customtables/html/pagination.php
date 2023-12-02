@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Router\Route;
 
 /**
@@ -26,7 +27,7 @@ use Joomla\CMS\Router\Route;
  * @subpackage  HTML
  * @since       11.1
  */
-class JESPagination// extends JObject
+class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.+ compatible some
 {
 	/**
 	 * The record number to start displaying from.
@@ -550,7 +551,7 @@ class JESPagination// extends JObject
  * @subpackage  HTML
  * @since       11.1
  */
-class JESPaginationObject// extends JObject
+class JESPaginationObject extends CMSObject //JObject
 {
 	/**
 	 *

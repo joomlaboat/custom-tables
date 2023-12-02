@@ -24,7 +24,7 @@ use CustomTables\record;
 use CustomTables\TwigProcessor;
 use CustomTables\SaveFieldQuerySet;
 
-jimport('joomla.application.component.model');
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 $siteLibPath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
 require_once($siteLibPath . 'layout.php');
@@ -32,9 +32,8 @@ require_once($siteLibPath . 'layout.php');
 $libPath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR;
 require_once($libPath . 'valuetags.php');
 
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-class CustomTablesModelEditItem extends BaseDatabaseModel//JModelLegacy
+class CustomTablesModelEditItem extends BaseDatabaseModel
 {
 	var CT $ct;
 	var bool $userIdField_Unique;

@@ -16,8 +16,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Fields;
+
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Event\Content\ContentPrepareEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
+use Joomla\Event\DispatcherInterface;
+use Joomla\Registry\Registry;
 
 class JoomlaBasicMisc
 {
@@ -630,19 +635,44 @@ class JoomlaBasicMisc
 
 			$content_params = $mainframe->getParams('com_content');
 
-			$o = new stdClass();
-			$o->text = $htmlresult;
-			$o->created_by_alias = 0;
+			if ($version >= 4) {
 
-			JPluginHelper::importPlugin('content');
+				/*$article = new \stdClass();
+				$article->text = $htmlresult;
 
-			if ($version < 4) {
-				$dispatcher = JDispatcher::getInstance();
-				$dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
-			} else
-				Factory::getApplication()->triggerEvent('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
+				$dispatcher = Factory::getContainer()->get(DispatcherInterface::class);
 
-			$htmlresult = $o->text;
+				PluginHelper::importPlugin('content', null, true, $dispatcher);
+
+				$params = new Registry();
+				$context = 'text';
+
+				$dispatcher->dispatch('onContentPrepare', new ContentPrepareEvent('onContentPrepare', [
+					'context' => $context,
+					'subject' => $article,
+					'params' => $params,
+					'page' => 0,
+				]));
+
+				$htmlresult = $article->text;*/
+
+				$htmlresult = Joomla\CMS\HTML\Helpers\Content::prepare($htmlresult, $content_params, 'text');
+
+			} else {
+				$o = new stdClass();
+				$o->text = $htmlresult;
+				$o->created_by_alias = 0;
+
+				JPluginHelper::importPlugin('content');
+
+				if ($version < 4) {
+					$dispatcher = JDispatcher::getInstance();
+					$dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
+				}
+
+				$htmlresult = $o->text;
+			}
+
 			$myDoc->setTitle(common::translate($pageTitle)); //because content plugins may overwrite the title
 		}
 		return $htmlresult;
