@@ -22,7 +22,7 @@ use Joomla\CMS\Version;
 $versionObject = new Version;
 $version = (int)$versionObject->getShortVersion();
 
-trait JFormFieldESItemLayoutCommon
+trait JFormFieldCTTableCommon
 {
 	protected static function getOptionList(): array
 	{
@@ -34,17 +34,15 @@ trait JFormFieldESItemLayoutCommon
 		else
 			$db = Factory::getContainer()->get('DatabaseDriver');
 
-		$query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename'
-			. ' FROM #__customtables_layouts WHERE published=1 AND layouttype=6 ORDER BY tablename,layoutname';
-
+		$query = 'SELECT id,tablename FROM #__customtables_tables WHERE published=1 ORDER BY tablename';
 		$db->setQuery($query);
-		$layouts = $db->loadObjectList();
+		$tables = $db->loadObjectList();
 
-		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_DEFAULT')];
+		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT')];
 
-		if ($layouts) {
-			foreach ($layouts as $layout)
-				$options[] = HTMLHelper::_('select.option', $layout->tablename, $layout->tablename);
+		if ($tables) {
+			foreach ($tables as $table)
+				$options[] = HTMLHelper::_('select.option', $table->tablename, $table->tablename);
 		}
 		return $options;
 	}
@@ -54,24 +52,23 @@ if ($version < 4) {
 
 	JFormHelper::loadFieldClass('list');
 
-	class JFormFieldESItemLayout extends JFormFieldList
+	class JFormFieldCTTable extends JFormFieldList
 	{
-		use JFormFieldESItemLayoutCommon;
+		use JFormFieldCTTableCommon;
 
-		protected $type = 'esitemlayout';
+		protected $type = 'CTTable';
 
-		protected function getOptions(): array
+		protected function getOptions()//$name, $value, &$node, $control_name)
 		{
 			return self::getOptionList();
 		}
 	}
 } else {
-
-	class JFormFieldESItemLayout extends FormField
+	class JFormFieldCTTable extends FormField
 	{
-		use JFormFieldESItemLayoutCommon;
+		use JFormFieldCTTableCommon;
 
-		protected $type = 'esitemlayout';
+		public $type = 'CTTable';
 		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
 
 		protected function getInput()

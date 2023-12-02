@@ -19,7 +19,10 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
 
-trait JFormFieldESEmailLayoutCommon
+$versionObject = new Version;
+$version = (int)$versionObject->getShortVersion();
+
+trait JFormFieldCTItemLayoutCommon
 {
 	protected static function getOptionList(): array
 	{
@@ -31,9 +34,8 @@ trait JFormFieldESEmailLayoutCommon
 		else
 			$db = Factory::getContainer()->get('DatabaseDriver');
 
-		$query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename FROM #__customtables_layouts'
-			. ' WHERE published=1 AND layouttype=7'
-			. ' ORDER BY tablename,layoutname';
+		$query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename'
+			. ' FROM #__customtables_layouts WHERE published=1 AND layouttype=6 ORDER BY tablename,layoutname';
 
 		$db->setQuery($query);
 		$layouts = $db->loadObjectList();
@@ -48,18 +50,15 @@ trait JFormFieldESEmailLayoutCommon
 	}
 }
 
-$versionObject = new Version;
-$version = (int)$versionObject->getShortVersion();
-
 if ($version < 4) {
 
 	JFormHelper::loadFieldClass('list');
 
-	class JFormFieldESEmailLayout extends JFormFieldList
+	class JFormFieldCTItemLayout extends JFormFieldList
 	{
-		use JFormFieldESEmailLayoutCommon;
+		use JFormFieldCTItemLayoutCommon;
 
-		protected $type = 'esemaillayout';
+		protected $type = 'CTItemLayout';
 
 		protected function getOptions(): array
 		{
@@ -68,11 +67,11 @@ if ($version < 4) {
 	}
 } else {
 
-	class JFormFieldESEmailLayout extends FormField
+	class JFormFieldCTItemLayout extends FormField
 	{
-		use JFormFieldESEmailLayoutCommon;
+		use JFormFieldCTItemLayoutCommon;
 
-		protected $type = 'esemaillayout';
+		protected $type = 'CTItemLayout';
 		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
 
 		protected function getInput()

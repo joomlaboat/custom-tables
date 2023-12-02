@@ -19,10 +19,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
 
-$versionObject = new Version;
-$version = (int)$versionObject->getShortVersion();
-
-trait JFormFieldESTableCommon
+trait JFormFieldCTEmailLayoutCommon
 {
 	protected static function getOptionList(): array
 	{
@@ -34,41 +31,48 @@ trait JFormFieldESTableCommon
 		else
 			$db = Factory::getContainer()->get('DatabaseDriver');
 
-		$query = 'SELECT id,tablename FROM #__customtables_tables WHERE published=1 ORDER BY tablename';
+		$query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename FROM #__customtables_layouts'
+			. ' WHERE published=1 AND layouttype=7'
+			. ' ORDER BY tablename,layoutname';
+
 		$db->setQuery($query);
-		$tables = $db->loadObjectList();
+		$layouts = $db->loadObjectList();
 
-		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT')];
+		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_DEFAULT')];
 
-		if ($tables) {
-			foreach ($tables as $table)
-				$options[] = HTMLHelper::_('select.option', $table->tablename, $table->tablename);
+		if ($layouts) {
+			foreach ($layouts as $layout)
+				$options[] = HTMLHelper::_('select.option', $layout->tablename, $layout->tablename);
 		}
 		return $options;
 	}
 }
 
+$versionObject = new Version;
+$version = (int)$versionObject->getShortVersion();
+
 if ($version < 4) {
 
 	JFormHelper::loadFieldClass('list');
 
-	class JFormFieldESTable extends JFormFieldList
+	class JFormFieldCTEmailLayout extends JFormFieldList
 	{
-		use JFormFieldESTableCommon;
+		use JFormFieldCTEmailLayoutCommon;
 
-		protected $type = 'estable';
+		protected $type = 'CTEmailLayout';
 
-		protected function getOptions()//$name, $value, &$node, $control_name)
+		protected function getOptions(): array
 		{
 			return self::getOptionList();
 		}
 	}
 } else {
-	class JFormFieldESTable extends FormField
-	{
-		use JFormFieldESTableCommon;
 
-		public $type = 'estable';
+	class JFormFieldCTEmailLayout extends FormField
+	{
+		use JFormFieldCTEmailLayoutCommon;
+
+		protected $type = 'CTEmailLayout';
 		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
 
 		protected function getInput()

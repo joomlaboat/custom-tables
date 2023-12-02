@@ -19,10 +19,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
 
-$versionObject = new Version;
-$version = (int)$versionObject->getShortVersion();
-
-trait JFormFieldESDetailsLayoutCommon
+trait JFormFieldCTEditLayoutCommon
 {
 	protected static function getOptionList(): array
 	{
@@ -35,7 +32,8 @@ trait JFormFieldESDetailsLayoutCommon
 			$db = Factory::getContainer()->get('DatabaseDriver');
 
 		$query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename FROM #__customtables_layouts'
-			. ' WHERE published=1 AND (layouttype=4 OR layouttype=8 OR layouttype=9 OR layouttype=10) ORDER BY tablename,layoutname';
+			. ' WHERE published=1 AND layouttype=2'
+			. ' ORDER BY tablename,layoutname';
 
 		$db->setQuery($query);
 		$layouts = $db->loadObjectList();
@@ -50,15 +48,18 @@ trait JFormFieldESDetailsLayoutCommon
 	}
 }
 
+$versionObject = new Version;
+$version = (int)$versionObject->getShortVersion();
+
 if ($version < 4) {
 
 	JFormHelper::loadFieldClass('list');
 
-	class JFormFieldESDetailsLayoutLayout extends JFormFieldList
+	class JFormFieldCTEditLayout extends JFormFieldList
 	{
-		use JFormFieldESDetailsLayoutCommon;
+		use JFormFieldCTEditLayoutCommon;
 
-		protected $type = 'esdetailslayout';
+		protected $type = 'eseditlayout';
 
 		protected function getOptions(): array
 		{
@@ -67,11 +68,11 @@ if ($version < 4) {
 	}
 } else {
 
-	class JFormFieldESDetailsLayout extends FormField
+	class JFormFieldCTEditLayout extends FormField
 	{
-		use JFormFieldESDetailsLayoutCommon;
+		use JFormFieldCTEditLayoutCommon;
 
-		protected $type = 'esdetailslayout';
+		protected $type = 'CTEditLayout';
 		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
 
 		protected function getInput()

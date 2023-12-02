@@ -14,12 +14,12 @@
     >
         <fieldset name="PARAMS">
 
-            <field type="estable" name="establename" default="" label="Table" description="Select Table"/>
+            <field type="CTTable" name="establename" default="" label="Table" description="Select Table"/>
 
-            <field type="esdetailslayout" name="esdetailslayout" default="" label="Details Layout"
+            <field type="CTDetailsLayout" name="esdetailslayout" default="" label="Details Layout"
                    description="Select Details Layout"/>
 
-            <field type="eseditlayout" name="eseditlayout" default="" label="Edit Layout"
+            <field type="CTEditLayout" name="eseditlayout" default="" label="Edit Layout"
                    description="Select Edit Layout"/>
 
         </fieldset>
@@ -123,7 +123,7 @@ In this case, there will be two checks: the first one will check if the record b
                 label="Email Notification"
                 description="Send emails if record added or edited."
         >
-            <field type="esemaillayout" name="onrecordaddsendemaillayout" default="" label="Email Layout"
+            <field type="CTEmailLayout" name="onrecordaddsendemaillayout" default="" label="Email Layout"
                    description="Email Layout"/>
 
             <field type="list" name="onrecordaddsendemail" default="0" label="Send Email When record" description="">

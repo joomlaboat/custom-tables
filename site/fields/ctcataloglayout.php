@@ -22,7 +22,7 @@ use Joomla\CMS\Version;
 $versionObject = new Version;
 $version = (int)$versionObject->getShortVersion();
 
-trait JFormFieldESCatalogLayoutCommon
+trait JFormFieldCTCatalogLayoutCommon
 {
 	protected static function getOptionList(): array
 	{
@@ -55,11 +55,11 @@ if ($version < 4) {
 
 	JFormHelper::loadFieldClass('list');
 
-	class JFormFieldESCatalogLayout extends JFormFieldList
+	class JFormFieldCTCatalogLayout extends JFormFieldList
 	{
-		use JFormFieldESCatalogLayoutCommon;
+		use JFormFieldCTCatalogLayoutCommon;
 
-		protected $type = 'escataloglayout';
+		protected $type = 'CTCatalogLayout';
 
 		protected function getOptions(): array
 		{
@@ -68,11 +68,11 @@ if ($version < 4) {
 	}
 } else {
 
-	class JFormFieldESCatalogLayout extends FormField
+	class JFormFieldCTCatalogLayout extends FormField
 	{
-		use JFormFieldESCatalogLayoutCommon;
+		use JFormFieldCTCatalogLayoutCommon;
 
-		protected $type = 'escataloglayout';
+		protected $type = 'CTCatalogLayout';
 		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
 
 		protected function getInput()

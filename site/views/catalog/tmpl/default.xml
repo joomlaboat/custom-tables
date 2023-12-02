@@ -13,19 +13,19 @@
 
         <fieldset name="PARAMS" addfieldpath="/components/com_customtables/fields"
                   label="Table &amp; Layouts" description="Basic menu item parameters needed to render the page.">
-            <field type="estable" name="establename" label="Table"
+            <field type="CTTable" name="establename" label="Table"
                    description="Select the Table for reading the records. You can create a new table in Components/Custom Tables/Tables."
                    required="true"/>
 
-            <field type="escataloglayout" name="escataloglayout" default="" label="Page Layout"
+            <field type="CTCatalogLayout" name="escataloglayout" default="" label="Page Layout"
                    description="Select Catalog Page Layout. This parameter is available on Custom Tables - Records menu item type."/>
-            <field type="esitemlayout" name="esitemlayout" default="" label="Item Layout"
-                   description="Item Layout. This parameter can be used on Records menu item and if Page layout type is Catalog Page not Simple Catalog."/>
+            <field type="CTItemLayout" name="esitemlayout" default="" label="Item Layout"
+                   description="Select Item Layout. This parameter can be used on Records menu item and if Page layout type is Catalog Page not Simple Catalog."/>
 
-            <field type="eseditlayout" name="eseditlayout" default="" label="Edit Layout"
+            <field type="CTEditLayout" name="eseditlayout" default="" label="Edit Layout"
                    description="Select Edit Form Layout. This parameter is available on most of the Custom Tables menu item types because the edit form can be opened from the Records (catalog) page, or even as the modal form."/>
 
-            <field type="esdetailslayout" name="esdetailslayout" default="" label="Details Layout"
+            <field type="CTDetailsLayout" name="esdetailslayout" default="" label="Details Layout"
                    description="Select Record Details Layout. This parameter is available on Record Details and Records menu item type pages."/>
         </fieldset>
 
@@ -137,7 +137,7 @@ In this case, there will be two checks: first, it will check if the record belon
                 label="Email Notification"
                 description="Send email(s) after record has been added or edited."
         >
-            <field type="esemaillayout" name="onrecordaddsendemaillayout" default="" label="Email message Layout"
+            <field type="CTEmailLayout" name="onrecordaddsendemaillayout" default="" label="Email message Layout"
                    description="Select the Email Message type layout to create the message body."/>
 
             <field type="list" name="onrecordaddsendemail" default="0" label="The condition when to send the email"
