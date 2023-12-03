@@ -22,8 +22,6 @@ use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-JTable::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'tables');
-
 class CustomTablesModelEditPhotos extends BaseDatabaseModel
 {
 	var CT $ct;
@@ -32,7 +30,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	var $Listing_Title;
 	var $galleryname;
 	var $GalleryTitle;
-
 	var $imagefolderword;
 	var $imagefolder;
 	var $imagefolderweb;
@@ -96,17 +93,17 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 
 		$this->Listing_Title = '';
 
+		//Get first field value as a Gallery Title
 		foreach ($this->ct->Table->fields as $mFld) {
-			$titlefield = $mFld['realfieldname'];
+			$titleField = $mFld['realfieldname'];
 			if (str_contains($mFld['type'], 'multi'))
-				$titlefield .= $this->ct->Languages->Postfix;
+				$titleField .= $this->ct->Languages->Postfix;
 
-			if ($this->row[$titlefield] != '') {
-				$this->Listing_Title = $this->row[$titlefield];
+			if ($this->row[$titleField] != '') {
+				$this->Listing_Title = $this->row[$titleField];
 				break;
 			}
 		}
-
 		return true;
 	}
 
@@ -190,15 +187,15 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 
 	function delete(): bool
 	{
-		$photoids = common::inputGetString('photoids', '');
-		$photo_arr = explode('*', $photoids);
+		$photoIDs = common::inputGetString('photoids', '');
+		$photo_arr = explode('*', $photoIDs);
 
-		foreach ($photo_arr as $photoid) {
-			if ($photoid != '') {
+		foreach ($photo_arr as $photoId) {
+			if ($photoId != '') {
 				$this->imagemethods->DeleteExistingGalleryImage($this->imagefolder, $this->imagemainprefix, $this->ct->Table->tableid, $this->galleryname,
-					$photoid, $this->field->params[0], true);
+					$photoId, $this->field->params[0] ?? '', true);
 
-				$query = 'DELETE FROM ' . $this->phototablename . ' WHERE listingid=' . $this->listing_id . ' AND photoid=' . $photoid;
+				$query = 'DELETE FROM ' . $this->phototablename . ' WHERE listingid=' . $this->listing_id . ' AND photoid=' . $photoId;
 				database::setQuery($query);
 			}
 		}
@@ -247,7 +244,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		if ($r != 1)
 			$isOk = false;
 
-		$customSizes = $this->imagemethods->getCustomImageOptions($this->field->params[0]);
+		$customSizes = $this->imagemethods->getCustomImageOptions($this->field->params[0] ?? '');
 
 		foreach ($customSizes as $imagesize) {
 			$prefix = $imagesize[0];
@@ -255,7 +252,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 			$height = (int)$imagesize[2];
 			$color = (int)$imagesize[3];
 
-			//save as extention
+			//save as an extension
 			if ($imagesize[4] != '')
 				$ext = $imagesize[4];
 			else

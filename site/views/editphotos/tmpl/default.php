@@ -24,7 +24,6 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/image
     .MainImage {
         border-color: #ff0000;
         border-style: solid;
-
     }
 </style>
 <script>
