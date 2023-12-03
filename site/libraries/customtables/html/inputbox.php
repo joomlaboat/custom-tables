@@ -414,13 +414,13 @@ class Inputbox
 			case 'records':
 				return $this->render_records($value);
 
-			case 'googlemapcoordinates'://dok
+			case 'googlemapcoordinates':
 				if ($value === null) {
 					$value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
 					if ($value == '')
 						$value = $this->defaultValue;
 				}
-				return HTMLHelper::_('GoogleMapCoordinates.render', $this->prefix . $this->field->fieldname, $value);
+				return CTTypes::googlemapcoordinates($this->prefix . $this->field->fieldname, $value);
 
 			case 'email'://dok
 				if ($value === null) {

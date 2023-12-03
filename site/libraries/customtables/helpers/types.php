@@ -83,6 +83,21 @@ class CTTypes
 		}
 	}
 
+	public static function googlemapcoordinates(string $elementId, ?string $value = null): string
+	{
+		if ($value === null)
+			return '';
+
+		$html = [];
+		$html[] = '<div class="input-group has-success">';
+		$html[] = '<input type="text" class="form-control valid form-control-success" id="' . $elementId . '" name="' . $elementId . '" value="' . htmlspecialchars($value ?? '') . '" />';
+		$html[] = '<button type="button" class="btn btn-primary" onclick="ctInputbox_googlemapcoordinates(\'' . $elementId . '\')" data-inputfield="comes_' . $elementId . '" data-button="comes_' . $elementId . '_btn">&nbsp;...&nbsp;</button>';
+		$html[] = '</div>';
+		$html[] = '<div id="' . $elementId . '_map" style="width: 480px; height: 540px;display:none;"></div>';
+
+		return implode("\n", $html);
+	}
+
 	public static function color(string $elementId, ?string $value = null, $showAlpha = false, ?array $palette = null, array $attributes = []): string
 	{
 		// Include necessary CSS and JavaScript files for Spectrum Color Picker
