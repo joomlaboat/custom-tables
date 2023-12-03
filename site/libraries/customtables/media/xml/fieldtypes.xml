@@ -872,8 +872,8 @@
         </editparams>
     </type>
 
-    <type ct_name="records" label="Multiple Table Join"
-          description="Provides a Multiple Left Join to records of another table." priority="2">
+    <type ct_name="records" label="Table Join List"
+          description="Concatenated ID list referencing another table. " priority="2">
         <params>
             <param name="table" label="Table" description="Type the name of the Custom Table to join/link with."
                    example="products" default="" type="table" fieldchild="fieldtype_param_1"/>
