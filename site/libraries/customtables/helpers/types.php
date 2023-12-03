@@ -64,7 +64,7 @@ class CTTypes
 
 			$select .= '>';
 
-			$select .= '<option value="">' . common::translate('COM_CUSTOMTABLES_SELECT_FIL') . '</option>'; // Optional default option
+			$select .= '<option value="">' . common::translate('COM_CUSTOMTABLES_SELECT_FILE') . '</option>'; // Optional default option
 
 			// Generate options for each file in the folder
 			foreach ($files as $file) {

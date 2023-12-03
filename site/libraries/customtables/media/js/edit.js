@@ -19,12 +19,8 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
     if (submitForm) {
         let objForm = document.getElementById(formName);
         if (objForm) {
-
-            ctInputbox_signature_apply();
             const tasks_with_validation = ['saveandcontinue', 'save', 'saveandprint', 'saveascopy'];
-
             if (isModal && task !== 'saveascopy') {
-
                 let hideModelOnSave = true;
                 if (task === 'saveandcontinue')
                     hideModelOnSave = false;
@@ -40,8 +36,9 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
                 if (tasks_with_validation.includes(task)) {
                     if (checkRequiredFields(objForm))
                         objForm.submit();
-                } else
+                } else {
                     objForm.submit();
+                }
             }
         } else
             alert("Form not found.");
@@ -311,6 +308,13 @@ function doSanitanization(obj, sanitizers_string) {
 function checkRequiredFields(formObject) {
     if (!checkFilters())
         return false;
+
+    if (ct_signaturePad_fields.length > 0) {
+        if (!ctInputbox_signature_apply()) {
+            event.preventDefault();
+            return false;
+        }
+    }
 
     let requiredFields = formObject.getElementsByClassName("required");
     let label = "One field";
@@ -1009,18 +1013,6 @@ function ctInputbox_signature(inputbox_id, width, height, format) {
     document.getElementById(inputbox_id + '_clear').addEventListener('click', function () {
         ct_signaturePad[inputbox_id].clear();
     });
-
-    /*
-    document.getElementById(inputbox_id + '_save').addEventListener("click", function (event) {
-        if (ct_signaturePad[inputbox_id].isEmpty()) {
-            "Please provide a signature first.";
-        } else {
-            //let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/'+format+'+xml');
-            let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/'+format);
-            document.getElementById(inputbox_id).setAttribute("value", dataURL);
-        }
-    });
-    */
 }
 
 function ctInputbox_signature_apply() {
@@ -1029,7 +1021,8 @@ function ctInputbox_signature_apply() {
         let inputbox_id = ct_signaturePad_fields[i];
 
         if (ct_signaturePad[inputbox_id].isEmpty()) {
-            alert("Please provide a signature first.");
+            alert(TranslateText('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED'));
+            return false;
         } else {
 
             let format = ct_signaturePad_formats[inputbox_id];
@@ -1037,8 +1030,10 @@ function ctInputbox_signature_apply() {
             //let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/'+format+'+xml');
             let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/' + format);
             document.getElementById(inputbox_id).setAttribute("value", dataURL);
+            return true;
         }
     }
+    return true;
 }
 
 /*

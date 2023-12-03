@@ -323,7 +323,7 @@ class CT_FieldTypeTag_file
 			return '';
 
 		if ($field->type == 'filelink') {
-			$FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
+			$FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0] ?? '');
 			$filepath = $FileFolder . '/' . $filename;
 		} elseif ($field->type == 'blob')
 			$filepath = $filename;
@@ -354,11 +354,15 @@ class CT_FieldTypeTag_file
 
 		$how_to_process = $option_list[0] ?? '';
 
-		if ($how_to_process != '') {
-			$filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
-		} elseif ($field->type == 'blob') {
-			$how_to_process = 'blob';//Not secure but BLOB
-			$filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+		if ($record_id === null) {
+			$filepath = null;
+		} else {
+			if ($how_to_process != '') {
+				$filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+			} elseif ($field->type == 'blob') {
+				$how_to_process = 'blob';//Not secure but BLOB
+				$filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+			}
 		}
 
 		$target = '';
@@ -424,7 +428,7 @@ class CT_FieldTypeTag_file
 		}
 	}
 
-	static protected function get_private_file_path($rowValue, $how_to_process, $filepath, $recId, $fieldid, $tableid, $filename_only = false): string
+	static protected function get_private_file_path(string $rowValue, string $how_to_process, string $filepath, string $recId, int $fieldid, int $tableid, bool $filename_only = false): string
 	{
 		$security = CT_FieldTypeTag_file::get_security_letter($how_to_process);
 
@@ -455,7 +459,7 @@ class CT_FieldTypeTag_file
 		return $filepath;
 	}
 
-	static protected function get_security_letter($how_to_process): string
+	static protected function get_security_letter(string $how_to_process): string
 	{
 		switch ($how_to_process) {
 

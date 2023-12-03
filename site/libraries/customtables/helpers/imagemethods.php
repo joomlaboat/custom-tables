@@ -26,8 +26,12 @@ class CustomTablesImageMethods
 
 		if (isset($params[2])) {
 			$ImageFolder = $params[2];
-			if ($ImageFolder[0] != '/')
-				$ImageFolder = '/' . $ImageFolder;
+
+			if ($ImageFolder != '') {
+				if ($ImageFolder[0] != '/')
+					$ImageFolder = '/' . $ImageFolder;
+			} else
+				$ImageFolder = '/';
 
 			if (strlen($ImageFolder) > 8) {
 				$p1 = substr($ImageFolder, 0, 7);
