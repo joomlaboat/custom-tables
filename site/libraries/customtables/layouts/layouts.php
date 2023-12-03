@@ -670,9 +670,16 @@ class Layouts
 
 		$result .= '<td style="text-align:center;"><a href="{{ record.link(true) }}">{{ record.id }}</a></td>' . PHP_EOL;
 
+		$imagegalleryFound = false;
+		$fileboxFound = false;
+
 		foreach ($fields as $field) {
 
-			if ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip)) {
+			if ($field['type'] == 'imagegallery') {
+				$imagegalleryFound = true;
+			} elseif ($field['type'] == 'filebox') {
+				$fileboxFound = true;
+			} elseif ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip)) {
 
 				if ($field['type'] == 'url')
 					$fieldValue = '<a href="{{ ' . $field['fieldname'] . ' }}" target="_blank">{{ ' . $field['fieldname'] . ' }}</a>';
@@ -683,8 +690,18 @@ class Layouts
 			}
 		}
 
-		if ($addToolbar)
-			$result .= '<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>' . PHP_EOL;
+		if ($addToolbar) {
+
+			$toolbarButtons = ['edit', 'publish', 'refresh', 'delete'];
+
+			if ($imagegalleryFound)
+				$toolbarButtons [] = 'gallery';
+
+			if ($fileboxFound)
+				$toolbarButtons [] = 'filebox';
+
+			$result .= '<td>{{ html.toolbar("' . implode('","', $toolbarButtons) . '") }}</td>' . PHP_EOL;
+		}
 
 		$result .= '</tr>';
 
