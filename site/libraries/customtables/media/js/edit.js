@@ -932,6 +932,15 @@ let gmapdata = [];
 let gmapmarker = [];
 
 function ctInputbox_googlemapcoordinates(inputbox_id) {
+
+    let map_obj = document.getElementById(inputbox_id + "_map");
+
+    if (typeof google === 'undefined') {
+        map_obj.innerHTML = 'Custom Tables Configuration: Google Map API Key not provided.';
+        map_obj.style.display = "block";
+        return false;
+    }
+
     let val = document.getElementById(inputbox_id).value;
     let val_list = val.split(",");
 
@@ -944,7 +953,6 @@ function ctInputbox_googlemapcoordinates(inputbox_id) {
 
     let curpoint = new google.maps.LatLng(def_latval, def_longval);
 
-    let map_obj = document.getElementById(inputbox_id + "_map");
 
     if (map_obj.style.display === "block") {
         map_obj.style.display = "none";
