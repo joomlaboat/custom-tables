@@ -15,47 +15,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\Languages;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Version;
 use Joomla\CMS\Form\FormHelper;
 
 class CTTypes
 {
-	public static function getField($type, $attributes, $field_value = '')
-	{
-		$version_object = new Version;
-		$version = (int)$version_object->getShortVersion();
-
-		FormHelper::loadFieldClass($type);
-
-		try {
-
-			if ($version < 4)
-				$xml = new JXMLElement('<?xml version="1.0" encoding="utf-8"?><field />');
-			else
-				$xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><field />');
-
-			foreach ($attributes as $key => $value) {
-				if ('_options' == $key) {
-					foreach ($value as $_opt_value) {
-						$xml->addChild('option', $_opt_value->text)->addAttribute('value', $_opt_value->value);
-					}
-					continue;
-				}
-				$xml->addAttribute($key, $value);
-			}
-
-			//$class = 'FormHelper' . $type;
-			$class = $type;
-
-			$field = new $class();
-			$field->setup($xml, $field_value);
-
-			return $field;
-		} catch (Exception $e) {
-			return false;
-		}
-	}
-
 	public static function language(string $elementId, ?int $value = null, array $attributes = []): string
 	{
 		$lang = new Languages();
@@ -116,5 +81,49 @@ class CTTypes
 		} else {
 			return 'Folder does not exist.';
 		}
+	}
+
+	public static function color(string $elementId, ?string $value = null, $showAlpha = false, ?array $palette = null, array $attributes = []): string
+	{
+		// Include necessary CSS and JavaScript files for Spectrum Color Picker
+		HTMLHelper::_('stylesheet', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css');
+		HTMLHelper::_('script', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js');
+
+		// JavaScript code to initialize Spectrum Color Picker
+		//palette: [ ['#ff0000', '#00ff00', '#0000ff'],['#ffff00', '#ff00ff', '#00ffff'] ]
+
+		$js = '
+        <script>jQuery(document).ready(function($) {
+            $("#' . $elementId . '").spectrum({
+                preferredFormat: "hex", // Set preferred color format
+                showInput: true, // Display typed color values
+                
+                ' . ($palette !== null ? '
+                showPalette: true, // Show a palette of basic colors
+                palette: [["' . implode('","', $palette) . '"]],' : '') . '
+                
+                ' . ($showAlpha ? '
+                allowEmpty: true, // Allow clearing the color to make it transparent
+				showAlpha: true, // Show the alpha channel slider
+				' : '') . '
+            });
+        });
+    </script>';
+
+		if (key_exists('class', $attributes)) {
+			if (str_contains($attributes['class'], 'color-picker-class')) {
+				$attributes['class'] .= ' color-picker-class';
+			}
+		} else {
+			$attributes['class'] = 'color-picker-class';
+		}
+
+		$attributesString = '';
+		// Add attributes
+		foreach ($attributes as $key => $attr) {
+			$attributesString .= ' ' . htmlspecialchars($key) . '="' . htmlspecialchars($attr) . '"';
+		}
+
+		return '<input type="text" id="' . $elementId . '" name="' . $elementId . '" value="' . $value . '" ' . $attributesString . ' />' . $js;
 	}
 }

@@ -1094,31 +1094,20 @@ class Inputbox
 
 		$result = '';
 		$att = array(
-			'name' => $this->prefix . $this->field->fieldname,
-			'id' => $this->prefix . $this->field->fieldname,
 			'data-type' => $this->field->type,
 			'label' => $this->field->title);
 
-		if ($this->option_list[0] == 'transparent') {
-			$att['format'] = 'rgba';
-			$att['keywords'] = 'transparent,initial,inherit';
-
-			//convert value to rgba: rgba(255, 0, 255, 0.1)
-			$value = JoomlaBasicMisc::colorStringValueToCSSRGB($value);
-		}
 		$array_attributes = $this->prepareAttributes($att, $this->attributes);
-		$inputbox = CTTypes::getField('color', $array_attributes, $value)->input;
 
-		//Add onChange attribute if not added
-		$onChangeAttribute = '';
-		foreach ($array_attributes as $key => $attributeValue) {
-			if ('onChange' == $key) {
-				$onChangeAttribute = 'onChange="' . $attributeValue . '"';
-				break;
-			}
-		}
-		if ($onChangeAttribute != '' and !str_contains($inputbox, 'onChange'))
-			$inputbox = str_replace('<input ', '<input ' . $onChangeAttribute, $inputbox);
+
+		$transparent = $this->option_list[0] == 'transparent';
+		if (isset($this->option_list[1]) and $this->option_list[1] != "")
+			$palette = explode(',', $this->option_list[1]);
+		else
+			$palette = null;
+
+		// Create the color picker field
+		$inputbox = CTTypes::color($this->prefix . $this->field->fieldname, $value, $transparent, $palette, $array_attributes);
 
 		$result .= $inputbox;
 		return $result;
