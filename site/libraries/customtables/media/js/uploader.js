@@ -87,15 +87,17 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
                         $("#" + EventMessageBox).html("");
                         p.files_uploaded += 1;
                         updateUploadedFileBox(index);
-                        if (p.AutoSubmitForm)
+                        if (p.AutoSubmitForm) {
+
+                            if (typeof checkRequiredFields === 'function') {
+                                let formObject = document.getElementById(UploaderForm);
+                                checkRequiredFields(formObject);
+                            }
+
                             document.getElementById(p.esUploaderFormID).submit();
+                        }
                     } else
                         $("#" + EventMessageBox).html('Error : <span style="color:red;">' + res.error + '</span>');
-                }
-
-                if (typeof checkRequiredFields === 'function') {
-                    let formObject = document.getElementById(UploaderForm);
-                    checkRequiredFields(formObject);
                 }
             },
 
