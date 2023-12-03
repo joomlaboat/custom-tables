@@ -22,15 +22,15 @@
     display: block;
     position: absolute;
     color: white;
-    background: #5bb75b;
+    background: #5bb75baa;
     top: 0;
-    left: 0;
+    right: 0;
     padding: 3px;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-    margin-top: -5px;
-
+    /*border-top-left-radius: 3px;*/
+    /*border-top-right-radius: 3px;*/
+    border-bottom-left-radius: 3px;
+    /*margin-top: -5px;*/
+    overflow: hidden;
 }
 
 .multilangtext .language_label_rich {
