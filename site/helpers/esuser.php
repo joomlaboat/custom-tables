@@ -44,10 +44,12 @@ class JHTMLESUser
 		if ($mysqlWhere != '')
 			$where [] = $mysqlWhere;
 
-		$query .= ' WHERE ' . implode(' AND ', $where);
+		if (count($where) > 0)
+			$query .= ' WHERE ' . implode(' AND ', $where);
 
 		$query .= ' GROUP BY #__users.id';
 		$query .= ' ORDER BY #__users.name';
+
 		$options = database::loadObjectList($query);
 
 		$att = ['id' => '', 'data-type' => 'user', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT')];

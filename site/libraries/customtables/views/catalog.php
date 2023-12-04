@@ -145,7 +145,7 @@ class Catalog
 					else
 						$pageLayout = 'CustomTables: Fields not set.';
 
-					$pageLayoutNameString = 'Generated_Page_Layout';
+					$pageLayoutNameString = 'Generated_Simple_Catalog_Layout';
 				}
 			}
 		}
