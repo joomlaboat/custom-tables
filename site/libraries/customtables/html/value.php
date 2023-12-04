@@ -267,7 +267,7 @@ class Value
 			case 'language':
 				$lang = new Languages();
 				foreach ($lang->LanguageList as $language) {
-					if ($language->id === (int)$rowValue)
+					if ($language->language === $rowValue)
 						return $language->caption;
 				}
 				return '';

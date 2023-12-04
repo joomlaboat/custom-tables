@@ -98,9 +98,6 @@ class Inputbox
 
 		$this->field = new Field($this->ct, $fieldRow);
 
-		if ($this->field->type != "records")
-			$this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control');
-
 		if ($this->field->isrequired == 1)
 			$this->cssclass .= ' required';
 
@@ -109,8 +106,13 @@ class Inputbox
 
 		$this->attributesArray['class'] = $this->cssclass;
 		$this->attributesArray['data-type'] = $this->field->type;
-		$this->attributesArray['label-type'] = $this->field->title;
+		$this->attributesArray['data-label'] = $this->field->title;
 		$this->attributesArray['readonly'] = false;
+		$this->attributesArray['onchange'] = $this->onchange;
+
+		//For old input boxes
+		if ($this->field->type != "records")
+			$this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control');
 	}
 
 	static public function renderTableJoinSelectorJSON(CT &$ct, $key, $obEndClean = true): ?string
@@ -360,7 +362,9 @@ class Inputbox
 
 			case 'userid':
 			case 'user':
-				return $this->getUserBox($value);
+				require_once('inputbox_user.php');
+				$InputBox_User = new InputBox_User($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_User->render_user($value, $this->defaultValue);
 
 			case 'usergroup':
 				return $this->getUserGroupBox($value);
@@ -1024,29 +1028,6 @@ class Inputbox
 		return $result;
 	}
 
-	protected function getUserBox(?string $value): string
-	{
-		if ($value === null) {
-			$value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
-			if ($value == 0)
-				$value = $this->defaultValue;
-		}
-		$result = '';
-
-		if ($this->ct->Env->user->id === null)
-			return '';
-
-		$attributes = 'class="' . $this->cssclass . '" ' . $this->attributes;
-		$userGroup = $this->field->params[0] ?? '';
-
-		$where = '';
-		if (isset($this->field->params[3]))
-			$where = 'INSTR(name,"' . $this->field->params[3] . '")';
-
-		$result .= HTMLHelper::_('ESUser.render', $this->prefix . $this->field->fieldname, $value ?? '', '', $attributes, $userGroup, '', $where);
-		return $result;
-	}
-
 	protected function getUserGroupBox(?string $value): string
 	{
 		if ($value === null) {
@@ -1666,5 +1647,55 @@ class Inputbox
 		$b = str_replace(' OR ', ' and ', $b);
 		$b = str_replace(' AND ', ' and ', $b);
 		return explode(' and ', $b);
+	}
+}
+
+abstract class BaseInputBox
+{
+	protected CT $ct;
+	protected Field $field;
+	protected ?array $row;
+	protected array $attributes;
+	protected array $option_list;
+
+	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
+	{
+		$this->ct = $ct;
+		$this->field = $field;
+		$this->row = $row;
+		$this->option_list = $option_list;
+		$this->attributes = $attributes;
+	}
+
+	function selectBoxAddCSSClass(): void
+	{
+		if (isset($this->attributes['class'])) {
+			$classes = explode(' ', $this->attributes['class']);
+			if ($this->ct->Env->version < 4) {
+				if (!in_array('inputbox', $classes)) {
+					$classes [] = 'inputbox';
+					$this->attributes['class'] = implode(' ', $classes);
+				}
+			} else {
+				if (!in_array('inputbox', $classes)) {
+					$classes [] = 'form-select';
+					$this->attributes['class'] = implode(' ', $classes);
+				}
+			}
+		} else {
+			if ($this->ct->Env->version < 4)
+				$this->attributes['class'] = 'inputbox';
+			else
+				$this->attributes['class'] = 'form-select';
+		}
+	}
+
+	function attributes2String(): string
+	{
+		$result = '';
+		foreach ($this->attributes as $key => $attr) {
+			$result .= ' ' . htmlspecialchars($key) . '="' . htmlspecialchars($attr) . '"';
+		}
+		return $result;
 	}
 }

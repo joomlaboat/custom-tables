@@ -421,22 +421,18 @@ class SearchInputBox
 		return $result;
 	}
 
-	protected function getUserBox($default_Action, $index, $where, $whereList, $objName, $value, $cssclass)
+	protected function getUserBox($default_Action, $index, $where, $whereList, $objName, $value, $cssclass): string
 	{
-		$result = '';
-		$mysqlJoin = $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__users.id';
-		$onchange = $this->getOnChangeAttributeString($default_Action, $index, $where, $whereList);
-
-		if ($this->ct->Env->version < 4)
-			$default_class = 'inputbox';
-		else
-			$default_class = 'form-control';
-
-		if ($this->ct->Env->user->id != 0)
-			$result = HTMLHelper::_('ESUser.render', $objName, $value, '', 'class="' . $cssclass . ' ' . $default_class . '" ',
-				($this->field->params[0] ?? ''), $onchange, $where, $mysqlJoin);
-
-		return $result;
+		if ($this->ct->Env->user->id != 0) {
+			require_once('inputbox_user.php');
+			$attributes['id'] = $objName;
+			$attributes['name'] = $objName;
+			$attributes['class'] = $cssclass;
+			$attributes['onchange'] = $this->getOnChangeAttributeString($default_Action, $index, $where, $whereList);;
+			$InputBox_User = new InputBox_User($this->ct, $this->field, null, [], $attributes);
+			return $InputBox_User->render_user($value, $this->defaultValue, true);
+		}
+		return '';
 	}
 
 	protected function getUserGroupBox($default_Action, $index, $where, $whereList, $objectName, $value, $cssclass)
