@@ -733,6 +733,7 @@ class SaveFieldQuerySet
 			case 'checkbox':
 			case 'multi';
 				$valueArray = common::inputPost($this->field->comesfieldname, null, 'array');
+
 				if (isset($valueArray))
 					return ',' . implode(',', $valueArray) . ',';
 

@@ -370,18 +370,9 @@ class Inputbox
 				return $this->getUserGroupBox($value);
 
 			case 'usergroups':
-				if ($value === null) {
-					$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-					$value = preg_replace('/[^\0-9]/u', '', $value);
-					if ($value == '')
-						$value = $this->defaultValue;
-				}
-
-				return HTMLHelper::_('ESUserGroups.render',
-					$this->prefix . $this->field->fieldname,
-					$value,
-					$this->field->params
-				);
+				require_once('inputbox_usergroups.php');
+				$InputBox_UserGroups = new InputBox_UserGroups($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_UserGroups->render_userGroups($value, $this->defaultValue);
 
 			case 'language':
 				require_once('inputbox_language.php');
@@ -1690,10 +1681,13 @@ abstract class BaseInputBox
 		}
 	}
 
-	function attributes2String(): string
+	function attributes2String(?array $attributes = null): string
 	{
+		if ($attributes === null)
+			$attributes = $this->attributes;
+
 		$result = '';
-		foreach ($this->attributes as $key => $attr) {
+		foreach ($attributes as $key => $attr) {
 			$result .= ' ' . htmlspecialchars($key) . '="' . htmlspecialchars($attr) . '"';
 		}
 		return $result;
