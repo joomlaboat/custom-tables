@@ -872,137 +872,6 @@
         </editparams>
     </type>
 
-    <type ct_name="records" label="Table Join List"
-          description="Concatenated ID list referencing another table. " priority="2">
-        <params>
-            <param name="table" label="Table" description="Type the name of the Custom Table to join/link with."
-                   example="products" default="" type="table" fieldchild="fieldtype_param_1"/>
-            <param name="fieldname" label="Field Name" example="title"
-                   description="Type the field name to return the value from (that can be overwritten in Layout). You may type layout name instead. options: [layout:the layout or tablelesslayout:the layout]"
-                   default="" type="field"/>
-            <param name="selector" label="Selector" example="single" description="How to select records."
-                   default="single" type="list">
-                <option value="single" label="Single Record (Dropdown List)"/>
-                <option value="multi" label="Multiple Records (Dropdown List)"/>
-                <option value="radio" label="Single Record (Radio)"/>
-                <option value="checkbox" label="Multiple Records (Checkboxes)"/>
-                <option value="multibox" label="Multiple Records (Add Record List, requires Dynamic Filter)"/>
-            </param>
-            <param name="filter" label="Filter"
-                   description="Limits records using filter. Example: [age>30] where age is a field in joining table"
-                   default="" type="string"/>
-            <param name="dynamicfilter" label="Dynamic Filter"
-                   description="Used with multibox, requires that joining table contain SQL Join field to use it as Category Filter"
-                   default="" type="string"/>
-            <param name="orderby" label="Order By" example="title" description="Field name to sort record by" default=""
-                   type="string"/>
-            <param name="allowunpublished" label="Allow Unpublished" description="Allow to select unpublished records."
-                   default="" type="radio" options="|No,true|Yes"/>
-        </params>
-
-        <valueparams name="records" label="How to show the list of records selected.">
-            <params>
-                <param name="fieldname" label="Field Name"
-                       description="Type the field name to return the value from. You may type layout name instead. options: [layout:layoutname or tablelesslayout:layoutname]"
-                       example="products"
-                       default="" type="string"/>
-                <param name="orderby" label="Order By" example="price" description="Field name to sort records by"
-                       default=""
-                       type="string"/>
-                <param name="separator" label="List Separator" example=","
-                       description="Separate record values with a character. i.e. ',' or ';'" default=","
-                       type="string"/>
-            </params>
-        </valueparams>
-
-        <editparams name="records" label="Input Element Parameters" description="">
-            <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."
-                       example=""/>
-                <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
-                       example=""
-                       type="string"/>
-                <param name="parent-selector" label="Parent Selector"
-                       description="Used for multilevel dependencies like Country, City, Street. List of parameters to set the sub-level select box. Example: [city_table_name, city_field_name, allow_unpublished(true or false), filter(population>100000), order_by(name)]. It is also possible to pass multiple selectors. Example: [ [city_table_name, city_field_name],[country_table_name, country_field_name, false]]"
-                       default="" type="array"
-                       examplenoquotes="1"
-                       example="[[city_table_name, city_field_name],[country_table_name, country_field_name, false]]"/>
-                <param type="layout" name="layout" label="Title Layout"
-                       description="Optional parameter set the option title format, instead of the field name set in the field type parameter. The layout may contain the field names surrounded by curly brackets. Example: {{ name }} - {{ title }}"
-                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"
-                       image="https://joomlaboat.com/images/components/ct/field-types/tablejoin-customtitle.png"/>
-            </params>
-        </editparams>
-
-        <subvalueparams name="get" label="Read processed value of selected field of joined table">
-            <params>
-                <param name="fieldName" label="Field name"
-                       description="Specify the name of the field to get the value from."
-                       example="workers"
-                       type="field"/>
-                <param name="showPublished" label="Show Published Records"
-                       description="Filter the list of records, show published, unpublished or all records."
-                       hidden="false"
-                       example="any" optional="1"
-                       default="published" type="list">
-                    <option value="published" label="Only Published"/>
-                    <option value="unpublished" label="Only Unpublished"/>
-                    <option value="all" label="Show all records"/>
-                </param>
-
-                <param name="separator" label="List Separator" example="," optional="1"
-                       description="Separate record values with a character. i.e. ',' or ';'" default=","
-                       type="string"/>
-            </params>
-        </subvalueparams>
-
-        <subvalueparams name="getvalue" label="Read unprocessed value of selected field of joined table">
-            <params>
-                <param name="fieldName" label="Field name"
-                       description="Specify the name of the field to get the value from."
-                       example="workers"
-                       type="field"/>
-                <param name="showPublished" label="Show Published Records"
-                       description="Filter the list of records, show published, unpublished or all records."
-                       hidden="false"
-                       example="any" optional="1"
-                       default="published" type="list">
-                    <option value="published" label="Only Published"/>
-                    <option value="unpublished" label="Only Unpublished"/>
-                    <option value="all" label="Show all records"/>
-                </param>
-
-                <param name="separator" label="List Separator" example="," optional="1"
-                       description="Separate record values with a character. i.e. ',' or ';'" default=","
-                       type="string"/>
-            </params>
-        </subvalueparams>
-
-        <subvalueparams name="layout" label="Render the value of joined table using selected layout">
-            <params>
-                <param type="layout" name="layout" label="Layout"
-                       description="The layout to render joined table record."
-                       example="PeopleLayout"
-                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
-                <param name="showPublished" label="Show Published Records"
-                       description="Show published, unpublished or all records."
-                       hidden="false"
-                       example="published" optional="1"
-                       default="published" type="list">
-                    <option value="published" label="Only Published"/>
-                    <option value="unpublished" label="Only Unpublished"/>
-                    <option value="all" label="Show all records"/>
-                </param>
-
-                <param name="separator" label="List Separator"
-                       description="Separate record values with a character. i.e. ',' or ';'" default=","
-                       example="," optional="1"
-                       type="string"/>
-            </params>
-        </subvalueparams>
-    </type>
-
     <type ct_name="ordering" name="ordering" label="Ordering/Sorting"
           description="Record custom position, a front-end tool to sort records in a custom order." ct_alias="ordering"
           disabled="false" ct_special="false" priority="3"
@@ -1155,7 +1024,7 @@
 
     <type ct_name="signature" name="signature" label="Signature"
           description="A signature pad that allows users to draw smooth signatures on canvas element and export the signatures to PNG/JPG/SVG/WebP images."
-          ct_alias="signature" disabled="false" ct_special="false" priority="1">
+          ct_alias="signature" disabled="false" ct_special="false" priority="1" proversion="1">
         <params>
             <param name="width" label="Width" description="Width in pixels" default="300" type="text" options=""/>
             <param name="height" label="Height" description="Height in pixels" default="150" type="text" options=""/>
@@ -1266,6 +1135,137 @@
                        description="The layout to render joined table record."
                        example="PersonProfileLayout"
                        layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
+            </params>
+        </subvalueparams>
+    </type>
+
+    <type ct_name="records" label="Table Join List"
+          description="Concatenated ID list referencing another table. " priority="2" proversion="1">
+        <params>
+            <param name="table" label="Table" description="Type the name of the Custom Table to join/link with."
+                   example="products" default="" type="table" fieldchild="fieldtype_param_1"/>
+            <param name="fieldname" label="Field Name" example="title"
+                   description="Type the field name to return the value from (that can be overwritten in Layout). You may type layout name instead. options: [layout:the layout or tablelesslayout:the layout]"
+                   default="" type="field"/>
+            <param name="selector" label="Selector" example="single" description="How to select records."
+                   default="single" type="list">
+                <option value="single" label="Single Record (Dropdown List)"/>
+                <option value="multi" label="Multiple Records (Dropdown List)"/>
+                <option value="radio" label="Single Record (Radio)"/>
+                <option value="checkbox" label="Multiple Records (Checkboxes)"/>
+                <option value="multibox" label="Multiple Records (Add Record List, requires Dynamic Filter)"/>
+            </param>
+            <param name="filter" label="Filter"
+                   description="Limits records using filter. Example: [age>30] where age is a field in joining table"
+                   default="" type="string"/>
+            <param name="dynamicfilter" label="Dynamic Filter"
+                   description="Used with multibox, requires that joining table contain SQL Join field to use it as Category Filter"
+                   default="" type="string"/>
+            <param name="orderby" label="Order By" example="title" description="Field name to sort record by" default=""
+                   type="string"/>
+            <param name="allowunpublished" label="Allow Unpublished" description="Allow to select unpublished records."
+                   default="" type="radio" options="|No,true|Yes"/>
+        </params>
+
+        <valueparams name="records" label="How to show the list of records selected.">
+            <params>
+                <param name="fieldname" label="Field Name"
+                       description="Type the field name to return the value from. You may type layout name instead. options: [layout:layoutname or tablelesslayout:layoutname]"
+                       example="products"
+                       default="" type="string"/>
+                <param name="orderby" label="Order By" example="price" description="Field name to sort records by"
+                       default=""
+                       type="string"/>
+                <param name="separator" label="List Separator" example=","
+                       description="Separate record values with a character. i.e. ',' or ';'" default=","
+                       type="string"/>
+            </params>
+        </valueparams>
+
+        <editparams name="records" label="Input Element Parameters" description="">
+            <params>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."
+                       example=""/>
+                <param name="attributes" label="Attributes"
+                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       example=""
+                       type="string"/>
+                <param name="parent-selector" label="Parent Selector"
+                       description="Used for multilevel dependencies like Country, City, Street. List of parameters to set the sub-level select box. Example: [city_table_name, city_field_name, allow_unpublished(true or false), filter(population>100000), order_by(name)]. It is also possible to pass multiple selectors. Example: [ [city_table_name, city_field_name],[country_table_name, country_field_name, false]]"
+                       default="" type="array"
+                       examplenoquotes="1"
+                       example="[[city_table_name, city_field_name],[country_table_name, country_field_name, false]]"/>
+                <param type="layout" name="layout" label="Title Layout"
+                       description="Optional parameter set the option title format, instead of the field name set in the field type parameter. The layout may contain the field names surrounded by curly brackets. Example: {{ name }} - {{ title }}"
+                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"
+                       image="https://joomlaboat.com/images/components/ct/field-types/tablejoin-customtitle.png"/>
+            </params>
+        </editparams>
+
+        <subvalueparams name="get" label="Read processed value of selected field of joined table">
+            <params>
+                <param name="fieldName" label="Field name"
+                       description="Specify the name of the field to get the value from."
+                       example="workers"
+                       type="field"/>
+                <param name="showPublished" label="Show Published Records"
+                       description="Filter the list of records, show published, unpublished or all records."
+                       hidden="false"
+                       example="any" optional="1"
+                       default="published" type="list">
+                    <option value="published" label="Only Published"/>
+                    <option value="unpublished" label="Only Unpublished"/>
+                    <option value="all" label="Show all records"/>
+                </param>
+
+                <param name="separator" label="List Separator" example="," optional="1"
+                       description="Separate record values with a character. i.e. ',' or ';'" default=","
+                       type="string"/>
+            </params>
+        </subvalueparams>
+
+        <subvalueparams name="getvalue" label="Read unprocessed value of selected field of joined table">
+            <params>
+                <param name="fieldName" label="Field name"
+                       description="Specify the name of the field to get the value from."
+                       example="workers"
+                       type="field"/>
+                <param name="showPublished" label="Show Published Records"
+                       description="Filter the list of records, show published, unpublished or all records."
+                       hidden="false"
+                       example="any" optional="1"
+                       default="published" type="list">
+                    <option value="published" label="Only Published"/>
+                    <option value="unpublished" label="Only Unpublished"/>
+                    <option value="all" label="Show all records"/>
+                </param>
+
+                <param name="separator" label="List Separator" example="," optional="1"
+                       description="Separate record values with a character. i.e. ',' or ';'" default=","
+                       type="string"/>
+            </params>
+        </subvalueparams>
+
+        <subvalueparams name="layout" label="Render the value of joined table using selected layout">
+            <params>
+                <param type="layout" name="layout" label="Layout"
+                       description="The layout to render joined table record."
+                       example="PeopleLayout"
+                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
+                <param name="showPublished" label="Show Published Records"
+                       description="Show published, unpublished or all records."
+                       hidden="false"
+                       example="published" optional="1"
+                       default="published" type="list">
+                    <option value="published" label="Only Published"/>
+                    <option value="unpublished" label="Only Unpublished"/>
+                    <option value="all" label="Show all records"/>
+                </param>
+
+                <param name="separator" label="List Separator"
+                       description="Separate record values with a character. i.e. ',' or ';'" default=","
+                       example="," optional="1"
+                       type="string"/>
             </params>
         </subvalueparams>
     </type>
