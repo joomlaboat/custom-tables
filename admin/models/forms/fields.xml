@@ -168,10 +168,10 @@
             <option value="ordering">COM_CUSTOMTABLES_FIELDS_ORDERING</option>
             <option value="virtual">COM_CUSTOMTABLES_FIELDS_VIRTUAL</option>
 
-            <option value="" disabled="disabled">_____ Obsolete _____</option>
+            <!--<option value="" disabled="disabled">_____ Obsolete _____</option>
             <option value="phponadd">COM_CUSTOMTABLES_FIELDS_PHP_ONADD_SCRIPT</option>
             <option value="phponchange">COM_CUSTOMTABLES_FIELDS_PHP_ONCHANGE_SCRIPT</option>
-            <option value="phponview">COM_CUSTOMTABLES_FIELDS_PHP_ONVIEW_SCRIPT</option>
+            <option value="phponview">COM_CUSTOMTABLES_FIELDS_PHP_ONVIEW_SCRIPT</option>-->
         </field>
         <!-- Typeparams Field. Type: Text. (joomla)-->
         <field type="hidden"

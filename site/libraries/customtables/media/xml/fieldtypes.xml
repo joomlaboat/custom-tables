@@ -877,31 +877,33 @@
           description="Record custom position, a front-end tool to sort records in a custom order." ct_alias="ordering"
           disabled="false" ct_special="false" priority="3"
           image="https://joomlaboat.com/images/components/ct/field-types/ordering-catalog.png"/>
-
-    <type ct_name="phponadd" label="PHP On Add"
-          description="Executes PHP script after record has been added saves the return value." rawquotes="0"
-          priority="3" proversion="1" depricated="1"><!-- pro -->
-        <params>
-            <param name="phpcode" example="&quot;Time is &quot;.(time()+3600)" examplenoquotes="1" label="PHP Script"
-                   description='Note that you cannot use single quote symbol.
-			In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
-                   default="" type="string"/>
-        </params>
-    </type>
-
-    <type ct_name="phponchange" label="PHP On Change"
-          description="Executes PHP script after record has been changed saves the return value." rawquotes="0"
-          priority="3" proversion="1" depricated="1"><!-- pro -->
-        <params>
-            <param name="phpcode" label="PHP Script" example="&quot;[firstname]&quot;.&quot;[lastname]&quot;"
-                   examplenoquotes="1"
-                   description='Note that you cannot use single quote symbol. In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
-                   default="" type="string"/>
-        </params>
-    </type>
-
+    <!--
+        <type ct_name="phponadd" label="PHP On Add"
+              description="Executes PHP script after record has been added saves the return value." rawquotes="0"
+              priority="3" proversion="1" depricated="1">
+            <params>
+                <param name="phpcode" example="&quot;Time is &quot;.(time()+3600)" examplenoquotes="1" label="PHP Script"
+                       description='Note that you cannot use single quote symbol.
+                In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
+                       default="" type="string"/>
+            </params>
+        </type>
+    -->
+    <!--
+        <type ct_name="phponchange" label="PHP On Change"
+              description="Executes PHP script after record has been changed saves the return value." rawquotes="0"
+              priority="3" proversion="1" depricated="1">
+            <params>
+                <param name="phpcode" label="PHP Script" example="&quot;[firstname]&quot;.&quot;[lastname]&quot;"
+                       examplenoquotes="1"
+                       description='Note that you cannot use single quote symbol. In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
+                       default="" type="string"/>
+            </params>
+        </type>
+    -->
+    <!--
     <type ct_name="phponview" label="PHP On View" description="Executes PHP script on record view event." rawquotes="0"
-          priority="3" proversion="1" depricated="1"><!-- pro -->
+          priority="3" proversion="1" depricated="1">
         <params>
             <param name="phpcode" label="PHP Script" example="&quot;Time is &quot;.(time()+3600)" examplenoquotes="1"
                    description='Note that you cannot use single quote symbol. In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
@@ -912,7 +914,7 @@
                 <option value="dynamic" label="Do not store value"/>
             </param>
         </params>
-    </type>
+    </type>-->
 
     <type ct_name="radio" label="Radio" description="Radio Buttons" depricated="1" priority="3" proversion="1"
           repetitive="1"><!-- pro -->
