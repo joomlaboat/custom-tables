@@ -1227,6 +1227,8 @@ class Inputbox
 				$sqljoin_attributes);
 		} else {
 			//CT Tag
+			return 'Old Table Join tags no longer supported';
+			/*
 			if (isset($this->option_list[2]) and $this->option_list[2] != '')
 				$this->field->params[2] = $this->option_list[2];//Overwrites field type filter parameter.
 
@@ -1241,6 +1243,7 @@ class Inputbox
 				$this->place_holder,
 				$this->cssclass,
 				$sqljoin_attributes);
+			*/
 		}
 		return $result;
 	}
@@ -1336,6 +1339,9 @@ class Inputbox
 			if ($value == '')
 				$value = $this->defaultValue;
 		}
+
+		if (!str_contains($this->cssclass, 'form-select'))
+			$this->cssclass .= ($this->cssclass == '' ? '' : ' ') . 'form-select';
 
 		$result .= HTMLHelper::_('ESRecords.render',
 			$this->field->params,

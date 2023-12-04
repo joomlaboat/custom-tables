@@ -8,28 +8,25 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-// no direct access
+namespace CustomTables;
+
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CustomTables\database;
-use CustomTables\CT;
-use CustomTables\TwigProcessor;
-use Joomla\CMS\HTML\HTMLHelper;
-
-class CT_FieldTypeTag_records
+class TypeView_TableJoinList extends TypeView
 {
-	//New function
-	public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, string $showPublishedString = '', ?string $separatorCharacter = ',')
+	public static function resolveRecordTypeValue(Field &$field, string $layoutcode, ?string $rowValue, string $showPublishedString = '', ?string $separatorCharacter = ','): string
 	{
+		if ($rowValue === null)
+			return '';
+
 		if ($separatorCharacter === null)
 			$separatorCharacter = ',';
 
 		$ct = new CT;
 		$ct->getTable($field->params[0]);
-
-		$selector = $field->params[2];
 
 		if (count($field->params) < 3)
 			return 'selector not specified';
@@ -40,7 +37,7 @@ class CT_FieldTypeTag_records
 		//$showpublished = 1 - show unpublished
 		//$showpublished = 2 - show any
 
-		if ($showPublishedString == '' and isset($field->params[6]))
+		if (($showPublishedString === null or $showPublishedString == '') and isset($field->params[6]))
 			$showPublishedString = $field->params[6];
 
 		if ($showPublishedString == 'published')
@@ -55,10 +52,10 @@ class CT_FieldTypeTag_records
 		$ct->Filter->where[] = 'INSTR(' . database::quote($rowValue) . ',' . $ct->Table->realidfieldname . ')';
 		$ct->getRecords();
 
-		return CT_FieldTypeTag_records::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records, $separatorCharacter);
+		return self::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records, $separatorCharacter);
 	}
 
-	protected static function processRecordRecords(CT &$ct, $layoutcode, $rowValue, &$records, string $separatorCharacter = ',')
+	protected static function processRecordRecords(CT &$ct, $layoutcode, ?string $rowValue, &$records, string $separatorCharacter = ',')
 	{
 		$valueArray = explode(',', $rowValue);
 
@@ -91,46 +88,5 @@ class CT_FieldTypeTag_records
 		}
 
 		return $htmlresult;
-	}
-
-	//Old function
-	public static function resolveRecordType($rowValue, $field, array $options)
-	{
-		if (count($field->params) < 1)
-			return 'table not specified';
-
-		if (count($field->params) < 2)
-			return 'field or layout not specified';
-
-		if (count($field->params) < 3)
-			return 'selector not specified';
-
-		$esr_table = $field->params[0];
-
-		$sortByField = '';
-		if (isset($field->params[5]))
-			$sortByField = $field->params[5];
-
-		if (($options[1] ?? '') != '')
-			$sortByField = $options[1];
-
-		if (($options[0] ?? '') != '') {
-			$esr_field = $options[0];
-		} else
-			$esr_field = $field->params[1];
-
-		$esr_selector = $field->params[2];
-
-		if (count($field->params) > 3)
-			$esr_filter = $field->params[3];
-		else
-			$esr_filter = '';
-
-		if (($options[2] ?? '') != '')
-			$separator = $options[1];
-		else
-			$separator = '';
-
-		return HTMLHelper::_('ESRecordsView.render', $rowValue, $esr_table, $esr_field, $esr_selector, $esr_filter, $sortByField, $separator);
 	}
 }

@@ -20,11 +20,9 @@ use CT_FieldTypeTag_imagegallery;
 use Exception;
 use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
-use CT_FieldTypeTag_records;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-
 use CT_FieldTypeTag_image;
 
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
@@ -697,7 +695,7 @@ class fieldObject
 				$separatorCharacter = null;
 
 			$layoutcode = '{{ ' . $fieldName . ' }}';
-			return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname],
+			return TypeView_TableJoinList::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname],
 				$showPublishedString, $separatorCharacter);
 		} else {
 			$this->ct->errors[] = '{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.';
@@ -751,7 +749,7 @@ class fieldObject
 			else
 				$separatorCharacter = null;
 
-			return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
+			return TypeView_TableJoinList::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
 		} else {
 			$this->ct->errors[] = '{{ ' . $this->field->fieldname . '.getvalue }}. Wrong field type "' . $this->field->type . '". ".getvalue" method is only available for Table Join and Records filed types.';
 			return '';
@@ -782,7 +780,7 @@ class fieldObject
 		if ($this->field->type == 'sqljoin') {
 			return TypeView::tableJoin($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname]);
 		} elseif ($this->field->type == 'records') {
-			return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
+			return TypeView_TableJoinList::resolveRecordTypeValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
 		}
 		return 'impossible';
 	}

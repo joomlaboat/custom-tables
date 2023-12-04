@@ -518,8 +518,16 @@ class SearchInputBox
 		if (is_array($value))
 			$value = implode(',', $value);
 
-		$real_selector = $esr_selector;//TODO: check if this is correct
+		//$real_selector = $esr_selector;//TODO: check if this is correct
 		$real_selector = 'single';
+
+		if ($this->ct->Env->version < 4) {
+			if (!str_contains($cssclass, 'inputbox'))
+				$cssclass .= ' inputbox';
+		} else {
+			if (!str_contains($cssclass, 'form-select'))
+				$cssclass .= ' form-select';//form-control
+		}
 
 		$result .= HTMLHelper::_('ESRecords.render', $this->field->params, $objectName,
 			$value, $esr_table, $esr_field, $real_selector, $esr_filter, '',

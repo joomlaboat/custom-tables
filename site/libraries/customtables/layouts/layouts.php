@@ -308,7 +308,7 @@ class Layouts
 
 		foreach ($fields as $field) {
 			if ($field['type'] === "dummy") {
-				$result .= '<p><span style="color: #FB1E3D; ">*</span> {{ ' . $field['fieldname'] . ' }}</p>';
+				$result .= '<p><span style="color: #FB1E3D; ">*</span>' . ' {{ ' . $field['fieldname'] . '.title }}</p>';
 				break;
 			}
 		}

@@ -15,6 +15,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use Exception;
+
 class TypeView
 {
 	public static function user($value, $field = '')
@@ -122,5 +124,42 @@ class TypeView
 			$ct->errors[] = $twig->errorMessage;
 
 		return $value;
+	}
+
+	public static function tableJoinList(Field &$field, ?string $rowValue, array $option_list = []): string
+	{
+		if ($rowValue === null)
+			return '';
+
+		$ct = new CT;
+		$ct->getTable($field->params[0]);
+
+		if (count($option_list) == 0)
+			$fieldName = $field->params[1];
+		else
+			$fieldName = $option_list[0];
+
+		$fieldNameParts = explode(':', $fieldName);
+
+		if (count($fieldNameParts) == 2) {
+			//It's not a fieldname but layout. Example: tablelesslayout:PersonName
+			if ($fieldNameParts[0] == 'tablelesslayout' or $fieldNameParts[0] == 'layout') {
+				$Layouts = new Layouts($ct);
+				$layoutCode = $Layouts->getLayout($fieldNameParts[1]);
+
+				if ($layoutCode == '')
+					throw new Exception('Table Join List value layout not found. (' . $fieldName . ')');
+			} else
+				throw new Exception('Table Join List value layout syntax invalid. (' . $fieldName . ')');
+		} else
+			$layoutCode = '{{ ' . $fieldName . ' }}';
+
+		if (($options[2] ?? '') != '')
+			$separatorCharacter = $options[1];
+		else
+			$separatorCharacter = ',';
+
+		require_once('typeview_tablejoinlist.php');
+		return TypeView_TableJoinList::resolveRecordTypeValue($field, $layoutCode, $rowValue, '', $separatorCharacter);
 	}
 }

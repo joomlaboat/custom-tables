@@ -26,7 +26,6 @@ use CT_FieldTypeTag_file;
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_imagegallery;
 use CT_FieldTypeTag_FileBox;
-use CT_FieldTypeTag_records;
 use CT_FieldTypeTag_log;
 use CT_FieldTypeTag_ct;
 
@@ -41,8 +40,6 @@ if (file_exists($types_path . '_type_ct.php')) {
 	require_once($types_path . '_type_gallery.php');
 	require_once($types_path . '_type_image.php');
 	require_once($types_path . '_type_log.php');
-	require_once($types_path . '_type_records.php');
-	//require_once($types_path . '_type_sqljoin.php');
 }
 
 class Value
@@ -226,7 +223,7 @@ class Value
 				return $this->listProcess($rowValue, $option_list);
 
 			case 'records':
-				return CT_FieldTypeTag_records::resolveRecordType($rowValue, $this->field, $option_list);
+				return TypeView::tableJoinList($this->field, $rowValue, $option_list);
 
 			case 'sqljoin':
 
