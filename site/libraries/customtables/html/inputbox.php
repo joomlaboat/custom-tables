@@ -367,7 +367,9 @@ class Inputbox
 				return $InputBox_User->render_user($value, $this->defaultValue);
 
 			case 'usergroup':
-				return $this->getUserGroupBox($value);
+				require_once('inputbox_usergroup.php');
+				$InputBox_UserGroup = new InputBox_UserGroup($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_UserGroup->render_userGroup($value, $this->defaultValue);
 
 			case 'usergroups':
 				require_once('inputbox_usergroups.php');
@@ -1016,35 +1018,6 @@ class Inputbox
 <script>
 	ctInputbox_signature("' . $ctInputbox_signature . '")
 </script>';
-		return $result;
-	}
-
-	protected function getUserGroupBox(?string $value): string
-	{
-		if ($value === null) {
-			$value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
-			if ($value == 0)
-				$value = $this->defaultValue;
-		}
-		$result = '';
-
-		if ($this->ct->Env->user->id === null)
-			return '';
-
-		$attributes = 'class="' . $this->cssclass . '" ' . $this->attributes;
-		$availableUserGroupsList = ($this->field->params[0] == '' ? [] : $this->field->params);
-
-		if (count($availableUserGroupsList) == 0) {
-			$where_string = '#__usergroups.title!=' . database::quote('Super Users');
-		} else {
-			$where = [];
-			foreach ($availableUserGroupsList as $availableUserGroup) {
-				if ($availableUserGroup != '')
-					$where[] = '#__usergroups.title=' . database::quote($availableUserGroup);
-			}
-			$where_string = '(' . implode(' OR ', $where) . ')';
-		}
-		$result .= HTMLHelper::_('ESUserGroup.render', $this->prefix . $this->field->fieldname, $value, '', $attributes, $where_string);
 		return $result;
 	}
 

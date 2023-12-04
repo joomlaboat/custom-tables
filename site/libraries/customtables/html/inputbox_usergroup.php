@@ -17,7 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class InputBox_User extends BaseInputBox
+class InputBox_UserGroup extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
@@ -28,7 +28,7 @@ class InputBox_User extends BaseInputBox
 	 * @throws Exception
 	 * @since 3.2.0
 	 */
-	function render_user(?string $value, ?string $defaultValue, bool $showUserWithRecords = false): string
+	function render_userGroup(?string $value, ?string $defaultValue, bool $showUserWithRecords = false): string
 	{
 		if ($this->ct->Env->user->id === null)
 			return '';
@@ -68,37 +68,31 @@ class InputBox_User extends BaseInputBox
 
 	protected function buildQuery(bool $showUserWithRecords = false): string
 	{
-		$query = 'SELECT #__users.id AS id, #__users.name AS name FROM #__users';
+		$query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
 
 		if ($showUserWithRecords)
-			$query .= ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__users.id';
+			$query .= ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
 
 		$where = [];
 
-		//User Group Filter
-		$userGroup = $this->field->params[0] ?? '';
-		if ($userGroup != '') {
-			$query .= ' INNER JOIN #__user_usergroup_map ON user_id=#__users.id';
-			$query .= ' INNER JOIN #__usergroups ON #__usergroups.id=#__user_usergroup_map.group_id';
+		$availableUserGroupsList = ($this->field->params[0] == '' ? [] : $this->field->params);
 
-			$ug = explode(",", $userGroup);
-			$w = array();
-			foreach ($ug as $u)
-				$w[] = '#__usergroups.title=' . database::quote($u);
-
-			if (count($w) > 0)
-				$where [] = '(' . implode(' OR ', $w) . ')';
+		if (count($availableUserGroupsList) == 0) {
+			$where [] = '#__usergroups.title!=' . database::quote('Super Users');
+		} else {
+			$whereOr = [];
+			foreach ($availableUserGroupsList as $availableUserGroup) {
+				if ($availableUserGroup != '')
+					$whereOr[] = '#__usergroups.title=' . database::quote($availableUserGroup);
+			}
+			$where = '(' . implode(' OR ', $whereOr) . ')';
 		}
-
-		//Name Filter
-		if (isset($this->field->params[3]))
-			$where [] = 'INSTR(name,"' . $this->field->params[3] . '")';
 
 		if (count($where) > 0)
 			$query .= ' WHERE ' . implode(' AND ', $where);
 
-		$query .= ' GROUP BY #__users.id';
-		$query .= ' ORDER BY #__users.name';
+		$query .= ' GROUP BY #__usergroups.id';
+		$query .= ' ORDER BY #__usergroups.title';
 		return $query;
 	}
 }

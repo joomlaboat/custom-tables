@@ -25,7 +25,6 @@ class JHTMLESFileLink
 		if ($path != '' and $path[0] != '/')
 			$path = '/images/' . $path;
 
-
 		$parts = explode('/', $path);
 
 		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);

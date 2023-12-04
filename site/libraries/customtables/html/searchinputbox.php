@@ -428,25 +428,15 @@ class SearchInputBox
 			$attributes['id'] = $objName;
 			$attributes['name'] = $objName;
 			$attributes['class'] = $cssclass;
-			$attributes['onchange'] = $this->getOnChangeAttributeString($default_Action, $index, $where, $whereList);;
+			$attributes['onchange'] = $this->getOnChangeAttributeString($default_Action, $index, $where, $whereList);
 			$InputBox_User = new InputBox_User($this->ct, $this->field, null, [], $attributes);
-			return $InputBox_User->render_user($value, $this->defaultValue, true);
+			return $InputBox_User->render_user($value, null, true);
 		}
 		return '';
 	}
 
 	protected function getUserGroupBox($default_Action, $index, $where, $whereList, $objectName, $value, $cssclass)
 	{
-		$result = '';
-		$mysqlJoin = $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
-
-		if ($this->ct->Env->version < 4)
-			$cssclass = 'class="inputbox ' . $cssclass . '" ';
-		else
-			$cssclass = 'class="form-control ' . $cssclass . '" ';
-
-		$user = new CTUser();
-
 		if ($default_Action != '') {
 			$onchange = $default_Action;
 		} else {
@@ -460,10 +450,17 @@ class SearchInputBox
 				. ')"';
 		}
 
-		if ($user->id != 0)
-			$result = HTMLHelper::_('ESUserGroup.render', $objectName, $value, '', $cssclass, $onchange, $where, $mysqlJoin);
-
-		return $result;
+		if ($this->ct->Env->user->id != 0) {
+			require_once('inputbox_usergroup.php');
+			$attributes['id'] = $objectName;
+			$attributes['name'] = $objectName;
+			$attributes['class'] = $cssclass;
+			$attributes['onchange'] = $onchange;
+			$InputBox_UserGroup = new InputBox_UserGroup($this->ct, $this->field, null, [], $attributes);
+			return $InputBox_UserGroup->render_userGroup($value, null, true);
+			return HTMLHelper::_('ESUserGroup.render', $objectName, $value, '', $cssclass, $onchange, $where, $mysqlJoin);
+		}
+		return '';
 	}
 
 	protected function getRecordsBox($default_Action, $whereList, $objectName, $value, $cssclass): string
