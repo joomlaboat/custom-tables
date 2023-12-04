@@ -21,32 +21,6 @@ use Joomla\CMS\Form\FormHelper;
 
 class CTTypes
 {
-	public static function language(string $elementId, ?int $value = null, array $attributes = []): string
-	{
-		$lang = new Languages();
-
-		// Start building the select element with attributes
-		$select = '<select id="' . htmlspecialchars($elementId) . '" name="' . htmlspecialchars($elementId) . '"';
-
-		// Add attributes
-		foreach ($attributes as $key => $attr) {
-			$select .= ' ' . htmlspecialchars($key) . '="' . htmlspecialchars($attr) . '"';
-		}
-
-		$select .= '>';
-
-		$select .= '<option value="">' . common::translate('COM_CUSTOMTABLES_SELECT_LANGUAGE') . '</option>'; // Optional default option
-
-		// Generate options for each file in the folder
-		foreach ($lang->LanguageList as $language) {
-			$selected = ($language->id === $value) ? ' selected' : '';
-			$select .= '<option value="' . $language->id . '" ' . $selected . '>' . $language->caption . '</option>';
-
-		}
-		$select .= '</select>';
-		return $select;
-	}
-
 	public static function filelink(string $elementId, string $folderPath, ?string $value = null, array $attributes = []): string
 	{
 		// Check if the folder exists

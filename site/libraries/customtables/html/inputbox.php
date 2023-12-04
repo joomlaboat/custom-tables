@@ -48,6 +48,7 @@ class Inputbox
 
 	var string $cssclass;
 	var string $attributes;
+	var array $attributesArray;
 	var string $onchange;
 	var array $option_list;
 	var string $place_holder;
@@ -105,6 +106,11 @@ class Inputbox
 
 		$this->option_list = $option_list;
 		$this->place_holder = $this->field->title;
+
+		$this->attributesArray['class'] = $this->cssclass;
+		$this->attributesArray['data-type'] = $this->field->type;
+		$this->attributesArray['label-type'] = $this->field->title;
+		$this->attributesArray['readonly'] = false;
 	}
 
 	static public function renderTableJoinSelectorJSON(CT &$ct, $key, $obEndClean = true): ?string
@@ -279,6 +285,8 @@ class Inputbox
 		$this->row = $row;
 		$this->field = new Field($this->ct, $this->field->fieldrow, $this->row);
 		$this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm ? $this->row[$this->ct->Table->realidfieldname] . '_' : '');
+		$this->attributesArray['name'] = $this->prefix . $this->field->fieldname;
+		$this->attributesArray['id'] = $this->prefix . $this->field->fieldname;
 
 		if ($this->field->defaultvalue !== '' and $value === null) {
 			$twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
@@ -372,25 +380,9 @@ class Inputbox
 				);
 
 			case 'language':
-				if ($value === null) {
-					$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-					if ($value == '') {
-						if ($this->defaultValue === null or $this->defaultValue === '') {
-							//If it's a new record then current language will be used.
-							$langObj = Factory::getLanguage();
-							$value = $langObj->getTag();
-						} else
-							$value = $this->defaultValue;
-					}
-				}
-
-				$lang_attributes = array(
-					'name' => $this->prefix . $this->field->fieldname,
-					'id' => $this->prefix . $this->field->fieldname,
-					'data-type' => "language",
-					'label' => $this->field->title, 'readonly' => false);
-
-				return CTTypes::language($this->prefix . $this->field->fieldname, (int)$value, $lang_attributes);
+				require_once('inputbox_language.php');
+				$InputBox_Language = new InputBox_Language($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_Language->render_language($value, $this->defaultValue);
 
 			case 'color':
 				return $this->render_color($value);
