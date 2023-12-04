@@ -820,7 +820,7 @@ function renderInput_Field_do(id, value, onchange, SQLJoinTableID) {
         else
             result += '<option value="_published">- Published</option>';
     } else {
-        alert("Table not selected");
+        alert("Table not selected.");
     }
 
     result += '</select>';
@@ -874,8 +874,14 @@ function renderInput_Field_readSelectBoxes(id) {
         //add new select box
         const selectBoxes = document.getElementById(id + '_selectboxes');
 
+        let tableObject = document.getElementById('jform_tableid');
+        if (!tableObject)
+            return;
+
+        let tableId = tableObject.value;
+
         const o2 = 'onchange=\'renderInput_Field_readSelectBoxes("' + id + '");' + onchange_function + '\';';
-        selectBoxes.innerHTML = selectBoxes.innerHTML + renderInput_Field_do(id + "_" + i, '', o2, null);
+        selectBoxes.innerHTML = selectBoxes.innerHTML + renderInput_Field_do(id + "_" + i, '', o2, tableId);
 
         //update values
         for (let n = 0; n < i; n++) {
