@@ -196,7 +196,7 @@ class Value
 				return null;
 
 			case 'article':
-			case 'multilangarticle':
+				//case 'multilangarticle':
 				return $this->articleProcess($rowValue, $option_list);
 
 			case 'imagegallery':

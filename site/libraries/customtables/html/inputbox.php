@@ -467,11 +467,9 @@ class Inputbox
 				if (!$this->ct->isRecordNull($this->row))
 					return $this->getFileBox($this->row[$this->ct->Table->realidfieldname]);
 				break;
-
-			case 'multilangarticle': //Default value cannot be used with this data type.
-				if (!$this->ct->isRecordNull($this->row))
-					return $this->renderMultilingualArticle();
-				break;
+			/*
+						//case 'multilangarticle': //Default value cannot be used with this data type.
+							return $this->renderMultilingualArticle();*/
 		}
 		return '';
 	}
@@ -1498,47 +1496,48 @@ class Inputbox
 		return $result;
 	}
 
-	protected function renderMultilingualArticle(): string
-	{
-		$result = '
-		<table>
-			<tbody>';
+	/*
+		protected function renderMultilingualArticle(): string
+		{
+			$result = '
+			<table>
+				<tbody>';
 
-		$firstLanguage = true;
-		foreach ($this->ct->Languages->LanguageList as $lang) {
-			if ($firstLanguage) {
-				$postfix = '';
-				$firstLanguage = false;
-			} else
-				$postfix = '_' . $lang->sef;
+			$firstLanguage = true;
+			foreach ($this->ct->Languages->LanguageList as $lang) {
+				if ($firstLanguage) {
+					$postfix = '';
+					$firstLanguage = false;
+				} else
+					$postfix = '_' . $lang->sef;
 
-			$fieldname = $this->field->fieldname . $postfix;
+				$fieldname = $this->field->fieldname . $postfix;
 
-			if ($this->ct->isRecordNull($this->row))
-				$value = common::inputGetString($this->ct->Env->field_prefix . $fieldname, '');
-			else
-				$value = $this->row[$this->field->realfieldname . $postfix];
+				if ($this->ct->isRecordNull($this->row))
+					$value = common::inputGetString($this->ct->Env->field_prefix . $fieldname, '');
+				else
+					$value = $this->row[$this->field->realfieldname . $postfix];
 
-			$result .= '
-				<tr>
-					<td>' . $lang->caption . '</td>
-					<td>:</td>
-					<td>';
+				$result .= '
+					<tr>
+						<td>' . $lang->caption . '</td>
+						<td>:</td>
+						<td>';
 
-			$result .= HTMLHelper::_('CTArticle.render',
-				$this->prefix . $fieldname,
-				$value,
-				$this->cssclass,
-				$this->field->params
-			);
+				$result .= HTMLHelper::_('CTArticle.render',
+					$this->prefix . $fieldname,
+					$value,
+					$this->cssclass,
+					$this->field->params
+				);
 
-			$result .= '</td>
-				</tr>';
+				$result .= '</td>
+					</tr>';
+			}
+			$result .= '</body></table>';
+			return $result;
 		}
-		$result .= '</body></table>';
-		return $result;
-	}
-
+	*/
 	function getDefaultValueIfNeeded($row)
 	{
 		$value = null;
@@ -1582,7 +1581,7 @@ class Inputbox
 				}
 			}
 		} else {
-			if ($this->field->type != 'multilangstring' and $this->field->type != 'multilangtext' and $this->field->type != 'multilangarticle') {
+			if ($this->field->type != 'multilangstring' and $this->field->type != 'multilangtext') {// and $this->field->type != 'multilangarticle') {
 				$value = $row[$this->field->realfieldname] ?? null;
 			}
 		}

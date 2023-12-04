@@ -1238,7 +1238,7 @@ class Fields
 			case 'usergroup':
 			case 'sqljoin':
 			case 'article':
-			case 'multilangarticle':
+				//case 'multilangarticle':
 				return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'image':

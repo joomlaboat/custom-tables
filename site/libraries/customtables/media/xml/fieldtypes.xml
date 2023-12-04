@@ -24,6 +24,7 @@
         </editparams>
     </type>
 
+    <!--
     <type ct_name="multilangarticle" label="Article (Multilingual)"
           description="Select Article box per each language installed." priority="3">
         <editparams name="multilangarticle" label="Input Element Parameters" description="">
@@ -34,7 +35,7 @@
                        type="string"/>
             </params>
         </editparams>
-    </type>
+    </type>-->
 
     <type ct_name="userid" label="Author User" description="Stores the ID of the user who created the record."
           priority="2">

@@ -143,7 +143,7 @@ class Table
 			if ($field['type'] == 'blob') {
 				$this->selects[] = 'OCTET_LENGTH(' . $this->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
 				$this->selects[] = 'SUBSTRING(' . $this->realtablename . '.' . $field['realfieldname'] . ',1,255) AS ' . $field['realfieldname'] . '_sample';
-			} elseif ($field['type'] == 'multilangstring' or $field['type'] == 'multilangtext' or $field['type'] == 'multilangarticle') {
+			} elseif ($field['type'] == 'multilangstring' or $field['type'] == 'multilangtext') {// or $field['type'] == 'multilangarticle') {
 
 				$firstLanguage = true;
 				foreach ($this->Languages->LanguageList as $lang) {

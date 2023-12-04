@@ -160,11 +160,10 @@
             <option value="usergroups">COM_CUSTOMTABLES_FIELDS_USER_GROUPS</option>
             <option value="language">COM_CUSTOMTABLES_FIELDS_USER_LANGUAGE</option>
 
-            <option value="" disabled="disabled">_____ Articles _____</option>
-            <option value="article">COM_CUSTOMTABLES_FIELDS_ARTICLE_LINK</option>
-            <option value="multilangarticle">COM_CUSTOMTABLES_FIELDS_MULTILINGUAL_ARTICLE</option>
+            <!--<option value="multilangarticle">COM_CUSTOMTABLES_FIELDS_MULTILINGUAL_ARTICLE</option>-->
 
             <option value="" disabled="disabled">_____ Extra _____</option>
+            <option value="article">COM_CUSTOMTABLES_FIELDS_ARTICLE_LINK</option>
             <option value="log">COM_CUSTOMTABLES_FIELDS_MODIFICATION_LOG</option>
             <option value="ordering">COM_CUSTOMTABLES_FIELDS_ORDERING</option>
             <option value="virtual">COM_CUSTOMTABLES_FIELDS_VIRTUAL</option>

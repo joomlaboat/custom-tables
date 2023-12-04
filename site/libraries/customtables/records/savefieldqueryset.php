@@ -389,25 +389,25 @@ class SaveFieldQuerySet
 				$value = $this->get_customtables_type_signature();
 				$this->setNewValue($value);
 				return;
+			/*
+						case 'multilangarticle':
 
-			case 'multilangarticle':
+							$firstLanguage = true;
+							foreach ($this->ct->Languages->LanguageList as $lang) {
+								if ($firstLanguage) {
+									$postfix = '';
+									$firstLanguage = false;
+								} else
+									$postfix = '_' . $lang->sef;
 
-				$firstLanguage = true;
-				foreach ($this->ct->Languages->LanguageList as $lang) {
-					if ($firstLanguage) {
-						$postfix = '';
-						$firstLanguage = false;
-					} else
-						$postfix = '_' . $lang->sef;
+								$value = common::inputGetInt($this->field->comesfieldname . $postfix);
 
-					$value = common::inputGetInt($this->field->comesfieldname . $postfix);
-
-					if (isset($value)) {
-						$this->row_old[$this->field->realfieldname . $postfix] = $value;
-						$this->row_new[$this->field->realfieldname . $postfix] = $value;
-					}
-				}
-				return;
+								if (isset($value)) {
+									$this->row_old[$this->field->realfieldname . $postfix] = $value;
+									$this->row_new[$this->field->realfieldname . $postfix] = $value;
+								}
+							}
+							return;*/
 
 			case 'customtables':
 
