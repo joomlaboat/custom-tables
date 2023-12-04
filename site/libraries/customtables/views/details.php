@@ -10,14 +10,14 @@
 
 namespace CustomTables;
 
-use JoomlaBasicMisc;
-use LayoutProcessor;
-use tagProcessor_PHP;
-
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
+
+use JoomlaBasicMisc;
+use LayoutProcessor;
+use tagProcessor_PHP;
 
 class Details
 {
@@ -165,8 +165,7 @@ class Details
 		if ($this->ct->Table->published_field_found)
 			$this->ct->Ordering->orderby .= ',published DESC';
 
-		$query = $this->ct->buildQuery($where);
-		$query .= ' LIMIT 1';
+		$query = $this->ct->buildQuery($where) . ' LIMIT 1';
 		$rows = database::loadAssocList($query);
 
 		if (count($rows) < 1)
@@ -178,7 +177,6 @@ class Details
 			$record = new record($this->ct);
 			return $record->getSpecificVersionIfSet($row);
 		}
-
 		return $row;
 	}
 
@@ -189,8 +187,7 @@ class Details
 			return null;
 		}
 
-		$query = $this->ct->buildQuery('WHERE id=' . database::quote($listing_id));
-		$query .= ' LIMIT 1';
+		$query = $this->ct->buildQuery('WHERE id=' . database::quote($listing_id)) . ' LIMIT 1';
 		$rows = database::loadAssocList($query);
 
 		if (count($rows) < 1)
@@ -202,39 +199,22 @@ class Details
 			$record = new record($this->ct);
 			return $record->getSpecificVersionIfSet($row);
 		}
-
 		return $row;
 	}
 
 	protected function SaveViewLogForRecord($rec): void
 	{
-		$updateFields = array();
-		$allowedTypes = ['lastviewtime', 'viewcount'];
+		$updateFields = [];
 
-		foreach ($this->ct->Table->fields as $mFld) {
-			$t = $mFld['type'];
-			if (in_array($t, $allowedTypes)) {
-
-				$allow_count = true;
-				$author_user_field = $mFld['typeparams'];
-
-				if (!isset($author_user_field) or $author_user_field == '' or $rec[$this->ct->Env->field_prefix . $author_user_field] == $this->ct->Env->user->id)
-					$allow_count = false;
-
-				if ($allow_count) {
-					$n = $this->ct->Env->field_prefix . $mFld['fieldname'];
-					if ($t == 'lastviewtime')
-						$updateFields[] = $n . '="' . date('Y-m-d H:i:s') . '"';
-					elseif ($t == 'viewcount')
-						$updateFields[] = $n . '=' . ((int)($rec[$n]) + 1);
-				}
-			}
+		foreach ($this->ct->Table->fields as $field) {
+			if ($field['type'] == 'lastviewtime')
+				$updateFields[$field['realfieldname']] = date('Y-m-d H:i:s');
+			elseif ($field['type'] == 'viewcount')
+				$updateFields[$field['realfieldname']] = ((int)($rec[$field['realfieldname']]) + 1);
 		}
 
-		if (count($updateFields) > 0) {
-			$query = 'UPDATE #__customtables_table_' . $this->ct->Table->tablename . ' SET ' . implode(', ', $updateFields) . ' WHERE id=' . $rec[$this->ct->Table->realidfieldname];
-			database::setQuery($query);
-		}
+		if (count($updateFields) > 0)
+			database::update($this->ct->Table->realtablename, $updateFields, [$this->ct->Table->realidfieldname => $rec[$this->ct->Table->realidfieldname]]);
 	}
 
 	protected function UpdatePHPOnView(): bool
@@ -242,11 +222,10 @@ class Details
 		if (!isset($row[$this->ct->Table->realidfieldname]))
 			return false;
 
-		foreach ($this->ct->Table->fields as $mFld) {
-			if ($mFld['type'] == 'phponview') {
-				$fieldname = $mFld['fieldname'];
-				$type_params = JoomlaBasicMisc::csv_explode(',', $mFld['typeparams']);
-				tagProcessor_PHP::processTempValue($this->ct, $this->row, $fieldname, $type_params);
+		foreach ($this->ct->Table->fields as $field) {
+			if ($field['type'] == 'phponview') {
+				$fieldname = $field['fieldname'];
+				tagProcessor_PHP::processTempValue($this->ct, $this->row, $fieldname, $field->params);
 			}
 		}
 		return true;

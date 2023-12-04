@@ -323,7 +323,7 @@ class Layouts
 		$this->layoutType = 4;
 		$result = '<legend>{{ table.title }}</legend>{{ html.goback() }}<div class="form-horizontal">';
 
-		$fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];
+		$fieldTypes_to_skip = ['dummy'];
 
 		foreach ($fields as $field) {
 			if (!in_array($field['type'], $fieldTypes_to_skip)) {

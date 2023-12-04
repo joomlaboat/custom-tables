@@ -128,8 +128,6 @@ class record
 				$this->row_new = $this->ct->Table->loadRecord($this->listing_id);
 
 				if ($this->row_new !== null) {
-					//$this->listing_id = $this->row_new[$this->ct->Table->realidfieldname];
-					//common::inputSet("listing_id", $this->row_new[$this->ct->Table->realidfieldname]);
 
 					if ($this->ct->Env->advancedTagProcessor) {
 						if ($phpOnAddFound)
