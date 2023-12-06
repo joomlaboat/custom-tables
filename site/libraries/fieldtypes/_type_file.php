@@ -27,6 +27,7 @@ if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.ph
 
 class CT_FieldTypeTag_file
 {
+	/*
 	static public function get_file_type_value(CustomTables\Field $field, $listing_id): ?string
 	{
 		if ($field->type == 'filelink')
@@ -45,11 +46,12 @@ class CT_FieldTypeTag_file
 		if ($listing_id == 0) {
 			$value = CT_FieldTypeTag_file::UploadSingleFile('', $file_id, $field, JPATH_SITE . $FileFolder);
 		} else {
-			$to_delete = common::inputPost($field->comesfieldname . '_delete', '', 'CMD');
-
 			$ExistingFile = $field->ct->Table->getRecordFieldValue($listing_id, $field->realfieldname);
 
+			$to_delete = common::inputPost($field->comesfieldname . '_delete', '', 'CMD');
+
 			if ($to_delete == 'true') {
+				$value = true;
 				if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $field)) {
 					$filename_full = $filepath . DIRECTORY_SEPARATOR . $ExistingFile;
 
@@ -57,168 +59,11 @@ class CT_FieldTypeTag_file
 						unlink($filename_full);
 				}
 			}
-
 			$value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile, $file_id, $field, JPATH_SITE . $FileFolder);
 		}
 		return $value;
 	}
-
-	public static function getFileFolder(string $folder): string
-	{
-		if ($folder == '')
-			$folder = '/images';    //default folder
-		elseif ($folder[0] == '/') {
-
-			//delete trailing slash if found
-			$p = substr($folder, strlen($folder) - 1, 1);
-			if ($p == '/')
-				$folder = substr($folder, 0, strlen($folder) - 1);
-		} else {
-			$folder = '/' . $folder;
-			if (strlen($folder) > 8)//add /images to relative path
-			{
-				$p = substr($folder, 0, 8);
-				if ($p != '/images/')
-					$folder = '/images' . $folder;
-			} else {
-				$folder = '/images' . $folder;
-			}
-
-			//delete trailing slash if found
-			$p = substr($folder, strlen($folder) - 1, 1);
-			if ($p == '/')
-				$folder = substr($folder, 0, strlen($folder) - 1);
-		}
-
-		$folderPath = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $folder); //relative path
-
-		//Create folder if not exists
-		if (!file_exists($folderPath))
-			mkdir($folderPath, 0755, true);
-
-		return $folder;
-	}
-
-	protected static function UploadSingleFile($ExistingFile, $file_id, $field, $FileFolder): ?string
-	{
-		if ($field->type == 'file')
-			$fileExtensions = $field->params[2] ?? '';
-		elseif ($field->type == 'blob')
-			$fileExtensions = $field->params[1] ?? '';
-		else
-			return null;
-
-		if ($file_id != '') {
-			$accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileExtensions));
-
-			$accepted_filetypes = array();
-
-			foreach ($accepted_file_types as $filetype) {
-				$mime = ESFileUploader::get_mime_type('1.' . $filetype);
-				$accepted_filetypes[] = $mime;
-
-				if ($filetype == 'docx')
-					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-				elseif ($filetype == 'xlsx')
-					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-				elseif ($filetype == 'pptx')
-					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-			}
-
-			$uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
-
-			$is_base64encoded = common::inputGet('base64encoded', '', 'CMD');
-			if ($is_base64encoded == "true") {
-				$src = $uploadedFile;
-
-				$file = common::inputPost($field->comesfieldname, '', 'STRING');
-				$dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
-				CustomTablesFileMethods::base64file_decode($src, $dst);
-				$uploadedFile = $dst;
-			}
-
-			if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $field)) {
-				//Delete Old File
-				$filename_full = $FileFolder . DIRECTORY_SEPARATOR . $ExistingFile;
-
-				if (file_exists($filename_full))
-					unlink($filename_full);
-			}
-
-			if (!file_exists($uploadedFile))
-				return null;
-
-			$mime = mime_content_type($uploadedFile);
-
-			$parts = explode('.', $uploadedFile);
-			$fileExtension = end($parts);
-			if ($mime == 'application/zip' and $fileExtension != 'zip') {
-				//could be docx, xlsx, pptx
-				$mime = ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
-			}
-
-			if (in_array($mime, $accepted_filetypes)) {
-
-				$new_filename = CT_FieldTypeTag_file::getCleanAndAvailableFileName($file_id, $FileFolder);
-				$new_filename_path = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder . DIRECTORY_SEPARATOR . $new_filename);
-
-				if (@copy($uploadedFile, $new_filename_path)) {
-					unlink($uploadedFile);
-
-					//Copied
-					return $new_filename;
-				} else {
-					unlink($uploadedFile);
-
-					//Cannot copy
-					return null;
-				}
-			} else {
-				unlink($uploadedFile);
-				return null;
-			}
-		}
-		return null;
-	}
-
-	static protected function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field $field): bool
-	{
-		$query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . database::quote($filename) . ' LIMIT 2';
-		return database::getNumRowsOnly($query) > 1;
-	}
-
-	static protected function getCleanAndAvailableFileName(string $filename, string $FileFolder): string
-	{
-		$parts = explode('_', $filename);
-		if (count($parts) < 4)
-			return '';
-
-		$parts[0] = '';
-		$parts[1] = '';
-		$parts[2] = '';
-
-		$new_filename = trim(implode(' ', $parts));
-
-		//Clean Up file name
-		$filename_raw = strtolower($new_filename);
-		$filename_raw = str_replace(' ', '_', $filename_raw);
-		$filename_raw = str_replace('-', '_', $filename_raw);
-		//$filename = preg_replace("/[^a-z\d._]/", "", $filename_raw);
-		$filename = preg_replace("/[^\p{L}\d._]/u", "", $filename_raw);
-
-		$i = 0;
-		$filename_new = $filename;
-		while (1) {
-
-			if (file_exists($FileFolder . DIRECTORY_SEPARATOR . $filename_new)) {
-				//increase index
-				$i++;
-				$filename_new = str_replace('.', '-' . $i . '.', $filename);
-			} else
-				break;
-		}
-		return $filename_new;
-	}
+	*/
 
 	static public function get_blob_value(CustomTables\Field $field)
 	{
@@ -426,6 +271,42 @@ class CT_FieldTypeTag_file
 			default:
 				return $filepath;
 		}
+	}
+
+	public static function getFileFolder(string $folder): string
+	{
+		if ($folder == '')
+			$folder = '/images';    //default folder
+		elseif ($folder[0] == '/') {
+
+			//delete trailing slash if found
+			$p = substr($folder, strlen($folder) - 1, 1);
+			if ($p == '/')
+				$folder = substr($folder, 0, strlen($folder) - 1);
+		} else {
+			$folder = '/' . $folder;
+			if (strlen($folder) > 8)//add /images to relative path
+			{
+				$p = substr($folder, 0, 8);
+				if ($p != '/images/')
+					$folder = '/images' . $folder;
+			} else {
+				$folder = '/images' . $folder;
+			}
+
+			//delete trailing slash if found
+			$p = substr($folder, strlen($folder) - 1, 1);
+			if ($p == '/')
+				$folder = substr($folder, 0, strlen($folder) - 1);
+		}
+
+		$folderPath = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $folder); //relative path
+
+		//Create folder if not exists
+		if (!file_exists($folderPath))
+			mkdir($folderPath, 0755, true);
+
+		return $folder;
 	}
 
 	static protected function get_private_file_path(string $rowValue, string $how_to_process, string $filepath, string $recId, int $fieldid, int $tableid, bool $filename_only = false): string
@@ -714,5 +595,126 @@ class CT_FieldTypeTag_file
 	{
 		Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 		return false;
+	}
+
+	public static function UploadSingleFile($ExistingFile, $file_id, $field, $FileFolder): ?string
+	{
+		if ($field->type == 'file')
+			$fileExtensions = $field->params[2] ?? '';
+		elseif ($field->type == 'blob')
+			$fileExtensions = $field->params[1] ?? '';
+		else
+			return null;
+
+		if ($file_id != '') {
+			$accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileExtensions));
+
+			$accepted_filetypes = array();
+
+			foreach ($accepted_file_types as $filetype) {
+				$mime = ESFileUploader::get_mime_type('1.' . $filetype);
+				$accepted_filetypes[] = $mime;
+
+				if ($filetype == 'docx')
+					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+				elseif ($filetype == 'xlsx')
+					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+				elseif ($filetype == 'pptx')
+					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+			}
+
+			$uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
+
+			$is_base64encoded = common::inputGet('base64encoded', '', 'CMD');
+			if ($is_base64encoded == "true") {
+				$src = $uploadedFile;
+
+				$file = common::inputPost($field->comesfieldname, '', 'STRING');
+				$dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
+				CustomTablesFileMethods::base64file_decode($src, $dst);
+				$uploadedFile = $dst;
+			}
+
+			if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $field)) {
+				//Delete Old File
+				$filename_full = $FileFolder . DIRECTORY_SEPARATOR . $ExistingFile;
+
+				if (file_exists($filename_full))
+					unlink($filename_full);
+			}
+
+			if (!file_exists($uploadedFile))
+				return null;
+
+			$mime = mime_content_type($uploadedFile);
+
+			$parts = explode('.', $uploadedFile);
+			$fileExtension = end($parts);
+			if ($mime == 'application/zip' and $fileExtension != 'zip') {
+				//could be docx, xlsx, pptx
+				$mime = ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
+			}
+
+			if (in_array($mime, $accepted_filetypes)) {
+
+				$new_filename = CT_FieldTypeTag_file::getCleanAndAvailableFileName($file_id, $FileFolder);
+				$new_filename_path = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder . DIRECTORY_SEPARATOR . $new_filename);
+
+				if (@copy($uploadedFile, $new_filename_path)) {
+					unlink($uploadedFile);
+
+					//Copied
+					return $new_filename;
+				} else {
+					unlink($uploadedFile);
+
+					//Cannot copy
+					return null;
+				}
+			} else {
+				unlink($uploadedFile);
+				return null;
+			}
+		}
+		return null;
+	}
+
+	public static function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field $field): bool
+	{
+		$query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . database::quote($filename) . ' LIMIT 2';
+		return database::getNumRowsOnly($query) > 1;
+	}
+
+	protected static function getCleanAndAvailableFileName(string $filename, string $FileFolder): string
+	{
+		$parts = explode('_', $filename);
+		if (count($parts) < 4)
+			return '';
+
+		$parts[0] = '';
+		$parts[1] = '';
+		$parts[2] = '';
+
+		$new_filename = trim(implode(' ', $parts));
+
+		//Clean Up file name
+		$filename_raw = strtolower($new_filename);
+		$filename_raw = str_replace(' ', '_', $filename_raw);
+		$filename_raw = str_replace('-', '_', $filename_raw);
+		//$filename = preg_replace("/[^a-z\d._]/", "", $filename_raw);
+		$filename = preg_replace("/[^\p{L}\d._]/u", "", $filename_raw);
+
+		$i = 0;
+		$filename_new = $filename;
+		while (1) {
+
+			if (file_exists($FileFolder . DIRECTORY_SEPARATOR . $filename_new)) {
+				//increase index
+				$i++;
+				$filename_new = str_replace('.', '-' . $i . '.', $filename);
+			} else
+				break;
+		}
+		return $filename_new;
 	}
 }

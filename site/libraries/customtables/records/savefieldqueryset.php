@@ -93,6 +93,7 @@ class SaveFieldQuerySet
 					return;
 				}
 				break;
+
 			case 'radio':
 				$value = common::inputGetCmd($this->field->comesfieldname);
 
@@ -103,7 +104,9 @@ class SaveFieldQuerySet
 				break;
 
 			case 'string':
+
 			case 'filelink':
+
 			case 'googlemapcoordinates':
 				$value = common::inputGetString($this->field->comesfieldname);
 
@@ -270,6 +273,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'article':
+
 			case 'usergroup':
 				$value = common::inputGetInt($this->field->comesfieldname);
 
@@ -301,11 +305,9 @@ class SaveFieldQuerySet
 			case 'image':
 
 				$to_delete = common::inputPost($this->field->comesfieldname . '_delete', '', 'CMD');
-				$returnValue = null;
 
 				if ($to_delete == 'true') {
 					$this->setNewValue(null);
-					$returnValue = $this->field->realfieldname . '=NULL';
 
 					$ExistingImage = Tree::isRecordExist($listing_id, $this->ct->Table->realidfieldname, $this->field->realfieldname, $this->field->ct->Table->realtablename);
 
@@ -330,9 +332,8 @@ class SaveFieldQuerySet
 
 					$value = CT_FieldTypeTag_image::get_image_type_value($this->field, $this->ct->Table->realidfieldname, $listing_id);
 					$this->setNewValue($value);
-					return;
 				}
-				break;
+				return;
 
 			case 'blob':
 
@@ -373,14 +374,37 @@ class SaveFieldQuerySet
 				$file_type_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
 				require_once($file_type_file);
 
-				$value = CT_FieldTypeTag_file::get_file_type_value($this->field, $listing_id);
+				$FileFolder = CT_FieldTypeTag_file::getFileFolder($this->field->params[1]);
 
-				$to_delete = common::inputPost($this->field->comesfieldname . '_delete', '', 'CMD');
+				$file_id = common::inputPost($this->field->comesfieldname, '', 'STRING');
 
-				if ($to_delete == 'true' and $value === null) {
-					$this->setNewValue(null);
-				} else {
+				$filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
+				if (substr($filepath, 0, 1) == DIRECTORY_SEPARATOR)
+					$filepath = JPATH_SITE . $filepath;
+				else
+					$filepath = JPATH_SITE . DIRECTORY_SEPARATOR . $filepath;
+
+				if ($listing_id == 0) {
+					$value = CT_FieldTypeTag_file::UploadSingleFile('', $file_id, $this->field, JPATH_SITE . $FileFolder);
 					$this->setNewValue($value);
+				} else {
+					$ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
+
+					$to_delete = common::inputPost($this->field->comesfieldname . '_delete', '', 'CMD');
+
+					if ($to_delete == 'true') {
+						$this->setNewValue(null);
+						if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $this->field)) {
+							$filename_full = $filepath . DIRECTORY_SEPARATOR . $ExistingFile;
+
+							if (file_exists($filename_full))
+								unlink($filename_full);
+						}
+					}
+					$value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile, $file_id, $this->field, JPATH_SITE . $FileFolder);
+
+					if ($value)
+						$this->setNewValue($value);
 				}
 				return;
 
@@ -389,25 +413,6 @@ class SaveFieldQuerySet
 				$value = $this->get_customtables_type_signature();
 				$this->setNewValue($value);
 				return;
-			/*
-						case 'multilangarticle':
-
-							$firstLanguage = true;
-							foreach ($this->ct->Languages->LanguageList as $lang) {
-								if ($firstLanguage) {
-									$postfix = '';
-									$firstLanguage = false;
-								} else
-									$postfix = '_' . $lang->sef;
-
-								$value = common::inputGetInt($this->field->comesfieldname . $postfix);
-
-								if (isset($value)) {
-									$this->row_old[$this->field->realfieldname . $postfix] = $value;
-									$this->row_new[$this->field->realfieldname . $postfix] = $value;
-								}
-							}
-							return;*/
 
 			case 'customtables':
 
@@ -419,29 +424,23 @@ class SaveFieldQuerySet
 				$value = common::inputGetString($this->field->comesfieldname);
 				if (isset($value)) {
 					$value = trim($value ?? '');
-					if (Email::checkEmail($value)) {
+					if (Email::checkEmail($value))
 						$this->setNewValue($value);
-					} else {
+					else
 						$this->setNewValue(null);
-					}
-					return;
 				}
-				break;
+				return;
 
 			case 'url':
 				$value = common::inputGetString($this->field->comesfieldname);
 				if (isset($value)) {
 					$value = trim($value ?? '');
-
-					if (filter_var($value, FILTER_VALIDATE_URL)) {
+					if (filter_var($value, FILTER_VALIDATE_URL))
 						$this->setNewValue($value);
-
-					} else {
+					else
 						$this->setNewValue(null);
-					}
-					return;
 				}
-				break;
+				return;
 
 			case 'checkbox':
 				$value = common::inputGetCmd($this->field->comesfieldname);
@@ -453,19 +452,16 @@ class SaveFieldQuerySet
 						$value = 0;
 
 					$this->setNewValue($value);
-					return;
 				} else {
 					$value = common::inputGetCmd($this->field->comesfieldname . '_off');
 					if ($value !== null) {
-						if ((int)$value == 1) {
+						if ((int)$value == 1)
 							$this->setNewValue(0);
-						} else {
+						else
 							$this->setNewValue(1);
-						}
-						return;
 					}
 				}
-				break;
+				return;
 
 			case 'date':
 				$value = common::inputGetString($this->field->comesfieldname);
@@ -479,11 +475,9 @@ class SaveFieldQuerySet
 						}
 					} else {
 						$this->setNewValue($value);
-
 					}
-					return;
 				}
-				break;
+				return;
 
 			case 'time':
 				$value = common::inputGetString($this->field->comesfieldname);
@@ -493,18 +487,15 @@ class SaveFieldQuerySet
 					} else {
 						$this->setNewValue((int)$value);
 					}
-					return;
 				}
-				break;
+				return;
 
 			case 'creationtime':
 				if ($this->row_old[$this->ct->Table->realidfieldname] == 0 or $this->row_old[$this->ct->Table->realidfieldname] == '' or $this->isCopy) {
 					$value = gmdate('Y-m-d H:i:s');
 					$this->setNewValue($value);
-
-					return;
 				}
-				break;
+				return;
 
 			case 'changetime':
 				$value = gmdate('Y-m-d H:i:s');
@@ -534,10 +525,9 @@ class SaveFieldQuerySet
 							$value = $minid;
 
 						$this->setNewValue($value);
-						return;
 					}
 				}
-				break;
+				return;
 
 			case 'md5':
 
@@ -556,11 +546,8 @@ class SaveFieldQuerySet
 				if ($vlu != '') {
 					$value = md5($vlu);
 					$this->setNewValue($value);
-					return;
 				}
-				break;
 		}
-		return null;
 	}
 
 	public static function get_record_type_value(Field $field): ?string
