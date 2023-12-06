@@ -42,7 +42,7 @@ trait JFormFieldCTEmailLayoutCommon
 
 		if ($layouts) {
 			foreach ($layouts as $layout)
-				$options[] = HTMLHelper::_('select.option', $layout->tablename, $layout->tablename);
+				$options[] = HTMLHelper::_('select.option', $layout->layoutname, $layout->tablename . ' - ' . $layout->layoutname);
 		}
 		return $options;
 	}
