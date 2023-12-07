@@ -29,7 +29,6 @@ use CustomTables\DataTypes\Tree;
 use CTTypes;
 
 use Joomla\Registry\Registry;
-use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Editor\Editor;
@@ -107,6 +106,10 @@ class Inputbox
 		$this->attributesArray['class'] = $this->cssclass;
 		$this->attributesArray['data-type'] = $this->field->type;
 		$this->attributesArray['data-label'] = $this->field->title;
+
+		$this->attributesArray['data-valuerule'] = str_replace('"', '&quot;', $this->field->valuerule);
+		$this->attributesArray['data-valuerulecaption'] = str_replace('"', '&quot;', $this->field->valuerulecaption);
+
 		$this->attributesArray['readonly'] = false;
 		$this->attributesArray['onchange'] = $this->onchange;
 
@@ -389,9 +392,6 @@ class Inputbox
 				$InputBox_FileLink = new InputBox_FileLink($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
 				return $InputBox_FileLink->render_fileLink($value, $this->defaultValue);
 
-			case 'customtables':
-				return $this->render_customtables($value);
-
 			case 'sqljoin':
 				return $this->render_tablejoin($value);
 
@@ -437,10 +437,11 @@ class Inputbox
 				return $this->render_date($value);
 
 			case 'time':
-				return $this->render_time($value);
+				require_once('inputbox_time.php');
+				$InputBox_Time = new InputBox_Time($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_Time->render_time($value, $this->defaultValue);
 
 			case 'article':
-
 				require_once('inputbox_article.php');
 				$InputBox_Article = new InputBox_Article($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
 				return $InputBox_Article->render_article($value, $this->defaultValue);
@@ -1051,67 +1052,7 @@ class Inputbox
 		}
 		return $attributes_;
 	}
-
-	protected function render_customtables(?string $value): string
-	{
-		$result = '';
-
-		if (!isset($this->field->params[1]))
-			return 'selector not specified';
-
-		$optionName = $this->field->params[0];
-		$parentId = Tree::getOptionIdFull($optionName);
-
-		//$this->field->params[0] is structure parent
-		//$this->field->params[1] is selector type (multi or single)
-		//$this->field->params[2] is data length
-		//$this->field->params[3] is requirement depth
-
-		if ($value === null) {
-			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname);
-			if ($value === null) {
-				if ($this->field->defaultvalue !== null and $this->field->defaultvalue != '')
-					$value = ',' . $this->field->params[0] . '.' . $this->defaultValue . '.,';
-			}
-		}
-
-		if ($this->field->params[1] == 'multi') {
-			$result .= HTMLHelper::_('MultiSelector.render',
-				$this->prefix,
-				$parentId, $optionName,
-				$this->ct->Languages->Postfix,
-				$this->ct->Table->tablename,
-				$this->field->fieldname,
-				$value,
-				'',
-				$this->place_holder);
-		} elseif ($this->field->params[1] == 'single') {
-			$result .= '<div style="float:left;">';
-			$result .= HTMLHelper::_('ESComboTree.render',
-				$this->prefix,
-				$this->ct->Table->tablename,
-				$this->field->fieldname,
-				$optionName,
-				$this->ct->Languages->Postfix,
-				$value,
-				'',
-				'',
-				'',
-				'',
-				$this->field->isrequired,
-				(isset($this->field->params[3]) ? (int)$this->field->params[3] : 1),
-				$this->place_holder,
-				$this->field->valuerule,
-				$this->field->valuerulecaption
-			);
-
-			$result .= '</div>';
-		} else
-			$result .= 'selector not specified';
-
-		return $result;
-	}
-
+	
 	protected function render_tablejoin(?string $value): string
 	{
 		$result = '';
@@ -1397,27 +1338,6 @@ class Inputbox
 		return $jsFormat;
 	}
 
-	protected function render_time(?string $value): string
-	{
-		$result = '';
-
-		if ($value === null) {
-			$value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
-
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		$value = (int)$value;
-		$time_attributes = ($this->attributes != '' ? ' ' : '')
-			. 'data-type="time" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
-
-		$result .= HTMLHelper::_('CTTime.render', $this->prefix . $this->field->fieldname, $value, $this->cssclass, $time_attributes, $this->field->params, $this->option_list);
-		return $result;
-	}
-
 	protected function getImageGallery($listing_id): string
 	{
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_gallery.php');
@@ -1593,6 +1513,24 @@ abstract class BaseInputBox
 			else
 				$this->attributes['class'] = 'form-select';
 		}
+	}
+
+	function renderSelect(string $value, array $options): string
+	{
+		// Start building the select element with attributes
+		$select = '<select ' . $this->attributes2String() . '>';
+
+		// Optional default option
+		$selected = ($value == '' ? ' selected' : '');
+		$select .= '<option value=""' . $selected . '> - ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
+
+		// Generate options for each file in the folder
+		foreach ($options as $option) {
+			$selected = ($option->id == $value) ? ' selected' : '';
+			$select .= '<option value="' . $option->id . '"' . $selected . '>' . $option->name . '</option>';
+		}
+		$select .= '</select>';
+		return $select;
 	}
 
 	function attributes2String(?array $attributes = null): string

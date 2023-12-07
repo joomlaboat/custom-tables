@@ -122,10 +122,6 @@ class SearchInputBox
 				$result .= $this->getRadioBox($default_Action, $index, $where, $whereList, $objName_, $value, $cssclass);
 				break;
 
-			case 'customtables':
-				$result .= $this->getCustomTablesBox($prefix, $innerJoin, $default_Action, $index, $where, $whereList, $value, $cssclass, $place_holder);
-				break;
-
 			case 'user':
 			case 'userid':
 				$result .= $this->getUserBox($default_Action, $index, $where, $whereList, $objName_, $value, $cssclass);
@@ -380,45 +376,6 @@ class SearchInputBox
 			$options[] = ['id' => $param, 'data-type' => 'radio', 'name' => $param];
 
 		return HTMLHelper::_('select.genericlist', $options, $objName, $cssclass . ' ' . $onchange . ' ', 'id', 'name', $value, $objName);
-	}
-
-	protected function getCustomTablesBox($prefix, $innerJoin, $default_Action, $index, $where, $whereList, $value, $cssclass, $place_holder = ''): string
-	{
-		$result = '';
-		$optionname = $this->field->params[0];
-
-		if ($default_Action != '') {
-			$onchange = $default_Action;
-			$requirementDepth = 1;
-		} else {
-			$onchange = $this->moduleName . '_onChange('
-				. $index . ','
-				. 'me.value,'
-				. '\'' . $this->field->fieldname . '\','
-				. '\'' . urlencode($where) . '\','
-				. '\'' . urlencode($whereList) . '\','
-				. '\'' . $this->ct->Languages->Postfix . '\''
-				. ')';
-
-			$requirementDepth = 0;
-		}
-
-		$result .= HTMLHelper::_('ESComboTree.render',
-			$prefix,
-			$this->ct->Table->tablename,
-			$this->field->fieldname,
-			$optionname,
-			$this->ct->Languages->Postfix,
-			$value,
-			$cssclass,
-			$onchange,
-			$where,
-			$innerJoin, false, $requirementDepth,
-			$place_holder,
-			'',
-			'');
-
-		return $result;
 	}
 
 	protected function getUserBox($default_Action, $index, $where, $whereList, $objName, $value, $cssclass): string

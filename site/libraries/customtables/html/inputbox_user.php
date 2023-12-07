@@ -49,21 +49,7 @@ class InputBox_User extends BaseInputBox
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
-
-		// Start building the select element with attributes
-		$select = '<select ' . $this->attributes2String() . '>';
-
-		// Optional default option
-		$selected = (0 === (int)$value) ? ' selected' : '';
-		$select .= '<option value=""' . $selected . '> - ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
-
-		// Generate options for each file in the folder
-		foreach ($options as $option) {
-			$selected = ($option->id === (int)$value) ? ' selected' : '';
-			$select .= '<option value="' . $option->id . '"' . $selected . '>' . $option->name . '</option>';
-		}
-		$select .= '</select>';
-		return $select;
+		return $this->renderSelect($value ?? '', $options);
 	}
 
 	protected function buildQuery(bool $showUserWithRecords = false): string

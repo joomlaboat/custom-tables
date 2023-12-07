@@ -20,7 +20,6 @@ use CustomTablesImageMethods;
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
 use JoomlaBasicMisc;
-use JHTMLCTTime;
 
 use CT_FieldTypeTag_file;
 use CT_FieldTypeTag_image;
@@ -286,9 +285,9 @@ class Value
 				return $this->dataProcess($rowValue, $option_list);
 
 			case 'time':
-				require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'cttime.php');
-				$seconds = JHTMLCTTime::ticks2Seconds($rowValue, $this->field->params);
-				return JHTMLCTTime::seconds2FormatedTime($seconds, $option_list[0] ?? '');
+				require_once('inputbox_time.php');
+				$seconds = InputBox_Time::ticks2Seconds($rowValue, $this->field->params);
+				return InputBox_Time::seconds2FormattedTime($seconds, $option_list[0] ?? '');
 
 			case 'changetime':
 			case 'creationtime':

@@ -10,7 +10,7 @@
 
 namespace CustomTables;
 
-use Joomla\CMS\HTML\HTMLHelper;
+use Exception;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -25,6 +25,9 @@ class InputBox_Article extends BaseInputBox
 
 	function render_article(?string $value, ?string $defaultValue): string
 	{
+		if ($value == '')
+			$value = null;
+
 		if ($value === null) {
 			$value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname);
 			if ($value === null)
@@ -34,19 +37,18 @@ class InputBox_Article extends BaseInputBox
 		$this->selectBoxAddCSSClass();
 
 		$catId = (int)$this->field->params[0] ?? '';
-		$query = 'SELECT id, title FROM #__content';
+		$query = 'SELECT id, title AS name FROM #__content';
 
 		if ($catId != 0)
 			$query .= ' WHERE catid=' . $catId;
 
 		$query .= ' ORDER BY title';
-		$options = database::loadObjectList($query);
-		$options = array_merge(array(array(
-			'id' => '',
-			'data-type' => 'article',
-			'title' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT'))), $options);
 
-		return HTMLHelper::_('select.genericlist', $options, $this->prefix . $this->field->fieldname,
-			$this->attributes2String(), 'id', 'title', $value, $this->prefix . $this->field->fieldname);
+		try {
+			$articles = database::loadObjectList($query);
+		} catch (Exception $e) {
+			return 'InputBox_Article::render_article() - Cannot load a list of articles. Details: ' . $e->getMessage();
+		}
+		return $this->renderSelect(strval($value ?? ''), $articles);
 	}
 }
