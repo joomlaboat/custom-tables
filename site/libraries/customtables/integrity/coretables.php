@@ -232,7 +232,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$dbPrefix = database::getDBPrefix();
 		$tables_projected_fields = array();
 
-		$tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
+		$tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT 1'];
 		$tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
 		$tables_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL', 'postgresql_type' => 'INT NOT NULL'];
 
@@ -278,7 +278,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$dbPrefix = database::getDBPrefix();
 		$tables_projected_fields = array();
 
-		$tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
+		$tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT 1'];
 		$tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
 		$tables_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL', 'postgresql_type' => 'INT NOT NULL'];
 
@@ -315,7 +315,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$dbPrefix = database::getDBPrefix();
 		$tables_projected_fields = array();
 
-		$tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
+		$tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT 1'];
 		$tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
 
 		$tables_projected_fields[] = ['name' => 'categoryname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL DEFAULT "tablename"', 'postgresql_type' => 'VARCHAR(100) NOT NULL DEFAULT \'\''];
@@ -342,7 +342,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$dbPrefix = database::getDBPrefix();
 		$tables_projected_fields = array();
 
-		$tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
+		$tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT 1'];
 		$tables_projected_fields[] = ['name' => 'userid', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
 		$tables_projected_fields[] = ['name' => 'datetime', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
 		$tables_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];

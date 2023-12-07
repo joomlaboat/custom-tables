@@ -25,7 +25,6 @@ use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_imagegallery;
 use CT_FieldTypeTag_FileBox;
 use CT_FieldTypeTag_log;
-use CT_FieldTypeTag_ct;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;

@@ -44,9 +44,6 @@ class IntegrityTables extends IntegrityChecks
 				$link = Uri::root() . 'administrator/index.php?option=com_customtables&view=databasecheck&tableid=' . $table['id'];
 				$content = IntegrityFields::checkFields($ct, $link);
 
-				if ($ct->Env->advancedTagProcessor)
-					IntegrityOptions::checkOptions($ct);
-
 				$zeroId = IntegrityTables::getZeroRecordID($table['realtablename'], $table['realidfieldname']);
 
 				if ($content != '' or $zeroId > 0) {

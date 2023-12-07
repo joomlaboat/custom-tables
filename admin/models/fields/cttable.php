@@ -35,7 +35,7 @@ if ($version < 4) {
 			$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
 			$records = database::loadObjectList((string)$query);
 
-			$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT')];
+			$options = ['' => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
 
 			if ($records) {
 				if ($add_empty_option)

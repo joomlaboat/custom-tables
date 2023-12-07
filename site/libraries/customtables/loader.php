@@ -71,15 +71,10 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 
 	require_once($pathIntegrity . 'integrity.php');
 	require_once($pathIntegrity . 'fields.php');
-	require_once($pathIntegrity . 'options.php');
 	require_once($pathIntegrity . 'coretables.php');
 	require_once($pathIntegrity . 'tables.php');
 
 	$path_helpers = $path . 'helpers' . DIRECTORY_SEPARATOR;
-
-	//require_once($path_helpers.'customtablesmisc.php');
-	//require_once($path_helpers.'fields.php');
-
 
 	require_once($path_helpers . 'imagemethods.php');
 	require_once($path_helpers . 'email.php');
@@ -112,7 +107,6 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 
 	$pathDataTypes = $path . 'layouts' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'layouts.php');
-
 
 	require_once($pathDataTypes . 'twig.php');
 	require_once($pathDataTypes . 'general_tags.php');

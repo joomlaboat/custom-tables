@@ -19,7 +19,6 @@ use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**

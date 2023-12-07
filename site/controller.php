@@ -45,10 +45,6 @@ class CustomTablesController extends BaseController
 					require_once('controllers/log.php');
 					break;
 
-				case 'list' :
-					require_once('controllers/list.php');
-					break;
-
 				case 'edititem' :
 					require_once('controllers/save.php');
 					break;

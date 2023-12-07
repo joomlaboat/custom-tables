@@ -14,10 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
-use CustomTables\Languages;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Version;
-use Joomla\CMS\Form\FormHelper;
 
 class CTTypes
 {

@@ -117,7 +117,6 @@ class tagProcessor_Item
 		if (isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::GetCustomToolBar($ct, $pageLayout, $row);
 
-		CT_FieldTypeTag_ct::ResolveStructure($ct, $pageLayout);
 		return true;
 	}
 

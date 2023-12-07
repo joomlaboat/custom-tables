@@ -17,12 +17,8 @@ use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Fields;
 
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\Event\Content\ContentPrepareEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
-use Joomla\Event\DispatcherInterface;
-use Joomla\Registry\Registry;
 
 class JoomlaBasicMisc
 {

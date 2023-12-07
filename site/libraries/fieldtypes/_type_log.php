@@ -17,7 +17,6 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\TypeView;
-use Joomla\CMS\HTML\HTMLHelper;
 
 class CT_FieldTypeTag_log
 {
