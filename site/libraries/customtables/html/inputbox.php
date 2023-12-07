@@ -385,14 +385,9 @@ class Inputbox
 				return $this->render_color($value);
 
 			case 'filelink':
-				if ($value === null) {
-					$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-					if ($value == '')
-						$value = $this->defaultValue;
-				}
-
-				$folderPath = CUSTOMTABLES_IMAGES_PATH . DIRECTORY_SEPARATOR . $this->field->params[0];
-				return CTTypes::filelink($this->prefix . $this->field->fieldname, $folderPath, $value);
+				require_once('inputbox_filelink.php');
+				$InputBox_FileLink = new InputBox_FileLink($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_FileLink->render_fileLink($value, $this->defaultValue);
 
 			case 'customtables':
 				return $this->render_customtables($value);
@@ -459,9 +454,6 @@ class Inputbox
 				if (!$this->ct->isRecordNull($this->row))
 					return $this->getFileBox($this->row[$this->ct->Table->realidfieldname]);
 				break;
-			/*
-						//case 'multilangarticle': //Default value cannot be used with this data type.
-							return $this->renderMultilingualArticle();*/
 		}
 		return '';
 	}

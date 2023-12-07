@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component and WordPress 6.x Plugin
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -8,20 +8,33 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-// Check to ensure this file is included in Joomla!
-use CustomTables\common;
+namespace CustomTables;
+
 use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'catalog.php');
-
-class JHTMLESFileLink
+class InputBox_FileLink extends BaseInputBox
 {
-	static public function render($control_name, $value, $style, $cssclass, $path = '/images', $attribute = '')
+	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
+		parent::__construct($ct, $field, $row, $option_list, $attributes);
+	}
+
+	function render_fileLink(?string $value, ?string $defaultValue): string
+	{
+		if ($value === null) {
+			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+			if ($value == '')
+				$value = $defaultValue;
+		}
+
+		$this->selectBoxAddCSSClass();
+
+		$path = CUSTOMTABLES_IMAGES_PATH . DIRECTORY_SEPARATOR . $this->field->params[0] ?? '';
+
 		if ($path != '' and $path[0] != '/')
 			$path = '/images/' . $path;
 
@@ -50,6 +63,7 @@ class JHTMLESFileLink
 				'data-type' => "filelink",
 				'name' => '- ' . common::translate('COM_CUSTOMTABLES_PATH') . ' (' . $path . ') ' . common::translate('COM_CUSTOMTABLES_NOTFOUND'));
 
-		return HTMLHelper::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);
+		return HTMLHelper::_('select.genericlist', $options, $this->prefix . $this->field->fieldname,
+			$this->attributes2String(), 'id', 'name', $value, $this->prefix . $this->field->fieldname);
 	}
 }
