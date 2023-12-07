@@ -445,18 +445,10 @@ class Inputbox
 				return $this->render_time($value);
 
 			case 'article':
-				if ($value === null) {
-					$value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname);
-					if ($value === null)
-						$value = (int)$this->defaultValue;
-				}
 
-				return HTMLHelper::_('CTArticle.render',
-					$this->prefix . $this->field->fieldname,
-					$value,
-					$this->cssclass,
-					$this->field->params
-				);
+				require_once('inputbox_article.php');
+				$InputBox_Article = new InputBox_Article($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_Article->render_article($value, $this->defaultValue);
 
 			case 'imagegallery': //Default value cannot be used with this data type.
 				if (!$this->ct->isRecordNull($this->row))
@@ -1496,48 +1488,6 @@ class Inputbox
 		return $result;
 	}
 
-	/*
-		protected function renderMultilingualArticle(): string
-		{
-			$result = '
-			<table>
-				<tbody>';
-
-			$firstLanguage = true;
-			foreach ($this->ct->Languages->LanguageList as $lang) {
-				if ($firstLanguage) {
-					$postfix = '';
-					$firstLanguage = false;
-				} else
-					$postfix = '_' . $lang->sef;
-
-				$fieldname = $this->field->fieldname . $postfix;
-
-				if ($this->ct->isRecordNull($this->row))
-					$value = common::inputGetString($this->ct->Env->field_prefix . $fieldname, '');
-				else
-					$value = $this->row[$this->field->realfieldname . $postfix];
-
-				$result .= '
-					<tr>
-						<td>' . $lang->caption . '</td>
-						<td>:</td>
-						<td>';
-
-				$result .= HTMLHelper::_('CTArticle.render',
-					$this->prefix . $fieldname,
-					$value,
-					$this->cssclass,
-					$this->field->params
-				);
-
-				$result .= '</td>
-					</tr>';
-			}
-			$result .= '</body></table>';
-			return $result;
-		}
-	*/
 	function getDefaultValueIfNeeded($row)
 	{
 		$value = null;
