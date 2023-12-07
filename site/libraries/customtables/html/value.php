@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CustomTables\DataTypes\Tree;
 use CustomTablesImageMethods;
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -33,8 +32,7 @@ use Joomla\CMS\Uri\Uri;
 
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
 
-if (file_exists($types_path . '_type_ct.php')) {
-	require_once($types_path . '_type_ct.php');
+if (file_exists($types_path . '_type_file.php')) {
 	require_once($types_path . '_type_file.php');
 	require_once($types_path . '_type_gallery.php');
 	require_once($types_path . '_type_image.php');
@@ -217,9 +215,6 @@ class Value
 					return count($FileBoxRows);
 
 				return CT_FieldTypeTag_FileBox::process($FileBoxRows, $this->field, $this->row[$this->ct->Table->realidfieldname], $option_list);
-
-			case 'customtables':
-				return $this->listProcess($rowValue, $option_list);
 
 			case 'records':
 				return TypeView::tableJoinList($this->field, $rowValue, $option_list);
@@ -456,63 +451,6 @@ class Value
 			return ""; //return nothing if article not found
 
 		return $rows[0][$field];
-	}
-
-	protected function listProcess($rowValue, array $option_list): string
-	{
-		if (count($option_list) > 1 and $option_list[0] != "") {
-			if ($option_list[0] == 'group') {
-				$rootParent = $this->field->params[0];
-
-				$orientation = 0;// horizontal
-				if (isset($option_list[1]) and $option_list[1] == 'vertical')
-					$orientation = 1;// vertical
-
-				$groupArray = CT_FieldTypeTag_ct::groupCustomTablesParents($this->ct, $rowValue, $rootParent);
-
-				//Build structure
-				$vlu = '<table><tbody>';
-
-				if ($orientation == 0)
-					$vlu .= '<tr>';
-
-				foreach ($groupArray as $fGroup) {
-					if ($orientation == 1)
-						$vlu .= '<tr>';
-
-					$vlu .= '<td><h3>' . $fGroup[0] . '</h3><ul>';
-
-					for ($i = 1; $i < count($fGroup); $i++)
-						$vlu .= '<li>' . $fGroup[$i] . '</li>';
-
-					$vlu .= '<ul></td><td></td>';
-
-					if ($orientation == 1)
-						$vlu .= '</tr>';
-				}
-
-				if ($orientation == 0)
-					$vlu .= '</tr>';
-
-				$vlu .= '</tbody></table>';
-
-				return $vlu;
-			} elseif ($option_list[0] == 'list') {
-				if ($rowValue != '') {
-					$vlu = explode(',', $rowValue);
-					$vlu = array_filter($vlu);
-
-					sort($vlu);
-
-					$temp_index = 0;
-					return Tree::BuildULHtmlList($vlu, $temp_index, $this->ct->Languages->Postfix);
-				}
-			}
-		} else {
-			if ($rowValue != '')
-				return implode(',', Tree::getMultyValueTitles($rowValue, $this->ct->Languages->Postfix, 1, ' - ', $this->field->params));
-		}
-		return '';
 	}
 
 	protected function dataProcess($rowValue, array $option_list): string

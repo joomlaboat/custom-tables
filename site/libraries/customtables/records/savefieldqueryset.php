@@ -21,8 +21,6 @@ use Joomla\CMS\Component\ComponentHelper;
 
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
-use CustomTables\DataTypes\Tree;
-
 use LayoutProcessor;
 use tagProcessor_General;
 use tagProcessor_Item;
@@ -309,7 +307,14 @@ class SaveFieldQuerySet
 				if ($to_delete == 'true') {
 					$this->setNewValue(null);
 
-					$ExistingImage = Tree::isRecordExist($listing_id, $this->ct->Table->realidfieldname, $this->field->realfieldname, $this->field->ct->Table->realtablename);
+					$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->field->ct->Table->realtablename
+						. ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id);
+
+					$ExistingImageRows = database::loadObjectList($query, null, 1);
+					if (count($ExistingImageRows) == 0)
+						$ExistingImage = null;
+					else
+						$ExistingImage = $ExistingImageRows[$this->field->realfieldname];
 
 					if ($ExistingImage !== null and ($ExistingImage != '' or (is_numeric($ExistingImage) and $ExistingImage > 0))) {
 
@@ -411,12 +416,6 @@ class SaveFieldQuerySet
 			case 'signature':
 
 				$value = $this->get_customtables_type_signature();
-				$this->setNewValue($value);
-				return;
-
-			case 'customtables':
-
-				$value = $this->get_customtables_type_value();
 				$this->setNewValue($value);
 				return;
 
@@ -789,130 +788,6 @@ class SaveFieldQuerySet
 		return null;
 	}
 
-	protected function get_customtables_type_value(): ?string
-	{
-		$optionname = $this->field->params[0];
-
-		if ($this->field->params[1] == 'multi') {
-			$value = $this->getMultiString($optionname);
-
-			if ($value !== null) {
-				if ($value != '')
-					return ',' . $value . ',';
-				else
-					return '';
-			}
-		} elseif ($this->field->params[1] == 'single') {
-			$value = $this->getComboString($optionname);
-
-			if ($value !== null) {
-				if ($value != '')
-					return ',' . $value . ',';
-				else
-					return '';
-			}
-		}
-		return null;
-	}
-
-	protected function getMultiString($parent): ?string
-	{
-		$prefix = $this->field->prefix . 'multi_' . $this->ct->Table->tablename . '_' . $this->field->fieldname;
-
-		$parentId = Tree::getOptionIdFull($parent);
-		$a = $this->getMultiSelector($parentId, $parent, $prefix);
-		if ($a === null)
-			return null;
-
-		if (count($a) == 0)
-			return '';
-		else
-			return implode(',', $a);
-
-	}
-
-	protected function getMultiSelector($parentId, $parentName, $prefix): ?array
-	{
-		$set = false;
-		$resultList = array();
-
-		$rows = $this->getList($parentId);
-		if (count($rows) < 1)
-			return $resultList;
-
-		foreach ($rows as $row) {
-			if (strlen($parentName) == 0)
-				$ChildList = $this->getMultiSelector($row->id, $row->optionname, $prefix);
-			else
-				$ChildList = $this->getMultiSelector($row->id, $parentName . '.' . $row->optionname, $prefix);
-
-			if ($ChildList !== null)
-				$count_child = count($ChildList);
-			else
-				$count_child = 0;
-
-			if ($count_child > 0) {
-				$resultList = array_merge($resultList, $ChildList);
-			} else {
-				$value = common::inputGetString($prefix . '_' . $row->id);
-				if (isset($value)) {
-					$set = true;
-
-					if (strlen($parentName) == 0)
-						$resultList[] = $row->optionname . '.';
-					else
-						$resultList[] = $parentName . '.' . $row->optionname . '.';
-				}
-			}
-		}
-
-		if (!$set)
-			return null;
-
-		return $resultList;
-	}
-
-	protected function getList($parentId)
-	{
-		$query = 'SELECT id, optionname FROM #__customtables_options WHERE parentid=' . (int)$parentId;
-		return database::loadObjectList($query);
-	}
-
-	protected function getComboString($parent): ?string
-	{
-		$prefix = $this->field->prefix . 'combotree_' . $this->ct->Table->tablename . '_' . $this->field->fieldname;
-		$i = 1;
-		$result = array();
-		$v = '';
-		$set = false;
-		do {
-			$value = common::inputGetCmd($prefix . '_' . $i);
-			if (isset($value)) {
-				if ($value != '') {
-					$result[] = $value;
-					$i++;
-				}
-				$set = true;
-			} else
-				break;
-
-		} while ($v != '');
-
-		if (count($result) == 0) {
-			if ($set)
-				return '';
-			else
-				return null;
-		} else
-			return $parent . '.' . implode('.', $result) . '.';
-
-		// the format of the string is: ",[optionname1].[optionname2].[optionname..n].,
-		// example: ,geo.usa.newyork.,
-		// last "." dot is to let search by parents
-		// php example: getpos(",geo.usa.",$string)
-		// mysql example: instr($string, ",geo.usa.")
-	}
-
 	public static function getUserIP(): string
 	{
 		if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -1195,5 +1070,4 @@ class SaveFieldQuerySet
 		}
 		return $status;
 	}
-
 }

@@ -18,7 +18,6 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\Filtering;
-use CustomTables\DataTypes\Tree;
 use CustomTables\CustomPHP\CleanExecute;
 use CustomTables\record;
 use CustomTables\TwigProcessor;
@@ -74,70 +73,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			}
 		}
 		return false;
-	}
-
-	function getCustomTablesBranch($optionName, $startFrom, $langPostFix, $defaultValue): ?array
-	{
-		$optionId = 0;
-		$filterRootParent = Tree::getOptionIdFull($optionName);
-
-		if ($optionName) {
-			$available_categories = Tree::getChildren($optionId, $filterRootParent, 1);
-
-			$query = ' SELECT optionname, id, title_' . $langPostFix . ' AS title FROM #__customtables_options WHERE ';
-			$query .= ' id=' . $filterRootParent . ' LIMIT 1';
-
-			try {
-				$rootParentName = database::loadObjectList($query);
-			} catch (Exception $e) {
-				$this->ct->errors[] = $e->getMessage();
-				return null;
-			}
-
-			if ($startFrom == 0) {
-				if (count($rootParentName) == 1)
-					JoomlaBasicMisc::array_insert(
-						$available_categories,
-						array(
-							"id" => $filterRootParent,
-							"name" => strtoupper($rootParentName[0]->title),
-							"fullpath" => strtoupper($rootParentName[0]->optionname)
-
-						), 0);
-			}
-		} else {
-			$available_categories = Tree::getChildren($optionId, 0, 1);
-		}
-		if ($defaultValue)
-			JoomlaBasicMisc::array_insert(
-				$available_categories,
-				array(
-					"id" => 0,
-					"name" => $defaultValue,
-					"fullpath" => ''
-
-				), 0);
-
-		if ($startFrom == 0)
-			JoomlaBasicMisc::array_insert($available_categories,
-				array("id" => 0,
-					"name" => common::translate('COM_CUSTOMTABLES_ROOT'),
-					"fullpath" => ''),
-				count($available_categories));
-
-		return $available_categories;
-	}
-
-	function convertESParam2Array($par): array
-	{
-		$newParameter = [];
-		$a = explode(',', $par);
-		foreach ($a as $b) {
-			$c = trim($b);
-			if (strlen($c) > 0)
-				$newParameter[] = $c;
-		}
-		return $newParameter;
 	}
 
 	function copy(&$msg, &$link): bool
@@ -637,18 +572,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 					$value='"'.implode('","',$valuearray).'"';
 					break;
 
-				case 'customtables':
-
-						$typeParams_arr=explode(',',$typeParams);
-						$optionname=$typeParamsArray[0];
-
-						if($typeParamsArray[1]=='multi')
-							$value=$this->getMultiString($optionname, $prefix.'multi_'.$this->ct->Table->tablename.'_'.$fieldname);
-						elseif($typeParamsArray[1]=='single')
-							$value=$this->getComboString($optionname, $prefix.'combotree_'.$this->ct->Table->tablename.'_'.$fieldname);
-
-					break;
-
 				case 'email':
 						$value=common::inputGetString($prefix.$fieldname);
 					break;
@@ -785,12 +708,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			case 'sqljoin':
 				if ($to_row[$to_field['realfieldname']] !== '')
 					die(json_encode(['error' => 'Target field type is the Table Join. Multiple values not allowed.']));
-
-				break;
-
-			case 'customtables':
-				if ($to_row[$to_field['realfieldname']] !== '')
-					die(json_encode(['error' => 'Target field type is a Tree. Multiple values not allowed.']));
 
 				break;
 

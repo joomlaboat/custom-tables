@@ -38,10 +38,6 @@ class IntegrityCoreTables extends IntegrityChecks
 			IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Categories());
 
 		IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Log());
-
-		if ($ct->Env->advancedTagProcessor) {
-			IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Options());
-		}
 	}
 
 	protected static function createCoreTableIfNotExists(CT &$ct, $table)
@@ -362,39 +358,5 @@ class IntegrityCoreTables extends IntegrityChecks
 			'fields' => $tables_projected_fields,
 			'indexes' => $tables_projected_indexes,
 			'comment' => 'Custom Tables Action Log'];
-	}
-
-	protected static function getCoreTableFields_Options(): object
-	{
-		$dbPrefix = database::getDBPrefix();
-		$tables_projected_fields = array();
-
-		$tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
-		$tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
-		$tables_projected_fields[] = ['name' => 'optionname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 50, 'mysql_type' => 'VARCHAR(50) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL'];
-		$tables_projected_fields[] = ['name' => 'title', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(100) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(100) NULL DEFAULT NULL', 'multilang' => true];
-
-		$tables_projected_fields[] = ['name' => 'image', 'ct_fieldtype' => '', 'mysql_type' => 'BIGINT NULL', 'postgresql_type' => 'BIGINT NULL'];
-		$tables_projected_fields[] = ['name' => 'imageparams', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(100) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(100) NULL DEFAULT NULL'];
-		$tables_projected_fields[] = ['name' => 'ordering', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[] = ['name' => 'parentid', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NULL', 'postgresql_type' => 'INT NULL DEFAULT NULL'];
-		$tables_projected_fields[] = ['name' => 'sublevel', 'ct_fieldtype' => '', 'mysql_type' => 'INT NULL', 'postgresql_type' => 'INT NULL DEFAULT NULL'];
-		$tables_projected_fields[] = ['name' => 'isselectable', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
-		$tables_projected_fields[] = ['name' => 'optionalcode', 'ct_fieldtype' => '', 'mysql_type' => 'TEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
-		$tables_projected_fields[] = ['name' => 'link', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(1024) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(1024) NULL DEFAULT NULL'];
-		$tables_projected_fields[] = ['name' => 'familytree', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(1024) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(1024) NULL DEFAULT NULL'];
-		$tables_projected_fields[] = ['name' => 'familytreestr', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(1024) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(1024) NULL DEFAULT NULL'];
-
-		$tables_projected_indexes = [];
-		$tables_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
-		$tables_projected_indexes[] = ['name' => 'idx_optionname', 'field' => 'optionname'];
-		//Specified key was too long; max key length is 767 bytes
-		//$tables_projected_indexes[]=['name'=>'idx_familytree','field'=>'familytree'];
-		//$tables_projected_indexes[]=['name'=>'idx_familytreestr','field'=>'familytreestr'];
-
-		return (object)['realtablename' => $dbPrefix . 'customtables_options',
-			'fields' => $tables_projected_fields,
-			'indexes' => $tables_projected_indexes,
-			'comment' => 'Hierarchical structure records (Custom Tables field type)'];
 	}
 }

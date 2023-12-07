@@ -551,14 +551,7 @@ class Twig_Html_Tags
 		if (isset($fld['fields']) and count($fld['fields']) > 0) {
 			return 'es_search_box_' . $fld['fieldname'] . ':' . implode(';', $fld['fields']) . ':';
 		} else {
-			if ($fld['type'] == 'customtables') {
-				$paramsList = explode(',', $fld['typeparams']);
-				if (count($paramsList) > 1) {
-					$root = $paramsList[0];
-					return 'es_search_box_combotree_' . $this->ct->Table->tablename . '_' . $fld['fieldname'] . '_1:' . $fld['fieldname'] . ':' . $root;
-				}
-			} else
-				return 'es_search_box_' . $fld['fieldname'] . ':' . $fld['fieldname'] . ':';
+			return 'es_search_box_' . $fld['fieldname'] . ':' . $fld['fieldname'] . ':';
 		}
 
 		return '';

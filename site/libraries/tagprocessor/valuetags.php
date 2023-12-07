@@ -17,7 +17,6 @@ use CustomTables\CT;
 use CustomTables\CTUser;
 
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
-require_once($types_path . '_type_ct.php');
 require_once($types_path . '_type_file.php');
 require_once($types_path . '_type_gallery.php');
 require_once($types_path . '_type_image.php');
@@ -362,11 +361,6 @@ class tagProcessor_Value
 				else
 					return true;
 			}
-		} elseif ($fieldType == 'customtables') {
-			if ($rowValue == '' or $rowValue == ',.')
-				return true;
-			else
-				return false;
 		} elseif ($fieldType == 'sqljoin') {
 			if ($rowValue == 0)
 				return true;

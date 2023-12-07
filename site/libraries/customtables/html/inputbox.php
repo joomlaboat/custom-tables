@@ -24,8 +24,6 @@ use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
 use CT_FieldTypeTag_imagegallery;
 use CT_FieldTypeTag_FileBox;
-
-use CustomTables\DataTypes\Tree;
 use CTTypes;
 
 use Joomla\Registry\Registry;
@@ -1052,7 +1050,7 @@ class Inputbox
 		}
 		return $attributes_;
 	}
-	
+
 	protected function render_tablejoin(?string $value): string
 	{
 		$result = '';

@@ -109,7 +109,6 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 	require_once($pathDataTypes . 'datatypes.php');
 	require_once($pathDataTypes . 'filebox.php');
 	require_once($pathDataTypes . 'filemethods.php');
-	require_once($pathDataTypes . 'tree.php');
 
 	$pathDataTypes = $path . 'layouts' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'layouts.php');

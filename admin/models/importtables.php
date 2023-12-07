@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
-use CustomTables\DataTypes\Tree;
 use CustomTables\ImportTables;
 
 use Joomla\CMS\MVC\Model\ListModel;
@@ -95,55 +94,12 @@ class CustomTablesModelImportTables extends ListModel
 				elseif ($fieldTypePair[0] == 'radio')
 					$result[] = '"' . $values[$i] . '"';
 
-				elseif ($fieldTypePair[0] == 'customtables') {
-					//this function must add item if not found
-					$esValue = $this->getOptionListItem($fieldTypePair[1], $values[$i]);
-
-					$result[] = '"' . $esValue . '"';
-				} else {
-					//type unsupported
-					$result[] = '""';
-				}
+				else
+					$result[] = '""';//type unsupported
 			}
 			$c++;
 		}
 		return $result;
-	}
-
-	function getOptionListItem($optionname, $optionTitle): string
-	{
-		$parentId = Tree::getOptionIdFull($optionname);
-		$rows = Tree::getHeritage($parentId, database::quoteName('title') . '=' . database::quote($optionTitle), 1);
-
-		if (count($rows) == 0) {
-			//add item
-			$newOptionName_original = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", $optionTitle)));
-			$newOptionName = $newOptionName_original;
-			$n = 0;
-			while (1) {
-				$rows_check = Tree::getHeritage($parentId, database::quoteName('optionname') . '=' . database::quote($newOptionName), 1);
-				if (count($rows_check)) {
-					$n++;
-					$newOptionName = $newOptionName_original . $n;
-				} else
-					break;
-			}
-
-			$familyTree = Tree::getFamilyTreeByParentID($parentId) . '-';
-
-			$query = 'INSERT #__customtables_options SET '
-				. database::quoteName('parentid') . '=' . database::quote($parentId) . ', '
-				. database::quoteName('optionname') . '=' . database::quote($newOptionName) . ', '
-				. database::quoteName('familytree') . '=' . database::quote($familyTree) . ', '
-				. database::quoteName('title') . '=' . database::quote($optionTitle);
-
-			database::setQuery($query);
-
-			return ',' . $optionname . '.' . $newOptionName . '.,';
-		} else {
-			$row = $rows[0];
-			return ',' . Tree::getFamilyTreeString($parentId, 1) . '.' . $row['optionname'] . '.,';
-		}
 	}
 
 	function findMaxId($table): int

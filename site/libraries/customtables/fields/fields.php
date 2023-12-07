@@ -1221,18 +1221,6 @@ class Fields
 					$l = '20,2';
 				return ['data_type' => 'decimal', 'is_nullable' => true, 'is_unsigned' => false, 'length' => $l, 'default' => null, 'extra' => null];
 
-			case 'customtables':
-
-				if (count($typeParamsArray) < 255)
-					$l = 255;
-				else
-					$l = (int)$typeParamsArray[2];
-
-				if ($l > 65535)
-					$l = 65535;
-
-				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => $l, 'default' => null, 'extra' => null];
-
 			case 'userid':
 			case 'user':
 			case 'usergroup':
@@ -1460,22 +1448,12 @@ class Fields
 				return true; //no need to convert
 		}
 
-		$inconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'customtables', 'log');
+		$inconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'log');
 
 		if (in_array($new_type, $inconvertible_types) or in_array($ex_type, $inconvertible_types))
 			return false;
 
 		$PureFieldType_ = $PureFieldType;
-
-		//Check and fix record
-		if ($new_type == 'customtables') {
-			//get number of string like "varchar(255)"
-			$maxlength = (int)preg_replace("/\D/", "", $PureFieldType);
-			$typeParamsArray = explode(',', $new_typeparams);
-			$optionName = $typeParamsArray[0];
-
-			Fields::FixCustomTablesRecords($realtablename, $realfieldname, $optionName, $maxlength);
-		}
 
 		$serverType = database::getServerType();
 
@@ -1495,63 +1473,6 @@ class Fields
 			throw new Exception($e->getMessage());
 		}
 		return true;
-	}
-
-	public static function FixCustomTablesRecords($realtablename, $realfieldname, $optionname, $maxlenght): void
-	{
-		//CustomTables field type
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql')
-			return;
-
-		$fixCount = 0;
-		$fixQuery = 'SELECT id, ' . $realfieldname . ' AS fldvalue FROM ' . $realtablename;
-		$fixRows = database::loadObjectList($fixQuery);
-		foreach ($fixRows as $fixRow) {
-
-			$newRow = Fields::FixCustomTablesRecord($fixRow->fldvalue, $optionname, $maxlenght);
-
-			if ($fixRow->fldvalue != $newRow) {
-				$fixCount++;
-				$fixitQuery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newRow . '" WHERE id=' . $fixRow->id;
-				database::setQuery($fixitQuery);
-			}
-		}
-	}
-
-	public static function FixCustomTablesRecord($record, $optionname, $maxlen): string
-	{
-		$l = 2;
-		$e = explode(',', $record);
-		$r = array();
-
-		foreach ($e as $a) {
-			$p = explode('.', $a);
-			$b = array();
-
-			foreach ($p as $t) {
-				if ($t != '')
-					$b[] = $t;
-			}
-			if (count($b) > 0) {
-				$d = implode('.', $b);
-				if ($d != $optionname)
-					$e = implode('.', $b) . '.';
-
-				$l += strlen($e) + 1;
-				if ($l >= $maxlen)
-					break;
-
-				$r[] = $e;
-			}
-		}
-
-		if (count($r) > 0)
-			$newRow = ',' . implode(',', $r) . ',';
-		else
-			$newRow = '';
-
-		return $newRow;
 	}
 
 	public static function addField(CT $ct, string $realtablename, string $realfieldname, string $fieldType, string $PureFieldType, string $fieldTitle, array $fieldRow): void
@@ -1753,6 +1674,63 @@ class Fields
 			echo 'Caught exception: ', $e->getMessage(), "\n";
 			die;
 		}
+	}
+
+	public static function FixCustomTablesRecords($realtablename, $realfieldname, $optionname, $maxlenght): void
+	{
+		//CustomTables field type
+		$serverType = database::getServerType();
+		if ($serverType == 'postgresql')
+			return;
+
+		$fixCount = 0;
+		$fixQuery = 'SELECT id, ' . $realfieldname . ' AS fldvalue FROM ' . $realtablename;
+		$fixRows = database::loadObjectList($fixQuery);
+		foreach ($fixRows as $fixRow) {
+
+			$newRow = Fields::FixCustomTablesRecord($fixRow->fldvalue, $optionname, $maxlenght);
+
+			if ($fixRow->fldvalue != $newRow) {
+				$fixCount++;
+				$fixitQuery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newRow . '" WHERE id=' . $fixRow->id;
+				database::setQuery($fixitQuery);
+			}
+		}
+	}
+
+	public static function FixCustomTablesRecord($record, $optionname, $maxlen): string
+	{
+		$l = 2;
+		$e = explode(',', $record);
+		$r = array();
+
+		foreach ($e as $a) {
+			$p = explode('.', $a);
+			$b = array();
+
+			foreach ($p as $t) {
+				if ($t != '')
+					$b[] = $t;
+			}
+			if (count($b) > 0) {
+				$d = implode('.', $b);
+				if ($d != $optionname)
+					$e = implode('.', $b) . '.';
+
+				$l += strlen($e) + 1;
+				if ($l >= $maxlen)
+					break;
+
+				$r[] = $e;
+			}
+		}
+
+		if (count($r) > 0)
+			$newRow = ',' . implode(',', $r) . ',';
+		else
+			$newRow = '';
+
+		return $newRow;
 	}
 
 	protected static function checkFieldName($tableId, $fieldName): string

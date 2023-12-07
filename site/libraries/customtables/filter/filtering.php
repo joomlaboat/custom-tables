@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CustomTables\DataTypes\Tree;
 use DateTime;
 use ESTables;
 use Exception;
@@ -359,47 +358,6 @@ class Filtering
 			case 'multilangstring':
 
 				$c = $this->Search_String($value, $fieldrow, $comparison_operator, true);
-				break;
-
-			case 'customtables':
-
-				if ($comparison_operator == '==')
-					$comparison_operator = '=';
-
-				$vList = explode(',', $value);
-				$cArr = array();
-				foreach ($vList as $vL) {
-					//--------
-
-					$v = trim($vL);
-					if ($v != '') {
-
-						//to fix the line
-						if ($v[0] != ',')
-							$v = ',' . $v;
-
-						if ($v[strlen($v) - 1] != '.')
-							$v .= '.';
-
-						if ($comparison_operator == '=') {
-							$cArr[] = 'instr(' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ',' . database::quote($v) . ')';
-
-							$vTitle = Tree::getMultyValueTitles($v, $this->ct->Languages->Postfix, 1, ' - ');
-							$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ': ' . implode(',', $vTitle);
-						} elseif ($comparison_operator == '!=') {
-							$cArr[] = '!instr(' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ',' . database::quote($v) . ')';
-
-							$vTitle = Tree::getMultyValueTitles($v, $this->ct->Languages->Postfix, 1, ' - ');
-							$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ': ' . implode(',', $vTitle);
-						}
-					}
-				}
-
-				if (count($cArr) == 1)
-					$c = $cArr[0];
-				else
-					$c = '(' . implode(' OR ', $cArr) . ')';
-
 				break;
 
 			case 'records':

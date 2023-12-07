@@ -125,9 +125,6 @@ class Ordering
 			case 'user':
 				return '(SELECT #__users.name FROM #__users WHERE #__users.id=' . $Table->realtablename . '.' . $field->realfieldname . ')';
 
-			case 'customtables':
-				return '(SELECT #__customtables_options.title FROM #__customtables_options WHERE #__customtables_options.familytreestr=' . $field->realfieldname . ')';
-
 			case 'sqljoin':
 
 				$join_table = $field->params[0];
@@ -276,11 +273,6 @@ class Ordering
 					$order_values[] = $fieldname . $this->Table->Languages->Postfix;
 					$order_list[] = $fieldtitle . ' ' . common::translate('COM_CUSTOMTABLES_ZA');
 					$order_values[] = $fieldname . $this->Table->Languages->Postfix . " desc";
-				} elseif ($fieldType == 'customtables') {
-					$order_list[] = $fieldtitle . ' ' . common::translate('COM_CUSTOMTABLES_AZ');
-					$order_values[] = $fieldname . '.customtables';
-					$order_list[] = $fieldtitle . ' ' . common::translate('COM_CUSTOMTABLES_ZA');
-					$order_values[] = $fieldname . '.customtables desc';
 				} elseif ($fieldType == 'userid' or $fieldType == 'user') {
 					$order_list[] = $fieldtitle . ' ' . common::translate('COM_CUSTOMTABLES_AZ');
 					$order_values[] = $fieldname . '.user';

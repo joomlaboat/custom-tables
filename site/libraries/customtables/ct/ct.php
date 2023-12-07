@@ -388,7 +388,6 @@ class CT
 			if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
 				$this->document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
 
-			$this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/combotree.js"></script>');
 			$this->document->addCustomTag('<script>let ctWebsiteRoot = "' . $this->Env->WebsiteRoot . '";</script>');
 
 			if ($this->Params->ModuleId == null)

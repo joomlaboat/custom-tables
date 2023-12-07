@@ -15,7 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\DataTypes\Tree;
+use CustomTables\database;
 use CustomTables\Field;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -108,7 +108,15 @@ class CT_FieldTypeTag_image
 				. $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
 		} else {
 
-			$ExistingImage = Tree::isRecordExist($listing_id, $realidfieldname, $field->realfieldname, $field->ct->Table->realtablename);
+			$query = 'SELECT ' . $field->realfieldname . ' FROM ' . $field->ct->Table->realtablename
+				. ' WHERE ' . $realidfieldname . ' = ' . database::quote($listing_id);
+
+			$ExistingImageRows = database::loadObjectList($query, null, 1);
+			if (count($ExistingImageRows) == 0)
+				$ExistingImage = null;
+			else
+				$ExistingImage = $ExistingImageRows[$field->realfieldname];
+
 			$value = $imageMethods->UploadSingleImage($ExistingImage, $fileId, $field->realfieldname,
 				JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
 		}

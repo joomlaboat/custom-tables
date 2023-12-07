@@ -31,8 +31,6 @@ require_once($libpath . 'itemtags.php');//not all added to twig
 require_once($libpath . 'valuetags.php');//added to twig
 require_once($libpath . 'shopingtags.php');
 
-require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_ct.php');
-
 class LayoutProcessor
 {
 	var string $layout;

@@ -13,7 +13,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
-use CustomTables\DataTypes\Tree;
 
 require_once('render_html.php');
 require_once('render_xlsx.php');
@@ -101,14 +100,10 @@ class tagProcessor_Catalog
 			foreach ($ct->Records as $row) {
 
 				if ($lastGroup != $row[$ct->Params->groupBy] and $lastGroup != '') {
-					if ($FieldRow['type'] == 'customtables')
-						$GroupTitle = implode(',', Tree::getMultyValueTitles($lastGroup, $ct->Languages->Postfix, 1, ' - '));
-					else {
-						$row['_number'] = $number;
-						$row['_islast'] = $number == count($ct->Records);
-						$option = array();
-						$GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option);
-					}
+					$row['_number'] = $number;
+					$row['_islast'] = $number == count($ct->Records);
+					$option = array();
+					$GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option);
 
 					$CatGroups[] = array($GroupTitle, $RealRows);
 					$RealRows = array();
@@ -118,17 +113,15 @@ class tagProcessor_Catalog
 				$number++;
 			}
 			if (count($RealRows) > 0) {
-				if ($FieldRow['type'] == 'customtables')
-					$GroupTitle = implode(',', Tree::getMultyValueTitles($lastGroup, $ct->Languages->Postfix, 1, ' - '));
-				else {
-					$galleryRows = array();
-					$FileBoxRows = array();
-					$option = array();
 
-					$row = $RealRows[0];
+				$galleryRows = array();
+				$FileBoxRows = array();
+				$option = array();
 
-					$GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option, $galleryRows, $FileBoxRows);
-				}
+				$row = $RealRows[0];
+
+				$GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option, $galleryRows, $FileBoxRows);
+
 				$CatGroups[] = array($GroupTitle, $RealRows);
 			}
 		}

@@ -244,15 +244,6 @@ class CustomTablesKeywordSearch
 						$fieldTypeFound = true;
 						break;
 
-					case 'customtables':
-						$inner = 'INNER JOIN #__customtables_options ON instr(#__customtables_options.familytreestr, #__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldrow['fieldname'] . ')';
-						if (!in_array($inner, $inner_arr))
-							$inner_arr[] = $inner;
-
-						$where_arr[] = 'instr(#__customtables_options.title' . $this->ct->Languages->Postfix . ',"' . $kw . '")';
-						$fieldTypeFound = true;
-						break;
-
 					case 'user':
 						$inner = 'INNER JOIN #__users ON #__users.id=#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldrow['fieldname'];
 						if (!in_array($inner, $inner_arr))
@@ -321,12 +312,6 @@ class CustomTablesKeywordSearch
 
 			case 'sqljoin':
 				Factory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
-				break;
-
-			case 'customtables':
-				$esr_table = '#__customtables_options';
-				$inner = 'INNER JOIN ' . $esr_table . ' ON instr(' . $esr_table . '.familytreestr, #__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldname . ')';
-				$where = ' ' . $esr_table . '.title' . $this->ct->Languages->Postfix . ' REGEXP "' . $regexpression . '"';
 				break;
 
 			case 'user':
