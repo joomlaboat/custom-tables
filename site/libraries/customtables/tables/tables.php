@@ -51,7 +51,6 @@ class Tables
 		}
 
 		$this->ct->Table->recordcount = 0;
-
 		$this->ct->setFilter($filter, 2);
 
 		$this->ct->Ordering->ordering_processed_string = $orderby ?? '';
@@ -80,7 +79,6 @@ class Tables
 			return null;
 		}
 		$this->ct->Table->recordcount = 0;
-
 		$this->ct->setFilter('', 2);
 		$this->ct->Filter->where[] = $this->ct->Table->realidfieldname . '=' . database::quote($recordId);
 		$this->ct->Limit = 1;

@@ -179,6 +179,7 @@ class Filtering
 
 							if ($fieldname == '_id') {
 								$fieldrow = array(
+									'id' => 0,
 									'fieldname' => '_id',
 									'type' => '_id',
 									'typeparams' => '',
@@ -186,19 +187,19 @@ class Filtering
 								);
 							} elseif ($fieldname == '_published') {
 								$fieldrow = array(
+									'id' => 0,
 									'fieldname' => '_published',
 									'type' => '_published',
 									'typeparams' => '',
 									'realfieldname' => 'listing_published'
 								);
 							} else {
-
 								//Check if it's a range filter
 								$fieldNameParts = explode('_r_', $fieldname);
 								$fieldrow = Fields::FieldRowByName($fieldNameParts[0], $this->ct->Table->fields);
 							}
 
-							if (!is_null($fieldrow) and array_key_exists('id', $fieldrow)) {
+							if (!is_null($fieldrow) and array_key_exists('type', $fieldrow)) {
 								$w = $this->processSingleFieldWhereSyntax($fieldrow, $comparison_operator, $fieldname, $value, $field_extra_param);
 								if ($w !== null and $w != '')
 									$multi_field_where[] = $w;
@@ -233,7 +234,7 @@ class Filtering
 	 */
 	function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname_, string $value, string $field_extra_param = ''): ?string
 	{
-		if (!array_key_exists('id', $fieldrow)) {
+		if (!array_key_exists('type', $fieldrow)) {
 			throw new Exception('processSingleFieldWhereSyntax: Field not set');
 		}
 

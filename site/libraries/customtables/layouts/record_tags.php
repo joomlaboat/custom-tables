@@ -759,7 +759,6 @@ class Twig_Tables_Tags
 				return '';
 			}
 		} else {
-
 			try {
 				if ($tables->loadRecords($table, $record_id_or_filter, $orderby, 1)) {
 					if (count($join_ct->Records) > 0)

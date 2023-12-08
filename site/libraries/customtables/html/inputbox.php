@@ -339,9 +339,10 @@ class Inputbox
 			case 'text':
 				return $this->render_text($value);
 
-			case 'multilangtext'://dok
-				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . 'multilangtext.php');
-				return $this->render_multilangtext();
+			case 'multilangtext':
+				require_once('inputbox_multilingualtext.php');
+				$InputBox_MultilingualText = new InputBox_MultilingualText($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_MultilingualText->render_multilingualText($this->defaultValue);
 
 			case 'checkbox':
 				return $this->render_checkbox($value);
@@ -746,66 +747,6 @@ class Inputbox
 				$this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $fullFieldName . '");</script>');
 				$this->ct->document->addCustomTag('<script>$Spelling.DefaultDictionary = "English";</script>');
 			}
-		}
-		return $result;
-	}
-
-	protected function render_multilangtext(): string
-	{
-		$RequiredLabel = 'Field is required';
-		$result = '';
-		$firstLanguage = true;
-		foreach ($this->ct->Languages->LanguageList as $lang) {
-			if ($firstLanguage) {
-				$postfix = '';
-				$firstLanguage = false;
-			} else
-				$postfix = '_' . $lang->sef;
-
-			$fieldname = $this->field->fieldname . $postfix;
-
-			$value = null;
-			if (isset($this->row) and array_key_exists($this->ct->Env->field_prefix . $fieldname, $this->row)) {
-				$value = $this->row[$this->ct->Env->field_prefix . $fieldname];
-			} else {
-				Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Env->field_prefix . $this->field->fieldname, $this->ct->Env->field_prefix . $fieldname);
-				$this->ct->errors[] = 'Field "' . $this->ct->Env->field_prefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.';
-				$value = '';
-			}
-
-			if ($value === null) {
-				$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-				if ($value == '')
-					$value = $this->defaultValue;
-			}
-
-			$result .= ($this->field->isrequired == 1 ? ' ' . $RequiredLabel : '');
-
-			$result .= '<div id="' . $fieldname . '_div" class="multilangtext">';
-
-			if ($this->field->params[0] == 'rich') {
-				$result .= '<span class="language_label_rich">' . $lang->caption . '</span>';
-
-				$w = 500;
-				$h = 200;
-				$c = 0;
-				$l = 0;
-
-				$editor_name = $this->ct->app->get('editor');
-				$editor = Editor::getInstance($editor_name);
-
-				$fullFieldName = $this->prefix . $fieldname;
-				$result .= '<div>' . $editor->display($fullFieldName, $value, $w, $h, $c, $l) . '</div>';
-			} else {
-				$result .= '<textarea name="' . $this->prefix . $fieldname . '" '
-					. 'id="' . $this->prefix . $fieldname . '" '
-					. 'data-type="' . $this->field->type . '" '
-					. 'class="' . $this->cssclass . ' ' . ($this->field->isrequired == 1 ? 'required' : '') . '">' . htmlspecialchars($value ?? '') . '</textarea>'
-					. '<span class="language_label">' . $lang->caption . '</span>';
-
-				$result .= ($this->field->isrequired == 1 ? ' ' . $RequiredLabel : '');
-			}
-			$result .= '</div>';
 		}
 		return $result;
 	}

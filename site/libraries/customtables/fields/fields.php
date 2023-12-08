@@ -50,10 +50,8 @@ class Field
 	{
 		$this->ct = &$ct;
 
-		if (!array_key_exists('id', $fieldRow)) {
-			echo 'FieldRaw: Empty.';
-			return;
-		}
+		if (!array_key_exists('id', $fieldRow))
+			throw new Exception('FieldRaw: Empty.');
 
 		$this->id = $fieldRow['id'];
 		$this->fieldname = $fieldRow['fieldname'];
