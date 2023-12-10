@@ -39,7 +39,7 @@ class InputBox_UserGroup extends BaseInputBox
 				$value = $defaultValue;
 		}
 
-		$this->selectBoxAddCSSClass();
+		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 
 		//Build Query
 		$query = $this->buildQuery($showUserWithRecords);
@@ -51,7 +51,7 @@ class InputBox_UserGroup extends BaseInputBox
 		}
 
 		// Start building the select element with attributes
-		$select = '<select ' . $this->attributes2String() . '>';
+		$select = '<select ' . self::attributes2String($this->attributes) . '>';
 
 		// Optional default option
 		$selected = (0 === (int)$value) ? ' selected' : '';

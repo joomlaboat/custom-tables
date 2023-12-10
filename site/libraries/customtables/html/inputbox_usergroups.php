@@ -45,7 +45,7 @@ class InputBox_UserGroups extends BaseInputBox
 
 		$valueArray = explode(',', $value);
 
-		$this->selectBoxAddCSSClass();
+		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 
 		//Build Query
 		$query = $this->buildQuery();
@@ -103,7 +103,7 @@ class InputBox_UserGroups extends BaseInputBox
 		if ($multiple)
 			$attributes['name'] .= '[]';
 
-		$htmlresult = '<SELECT ' . $this->attributes2String($attributes) . ($multiple ? ' MULTIPLE' : '') . '>';
+		$htmlresult = '<SELECT ' . self::attributes2String($attributes) . ($multiple ? ' MULTIPLE' : '') . '>';
 
 		foreach ($records as $row) {
 			$htmlresult .= '<option value="' . $row->id . '"'

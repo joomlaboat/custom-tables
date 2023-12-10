@@ -13,9 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CustomTables\Fields;
 use CustomTables\Inputbox;
-use Joomla\CMS\HTML\HTMLHelper;
 
 class ESInputBox
 {
@@ -28,9 +26,11 @@ class ESInputBox
 		$this->requiredLabel = 'COM_CUSTOMTABLES_REQUIREDLABEL';
 	}
 
-	function renderFieldBox(array $fieldrow, ?array $row, array $option_list, string $onchange = '')
+	function renderFieldBox(array $fieldrow, ?array $row, array $option_list, string $onchange = ''): ?string
 	{
 		$Inputbox = new Inputbox($this->ct, $fieldrow, $option_list, false, $onchange);
+
+		/*
 
 		$realFieldName = $fieldrow['realfieldname'];
 
@@ -67,6 +67,7 @@ class ESInputBox
 
 			return $shortFieldObject;
 		}
+		*/
 
 		$value = $Inputbox->getDefaultValueIfNeeded($row);
 

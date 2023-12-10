@@ -15,12 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 
-//Not recommended method. TODO: replace login
-//$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers';
-//set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-
-// Include library dependencies
-
 $libpath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR;
 require_once($libpath . 'generaltags.php');//added to twig
 require_once($libpath . 'fieldtags.php');//added to twig

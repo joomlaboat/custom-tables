@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component and WordPress 6.x Plugin
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -8,23 +8,43 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-// Check to ensure this file is included in Joomla!
+namespace CustomTables;
+
+// no direct access
+use ESTables;
+use Joomla\Registry\Registry;
+use Joomla\CMS\HTML\HTMLHelper;
+use JoomlaBasicMisc;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CustomTables\common;
-use CustomTables\CT;
-use CustomTables\database;
-use CustomTables\Field;
-use CustomTables\Fields;
-use CustomTables\Inputbox;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\Registry\Registry;
-
-class JHTMLCTTableJoin
+class InputBox_TableJoin extends BaseInputBox
 {
-	static public function render($control_name, Field $field, $listing_is, $value, $option_list, $onchange, $attributes): string
+	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
+	{
+		parent::__construct($ct, $field, $row, $option_list, $attributes);
+	}
+
+	function render_tableJoin(?string $value, ?string $defaultValue): string
+	{
+		//$this->option_list[0] - CSS Class
+		//$this->option_list[1] - Optional Attributes
+		//$this->option_list[2] - Parent Selector - Array
+		//$this->option_list[3] - Custom Title Layout
+
+		if ($value === null) {
+			$value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
+			if ($value == 0)
+				$value = $defaultValue;
+		}
+
+		$listing_id = ($this->row !== null ? $this->row[$this->ct->Table->realidfieldname] : null);
+		return $this->render($this->attributes['id'], $listing_id, $value);
+	}
+
+	protected function render($control_name, $listing_id, $value): string
 	{
 		$params = new Registry;
 		//$params->loadArray([]);
@@ -32,7 +52,7 @@ class JHTMLCTTableJoin
 
 		//Check if Value exists
 		if ($value !== null and $value !== '' and $value !== 0) {
-			$tableName = $field->params[0];
+			$tableName = $this->field->params[0];
 			$tableRow = ESTables::getTableRowByNameAssoc($tableName);
 			$ct->setTable($tableRow);
 			if (!$ct->Table->isRecordExists($value))
@@ -41,13 +61,13 @@ class JHTMLCTTableJoin
 
 		//Prepare the input box
 		$filter = [];
-		$parent_filter_table_and_field = JHTMLCTTableJoin::parseTagArguments($option_list, $filter);
+		$parent_filter_table_and_field = self::parseTagArguments($this->option_list, $filter);
 		$parent_filter_table_name = $parent_filter_table_and_field[0] ?? '';
 		$parent_filter_field_name = $parent_filter_table_and_field[1] ?? '';
 
 		$params_filter = [];
 		if ($parent_filter_table_name == '' and $parent_filter_field_name == '') {
-			JHTMLCTTableJoin::parseTypeParams($field, $params_filter, $parent_filter_table_name, $parent_filter_field_name);
+			self::parseTypeParams($this->field, $params_filter, $parent_filter_table_name, $parent_filter_field_name);
 			$params_filter = array_reverse($params_filter);
 			if (count($params_filter) > 0 and isset($option_list[3]) and $option_list[3] != "") {
 				$params_filter[0][1] = 'layout:' . $option_list[3];
@@ -60,7 +80,7 @@ class JHTMLCTTableJoin
 		$js_filters = [];
 		$js_filters_FieldName = [];
 		$parent_id = $value;
-		JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters, $js_filters_FieldName);
+		self::processValue($filter, $parent_id, $js_filters, $js_filters_FieldName);
 
 		if (count($js_filters) == 0)
 			$js_filters[] = $value;
@@ -78,12 +98,12 @@ class JHTMLCTTableJoin
 
 		$data = [];
 		$data[] = 'data-key="' . $key . '"';
-		$data[] = 'data-fieldname="' . $field->fieldname . '"';
+		$data[] = 'data-fieldname="' . $this->field->fieldname . '"';
 		$data[] = 'data-controlname="' . $control_name . '"';
 		$data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
 		$data[] = 'data-valuefiltersnames="' . base64_encode(json_encode($js_filters_FieldName)) . '"';
-		$data[] = 'data-onchange="' . base64_encode($onchange) . '"';
-		$data[] = 'data-listing_id="' . $listing_is . '"';
+		$data[] = 'data-onchange="' . base64_encode($this->attributes['onchange']) . '"';
+		$data[] = 'data-listing_id="' . $listing_id . '"';
 		$data[] = 'data-value="' . htmlspecialchars($value ?? '') . '"';
 		$data[] = 'data-cssclass="' . htmlspecialchars($cssClass ?? '') . '"';
 
@@ -103,19 +123,21 @@ class JHTMLCTTableJoin
 				$formID = 'ctEditModalForm';
 			else {
 				$formID = 'ctEditForm';
-				$formID .= $field->ct->Params->ModuleId;
+				$formID .= $this->field->ct->Params->ModuleId;
 			}
 		}
 
 		$data[] = 'data-formname="' . $formID . '"';
-		$Placeholder = $field->title;
+		$Placeholder = $this->field->title;
+
+		$attributesString = self::attributes2String($this->attributes);
 
 		return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value ?? '') . '" '
 			. 'data-type="sqljoin" '
-			. 'data-tableid="' . $field->ct->Table->tableid . '" '
-			. $attributes . '/>'
+			. 'data-tableid="' . $this->field->ct->Table->tableid . '" '
+			. $attributesString . '/>'
 			. '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
-			. JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
+			. self::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributesString, $this->attributes['onchange'],
 				$filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder)
 			. '</div>';
 	}
@@ -268,13 +290,8 @@ class JHTMLCTTableJoin
 
 			$selfParentField = Fields::getSelfParentField($temp_ct);
 			if ($selfParentField !== null) {
-
 				$parent_filter_table_name = $temp_ct->Table->tablename;
 				$parent_filter_field_name = $selfParentField['fieldname'];//it was 6
-
-			} else {
-				//$parent_filter_table_name = null;
-				//$parent_filter_field_name = null;
 			}
 
 			$filter[] = self::mapJoinTypeParams($field, $parent_filter_table_name, $parent_filter_field_name, null);
@@ -316,7 +333,7 @@ class JHTMLCTTableJoin
 			$temp_js_filters = null;
 			$join_to_tableName = $flt[5];
 
-			$parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tableName);
+			$parent_id = self::getParentFilterID($temp_ct, $parent_id, $join_to_tableName);
 			$temp_js_filters = $parent_id;
 
 			//Check if this table has self-parent field - the TableJoin field linked with the same table.
@@ -326,7 +343,7 @@ class JHTMLCTTableJoin
 				$selfParent_filters = [];
 				while ($parent_id !== null) {
 					$selfParent_filters[] = $parent_id;
-					$parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tableName);
+					$parent_id = self::getParentFilterID($temp_ct, $parent_id, $join_to_tableName);
 				}
 
 				$selfParent_filters[] = "";
@@ -402,9 +419,7 @@ class JHTMLCTTableJoin
 			return $resultJSON_encoded->error;
 
 		if (!is_array($resultJSON_encoded)) {
-			echo '$resultJSON_encoded is not an array: "';
-			print_r($result);
-			echo '<br/>';
+			echo 'ctUpdateTableJoinLink: $resultJSON_encoded is not an array';
 		}
 
 		$resultJSON = [];
@@ -480,7 +495,7 @@ class JHTMLCTTableJoin
 				if ($next_index + 2 < count($js_filters)) {
 					$next_index += 1;
 					$next_sub_index = 0;
-					$result = JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes,
+					$result = self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes,
 						$onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
 					$result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
 					return $result;
@@ -526,7 +541,6 @@ class JHTMLCTTableJoin
 					$selectBoxParams [] = 'data-childtablefield="' . $childTableField . '"';
 					$selectBoxParams [] = 'data-js_filters_FieldName="' . $js_filters_FieldName[$index] . '"';
 
-
 					$selectedValue = null;
 					$options = [];
 					$maxLimitCount = 0;
@@ -555,12 +569,12 @@ class JHTMLCTTableJoin
 					$VirtualSelectParams [] = 'onServerSearch: onCTVirtualSelectServerSearch';
 					$current_object_id_tmp = $current_object_id . '_Tmp';
 					$result .= '<input id="' . $current_object_id_tmp . '" value="" type="hidden" /><div ' . implode(' ', $selectBoxParams) . '></div>'
-						. '<script>VirtualSelect.init({' . implode(',', $VirtualSelectParams) . '});
+						. '<script>VirtualSelect.init({' . implode(',', $VirtualSelectParams) . '})
 
                         document.querySelector("#' . $current_object_id . '").addEventListener("change", function() {
                         document.getElementById("' . $current_object_id_tmp . '").value = this.value;
                         ctUpdateTableJoinLink("' . $control_name . '",' . $next_index . ', false, ' . $next_sub_index . ',"' . $current_object_id_tmp
-						. '", "' . $formId . '", ' . $updateValueString . ',null,"");
+						. '", "' . $formId . '", ' . $updateValueString . ',null,"")
 });
 </script>';
 				} else {
@@ -571,9 +585,6 @@ class JHTMLCTTableJoin
 					$selectBoxParams [] = 'onChange="' . $onChangeAttribute . '"';
 					$selectBoxParams [] = 'class="' . $cssClass . '"';
 					$selectBoxParams [] = 'data-childtablefield="' . $childTableField . '"';
-
-					if (str_contains($cssClass, ' ct_virtualselect_selectbox'))
-						$selectBoxParams [] = 'data-search="true" style="visibility:hidden;"';
 
 					$result .= '<select ' . implode(' ', $selectBoxParams) . ' >';
 					$result .= '<option value="">- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
@@ -591,7 +602,6 @@ class JHTMLCTTableJoin
 						else
 							$result .= '<option value="' . $r[$i]->value . '">' . $r[$i]->label . '</option>';
 					}
-
 					$result .= '</select>';
 				}
 			}
@@ -602,12 +612,12 @@ class JHTMLCTTableJoin
 				if (is_array($js_filters[$index])) {
 
 					if ($next_sub_index < count($js_filters[$index]))//TODO: check this part
-						$result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
+						$result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
 							$attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
 					else
 						$result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
 				} else {
-					$result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
+					$result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
 						$attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
 				}
 			} else {
@@ -617,12 +627,12 @@ class JHTMLCTTableJoin
 					if (is_array($js_filters[$index])) {
 
 						if ($next_sub_index < count($js_filters[$index]))
-							$result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
+							$result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
 								$attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
 						else
 							$result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
 					} else {
-						$result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
+						$result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
 							$attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
 					}
 				}

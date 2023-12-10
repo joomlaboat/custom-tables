@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use JEventDispatcher;
 use Joomla\CMS\HTML\HTMLHelper;
 use JoomlaBasicMisc;
 use JESPagination;
@@ -376,6 +375,9 @@ class Twig_Html_Tags
 
 	function search($list_of_fields_string_or_array = null, $class = '', $reload = false, $improved = ''): string
 	{
+		if (is_string($reload))
+			$reload = $reload == 'reload';
+
 		if ($list_of_fields_string_or_array === null)
 			return '{{ html.search() }} tag requires at least one field name.';
 
@@ -505,7 +507,8 @@ class Twig_Html_Tags
 		elseif ($improved == 'virtualselect')
 			$cssClass .= ($cssClass == '' ? '' : ' ') . ' ct_virtualselect_selectbox';
 
-		$default_Action = $reload ? ' onChange="ctSearchBoxDo();"' : ' ';//action should be a space not empty or this.value=this.value
+		$onchange = $reload ? 'ctSearchBoxDo();' : null;//action should be a space not empty or this.value=this.value
+
 		$objectName = $first_fld['fieldname'];
 
 		if (count($first_fld) == 0)
@@ -513,7 +516,7 @@ class Twig_Html_Tags
 
 		$vlu = $SearchBox->renderFieldBox('es_search_box_', $objectName, $first_fld,
 			$cssClass, '0',
-			'', false, '', $default_Action, $field_title);//action should be a space not empty or
+			'', '', $onchange, $field_title);//action should be a space not empty or
 		//0 because it's not an edit box, and we pass onChange value even " " is the value;
 
 		$field2search = $this->prepareSearchElement($first_fld);

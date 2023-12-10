@@ -317,10 +317,11 @@ class TwigProcessor
 			try {
 				$result = @$this->twig->render($this->pageLayoutName, $this->variables);
 			} catch (Exception $e) {
-				$this->errorMessage = $e->getMessage();
-				$this->ct->errors[] = $e->getMessage();
+				$msg = $e->getMessage() . $e->getFile() . $e->getLine() . $e->getTraceAsString();
+				$this->errorMessage = $msg;
+				$this->ct->errors[] = $msg;
 
-				$msg = $e->getMessage();
+//				$msg = $e->getMessage();
 				if ($this->pageLayoutLink !== null)
 					$msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
 

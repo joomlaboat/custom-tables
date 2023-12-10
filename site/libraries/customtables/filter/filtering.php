@@ -390,14 +390,7 @@ class Filtering
 						$esr_filter = '';
 
 					$filterTitle .= TypeView::tableJoinList($field, $vL);
-					/*
-										$filterTitle .= HTMLHelper::_('ESRecordsView.render',
-											$vL,
-											$esr_table,
-											$esr_field,
-											$esr_selector,
-											$esr_filter);
-					*/
+
 					$opt_title = '';
 
 					if ($esr_selector == 'multi' or $esr_selector == 'checkbox' or $esr_selector == 'multibox') {

@@ -12,7 +12,6 @@ namespace CustomTables;
 
 // no direct access
 use Joomla\CMS\Editor\Editor;
-use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');

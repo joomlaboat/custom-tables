@@ -34,7 +34,7 @@ class InputBox_Article extends BaseInputBox
 				$value = (int)$defaultValue;
 		}
 
-		$this->selectBoxAddCSSClass();
+		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 
 		$catId = (int)$this->field->params[0] ?? '';
 		$query = 'SELECT id, title AS name FROM #__content';

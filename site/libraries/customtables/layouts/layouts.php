@@ -645,7 +645,7 @@ class Layouts
 		$result .= PHP_EOL;
 
 		$fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
-		$fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
+		$fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox', 'radio'];
 		$fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'userid', 'user', 'virtual'];
 
 		$result .= PHP_EOL . '<table>' . PHP_EOL;

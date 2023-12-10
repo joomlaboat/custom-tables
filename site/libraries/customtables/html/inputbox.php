@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use Exception;
 use tagProcessor_General;
 use tagProcessor_Item;
 use tagProcessor_If;
@@ -55,15 +56,12 @@ class Inputbox
 
 	protected string $cssStyle;
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function __construct(CT &$ct, $fieldRow, array $option_list = [], $isTwig = true, string $onchange = '')
 	{
-		if (defined('_JEXEC')) {
-			if ($ct->Env->version < 4)
-				HTMLHelper::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
-			else
-				HtmlHelper::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
-		}
-
 		$this->ct = &$ct;
 		$this->isTwig = $isTwig;
 
@@ -283,7 +281,11 @@ class Inputbox
 		return $outputString;
 	}
 
-	function render(?string $value, ?array $row)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function render(?string $value, ?array $row): ?string
 	{
 		$this->row = $row;
 		$this->field = new Field($this->ct, $this->field->fieldrow, $this->row);
@@ -392,10 +394,19 @@ class Inputbox
 				return $InputBox_FileLink->render_fileLink($value, $this->defaultValue);
 
 			case 'sqljoin':
-				return $this->render_tablejoin($value);
+				if (!$this->isTwig)
+					return 'Old Table Join tags no longer supported';
+
+				require_once('inputbox_tablejoin.php');
+				$InputBox_TableJoin = new InputBox_TableJoin($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_TableJoin->render_tableJoin($value, $this->defaultValue);
 
 			case 'records':
-				return $this->render_records($value);
+				require_once('inputbox_tablejoin.php');
+
+				require_once('inputbox_tablejoinlist.php');
+				$InputBox_TableJoinList = new InputBox_TableJoinList($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+				return $InputBox_TableJoinList->render_tableJoinList($value, $this->defaultValue);
 
 			case 'googlemapcoordinates':
 				if ($value === null) {
@@ -550,6 +561,10 @@ class Inputbox
 		return $result;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function getTextBox($value): string
 	{
 		if ($value === null) {
@@ -992,175 +1007,6 @@ class Inputbox
 		return $attributes_;
 	}
 
-	protected function render_tablejoin(?string $value): string
-	{
-		$result = '';
-
-		//CT Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
-
-		//$this->option_list[0] - CSS Class
-		//$this->option_list[1] - Optional Attributes
-		//$this->option_list[2] - Parent Selector - Array
-		//$this->option_list[3] - Custom Title Layout
-
-		if ($value === null) {
-			$value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
-			if ($value == 0)
-				$value = $this->defaultValue;
-		}
-
-		$sqljoin_attributes = ' data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"'
-			. ' data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '"';
-
-		if ($this->isTwig) {
-			//Twig Tag
-			//Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
-
-			$result .= HTMLHelper::_('CTTableJoin.render',
-				$this->prefix . $this->field->fieldname,
-				$this->field,
-				($this->row !== null ? $this->row[$this->ct->Table->realidfieldname] : null),
-				$value,
-				$this->option_list,
-				$this->onchange,
-				$sqljoin_attributes);
-		} else {
-			//CT Tag
-			return 'Old Table Join tags no longer supported';
-			/*
-			if (isset($this->option_list[2]) and $this->option_list[2] != '')
-				$this->field->params[2] = $this->option_list[2];//Overwrites field type filter parameter.
-
-			$sqljoin_attributes .= ' onchange="' . $this->onchange . '"';
-
-			$result .= HTMLHelper::_('ESSQLJoin.render',
-				$this->field->params,
-				$value,
-				false,
-				$this->ct->Languages->Postfix,
-				$this->prefix . $this->field->fieldname,
-				$this->place_holder,
-				$this->cssclass,
-				$sqljoin_attributes);
-			*/
-		}
-		return $result;
-	}
-
-	protected function render_records(?string $value): string
-	{
-		$result = '';
-
-		//CT Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
-
-		//$this->option_list[0] - CSS Class
-		//$this->option_list[1] - Optional Attributes
-		//$this->option_list[2] - Parent Selector - Array
-		//$this->option_list[3] - Custom Title Layout
-
-		if ($value === null) {
-			$value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
-			if ($value == 0)
-				$value = $this->defaultValue;
-		}
-
-		$sqljoin_attributes = ' data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"'
-			. ' data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '"';
-		/*
-				if ($this->isTwig) {
-					//Twig Tag
-					//Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
-
-					$result .= HTMLHelper::_('CTTableMultiJoin.render',
-						$this->prefix . $this->field->fieldname,
-						$this->field,
-						($this->row !== null ? $this->row[$this->ct->Table->realidfieldname] : null),
-						$value,
-						$this->option_list,
-						$this->onchange,
-						$sqljoin_attributes);
-				} else {
-		*/
-		//records : table, [fieldname || layout:layoutname], [selector: multi || single], filter, |datalength|
-
-		//Check minimum requirements
-		if (count($this->field->params) < 1)
-			$result .= 'table not specified';
-
-		if (count($this->field->params) < 2)
-			$result .= 'field or layout not specified';
-
-		if (count($this->field->params) < 3)
-			$result .= 'selector not specified';
-
-		$esr_table = $this->field->params[0];
-
-		$advancedOption = null;
-		if (isset($this->option_list[2]) and is_array($this->option_list[2]))
-			$advancedOption = $this->option_list[2];
-
-		if (isset($this->option_list[3])) {
-			$esr_field = 'layout:' . $this->option_list[3];
-		} else {
-			if ($advancedOption and isset($advancedOption[1]) and $advancedOption[1] and $advancedOption[1] != "")
-				$esr_field = $advancedOption[1];
-			else
-				$esr_field = $this->field->params[1] ?? '';
-		}
-
-		$esr_selector = $this->field->params[2] ?? '';
-
-		if (isset($this->option_list[5])) {
-			//To back-support old style
-			$esr_filter = $this->option_list[5];
-		} elseif ($advancedOption and isset($advancedOption[3]) and $advancedOption[3] and $advancedOption[3] != "") {
-			$esr_filter = $advancedOption[3];
-		} elseif (count($this->field->params) > 3)
-			$esr_filter = $this->field->params[3];
-		else
-			$esr_filter = '';
-
-		$dynamic_filter = $this->field->params[4] ?? '';
-
-		if ($advancedOption and isset($advancedOption[4]) and $advancedOption[4] and $advancedOption[4] != "")
-			$sortByField = $advancedOption[4];
-		else
-			$sortByField = $this->field->params[5] ?? '';
-
-		$records_attributes = ($this->attributes != '' ? ' ' : '')
-			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-			. 'data-type="filelink"';
-
-		if ($value === null) {
-			$value = SaveFieldQuerySet::get_record_type_value($this->field);
-			common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname);
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		if (!str_contains($this->cssclass, 'form-select'))
-			$this->cssclass .= ($this->cssclass == '' ? '' : ' ') . 'form-select';
-
-		$result .= HTMLHelper::_('ESRecords.render',
-			$this->field->params,
-			$this->prefix . $this->field->fieldname,
-			$value,
-			$esr_table,
-			$esr_field,
-			$esr_selector,
-			$esr_filter,
-			'',
-			($this->cssclass == '' ? 'ct_improved_selectbox' : $this->cssclass),
-			$records_attributes,
-			$dynamic_filter,
-			$sortByField,
-			$this->ct->Languages->Postfix,
-			$this->place_holder
-		);
-		return $result;
-	}
-
 	protected function render_url(?string $value): string
 	{
 		if ($value === null) {
@@ -1258,7 +1104,7 @@ class Inputbox
 		return $result;
 	}
 
-	protected function phpToJsDateFormat($phpFormat)
+	protected function phpToJsDateFormat($phpFormat): string
 	{
 		$formatConversion = array(
 			'Y' => '%Y',  // Year
@@ -1273,8 +1119,7 @@ class Inputbox
 			// Add more format conversions as needed
 		);
 
-		$jsFormat = strtr($phpFormat, $formatConversion);
-		return $jsFormat;
+		return strtr($phpFormat, $formatConversion);
 	}
 
 	protected function getImageGallery($listing_id): string
@@ -1339,6 +1184,10 @@ class Inputbox
 		return $result;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getDefaultValueIfNeeded($row)
 	{
 		$value = null;
@@ -1431,33 +1280,56 @@ abstract class BaseInputBox
 		$this->attributes = $attributes;
 	}
 
-	function selectBoxAddCSSClass(): void
+	public static function selectBoxAddCSSClass(&$attributes, $joomlaVersion): void
 	{
-		if (isset($this->attributes['class'])) {
-			$classes = explode(' ', $this->attributes['class']);
-			if ($this->ct->Env->version < 4) {
+		if (isset($attributes['class'])) {
+			$classes = explode(' ', $attributes['class']);
+			if ($joomlaVersion < 4) {
 				if (!in_array('inputbox', $classes)) {
 					$classes [] = 'inputbox';
-					$this->attributes['class'] = implode(' ', $classes);
+					$attributes['class'] = implode(' ', $classes);
 				}
 			} else {
-				if (!in_array('inputbox', $classes)) {
+				if (!in_array('form-select', $classes)) {
 					$classes [] = 'form-select';
-					$this->attributes['class'] = implode(' ', $classes);
+					$attributes['class'] = implode(' ', $classes);
 				}
 			}
 		} else {
-			if ($this->ct->Env->version < 4)
-				$this->attributes['class'] = 'inputbox';
+			if ($joomlaVersion < 4)
+				$attributes['class'] = 'inputbox';
 			else
-				$this->attributes['class'] = 'form-select';
+				$attributes['class'] = 'form-select';
+		}
+	}
+
+	public static function inputBoxAddCSSClass(&$attributes, $joomlaVersion): void
+	{
+		if (isset($attributes['class'])) {
+			$classes = explode(' ', $attributes['class']);
+			if ($joomlaVersion < 4) {
+				if (!in_array('inputbox', $classes)) {
+					$classes [] = 'inputbox';
+					$attributes['class'] = implode(' ', $classes);
+				}
+			} else {
+				if (!in_array('form-control', $classes)) {
+					$classes [] = 'form-control';
+					$attributes['class'] = implode(' ', $classes);
+				}
+			}
+		} else {
+			if ($joomlaVersion < 4)
+				$attributes['class'] = 'inputbox';
+			else
+				$attributes['class'] = 'form-control';
 		}
 	}
 
 	function renderSelect(string $value, array $options): string
 	{
 		// Start building the select element with attributes
-		$select = '<select ' . $this->attributes2String() . '>';
+		$select = '<select ' . self::attributes2String($this->attributes) . '>';
 
 		// Optional default option
 		$selected = ($value == '' ? ' selected' : '');
@@ -1472,15 +1344,12 @@ abstract class BaseInputBox
 		return $select;
 	}
 
-	function attributes2String(?array $attributes = null): string
+	public static function attributes2String(array $attributes): string
 	{
-		if ($attributes === null)
-			$attributes = $this->attributes;
-
 		$result = '';
-		foreach ($attributes as $key => $attr) {
+		foreach ($attributes as $key => $attr)
 			$result .= ' ' . htmlspecialchars($key) . '="' . htmlspecialchars($attr) . '"';
-		}
+
 		return $result;
 	}
 }

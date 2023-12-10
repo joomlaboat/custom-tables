@@ -31,7 +31,7 @@ class InputBox_FileLink extends BaseInputBox
 				$value = $defaultValue;
 		}
 
-		$this->selectBoxAddCSSClass();
+		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 
 		$path = CUSTOMTABLES_IMAGES_PATH . DIRECTORY_SEPARATOR . $this->field->params[0] ?? '';
 
@@ -64,6 +64,6 @@ class InputBox_FileLink extends BaseInputBox
 				'name' => '- ' . common::translate('COM_CUSTOMTABLES_PATH') . ' (' . $path . ') ' . common::translate('COM_CUSTOMTABLES_NOTFOUND'));
 
 		return HTMLHelper::_('select.genericlist', $options, $this->prefix . $this->field->fieldname,
-			$this->attributes2String(), 'id', 'name', $value, $this->prefix . $this->field->fieldname);
+			self::attributes2String($this->attributes), 'id', 'name', $value, $this->prefix . $this->field->fieldname);
 	}
 }

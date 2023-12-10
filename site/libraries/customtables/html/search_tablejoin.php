@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x Component and WordPress 6.x Plugin
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -8,24 +8,57 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-// Check to ensure this file is included in Joomla!
+namespace CustomTables;
+
+// no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CustomTables\common;
-use CustomTables\CT;
-use CustomTables\Layouts;
-use CustomTables\LinkJoinFilters;
-use CustomTables\TwigProcessor;
+use ESTables;
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
+use JoomlaBasicMisc;
+use LayoutProcessor;
 
-class JHTMLESSqlJoin
+class Search_tablejoin extends BaseSearch
 {
-	static public function render(array $typeParams, $value, $force_dropdown, $langpostfix, $control_name, $place_holder, $cssclass = '', $attribute = '', $addNoValue = false)
+	function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
 	{
+		parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
+		BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function render($value): string
+	{
+		if (str_contains($this->attributes['onchange'], 'onkeypress='))
+			$this->attributes['onchange'] .= ' onkeypress="es_SearchBoxKeyPress(event)"';
+
+		if (is_array($value))
+			$value = implode(',', $value);
+
+		BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+
+		if ($this->field->layout !== null)
+			$this->field->params[1] = 'tablelesslayout:' . $this->field->layout;
+
+		return $this->doRender($value, $this->objectName);
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function doRender($value, $control_name, $addNoValue = false): string
+	{
+		$typeParams = $this->field->params;
+
 		if (count($typeParams) < 1) {
 			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'), 'error');
 			return '';
@@ -43,19 +76,9 @@ class JHTMLESSqlJoin
 		$order_by_field = $typeParams[4] ?? '';
 
 		if (isset($typeParams[5]) and $typeParams[5] == 'true')
-			$allowunpublished = true;
+			$allowUnpublished = true;
 		else
-			$allowunpublished = false;
-
-		if (isset($typeParams[6])) {
-			if ($typeParams[6] == 'radio')
-				$selector = 'radio';
-			elseif ($typeParams[6] == 'json')
-				$selector = 'json';
-			else
-				$selector = 'dropdown';
-		} else
-			$selector = 'dropdown';
+			$allowUnpublished = false;
 
 		if (ESTables::getTableID($tableName) == '') {
 			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
@@ -65,42 +88,23 @@ class JHTMLESSqlJoin
 		if ($order_by_field == '')
 			$order_by_field = $value_field;
 
-		if ($place_holder == '')
-			$place_holder = '- ' . common::translate('COM_CUSTOMTABLES_SELECT');
-
 		//Get Database records
 		$_params = new Registry;
 
 		$ct = new CT($_params, true);
-		self::getSearchResult($ct, $filter, $tableName, $order_by_field, $allowunpublished);
+
+		$this->getSearchResult($ct, $filter, $tableName, $order_by_field, $allowUnpublished);
 
 		//Process records depending on field type and layout
-		$list_values = self::get_List_Values($ct, $value_field, $langpostfix, $dynamic_filter);
+		$list_values = $this->get_List_Values($ct, $value_field, $dynamic_filter);
 
-		$htmlresult = '';
-		//Output section box
-		if ($ct->Env->print == 1) {
-			$htmlresult .= self::renderPrintResult($list_values, $value, $control_name);
-		} elseif ($selector == 'json') {
-			//$list_value[0] - value
-			//$list_value[1] - title
-			//$list_value[2] - published
-			//$list_value[3] - filter
-			$new_list = [];
-			foreach ($list_values as $value)
-				$new_list[] = (object)['value' => $value[0], 'title' => $value[1]];
-
-			return $new_list;
-		} elseif ($selector == 'dropdown' or $force_dropdown or $dynamic_filter) {
-			$htmlresult .= self::renderDynamicFilter($ct, $value, $tableName, $dynamic_filter, $control_name);
-			$htmlresult .= self::renderDropdownSelector_Box($list_values, $value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue);
-		} else
-			$htmlresult .= self::renderRadioSelector_Box($list_values, $value, $control_name, $cssclass, $attribute, $value_field);
+		$htmlresult = self::renderDynamicFilter($ct, $value, $tableName, $dynamic_filter, $control_name);
+		$htmlresult .= self::renderDropdownSelector_Box($list_values, $value, $control_name, $dynamic_filter, $addNoValue);
 
 		return $htmlresult;
 	}
 
-	static protected function getSearchResult(CT &$ct, $filter, $tableName, $order_by_field, $allowUnpublished): bool
+	static protected function getSearchResult(CT $ct, $filter, $tableName, $order_by_field, $allowUnpublished): bool
 	{
 		$paramsArray = array();
 
@@ -125,7 +129,7 @@ class JHTMLESSqlJoin
 
 		$_params = new Registry($paramsArray);
 
-		$ct->setParams($_params, true);
+		$ct->setParams($_params);
 
 		// -------------------- Table
 
@@ -149,7 +153,11 @@ class JHTMLESSqlJoin
 		return true;
 	}
 
-	static protected function get_List_Values(CT &$ct, $field, $langpostfix, $dynamic_filter)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	static protected function get_List_Values(CT &$ct, $field, $dynamic_filter): array
 	{
 		$layout_mode = false;
 		$layoutcode = '';
@@ -201,31 +209,7 @@ class JHTMLESSqlJoin
 		return $list_values;
 	}
 
-	static protected function renderPrintResult($list_values, $current_value, $control_name): string
-	{
-		$htmlresult = '';
-
-		foreach ($list_values as $list_value) {
-			if ($list_value[0] == $current_value) {
-				$htmlresult .= '<input type="hidden" name="' . $control_name . '"'
-					. ' id="' . $control_name . '" value="' . $list_value[0] . '"'
-					. ' data-type="sqljoin" />';
-				$htmlresult .= $list_value[1];
-				break;
-			}
-		}
-
-		if ($htmlresult == '')
-			$htmlresult .= '<input type="hidden"'
-				. ' name="' . $control_name . '"'
-				. ' id="' . $control_name . '"'
-				. ' value=""'
-				. ' data-type="sqljoin" />';
-
-		return $htmlresult;
-	}
-
-	static protected function renderDynamicFilter(CT &$ct, $value, $tableName, $dynamic_filter, $control_name): string
+	static protected function renderDynamicFilter(CT $ct, $value, $tableName, $dynamic_filter, $control_name): string
 	{
 		$htmlresult = '';
 
@@ -242,42 +226,34 @@ class JHTMLESSqlJoin
 		return $htmlresult;
 	}
 
-	static protected function renderDropdownSelector_Box($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue = false)
+	protected function renderDropdownSelector_Box($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue = false): string
 	{
-		if (str_contains($cssclass, ' ct_improved_selectbox'))
-			return self::renderDropdownSelector_Box_improved($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter);
+		if (str_contains($this->attributes['class'], ' ct_improved_selectbox'))
+			return self::renderDropdownSelector_Box_improved($list_values, $current_value, $control_name, $dynamic_filter);
 		else
-			return self::renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue);
+			return self::renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue);
 	}
 
-	static protected function renderDropdownSelector_Box_improved($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue = false)
+	protected function renderDropdownSelector_Box_improved($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue = false): string
 	{
 		HTMLHelper::_('formbehavior.chosen', '.ct_improved_selectbox');
-		return self::renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue);
+		return $this->renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue);
 	}
 
-	static protected function renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue = false)
+	protected function renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue = false): string
 	{
 		$htmlresult = '';
 
-		$selectBoxParams = [];
-		$selectBoxParams [] = 'name="' . $control_name . '"';
-		$selectBoxParams [] = 'id="' . $control_name . '"';
-		$selectBoxParams [] = 'data-label="' . $place_holder . '"';
-		$selectBoxParams [] = 'data-type="sqljoin"';
+		$this->attributes['name'] = $control_name;
+		$this->attributes['id'] = $control_name;
+		$this->attributes['data-type'] = 'sqljoin';
 
-		if ($cssclass != '')
-			$selectBoxParams [] = 'class="' . $cssclass . '"';
+		if (str_contains($this->attributes['class'], ' ct_virtualselect_selectbox'))
+			$this->attributes['data-search'] = true;
 
-		if ($attribute != '')
-			$selectBoxParams [] = $attribute;
+		$htmlresult_select = '<SELECT ' . BaseInputBox::attributes2String($this->attributes) . '>';
 
-		if (str_contains($cssclass, ' ct_virtualselect_selectbox'))
-			$selectBoxParams [] = 'data-search="true"';
-
-		$htmlresult_select = '<SELECT ' . implode(' ', $selectBoxParams) . '>';
-
-		$htmlresult_select .= '<option value="">- ' . common::translate('COM_CUSTOMTABLES_SELECT') . ' ' . $place_holder . '</option>';
+		$htmlresult_select .= '<option value="">- ' . common::translate('COM_CUSTOMTABLES_SELECT') . ' ' . $this->attributes['data-label'] . '</option>';
 
 		foreach ($list_values as $list_value) {
 			if ($list_value[2] == 0)//if unpublished
@@ -322,7 +298,7 @@ class JHTMLESSqlJoin
 				ctInputbox_removeEmptyParents("' . $control_name . '","");
 				ctInputbox_UpdateSQLJoinLink("' . $control_name . '","");';
 
-			if (str_contains($cssclass, ' ct_virtualselect_selectbox'))
+			if (str_contains($this->attributes['class'], ' ct_virtualselect_selectbox'))
 				$htmlresult .= '
                 VirtualSelect.init({ ele: "' . $control_name . '" });';
 
@@ -332,47 +308,6 @@ class JHTMLESSqlJoin
 		} else {
 			$htmlresult .= $htmlresult_select;
 		}
-		return $htmlresult;
-	}
-
-	static protected function renderRadioSelector_Box($list_values, $current_value, $control_name, $cssclass, $attribute, $field)
-	{
-		$pair = explode(':', $field);
-
-		$withtable = false;
-
-		if ($pair[0] == 'layout')
-			$withtable = true;
-
-		$htmlresult = '';
-
-		if ($withtable)
-			$htmlresult .= '<table rel="radioboxselector" style="border:none;" id="sqljoin_table_' . $control_name . '" ' . ($cssclass != '' ? 'class="' . $cssclass . '"' : '') . '>';
-		else
-			$htmlresult .= '<div rel="radioboxselector" id="sqljoin_table_' . $control_name . '" ' . ($cssclass != '' ? 'class="' . $cssclass . '"' : '') . '>';
-
-		$i = 0;
-		foreach ($list_values as $list_value) {
-
-			$htmlresult = ($withtable ? '<tr><td>' : '<div id="sqljoin_table_' . $control_name . '_' . $list_value[0] . '">')
-				. '<input type="radio" '
-				. ' name="' . $control_name . '"'
-				. ' id="' . $control_name . '_' . $i . '"'
-				. ' value="' . $list_value[0] . '"'
-				. ($list_value == ' ' . $current_value ? ' checked="checked" ' : '')
-				. ' data-type="sqljoin" />'
-				. ($withtable ? '</td><td>' : '')
-				. '<label for="' . $control_name . '_' . $i . '">' . $list_value[1] . '</label>'
-				. ($withtable ? '</td></tr>' : '</div>');
-
-			$i++;
-		}
-
-		if ($withtable)
-			$htmlresult .= '</table>';
-		else
-			$htmlresult .= '</div>';
-
 		return $htmlresult;
 	}
 }
