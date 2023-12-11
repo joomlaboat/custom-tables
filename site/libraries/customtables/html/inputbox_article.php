@@ -10,20 +10,21 @@
 
 namespace CustomTables;
 
-use Exception;
-
+// no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class InputBox_Article extends BaseInputBox
+use Exception;
+
+class InputBox_article extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
-	function render_article(?string $value, ?string $defaultValue): string
+	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($value == '')
 			$value = null;

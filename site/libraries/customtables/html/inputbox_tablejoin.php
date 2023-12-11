@@ -11,23 +11,187 @@
 namespace CustomTables;
 
 // no direct access
-use ESTables;
-use Joomla\Registry\Registry;
-use Joomla\CMS\HTML\HTMLHelper;
-use JoomlaBasicMisc;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class InputBox_TableJoin extends BaseInputBox
+use ESTables;
+use Exception;
+use Joomla\Registry\Registry;
+use Joomla\CMS\HTML\HTMLHelper;
+use JoomlaBasicMisc;
+
+class InputBox_tablejoin extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
-	function render_tableJoin(?string $value, ?string $defaultValue): string
+	static public function renderTableJoinSelectorJSON(CT &$ct, $key, $obEndClean = true): ?string
+	{
+		$index = common::inputGetInt('index');
+
+		$selectors = (array)$ct->app->getUserState($key);
+
+		if ($index < 0 or $index >= count($selectors))
+			die(json_encode(['error' => 'Index out of range.' . $key]));
+
+		$additional_filter = common::inputGetCmd('filter', '');
+		$subFilter = common::inputGetCmd('subfilter');
+		$search = common::inputGetString('search');
+
+		return self::renderTableJoinSelectorJSON_Process($ct, $selectors, $index, $additional_filter, $subFilter, $search, $obEndClean);
+	}
+
+	protected static function renderTableJoinSelectorJSON_Process(CT &$ct, $selectors, $index, $additional_filter, $subFilter, ?string $search = null, $obEndClean = true): ?string
+	{
+		$selector = $selectors[$index];
+
+		$tableName = $selector[0];
+		if ($tableName === null) {
+			if ($obEndClean)
+				die(json_encode(['error' => 'Table not selected']));
+			else
+				return 'Table not selected';
+		}
+
+		$ct->getTable($tableName);
+		if (is_null($ct->Table->tablename))
+			die(json_encode(['error' => 'Table "' . $tableName . '"not found']));
+
+		$fieldName_or_layout = $selector[1];
+		if ($fieldName_or_layout === null or $fieldName_or_layout == '')
+			$fieldName_or_layout = $ct->Table->fields[0]['fieldname'];//Get first field if not specified
+
+		//$showPublished = 0 - show published
+		//$showPublished = 1 - show unpublished
+		//$showPublished = 2 - show any
+		$showPublishedString = $selector[2] ?? '';
+		$showPublished = ($showPublishedString == 'true' ? 2 : 0); //$selector[2] can be "" or "true" or "false"
+
+		$filter = $selector[3] ?? '';
+		$filterOverride = common::inputGetString('where');
+		if ($filterOverride !== null) {
+			if ($filter != '')
+				$filter .= ' and ';
+
+			$filter .= base64_decode($filterOverride);
+		}
+
+		$additional_where = '';
+		//Find the field name that has a join to the parent (index-1) table
+		foreach ($ct->Table->fields as $fld) {
+			if ($fld['type'] == 'sqljoin' or $fld['type'] == 'records') {
+				$type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams']);
+
+				$join_tableName = $type_params[0];
+				$join_to_tableName = $selector[5];
+
+				if ($additional_filter != '') {
+					if ($join_tableName == $join_to_tableName)
+						$filter .= ' and ' . $fld['fieldname'] . '=' . $additional_filter;
+
+				} else {
+					//Check if this table has self-parent field - the TableJoin field linked with the same table.
+					if ($join_tableName == $tableName) {
+						if ($subFilter == '')
+							$additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
+						else
+							$additional_where = $fld['realfieldname'] . '=' . database::quote($subFilter);
+					}
+				}
+			}
+		}
+
+		$ct->setFilter($filter, $showPublished);
+		if ($additional_where != '')
+			$ct->Filter->where[] = $additional_where;
+
+		if ($search !== null and $search != '') {
+			foreach ($ct->Table->fields as $fld) {
+				if ($fieldName_or_layout == $fld['fieldname']) {
+					$ct->Filter->where[] = 'INSTR(' . $fld['realfieldname'] . ',' . database::quote($search) . ')';
+				}
+			}
+		}
+
+		$orderBy = $selector[4] ?? '';
+
+		//sorting
+		$ct->Ordering->ordering_processed_string = $orderBy;
+		$ct->Ordering->parseOrderByString();
+
+		$ct->getRecords();
+
+		if (!str_contains($fieldName_or_layout, '{{') and !str_contains($fieldName_or_layout, 'layout')) {
+			$fieldName_or_layout_tag = '{{ ' . $fieldName_or_layout . ' }}';
+		} else {
+			$pair = explode(':', $fieldName_or_layout);
+
+			if (count($pair) == 2) {
+				$layout_mode = true;
+				if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout')
+					die(json_encode(['error' => common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' "' . $fieldName_or_layout . '"']));
+
+				$Layouts = new Layouts($ct);
+				$fieldName_or_layout_tag = $Layouts->getLayout($pair[1]);
+
+				if (!isset($fieldName_or_layout_tag) or $fieldName_or_layout_tag == '') {
+					$result_js = ['error' => common::translate(
+							'COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' "' . $pair[1] . '"'];
+					return json_encode($result_js);
+				}
+			} else
+				$fieldName_or_layout_tag = $fieldName_or_layout;
+		}
+
+		$selector1 = JoomlaBasicMisc::generateRandomString();
+		$selector2 = JoomlaBasicMisc::generateRandomString() . '*';
+
+		$itemLayout = '{{ record.id }}' . $selector1 . $fieldName_or_layout_tag . $selector2;
+		$pageLayoutContent = '{% block record %}' . $itemLayout . '{% endblock %}';
+
+		$paramsArray['establename'] = $tableName;
+
+		$params = new Registry;
+		$params->loadArray($paramsArray);
+		$ct->setParams($params);
+
+		$pathViews = CUSTOMTABLES_LIBRARIES_PATH
+			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+
+		require_once($pathViews . 'json.php');
+
+		$jsonOutput = new ViewJSON($ct);
+		$output = $jsonOutput->render($pageLayoutContent, false);
+		$outputList = JoomlaBasicMisc::csv_explode($selector2, $output, '"', false);
+		$outputArray = [];
+		foreach ($outputList as $outputListItems) {
+			$items = JoomlaBasicMisc::csv_explode($selector1, $outputListItems, '"', false);
+			if ($items[0] != '')
+				$outputArray[] = ["value" => $items[0], "label" => $items[1]];
+		}
+
+		$outputString = json_encode($outputArray);
+
+		if ($obEndClean) {
+			if (ob_get_contents()) ob_end_clean();
+			header('Content-Type: application/json; charset=utf-8');
+			header("Pragma: no-cache");
+			header("Expires: 0");
+
+			die($outputString);
+		}
+
+		return $outputString;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function render(?string $value, ?string $defaultValue): string
 	{
 		//$this->option_list[0] - CSS Class
 		//$this->option_list[1] - Optional Attributes
@@ -41,10 +205,14 @@ class InputBox_TableJoin extends BaseInputBox
 		}
 
 		$listing_id = ($this->row !== null ? $this->row[$this->ct->Table->realidfieldname] : null);
-		return $this->render($this->attributes['id'], $listing_id, $value);
+		return $this->doRender($this->attributes['id'], $listing_id, $value);
 	}
 
-	protected function render($control_name, $listing_id, $value): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function doRender($control_name, $listing_id, $value): string
 	{
 		$params = new Registry;
 		//$params->loadArray([]);
@@ -243,6 +411,10 @@ class InputBox_TableJoin extends BaseInputBox
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function parseTypeParams($field, &$filter, &$parent_filter_table_name, &$parent_filter_field_name): bool
 	{
 		$params = new Registry;
@@ -321,6 +493,10 @@ class InputBox_TableJoin extends BaseInputBox
 		return [$tableName, $fieldName, $allowUnpublished, $where_filter, $orderBy, $parent_filter_table_name, $parent_filter_field_name, $dynamicFilter];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function processValue($filter, &$parent_id, &$js_filters, &$js_filters_FieldName): void
 	{
 		for ($i = count($filter) - 1; $i >= 0; $i--) {
@@ -361,6 +537,10 @@ class InputBox_TableJoin extends BaseInputBox
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function getParentFilterID($temp_ct, $parent_id, $join_to_tablename)
 	{
 		$join_realfieldname = '';
@@ -408,7 +588,7 @@ class InputBox_TableJoin extends BaseInputBox
 		} else if ($js_filters[$index] != '')
 			$additional_filter = $js_filters[$index];
 
-		$result = Inputbox::renderTableJoinSelectorJSON_Process($ct, $filter, $index, $additional_filter, $subFilter, null, false);
+		$result = self::renderTableJoinSelectorJSON_Process($ct, $filter, $index, $additional_filter, $subFilter, null, false);
 
 		if ($result == '')
 			return '';

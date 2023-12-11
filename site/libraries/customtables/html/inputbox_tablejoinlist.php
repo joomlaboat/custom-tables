@@ -11,13 +11,15 @@
 namespace CustomTables;
 
 // no direct access
+if (!defined('_JEXEC') and !defined('WPINC')) {
+	die('Restricted access');
+}
+
+use Exception;
 use Joomla\Registry\Registry;
 use JoomlaBasicMisc;
 use LayoutProcessor;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
-	die('Restricted access');
-}
 
 class InputBox_TableJoinList extends BaseInputBox
 {
@@ -26,19 +28,23 @@ class InputBox_TableJoinList extends BaseInputBox
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function renderNew($control_name, Field $field, $listing_is, $value, $option_list, $onchange, $attributes): string
 	{
 		$params = new Registry;
 		$ct = new CT($params, true);
 
 		$filter = [];
-		$parent_filter_table_and_field = InputBox_TableJoin::parseTagArguments($option_list, $filter);
+		$parent_filter_table_and_field = InputBox_tablejoin::parseTagArguments($option_list, $filter);
 		$parent_filter_table_name = $parent_filter_table_and_field[0] ?? '';
 		$parent_filter_field_name = $parent_filter_table_and_field[1] ?? '';
 
 		$params_filter = [];
 		if ($parent_filter_table_name == '' and $parent_filter_field_name == '') {
-			InputBox_TableJoin::parseTypeParams($field, $params_filter, $parent_filter_table_name, $parent_filter_field_name);
+			InputBox_tablejoin::parseTypeParams($field, $params_filter, $parent_filter_table_name, $parent_filter_field_name);
 			$params_filter = array_reverse($params_filter);
 			if (count($params_filter) > 0 and isset($option_list[3])) {
 				$params_filter[0][1] = 'layout:' . $option_list[3];
@@ -51,7 +57,7 @@ class InputBox_TableJoinList extends BaseInputBox
 		$js_filters_FieldName = [];
 		$parent_id = $value;
 
-		InputBox_TableJoin::processValue($filter, $parent_id, $js_filters, $js_filters_FieldName);
+		InputBox_tablejoin::processValue($filter, $parent_id, $js_filters, $js_filters_FieldName);
 
 		if (count($js_filters) == 0)
 			$js_filters[] = $value;
@@ -96,12 +102,12 @@ class InputBox_TableJoinList extends BaseInputBox
 
 		return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value ?? '') . '" ' . $attributes . '/>'
 			. '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
-			. InputBox_TableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
+			. InputBox_tablejoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
 				$filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder)
 			. '</div>';
 	}
 
-	function render_tableJoinList(?string $value, ?string $defaultValue): string
+	function render(?string $value, ?string $defaultValue): string
 	{
 		$result = '';
 		//$this->option_list[0] - CSS Class

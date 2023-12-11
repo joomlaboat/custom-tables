@@ -14,13 +14,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
-use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
 
 if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php'))
 	require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
@@ -65,17 +63,17 @@ class CT_FieldTypeTag_file
 	}
 	*/
 
-	static public function get_blob_value(CustomTables\Field $field)
+	static public function get_blob_value(CustomTables\Field $field): ?string
 	{
 		$file_id = common::inputPost($field->comesfieldname, '', 'STRING');
 
 		if ($file_id == '')
-			return false;
+			return null;
 
 		$uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
 
 		if (!file_exists($uploadedFile))
-			return false;
+			return null;
 
 		$mime = mime_content_type($uploadedFile);
 
@@ -93,55 +91,225 @@ class CT_FieldTypeTag_file
 		return $fileData;
 	}
 
-	public static function renderFileFieldBox(CT $ct, Field &$field, ?array $row): string
+	public static function CheckIfFile2download(&$segments, &$vars): bool
 	{
-		if (!$ct->isRecordNull($row)) {
-			$file = strval($row[$field->realfieldname]);
-		} else
-			$file = '';
+		$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+		require_once($path . 'loader.php');
+		CTLoader();
 
-		$result = '<div class="esUploadFileBox" style="vertical-align:top;">';
+		if (str_contains(end($segments), '.')) {
 
-		if ($field->type == 'blob')
-			$result .= CT_FieldTypeTag_file::renderBlobAndDeleteOption(intval($file), $field, $row, $ct->Table->fields, $row[$ct->Table->realidfieldname]);
-		else
-			$result .= CT_FieldTypeTag_file::renderFileAndDeleteOption($file, $field);
+			//could be a file
+			$parts = explode('.', end($segments));
+			if (count($parts) >= 2 and strlen($parts[0]) > 0 and strlen($parts[1]) > 0) {
 
-		$result .= CT_FieldTypeTag_file::renderUploader($ct, $field);
+				//probably a file
+				$allowedExtensions = explode(' ', 'bin gslides doc docx pdf rtf txt xls xlsx psd ppt pptx mp3 wav ogg jpg bmp ico odg odp ods swf xcf jpeg png gif webp svg ai aac m4a wma flv mpg wmv mov flac txt avi csv accdb zip pages');
+				$ext = end($parts);
+				if (in_array($ext, $allowedExtensions)) {
+					$vars['view'] = 'files';
+					$vars['key'] = $segments[0];
 
-		$result .= '</div>';
-		return $result;
+					$processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
+					require_once($processor_file);
+
+					CT_FieldTypeTag_file::process_file_link(end($segments));
+					$vars["listing_id"] = common::inputGetInt("listing_id", 0);
+					$vars['fieldid'] = common::inputGetInt('fieldid', 0);
+					$vars['security'] = common::inputGetCmd('security', 0);//security level letter (d,e,f,g,h,i)
+					$vars['tableid'] = common::inputGetInt('tableid', 0);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
-	protected static function renderBlobAndDeleteOption(int $fileSize, $field, $row, $fields, $listing_id): string
+	public static function process_file_link($filename): void
 	{
-		if ($fileSize == '')
+		$parts = explode('.', $filename);
+
+		if (count($parts) == 1)
+			CT_FieldTypeTag_file::wrong();
+
+		array_splice($parts, count($parts) - 1);
+		$filename_without_ext = implode('.', $parts);
+
+		$parts2 = explode('_', $filename_without_ext);
+		$key = $parts2[count($parts2) - 1];
+
+		$key_parts = explode('c', $key);
+
+		if (count($key_parts) == 1)
+			CT_FieldTypeTag_file::wrong();
+
+		common::inputSet('key', $key);
+
+		$key_params = $key_parts[count($key_parts) - 1];
+
+		//TODO: improve it. Get $security from layout, somehow
+		//security letters tells what method used
+		$security = 'd';//Time Limited (8-24 minutes)
+
+		if (str_contains($key_params, 'b')) $security = 'b';//Blob - Not limited
+		elseif (str_contains($key_params, 'e')) $security = 'e';//Time Limited (1.5 - 4 hours)
+		elseif (str_contains($key_params, 'f')) $security = 'f';//Time/Host Limited (8-24 minutes)
+		elseif (str_contains($key_params, 'g')) $security = 'g';//Time/Host Limited (1.5 - 4 hours)
+		elseif (str_contains($key_params, 'h')) $security = 'h';//Time/Host/User Limited (8-24 minutes)
+		elseif (str_contains($key_params, 'i')) $security = 'i';//Time/Host/User Limited (1.5 - 4 hours)
+
+		common::inputSet('security', $security);
+
+		$key_params_a = explode($security, $key_params);
+		if (count($key_params_a) != 2)
+			CT_FieldTypeTag_file::wrong();
+
+		$listing_id = $key_params_a[0];
+		common::inputSet("listing_id", $listing_id);
+
+		if (isset($key_params_a[1])) {
+			$fieldid = $key_params_a[1];
+			common::inputSet('fieldid', $fieldid);
+		}
+
+		if (isset($key_params_a[2])) {
+			$tableid = $key_params_a[2];
+			common::inputSet('tableid', $tableid);
+		}
+	}
+
+	public static function wrong(): bool
+	{
+		Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+		return false;
+	}
+
+	public static function UploadSingleFile($ExistingFile, $file_id, $field, $FileFolder): ?string
+	{
+		if ($field->type == 'file')
+			$fileExtensions = $field->params[2] ?? '';
+		elseif ($field->type == 'blob')
+			$fileExtensions = $field->params[1] ?? '';
+		else
+			return null;
+
+		if ($file_id != '') {
+			$accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileExtensions));
+
+			$accepted_filetypes = array();
+
+			foreach ($accepted_file_types as $filetype) {
+				$mime = ESFileUploader::get_mime_type('1.' . $filetype);
+				$accepted_filetypes[] = $mime;
+
+				if ($filetype == 'docx')
+					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+				elseif ($filetype == 'xlsx')
+					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+				elseif ($filetype == 'pptx')
+					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+			}
+
+			$uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
+
+			$is_base64encoded = common::inputGet('base64encoded', '', 'CMD');
+			if ($is_base64encoded == "true") {
+				$src = $uploadedFile;
+
+				$file = common::inputPost($field->comesfieldname, '', 'STRING');
+				$dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
+				CustomTablesFileMethods::base64file_decode($src, $dst);
+				$uploadedFile = $dst;
+			}
+
+			if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $field)) {
+				//Delete Old File
+				$filename_full = $FileFolder . DIRECTORY_SEPARATOR . $ExistingFile;
+
+				if (file_exists($filename_full))
+					unlink($filename_full);
+			}
+
+			if (!file_exists($uploadedFile))
+				return null;
+
+			$mime = mime_content_type($uploadedFile);
+
+			$parts = explode('.', $uploadedFile);
+			$fileExtension = end($parts);
+			if ($mime == 'application/zip' and $fileExtension != 'zip') {
+				//could be docx, xlsx, pptx
+				$mime = ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
+			}
+
+			if (in_array($mime, $accepted_filetypes)) {
+
+				$new_filename = CT_FieldTypeTag_file::getCleanAndAvailableFileName($file_id, $FileFolder);
+				$new_filename_path = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder . DIRECTORY_SEPARATOR . $new_filename);
+
+				if (@copy($uploadedFile, $new_filename_path)) {
+					unlink($uploadedFile);
+
+					//Copied
+					return $new_filename;
+				} else {
+					unlink($uploadedFile);
+
+					//Cannot copy
+					return null;
+				}
+			} else {
+				unlink($uploadedFile);
+				return null;
+			}
+		}
+		return null;
+	}
+
+	public static function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field $field): bool
+	{
+		$query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . database::quote($filename) . ' LIMIT 2';
+		return database::getNumRowsOnly($query) > 1;
+	}
+
+	protected static function getCleanAndAvailableFileName(string $filename, string $FileFolder): string
+	{
+		$parts = explode('_', $filename);
+		if (count($parts) < 4)
 			return '';
 
-		$result = '
-                <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
+		$parts[0] = '';
+		$parts[1] = '';
+		$parts[2] = '';
 
-		$filename = CT_FieldTypeTag_file::getBlobFileName($field, $fileSize, $row, $fields);
+		$new_filename = trim(implode(' ', $parts));
 
-		$filename_Icon = CT_FieldTypeTag_file::process($filename, $field, ['', 'icon-filename-link', 48], $listing_id, false, $fileSize);
+		//Clean Up file name
+		$filename_raw = strtolower($new_filename);
+		$filename_raw = str_replace(' ', '_', $filename_raw);
+		$filename_raw = str_replace('-', '_', $filename_raw);
+		//$filename = preg_replace("/[^a-z\d._]/", "", $filename_raw);
+		$filename = preg_replace("/[^\p{L}\d._]/u", "", $filename_raw);
 
-		$result .= $filename_Icon . '<br/><br/>';
+		$i = 0;
+		$filename_new = $filename;
+		while (1) {
 
-		if ($field->isrequired !== 1)
-			$result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
-				. ' Delete Data';
-
-		$result .= '
-                </div>';
-
-		return $result;
+			if (file_exists($FileFolder . DIRECTORY_SEPARATOR . $filename_new)) {
+				//increase index
+				$i++;
+				$filename_new = str_replace('.', '-' . $i . '.', $filename);
+			} else
+				break;
+		}
+		return $filename_new;
 	}
 
-	public static function getBlobFileName($field, $value, $row, $fields)
+
+	public static function getBlobFileName(Field $field, int $valueSize, array $row, array $fields)
 	{
 		$filename = '';
 		if (isset($field->params[2]) and $field->params[2] != '') {
-
 			$fileNameField_String = $field->params[2];
 			$fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $fields);
 			$fileNameField = $fileNameField_Row['realfieldname'];
@@ -157,7 +325,10 @@ class CT_FieldTypeTag_file
 			if ($mime_file_extension)
 				$file_extension = $mime_file_extension;
 
-			$filename = 'blob-' . strtolower(str_replace(' ', '', JoomlaBasicMisc::formatSizeUnits((int)$value))) . '.' . $file_extension;
+			if ($valueSize == 0)
+				$filename = '';
+			else
+				$filename = 'blob-' . strtolower(str_replace(' ', '', JoomlaBasicMisc::formatSizeUnits($valueSize))) . '.' . $file_extension;
 		}
 		return $filename;
 	}
@@ -402,319 +573,5 @@ class CT_FieldTypeTag_file
 		//replace rear part of the hash
 		$m3 = substr($m, 0, strlen($m) - strlen($m2));
 		return $m3 . $m2;
-	}
-
-	protected static function renderFileAndDeleteOption(string $file, $field): string
-	{
-		if ($file == '')
-			return '';
-
-		if ($field->type == 'filelink')
-			$FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
-		else
-			$FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1]);
-
-		$link = $FileFolder . '/' . $file;
-
-		$parts = explode('.', $file);
-		$file_extension = end($parts);
-
-		$image_src = CUSTOMTABLES_MEDIA_WEBPATH . 'images/fileformats/48px/' . $file_extension . '.png';
-
-		$result = '
-                <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
-
-		$result .= '<a href="' . $link . '" target="_blank" title="' . $file . '"><img src="' . $image_src . '" style="width:48px;" alt="' . $file . '" /></a><br/>';
-
-		if ($field->isrequired !== 1)
-			$result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
-				. ' Delete File';
-
-		$result .= '
-                </div>';
-
-		return $result;
-	}
-
-	protected static function renderUploader(CT $ct, Field $field): string
-	{
-		if ($field->type == 'file')
-			$fileExtensions = $field->params[2] ?? '';
-		elseif ($field->type == 'blob')
-			$fileExtensions = $field->params[1] ?? '';
-		else
-			return false;
-
-		$accepted_file_types = ESFileUploader::getAcceptedFileTypes($fileExtensions);
-
-		if ($field->type == 'blob') {
-
-			if ($field->params[0] == 'tiny')
-				$custom_max_size = 255;
-			elseif ($field->params[0] == 'medium')
-				$custom_max_size = 16777215;
-			elseif ($field->params[0] == 'long')
-				$custom_max_size = 4294967295;
-			else
-				$custom_max_size = 65535;
-		} else {
-			$custom_max_size = (int)$field->params[0];
-
-			if ($custom_max_size != 0 and $custom_max_size < 10000)
-				$custom_max_size = $custom_max_size * 1000000; //to change 20 to 20MB
-		}
-
-		$max_file_size = JoomlaBasicMisc::file_upload_max_size($custom_max_size);
-
-		$file_id = JoomlaBasicMisc::generateRandomString();
-		$urlstr = Uri::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
-			. '_fileid=' . $file_id
-			. '&Itemid=' . $field->ct->Params->ItemId
-			. (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
-			. '&fieldname=' . $field->fieldname;
-
-		if ($ct->app->getName() == 'administrator')   //since   3.2
-			$formName = 'adminForm';
-		else {
-			if ($ct->Env->isModal)
-				$formName = 'ctEditModalForm';
-			else {
-				$formName = 'ctEditForm';
-				$formName .= $ct->Params->ModuleId;
-			}
-		}
-
-		return '<div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" '
-			. 'data-type="' . $field->type . '" '
-			. 'data-label="' . $field->title . '" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $field->valuerulecaption) . '" >'
-			. '<div id="ct_fileuploader_' . $field->fieldname . '"></div>'
-			. '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>'
-			. '<script>
-                        //UploadFileCount=1;
-			            ct_getUploader(' . $field->id . ',"' . $urlstr . '",' . $max_file_size . ',"' . $accepted_file_types . '","' . $formName . '",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
-			. $field->fieldname . '","' . $file_id . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '")
-
-                    </script>'
-			. '<input type="hidden" name="' . $field->prefix . $field->fieldname . '" id="' . $field->prefix . $field->fieldname . '" value="" />'
-			. '<input type="hidden" name="' . $field->prefix . $field->fieldname . '_filename" id="' . $field->prefix . $field->fieldname . '_filename" value="" />'
-			. common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>'
-			. common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size)
-			. '</div>';
-	}
-
-	public static function CheckIfFile2download(&$segments, &$vars): bool
-	{
-		$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-		require_once($path . 'loader.php');
-		CTLoader();
-
-		if (str_contains(end($segments), '.')) {
-
-			//could be a file
-			$parts = explode('.', end($segments));
-			if (count($parts) >= 2 and strlen($parts[0]) > 0 and strlen($parts[1]) > 0) {
-
-				//probably a file
-				$allowedExtensions = explode(' ', 'bin gslides doc docx pdf rtf txt xls xlsx psd ppt pptx mp3 wav ogg jpg bmp ico odg odp ods swf xcf jpeg png gif webp svg ai aac m4a wma flv mpg wmv mov flac txt avi csv accdb zip pages');
-				$ext = end($parts);
-				if (in_array($ext, $allowedExtensions)) {
-					$vars['view'] = 'files';
-					$vars['key'] = $segments[0];
-
-					$processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
-					require_once($processor_file);
-
-					CT_FieldTypeTag_file::process_file_link(end($segments));
-					$vars["listing_id"] = common::inputGetInt("listing_id", 0);
-					$vars['fieldid'] = common::inputGetInt('fieldid', 0);
-					$vars['security'] = common::inputGetCmd('security', 0);//security level letter (d,e,f,g,h,i)
-					$vars['tableid'] = common::inputGetInt('tableid', 0);
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public static function process_file_link($filename): void
-	{
-		$parts = explode('.', $filename);
-
-		if (count($parts) == 1)
-			CT_FieldTypeTag_file::wrong();
-
-		array_splice($parts, count($parts) - 1);
-		$filename_without_ext = implode('.', $parts);
-
-		$parts2 = explode('_', $filename_without_ext);
-		$key = $parts2[count($parts2) - 1];
-
-		$key_parts = explode('c', $key);
-
-		if (count($key_parts) == 1)
-			CT_FieldTypeTag_file::wrong();
-
-		common::inputSet('key', $key);
-
-		$key_params = $key_parts[count($key_parts) - 1];
-
-		//TODO: improve it. Get $security from layout, somehow
-		//security letters tells what method used
-		$security = 'd';//Time Limited (8-24 minutes)
-
-		if (str_contains($key_params, 'b')) $security = 'b';//Blob - Not limited
-		elseif (str_contains($key_params, 'e')) $security = 'e';//Time Limited (1.5 - 4 hours)
-		elseif (str_contains($key_params, 'f')) $security = 'f';//Time/Host Limited (8-24 minutes)
-		elseif (str_contains($key_params, 'g')) $security = 'g';//Time/Host Limited (1.5 - 4 hours)
-		elseif (str_contains($key_params, 'h')) $security = 'h';//Time/Host/User Limited (8-24 minutes)
-		elseif (str_contains($key_params, 'i')) $security = 'i';//Time/Host/User Limited (1.5 - 4 hours)
-
-		common::inputSet('security', $security);
-
-		$key_params_a = explode($security, $key_params);
-		if (count($key_params_a) != 2)
-			CT_FieldTypeTag_file::wrong();
-
-		$listing_id = $key_params_a[0];
-		common::inputSet("listing_id", $listing_id);
-
-		if (isset($key_params_a[1])) {
-			$fieldid = $key_params_a[1];
-			common::inputSet('fieldid', $fieldid);
-		}
-
-		if (isset($key_params_a[2])) {
-			$tableid = $key_params_a[2];
-			common::inputSet('tableid', $tableid);
-		}
-	}
-
-	public static function wrong(): bool
-	{
-		Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-		return false;
-	}
-
-	public static function UploadSingleFile($ExistingFile, $file_id, $field, $FileFolder): ?string
-	{
-		if ($field->type == 'file')
-			$fileExtensions = $field->params[2] ?? '';
-		elseif ($field->type == 'blob')
-			$fileExtensions = $field->params[1] ?? '';
-		else
-			return null;
-
-		if ($file_id != '') {
-			$accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileExtensions));
-
-			$accepted_filetypes = array();
-
-			foreach ($accepted_file_types as $filetype) {
-				$mime = ESFileUploader::get_mime_type('1.' . $filetype);
-				$accepted_filetypes[] = $mime;
-
-				if ($filetype == 'docx')
-					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-				elseif ($filetype == 'xlsx')
-					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-				elseif ($filetype == 'pptx')
-					$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-			}
-
-			$uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
-
-			$is_base64encoded = common::inputGet('base64encoded', '', 'CMD');
-			if ($is_base64encoded == "true") {
-				$src = $uploadedFile;
-
-				$file = common::inputPost($field->comesfieldname, '', 'STRING');
-				$dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
-				CustomTablesFileMethods::base64file_decode($src, $dst);
-				$uploadedFile = $dst;
-			}
-
-			if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $field)) {
-				//Delete Old File
-				$filename_full = $FileFolder . DIRECTORY_SEPARATOR . $ExistingFile;
-
-				if (file_exists($filename_full))
-					unlink($filename_full);
-			}
-
-			if (!file_exists($uploadedFile))
-				return null;
-
-			$mime = mime_content_type($uploadedFile);
-
-			$parts = explode('.', $uploadedFile);
-			$fileExtension = end($parts);
-			if ($mime == 'application/zip' and $fileExtension != 'zip') {
-				//could be docx, xlsx, pptx
-				$mime = ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
-			}
-
-			if (in_array($mime, $accepted_filetypes)) {
-
-				$new_filename = CT_FieldTypeTag_file::getCleanAndAvailableFileName($file_id, $FileFolder);
-				$new_filename_path = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder . DIRECTORY_SEPARATOR . $new_filename);
-
-				if (@copy($uploadedFile, $new_filename_path)) {
-					unlink($uploadedFile);
-
-					//Copied
-					return $new_filename;
-				} else {
-					unlink($uploadedFile);
-
-					//Cannot copy
-					return null;
-				}
-			} else {
-				unlink($uploadedFile);
-				return null;
-			}
-		}
-		return null;
-	}
-
-	public static function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field $field): bool
-	{
-		$query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . database::quote($filename) . ' LIMIT 2';
-		return database::getNumRowsOnly($query) > 1;
-	}
-
-	protected static function getCleanAndAvailableFileName(string $filename, string $FileFolder): string
-	{
-		$parts = explode('_', $filename);
-		if (count($parts) < 4)
-			return '';
-
-		$parts[0] = '';
-		$parts[1] = '';
-		$parts[2] = '';
-
-		$new_filename = trim(implode(' ', $parts));
-
-		//Clean Up file name
-		$filename_raw = strtolower($new_filename);
-		$filename_raw = str_replace(' ', '_', $filename_raw);
-		$filename_raw = str_replace('-', '_', $filename_raw);
-		//$filename = preg_replace("/[^a-z\d._]/", "", $filename_raw);
-		$filename = preg_replace("/[^\p{L}\d._]/u", "", $filename_raw);
-
-		$i = 0;
-		$filename_new = $filename;
-		while (1) {
-
-			if (file_exists($FileFolder . DIRECTORY_SEPARATOR . $filename_new)) {
-				//increase index
-				$i++;
-				$filename_new = str_replace('.', '-' . $i . '.', $filename);
-			} else
-				break;
-		}
-		return $filename_new;
 	}
 }

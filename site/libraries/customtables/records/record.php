@@ -119,7 +119,6 @@ class record
 		}
 
 		if (count($saveField->row_new) < 1) {
-			$this->ct->errors[] = 'Nothing to save';
 			return false;
 		}
 

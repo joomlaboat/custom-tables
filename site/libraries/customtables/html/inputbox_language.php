@@ -11,28 +11,25 @@
 namespace CustomTables;
 
 // no direct access
-use Joomla\CMS\Factory;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class InputBox_Language extends BaseInputBox
+class InputBox_language extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
-	function render_language(?string $value, ?string $defaultValue): string
+	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($value === null or $value === '') {
 			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname);
 			if ($value === null) {
 				if ($defaultValue === null or $defaultValue === '') {
 					//If it's a new record then current language will be used.
-					$langObj = Factory::getLanguage();
-					$value = $langObj->getTag();
+					$value = $this->ct->Languages->tag;
 				} else
 					$value = $defaultValue;
 			}

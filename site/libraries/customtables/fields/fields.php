@@ -637,7 +637,7 @@ class Fields
 		return $rows[0];
 	}
 
-	public static function FieldRowByName($fieldname, $ctFields)
+	public static function FieldRowByName(string $fieldname, ?array $ctFields)
 	{
 		if (is_null($ctFields))
 			return null;

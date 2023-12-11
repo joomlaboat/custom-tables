@@ -15,6 +15,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use Exception;
+
 class Search_user extends BaseSearch
 {
 	function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
@@ -23,6 +25,10 @@ class Search_user extends BaseSearch
 		BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function render($value): string
 	{
 		if ($this->ct->Env->user->id != 0) {
@@ -34,7 +40,7 @@ class Search_user extends BaseSearch
 			$this->attributes['name'] = $this->objectName;
 
 			$InputBox_User = new InputBox_User($this->ct, $this->field, null, [], $this->attributes);
-			return $InputBox_User->render_user($value, null, true);
+			return $InputBox_User->render($value, null, true);
 		}
 		return '';
 	}

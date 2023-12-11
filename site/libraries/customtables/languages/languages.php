@@ -21,6 +21,7 @@ class Languages
 {
 	var array $LanguageList;
 	var string $Postfix;
+	var string $tag;
 
 	function __construct()
 	{
@@ -94,6 +95,9 @@ class Languages
 			$index = 0;
 			foreach ($this->LanguageList as $lang) {
 				if ($lang->language == $nowLang) {
+
+					$this->tag = $lang->sef;
+
 					if ($index == 0)
 						return '';
 					else

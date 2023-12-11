@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
-use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Field;
 use Joomla\CMS\Factory;
@@ -130,22 +129,6 @@ class CT_FieldTypeTag_image
 		return $value;
 	}
 
-	public static function renderImageFieldBox(CT $ct, Field $field, string $prefix, ?array $row): string
-	{
-		$ImageFolder = CustomTablesImageMethods::getImageFolder($field->params);
-		$imageFile = '';
-		$isShortcut = false;
-		$imageSRC = CT_FieldTypeTag_image::getImageSRC($row, $field->realfieldname, $ImageFolder, $imageFile, $isShortcut);
-		$result = '<div class="esUploadFileBox" style="vertical-align:top;">';
-
-		if ($imageFile != '')
-			$result .= CT_FieldTypeTag_image::renderImageAndDeleteOption($field, $prefix, $imageSRC, $isShortcut);
-
-		$result .= CT_FieldTypeTag_image::renderUploader($ct, $field, $prefix);
-		$result .= '</div>';
-		return $result;
-	}
-
 	public static function getImageSRC(?array $row, string $realFieldName, string $ImageFolder, string &$imageFile, bool &$isShortcut): string
 	{
 		$isShortcut = false;
@@ -181,64 +164,6 @@ class CT_FieldTypeTag_image
 		return Uri::root() . $imageSrc;
 	}
 
-	protected static function renderImageAndDeleteOption(Field $field, string $prefix, string $imageSrc, bool $isShortcut): string
-	{
-		$result = '<div style="" id="ct_uploadedfile_box_' . $field->fieldname . '">'
-			. '<img src="' . $imageSrc . '" alt="Uploaded Image" style="width:150px;" id="ct_uploadfile_box_' . $field->fieldname . '_image" /><br/>';
-
-		if ($field->isrequired !== 1)
-			$result .= '<input type="checkbox" name="' . $prefix . $field->fieldname . '_delete" id="' . $prefix . $field->fieldname . '_delete" value="true">'
-				. ' Delete ' . ($isShortcut ? 'Shortcut' : 'Image');
-
-		$result .= '</div>';
-
-		return $result;
-	}
-
-	protected static function renderUploader(CT $ct, $field, $prefix): string
-	{
-		$max_file_size = JoomlaBasicMisc::file_upload_max_size();
-		$fileId = JoomlaBasicMisc::generateRandomString();
-		$style = 'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
-		$element_id = 'ct_uploadfile_box_' . $field->fieldname;
-
-		$urlString = Uri::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname . '_fileid=' . $fileId
-			. '&Itemid=' . $field->ct->Params->ItemId
-			. (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
-			. '&fieldname=' . $field->fieldname;
-
-		if ($ct->app->getName() == 'administrator')   //since   3.2
-			$formName = 'adminForm';
-		else {
-			if ($ct->Env->isModal)
-				$formName = 'ctEditModalForm';
-			else {
-				$formName = 'ctEditForm';
-				$formName .= $ct->Params->ModuleId;
-			}
-		}
-
-		$ct_getUploader = 'ct_getUploader(' . $field->id . ',"' . $urlString . '",' . $max_file_size . ',"jpg jpeg png gif svg webp","' . $formName . '",false,"ct_fileuploader_'
-			. $field->fieldname . '","ct_eventsmessage_' . $field->fieldname . '","' . $fileId . '","' . $prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");';
-
-		$ct_fileuploader = '<div id="ct_fileuploader_' . $field->fieldname . '"></div>';
-		$ct_eventsMessage = '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>';
-
-		$inputBoxFieldName = '<input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value="" ' . ($field->isrequired == 1 ? ' class="required"' : '') . ' />';
-		$inputBoxFieldName_FileName = '<input type="hidden" name="' . $prefix . $field->fieldname . '_filename" id="' . $prefix . $field->fieldname . '_filename" value="" />';
-
-		return '<div style="' . $style . '"' . ($field->isrequired == 1 ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
-			. 'data-type="' . $field->type . '" '
-			. 'data-label="' . $field->title . '" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $field->valuerulecaption) . '" >'
-			. $ct_fileuploader . $ct_eventsMessage
-			. '<script>
-                ' . $ct_getUploader . '
-           </script>
-           ' . $inputBoxFieldName . $inputBoxFieldName_FileName
-			. common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '</div>';
-	}
 
 	protected static function renderUploaderLimitations(): string
 	{

@@ -14,7 +14,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use JoomlaBasicMisc;
 
-//use JUri;
 use Joomla\CMS\Uri\Uri;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

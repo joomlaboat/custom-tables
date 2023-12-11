@@ -11,13 +11,14 @@
 namespace CustomTables;
 
 // no direct access
-use Exception;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class InputBox_User extends BaseInputBox
+use Exception;
+
+
+class InputBox_user extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
@@ -28,7 +29,7 @@ class InputBox_User extends BaseInputBox
 	 * @throws Exception
 	 * @since 3.2.0
 	 */
-	function render_user(?string $value, ?string $defaultValue, bool $showUserWithRecords = false): string
+	function render(?string $value, ?string $defaultValue, bool $showUserWithRecords = false): string
 	{
 		if ($this->ct->Env->user->id === null)
 			return '';

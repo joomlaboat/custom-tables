@@ -353,24 +353,29 @@ class SaveFieldQuerySet
 				}
 
 				if ($to_delete == 'true' and $value === null) {
-
 					$this->setNewValue(null);
 
 					if ($fileNameField != '' and !$this->checkIfFieldAlreadyInTheList($fileNameField))
 						$this->row_new[$fileNameField] = null;
-				} else {
+
+				} elseif ($value !== null) {
 					$this->setNewValue(strlen($value));
 
 					if ($fileNameField != '') {
-						$file_id = common::inputPost($this->field->comesfieldname, '', 'STRING');
-						$file_name_parts = explode('_', $file_id);
-						$file_name = implode('_', array_slice($file_name_parts, 3));
-						if ($value !== null and !$this->checkIfFieldAlreadyInTheList($fileNameField)) {
+						if (!$this->checkIfFieldAlreadyInTheList($fileNameField)) {
+							$file_id = common::inputPost($this->field->comesfieldname, '', 'STRING');
+
+							//Delete temporary file name parts
+							//Example: ct_1702267688_PseAH3r3Cy91VhQbhhzwbchYW5rK51sD_001_Li-Rongbo_LOI_PE1214762_26032019_c1b1121b122.doc
+							//Cleaned: 001_Li-Rongbo_LOI_PE1214762_26032019_c1b1121b122.doc
+							$file_name_parts = explode('_', $file_id);
+							$file_name = implode('_', array_slice($file_name_parts, 3));
+
 							$this->row_new[$fileNameField] = $file_name;
 						}
-					} else {
-						$this->row_new[$fileNameField] = $value;
 					}
+
+					$this->row_new[$this->field->realfieldname] = $value;
 				}
 				return;
 
@@ -640,7 +645,7 @@ class SaveFieldQuerySet
 		return $value;
 	}
 
-	public function prepare_alias_type_value($listing_id, $value)
+	public function prepare_alias_type_value(?string $listing_id, string $value)
 	{
 		$value = JoomlaBasicMisc::slugify($value);
 
@@ -666,10 +671,10 @@ class SaveFieldQuerySet
 		return $value_new;
 	}
 
-	protected function checkIfAliasExists($exclude_id, $value, $realfieldname): bool
+	protected function checkIfAliasExists(?string $exclude_id, string $value, string $realfieldname): bool
 	{
 		$query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
-			. $this->ct->Table->realidfieldname . '!=' . (int)$exclude_id . ' AND ' . $realfieldname . '=' . database::quote($value) . ' LIMIT 1';
+			. $this->ct->Table->realidfieldname . '!=' . database::quote($exclude_id) . ' AND ' . $realfieldname . '=' . database::quote($value) . ' LIMIT 1';
 
 		$rows = database::loadObjectList($query);
 		if (count($rows) == 0)

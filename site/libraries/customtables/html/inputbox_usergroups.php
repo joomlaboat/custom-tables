@@ -11,13 +11,13 @@
 namespace CustomTables;
 
 // no direct access
-use Exception;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class InputBox_UserGroups extends BaseInputBox
+use Exception;
+
+class InputBox_usergroups extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
@@ -28,7 +28,7 @@ class InputBox_UserGroups extends BaseInputBox
 	 * @throws Exception
 	 * @since 3.2.0
 	 */
-	function render_userGroups(?string $value, ?string $defaultValue): string
+	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($this->ct->Env->user->id === null)
 			return '';

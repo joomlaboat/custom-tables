@@ -10,15 +10,16 @@
 
 namespace CustomTables;
 
-use DateInterval;
-use DateTimeImmutable;
-use Exception;
-
+// no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class InputBox_Time extends BaseInputBox
+use DateInterval;
+use DateTimeImmutable;
+use Exception;
+
+class InputBox_time extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
@@ -82,7 +83,7 @@ class InputBox_Time extends BaseInputBox
 		return $endTime->getTimestamp() - $reference->getTimestamp();
 	}
 
-	function render_time(?string $value, ?string $defaultValue): string
+	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($value === null) {
 			$value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname);

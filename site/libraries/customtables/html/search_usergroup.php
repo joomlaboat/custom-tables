@@ -36,7 +36,7 @@ class Search_usergroup extends BaseSearch
 			$this->attributes['id'] = $this->objectName;
 			$this->attributes['name'] = $this->objectName;
 			$InputBox_UserGroup = new InputBox_UserGroup($this->ct, $this->field, null, [], $this->attributes);
-			return $InputBox_UserGroup->render_userGroup($value, null, true);
+			return $InputBox_UserGroup->render($value, null, true);
 		}
 		return '';
 	}

@@ -21,22 +21,8 @@ use tagProcessor_Item;
 use tagProcessor_If;
 use tagProcessor_Page;
 use tagProcessor_Value;
-use CT_FieldTypeTag_image;
-use CT_FieldTypeTag_file;
-use CT_FieldTypeTag_imagegallery;
-use CT_FieldTypeTag_FileBox;
-use CTTypes;
 
-use Joomla\Registry\Registry;
 use JoomlaBasicMisc;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Editor\Editor;
-
-//Joomla 3 support
-use JHTML;
-
-//Joomla 4+ support
-use Joomla\CMS\HTML\HTMLHelper;
 
 class Inputbox
 {
@@ -101,184 +87,16 @@ class Inputbox
 
 		$this->attributesArray['class'] = $this->cssclass;
 		$this->attributesArray['data-type'] = $this->field->type;
+		$this->attributesArray['title'] = $this->field->title;
 		$this->attributesArray['data-label'] = $this->field->title;
-
+		$this->attributesArray['placeholder'] = $this->field->title;
 		$this->attributesArray['data-valuerule'] = str_replace('"', '&quot;', $this->field->valuerule);
 		$this->attributesArray['data-valuerulecaption'] = str_replace('"', '&quot;', $this->field->valuerulecaption);
-
-		$this->attributesArray['readonly'] = false;
 		$this->attributesArray['onchange'] = $this->onchange;
 
 		//For old input boxes
 		if ($this->field->type != "records")
 			$this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control');
-	}
-
-	static public function renderTableJoinSelectorJSON(CT &$ct, $key, $obEndClean = true): ?string
-	{
-		$index = common::inputGetInt('index');
-
-		$selectors = (array)$ct->app->getUserState($key);
-
-		if ($index < 0 or $index >= count($selectors))
-			die(json_encode(['error' => 'Index out of range.' . $key]));
-
-		$additional_filter = common::inputGetCmd('filter', '');
-		$subFilter = common::inputGetCmd('subfilter');
-		$search = common::inputGetString('search');
-
-		return self::renderTableJoinSelectorJSON_Process($ct, $selectors, $index, $additional_filter, $subFilter, $search, $obEndClean);
-	}
-
-	static public function renderTableJoinSelectorJSON_Process(CT &$ct, $selectors, $index, $additional_filter, $subFilter, ?string $search = null, $obEndClean = true): ?string
-	{
-		$selector = $selectors[$index];
-
-		$tableName = $selector[0];
-		if ($tableName === null) {
-			if ($obEndClean)
-				die(json_encode(['error' => 'Table not selected']));
-			else
-				return 'Table not selected';
-		}
-
-		$ct->getTable($tableName);
-		if (is_null($ct->Table->tablename))
-			die(json_encode(['error' => 'Table "' . $tableName . '"not found']));
-
-		$fieldName_or_layout = $selector[1];
-		if ($fieldName_or_layout === null or $fieldName_or_layout == '')
-			$fieldName_or_layout = $ct->Table->fields[0]['fieldname'];//Get first field if not specified
-
-		//$showPublished = 0 - show published
-		//$showPublished = 1 - show unpublished
-		//$showPublished = 2 - show any
-		$showPublishedString = $selector[2] ?? '';
-		$showPublished = ($showPublishedString == 'true' ? 2 : 0); //$selector[2] can be "" or "true" or "false"
-
-		$filter = $selector[3] ?? '';
-		$filterOverride = common::inputGetString('where');
-		if ($filterOverride !== null) {
-			if ($filter != '')
-				$filter .= ' and ';
-
-			$filter .= base64_decode($filterOverride);
-		}
-
-		$additional_where = '';
-		//Find the field name that has a join to the parent (index-1) table
-		foreach ($ct->Table->fields as $fld) {
-			if ($fld['type'] == 'sqljoin' or $fld['type'] == 'records') {
-				$type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams']);
-
-				$join_tableName = $type_params[0];
-				$join_to_tableName = $selector[5];
-
-				if ($additional_filter != '') {
-					if ($join_tableName == $join_to_tableName)
-						$filter .= ' and ' . $fld['fieldname'] . '=' . $additional_filter;
-
-				} else {
-					//Check if this table has self-parent field - the TableJoin field linked with the same table.
-					if ($join_tableName == $tableName) {
-						if ($subFilter == '')
-							$additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
-						else
-							$additional_where = $fld['realfieldname'] . '=' . database::quote($subFilter);
-					}
-				}
-			}
-		}
-
-		$ct->setFilter($filter, $showPublished);
-		if ($additional_where != '')
-			$ct->Filter->where[] = $additional_where;
-
-		if ($search !== null and $search != '') {
-			foreach ($ct->Table->fields as $fld) {
-				if ($fieldName_or_layout == $fld['fieldname']) {
-					$ct->Filter->where[] = 'INSTR(' . $fld['realfieldname'] . ',' . database::quote($search) . ')';
-				}
-			}
-		}
-		/*
-		if (count($selectors) > $index + 1) {
-			$currentFilter = $selectors[$index];
-			$nextFilter = $selectors[$index + 1];
-			$ct->Filter->where[] = '(SELECT COUNT(id) FROM #__customtables_table_' . $nextFilter[0]
-				. ' WHERE #__customtables_table_' . $nextFilter[0] . '.es_' . $nextFilter[4] . '=#__customtables_table_' . $currentFilter[0] . '.id) >0';
-		}
-		*/
-
-		$orderBy = $selector[4] ?? '';
-
-		//sorting
-		$ct->Ordering->ordering_processed_string = $orderBy;
-		$ct->Ordering->parseOrderByString();
-
-		$ct->getRecords();
-
-		if (!str_contains($fieldName_or_layout, '{{') and !str_contains($fieldName_or_layout, 'layout')) {
-			$fieldName_or_layout_tag = '{{ ' . $fieldName_or_layout . ' }}';
-		} else {
-			$pair = explode(':', $fieldName_or_layout);
-
-			if (count($pair) == 2) {
-				$layout_mode = true;
-				if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout')
-					die(json_encode(['error' => common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' "' . $fieldName_or_layout . '"']));
-
-				$Layouts = new Layouts($ct);
-				$fieldName_or_layout_tag = $Layouts->getLayout($pair[1]);
-
-				if (!isset($fieldName_or_layout_tag) or $fieldName_or_layout_tag == '') {
-					$result_js = ['error' => common::translate(
-							'COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' "' . $pair[1] . '"'];
-					return json_encode($result_js);
-				}
-			} else
-				$fieldName_or_layout_tag = $fieldName_or_layout;
-		}
-
-		$selector1 = JoomlaBasicMisc::generateRandomString();
-		$selector2 = JoomlaBasicMisc::generateRandomString() . '*';
-
-		$itemLayout = '{{ record.id }}' . $selector1 . $fieldName_or_layout_tag . $selector2;
-		$pageLayoutContent = '{% block record %}' . $itemLayout . '{% endblock %}';
-
-		$paramsArray['establename'] = $tableName;
-
-		$params = new Registry;
-		$params->loadArray($paramsArray);
-		$ct->setParams($params);
-
-		$pathViews = CUSTOMTABLES_LIBRARIES_PATH
-			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
-
-		require_once($pathViews . 'json.php');
-
-		$jsonOutput = new ViewJSON($ct);
-		$output = $jsonOutput->render($pageLayoutContent, false);
-		$outputList = JoomlaBasicMisc::csv_explode($selector2, $output, '"', false);
-		$outputArray = [];
-		foreach ($outputList as $outputListItems) {
-			$items = JoomlaBasicMisc::csv_explode($selector1, $outputListItems, '"', false);
-			if ($items[0] != '')
-				$outputArray[] = ["value" => $items[0], "label" => $items[1]];
-		}
-
-		$outputString = json_encode($outputArray);
-
-		if ($obEndClean) {
-			if (ob_get_contents()) ob_end_clean();
-			header('Content-Type: application/json; charset=utf-8');
-			header("Pragma: no-cache");
-			header("Expires: 0");
-
-			die($outputString);
-		}
-
-		return $outputString;
 	}
 
 	/**
@@ -293,895 +111,86 @@ class Inputbox
 		$this->attributesArray['name'] = $this->prefix . $this->field->fieldname;
 		$this->attributesArray['id'] = $this->prefix . $this->field->fieldname;
 
+		if ($this->row === null)
+			$this->attributesArray['placeholder'] = $this->place_holder;
+
 		if ($this->field->defaultvalue !== '' and $value === null) {
 			$twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
 			$this->defaultValue = $twig->process($this->row);
 		} else
 			$this->defaultValue = null;
 
+
+		//Try to instantiate a class dynamically
+		$aliasMap = [
+			'blob' => 'file',
+			'userid' => 'user',
+			'ordering' => 'int',
+			'googlemapcoordinates' => 'gps',
+			'multilangstring' => 'multilingualstring',
+			'multilangtext' => 'multilingualtext',
+			'sqljoin' => 'tablejoin',
+			'records' => 'tablejoinlist'
+		];
+
+		$fieldTypeShort = str_replace('_', '', $this->field->type);
+		if (key_exists($fieldTypeShort, $aliasMap))
+			$fieldTypeShort = $aliasMap[$fieldTypeShort];
+
+		$additionalFile = 'inputbox_' . $fieldTypeShort . '.php';
+
+		if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $additionalFile)) {
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $additionalFile);
+			$className = '\CustomTables\InputBox_' . $fieldTypeShort;
+			$inputBoxRenderer = new $className($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+		}
+
 		switch ($this->field->type) {
-			case 'radio':
-				return $this->render_radio($value);
-
-			case 'ordering':
-			case 'int':
-				return $this->render_int($value);
-
-			case 'float':
-				return $this->render_float($value);
-
-			case 'phponadd':
-			case 'phponchange':
-
-				if ($value === null) {
-					$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-					$value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
-					if ($value == '')
-						$value = $this->defaultValue;
-				}
-
-				return $value . '<input type="hidden" '
-					. 'name="' . $this->prefix . $this->field->fieldname . '" '
-					. 'id="' . $this->prefix . $this->field->fieldname . '" '
-					. 'data-type="' . $this->field->type . '" '
-					. 'value="' . htmlspecialchars($value ?? '') . '" />';
-
-			case 'phponview':
-				return $value;
-
-			case 'string':
-				return $this->getTextBox($value);
 
 			case 'alias':
-				return $this->render_alias($value);
-
-			case 'multilangstring':
-				return $this->getMultilingualString();
-
-			case 'text':
-				return $this->render_text($value);
-
-			case 'multilangtext':
-				require_once('inputbox_multilingualtext.php');
-				$InputBox_MultilingualText = new InputBox_MultilingualText($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_MultilingualText->render_multilingualText($this->defaultValue);
-
+			case 'article':
+			case 'blob':
 			case 'checkbox':
-				return $this->render_checkbox($value);
-
-			case 'image': //Default value cannot be used with this data type.
-				$image_type_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php';
-				require_once($image_type_file);
-
-				return CT_FieldTypeTag_image::renderImageFieldBox($this->ct, $this->field, $this->prefix, $this->row);
-
-			case 'signature': //Default value cannot be used with this data type.
-				return $this->render_signature();
-
-			case 'blob': //Default value cannot be used with this data type.
-			case 'file':
-				$file_type_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
-				require_once($file_type_file);
-				return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->field, $this->row);
-
-			case 'userid':
-			case 'user':
-				require_once('inputbox_user.php');
-				$InputBox_User = new InputBox_User($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_User->render_user($value, $this->defaultValue);
-
-			case 'usergroup':
-				require_once('inputbox_usergroup.php');
-				$InputBox_UserGroup = new InputBox_UserGroup($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_UserGroup->render_userGroup($value, $this->defaultValue);
-
-			case 'usergroups':
-				require_once('inputbox_usergroups.php');
-				$InputBox_UserGroups = new InputBox_UserGroups($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_UserGroups->render_userGroups($value, $this->defaultValue);
-
-			case 'language':
-				require_once('inputbox_language.php');
-				$InputBox_Language = new InputBox_Language($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_Language->render_language($value, $this->defaultValue);
-
 			case 'color':
-				return $this->render_color($value);
-
+			case 'date':
+			case 'email':
+			case 'file':
+			case 'filebox':
 			case 'filelink':
-				require_once('inputbox_filelink.php');
-				$InputBox_FileLink = new InputBox_FileLink($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_FileLink->render_fileLink($value, $this->defaultValue);
+			case 'float':
+			case 'googlemapcoordinates':
+			case 'int':
+			case 'image':
+			case 'imagegallery':
+			case 'language':
+			case 'multilangstring':
+			case 'multilangtext':
+			case 'ordering':
+			case 'radio':
+			case 'signature':
+			case 'string':
+			case 'text':
+			case 'time':
+			case 'url':
+			case 'user':
+			case 'userid':
+			case 'usergroup':
+			case 'usergroups':
+				return $inputBoxRenderer->render($value, $this->defaultValue);
 
 			case 'sqljoin':
 				if (!$this->isTwig)
 					return 'Old Table Join tags no longer supported';
 
-				require_once('inputbox_tablejoin.php');
-				$InputBox_TableJoin = new InputBox_TableJoin($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_TableJoin->render_tableJoin($value, $this->defaultValue);
+				return $inputBoxRenderer->render($value, $this->defaultValue);
 
 			case 'records':
 				require_once('inputbox_tablejoin.php');
-
 				require_once('inputbox_tablejoinlist.php');
-				$InputBox_TableJoinList = new InputBox_TableJoinList($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_TableJoinList->render_tableJoinList($value, $this->defaultValue);
 
-			case 'googlemapcoordinates':
-				if ($value === null) {
-					$value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
-					if ($value == '')
-						$value = $this->defaultValue;
-				}
-				return CTTypes::googlemapcoordinates($this->prefix . $this->field->fieldname, $value);
-
-			case 'email'://dok
-				if ($value === null) {
-					$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-					//https://stackoverflow.com/questions/58265286/remove-all-special-characters-from-string-to-make-it-a-valid-email-but-keep-%C3%A4%C3%B6%C3%BC
-					$value = preg_replace('/[^\p{L}\d\-.;@_]/u', '', $value);
-
-					if ($value == '')
-						$value = $this->defaultValue;
-				}
-
-				return '<input '
-					. 'type="text" '
-					. 'name="' . $this->prefix . $this->field->fieldname . '" '
-					. 'id="' . $this->prefix . $this->field->fieldname . '" '
-					. 'class="' . $this->cssclass . '" '
-					. 'value="' . htmlspecialchars($value ?? '') . '" maxlength="255" '
-					. $this->attributes . ' '
-					. 'data-type="email" '
-					. 'data-filters="email" '
-					. 'data-label="' . $this->field->title . '"'
-					. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-					. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-					. ' />';
-
-			case 'url':
-				return $this->render_url($value);
-
-			case 'date':
-				return $this->render_date($value);
-
-			case 'time':
-				require_once('inputbox_time.php');
-				$InputBox_Time = new InputBox_Time($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_Time->render_time($value, $this->defaultValue);
-
-			case 'article':
-				require_once('inputbox_article.php');
-				$InputBox_Article = new InputBox_Article($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
-				return $InputBox_Article->render_article($value, $this->defaultValue);
-
-			case 'imagegallery': //Default value cannot be used with this data type.
-				if (!$this->ct->isRecordNull($this->row))
-					return $this->getImageGallery($this->row[$this->ct->Table->realidfieldname]);
-				break;
-
-			case 'filebox': //Default value cannot be used with this data type.
-				if (!$this->ct->isRecordNull($this->row))
-					return $this->getFileBox($this->row[$this->ct->Table->realidfieldname]);
-				break;
+				return $inputBoxRenderer->render($value, $this->defaultValue);
 		}
 		return '';
-	}
-
-	protected function render_radio(?string $value): string
-	{
-		$result = '<ul>';
-		$i = 0;
-
-		if ($value === null) {
-			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			$value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		foreach ($this->field->params as $radioValue) {
-			$v = trim($radioValue);
-			$result .= '<li><input type="radio"'
-				. ' data-type="radio" '
-				. ' name="' . $this->prefix . $this->field->fieldname . '"'
-				. ' id="' . $this->prefix . $this->field->fieldname . '_' . $i . '"'
-				. ' value="' . $v . '" '
-				. ($value == $v ? ' checked="checked"' : '')
-				. ' />'
-				. '<label for="' . $this->prefix . $this->field->fieldname . '_' . $i . '">' . $v . '</label></li>';
-			$i++;
-		}
-		$result .= '</ul>';
-
-		return $result;
-	}
-
-	protected function render_int(?string $value): string
-	{
-		$result = '';
-
-		if ($value === null) {
-			$value = common::inputGetAlnum($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		if ($value == '')
-			$value = (int)$this->field->defaultvalue;
-		else
-			$value = (int)$value;
-
-		$result .= '<input '
-			. 'type="text" '
-			. 'name="' . $this->prefix . $this->field->fieldname . '" '
-			. 'id="' . $this->prefix . $this->field->fieldname . '" '
-			. 'label="' . $this->field->fieldname . '" '
-			. 'class="' . $this->cssclass . '" '
-			. $this->attributes . ' '
-			. 'data-type="' . $this->field->type . '" '
-			. 'data-label="' . $this->field->title . '" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-			. 'value="' . htmlspecialchars($value ?? '') . '" />';
-
-		return $result;
-	}
-
-	protected function render_float(?string $value): string
-	{
-		$result = '';
-
-		if ($value === null) {
-			$value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
-				$value = (float)$this->defaultValue;
-		}
-
-		$result .= '<input '
-			. 'type="text" '
-			. 'name="' . $this->prefix . $this->field->fieldname . '" '
-			. 'id="' . $this->prefix . $this->field->fieldname . '" '
-			. 'class="' . $this->cssclass . '" '
-			. 'data-type="float" '
-			. 'data-label="' . $this->field->title . '" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-			. $this->attributes . ' ';
-
-		$decimals = intval($this->field->params[0]);
-		if ($decimals < 0)
-			$decimals = 0;
-
-		if (isset($values[2]) and $values[2] == 'smart')
-			$result .= 'onkeypress="ESsmart_float(this,event,' . $decimals . ')" ';
-
-		$result .= 'value="' . htmlspecialchars($value ?? '') . '" />';
-		return $result;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	protected function getTextBox($value): string
-	{
-		if ($value === null) {
-			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		$autocomplete = false;
-		if (isset($this->option_list[2]) and $this->option_list[2] == 'autocomplete')
-			$autocomplete = true;
-
-		$result = '<input type="text" '
-			. 'name="' . $this->prefix . $this->field->fieldname . '" '
-			. 'id="' . $this->prefix . $this->field->fieldname . '" '
-			. 'label="' . $this->field->fieldname . '" '
-			. ($autocomplete ? 'list="' . $this->prefix . $this->field->fieldname . '_datalist" ' : '')
-			. 'class="' . $this->cssclass . '" '
-			. 'title="' . $this->place_holder . '" '
-			. 'data-type="' . $this->field->type . '" '
-			. 'data-label="' . $this->field->title . '" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
-
-		if ($this->row === null)
-			$result .= 'placeholder="' . $this->place_holder . '" ';
-
-		$result .= 'value="' . htmlspecialchars($value ?? '') . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
-
-		if ($autocomplete) {
-
-			$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' GROUP BY ' . $this->field->realfieldname
-				. ' ORDER BY ' . $this->field->realfieldname;
-
-			$records = database::loadObjectList($query);
-
-			$result .= '<datalist id="' . $this->prefix . $this->field->fieldname . '_datalist">'
-				. (count($records) > 0 ? '<option value="' . implode('"><option value="', $records) . '">' : '')
-				. '</datalist>';
-		}
-
-		return $result;
-	}
-
-	protected function render_alias($value): string
-	{
-		$maxlength = 0;
-		if ($this->field->params !== null and count($this->field->params) > 0)
-			$maxlength = (int)$this->field->params[0];
-
-		if ($value === null) {
-			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		$result = '<input type="text" '
-			. 'name="' . $this->prefix . $this->field->fieldname . '" '
-			. 'id="' . $this->prefix . $this->field->fieldname . '" '
-			. 'label="' . $this->field->fieldname . '" '
-			. 'class="' . $this->cssclass . '" '
-			. ' ' . $this->attributes
-			. 'data-type="' . $this->field->type . '" '
-			. 'data-label="' . $this->field->title . '" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
-
-		if ($this->row === null)
-			$result .= 'placeholder="' . $this->place_holder . '" ';
-
-		$result .= 'value="' . htmlspecialchars($value ?? '') . '" ' . ($maxlength > 0 ? 'maxlength="' . $maxlength . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
-
-		return $result;
-	}
-
-	protected function getMultilingualString(): string
-	{
-		$result = '';
-		//Specific language selected
-		if (isset($this->option_list[4])) {
-			$language = $this->option_list[4];
-
-			$firstLanguage = true;
-			foreach ($this->ct->Languages->LanguageList as $lang) {
-				if ($firstLanguage) {
-					$postfix = '';
-					$firstLanguage = false;
-				} else
-					$postfix = '_' . $lang->sef;
-
-				if ($language == $lang->sef) {
-					//show single edit box
-					return $this->getMultilingualStringItem($postfix, $lang->sef);
-				}
-			}
-		}
-
-		//show all languages
-		$result .= '<div class="form-horizontal">';
-
-		$firstLanguage = true;
-		foreach ($this->ct->Languages->LanguageList as $lang) {
-			if ($firstLanguage) {
-				$postfix = '';
-				$firstLanguage = false;
-			} else
-				$postfix = '_' . $lang->sef;
-
-			$result .= '
-			<div class="control-group">
-				<div class="control-label">' . $lang->caption . '</div>
-				<div class="controls">' . $this->getMultilingualStringItem($postfix, $lang->sef) . '</div>
-			</div>';
-		}
-		$result .= '</div>';
-		return $result;
-	}
-
-	protected function getMultilingualStringItem(string $postfix, string $langSEF): string
-	{
-		$attributes_ = '';
-		$addDynamicEvent = false;
-
-		if (str_contains($this->attributes, 'onchange="ct_UpdateSingleValue('))//its like a keyword
-		{
-			$addDynamicEvent = true;
-		} else
-			$attributes_ = $this->attributes;
-
-		$value = $this->row[$this->field->realfieldname . $postfix] ?? null;
-		if ($value === null) {
-			$value = common::inputGetString($this->prefix . $this->field->fieldname . $postfix, '');
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		if ($addDynamicEvent) {
-			$href = 'onchange="ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\','
-				. $this->ct->Params->ItemId . ',\'' . $this->field->fieldname . $postfix . '\','
-				. $this->row[$this->ct->Table->realidfieldname] . ',\'' . $langSEF . '\',' . (int)$this->ct->Params->ModuleId . ')"';
-
-			$attributes_ = ' ' . $href;
-		}
-
-		return '<input type="text" '
-			. 'name="' . $this->prefix . $this->field->fieldname . $postfix . '" '
-			. 'id="' . $this->prefix . $this->field->fieldname . $postfix . '" '
-			. 'class="' . $this->cssclass . '" '
-			. 'value="' . htmlspecialchars($value ?? '') . '" '
-			. 'data-type="' . $this->field->type . '" '
-			. 'data-label="' . $this->field->title . '" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-			. ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '" ' : 'maxlength="255" ')
-			. $attributes_ . ' />';
-	}
-
-	protected function render_text(?string $value): string
-	{
-		if ($value === null) {
-			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		$result = '';
-		$fullFieldName = $this->prefix . $this->field->fieldname;
-
-		if (in_array('rich', $this->field->params)) {
-			$w = $this->option_list[2] ?? '100%';
-			$h = $this->option_list[3] ?? '300';
-			$c = 0;
-			$l = 0;
-			$editor_name = $this->ct->app->get('editor');
-			$editor = Editor::getInstance($editor_name);
-			$result .= '<div>' . $editor->display($fullFieldName, $value, $w, $h, $c, $l) . '</div>';
-		} else {
-			$result .= '<textarea name="' . $fullFieldName . '" '
-				. 'id="' . $fullFieldName . '" '
-				. 'class="' . $this->cssclass . '" '
-				. $this->attributes . ' '
-				. 'data-type="' . $this->field->type . '" '
-				. 'data-label="' . $this->field->title . '" '
-				. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-				. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-				. '>' . htmlspecialchars($value ?? '') . '</textarea>';
-		}
-
-		if (in_array('spellcheck', $this->field->params)) {
-			$file_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'thirdparty'
-				. DIRECTORY_SEPARATOR . 'jsc' . DIRECTORY_SEPARATOR . 'include.js';
-
-			if (file_exists($file_path)) {
-				$this->ct->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js"></script>');
-				$this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $fullFieldName . '");</script>');
-				$this->ct->document->addCustomTag('<script>$Spelling.DefaultDictionary = "English";</script>');
-			}
-		}
-		return $result;
-	}
-
-	protected function render_checkbox(?string $value_): string
-	{
-		if ($value_ === null) {
-			$value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
-			if ($value == 0)
-				$value = (int)$this->defaultValue;
-		} else {
-			$value = (int)$value_;
-		}
-
-		$result = '';
-		$format = '';
-
-		if (isset($this->option_list[2]) and $this->option_list[2] == 'yesno')
-			$format = "yesno";
-
-		if ($format == "yesno") {
-			$element_id = $this->prefix . $this->field->fieldname;
-			if ($this->ct->Env->version < 4) {
-				$result .= '<fieldset id="' . $this->prefix . $this->field->fieldname . '" class="' . $this->cssclass . ' btn-group radio btn-group-yesno" '
-					. 'style="border:none !important;background:none !important;">';
-
-				$result .= '<div style="position: absolute;visibility:hidden !important; display:none !important;">'
-					. '<input type="radio" '
-					. 'id="' . $element_id . '0" '
-					. 'name="' . $element_id . '" '
-					. 'value="1" '
-					. 'data-type="' . $this->field->type . '" '
-					. 'data-label="' . $this->field->title . '" '
-					. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-					. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-					. $this->attributes . ' '
-					. ($value == 1 ? ' checked="checked" ' : '')
-					. ' >'
-					. '</div>'
-					. '<label class="btn' . ($value == 1 ? ' active btn-success' : '') . '" for="' . $element_id . '0" id="' . $element_id . '0_label" >' . common::translate('COM_CUSTOMTABLES_YES') . '</label>';
-
-				$result .= '<div style="position: absolute;visibility:hidden !important; display:none !important;">'
-					. '<input type="radio" '
-					. 'id="' . $element_id . '1" '
-					. 'name="' . $element_id . '" '
-					. $this->attributes . ' '
-					. 'value="0" '
-					. 'data-type="' . $this->field->type . '" '
-					. 'data-label="' . $this->field->title . '" '
-					. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-					. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-					. ($value == 0 ? ' checked="checked" ' : '')
-					. ' >'
-					. '</div>'
-					. '<label class="btn' . ($value == 0 ? ' active btn-danger' : '') . '" for="' . $element_id . '1" id="' . $element_id . '1_label">' . common::translate('COM_CUSTOMTABLES_NO') . '</label>';
-
-				$result .= '</fieldset>';
-			} else {
-				$result .= '<div class="switcher">'
-					. '<input type="radio" '
-					. 'id="' . $element_id . '0" '
-					. 'name="' . $element_id . '" '
-					. $this->attributes . ' '
-					. 'value="0" '
-					. 'class="active " '
-					. 'data-type="' . $this->field->type . '" '
-					. 'data-label="' . $this->field->title . '" '
-					. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-					. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-					. ($value == 0 ? ' checked="checked" ' : '')
-					. ' >'
-					. '<label for="' . $element_id . '0">' . common::translate('COM_CUSTOMTABLES_NO') . '</label>'
-					. '<input type="radio" '
-					. 'id="' . $element_id . '1" '
-					. 'name="' . $element_id . '" '
-					. $this->attributes . ' '
-					. 'value="1" '
-					. 'data-type="' . $this->field->type . '" '
-					. 'data-label="' . $this->field->title . '" '
-					. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-					. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-					. ($value == 1 ? ' checked="checked" ' : '')
-					. ' >'
-					. '<label for="' . $element_id . '1">' . common::translate('COM_CUSTOMTABLES_YES') . '</label>'
-					. '<span class="toggle-outside"><span class="toggle-inside"></span></span>'
-					. '</div>';
-			}
-		} else {
-			if ($this->ct->Env->version < 4) {
-				$onchange = $this->prefix . $this->field->fieldname . '_off.value=(this.checked === true ? 0 : 1);';// this is to save unchecked value as well.
-
-				if (str_contains($this->attributes, 'onchange="'))
-					$check_attributes = str_replace('onchange="', 'onchange="' . $onchange, $this->attributes);// onchange event already exists add one before
-				else
-					$check_attributes = $this->attributes . 'onchange="' . $onchange;
-
-				$result .= '<input type="checkbox" '
-					. 'id="' . $this->prefix . $this->field->fieldname . '" '
-					. 'name="' . $this->prefix . $this->field->fieldname . '" '
-					. 'data-type="' . $this->field->type . '" '
-					. 'data-label="' . $this->field->title . '" '
-					. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-					. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-					. ($value ? ' checked="checked" ' : '')
-					. ($this->cssStyle != '' ? ' class="' . $this->cssStyle . '" ' : '')
-					. ($this->cssclass != '' ? ' class="' . $this->cssclass . '" ' : '')
-					. ($check_attributes != '' ? ' ' . $check_attributes : '')
-					. '>'
-					. '<input type="hidden"'
-					. ' id="' . $this->prefix . $this->field->fieldname . '_off" '
-					. ' name="' . $this->prefix . $this->field->fieldname . '_off" '
-					. ($value == 1 ? ' value="0" ' : 'value="1"')
-					. ' >';
-			} else {
-				$element_id = $this->prefix . $this->field->fieldname;
-
-				$result .= '<div class="switcher">'
-					. '<input type="radio" '
-					. 'id="' . $element_id . '0" '
-					. 'name="' . $element_id . '" '
-					. 'value="0" '
-					. 'class="active " '
-					. 'data-type="' . $this->field->type . '" '
-					. 'data-label="' . $this->field->title . '" '
-					. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-					. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-					. ($value == 0 ? ' checked="checked" ' : '')
-					. ' >'
-					. '<label for="' . $element_id . '0">' . common::translate('COM_CUSTOMTABLES_NO') . '</label>'
-					. '<input type="radio" '
-					. 'id="' . $element_id . '1" '
-					. 'name="' . $element_id . '" '
-					. 'value="1" '
-					. 'data-type="' . $this->field->type . '" '
-					. 'data-label="' . $this->field->title . '" '
-					. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-					. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-					. ($value == 1 ? ' checked="checked" ' : '') . ' >'
-					. '<label for="' . $element_id . '1">' . common::translate('COM_CUSTOMTABLES_YES') . '</label>'
-					. '<span class="toggle-outside"><span class="toggle-inside"></span></span>'
-					. '<input type="hidden"'
-					. ' id="' . $this->prefix . $this->field->fieldname . '_off" '
-					. ' name="' . $this->prefix . $this->field->fieldname . '_off" '
-					. ($value == 1 ? ' value="0" ' : 'value="1"')
-					. ' >'
-					. '</div>'
-					. '
-						<script>
-							document.getElementById("' . $element_id . '0").onchange = function(){if(this.checked === true)' . $this->prefix . $this->field->fieldname . '_off.value=1;' . $this->onchange . '};
-							document.getElementById("' . $element_id . '1").onchange = function(){if(this.checked === true)' . $this->prefix . $this->field->fieldname . '_off.value=0;' . $this->onchange . '};
-						</script>
-';
-			}
-		}
-		return $result;
-	}
-
-	protected function render_signature(): string
-	{
-		$width = $this->field->params[0] ?? 300;
-		$height = $this->field->params[1] ?? 150;
-		$format = $this->field->params[3] ?? 'svg';
-		if ($format == 'svg-db')
-			$format = 'svg';
-
-		//https://github.com/szimek/signature_pad/blob/gh-pages/js/app.js
-		//https://stackoverflow.com/questions/46514484/send-signature-pad-to-php-post-method
-		//		class="wrapper"
-		$result = '
-<div class="ctSignature_flexrow" style="width:' . $width . 'px;height:' . $height . 'px;padding:0;">
-	<div style="position:relative;display: flex;padding:0;">
-		<canvas style="background-color: #ffffff;padding:0;width:' . $width . 'px;height:' . $height . 'px;" '
-			. 'id="' . $this->prefix . $this->field->fieldname . '_canvas" '
-			. 'class="uneditable-input ' . $this->cssclass . '" '
-			. $this->attributes
-			. ' >
-		</canvas>
-		<div class="ctSignature_clear"><button type="button" class="close" id="' . $this->prefix . $this->field->fieldname . '_clear">×</button></div>';
-		$result .= '
-	</div>
-</div>
-
-<input type="text" style="display:none;" name="' . $this->prefix . $this->field->fieldname . '" id="' . $this->prefix . $this->field->fieldname . '" value="" '
-			. 'data-type="' . $this->field->type . '" '
-			. 'data-label="' . $this->field->title . '" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" >';
-
-		$ctInputbox_signature = $this->prefix . $this->field->fieldname . '",' . ((int)$width) . ',' . ((int)$height) . ',"' . $format;
-		$result .= '
-<script>
-	ctInputbox_signature("' . $ctInputbox_signature . '")
-</script>';
-		return $result;
-	}
-
-	protected function render_color(?string $value): string
-	{
-		if ($value === null) {
-			$value = common::inputGetAlnum($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		$result = '';
-		$att = array(
-			'data-type' => $this->field->type,
-			'label' => $this->field->title);
-
-		$array_attributes = $this->prepareAttributes($att, $this->attributes);
-
-
-		$transparent = $this->option_list[0] == 'transparent';
-		if (isset($this->option_list[1]) and $this->option_list[1] != "")
-			$palette = explode(',', $this->option_list[1]);
-		else
-			$palette = null;
-
-		// Create the color picker field
-		$inputbox = CTTypes::color($this->prefix . $this->field->fieldname, $value, $transparent, $palette, $array_attributes);
-
-		$result .= $inputbox;
-		return $result;
-	}
-
-	protected function prepareAttributes($attributes_, $attributes_str)
-	{
-		//Used for 'color' field type
-		if ($attributes_str != '') {
-			$attributesList = JoomlaBasicMisc::csv_explode(' ', $attributes_str, '"', false);
-			foreach ($attributesList as $a) {
-				$pair = explode('=', $a);
-
-				if (count($pair) == 2) {
-					$att = $pair[0];
-					if ($att == 'onchange')
-						$att = 'onChange';
-
-					$attributes_[$att] = $pair[1];
-				}
-			}
-		}
-		return $attributes_;
-	}
-
-	protected function render_url(?string $value): string
-	{
-		if ($value === null) {
-			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			//https://stackoverflow.com/questions/58265286/remove-all-special-characters-from-string-to-make-it-a-valid-email-but-keep-%C3%A4%C3%B6%C3%BC
-			$value = preg_replace('/[^\p{L}\d\-.;@_]/u', '', $value);
-
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		$result = '';
-		$filters = array();
-		$filters[] = 'url';
-
-		if (isset($this->field->params[1]) and $this->field->params[1] == 'true')
-			$filters[] = 'https';
-
-		if (isset($this->field->params[2]) and $this->field->params[2] != '')
-			$filters[] = 'domain:' . $this->field->params[2];
-
-		$result .= '<input '
-			. 'type="text" '
-			. 'name="' . $this->prefix . $this->field->fieldname . '" '
-			. 'id="' . $this->prefix . $this->field->fieldname . '" '
-			. 'class="' . $this->cssclass . '" '
-			. 'value="' . htmlspecialchars($value ?? '') . '" '
-			. 'maxlength="1024" '
-			. 'data-type="' . $this->field->type . '"'
-			. 'data-sanitizers="trim" '
-			. 'data-filters="' . implode(',', $filters) . '" '
-			. 'data-label="' . $this->field->title . '" '
-			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-			. 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-			. $this->attributes
-			. ' />';
-
-		return $result;
-	}
-
-	protected function render_date(?string $value): string
-	{
-		$result = '';
-
-		if ($value === null) {
-			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			$value = preg_replace('/[^\0-9]/u', '', $value);
-
-			if ($value == '')
-				$value = $this->defaultValue;
-		}
-
-		if ($value == "0000-00-00" or is_null($value))
-			$value = '';
-
-		$attributes = [];
-		$attributes['class'] = $this->cssclass;
-
-		$att = [];
-
-		if ($this->row === null)
-			$att[] = 'placeholder="' . $this->place_holder . '"';
-
-		$att[] = 'title="' . $this->place_holder . '"';
-		$att[] = 'data-type="date"';
-		$att[] = 'data-label="' . $this->place_holder . '"';
-		$att[] = 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"';
-		$att[] = 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption); // closing quote is not needed because onchange parameter already has opening and closing quotes.
-
-		if ($this->attributes != '' and str_contains($this->attributes, 'onchange=')) {
-			$attributes['onChange'] = str_replace('onchange="', '', $this->attributes) . ' ' . implode(' ', $att);
-		} else {
-			$attributes['onChange'] = '" ' . implode(' ', $att);
-		}
-
-		$attributes['required'] = ($this->field->isrequired == 1 ? 'required' : ''); //not working, don't know why.
-
-		if (isset($this->option_list[2]) and $this->option_list[2] != "")
-			$format = $this->phpToJsDateFormat($this->option_list[2]);
-		else
-			$format = null;
-
-		if ($this->field->params !== null and $this->field->params[0] == 'datetime') {
-			$attributes['showTime'] = true;
-			if ($format === null)
-				$format = '%Y-%m-%d %H:%M:%S';
-		} else {
-			if ($format === null)
-				$format = '%Y-%m-%d';
-		}
-
-		$result .= HTMLHelper::calendar($value, $this->prefix . $this->field->fieldname, $this->prefix . $this->field->fieldname,
-			$format, $attributes);
-
-		return $result;
-	}
-
-	protected function phpToJsDateFormat($phpFormat): string
-	{
-		$formatConversion = array(
-			'Y' => '%Y',  // Year
-			'y' => '%y',  // Year
-			'm' => '%m',  // Month
-			'n' => '%n',  // Month without leading zeros
-			'd' => '%d',  // Day of the month
-			'j' => '%e',  // Day of the month without leading zeros
-			'H' => '%H',  // Hours in 24-hour format
-			'i' => '%M',  // Minutes
-			's' => '%S',  // Seconds
-			// Add more format conversions as needed
-		);
-
-		return strtr($phpFormat, $formatConversion);
-	}
-
-	protected function getImageGallery($listing_id): string
-	{
-		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_gallery.php');
-
-		$result = '';
-		$getGalleryRows = CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $listing_id);
-		$image_prefix = '';
-
-		if (isset($pair[1]) and (int)$pair[1] < 250)
-			$img_width = (int)$pair[1];
-		else
-			$img_width = 250;
-
-		$imageSRCList = CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $image_prefix, $this->field->fieldname,
-			$this->field->params, $this->ct->Table->tableid);
-
-		if (count($imageSRCList) > 0) {
-
-			$result .= '<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\'' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/bg.png\');">
-
-		<table><tbody><tr>';
-
-			foreach ($imageSRCList as $img) {
-				$result .= '<td>';
-				$result .= '<a href="' . $img . '" target="_blank"><img src="' . $img . '" style="width:' . $img_width . 'px;" />';
-				$result .= '</td>';
-			}
-
-			$result .= '</tr></tbody></table>
-		</div>';
-
-		} else
-			return 'No Images';
-
-		return $result;
-	}
-
-	protected function getFileBox($listing_id): string
-	{
-		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
-			. 'customtables' . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR . 'filebox.php');
-
-		$manageButton = '';
-		$FileBoxRows = CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $listing_id);
-
-		foreach ($this->ct->Table->fileboxes as $fileBox) {
-			if ($fileBox[0] == $this->field->fieldname) {
-				$manageButton = CT_FieldTypeTag_FileBox::renderFileBoxIcon($this->ct, $listing_id, $fileBox[0], $fileBox[1]);
-				break;
-			}
-		}
-
-		if (count($FileBoxRows) > 0) {
-			$vlu = CT_FieldTypeTag_FileBox::process($FileBoxRows, $this->field, $listing_id, ['', 'icon-filename-link', '32', '_blank', 'ol']);
-			$result = '<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">'
-				. $manageButton . '<br/>' . $vlu . '</div>';
-		} else
-			$result = common::translate('COM_CUSTOMTABLES_FILE_NO_FILES') . ' ' . $manageButton;
-
-		return $result;
 	}
 
 	/**
@@ -1278,52 +287,38 @@ abstract class BaseInputBox
 		$this->row = $row;
 		$this->option_list = $option_list;
 		$this->attributes = $attributes;
+
+		if ($this->field->isrequired == 1)
+			self::addCSSClass($this->attributes, 'required');
+	}
+
+	public static function addCSSClass(&$attributes, $className): void
+	{
+		if (isset($attributes['class'])) {
+			$classes = explode(' ', $attributes['class']);
+			if (!in_array($className, $classes)) {
+				$classes [] = $className;
+				$attributes['class'] = implode(' ', $classes);
+			}
+		} else {
+			$attributes['class'] = $className;
+		}
 	}
 
 	public static function selectBoxAddCSSClass(&$attributes, $joomlaVersion): void
 	{
-		if (isset($attributes['class'])) {
-			$classes = explode(' ', $attributes['class']);
-			if ($joomlaVersion < 4) {
-				if (!in_array('inputbox', $classes)) {
-					$classes [] = 'inputbox';
-					$attributes['class'] = implode(' ', $classes);
-				}
-			} else {
-				if (!in_array('form-select', $classes)) {
-					$classes [] = 'form-select';
-					$attributes['class'] = implode(' ', $classes);
-				}
-			}
-		} else {
-			if ($joomlaVersion < 4)
-				$attributes['class'] = 'inputbox';
-			else
-				$attributes['class'] = 'form-select';
-		}
+		if ($joomlaVersion < 4)
+			self::addCSSClass($attributes, 'inputbox');
+		else
+			self::addCSSClass($attributes, 'form-select');
 	}
 
 	public static function inputBoxAddCSSClass(&$attributes, $joomlaVersion): void
 	{
-		if (isset($attributes['class'])) {
-			$classes = explode(' ', $attributes['class']);
-			if ($joomlaVersion < 4) {
-				if (!in_array('inputbox', $classes)) {
-					$classes [] = 'inputbox';
-					$attributes['class'] = implode(' ', $classes);
-				}
-			} else {
-				if (!in_array('form-control', $classes)) {
-					$classes [] = 'form-control';
-					$attributes['class'] = implode(' ', $classes);
-				}
-			}
-		} else {
-			if ($joomlaVersion < 4)
-				$attributes['class'] = 'inputbox';
-			else
-				$attributes['class'] = 'form-control';
-		}
+		if ($joomlaVersion < 4)
+			self::addCSSClass($attributes, 'inputbox');
+		else
+			self::addCSSClass($attributes, 'form-control');
 	}
 
 	function renderSelect(string $value, array $options): string

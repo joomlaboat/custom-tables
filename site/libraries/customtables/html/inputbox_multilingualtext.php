@@ -11,20 +11,20 @@
 namespace CustomTables;
 
 // no direct access
-use Joomla\CMS\Editor\Editor;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class InputBox_MultilingualText extends BaseInputBox
+use Joomla\CMS\Editor\Editor;
+
+class InputBox_multilingualtext extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
-	function render_multilingualText(?string $defaultValue): string
+	function render(?string $value, ?string $defaultValue): string
 	{
 		$RequiredLabel = 'Field is required';
 		$result = '';
@@ -55,6 +55,10 @@ class InputBox_MultilingualText extends BaseInputBox
 
 			$result .= ($this->field->isrequired == 1 ? ' ' . $RequiredLabel : '');
 
+			$attributes = $this->attributes;
+			$attributes['id'] = $this->attributes['id'] . $postfix;
+			$attributes['name'] = $this->attributes['name'] . $postfix;
+
 			$result .= '<div id="' . $fieldname . '_div" class="multilangtext">';
 
 			if ($this->field->params[0] == 'rich') {
@@ -68,18 +72,12 @@ class InputBox_MultilingualText extends BaseInputBox
 				$editor_name = $this->ct->app->get('editor');
 				$editor = Editor::getInstance($editor_name);
 
-				$fullFieldName = $this->prefix . $fieldname;
-				$result .= '<div>' . $editor->display($fullFieldName, $value, $w, $h, $c, $l) . '</div>';
+				$input = '<div>' . $editor->display($attributes['name'], $value, $w, $h, $c, $l) . '</div>';
 			} else {
-				$result .= '<textarea name="' . $this->prefix . $fieldname . '" '
-					. 'id="' . $this->prefix . $fieldname . '" '
-					. 'data-type="' . $this->field->type . '" '
-					. 'class="' . $this->cssclass . ' ' . ($this->field->isrequired == 1 ? 'required' : '') . '">' . htmlspecialchars($value ?? '') . '</textarea>'
+				$input = '<textarea ' . self::attributes2String($attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>'
 					. '<span class="language_label">' . $lang->caption . '</span>';
-
-				$result .= ($this->field->isrequired == 1 ? ' ' . $RequiredLabel : '');
 			}
-			$result .= '</div>';
+			$result .= '<div id="' . $fieldname . '_div" class="multilangtext">' . $input . '</div>';
 		}
 		return $result;
 	}

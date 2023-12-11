@@ -10,20 +10,20 @@
 
 namespace CustomTables;
 
-use Joomla\CMS\HTML\HTMLHelper;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-class InputBox_FileLink extends BaseInputBox
+use Joomla\CMS\HTML\HTMLHelper;
+
+class InputBox_fileLink extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
-	function render_fileLink(?string $value, ?string $defaultValue): string
+	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($value === null) {
 			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
@@ -35,11 +35,14 @@ class InputBox_FileLink extends BaseInputBox
 
 		$path = CUSTOMTABLES_IMAGES_PATH . DIRECTORY_SEPARATOR . $this->field->params[0] ?? '';
 
-		if ($path != '' and $path[0] != '/')
-			$path = '/images/' . $path;
+		//Check if the path does not start from the root directory
+		if (!empty($path)) {
+			if ($path[0] !== '/' && (strlen($path) >= 2 && $path[1] !== ':')) {
+				$path = '/images/' . $path;
+			}
+		}
 
 		$parts = explode('/', $path);
-
 		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
 
 		if ($parts[0] == 'images' or (isset($parts[1]) and $parts[1] == 'images')) {
@@ -63,7 +66,7 @@ class InputBox_FileLink extends BaseInputBox
 				'data-type' => "filelink",
 				'name' => '- ' . common::translate('COM_CUSTOMTABLES_PATH') . ' (' . $path . ') ' . common::translate('COM_CUSTOMTABLES_NOTFOUND'));
 
-		return HTMLHelper::_('select.genericlist', $options, $this->prefix . $this->field->fieldname,
-			self::attributes2String($this->attributes), 'id', 'name', $value, $this->prefix . $this->field->fieldname);
+		return HTMLHelper::_('select.genericlist', $options, $this->attributes['id'],
+			self::attributes2String($this->attributes), 'id', 'name', $value, $this->attributes['id']);
 	}
 }
