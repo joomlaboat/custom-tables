@@ -20,12 +20,6 @@ use Exception;
 use JoomlaBasicMisc;
 use LayoutProcessor;
 
-//Joomla 3 support
-use JHTML;
-
-//Joomla 4+ support
-use Joomla\CMS\HTML\HTMLHelper;
-
 class Filtering
 {
 	var CT $ct;
@@ -60,6 +54,10 @@ class Filtering
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function addQueryWhereFilter(): void
 	{
 		if (common::inputGetBase64('where')) {
@@ -363,6 +361,9 @@ class Filtering
 
 			case 'records':
 
+				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
+					. DIRECTORY_SEPARATOR . 'tablejoinlist.php');
+
 				$vList = explode(',', $this->getString_vL($value));
 				$cArr = array();
 				foreach ($vList as $vL) {
@@ -389,7 +390,7 @@ class Filtering
 					else
 						$esr_filter = '';
 
-					$filterTitle .= TypeView::tableJoinList($field, $vL);
+					$filterTitle .= Value_tablejoinlist::renderTableJoinListValue($field, $vL);
 
 					$opt_title = '';
 
@@ -442,6 +443,9 @@ class Filtering
 
 			case 'sqljoin':
 
+				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
+					. DIRECTORY_SEPARATOR . 'tablejoin.php');
+
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
@@ -465,7 +469,7 @@ class Filtering
 					foreach ($vList as $vL) {
 						$valueNew = $vL;
 
-						$filterTitle .= TypeView::tableJoin($field, '{{ ' . $esr_field_name . ' }}', $valueNew);
+						$filterTitle .= Value_tablejoin::renderTableJoinValue($field, '{{ ' . $esr_field_name . ' }}', $valueNew);
 
 						if ($valueNew != '') {
 							if ($comparison_operator == '!=') {
@@ -530,8 +534,15 @@ class Filtering
 		return $c;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function Search_User($value, $fieldrow, $comparison_operator, $field_extra_param = '')
 	{
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+			. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
+
 		$v = $this->getString_vL($value);
 
 		$vList = explode(',', $v);
@@ -544,7 +555,10 @@ class Filtering
 					$cArr[] = '(SELECT m.group_id FROM #__user_usergroup_map AS m WHERE user_id=' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ' AND '
 						. $select1 . $comparison_operator . database::quote($v) . ')';
 
-					$filterTitle = TypeView::user($vL);
+					require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+						. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
+
+					$filterTitle = Value_user::renderUserValue($vL);
 					$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 				}
 			}
@@ -556,7 +570,7 @@ class Filtering
 					else
 						$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
 
-					$filterTitle = TypeView::user($vL);
+					$filterTitle = Value_user::renderUserValue($vL);
 					$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 				}
 			}
@@ -596,7 +610,7 @@ class Filtering
 		foreach ($vList as $vL) {
 			if ($vL != '') {
 				$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
-				$filterTitle = TypeView::userGroup($vL);
+				$filterTitle = CTUser::showUserGroup((int)$vL);
 				$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 			}
 		}

@@ -681,7 +681,10 @@ class fieldObject
 			} else
 				$layoutcode = '{{ ' . $fieldName . ' }}';
 
-			return TypeView::tableJoin($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
+				. DIRECTORY_SEPARATOR . 'tablejoin.php');
+
+			return Value_tablejoin::renderTableJoinValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
 		} elseif ($this->field->type == 'records') {
 			//2. ?string $showPublishedString = ''
 			if (isset($functionParams[1]) and is_array($functionParams[1]))
@@ -697,8 +700,10 @@ class fieldObject
 
 			$layoutcode = '{{ ' . $fieldName . ' }}';
 
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'typeview_tablejoinlist.php');
-			return TypeView_TableJoinList::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname],
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
+				. DIRECTORY_SEPARATOR . 'tablejoinlist.php');
+
+			return Value_tablejoinlist::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname],
 				$showPublishedString, $separatorCharacter);
 		} else {
 			$this->ct->errors[] = '{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.';
@@ -737,7 +742,11 @@ class fieldObject
 		$layoutcode = '{{ ' . $fieldName . '.value }}';
 
 		if ($this->field->type == 'sqljoin') {
-			return TypeView::tableJoin($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
+
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
+				. DIRECTORY_SEPARATOR . 'tablejoin.php');
+
+			return Value_tablejoin::renderTableJoinValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
 		} elseif ($this->field->type == 'records') {
 
 			//2. ?string $showPublishedString = ''
@@ -752,8 +761,10 @@ class fieldObject
 			else
 				$separatorCharacter = null;
 
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'typeview_tablejoinlist.php');
-			return TypeView_TableJoinList::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
+				. DIRECTORY_SEPARATOR . 'tablejoinlist.php');
+
+			return Value_tablejoinlist::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
 		} else {
 			$this->ct->errors[] = '{{ ' . $this->field->fieldname . '.getvalue }}. Wrong field type "' . $this->field->type . '". ".getvalue" method is only available for Table Join and Records filed types.';
 			return '';
@@ -782,10 +793,16 @@ class fieldObject
 		}
 
 		if ($this->field->type == 'sqljoin') {
-			return TypeView::tableJoin($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname]);
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
+				. DIRECTORY_SEPARATOR . 'tablejoin.php');
+
+			return Value_tablejoin::renderTableJoinValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname]);
 		} elseif ($this->field->type == 'records') {
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'typeview_tablejoinlist.php');
-			return TypeView_TableJoinList::resolveRecordTypeValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
+
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
+				. DIRECTORY_SEPARATOR . 'tablejoinlist.php');
+
+			return Value_tablejoinlist::resolveRecordTypeValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
 		}
 		return 'impossible';
 	}

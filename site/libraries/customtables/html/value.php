@@ -60,9 +60,13 @@ class Value
 		$rowValue = $row[$rfn] ?? null;
 
 		//Try to instantiate a class dynamically
-		$aliasMap = [];
+		$aliasMap = [
+			'userid' => 'user',
+			'sqljoin' => 'tablejoin',
+			'records' => 'tablejoinlist'
+		];
 
-		$fieldTypeShort = str_replace('_', '', $this->field->type);
+		$fieldTypeShort = $this->field->type;
 		if (key_exists($fieldTypeShort, $aliasMap))
 			$fieldTypeShort = $aliasMap[$fieldTypeShort];
 
@@ -70,9 +74,9 @@ class Value
 			. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . $fieldTypeShort . '.php';
 
 		if (file_exists($additionalFile)) {
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $additionalFile);
+			require_once($additionalFile);
 			$className = '\CustomTables\Value_' . $fieldTypeShort;
-			$ValueRenderer = new $className($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+			$ValueRenderer = new $className($this->ct, $this->field, $rowValue, $option_list);
 		}
 
 		switch ($this->field->type) {
@@ -231,36 +235,11 @@ class Value
 
 				return CT_FieldTypeTag_FileBox::process($FileBoxRows, $this->field, $this->row[$this->ct->Table->realidfieldname], $option_list);
 
-			case 'records':
-				return TypeView::tableJoinList($this->field, $rowValue, $option_list);
-
 			case 'sqljoin':
-
-				if (count($option_list) == 0)
-					$fieldName = $this->field->params[1];
-				else
-					$fieldName = $option_list[0];
-
-				$fieldNameParts = explode(':', $fieldName);
-
-				if (count($fieldNameParts) == 2) {
-					//It's not a fieldname but layout. Example: tablelesslayout:PersonName
-					if ($fieldNameParts[0] == 'tablelesslayout' or $fieldNameParts[0] == 'layout') {
-						$Layouts = new Layouts($this->ct);
-						$layoutCode = $Layouts->getLayout($fieldNameParts[1]);
-
-						if ($layoutCode == '')
-							throw new Exception('TableJoin value layout not found. (' . $fieldName . ')');
-					} else
-						throw new Exception('TableJoin value layout syntax invalid. (' . $fieldName . ')');
-				} else
-					$layoutCode = '{{ ' . $fieldName . ' }}';
-
-				return TypeView::tableJoin($this->field, $layoutCode, $rowValue);
-
-			case 'user':
 			case 'userid':
-				return TypeView::user($rowValue, $option_list[0] ?? '');
+			case 'user':
+			case 'records':
+				return $ValueRenderer->render();
 
 			case 'usergroup':
 				return CTUser::showUserGroup((int)$rowValue);
@@ -518,5 +497,21 @@ class Value
 			return 'Error:' . $e->getMessage();
 		}
 		return $value;
+	}
+}
+
+abstract class BaseValue
+{
+	protected CT $ct;
+	protected Field $field;
+	protected $rowValue;
+	protected array $option_list;
+
+	function __construct(CT &$ct, Field $field, $rowValue, array $option_list = [])
+	{
+		$this->ct = $ct;
+		$this->field = $field;
+		$this->rowValue = $rowValue;
+		$this->option_list = $option_list;
 	}
 }

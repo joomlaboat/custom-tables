@@ -17,10 +17,15 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\TypeView;
+use CustomTables\Value_user;
 
 class CT_FieldTypeTag_log
 {
-	public static function getLogVersionLinks(CT &$ct, $rowValue, &$row)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function getLogVersionLinks(CT &$ct, $rowValue, &$row): string
 	{
 		$current_json_data_size = CT_FieldTypeTag_log::getVersionDataSize($ct, $row);
 
@@ -46,7 +51,11 @@ class CT_FieldTypeTag_log
 		//get original author
 		foreach ($ct->Table->fields as $fieldRow) {
 			if ($fieldRow['type'] == 'userid') {
-				$version_author = TypeView::user($row[$ct->Env->field_prefix . $fieldRow['fieldname']], '');
+
+				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+					. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
+
+				$version_author = Value_user::renderUserValue($row[$ct->Env->field_prefix . $fieldRow['fieldname']]);
 				break;
 			}
 		}
@@ -118,7 +127,10 @@ class CT_FieldTypeTag_log
 
 				if (isset($data[1])) //last comma is empty so no element number 1
 				{
-					$version_author = TypeView::user($data[1], '');
+					require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+						. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
+
+					$version_author = Value_user::renderUserValue($data[1]);
 
 					if (isset($data[3])) //last comma is empty so no element number 1
 					{
