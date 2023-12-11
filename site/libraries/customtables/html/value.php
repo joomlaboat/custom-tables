@@ -51,6 +51,7 @@ class Value
 
 	/**
 	 * @throws Exception
+	 * @since 3.2.2
 	 */
 	function renderValue(array $fieldrow, ?array $row, array $option_list, bool $parseParams = true)
 	{

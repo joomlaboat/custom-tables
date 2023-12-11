@@ -21,7 +21,7 @@ require_once($path . 'helpers' . DIRECTORY_SEPARATOR . 'misc.php');
 require_once($path . 'tables' . DIRECTORY_SEPARATOR . 'tables.php');
 require_once($path . 'fields' . DIRECTORY_SEPARATOR . 'fields.php');
 
-function updateESTables()
+function updateESTables(): void
 {
 	getESTables();
 }

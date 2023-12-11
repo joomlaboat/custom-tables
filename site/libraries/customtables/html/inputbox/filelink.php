@@ -14,13 +14,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use Joomla\CMS\HTML\HTMLHelper;
-
 class InputBox_fileLink extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
 	{
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
+		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 	}
 
 	function render(?string $value, ?string $defaultValue): string
@@ -30,8 +29,6 @@ class InputBox_fileLink extends BaseInputBox
 			if ($value == '')
 				$value = $defaultValue;
 		}
-
-		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 
 		$path = CUSTOMTABLES_IMAGES_PATH . DIRECTORY_SEPARATOR . $this->field->params[0] ?? '';
 
@@ -53,20 +50,23 @@ class InputBox_fileLink extends BaseInputBox
 			$real_path = $path;//un-relative path
 		}
 
+		$options = [];
+
 		if (file_exists($real_path)) {
-			$options[] = array('id' => '', 'name' => '- ' . common::translate('COM_CUSTOMTABLES_SELECT'),
-				'data-type' => "filelink");
+
+			$options [] = '<option value="">' . common::translate('COM_CUSTOMTABLES_SELECT_FILE') . '</option>'; // Optional default option
+
 			$files = scandir($real_path);
-			foreach ($files as $f) {
-				if (!is_dir($relativePath . $f) and str_contains($f, '.'))
-					$options[] = array('id' => $f, 'name' => $f);
+			foreach ($files as $file) {
+				if ($file !== '.' && $file !== '..' && !is_dir($real_path . '/' . $file)) {
+					$fileValue = htmlspecialchars($file);
+					$selected = ($fileValue === $value) ? ' selected' : '';
+					$options [] = '<option value="' . $file . '"' . $selected . '>' . $file . '</option>';
+				}
 			}
 		} else
-			$options[] = array('id' => '',
-				'data-type' => "filelink",
-				'name' => '- ' . common::translate('COM_CUSTOMTABLES_PATH') . ' (' . $path . ') ' . common::translate('COM_CUSTOMTABLES_NOTFOUND'));
+			$options [] = '<option value="">' . common::translate('COM_CUSTOMTABLES_PATH') . ' (' . $path . ') ' . common::translate('COM_CUSTOMTABLES_NOTFOUND') . '</option>';
 
-		return HTMLHelper::_('select.genericlist', $options, $this->attributes['id'],
-			self::attributes2String($this->attributes), 'id', 'name', $value, $this->attributes['id']);
+		return '<select ' . self::attributes2String($this->attributes) . '>' . implode('', $options) . '</select>';
 	}
 }

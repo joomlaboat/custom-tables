@@ -85,15 +85,12 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 	require_once($path_helpers . 'tables.php');
 	require_once($path_helpers . 'compareimages.php');
 	require_once($path_helpers . 'findsimilarimage.php');
-	//require_once($path_helpers.'layouts.php');
-	require_once($path_helpers . 'types.php');
 
 	if ($include_utilities) {
 		$path_utilities = $path . 'utilities' . DIRECTORY_SEPARATOR;
 		require_once($path_utilities . 'importtables.php');
 		require_once($path_utilities . 'exporttables.php');
 	}
-
 
 	$pathDataTypes = $path . 'ct' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'ct.php');

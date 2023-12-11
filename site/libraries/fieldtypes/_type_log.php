@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
-use CustomTables\TypeView;
 use CustomTables\Value_user;
 
 class CT_FieldTypeTag_log

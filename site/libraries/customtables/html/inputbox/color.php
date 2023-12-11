@@ -15,7 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CTTypes;
+use Joomla\CMS\HTML\HTMLHelper;
 
 class InputBox_color extends BaseInputBox
 {
@@ -32,18 +32,45 @@ class InputBox_color extends BaseInputBox
 				$value = $defaultValue;
 		}
 
-		$result = '';
+		$showAlpha = $this->option_list[0] == 'transparent';
 
-		$transparent = $this->option_list[0] == 'transparent';
 		if (isset($this->option_list[1]) and $this->option_list[1] != "")
 			$palette = explode(',', $this->option_list[1]);
 		else
 			$palette = null;
 
 		// Create the color picker field
-		$inputbox = CTTypes::color($this->attributes['id'], $value, $transparent, $palette, $this->attributes);
+		$elementId = $this->attributes['id'];
 
-		$result .= $inputbox;
-		return $result;
+		// Include necessary CSS and JavaScript files for Spectrum Color Picker
+		HTMLHelper::_('stylesheet', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.css');
+		HTMLHelper::_('script', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.0/spectrum.min.js');
+
+		// JavaScript code to initialize Spectrum Color Picker
+		//palette: [ ['#ff0000', '#00ff00', '#0000ff'],['#ffff00', '#ff00ff', '#00ffff'] ]
+
+		$js = '
+        <script>jQuery(document).ready(function($) {
+            $("#' . $elementId . '").spectrum({
+                preferredFormat: "hex", // Set preferred color format
+                showInput: true, // Display typed color values
+                
+                ' . ($palette !== null ? '
+                showPalette: true, // Show a palette of basic colors
+                palette: [["' . implode('","', $palette) . '"]],' : '') . '
+                
+                ' . ($showAlpha ? '
+                allowEmpty: true, // Allow clearing the color to make it transparent
+				showAlpha: true, // Show the alpha channel slider
+				' : '') . '
+            });
+        });
+    </script>';
+
+		self::addCSSClass($this->attributes, 'color-picker-class');
+
+		$this->attributes['type'] = 'text';
+		$this->attributes['value'] = $value;
+		return '<input ' . self::attributes2String($this->attributes) . ' />' . $js;
 	}
 }
