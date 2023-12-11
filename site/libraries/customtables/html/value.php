@@ -104,9 +104,9 @@ class Value
 
 			case 'id':
 			case 'md5':
-			case 'phponadd':
-			case 'phponchange':
-			case 'phponview':
+				//case 'phponadd':
+				//case 'phponchange':
+				//case 'phponview':
 			case 'alias':
 			case 'radio':
 			case 'server':
@@ -275,7 +275,10 @@ class Value
 				return $this->dataProcess($rowValue, $option_list);
 
 			case 'time':
-				require_once('inputbox_time.php');
+				
+				$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
+				require_once($path . 'time.php');
+
 				$seconds = InputBox_Time::ticks2Seconds($rowValue, $this->field->params);
 				return InputBox_Time::seconds2FormattedTime($seconds, $option_list[0] ?? '');
 
