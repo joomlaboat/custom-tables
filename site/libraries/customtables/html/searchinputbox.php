@@ -97,10 +97,11 @@ class SearchInputBox
 		if (key_exists($fieldTypeShort, $aliasMap))
 			$fieldTypeShort = $aliasMap[$fieldTypeShort];
 
-		$additionalFile = 'search_' . $fieldTypeShort . '.php';
+		$additionalFile = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+			. DIRECTORY_SEPARATOR . 'searchbox' . DIRECTORY_SEPARATOR . $fieldTypeShort . '.php';
 
-		if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $additionalFile)) {
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $additionalFile);
+		if (file_exists($additionalFile)) {
+			require_once($additionalFile);
 			$className = '\CustomTables\Search_' . $fieldTypeShort;
 			$searchBoxRenderer = new $className($this->ct, $this->field, $this->moduleName, $attributes, $index, $where, $whereList, $objName_);
 			return $searchBoxRenderer->render($value);

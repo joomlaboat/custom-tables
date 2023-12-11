@@ -165,7 +165,7 @@ class Search_tablejoin extends BaseSearch
 		if (count($pair) == 2) {
 			$layout_mode = true;
 			if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout') {
-				Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' "' . $field . '"', 'error');
+				Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' search_tablejoin.php' . $field . '"', 'error');
 				return array();
 			}
 
@@ -173,7 +173,7 @@ class Search_tablejoin extends BaseSearch
 			$layoutcode = $Layouts->getLayout($pair[1]);
 
 			if (!isset($layoutcode) or $layoutcode == '') {
-				Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' "' . $pair[1] . '"', 'error');
+				Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' search_tablejoin.php' . $pair[1] . '"', 'error');
 				return array();
 			}
 		}

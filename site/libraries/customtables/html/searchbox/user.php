@@ -35,11 +35,13 @@ class Search_user extends BaseSearch
 
 			$this->getOnChangeAttributeString();
 
-			require_once('inputbox_user.php');
+			$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
+			require_once($path . 'user.php');
+
 			$this->attributes['id'] = $this->objectName;
 			$this->attributes['name'] = $this->objectName;
 
-			$InputBox_User = new InputBox_User($this->ct, $this->field, null, [], $this->attributes);
+			$InputBox_User = new InputBox_user($this->ct, $this->field, null, [], $this->attributes);
 			return $InputBox_User->render($value, null, true);
 		}
 		return '';

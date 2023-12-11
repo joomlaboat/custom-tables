@@ -59,6 +59,22 @@ class Value
 		$this->row = $row;
 		$rowValue = $row[$rfn] ?? null;
 
+		//Try to instantiate a class dynamically
+		$aliasMap = [];
+
+		$fieldTypeShort = str_replace('_', '', $this->field->type);
+		if (key_exists($fieldTypeShort, $aliasMap))
+			$fieldTypeShort = $aliasMap[$fieldTypeShort];
+
+		$additionalFile = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+			. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . $fieldTypeShort . '.php';
+
+		if (file_exists($additionalFile)) {
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $additionalFile);
+			$className = '\CustomTables\Value_' . $fieldTypeShort;
+			$ValueRenderer = new $className($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+		}
+
 		switch ($this->field->type) {
 			case 'int':
 			case 'viewcount':

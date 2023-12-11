@@ -137,10 +137,11 @@ class Inputbox
 		if (key_exists($fieldTypeShort, $aliasMap))
 			$fieldTypeShort = $aliasMap[$fieldTypeShort];
 
-		$additionalFile = 'inputbox_' . $fieldTypeShort . '.php';
+		$additionalFile = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+			. DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . $fieldTypeShort . '.php';
 
-		if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $additionalFile)) {
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $additionalFile);
+		if (file_exists($additionalFile)) {
+			require_once($additionalFile);
 			$className = '\CustomTables\InputBox_' . $fieldTypeShort;
 			$inputBoxRenderer = new $className($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
 		}
@@ -185,8 +186,9 @@ class Inputbox
 				return $inputBoxRenderer->render($value, $this->defaultValue);
 
 			case 'records':
-				require_once('inputbox_tablejoin.php');
-				require_once('inputbox_tablejoinlist.php');
+				$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
+				require_once($path . 'tablejoin.php');
+				require_once($path . 'tablejoinlist.php');
 
 				return $inputBoxRenderer->render($value, $this->defaultValue);
 		}

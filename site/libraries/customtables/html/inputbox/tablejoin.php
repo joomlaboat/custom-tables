@@ -132,14 +132,14 @@ class InputBox_tablejoin extends BaseInputBox
 			if (count($pair) == 2) {
 				$layout_mode = true;
 				if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout')
-					die(json_encode(['error' => common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' "' . $fieldName_or_layout . '"']));
+					die(json_encode(['error' => common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' inputbox_tablejoin.php' . $fieldName_or_layout . '"']));
 
 				$Layouts = new Layouts($ct);
 				$fieldName_or_layout_tag = $Layouts->getLayout($pair[1]);
 
 				if (!isset($fieldName_or_layout_tag) or $fieldName_or_layout_tag == '') {
 					$result_js = ['error' => common::translate(
-							'COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' "' . $pair[1] . '"'];
+							'COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' inputbox_tablejoin.php' . $pair[1] . '"'];
 					return json_encode($result_js);
 				}
 			} else

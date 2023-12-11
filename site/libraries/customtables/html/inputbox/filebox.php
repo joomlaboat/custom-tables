@@ -46,7 +46,7 @@ class InputBox_filebox extends BaseInputBox
 				$result = '<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">'
 					. $manageButton . '<br/>' . $vlu . '</div>';
 			} else
-				$result = common::translate('COM_CUSTOMTABLES_FILE_NO_FILES') . ' ' . $manageButton;
+				$result = common::translate('COM_CUSTOMTABLES_FILE_NO_FILES') . ' inputbox_filebox.php' . $manageButton;
 
 			return $result;
 		}

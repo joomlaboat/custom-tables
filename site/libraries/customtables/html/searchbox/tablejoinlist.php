@@ -71,8 +71,9 @@ class Search_tablejoinlist extends BaseSearch
 		if (is_array($value))
 			$value = implode(',', $value);
 
-		require_once('inputbox_tablejoin.php');
-		require_once('inputbox_tablejoinlist.php');
+		$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
+		require_once($path . 'tablejoin.php');
+		require_once($path . 'tablejoinlist.php');
 
 		$InputBox_TableJoinList = new InputBox_TableJoinList($this->ct, $this->field, null, [], $this->attributes);
 
