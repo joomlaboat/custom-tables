@@ -338,6 +338,20 @@ class Layouts
 		return $result;
 	}
 
+	function createDefaultLayout_Email(array $fields): string
+	{
+		$this->layoutType = 4;
+		$result = 'Dear ...<br/>A new records has been added to {{ table.title }} table.<br/><br/>Details below:<br/>';
+
+		$fieldTypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+
+		foreach ($fields as $field) {
+			if (!in_array($field['type'], $fieldTypes_to_skip))
+				$result .= '{{ ' . $field['fieldname'] . '.title }}: {{ ' . $field['fieldname'] . ' }}<br/>';
+		}
+		return $result;
+	}
+
 	function createDefaultLayout_Edit_WP($fields, $addToolbar = true): string
 	{
 		$this->layoutType = 2;

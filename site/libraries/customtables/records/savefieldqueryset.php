@@ -1025,7 +1025,12 @@ class SaveFieldQuerySet
 		}
 
 		$Layouts = new Layouts($this->ct);
-		$message_layout_content = $Layouts->getLayout($this->ct->Params->onRecordAddSendEmailLayout);
+
+		if ($this->ct->Params->onRecordAddSendEmailLayout !== null)
+			$message_layout_content = $Layouts->getLayout($this->ct->Params->onRecordAddSendEmailLayout);
+		else
+			$message_layout_content = $Layouts->createDefaultLayout_Email($this->ct->Table->fields);
+
 		$note = $Layouts->parseRawLayoutContent($message_layout_content);
 		$status = 0;
 
