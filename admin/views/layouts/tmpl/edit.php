@@ -29,7 +29,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
 
-if ($this->version >= 4) {
+if ($this->ct->Env->version >= 4) {
 	$wa = $this->document->getWebAssetManager();
 	$wa->useScript('keepalive')->useScript('form.validate');
 } else {
