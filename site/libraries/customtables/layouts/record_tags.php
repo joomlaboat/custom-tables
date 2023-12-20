@@ -676,7 +676,11 @@ class Twig_Table_Tags
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
 			return 'Table not selected';
 
-		return $this->ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix];
+		if (isset($this->ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix])
+			and $this->ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix] !== '') {
+			return $this->ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix];
+		} else
+			return $this->ct->Table->tablerow['description'];
 	}
 
 	function title(): string
