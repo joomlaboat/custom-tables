@@ -661,10 +661,8 @@ class JoomlaBasicMisc
 
 				JPluginHelper::importPlugin('content');
 
-				if ($version < 4) {
-					$dispatcher = JDispatcher::getInstance();
-					$dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
-				}
+				$dispatcher = \JDispatcher::getInstance();
+				$dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
 
 				$htmlresult = $o->text;
 			}

@@ -45,6 +45,12 @@ class Edit
 			$Layouts = new Layouts($this->ct);
 			$this->layoutContent = $Layouts->getLayout($this->ct->Params->editLayout);
 			$this->pageLayoutNameString = $this->ct->Params->editLayout;
+
+			if (!isset($Layouts->layoutId)) {
+				echo 'Layout: "' . $this->ct->Params->editLayout . '" not found.';
+				return false;
+			}
+
 			$this->pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
 			if ($Layouts->layoutType === null) {

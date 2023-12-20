@@ -737,7 +737,9 @@ class Twig_Html_Tags
 		JPluginHelper::importPlugin('captcha');
 
 		if ($this->ct->Env->version < 4) {
-			$dispatcher = JEventDispatcher::getInstance();
+
+			$dispatcher = \JDispatcher::getInstance();
+			//$dispatcher = JEventDispatcher::getInstance();
 			$dispatcher->trigger('onInit', 'my_captcha_div');
 		} else {
 			$this->ct->app->triggerEvent('onInit', array(null, 'my_captcha_div', 'class=""'));
