@@ -385,6 +385,35 @@ function checkRequiredFields(formObject) {
                         alert(TranslateText('COM_CUSTOMTABLES_NOT_SELECTED', label));
                         return false;
                     }
+                } else if (d.selector == 'switcher') {
+                    //Checkbox element with Yes/No visual effect
+                    if (d.label)
+                        label = d.label;
+                    else
+                        label = "Unlabeled field";
+
+                    if (requiredFields[i].value === "1") {
+
+                        if (d.valuerulecaption && d.valuerulecaption !== "")
+                            alert(d.valuerulecaption);
+                        else
+                            alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
+                        return false;
+                    }
+                } else if (d.type == 'checkbox') {
+                    //Simple HTML Checkbox element
+                    if (d.label)
+                        label = d.label;
+                    else
+                        label = "Unlabeled field";
+
+                    if (!requiredFields[i].checked) {
+                        if (d.valuerulecaption && d.valuerulecaption !== "")
+                            alert(d.valuerulecaption);
+                        else
+                            alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
+                        return false;
+                    }
                 }
             }
         }

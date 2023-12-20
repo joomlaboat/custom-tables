@@ -69,6 +69,7 @@ class InputBox_checkbox extends BaseInputBox
 					. 'style="border:none !important;background:none !important;">' . $input1 . $input2 . '</fieldset>';
 			} else {
 
+				/*
 				if ($value == 1)
 					$this->attributes['checked'] = 'checked';
 
@@ -83,63 +84,80 @@ class InputBox_checkbox extends BaseInputBox
 					. '<label for="' . $element_id . '1">' . common::translate('COM_CUSTOMTABLES_YES') . '</label>';
 
 				return '<div class="switcher">' . $input1 . $input2 . '<span class="toggle-outside"><span class="toggle-inside"></span></span></div>';
-			}
-		} else {
-			if ($this->ct->Env->version < 4) {
-				$onchange = $element_id . '_off.value=(this.checked === true ? 0 : 1);';// this is to save unchecked value as well.
-				$this->attributes['onchange'] = (($this->attributes['onchange'] ?? '') == '' ? '' : $this->attributes['onchange'] . ' ') . $onchange;
 
-				if ($value == 1)
-					$this->attributes['checked'] = 'checked';
+				*/
 
-				$this->attributes['type'] = 'checkbox';
+				$attributes = [];
+				$attributes['id'] = $element_id . '0';
+				$attributes['name'] = $element_id;
+				$attributes['type'] = 'radio';
+				$attributes['value'] = '0';
 
-				$input = '<input ' . self::attributes2String($this->attributes) . ' />';
-
-				$hidden = '<input type="hidden"'
-					. ' id="' . $element_id . '_off" '
-					. ' name="' . $element_id . '_off" '
-					. ($value == 1 ? ' value="0" ' : 'value="1"')
-					. ' >';
-
-				return $input . $hidden;
-			} else {
-
-				$customClass = $this->attributes['class'];
-				$this->attributes['type'] = 'radio';
-
-				$this->attributes['id'] = $element_id . '0';
-				$this->attributes['value'] = '0';
-				$this->attributes['class'] = 'active';
+				$attributes['class'] = $this->attributes['class'];
+				self::addCSSClass($attributes, 'active');
 
 				if ($value == 0)
-					$this->attributes['checked'] = 'checked';
+					$attributes['checked'] = 'checked';
 
-				$input1 = '<input ' . self::attributes2String($this->attributes) . ' />'
-					. '<label for="' . $this->attributes['id'] . '">' . common::translate('COM_CUSTOMTABLES_NO') . '</label>';
+				$input1 = '<input ' . self::attributes2String($attributes) . ' />'
+					. '<label for="' . $attributes['id'] . '">' . common::translate('COM_CUSTOMTABLES_NO') . '</label>';
 
-				$this->attributes['id'] = $element_id . '1';
-				$this->attributes['value'] = '1';
-				$this->attributes['class'] = null;
+				$attributes = [];
+				$attributes['id'] = $element_id . '1';
+				$attributes['name'] = $element_id;
+				$attributes['type'] = 'radio';
+				$attributes['value'] = '1';
+				$attributes['class'] = null;
 
 				if ($value == 1)
-					$this->attributes['checked'] = 'checked';
+					$attributes['checked'] = 'checked';
 
-				$input2 = '<input ' . self::attributes2String($this->attributes) . ' />'
-					. '<label for="' . $this->attributes['id'] . '">' . common::translate('COM_CUSTOMTABLES_YES') . '</label>';
+				$input2 = '<input ' . self::attributes2String($attributes) . ' />'
+					. '<label for="' . $attributes['id'] . '">' . common::translate('COM_CUSTOMTABLES_YES') . '</label>';
 
 				$span = '<span class="toggle-outside"><span class="toggle-inside"></span></span>';
-				$hidden = '<input type="hidden"'
-					. ' id="' . $element_id . '_off" '
-					. ' name="' . $element_id . '_off" '
-					. ($value == 1 ? ' value="0" ' : 'value="1"')
-					. ' >';
 
-				return '<div class="switcher' . ($customClass != '' ? ' ' . $customClass : '') . '">' . $input1 . $input2 . $span . $hidden . '</div><script>
+				$hidden = '<input type="hidden"'
+					. ' id="' . $element_id . '_off"'
+					. ' name="' . $element_id . '_off"'
+					. ' class="' . $this->attributes['class'] . '"'
+					. ' data-selector="switcher"'
+					. ' data-label="' . $this->attributes['data-label'] . '"'
+					. ' data-valuerulecaption="' . $this->attributes['data-valuerulecaption'] . '"'
+					. ($value == 1 ? ' value="0"' : ' value="1"')
+					. ' />';
+
+				self::addCSSClass($this->attributes, 'switcher');
+				$cssClass = $this->attributes['class'];
+
+				return '<div class="' . $cssClass . '">' . $input1 . $input2 . $span . $hidden . '</div><script>
 							document.getElementById("' . $element_id . '0").onchange = function(){if(this.checked === true)' . $element_id . '_off.value=1;' . $this->attributes['onchange'] . '};
 							document.getElementById("' . $element_id . '1").onchange = function(){if(this.checked === true)' . $element_id . '_off.value=0;' . $this->attributes['onchange'] . '};
 						</script>';
 			}
+		} else {
+			//if ($this->ct->Env->version < 4) {
+			$onchange = $element_id . '_off.value=(this.checked === true ? 0 : 1);';// this is to save unchecked value as well.
+			$this->attributes['onchange'] = (($this->attributes['onchange'] ?? '') == '' ? '' : $this->attributes['onchange'] . ' ') . $onchange;
+
+			if ($value == 1)
+				$this->attributes['checked'] = 'checked';
+
+			$this->attributes['type'] = 'checkbox';
+
+			$input = '<input ' . self::attributes2String($this->attributes) . ' />';
+
+			$hidden = '<input type="hidden"'
+				. ' id="' . $element_id . '_off" '
+				. ' name="' . $element_id . '_off" '
+				. ($value == 1 ? ' value="0" ' : 'value="1"')
+				. ' >';
+
+			return $input . $hidden;
+			//} else {
+
+
+			//}
 		}
 	}
 }
