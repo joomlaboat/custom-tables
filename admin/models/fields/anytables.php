@@ -37,7 +37,7 @@ if ($version < 4) {
 		protected function getOptions()
 		{
 			$options = array();
-			$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_SELECT'));
+			$options[] = HTMLHelper::_('select.option', '', ' - ' . common::translate('COM_CUSTOMTABLES_SELECT'));
 
 			$tables = $this->getListOfExistingTables();
 
@@ -108,7 +108,7 @@ if ($version < 4) {
 			$options = array();
 			if ($tables) {
 				if ($add_empty_option)
-					$options[] = ['value' => '', 'text' => common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT')];
+					$options[] = ['value' => '', 'text' => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
 
 				foreach ($tables as $table)
 					$options[] = ['value' => $table, 'text' => $table];

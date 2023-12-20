@@ -96,23 +96,14 @@
                message="COM_CUSTOMTABLES_TABLES_TABLETITLE_MESSAGE"
                hint="COM_CUSTOMTABLES_TABLES_TABLETITLE_HINT"
                autocomplete="on"/>
-        <!-- Tablename Field. Type: Text. (joomla)-->
+
         <field type="text"
                name="tablename"
                label="COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL"
                required="true"
                filter="CMD"
                hint="COM_CUSTOMTABLES_TABLES_TABLENAME_HINT"/>
-        <!-- Description Field. Type: Text. (joomla)-->
-        <!--
-                        <field
-                    type="hidden"
-                               name="description"
-                               label="COM_CUSTOMTABLES_TABLES_DESCRIPTION_LABEL"
-                               description="COM_CUSTOMTABLES_TABLES_DESCRIPTION_DESCRIPTION"
-                               class="text_area" />
-        -->
-        <!-- Customphp Field. Type: Filelist. (joomla)-->
+
         <field type="filelist"
                name="customphp"
                label="COM_CUSTOMTABLES_TABLES_CUSTOMPHP_LABEL"
@@ -129,7 +120,6 @@
             <option value="0">COM_CUSTOMTABLES_FIELDS_NO</option>
         </field>
 
-
         <field type="anytables"
                name="customtablename"
                label="COM_CUSTOMTABLES_TABLES_CUSTOMTABLENAME_LABEL"
@@ -145,8 +135,6 @@
                required="false"
                filter="CMD"
                hint=""/>
-
-
     </fieldset>
 
     <!-- Access Control Fields. -->

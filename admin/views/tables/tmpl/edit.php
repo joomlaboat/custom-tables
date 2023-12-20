@@ -146,37 +146,50 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
                 <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('customphp'); ?></div>
                     <div class="controls"><?php
-
 						if (!$this->ct->Env->advancedTagProcessor)
 							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
 						else
 							echo $this->form->getInput('customphp');
-
 						?></div>
                 </div>
 
                 <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('allowimportcontent'); ?></div>
-                    <div class="controls"><?php echo $this->form->getInput('allowimportcontent'); ?></div>
+                    <div class="controls"><?php
+						if (!$this->ct->Env->advancedTagProcessor)
+							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
+						else
+							echo $this->form->getInput('allowimportcontent');
+						?>
+                    </div>
                 </div>
 
                 <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('customtablename'); ?></div>
-                    <div class="controls"><?php echo $this->form->getInput('customtablename'); ?></div>
+                    <div class="controls"><?php
+						if (!$this->ct->Env->advancedTagProcessor)
+							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
+						else
+							echo $this->form->getInput('customtablename');
+						?>
+                    </div>
                 </div>
 
                 <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('customidfield'); ?></div>
-                    <div class="controls"><?php echo $this->form->getInput('customidfield'); ?></div>
+                    <div class="controls">
+						<?php
+						if (!$this->ct->Env->advancedTagProcessor)
+							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
+						else
+							echo $this->form->getInput('customidfield');
+						?>
+                    </div>
                 </div>
-
-
             </div>
         </div>
 
-		<?php echo HTMLHelper::_('bootstrap.endTab');
-		//endif;
-		?>
+		<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
 
 		<?php
 
