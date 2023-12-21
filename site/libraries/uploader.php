@@ -77,6 +77,7 @@ class ESFileUploader
 							. DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'importcsv.php');
 
 						move_uploaded_file($file["tmp_name"], $newFileName);
+
 						$msg = importCSVfile($newFileName, common::inputGetInt('tableid', 0));
 						if ($msg != '' and $msg != 'success')
 							$ret = ['error' => $msg];
@@ -85,7 +86,7 @@ class ESFileUploader
 								, 'originalfilename' => $file['name']];
 
 					} else {
-						if (@move_uploaded_file($file["tmp_name"], $newFileName))
+						if (move_uploaded_file($file["tmp_name"], $newFileName))
 							$ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileId . '_' . $fileName
 								, 'originalfilename' => $file['name']];
 						else

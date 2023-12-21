@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Fields;
+use CustomTables\InputBox_time;
 
 function importCSVfile($filename, $ct_tableid)
 {
@@ -58,13 +59,13 @@ function detectDelimiter($csvFile)
 	return array_search(max($delimiters), $delimiters);
 }
 
-function processFieldParams(&$fieldList, array &$fields): array
+function processFieldParams($fieldList, array $fields): array
 {
 	foreach ($fieldList as $f_index) {
 		if ($f_index >= 0) {
 			$fieldType = $fields[$f_index]->type;
 			if ($fieldType == 'sqljoin') {
-				$type_params = JoomlaBasicMisc::csv_explode(',', $fields[$f_index]->typeparams, '"', false);
+				$type_params = JoomlaBasicMisc::csv_explode(',', $fields[$f_index]->typeparams);
 
 				$tableName = $type_params[0];
 				$fieldName = $type_params[1];
@@ -94,7 +95,7 @@ function importCSVdata(string $filename, $ct_tableid): string
 	if ($arrayOfLines === null)
 		return common::translate('COM_CUSTOMTABLES_CSV_FILE_EMPTY');
 
-	$tablerow = ESTables::getTableRowByID($ct_tableid);
+	$tableRow = ESTables::getTableRowByID($ct_tableid);
 	$fields = Fields::getFields($ct_tableid, true);
 
 	$first_line_fieldnames = false;
@@ -116,11 +117,16 @@ function importCSVdata(string $filename, $ct_tableid): string
 	for ($i = $offset; $i < count($arrayOfLines); $i++) {
 		if (count($arrayOfLines[$i]) > 0) {
 			$sets = prepareSQLQuery($fieldList, $fields, $arrayOfLines[$i]);
-			$listing_id = findRecord($tablerow->realtablename, $tablerow->realidfieldname, $tablerow->published_field_found, $sets);
+			$listing_id = findRecord($tableRow->realtablename, $tableRow->realidfieldname, $tableRow->published_field_found, $sets);
 
 			if (is_null($listing_id)) {
-				$query = 'INSERT ' . $tablerow->realtablename . ' SET ' . implode(', ', $sets);
-				database::setQuery($query);
+				$query = 'INSERT ' . $tableRow->realtablename . ' SET ' . implode(', ', $sets);
+
+				try {
+					database::setQuery($query);
+				} catch (Exception $e) {
+					return $e->getMessage();
+				}
 			}
 		}
 	}
@@ -141,11 +147,11 @@ function findRecord($realtablename, $realidfieldname, bool $published_field_foun
 	return $rows[0][$realidfieldname];
 }
 
-function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname, bool $published_field_found, $vlus_str)
+function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname, bool $published_field_found, $vlus_str): ?array
 {
-	$vlus = explode(',', $vlus_str);
+	$values = explode(',', $vlus_str);
 	$wheres_or = array();
-	foreach ($vlus as $vlu)
+	foreach ($values as $vlu)
 		$wheres_or[] = database::quoteName($join_realfieldname) . '=' . database::quote($vlu);
 
 	$wheres[] = '(' . implode(' OR ', $wheres_or) . ')';
@@ -173,13 +179,17 @@ function findSQLJoin($realtablename, $join_realfieldname, $realidfieldname, bool
 	return findRecord($realtablename, $realidfieldname, $published_field_found, $wheres);
 }
 
-function addSQLJoinSets($realtablename, $sets)
+function addSQLJoinSets($realtablename, $sets): void
 {
 	$query = 'INSERT ' . $realtablename . ' SET ' . implode(',', $sets);
 	database::setQuery($query);
 }
 
-function prepareSQLQuery($fieldList, $fields, $line)
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function prepareSQLQuery($fieldList, $fields, $line): array
 {
 	$sets = array();
 	$i = 0;
@@ -187,6 +197,8 @@ function prepareSQLQuery($fieldList, $fields, $line)
 	foreach ($fieldList as $f_index) {
 		if ($f_index >= 0) {
 			$fieldType = $fields[$f_index]->type;
+			$fieldParamsString = $fields[$f_index]->typeparams;
+			$fieldParams = JoomlaBasicMisc::csv_explode(',', $fieldParamsString);
 
 			if ($fieldType == 'sqljoin') {
 				if (isset($fields[$f_index]->sqljoin)) {
@@ -272,6 +284,14 @@ function prepareSQLQuery($fieldList, $fields, $line)
 
 					$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . $vlu;
 				}
+			} elseif ($fieldType == 'time') {
+				$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
+				require_once($path . 'time.php');
+
+				$seconds = InputBox_Time::formattedTime2Seconds($line[$i]);
+				$ticks = InputBox_Time::seconds2Ticks($seconds, $fieldParams);
+
+				$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . (int)$ticks;
 
 			} else {
 				if (isset($line[$i])) {
@@ -280,10 +300,8 @@ function prepareSQLQuery($fieldList, $fields, $line)
 				}
 			}
 		}
-
 		$i++;
 	}
-
 	return $sets;
 }
 
@@ -291,6 +309,7 @@ function prepareSQLQuery($fieldList, $fields, $line)
  * This was used to detect if CSV file is in UTF 8
  * @param $s
  * @return bool
+ * @since 3.2.2
  */
 function ifBomUtf8($s): bool
 {

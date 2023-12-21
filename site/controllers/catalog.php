@@ -25,7 +25,6 @@ $view = common::inputGetCmd('view');
 if ($view == 'home') {
 	common::inputSet('homeparent', 'home');
 	common::inputSet('view', 'catalog');
-
 	parent::display();
 }
 
