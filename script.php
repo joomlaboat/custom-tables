@@ -79,7 +79,7 @@ class com_customtablesInstallerScript
 	function postflight($type, $parent)
 	{
 		if ($type == 'uninstall') {
-			return; //No need to do anything
+			return true; //No need to do anything
 		}
 
 		if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images'))
