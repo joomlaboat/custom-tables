@@ -71,7 +71,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'sqljoin':
-				$value = common::inputGetString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname);
 
 				if (isset($value)) {
 					$value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
@@ -93,7 +93,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'radio':
-				$value = common::inputGetCmd($this->field->comesfieldname);
+				$value = common::inputPostCmd($this->field->comesfieldname);
 
 				if (isset($value)) {
 					$this->setNewValue($value);
@@ -106,7 +106,7 @@ class SaveFieldQuerySet
 			case 'filelink':
 
 			case 'googlemapcoordinates':
-				$value = common::inputGetString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname);
 
 				if (isset($value)) {
 					$this->setNewValue($value);
@@ -115,7 +115,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'color':
-				$value = common::inputGetString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname);
 				if (isset($value)) {
 					if (str_contains($value, 'rgb')) {
 						$parts = str_replace('rgba(', '', $value);
@@ -136,7 +136,7 @@ class SaveFieldQuerySet
 						}
 
 					} else
-						$value = common::inputGetAlnum($this->field->comesfieldname, '');
+						$value = common::inputPostAlnum($this->field->comesfieldname, '');
 
 					$value = strtolower($value);
 					$value = str_replace('#', '', $value);
@@ -148,7 +148,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'alias':
-				$value = common::inputGetString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname);
 
 				if (isset($value)) {
 					$value = $this->get_alias_type_value($listing_id);
@@ -167,7 +167,7 @@ class SaveFieldQuerySet
 					} else
 						$postfix = '_' . $lang->sef;
 
-					$value = common::inputGetString($this->field->comesfieldname . $postfix);
+					$value = common::inputPostString($this->field->comesfieldname . $postfix);
 
 					if (isset($value)) {
 						$this->row_old[$this->field->realfieldname . $postfix] = $value;
@@ -206,7 +206,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'ordering':
-				$value = common::inputGetInt($this->field->comesfieldname);
+				$value = common::inputPostInt($this->field->comesfieldname);
 
 				if (isset($value)) // always check with isset(). null doesn't work as 0 is null somehow in PHP
 				{
@@ -216,7 +216,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'int':
-				$value = common::inputGetInt($this->field->comesfieldname);
+				$value = common::inputPostInt($this->field->comesfieldname);
 
 				if (!is_null($value)) // always check with isset(). null doesn't work as 0 is null somehow in PHP
 				{
@@ -229,7 +229,7 @@ class SaveFieldQuerySet
 				$value = common::inputPost($this->field->comesfieldname);
 
 				if (isset($value)) {
-					$value = common::inputGetInt($this->field->comesfieldname);
+					$value = common::inputPostInt($this->field->comesfieldname);
 
 					if ($value == 0)
 						$value = null;
@@ -260,7 +260,7 @@ class SaveFieldQuerySet
 					return;
 				}
 
-				$value = common::inputGetInt($this->field->comesfieldname);
+				$value = common::inputPostInt($this->field->comesfieldname);
 				if ($value == 0)
 					$value = null;
 
@@ -273,7 +273,7 @@ class SaveFieldQuerySet
 			case 'article':
 
 			case 'usergroup':
-				$value = common::inputGetInt($this->field->comesfieldname);
+				$value = common::inputPostInt($this->field->comesfieldname);
 
 				if (isset($value)) {
 					$this->setNewValue($value);
@@ -425,7 +425,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'email':
-				$value = common::inputGetString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname);
 				if (isset($value)) {
 					$value = trim($value ?? '');
 					if (Email::checkEmail($value))
@@ -436,7 +436,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'url':
-				$value = common::inputGetString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname);
 				if (isset($value)) {
 					$value = trim($value ?? '');
 					if (filter_var($value, FILTER_VALIDATE_URL))
@@ -447,7 +447,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'checkbox':
-				$value = common::inputGetCmd($this->field->comesfieldname);
+				$value = common::inputPostCmd($this->field->comesfieldname);
 
 				if ($value !== null) {
 					if ((int)$value == 1 or $value == 'on')
@@ -457,7 +457,7 @@ class SaveFieldQuerySet
 
 					$this->setNewValue($value);
 				} else {
-					$value = common::inputGetCmd($this->field->comesfieldname . '_off');
+					$value = common::inputPostCmd($this->field->comesfieldname . '_off');
 					if ($value !== null) {
 						if ((int)$value == 1)
 							$this->setNewValue(0);
@@ -468,7 +468,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'date':
-				$value = common::inputGetString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname);
 				if (isset($value)) {
 					if ($value == '' or $value == '0000-00-00') {
 
@@ -484,7 +484,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'time':
-				$value = common::inputGetString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname);
 				if (isset($value)) {
 					if ($value == '') {
 						$this->setNewValue(null);
@@ -562,7 +562,7 @@ class SaveFieldQuerySet
 
 			switch ($selectorPair[0]) {
 				case 'single';
-					$value = common::inputGetInt($field->comesfieldname);
+					$value = common::inputPostInt($field->comesfieldname);
 
 					if (isset($value))
 						return $value;
@@ -634,7 +634,7 @@ class SaveFieldQuerySet
 
 	public function get_alias_type_value($listing_id)
 	{
-		$value = common::inputGetString($this->field->comesfieldname);
+		$value = common::inputPostString($this->field->comesfieldname);
 		if (!isset($value))
 			return null;
 
@@ -715,7 +715,7 @@ class SaveFieldQuerySet
 		switch ($this->field->params[0]) {
 			case 'radio':
 			case 'single';
-				$value = common::inputGetString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname);
 				if (isset($value))
 					return ',' . $value . ',';
 
@@ -735,7 +735,7 @@ class SaveFieldQuerySet
 
 	protected function get_customtables_type_language(): ?string
 	{
-		$value = common::inputGetCmd($this->field->comesfieldname);
+		$value = common::inputPostCmd($this->field->comesfieldname);
 
 		if (isset($value))
 			return $value;
@@ -759,7 +759,7 @@ class SaveFieldQuerySet
 
 	protected function get_customtables_type_signature(): ?string
 	{
-		$value = common::inputGetString($this->field->comesfieldname);
+		$value = common::inputPostString($this->field->comesfieldname);
 
 		if (isset($value)) {
 			$ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);

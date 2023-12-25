@@ -204,7 +204,7 @@ class Inputbox
 		$value = null;
 
 		if ($this->ct->isRecordNull($row)) {
-			$value = common::inputGetString($this->field->realfieldname);
+			$value = common::inputPostString($this->field->realfieldname);
 
 			if ($value == '')
 				$value = $this->getWhereParameter($this->field->realfieldname);

@@ -350,6 +350,7 @@ class Params
 		$this->recordsField = null;
 	}
 
+	//Used by Joomla version of teh Custom Tables
 	protected function getForceItemId($menu_params): void
 	{
 		$forceItemId = $menu_params->get('forceitemid');

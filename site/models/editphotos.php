@@ -166,7 +166,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		asort($images);
 		$i = 0;
 		foreach ($images as $image) {
-			$safeTitle = common::inputGetString('esphototitle' . $image->photoid);
+			$safeTitle = common::inputPostString('esphototitle' . $image->photoid);
 			$safeTitle = str_replace('"', "", $safeTitle);
 
 			$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safeTitle . '" WHERE listingid='
@@ -187,7 +187,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 
 	function delete(): bool
 	{
-		$photoIDs = common::inputGetString('photoids', '');
+		$photoIDs = common::inputPostString('photoids', '');
 		$photo_arr = explode('*', $photoIDs);
 
 		foreach ($photo_arr as $photoId) {
@@ -330,7 +330,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		asort($images);
 		$i = 0;
 		foreach ($images as $image) {
-			$safeTitle = common::inputGetString('esphototitle' . $image->photoid);
+			$safeTitle = common::inputPostString('esphototitle' . $image->photoid);
 			$safeTitle = str_replace('"', "", $safeTitle);
 
 			if ($safeTitle != '') {

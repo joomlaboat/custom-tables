@@ -454,7 +454,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 						switch($selectorpair[0])
 						{
 							case 'single';
-									$value=common::inputGetString($prefix.$fieldname);
+									$value=common::inputPostString($prefix.$fieldname);
 								break;
 
 							case 'multi';
@@ -467,7 +467,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 								break;
 
 							case 'radio';
-									$value=common::inputGetString($prefix.$fieldname);
+									$value=common::inputPostString($prefix.$fieldname);
 								break;
 
 							case 'checkbox';
@@ -480,15 +480,15 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 					break;
 				case 'radio':
-						$value=common::inputGetString($prefix.$fieldname);
+						$value=common::inputPostString($prefix.$fieldname);
 					break;
 
 				case 'googlemapcoordinates':
-						$value=common::inputGetString($prefix.$fieldname);
+						$value=common::inputPostString($prefix.$fieldname);
 					break;
 
 				case 'string':
-						$value=common::inputGetString($prefix.$fieldname);
+						$value=common::inputPostString($prefix.$fieldname);
 					break;
 
 				case 'multilangstring':
@@ -504,7 +504,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=common::inputGetString($prefix.$fieldname.$postfix);
+						$valuearray[]=common::inputPostString($prefix.$fieldname.$postfix);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
@@ -537,20 +537,20 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 					break;
 
 				case 'int':
-						$value=common::inputGetInt($prefix.$fieldname,0);
+						$value=common::inputPostInt($prefix.$fieldname,0);
 					break;
 
 				case 'user':
-						$value=(int)common::inputGetInt($prefix.$fieldname,0);
+						$value=(int)common::inputPostInt($prefix.$fieldname,0);
 					break;
 
 				case 'float':
-						$value=common::inputGet($prefix.$fieldname,0,'FLOAT');
+						$value=common::inputPostFloat($prefix.$fieldname,0,'FLOAT');
 					break;
 
 
 				case 'article':
-						$value=common::inputGetInt($prefix.$fieldname,0);
+						$value=common::inputPostInt($prefix.$fieldname,0);
 					break;
 
 				case 'multilangarticle':
@@ -566,22 +566,22 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=common::inputGetInt($prefix.$fieldname.$postfix,0);
+						$valuearray[]=common::inputPostInt($prefix.$fieldname.$postfix,0);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
 					break;
 
 				case 'email':
-						$value=common::inputGetString($prefix.$fieldname);
+						$value=common::inputPostString($prefix.$fieldname);
 					break;
 
 				case 'checkbox':
-						$value=common::inputGetCmd($prefix.$fieldname);
+						$value=common::inputPostCmd($prefix.$fieldname);
 					break;
 
 				case 'date':
-						$value=common::inputGetString($prefix.$fieldname);
+						$value=common::inputPostString($prefix.$fieldname);
 					break;
 			}
 
@@ -594,7 +594,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 	function Refresh($save_log = 1): int
 	{
-		$listing_ids_str = common::inputGetString('ids', '');
+		$listing_ids_str = common::inputPostString('ids', '');
 
 		if ($listing_ids_str != '') {
 			$listing_ids_ = explode(',', $listing_ids_str);
@@ -618,7 +618,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 	function setPublishStatus($status): int
 	{
-		$listing_ids_str = common::inputGetString('ids', '');
+		$listing_ids_str = common::inputPostString('ids', '');
 		if ($listing_ids_str != '') {
 			$listing_ids_ = explode(',', $listing_ids_str);
 			foreach ($listing_ids_ as $listing_id) {
@@ -640,7 +640,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 	function delete(): int
 	{
-		$listing_ids_str = common::inputGetString('ids', '');
+		$listing_ids_str = common::inputPostString('ids', '');
 		if ($listing_ids_str != '') {
 
 			$listing_ids_ = explode(',', $listing_ids_str);

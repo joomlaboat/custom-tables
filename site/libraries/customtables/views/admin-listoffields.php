@@ -251,38 +251,6 @@ class ListOfFields
 			return false;
 
 		return true;
-		/*
-		$redirect = 'index.php?option=' . $this->option;
-		$extraTask = common::inputGetCmd('extratask', '');
-
-		//Postpone extra task
-		if ($extraTask != '') {
-			$redirect .= '&extratask=' . $extraTask;
-			$redirect .= '&old_typeparams=' . common::inputGetBase64('old_typeparams', '');
-			$redirect .= '&new_typeparams=' . common::inputGetBase64('new_typeparams', '');
-			$redirect .= '&fieldid=' . $fieldid;
-
-			if (common::inputGetInt('stepsize', 10) != 10)
-				$redirect .= '&stepsize=' . common::inputGetInt('stepsize', 10);
-		}
-
-		if ($extraTask != '' or $this->task == 'apply' or $this->task == 'save2copy')
-			$redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit&id=' . (int)$fieldid;
-		elseif ($this->task == 'save2new')
-			$redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit';
-		else
-			$redirect .= '&view=listoffields&tableid=' . (int)$tableid;
-
-		if ($fieldid != null) {
-			// Redirect to the item screen.
-			$this->setRedirect(
-				Route::_($redirect, false)
-			);
-			return true;
-		}
-
-		return false;
-		*/
 	}
 
 	function getFieldTypesFromXML(bool $onlyWordpress = false): ?array

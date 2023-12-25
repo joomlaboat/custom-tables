@@ -10,15 +10,9 @@
 
 namespace CustomTables;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use JoomlaBasicMisc;
-
-use Joomla\CMS\Uri\Uri;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-
-echo 'CT COMMON INCLUDED';
 
 class common
 {
@@ -66,179 +60,193 @@ class common
 
 	public static function curPageURL(): string
 	{
-		if (defined('_JEXEC')) {
-			$WebsiteRoot = str_replace(Uri::root(true), '', Uri::root());
-			$RequestURL = $_SERVER["REQUEST_URI"];
+		$WebsiteRoot = str_replace(site_url(), '', home_url());
+		$RequestURL = $_SERVER["REQUEST_URI"];
 
-			if ($WebsiteRoot != '' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/') {
-				if ($RequestURL != '' and $RequestURL[0] == '/') {
-					//Delete $WebsiteRoot end /
-					$WebsiteRoot = substr($WebsiteRoot, 0, strlen($WebsiteRoot) - 1);
-				}
-			}
-		} else {
-			$WebsiteRoot = str_replace(site_url(), '', home_url());
-			$RequestURL = $_SERVER["REQUEST_URI"];
-
-			if ($WebsiteRoot !== '' && str_ends_with($WebsiteRoot, '/')) {
-				if ($RequestURL !== '' && $RequestURL[0] === '/') {
-					$WebsiteRoot = rtrim($WebsiteRoot, '/');
-				}
+		if ($WebsiteRoot !== '' && str_ends_with($WebsiteRoot, '/')) {
+			if ($RequestURL !== '' && $RequestURL[0] === '/') {
+				$WebsiteRoot = rtrim($WebsiteRoot, '/');
 			}
 		}
+
 		return $WebsiteRoot . $RequestURL;
 	}
 
 	public static function inputPostString($parameter, $default = null)
 	{
-		$nonce = wp_unslash($_REQUEST['_wpnonce']);
+		$nonce = wp_unslash($_POST['_wpnonce']);
 		if (!wp_verify_nonce($nonce, 'post'))
 			return $default;
 
 		if (!isset($_POST[$parameter]))
 			return $default;
 
-		$source = strip_tags($_POST[$parameter]);
+		$source = wp_strip_all_tags($_POST[$parameter]);
 		return sanitize_text_field($source);
 	}
 
 	public static function inputGetString($parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->getString($parameter, $default);
-		} else {
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
-
-			$source = strip_tags(wp_unslash($_REQUEST[$parameter]));
-			return (string)sanitize_text_field($source);
+		$nonce = wp_unslash($_POST['_wpnonce']);
+		if (!wp_verify_nonce($nonce, 'post')) {
+			//return $default;
 		}
+
+		if (!isset($_GET[$parameter]))
+			return $default;
+
+		$source = wp_strip_all_tags(wp_unslash($_GET[$parameter]));
+		return sanitize_text_field($source);
+	}
+
+	public static function inputPostFloat($parameter, $default = null)
+	{
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_POST[$parameter]))
+			return $default;
+
+		// Only use the first floating point value
+		preg_match('/-?\d+(\.\d+)?/', (string)$_POST[$parameter], $matches);
+		return @ (float)$matches[0];
 	}
 
 	public static function inputGetFloat($parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->getFloat($parameter, $default);
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_GET[$parameter]))
+			return $default;
 
-			// Only use the first floating point value
-			preg_match('/-?\d+(\.\d+)?/', (string)$_REQUEST[$parameter], $matches);
-			return @ (float)$matches[0];
-		}
+		// Only use the first floating point value
+		preg_match('/-?\d+(\.\d+)?/', (string)$_GET[$parameter], $matches);
+		return @ (float)$matches[0];
 	}
 
-	public static function inputGetInt(string $parameter, ?int $default = null)
+	public static function inputGetInt(string $parameter, ?int $default = null): ?int
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->getInt($parameter, $default);
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_GET[$parameter]))
+			return $default;
 
-			preg_match('/-?\d+/', (string)$_REQUEST[$parameter], $matches);
-			return @ (int)$matches[0];
-		}
+		preg_match('/-?\d+/', (string)$_GET[$parameter], $matches);
+		return @ (int)$matches[0];
 	}
 
 	public static function inputPostInt($parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->post->getInt($parameter, $default);
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_POST[$parameter]))
-				return $default;
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_POST[$parameter]))
+			return $default;
 
-			preg_match('/-?\d+/', (string)$_POST[$parameter], $matches);
-			return @ (int)$matches[0];
-		}
+		preg_match('/-?\d+/', (string)$_POST[$parameter], $matches);
+		return @ (int)$matches[0];
+	}
+
+	public static function inputPostUInt($parameter, $default = null)
+	{
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_POST[$parameter]))
+			return $default;
+
+		preg_match('/-?\d+/', (string)$_POST[$parameter], $matches);
+		return @ abs((int)$matches[0]);
 	}
 
 	public static function inputGetUInt($parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->getInt($parameter, $default);
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_GET[$parameter]))
+			return $default;
 
-			preg_match('/-?\d+/', (string)$_REQUEST[$parameter], $matches);
-			return @ abs((int)$matches[0]);
-		}
+		preg_match('/-?\d+/', (string)$_GET[$parameter], $matches);
+		return @ abs((int)$matches[0]);
+	}
+
+	public static function inputPostCmd(string $parameter, $default = null)
+	{
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_POST[$parameter]))
+			return $default;
+
+		$result = (string)preg_replace('/[^A-Z\d_\.-]/i', '', $_POST[$parameter]);
+		return ltrim($result, '.');
 	}
 
 	public static function inputGetCmd(string $parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->getCmd($parameter, $default);
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_GET[$parameter]))
+			return $default;
 
-			$result = (string)preg_replace('/[^A-Z\d_\.-]/i', '', $_REQUEST[$parameter]);
-			return ltrim($result, '.');
-		}
+		$result = (string)preg_replace('/[^A-Z\d_\.-]/i', '', $_GET[$parameter]);
+		return ltrim($result, '.');
+	}
+
+	public static function inputPostRow(string $parameter, $default = null)
+	{
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_POST[$parameter]))
+			return $default;
+
+		return stripslashes($_POST[$parameter]);
 	}
 
 	public static function inputGetRow(string $parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->get($parameter, $default, "RAW");
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_GET[$parameter]))
+			return $default;
 
-			return stripslashes($_REQUEST[$parameter]);
-		}
+		return stripslashes($_GET[$parameter]);
+	}
+
+	public static function inputPostBase64(string $parameter, $default = null)
+	{
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_POST[$parameter]))
+			return $default;
+
+		// Allow a-z, 0-9, slash, plus, equals.
+		return (string)preg_replace('/[^A-Z\d\/+=]/i', '', $_POST[$parameter]);
 	}
 
 	public static function inputGetBase64(string $parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_GET[$parameter]))
+			return $default;
 
-			// Allow a-z, 0-9, slash, plus, equals.
-			return (string)preg_replace('/[^A-Z\d\/+=]/i', '', $_REQUEST[$parameter]);
-		}
+		// Allow a-z, 0-9, slash, plus, equals.
+		return (string)preg_replace('/[^A-Z\d\/+=]/i', '', $_GET[$parameter]);
 	}
 
 	public static function inputGetWord(string $parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_GET[$parameter]))
+			return $default;
 
-			// Only allow characters a-z, and underscores
-			return (string)preg_replace('/[^A-Z_]/i', '', $_REQUEST[$parameter]);
-		}
+		// Only allow characters a-z, and underscores
+		return (string)preg_replace('/[^A-Z_]/i', '', $_GET[$parameter]);
+	}
+
+	public static function inputPostAlnum(string $parameter, $default = null)
+	{
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_POST[$parameter]))
+			return $default;
+
+		// Allow a-z and 0-9 only
+		return (string)preg_replace('/[^A-Z\d]/i', '', $_POST[$parameter]);
 	}
 
 	public static function inputGetAlnum(string $parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->get($parameter, $default, 'ALNUM');
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		if (!isset($_GET[$parameter]))
+			return $default;
 
-			// Allow a-z and 0-9 only
-			return (string)preg_replace('/[^A-Z\d]/i', '', $_REQUEST[$parameter]);
-		}
+		// Allow a-z and 0-9 only
+		return (string)preg_replace('/[^A-Z\d]/i', '', $_GET[$parameter]);
 	}
 
 	public static function inputGet(string $parameter, $default, string $filter)
@@ -374,7 +382,7 @@ class common
 			$decoded = html_entity_decode($encoded, ENT_COMPAT, $charset);
 
 			// Remove any potential scripting or dangerous content
-			$string = strip_tags($decoded);
+			$string = wp_strip_all_tags($decoded);
 
 			if ($shorten) {
 				return self::shorten($string, $length);

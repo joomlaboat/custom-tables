@@ -753,19 +753,19 @@ class Fields
 					$id_title .= '_' . $lang->sef;
 					$id_description .= '_' . $lang->sef;
 				}
-				$data[$id_title] = common::inputGetString($id_title);
-				$data[$id_description] = common::inputGetString($id_description);
+				$data[$id_title] = common::inputPostString($id_title);
+				$data[$id_description] = common::inputPostString($id_description);
 				$moreThanOneLang = true; //More than one language installed
 			}
 
 			$data['type'] = common::inputGetCmd('type');
-			$data['typeparams'] = common::inputGetString('typeparams');
+			$data['typeparams'] = common::inputPostString('typeparams');
 			$data['isrequired'] = common::inputGetInt('isrequired', 0);
-			$data['defaultvalue'] = common::inputGetString('defaultvalue');
+			$data['defaultvalue'] = common::inputPostString('defaultvalue');
 			$data['allowordering'] = common::inputGetInt('allowordering', 1);
-			$data['valuerule'] = common::inputGetString('valuerule');
-			$data['valuerulecaption'] = common::inputGetString('valuerulecaption');
-			$data['fieldname'] = common::inputGetString('fieldname');
+			$data['valuerule'] = common::inputPostString('valuerule');
+			$data['valuerulecaption'] = common::inputPostString('valuerulecaption');
+			$data['fieldname'] = common::inputPostString('fieldname');
 		}
 
 		$task = common::inputGetCmd('task');

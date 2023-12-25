@@ -118,7 +118,7 @@ function CustomTablesSave($task, $this_)
 			else
 				$link .= '&';
 
-			$link .= 'listing_id=' . common::inputGetInt("listing_id");
+			$link .= 'listing_id=' . common::inputPostInt("listing_id");
 			//stay on the same page if "saveandcontinue"
 		}
 

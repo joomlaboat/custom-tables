@@ -121,8 +121,8 @@ switch ($task) {
 			}
 
 			if ($result) {
-				if (common::inputGetString('msg'))
-					$msg = common::inputGetString('msg');
+				if (common::inputPostString('msg'))
+					$msg = common::inputPostString('msg');
 				elseif ($param_msg != '')
 					$msg = $param_msg;
 				else

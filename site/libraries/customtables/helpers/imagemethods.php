@@ -312,7 +312,7 @@ class CustomTablesImageMethods
 					$ImageID = date("YmdHis") . ($i > 0 ? $i : '');
 					$ImageID .= ($i > 0 ? $i : '');
 				} else {
-					$ImageID = common::inputGetString('com' . $realfieldname . '_filename', '');
+					$ImageID = common::inputPostString('com' . $realfieldname . '_filename', '');
 					if ($fileNameType == 'transliterated') {
 
 						if (function_exists("transliterator_transliterate"))

@@ -54,10 +54,10 @@ class Search_range extends BaseSearch
 			$value_max = $values[1];
 
 		if ($value_min == '')
-			$value_min = common::inputGetString($this->objectName . '_min');
+			$value_min = common::inputPostString($this->objectName . '_min');
 
 		if ($value_max == '')
-			$value_max = common::inputGetString($this->objectName . '_max');
+			$value_max = common::inputPostString($this->objectName . '_max');
 
 		//header function
 

@@ -143,16 +143,16 @@ class ListOfLayouts
 
 		// Process layout name
 		if (function_exists("transliterator_transliterate"))
-			$newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputGetString('layoutname'));
+			$newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPostString('layoutname'));
 		else
-			$newLayoutName = common::inputGetString('layoutname');
+			$newLayoutName = common::inputPostString('layoutname');
 
 		$newLayoutName = str_replace(" ", "_", $newLayoutName);
 		$newLayoutName = trim(preg_replace("/[^a-z A-Z_\d]/", "", $newLayoutName));
 		$data['layoutname'] = $newLayoutName;//$sets[] = 'layoutname=' . database::quote($newLayoutName);
 		$data['modified_by'] = (int)$this->ct->Env->user->id;//$sets[] = 'modified_by=' . (int)$this->ct->Env->user->id;
 		$data['modified'] = current_time('mysql', 1); // This will use the current date and time in MySQL format;//$sets[] = 'modified=NOW()';
-		$data['layouttype'] = common::inputGetString('layouttype');//$sets[] = 'layouttype=' . database::quote(common::inputGetString('layouttype'));
+		$data['layouttype'] = common::inputPostString('layouttype');//$sets[] = 'layouttype=' . database::quote(common::inputPostString('layouttype'));
 		$data['tableid'] = common::inputGetInt('table');//$sets[] = 'tableid=' . common::inputGetInt('table');
 		$data['layoutcode'] = common::inputGetRow('layoutcode');//$sets[] = 'layoutcode=' . database::quote(common::inputGetRow('layoutcode'), true);
 		$data['layoutmobile'] = common::inputGetRow('layoutmobile');//$sets[] = 'layoutmobile=' . database::quote(common::inputGetRow('layoutmobile'), true);

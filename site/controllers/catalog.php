@@ -275,7 +275,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
 		case 'setorderby':
 
-			$order_by = common::inputGetString('orderby', '');
+			$order_by = common::inputPostString('orderby', '');
 			$order_by = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $order_by));
 
 			$ct->app->setUserState('com_customtables.orderby_' . $ct->Params->ItemId, $order_by);
@@ -393,7 +393,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 				}
 
 				if ($result != "") {
-					$msg = common::inputGetString('msg');
+					$msg = common::inputPostString('msg');
 
 					if ($msg === null)
 						return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);

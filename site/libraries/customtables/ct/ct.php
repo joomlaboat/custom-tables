@@ -265,7 +265,8 @@ class CT
 
 	function getRecordsByKeyword(): void
 	{
-		$moduleId = common::inputGetInt('moduleid', 0);
+		//Joomla Method
+		$moduleId = common::inputGetInt('ModuleId', 0);
 		if ($moduleId != 0) {
 			$keywordSearch = common::inputGetString('eskeysearch_' . $moduleId, '');
 			if ($keywordSearch != '') {

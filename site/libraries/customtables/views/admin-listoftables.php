@@ -157,9 +157,9 @@ class ListOfTables
 
 		// Process table name
 		if (function_exists("transliterator_transliterate"))
-			$newTableName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputGetString('tablename'));
+			$newTableName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPostString('tablename'));
 		else
-			$newTableName = common::inputGetString('tablename');
+			$newTableName = common::inputPostString('tablename');
 
 		$newTableName = strtolower(trim(preg_replace("/\W/", "", $newTableName)));
 
@@ -193,7 +193,7 @@ class ListOfTables
 				$id_title .= '_' . $lang->sef;
 				$id_desc .= '_' . $lang->sef;
 			} else {
-				$tableTitle = common::inputGetString($id_title);
+				$tableTitle = common::inputPostString($id_title);
 			}
 
 			if (!in_array($id_title, $fields)) {
@@ -203,11 +203,11 @@ class ListOfTables
 			if (!in_array($id_desc, $fields))
 				Fields::addLanguageField('#__customtables_tables', $id_desc, $id_desc, 'null');
 
-			$tableTitleValue = common::inputGetString($id_title);
+			$tableTitleValue = common::inputPostString($id_title);
 			if ($tableTitleValue !== null)
 				$data [$id_title] = $tableTitleValue;
 
-			$tableDescription = common::inputGetString($id_desc);
+			$tableDescription = common::inputPostString($id_desc);
 			if ($tableDescription !== null)
 				$data [$id_desc] = $tableDescription;
 			$moreThanOneLanguage = true; //More than one language installed
@@ -254,7 +254,7 @@ class ListOfTables
 
 		//Create MySQLTable
 		$messages = array();
-		$customTableName = common::inputGetString('customtablename');
+		$customTableName = common::inputPostString('customtablename');
 		if ($customTableName == '-new-') {
 			// Case: Creating a new third-party table
 			$customTableName = $newTableName;

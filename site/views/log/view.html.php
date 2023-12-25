@@ -43,7 +43,7 @@ class CustomTablesViewLog extends HtmlView
 		$this->ct = new CT;
 		$user = new CTUser();
 
-		$this->action = common::inputGetString('action', '');
+		$this->action = common::inputPostString('action', '');
 		if ($this->action == '')
 			$this->action = -1;
 
