@@ -81,7 +81,12 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 	require_once($path_helpers . 'user.php');
 	require_once($path_helpers . 'misc.php');
 	require_once($path_helpers . 'database.php');
-	require_once($path_helpers . 'common.php');
+
+	if (defined('_JEXEC'))
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');
+	elseif (defined('WPINC'))
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-wp.php');
+
 	require_once($path_helpers . 'tables.php');
 	require_once($path_helpers . 'compareimages.php');
 	require_once($path_helpers . 'findsimilarimage.php');

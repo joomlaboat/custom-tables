@@ -66,7 +66,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
 		echo '<script>
 	
 	TableCategoryID = ' . (int)$this->state->get('filter.tablecategory') . ';
-	AllTables = ' . json_encode($this->diagram->tables) . ';
+	AllTables = ' . common::ctJsonEncode($this->diagram->tables) . ';
 	
 	</script>';
 

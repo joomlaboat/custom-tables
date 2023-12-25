@@ -71,7 +71,7 @@ $document->addCustomTag('<style>
                 <script>
 
                     TableCategoryID = <?php echo (int)$this->state->get('list.tablecategory'); ?>;
-                    AllTables = <?php echo json_encode($this->diagram->tables); ?>;
+                    AllTables = <?php echo common::ctJsonEncode($this->diagram->tables); ?>;
 
                 </script>
 

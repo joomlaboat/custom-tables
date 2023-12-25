@@ -88,7 +88,7 @@ class CustomtablesViewAPI extends HtmlView
 
 		if ($frmt == 'json') {
 			header('Content-Type: application/json');
-			echo json_encode($result);
+			echo common::ctJsonEncode($result);
 		} elseif ($frmt == 'xml') {
 			header('Content-Type: text/xml');
 			$xml_data = new SimpleXMLElement('<?xml version="1.0"?><data value=""></data>');

@@ -35,7 +35,7 @@ class InputBox_tablejoin extends BaseInputBox
 		$selectors = (array)$ct->app->getUserState($key);
 
 		if ($index < 0 or $index >= count($selectors))
-			die(json_encode(['error' => 'Index out of range.' . $key]));
+			die(common::ctJsonEncode(['error' => 'Index out of range.' . $key]));
 
 		$additional_filter = common::inputGetCmd('filter', '');
 		$subFilter = common::inputGetCmd('subfilter');
@@ -51,14 +51,14 @@ class InputBox_tablejoin extends BaseInputBox
 		$tableName = $selector[0];
 		if ($tableName === null) {
 			if ($obEndClean)
-				die(json_encode(['error' => 'Table not selected']));
+				die(common::ctJsonEncode(['error' => 'Table not selected']));
 			else
 				return 'Table not selected';
 		}
 
 		$ct->getTable($tableName);
 		if (is_null($ct->Table->tablename))
-			die(json_encode(['error' => 'Table "' . $tableName . '"not found']));
+			die(common::ctJsonEncode(['error' => 'Table "' . $tableName . '"not found']));
 
 		$fieldName_or_layout = $selector[1];
 		if ($fieldName_or_layout === null or $fieldName_or_layout == '')
@@ -132,7 +132,7 @@ class InputBox_tablejoin extends BaseInputBox
 			if (count($pair) == 2) {
 				$layout_mode = true;
 				if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout')
-					die(json_encode(['error' => common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' inputbox_tablejoin.php' . $fieldName_or_layout . '"']));
+					die(common::ctJsonEncode(['error' => common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' inputbox_tablejoin.php' . $fieldName_or_layout . '"']));
 
 				$Layouts = new Layouts($ct);
 				$fieldName_or_layout_tag = $Layouts->getLayout($pair[1]);
@@ -140,7 +140,7 @@ class InputBox_tablejoin extends BaseInputBox
 				if (!isset($fieldName_or_layout_tag) or $fieldName_or_layout_tag == '') {
 					$result_js = ['error' => common::translate(
 							'COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' inputbox_tablejoin.php' . $pair[1] . '"'];
-					return json_encode($result_js);
+					return common::ctJsonEncode($result_js);
 				}
 			} else
 				$fieldName_or_layout_tag = $fieldName_or_layout;
@@ -173,7 +173,7 @@ class InputBox_tablejoin extends BaseInputBox
 				$outputArray[] = ["value" => $items[0], "label" => $items[1]];
 		}
 
-		$outputString = json_encode($outputArray);
+		$outputString = common::ctJsonEncode($outputArray);
 
 		if ($obEndClean) {
 			if (ob_get_contents()) ob_end_clean();
@@ -268,8 +268,8 @@ class InputBox_tablejoin extends BaseInputBox
 		$data[] = 'data-key="' . $key . '"';
 		$data[] = 'data-fieldname="' . $this->field->fieldname . '"';
 		$data[] = 'data-controlname="' . $control_name . '"';
-		$data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
-		$data[] = 'data-valuefiltersnames="' . base64_encode(json_encode($js_filters_FieldName)) . '"';
+		$data[] = 'data-valuefilters="' . base64_encode(common::ctJsonEncode($js_filters)) . '"';
+		$data[] = 'data-valuefiltersnames="' . base64_encode(common::ctJsonEncode($js_filters_FieldName)) . '"';
 		$data[] = 'data-onchange="' . base64_encode($this->attributes['onchange']) . '"';
 		$data[] = 'data-listing_id="' . $listing_id . '"';
 		$data[] = 'data-value="' . htmlspecialchars($value ?? '') . '"';
@@ -395,7 +395,7 @@ class InputBox_tablejoin extends BaseInputBox
 		$ct = new CT();
 		$ct->getTable($tableName);
 		if (is_null($ct->Table->tablename))
-			die(json_encode(['error' => 'Table "' . $tableName . '"not found']));
+			die(common::ctJsonEncode(['error' => 'Table "' . $tableName . '"not found']));
 
 		//Find the field name that has a join to the parent (index-1) table
 		foreach ($ct->Table->fields as $fld) {

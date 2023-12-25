@@ -101,9 +101,9 @@ class ESFileUploader
 					$ret = ['error' => $msg];
 				}
 			}
-			return json_encode($ret);
+			return common::ctJsonEncode($ret);
 		} else
-			return json_encode(['error' => common::translate('COM_CUSTOMTABLES_FILE_IS_EMPTY')]);
+			return common::ctJsonEncode(['error' => common::translate('COM_CUSTOMTABLES_FILE_IS_EMPTY')]);
 	}
 
 	public static function getAcceptedFileTypes($fileExtensions): string
@@ -315,7 +315,7 @@ class ESFileUploader
 					. DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'importcsv.php');
 
 				if ($ct->Env->clean)
-					die(json_encode(['error' => 'Failed to open file.']));
+					die(common::ctJsonEncode(['error' => 'Failed to open file.']));
 				else
 					return [];
 			}
@@ -335,7 +335,7 @@ class ESFileUploader
 					$handle = fopen($file["tmp_name"], "rb");
 					if (FALSE === $handle) {
 						if ($ct->Env->clean)
-							die(json_encode(['error' => 'Failed to open file.']));
+							die(common::ctJsonEncode(['error' => 'Failed to open file.']));
 						else
 							return [];
 					}
@@ -347,7 +347,7 @@ class ESFileUploader
 
 					if (!($mime == 'text/plain' and $file_content == $magicNumber)) {
 						if ($ct->Env->clean)
-							die(json_encode(['error' => 'Illegal mime type (' . $mime . ') or content.']));
+							die(common::ctJsonEncode(['error' => 'Illegal mime type (' . $mime . ') or content.']));
 						else
 							return [];
 					}

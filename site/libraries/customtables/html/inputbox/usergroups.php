@@ -179,9 +179,9 @@ class InputBox_usergroups extends BaseInputBox
 
 		$htmlresult = '
 		<script>
-			ctInputBoxRecords_r["' . $control_name . '"] = ' . json_encode($ctInputBoxRecords_r) . ';
-			ctInputBoxRecords_v["' . $control_name . '"] = ' . json_encode($ctInputBoxRecords_v) . ';
-			ctInputBoxRecords_p["' . $control_name . '"] = ' . json_encode($ctInputBoxRecords_p) . ';
+			ctInputBoxRecords_r["' . $control_name . '"] = ' . common::ctJsonEncode($ctInputBoxRecords_r) . ';
+			ctInputBoxRecords_v["' . $control_name . '"] = ' . common::ctJsonEncode($ctInputBoxRecords_v) . ';
+			ctInputBoxRecords_p["' . $control_name . '"] = ' . common::ctJsonEncode($ctInputBoxRecords_p) . ';
 		</script>
 		';
 

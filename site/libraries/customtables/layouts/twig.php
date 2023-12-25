@@ -289,7 +289,7 @@ class TwigProcessor
 		$this->twig->addFilter($filter);
 
 		$filter = new TwigFilter('json_encode', function ($string) {
-			return json_encode($string);
+			return common::ctJsonEncode($string);
 		});
 
 		$this->twig->addFilter($filter);

@@ -82,7 +82,7 @@ class ImportExportUserGroups
 		$output = ['usergroups' => $usergroups, 'viewlevels' => $viewlevels];
 
 		if (count($output) > 0) {
-			$output_str = '<usergroupsexport>' . json_encode($output);
+			$output_str = '<usergroupsexport>' . common::ctJsonEncode($output);
 
 			$tmp_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
 			$filename = 'usergroups';

@@ -41,9 +41,9 @@ class CustomTablesViewFileUploader extends HtmlView
 
 			if ($file != '' and file_exists($output_dir . $file)) {
 				unlink($output_dir . $file);
-				echo json_encode(['status' => 'Deleted']);
+				echo common::ctJsonEncode(['status' => 'Deleted']);
 			} else
-				echo json_encode(['error' => 'File not found. Code: FU-1']);
+				echo common::ctJsonEncode(['error' => 'File not found. Code: FU-1']);
 		} else
 			echo ESFileUploader::uploadFile($fileid);
 

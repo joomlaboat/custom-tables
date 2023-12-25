@@ -52,12 +52,12 @@ foreach ($this->allTables as $table) {
 	foreach ($fields as $field)
 		$list[] = [$field->id, $field->fieldname];
 
-	echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
+	echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . common::ctJsonEncode($list) . '</div>
 ';
 }
 ?>
 <script>
-	<?php echo 'all_tables=' . json_encode($this->allTables) . ';'; ?>
+	<?php echo 'all_tables=' . common::ctJsonEncode($this->allTables) . ';'; ?>
 </script>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
@@ -170,7 +170,8 @@ foreach ($this->allTables as $table) {
 	?>
     <input type="hidden" name="task" value="layouts.edit"/>
 
-    <div id="allLayoutRaw" style="display:none;"><?php echo json_encode(ListOfLayouts::getLayouts()); ?></div>
+    <div id="allLayoutRaw"
+         style="display:none;"><?php echo common::ctJsonEncode(ListOfLayouts::getLayouts()); ?></div>
     <div id="dependencies_content" style="display:none;">
         <h3><?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT'); ?></h3>
         <div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">

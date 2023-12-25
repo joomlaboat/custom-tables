@@ -33,7 +33,7 @@ class Twig_Fields_Tags
 
 	function json(): string
 	{
-		return json_encode(Fields::shortFieldObjects($this->ct->Table->fields));
+		return common::ctJsonEncode(Fields::shortFieldObjects($this->ct->Table->fields));
 	}
 
 	function list($param = 'fieldname'): array

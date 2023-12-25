@@ -48,7 +48,7 @@ foreach ($this->allTables as $table) {
 	foreach ($fields as $field)
 		$list[] = [$field->id, $field->fieldname];
 
-	echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
+	echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . common::ctJsonEncode($list) . '</div>
 ';
 }
 
@@ -59,7 +59,7 @@ foreach ($this->allTables as $table) {
 	if ($this->ct->Env->advancedTagProcessor)
 		echo 'proversion=true;' . PHP_EOL;
 
-	echo 'all_tables=' . json_encode($this->allTables) . ';' . PHP_EOL;
+	echo 'all_tables=' . common::ctJsonEncode($this->allTables) . ';' . PHP_EOL;
 	?>
 </script>
 

@@ -78,7 +78,7 @@ class tagProcessor_General
 			elseif ($task == 'description')
 				$vlu = $ct->Table->tablerow['description' . $ct->Languages->Postfix];
 			elseif ($task == 'fields')
-				$vlu = json_encode(Fields::shortFieldObjects($ct->Table->fields));
+				$vlu = common::ctJsonEncode(Fields::shortFieldObjects($ct->Table->fields));
 
 			if ($extraopt == 'box') {
 				$ct->messages[] = $vlu;

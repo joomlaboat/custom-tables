@@ -44,7 +44,7 @@ class ExportTables
 		//Save the array to file
 		if (count($output) > 0) {
 			//Prepare output string with data
-			$output_str = '<customtablestableexport>' . json_encode($output);
+			$output_str = '<customtablestableexport>' . common::ctJsonEncode($output);
 
 			$tmp_path = JPATH_SITE . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR;
 			$filename = substr(implode('_', $tables), 0, 128);

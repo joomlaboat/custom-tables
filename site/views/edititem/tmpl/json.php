@@ -60,5 +60,5 @@ header('Content-Type: application/json; charset=utf-8');
 header("Pragma: no-cache");
 header("Expires: 0");
 
-echo json_encode($response_object);
+echo common::ctJsonEncode($response_object);
 die;

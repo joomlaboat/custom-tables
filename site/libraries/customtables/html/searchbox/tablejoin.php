@@ -284,7 +284,7 @@ class Search_tablejoin extends BaseSearch
 			}
 
 			$htmlresult .= '
-			<div id="' . $control_name . '_elements" style="display:none;">' . json_encode($elements) . '</div>
+			<div id="' . $control_name . '_elements" style="display:none;">' . common::ctJsonEncode($elements) . '</div>
 			<div id="' . $control_name . '_elementsID" style="display:none;">' . implode(',', $elementsID) . '</div>
 			<div id="' . $control_name . '_elementsFilter" style="display:none;">' . implode(';', $elementsFilter) . '</div>
 			<div id="' . $control_name . '_elementsPublished" style="display:none;">' . implode(',', $elementsPublished) . '</div>

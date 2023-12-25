@@ -89,6 +89,6 @@ class CustomtablesViewCustomtables extends HtmlView//JViewLegacy
 		$document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
 
 		// add manifest to page JavaScript
-		//$document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . json_encode($this->manifest) . '");</script>');
+		//$document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . common::ctJsonEncode($this->manifest) . '");</script>');
 	}
 }

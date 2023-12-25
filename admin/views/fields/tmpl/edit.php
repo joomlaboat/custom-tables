@@ -53,7 +53,7 @@ foreach ($this->allTables as $table) {
 	foreach ($fields as $field)
 		$list[] = [$field->id, $field->fieldname];
 
-	echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
+	echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . common::ctJsonEncode($list) . '</div>
 ';
 } ?>
 <script>
@@ -85,7 +85,7 @@ foreach ($this->allTables as $table) {
 		proversion=true;
 ';
 	}
-	echo 'all_tables=' . json_encode($this->allTables) . ';';
+	echo 'all_tables=' . common::ctJsonEncode($this->allTables) . ';';
 	?>
 </script>
 <div id="customtables_loader" style="display: none;">

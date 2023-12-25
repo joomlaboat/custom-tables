@@ -277,7 +277,7 @@ class record
 		if (count($rows) != 1)
 			return false;
 
-		$data = base64_encode(json_encode($rows));
+		$data = base64_encode(common::ctJsonEncode($rows));
 
 		foreach ($this->ct->Table->fields as $fieldrow) {
 			if ($fieldrow['type'] == 'log') {

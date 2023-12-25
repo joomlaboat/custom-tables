@@ -674,10 +674,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		$to_field = Fields::FieldRowByName($to_parts[1], $this->ct->Table->fields);
 
 		if (!isset($from_field['type']))
-			die(json_encode(['error' => 'From field not found.']));
+			die(common::ctJsonEncode(['error' => 'From field not found.']));
 
 		if (!isset($to_field['type']))
-			die(json_encode(['error' => 'To field not found.']));
+			die(common::ctJsonEncode(['error' => 'To field not found.']));
 
 		$from_row = $this->ct->Table->loadRecord($from_listing_id);
 		$to_row = $this->ct->Table->loadRecord($to_listing_id);
@@ -700,28 +700,28 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		}
 
 		if (!$ok)
-			die(json_encode(['error' => 'Target and destination field types do not match.']));
+			die(common::ctJsonEncode(['error' => 'Target and destination field types do not match.']));
 
 		$new_value = '';
 
 		switch ($to_field['type']) {
 			case 'sqljoin':
 				if ($to_row[$to_field['realfieldname']] !== '')
-					die(json_encode(['error' => 'Target field type is the Table Join. Multiple values not allowed.']));
+					die(common::ctJsonEncode(['error' => 'Target field type is the Table Join. Multiple values not allowed.']));
 
 				break;
 
 			case 'email':
 
 				if ($to_row[$to_field['realfieldname']] !== '')
-					die(json_encode(['error' => 'Target field type is an Email. Multiple values not allowed.']));
+					die(common::ctJsonEncode(['error' => 'Target field type is an Email. Multiple values not allowed.']));
 
 				break;
 
 			case 'string':
 
 				if (str_contains($to_row[$to_field['realfieldname']], $from_row[$from_field['realfieldname']]))
-					die(json_encode(['error' => 'Target field already contains this value.']));
+					die(common::ctJsonEncode(['error' => 'Target field already contains this value.']));
 
 				$new_value = $to_row[$to_field['realfieldname']];
 				if ($new_value != '')
@@ -750,7 +750,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 				$new_items[] = '';
 
 				if (count($new_items) == count($to_items))
-					die(json_encode(['error' => 'Target field already contains this value(s).']));
+					die(common::ctJsonEncode(['error' => 'Target field already contains this value(s).']));
 
 				$new_value = implode(',', $new_items);
 

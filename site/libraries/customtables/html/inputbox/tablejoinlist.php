@@ -71,8 +71,8 @@ class InputBox_TableJoinList extends BaseInputBox
 		$data[] = 'data-key="' . $key . '"';
 		$data[] = 'data-fieldname="' . $field->fieldname . '"';
 		$data[] = 'data-controlname="' . $control_name . '"';
-		$data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
-		$data[] = 'data-valuefiltersnames="' . base64_encode(json_encode($js_filters_FieldName)) . '"';
+		$data[] = 'data-valuefilters="' . base64_encode(common::ctJsonEncode($js_filters)) . '"';
+		$data[] = 'data-valuefiltersnames="' . base64_encode(common::ctJsonEncode($js_filters_FieldName)) . '"';
 		$data[] = 'data-onchange="' . base64_encode($onchange) . '"';
 		$data[] = 'data-listing_id="' . $listing_is . '"';
 		$data[] = 'data-value="' . htmlspecialchars($value ?? '') . '"';
@@ -513,7 +513,7 @@ class InputBox_TableJoinList extends BaseInputBox
 
 		if ($dynamic_filter != '') {
 			$htmlResultJS .= '
-			<div id="' . $attributes['id'] . '_elements" style="display:none;">' . json_encode($elements) . '</div>
+			<div id="' . $attributes['id'] . '_elements" style="display:none;">' . common::ctJsonEncode($elements) . '</div>
 			<div id="' . $attributes['id'] . '_elementsID" style="display:none;">' . implode(',', $elementsID) . '</div>
 			<div id="' . $attributes['id'] . '_elementsFilter" style="display:none;">' . implode(';', $elementsFilter) . '</div>
 			<div id="' . $attributes['id'] . '_elementsPublished" style="display:none;">' . implode(',', $elementsPublished) . '</div>
@@ -594,9 +594,9 @@ class InputBox_TableJoinList extends BaseInputBox
 		$htmlResult = '
 		<script>
 			//Field value
-			ctInputBoxRecords_r["' . $this->attributes['id'] . '"] = ' . json_encode($ctInputBoxRecords_r) . ';
-			ctInputBoxRecords_v["' . $this->attributes['id'] . '"] = ' . json_encode($ctInputBoxRecords_v) . ';
-			ctInputBoxRecords_p["' . $this->attributes['id'] . '"] = ' . json_encode($ctInputBoxRecords_p) . ';
+			ctInputBoxRecords_r["' . $this->attributes['id'] . '"] = ' . common::ctJsonEncode($ctInputBoxRecords_r) . ';
+			ctInputBoxRecords_v["' . $this->attributes['id'] . '"] = ' . common::ctJsonEncode($ctInputBoxRecords_v) . ';
+			ctInputBoxRecords_p["' . $this->attributes['id'] . '"] = ' . common::ctJsonEncode($ctInputBoxRecords_p) . ';
 		</script>
 		';
 

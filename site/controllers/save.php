@@ -158,7 +158,7 @@ function CustomTablesSave($task, $this_)
 					$res['record'] = $ct->Table->record;
 				}
 
-				die(json_encode($res));
+				die(common::ctJsonEncode($res));
 
 			} elseif ($link != '') {
 				$link = str_replace('$get_listing_id', common::inputGet("listing_id", 0, 'INT'), $link);
@@ -205,7 +205,7 @@ function CustomTablesSave($task, $this_)
 
 			if (common::inputGetInt('clean', 0) == 1) {
 				$res = ['status' => 'error', 'id' => $model->listing_id, 'message' => implode(',', $model->ct->errors)];
-				die(json_encode($res));
+				die(common::ctJsonEncode($res));
 			}
 
 			if ($msg_ == 'COM_CUSTOMTABLES_INCORRECT_CAPTCHA') {

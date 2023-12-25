@@ -72,7 +72,7 @@ function processFieldParams($fieldList, array $fields): array
 				$tableRow = ESTables::getTableRowByName($tableName);
 
 				if (!is_object($tableRow)) {
-					echo json_encode(['error' => 'sqljoin field(' . $fields[$f_index]->fieldtitle . ') table not found']);
+					echo common::ctJsonEncode(['error' => 'sqljoin field(' . $fields[$f_index]->fieldtitle . ') table not found']);
 					die;
 				}
 

@@ -74,7 +74,7 @@ trait render_json
 			$number++;
 		}
 
-		return json_encode($records);
+		return common::ctJsonEncode($records);
 	}
 
 }

@@ -418,4 +418,9 @@ class common
 		}
 		return $string;
 	}
+
+	public static function ctJsonEncode($argument): bool|string
+	{
+		return json_encode($argument);
+	}
 }
