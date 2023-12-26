@@ -212,7 +212,7 @@ class CT_FieldTypeTag_file
 
 			$uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
 
-			$is_base64encoded = common::inputGet('base64encoded', '', 'CMD');
+			$is_base64encoded = common::inputGetCmd('base64encoded', '');
 			if ($is_base64encoded == "true") {
 				$src = $uploadedFile;
 

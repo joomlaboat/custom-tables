@@ -244,7 +244,7 @@ class tagProcessor_General
 				switch ($optionPair[0]) {
 					case 'string':
 					case '':
-						$value = strip_tags(common::inputGetString($optionPair[1], ''));
+						$value = common::ctStripTags(common::inputGetString($optionPair[1], ''));
 						break;
 					case 'int':
 						$value = common::inputGetInt($optionPair[1], 0);
@@ -268,11 +268,11 @@ class tagProcessor_General
 						$value = common::inputGetCmd($optionPair[1], '');
 						break;
 					case 'base64decode':
-						$value = strip_tags(base64_decode(common::inputGet($optionPair[1], '', 'BASE64')));
+						$value = common::ctStripTags(base64_decode(common::inputGet($optionPair[1], '', 'BASE64')));
 						break;
 					case 'base64encode':
 					case 'base64':
-						$value = base64_encode(strip_tags(common::inputGetString($optionPair[1], '')));
+						$value = base64_encode(common::ctStripTags(common::inputGetString($optionPair[1], '')));
 						break;
 					case 'set':
 						if (isset($optionPair[2]))

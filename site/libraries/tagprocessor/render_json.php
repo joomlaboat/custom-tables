@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
@@ -33,7 +34,7 @@ trait render_json
 		$records = [];
 
 		foreach ($ct->Records as $row)
-			$records[] = trim(strip_tags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row)));
+			$records[] = trim(common::ctStripTags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row)));
 
 		return implode(',', $records);
 	}

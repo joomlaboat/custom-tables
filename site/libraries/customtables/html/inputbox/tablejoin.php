@@ -730,9 +730,9 @@ class InputBox_tablejoin extends BaseInputBox
 
 						if ($r[$i]->value == $val or str_contains($val, ',' . $r[$i]->value . ',')) {
 							$selectedValue = $r[$i]->value;
-							$options [] = '{ label: "' . strip_tags(html_entity_decode($label, ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '", value: "' . $r[$i]->value . '" },';
+							$options [] = '{ label: "' . common::ctStripTags(html_entity_decode($label, ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '", value: "' . $r[$i]->value . '" },';
 						} elseif ($maxLimitCount < 5)
-							$options [] = '{ label: "' . strip_tags(html_entity_decode($label, ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '", value: "' . $r[$i]->value . '" },';
+							$options [] = '{ label: "' . common::ctStripTags(html_entity_decode($label, ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '", value: "' . $r[$i]->value . '" },';
 
 						$maxLimitCount += 1;
 					}

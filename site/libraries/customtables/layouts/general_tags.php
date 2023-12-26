@@ -264,7 +264,7 @@ class Twig_Url_Tags
 
 	function getstringandencode($param, $default = ''): string
 	{
-		return base64_encode(strip_tags(common::inputGetString($param, $default)));
+		return base64_encode(common::ctStripTags(common::inputGetString($param, $default)));
 	}
 
 	function getstring($param, $default = ''): string
@@ -274,7 +274,7 @@ class Twig_Url_Tags
 
 	function getstringanddecode($param, $default = ''): string
 	{
-		return strip_tags(base64_decode(common::inputGetString($param, $default)));
+		return common::ctStripTags(base64_decode(common::inputGetString($param, $default)));
 	}
 
 	function itemid(): int

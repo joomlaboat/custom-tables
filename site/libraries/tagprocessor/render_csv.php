@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
@@ -32,7 +33,7 @@ trait render_csv
 		$records = [];
 
 		foreach ($ct->Records as $row)
-			$records[] = trim(strip_tags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row)));//TO DO
+			$records[] = trim(common::ctStripTags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row)));//TO DO
 
 		$result = implode('
 ', $records);
@@ -56,7 +57,7 @@ trait render_csv
 		$line_fields = array();
 		foreach ($fieldarray as $field) {
 			$fieldpair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
-			$header_fields[] = trim(strip_tags(html_entity_decode($fieldpair[0])));//header
+			$header_fields[] = trim(common::ctStripTags(html_entity_decode($fieldpair[0])));//header
 			if (isset($fieldpair[1]))
 				$vlu = str_replace('"', '', $fieldpair[1]);
 			else
@@ -76,8 +77,8 @@ trait render_csv
 
 		//Initiate the file output
 
-		$result = strip_tags($result);
-		$result .= strip_tags(self::renderCSVoutput($ct, $layoutType, ''));
+		$result = common::ctStripTags($result);
+		$result .= common::ctStripTags(self::renderCSVoutput($ct, $layoutType, ''));
 
 		if ($ct->Table->recordcount > $ct->LimitStart + $ct->Limit) {
 			if ($ct->Limit > 0) {
@@ -94,7 +95,7 @@ trait render_csv
 			}
 		}
 
-		return strip_tags($result);
+		return common::ctStripTags($result);
 	}
 
 	protected static function renderCSVoutput(CT &$ct, int $layoutType, string $itemLayout)
@@ -109,7 +110,7 @@ trait render_csv
 			$row['_islast'] = $number == count($ct->Records);
 
 			$tablecontent .= '
-' . strip_tags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row));//TODO
+' . common::ctStripTags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row));//TODO
 
 			$number++;
 		}

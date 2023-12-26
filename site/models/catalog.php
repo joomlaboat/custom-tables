@@ -41,7 +41,7 @@ class CustomTablesModelCatalog extends BaseDatabaseModel
 
 	function cart_deleteitem(): bool
 	{
-		$listing_id = common::inputGetCmd("listing_id", '');
+		$listing_id = common::inputGetCmd('listing_id', '');
 		if ($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
 			return false;
 
@@ -52,7 +52,7 @@ class CustomTablesModelCatalog extends BaseDatabaseModel
 
 	function cart_setitemcount($itemcount = -1): bool
 	{
-		$listing_id = common::inputGetCmd("listing_id", '');
+		$listing_id = common::inputGetCmd('listing_id', '');
 		if ($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
 			return false;
 
@@ -98,7 +98,7 @@ class CustomTablesModelCatalog extends BaseDatabaseModel
 
 	function cart_form_addtocart($itemcount = -1): bool
 	{
-		$listing_id = common::inputGetCmd("listing_id", '');
+		$listing_id = common::inputGetCmd('listing_id', '');
 		if ($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
 			return false;
 
@@ -144,7 +144,7 @@ class CustomTablesModelCatalog extends BaseDatabaseModel
 
 	function cart_addtocart()
 	{
-		$listing_id = common::inputGetCmd("listing_id", '');
+		$listing_id = common::inputGetCmd('listing_id', '');
 		if ($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
 			return false;
 

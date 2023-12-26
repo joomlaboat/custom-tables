@@ -580,7 +580,7 @@ class Twig_Html_Tags
 
 		$default_Label = common::translate('COM_CUSTOMTABLES_SEARCH');
 
-		if ($label == strip_tags($label)) {
+		if ($label == common::ctStripTags($label)) {
 			if ($this->ct->Env->toolbarIcons != '') {
 				$img = '<i class=\'' . $this->ct->Env->toolbarIcons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbarIcons . ' fa-search\' title=\'' . $label . '\'></i>';
 				$labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
@@ -617,7 +617,7 @@ class Twig_Html_Tags
 			$class .= ' btn button-apply btn-primary';
 
 		$default_Label = common::translate('COM_CUSTOMTABLES_SEARCHRESET');
-		if ($label == strip_tags($label)) {
+		if ($label == common::ctStripTags($label)) {
 			if ($this->ct->Env->toolbarIcons != '') {
 				$img = '<i class=\'' . $this->ct->Env->toolbarIcons . ' fa-times\' data-icon=\'' . $this->ct->Env->toolbarIcons . ' fa-times\' title=\'' . $label . '\'></i>';
 				$labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');

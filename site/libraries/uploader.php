@@ -402,7 +402,7 @@ class ESFileUploader
 	{
 		//String sanitizer for filename
 		//https://stackoverflow.com/a/1.2.636
-		$str = strip_tags($str);
+		$str = common::ctStripTags($str);
 		$str = preg_replace('/[\r\n\t ]+/', ' ', $str);
 		$str = preg_replace('/[\"\*\/\:\<\>\?\'\|]+/', ' ', $str);
 		//$str = strtolower($str);

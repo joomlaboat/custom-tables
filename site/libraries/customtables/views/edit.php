@@ -116,7 +116,7 @@ class Edit
 		}
 
 		if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
-			$result .= '<div class="page-header' . strip_tags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
+			$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
 				. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
 		}
 

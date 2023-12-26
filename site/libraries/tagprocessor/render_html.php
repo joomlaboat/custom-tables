@@ -22,7 +22,7 @@ trait render_html
 	protected static function get_CatalogTable_HTML(CT &$ct, $layoutType, $fields, $class, $dragdrop = false)
 	{
 		//for reload single record functionality
-		$listing_id = common::inputGetCmd("listing_id", '');
+		$listing_id = common::inputGetCmd('listing_id', '');
 		$custom_number = common::inputGetInt('number', 0);
 		// end of for reload single record functionality
 

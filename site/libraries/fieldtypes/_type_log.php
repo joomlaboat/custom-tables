@@ -33,7 +33,7 @@ class CT_FieldTypeTag_log
 
 		$result = '';
 		$versions = explode(';', $rowValue);
-		$version = common::inputGet('version', 0, 'INT');
+		$version = common::inputGetInt('version', 0);
 
 		$version_date = '';
 		$version_author = '';

@@ -181,7 +181,7 @@ class JoomlaBasicMisc
 		if ($count == 0)
 			return "";
 
-		$desc = strip_tags($text);
+		$desc = common::ctStripTags($text);
 		$desc = trim($desc);
 		$desc = str_replace("/n", "", $desc);
 		$desc = str_replace("/r", "", $desc);
@@ -204,7 +204,7 @@ class JoomlaBasicMisc
 		if ($text === null or $count == 0)
 			return "";
 
-		$desc = strip_tags($text);
+		$desc = common::ctStripTags($text);
 		$matches = [];
 
 		if ($count != 1)
@@ -553,7 +553,7 @@ class JoomlaBasicMisc
 		 *Usage example:
 	$text = '<b>example</b> text with <div>tags</div>';
 
-	Result for strip_tags($text):
+	Result for common::ctStripTags($text):
 	example text with tags
 
 	Result for strip_tags_content($text):

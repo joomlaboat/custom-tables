@@ -24,7 +24,7 @@ $ct = new CT;
 $model = $this->getModel('edititem');
 $model->load($ct);
 $model->params = Factory::getApplication()->getParams();
-$model->listing_id = common::inputGetCmd("listing_id");
+$model->listing_id = common::inputGetCmd('listing_id');
 $user = new CTUser();
 
 if (!$ct->CheckAuthorization(5)) {

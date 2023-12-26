@@ -48,7 +48,7 @@ class record
 		}
 
 		if ($listing_id == '') {
-			$listing_id = common::inputGetCmd("listing_id", ''); //TODO : this inconsistency must be fixed
+			$listing_id = common::inputGetCmd('listing_id', ''); //TODO : this inconsistency must be fixed
 			if ($listing_id == 0)
 				$listing_id = '';
 		}

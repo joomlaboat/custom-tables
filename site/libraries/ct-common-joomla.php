@@ -300,7 +300,7 @@ class common
 			$decoded = html_entity_decode($encoded, ENT_COMPAT, $charset);
 
 			// Remove any potential scripting or dangerous content
-			$string = strip_tags($decoded);
+			$string = common::ctStripTags($decoded);
 
 			if ($shorten) {
 				return self::shorten($string, $length);
@@ -317,6 +317,11 @@ class common
 			return true;
 		}
 		return false;
+	}
+
+	public static function ctStripTags($argument): bool|string
+	{
+		return strip_tags($argument);
 	}
 
 	public static function shorten($string, $length = 40, $addTip = true)

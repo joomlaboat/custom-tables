@@ -758,11 +758,11 @@ class Fields
 				$moreThanOneLang = true; //More than one language installed
 			}
 
-			$data['type'] = common::inputGetCmd('type');
+			$data['type'] = common::inputPostCmd('type');
 			$data['typeparams'] = common::inputPostString('typeparams');
-			$data['isrequired'] = common::inputGetInt('isrequired', 0);
+			$data['isrequired'] = common::inputPostInt('isrequired', 0);
 			$data['defaultvalue'] = common::inputPostString('defaultvalue');
-			$data['allowordering'] = common::inputGetInt('allowordering', 1);
+			$data['allowordering'] = common::inputPostInt('allowordering', 1);
 			$data['valuerule'] = common::inputPostString('valuerule');
 			$data['valuerulecaption'] = common::inputPostString('valuerulecaption');
 			$data['fieldname'] = common::inputPostString('fieldname');

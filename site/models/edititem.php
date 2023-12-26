@@ -77,7 +77,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 	function copy(&$msg, &$link): bool
 	{
-		$listing_id = common::inputGetCmd("listing_id", 0);
+		$listing_id = common::inputGetCmd('listing_id', 0);
 		$query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
 
 		try {
@@ -608,7 +608,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			return count($listing_ids_);
 		}
 
-		$listing_id = common::inputGetCmd("listing_id", 0);
+		$listing_id = common::inputGetCmd('listing_id', 0);
 
 		if ($listing_id == 0 or $listing_id == '')
 			return 0;
@@ -654,7 +654,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			return count($listing_ids_);
 		}
 
-		$listing_id = common::inputGetCmd("listing_id", 0);
+		$listing_id = common::inputGetCmd('listing_id', 0);
 		if ($listing_id == '' or $listing_id == 0)
 			return 0;
 

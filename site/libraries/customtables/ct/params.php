@@ -173,10 +173,10 @@ class Params
 		$this->showPageHeading = $menu_params->get('show_page_heading', 1);
 
 		if ($menu_params->get('pageclass_sfx') !== null)
-			$this->pageClassSFX = strip_tags($menu_params->get('pageclass_sfx'));
+			$this->pageClassSFX = common::ctStripTags($menu_params->get('pageclass_sfx'));
 
-		if (!$blockExternalVars and common::inputGetCmd("listing_id") !== null)
-			$this->listing_id = common::inputGetCmd("listing_id");
+		if (!$blockExternalVars and common::inputGetCmd('listing_id') !== null)
+			$this->listing_id = common::inputGetCmd('listing_id');
 		else
 			$this->listing_id = $menu_params->get('listingid');
 

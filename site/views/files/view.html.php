@@ -39,7 +39,7 @@ class CustomTablesViewFiles extends HtmlView
 	{
 		$this->ct = new CT;
 
-		$this->listing_id = common::inputGetCmd("listing_id");
+		$this->listing_id = common::inputGetCmd('listing_id');
 		$this->tableid = common::inputGetInt('tableid', 0);
 		$this->fieldid = common::inputGetInt('fieldid', 0);
 

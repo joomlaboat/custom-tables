@@ -292,7 +292,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'float':
-				$value = common::inputGetFloat($this->field->comesfieldname);
+				$value = common::inputPostFloat($this->field->comesfieldname);
 
 				if (isset($value)) {
 					$this->setNewValue((float)$value);

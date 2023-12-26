@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use CustomTables\CT;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -62,14 +63,11 @@ trait render_xlsx
 
 			$value = JoomlaBasicMisc::strip_tags_content($value, '<p><br><i><u><b><span>', FALSE);
 
-			$value = strip_tags($value);//, '<center><p><br><i><u><b><span>');
+			$value = common::ctStripTags($value);//, '<center><p><br><i><u><b><span>');
 			self::simpleHTMLCorrections($value);
 
-
 			$richText = $value;//$wizard->toRichTextObject($value);
-
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($pos, $richText);
-
 
 			// Output Rows
 
@@ -85,7 +83,7 @@ trait render_xlsx
 			foreach ($ct->Records as $row) {
 				$htmlresult = $LayoutProc->fillLayout($row);
 				$htmlresult = JoomlaBasicMisc::strip_tags_content($htmlresult, '<a><p><br><i><u><b><span>', FALSE);
-				$htmlresult = strip_tags($htmlresult);//, '<center><p><br><i><u><b><span>');
+				$htmlresult = common::ctStripTags($htmlresult);//, '<center><p><br><i><u><b><span>');
 				$records[] = $htmlresult;//$richText;
 			}
 			$allRecords[] = $records;
