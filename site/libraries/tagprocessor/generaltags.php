@@ -356,7 +356,7 @@ class tagProcessor_General
 
 	public static function getGoBackButton(CT $ct, string &$layout_code): void
 	{
-		$returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+		$returnto = common::getReturnToURL();
 
 		$options = array();
 		$fList = JoomlaBasicMisc::getListToReplace('gobackbutton', $options, $layout_code, '{}');

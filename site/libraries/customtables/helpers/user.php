@@ -168,10 +168,20 @@ class CTUser
 		return true;
 	}
 
+	/**
+	 * Sets the password for a user identified by the provided user ID.
+	 *
+	 * @param int $userid The ID of the user for whom the password will be set.
+	 * @param string $password The new password to set for the user.
+	 *
+	 * @return int Returns the ID of the user for whom the password was set.
+	 * @throws Exception If there's an issue setting the user password.
+	 * @since 3.2.1
+	 */
 	static protected function SetUserPassword(int $userid, string $password): int
 	{
 		$query = 'UPDATE #__users SET password=md5("' . $password . '"), requireReset=0 WHERE id=' . $userid;
-		database::setQuery($query);
+		database::setQuery($query); // Consider using prepared statements to prevent SQL injection.
 		return $userid;
 	}
 

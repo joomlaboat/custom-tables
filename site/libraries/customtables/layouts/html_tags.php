@@ -202,7 +202,8 @@ class Twig_Html_Tags
 		return common::translate('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
 	}
 
-	function goback($defaultLabel = 'COM_CUSTOMTABLES_GO_BACK', $image_icon = '', $attribute = '', $returnto = '')
+	//$returnto must be provided already decoded
+	function goback($defaultLabel = 'COM_CUSTOMTABLES_GO_BACK', $image_icon = '', $attribute = '', string $returnto = ''): string
 	{
 		if ($defaultLabel === null)
 			$defaultLabel = 'COM_CUSTOMTABLES_GO_BACK';
@@ -219,8 +220,8 @@ class Twig_Html_Tags
 			return '';
 
 		if ($returnto == '')
-			$returnto = base64_decode(common::inputGetBase64('returnto', ''));
-
+			$returnto = common::getReturnToURL() ?? '';
+		
 		if ($returnto == '')
 			return '';
 

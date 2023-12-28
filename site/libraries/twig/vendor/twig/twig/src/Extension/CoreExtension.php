@@ -309,7 +309,6 @@ namespace Twig\Extension {
 
 namespace {
 
-	use CustomTables\common;
 	use Twig\Environment;
 	use Twig\Error\LoaderError;
 	use Twig\Error\RuntimeError;

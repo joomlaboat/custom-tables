@@ -50,14 +50,14 @@ if (!$ct->CheckAuthorization(5)) {
 
 			$fileboxname = common::inputGetCmd('fileboxname');
 			$listing_id = common::inputGet("listing_id", 0, 'INT');
-			$returnto = common::inputGet('returnto', '', 'BASE64');
+			$returntoEncoded = common::getReturnToURL(false);
 			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
 			$link = 'index.php?option=com_customtables&view=editfiles'
 
 				. '&fileboxname=' . $fileboxname
 				. '&listing_id=' . $listing_id
-				. '&returnto=' . $returnto
+				. '&returnto=' . $returntoEncoded //base64 encoded url in Joomla and Sessions ReturnTo variable reference in WP
 				. '&Itemid=' . $Itemid;
 
 			$this->setRedirect($link, $msg);
@@ -76,14 +76,14 @@ if (!$ct->CheckAuthorization(5)) {
 			//$establename=common::inputGetCmd( 'establename');
 			$fileboxname = common::inputGetCmd('fileboxname');
 			$listing_id = common::inputGet("listing_id", 0, 'INT');
-			$returnto = common::inputGet('returnto', '', 'BASE64');
+			$returnToEncoded = common::getReturnToURL(false);
 			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
 			$link = 'index.php?option=com_customtables&view=editfiles'
 
 				. '&fileboxname=' . $fileboxname
 				. '&listing_id=' . $listing_id
-				. '&returnto=' . $returnto
+				. '&returnto=' . $returnToEncoded
 				. '&Itemid=' . $Itemid;
 
 			$this->setRedirect($link, $msg);
@@ -100,22 +100,15 @@ if (!$ct->CheckAuthorization(5)) {
 			} else {
 				$msg = common::translate('COM_CUSTOMTABLES_FILE_ORDER_NOT_SAVED');
 			}
-			$returnto = common::inputGet('returnto', '', 'BASE64');
 
-			$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
-
-
-			$this->setRedirect($link, $msg);
-
+			$returnto = common::getReturnToURL();
+			$this->setRedirect($returnto, $msg);
 			break;
 
 		case 'cancel' :
-
 			$msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
-			$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
-
-			$this->setRedirect($link, $msg);
-
+			$returnto = common::getReturnToURL();
+			$this->setRedirect($returnto, $msg);
 			break;
 		default:
 

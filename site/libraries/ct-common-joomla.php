@@ -54,21 +54,6 @@ class common
 			return $new_text;
 	}
 
-	public static function curPageURL(): string
-	{
-		$WebsiteRoot = str_replace(Uri::root(true), '', Uri::root());
-		$RequestURL = $_SERVER["REQUEST_URI"];
-
-		if ($WebsiteRoot != '' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/') {
-			if ($RequestURL != '' and $RequestURL[0] == '/') {
-				//Delete $WebsiteRoot end /
-				$WebsiteRoot = substr($WebsiteRoot, 0, strlen($WebsiteRoot) - 1);
-			}
-		}
-
-		return $WebsiteRoot . $RequestURL;
-	}
-
 	public static function inputPostString($parameter, $default = null): ?string
 	{
 		return Factory::getApplication()->input->post->getString($parameter, $default);
@@ -165,16 +150,6 @@ class common
 			// Allow a-z and 0-9 only
 			return (string)preg_replace('/[^A-Z\d]/i', '', $_REQUEST[$parameter]);
 		}
-	}
-
-	public static function inputGet(string $parameter, $default, string $filter)
-	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->get($parameter, $default, $filter);
-		} else {
-			echo 'common::inputGet not supported in WordPress';
-		}
-		return null;
 	}
 
 	public static function inputPost($parameter, $default = null, $filter = null)
@@ -355,5 +330,65 @@ class common
 	public static function ctJsonEncode($argument): bool|string
 	{
 		return json_encode($argument);
+	}
+
+	//Returns base64 encoded/decoded url in Joomla and Sessions ReturnTo variable reference in WP or reference converted to URL
+	public static function getReturnToURL(bool $decode = true): ?string
+	{
+		$returnto = common::inputGet('returnto', null, 'BASE64');
+		if ($returnto === null)
+			return null;
+
+		if ($decode) {
+			return base64_decode($returnto);
+
+			/* TODO: future optional method
+			// Construct the session variable key from the received returnto ID
+			$returnto_key = 'returnto_' . $returnto_id;
+
+			// Retrieve the value associated with the returnto key from the session
+			$session = JFactory::getSession();
+			return $session->get($returnto_key, '');
+			*/
+		} else
+			return $returnto;
+	}
+
+	public static function inputGet(string $parameter, $default, string $filter)
+	{
+		if (defined('_JEXEC')) {
+			return Factory::getApplication()->input->get($parameter, $default, $filter);
+		} else {
+			echo 'common::inputGet not supported in WordPress';
+		}
+		return null;
+	}
+
+	public static function makeReturnToURL(string $currentURL = null): ?string
+	{
+		if ($currentURL === null)
+			$currentURL = JoomlaBasicMisc::curPageURL();
+
+		return base64_encode($currentURL);
+	}
+
+	public static function curPageURL(): string
+	{
+		$WebsiteRoot = str_replace(Uri::root(true), '', Uri::root());
+		$RequestURL = $_SERVER["REQUEST_URI"];
+
+		if ($WebsiteRoot != '' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/') {
+			if ($RequestURL != '' and $RequestURL[0] == '/') {
+				//Delete $WebsiteRoot end /
+				$WebsiteRoot = substr($WebsiteRoot, 0, strlen($WebsiteRoot) - 1);
+			}
+		}
+
+		return $WebsiteRoot . $RequestURL;
+	}
+
+	public static function ctParseUrl($argument)
+	{
+		return parse_url($argument);
 	}
 }

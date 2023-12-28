@@ -965,7 +965,7 @@ class JoomlaBasicMisc
 	{
 		$arr = array();
 
-		$var = parse_url($var);
+		$var = common::ctParseUrl($var);
 		$varQuery = $var['query'] ?? '';
 
 		if ($varQuery == '')

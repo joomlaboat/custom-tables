@@ -41,14 +41,14 @@ if (!$ct->CheckAuthorization(1)) {
 			$tableName = common::inputGetCmd('establename');
 			$galleryName = common::inputGet('galleryname', '', 'CMD');
 			$listing_id = common::inputGet("listing_id", 0, 'INT');
-			$returnto = common::inputGet('returnto', '', 'BASE64');
+			$returnToEncoded = common::getReturnToURL(false);
 			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
 			$link = 'index.php?option=com_customtables&view=editphotos'
 				. '&establename=' . $tableName
 				. '&galleryname=' . $galleryName
 				. '&listing_id=' . $listing_id
-				. '&returnto=' . $returnto
+				. '&returnto=' . $returnToEncoded
 				. '&Itemid=' . $Itemid;
 
 			$this->setRedirect($link, $msg);
@@ -67,14 +67,14 @@ if (!$ct->CheckAuthorization(1)) {
 			$tableName = common::inputGetCmd('establename');
 			$galleryName = common::inputGet('galleryname', '', 'CMD');
 			$listing_id = common::inputGet("listing_id", 0, 'INT');
-			$returnto = common::inputGet('returnto', '', 'BASE64');
+			$returnToEncoded = common::getReturnToURL(false);
 			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
 			$link = 'index.php?option=com_customtables&view=editphotos'
 				. '&establename=' . $tableName
 				. '&galleryname=' . $galleryName
 				. '&listing_id=' . $listing_id
-				. '&returnto=' . $returnto
+				. '&returnto=' . $returnToEncoded
 				. '&Itemid=' . $Itemid;
 
 			$this->setRedirect($link, $msg);
@@ -90,16 +90,14 @@ if (!$ct->CheckAuthorization(1)) {
 				$msg = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_NOT_SAVED');
 			}
 
-			$returnto = common::inputGet('returnto', '', 'BASE64');
-
-			$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
-			$this->setRedirect($link, $msg);
+			$returnto = common::getReturnToURL();
+			$this->setRedirect($returnto, $msg);
 			break;
 
 		case 'cancel' :
 			$msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
-			$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
-			$this->setRedirect($link, $msg);
+			$returnto = common::getReturnToURL();
+			$this->setRedirect($returnto, $msg);
 			break;
 		default:
 			parent::display();

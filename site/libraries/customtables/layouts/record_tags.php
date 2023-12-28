@@ -90,16 +90,15 @@ class Twig_Record_Tags
 
 		$view_link .= '&amp;Itemid=' . ($menu_item_id == 0 ? $this->ct->Params->ItemId : $menu_item_id);
 		$view_link .= (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId);
-
 		$view_link = JoomlaBasicMisc::deleteURLQueryOption($view_link, 'returnto');
 
 		if ($add_returnto) {
 			if ($custom_not_base64_returnto)
-				$returnto = base64_encode($custom_not_base64_returnto);
+				$returnToEncoded = common::makeReturnToURL($custom_not_base64_returnto);
 			else
-				$returnto = base64_encode($this->ct->Env->current_url . '#a' . $this->ct->Table->record[$this->ct->Table->realidfieldname]);
+				$returnToEncoded = common::makeReturnToURL($this->ct->Env->current_url . '#a' . $this->ct->Table->record[$this->ct->Table->realidfieldname]);
 
-			$view_link .= ($returnto != '' ? '&amp;returnto=' . $returnto : '');
+			$view_link .= ($returnToEncoded != '' ? '&amp;returnto=' . $returnToEncoded : '');
 		}
 
 		if (defined('_JEXEC'))

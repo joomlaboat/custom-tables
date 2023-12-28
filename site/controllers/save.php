@@ -31,7 +31,7 @@ switch ($task) {
 
 	case 'cancel':
 		$msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
-		$link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+		$link = common::getReturnToURL();
 		$this->setRedirect($link, $msg);
 		break;
 
@@ -62,10 +62,9 @@ function CustomTablesDelete($this_)
 		}
 		return true;
 	} else {
-		$returnto = common::inputGet('returnto', '', 'BASE64');
-		$decodedReturnTo = base64_decode($returnto);
+		$decodedReturnTo = common::getReturnToURL();
 
-		if ($returnto != '') {
+		if ($decodedReturnTo != '') {
 			$link = $decodedReturnTo;
 			if (!str_contains($link, 'http:') and !str_contains($link, 'https:')) $link .= $edit_model->ct->Env->WebsiteRoot . $link;
 		} else
@@ -88,8 +87,7 @@ function CustomTablesDelete($this_)
 
 function CustomTablesSave($task, $this_)
 {
-	$returnto = common::inputGet('returnto', '', 'BASE64');
-	$link = base64_decode($returnto);
+	$link = common::getReturnToURL();
 
 	common::inputSet('task', '');
 	$ct = new CT(null, false);

@@ -26,20 +26,6 @@ class common
 		return __($text, 'customtables');
 	}
 
-	public static function curPageURL(): string
-	{
-		$WebsiteRoot = str_replace(site_url(), '', home_url());
-		$RequestURL = $_SERVER["REQUEST_URI"];
-
-		if ($WebsiteRoot !== '' && str_ends_with($WebsiteRoot, '/')) {
-			if ($RequestURL !== '' && $RequestURL[0] === '/') {
-				$WebsiteRoot = rtrim($WebsiteRoot, '/');
-			}
-		}
-
-		return $WebsiteRoot . $RequestURL;
-	}
-
 	public static function inputPostString($parameter, $default = null)
 	{
 		if (isset($_POST['_wpnonce'])) {
@@ -115,28 +101,6 @@ class common
 		// Only use the first floating point value
 		preg_match('/-?\d+(\.\d+)?/', (string)$value, $matches);
 		return @ (float)$matches[0];
-	}
-
-	public static function inputGetInt(string $parameter, ?int $default = null): ?int
-	{
-		if (isset($_GET['_wpnonce'])) {
-			$nonce = wp_unslash($_GET['_wpnonce'] ?? '');
-			if (function_exists('\wp_verify_nonce') and !\wp_verify_nonce($nonce, 'get')) {
-				//return $default;
-			}
-		}
-
-		if (!isset($_GET[$parameter]))
-			return $default;
-
-		$value = $_GET[$parameter] ?? null;
-
-		if (!$value)
-			return $default;
-
-		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-		preg_match('/-?\d+/', (string)$value, $matches);
-		return @ (int)$matches[0];
 	}
 
 	public static function inputPostInt($parameter, $default = null)
@@ -367,12 +331,6 @@ class common
 		return (string)preg_replace('/[^A-Z\d]/i', '', $value);
 	}
 
-	public static function inputGet(string $parameter, $default, string $filter)
-	{
-		echo 'common::inputGet not supported in WordPress';
-		return null;
-	}
-
 	public static function inputPost($parameter, $default = null, $filter = null)
 	{
 		echo 'common::inputPost not supported in WordPress';
@@ -527,5 +485,99 @@ class common
 	public static function ctStripTags($argument): bool|string
 	{
 		return wp_strip_all_tags($argument);
+	}
+
+	public static function getReturnToURL(bool $decode = true): ?string
+	{
+		$returnto_id = common::inputGetInt('returnto', null);
+
+		if (empty($returnto_id))
+			return null;
+
+		if ($decode) {
+			// Construct the session variable key from the received returnto ID
+			$returnto_key = 'returnto_' . $returnto_id;
+
+			// Start the session (if not started already)
+			if (!session_id()) {
+				session_start();
+			}
+
+			// Retrieve the value associated with the returnto key from the $_SESSION
+			return $_SESSION[$returnto_key] ?? '';
+		} else
+			return $returnto_id;
+	}
+
+	public static function inputGetInt(string $parameter, ?int $default = null): ?int
+	{
+		if (isset($_GET['_wpnonce'])) {
+			$nonce = wp_unslash($_GET['_wpnonce'] ?? '');
+			if (function_exists('\wp_verify_nonce') and !\wp_verify_nonce($nonce, 'get')) {
+				//return $default;
+			}
+		}
+
+		if (!isset($_GET[$parameter]))
+			return $default;
+
+		$value = $_GET[$parameter] ?? null;
+
+		if (!$value)
+			return $default;
+
+		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+		preg_match('/-?\d+/', (string)$value, $matches);
+		return @ (int)$matches[0];
+	}
+
+	public static function makeReturnToURL(string $currentURL = null): ?string
+	{
+		if ($currentURL === null) {
+			// Get the current URL
+			//$current_url = esc_url_raw(home_url(add_query_arg(array(), $wp->request)));
+
+			$currentURL = JoomlaBasicMisc::curPageURL();
+		}
+
+		// Generate a unique identifier for the session variable
+		$returnto_id = uniqid();
+
+		$returnto_key = 'returnto_' . $returnto_id;
+
+		// Start the session (if not started already)
+		if (!session_id()) {
+			session_start();
+		}
+
+		// Set the session variable using the generated ID as the key
+		$_SESSION[$returnto_key] = $currentURL;
+
+		return $returnto_id;
+	}
+
+	public static function curPageURL(): string
+	{
+		$WebsiteRoot = str_replace(site_url(), '', home_url());
+		$RequestURL = $_SERVER["REQUEST_URI"];
+
+		if ($WebsiteRoot !== '' && str_ends_with($WebsiteRoot, '/')) {
+			if ($RequestURL !== '' && $RequestURL[0] === '/') {
+				$WebsiteRoot = rtrim($WebsiteRoot, '/');
+			}
+		}
+
+		return $WebsiteRoot . $RequestURL;
+	}
+
+	public static function inputGet(string $parameter, $default, string $filter)
+	{
+		echo 'common::inputGet not supported in WordPress';
+		return null;
+	}
+
+	public static function ctParseUrl($argument)
+	{
+		return wp_parse_url($argument);
 	}
 }
