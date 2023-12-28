@@ -80,12 +80,15 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 	require_once($path_helpers . 'email.php');
 	require_once($path_helpers . 'user.php');
 	require_once($path_helpers . 'misc.php');
-	require_once($path_helpers . 'database.php');
 
-	if (defined('_JEXEC'))
+
+	if (defined('_JEXEC')) {
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');
-	elseif (defined('WPINC'))
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
+	} elseif (defined('WPINC')) {
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-wp.php');
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-wp.php');
+	}
 
 	require_once($path_helpers . 'tables.php');
 	require_once($path_helpers . 'compareimages.php');

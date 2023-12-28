@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component and WordPress 6.x Plugin
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -11,7 +11,7 @@
 namespace CustomTables;
 
 // no direct access
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC')) {
 	die('Restricted access');
 }
 
@@ -27,14 +27,8 @@ class database
 
 	public static function getDBPrefix(): ?string
 	{
-		if (defined('_JEXEC')) {
-			$conf = Factory::getConfig();
-			return $conf->get('dbprefix');
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-			return $wpdb->prefix;
-		}
-		return null;
+		$conf = Factory::getConfig();
+		return $conf->get('dbprefix');
 	}
 
 	public static function realTableName($tableName): ?string
