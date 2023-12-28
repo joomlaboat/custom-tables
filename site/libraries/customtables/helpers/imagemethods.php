@@ -309,7 +309,7 @@ class CustomTablesImageMethods
 
 			do {
 				if ($fileNameType == '') {
-					$ImageID = date("YmdHis") . ($i > 0 ? $i : '');
+					$ImageID = gmdate("YmdHis") . ($i > 0 ? $i : '');
 					$ImageID .= ($i > 0 ? $i : '');
 				} else {
 					$ImageID = common::inputPostString('com' . $realfieldname . '_filename', '');

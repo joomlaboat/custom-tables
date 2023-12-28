@@ -208,8 +208,8 @@ class InputBox_time extends BaseInputBox
 		date_default_timezone_set('UTC');
 
 		if ($format != '')
-			return date($format, $seconds);
+			return gmdate($format, $seconds);
 		else
-			return date('H:i:s', $seconds);
+			return gmdate('H:i:s', $seconds);
 	}
 }

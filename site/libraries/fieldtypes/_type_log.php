@@ -70,7 +70,7 @@ class CT_FieldTypeTag_log
 				$result .= '<li>';
 
 				if ($version_date != '') {
-					$str = date('Y-m-d H:m:s', $version_date) . ' - ' . $version_author;
+					$str = gmdate('Y-m-d H:m:s', $version_date) . ' - ' . $version_author;
 
 
 					if (isset($data[3])) {

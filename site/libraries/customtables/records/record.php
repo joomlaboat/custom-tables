@@ -352,7 +352,7 @@ class record
 				$new_row[$log_field] = $row[$log_field];
 
 				if ($creation_time_field) {
-					$timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
+					$timestamp = gmdate('Y-m-d H:i:s', (int)$data_editor[0]);
 					$new_row[$creation_time_field] = $timestamp; //time (int)
 				}
 				return $new_row;

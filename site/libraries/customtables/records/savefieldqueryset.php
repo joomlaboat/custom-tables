@@ -776,7 +776,7 @@ class SaveFieldQuerySet
 
 				$i = 0;
 				do {
-					$ImageID = date("YmdHis") . ($i > 0 ? $i : '');
+					$ImageID = gmdate("YmdHis") . ($i > 0 ? $i : '');
 					//there is possible error, check all possible ext
 					$image_file = JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder . DIRECTORY_SEPARATOR . $ImageID . '.' . $format;
 					$i++;

@@ -464,7 +464,7 @@ namespace {
 	/**
 	 * Converts an input to a \DateTime instance.
 	 *
-	 *    {% if date(user.created_at) < date('+2days') %}
+	 *    {% if gmdate(user.created_at) < gmdate('+2days') %}
 	 *      {# do something #}
 	 *    {% endif %}
 	 *

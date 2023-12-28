@@ -117,7 +117,7 @@ class CustomTablesViewCatalog extends HtmlView
 		foreach ($this->ct->Table->fields as $mFld) {
 			if (in_array($mFld['fieldname'], $allowedFields)) {
 				if ($mFld['type'] == 'lastviewtime')
-					$update_fields[] = $mFld['realfieldname'] . '="' . date('Y-m-d H:i:s') . '"';
+					$update_fields[] = $mFld['realfieldname'] . '="' . gmdate('Y-m-d H:i:s') . '"';
 
 				if ($mFld['type'] == 'viewcount')
 					$update_fields[] = $mFld['realfieldname'] . '="' . ((int)($rec[$this->ct->Env->field_prefix . $mFld['fieldname']]) + 1) . '"';

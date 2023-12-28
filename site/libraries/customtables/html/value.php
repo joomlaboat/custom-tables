@@ -462,7 +462,7 @@ class Value
 			if ($option_list[0] == 'timestamp')
 				return $PHPDate;
 
-			return date($option_list[0], $PHPDate);
+			return gmdate($option_list[0], $PHPDate);
 		} else
 			return HTMLHelper::date($PHPDate);
 	}
@@ -474,7 +474,7 @@ class Value
 			if ($option_list[0] == 'timestamp')
 				return $PHPDate;
 
-			return date($option_list[0], $PHPDate);
+			return gmdate($option_list[0], $PHPDate);
 		} else {
 			if ($value == '0000-00-00 00:00:00')
 				return '';
