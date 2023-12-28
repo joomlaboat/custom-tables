@@ -36,7 +36,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/jquer
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/jquery.uploadfile.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/uploader.js"></script>');
 
-$fileId = $this->generateRandomString();
+$fileId = common::generateRandomString();
 $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
 echo '<form method="post" action="" id="esFileUploaderForm_Tables">';

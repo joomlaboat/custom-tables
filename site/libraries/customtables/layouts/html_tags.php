@@ -117,7 +117,7 @@ class Twig_Html_Tags
 
 		$max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
-		$fileid = JoomlaBasicMisc::generateRandomString();
+		$fileid = common::generateRandomString();
 		$fieldid = '9999999';//some unique number. TODO
 		$objectname = 'importcsv';
 
@@ -221,7 +221,7 @@ class Twig_Html_Tags
 
 		if ($returnto == '')
 			$returnto = common::getReturnToURL() ?? '';
-		
+
 		if ($returnto == '')
 			return '';
 

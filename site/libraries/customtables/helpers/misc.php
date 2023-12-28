@@ -684,7 +684,7 @@ class JoomlaBasicMisc
 			$webDir = DIRECTORY_SEPARATOR . substr($tempDir, 1) . DIRECTORY_SEPARATOR;
 		}
 
-		$random_name = JoomlaBasicMisc::generateRandomString();
+		$random_name = common::generateRandomString();
 
 		while (1) {
 
@@ -695,17 +695,6 @@ class JoomlaBasicMisc
 				return $file;
 			}
 		}
-	}
-
-	public static function generateRandomString(int $length = 32): string
-	{
-		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$charactersLength = strlen($characters);
-		$randomString = '';
-		for ($i = 0; $i < $length; $i++)
-			$randomString .= $characters[rand(0, $charactersLength - 1)];
-
-		return $randomString;
 	}
 
 	public static function getHTMLTagParameters($tag): array

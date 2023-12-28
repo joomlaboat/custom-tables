@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 
@@ -42,7 +43,7 @@ class tagProcessor_Value
 			foreach ($ct->Table->fields as $fieldRow) {
 				$field = new Field($ct, $fieldRow, $row);
 
-				$replaceItCode = md5(JoomlaBasicMisc::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $field->fieldname);
+				$replaceItCode = md5(common::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $field->fieldname);
 
 				$temp_items_to_replace = tagProcessor_Value::processPureValues($ct, $pageLayout, $row, $isGalleryLoaded, $getGalleryRows, $isFileBoxLoaded, $getFileBoxRows, $tag_chars);
 				if (count($temp_items_to_replace) != 0)
@@ -149,7 +150,7 @@ class tagProcessor_Value
 			foreach ($ct->Table->fields as $fieldRow) {
 				$field = new Field($ct, $fieldRow, $row);
 
-				$replaceItCode = md5(JoomlaBasicMisc::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $field->fieldname);
+				$replaceItCode = md5(common::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $field->fieldname);
 
 				if ($pureValueOptionArr[0] == $field->fieldname) {
 
@@ -413,7 +414,7 @@ class tagProcessor_Value
 
 			$i = 0;
 			foreach ($ct->Table->fields as $fieldRow) {
-				$replaceItCode = md5(JoomlaBasicMisc::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $fieldRow['fieldname']);
+				$replaceItCode = md5(common::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $fieldRow['fieldname']);
 
 				if ($pureValueOptionArr[0] == $fieldRow['fieldname']) {
 					//this is temporary replace string - part of the mechanism to avoid getting values of another fields

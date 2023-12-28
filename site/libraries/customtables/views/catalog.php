@@ -170,7 +170,7 @@ class Catalog
 				$itemLayout = str_replace("\t", '', $itemLayout);
 			}
 
-			$catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
+			$catalogTableCode = common::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
 			$catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $Layouts->layoutType, $pageLayout, $catalogTableCode);
 			if ($catalogTableContent == '') {

@@ -140,7 +140,7 @@ class InputBox_file extends BaseInputBox
 
 		$max_file_size = JoomlaBasicMisc::file_upload_max_size($custom_max_size);
 
-		$file_id = JoomlaBasicMisc::generateRandomString();
+		$file_id = common::generateRandomString();
 		$urlstr = Uri::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
 			. '_fileid=' . $file_id
 			. '&Itemid=' . $field->ct->Params->ItemId

@@ -146,8 +146,8 @@ class InputBox_tablejoin extends BaseInputBox
 				$fieldName_or_layout_tag = $fieldName_or_layout;
 		}
 
-		$selector1 = JoomlaBasicMisc::generateRandomString();
-		$selector2 = JoomlaBasicMisc::generateRandomString() . '*';
+		$selector1 = common::generateRandomString();
+		$selector2 = common::generateRandomString() . '*';
 
 		$itemLayout = '{{ record.id }}' . $selector1 . $fieldName_or_layout_tag . $selector2;
 		$pageLayoutContent = '{% block record %}' . $itemLayout . '{% endblock %}';
@@ -253,7 +253,7 @@ class InputBox_tablejoin extends BaseInputBox
 		if (count($js_filters) == 0)
 			$js_filters[] = $value;
 
-		$key = JoomlaBasicMisc::generateRandomString();
+		$key = common::generateRandomString();
 		$ct->app->setUserState($key, $filter);
 
 		$cssClass = $option_list[0] ?? '';

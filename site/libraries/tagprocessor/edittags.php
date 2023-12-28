@@ -12,6 +12,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Twig_Html_Tags;
@@ -80,7 +81,7 @@ class tagProcessor_Edit
 
 		//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 		$calendars = array();
-		$replaceItCode = JoomlaBasicMisc::generateRandomString();
+		$replaceItCode = common::generateRandomString();
 		$items_to_replace = array();
 
 		$field_objects = self::renderFields($ct, $row, $pageLayout, $inputBox, $calendars, $replaceItCode, $items_to_replace, $getEditFieldNamesOnly);

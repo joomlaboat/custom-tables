@@ -62,7 +62,7 @@ class InputBox_TableJoinList extends BaseInputBox
 		if (count($js_filters) == 0)
 			$js_filters[] = $value;
 
-		$key = JoomlaBasicMisc::generateRandomString();
+		$key = common::generateRandomString();
 		$ct->app->setUserState($key, $filter);
 
 		$cssClass = '';

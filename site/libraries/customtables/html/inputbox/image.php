@@ -62,7 +62,7 @@ class InputBox_image extends BaseInputBox
 	protected function renderUploader(): string
 	{
 		$max_file_size = JoomlaBasicMisc::file_upload_max_size();
-		$fileId = JoomlaBasicMisc::generateRandomString();
+		$fileId = common::generateRandomString();
 		$style = 'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
 		$element_id = 'ct_uploadfile_box_' . $this->field->fieldname;
 

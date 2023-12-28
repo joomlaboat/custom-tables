@@ -90,7 +90,7 @@ class TwigProcessor
 			$record_block = substr($layoutContent, $pos1 + $tag1_length, $pos2 - $pos1 - $tag1_length);
 			$record_block_replace = substr($layoutContent, $pos1, $pos2 - $pos1 + strlen($tag2));
 
-			$this->recordBlockReplaceCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
+			$this->recordBlockReplaceCode = common::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 			$pageLayoutContent = str_replace($record_block_replace, $this->recordBlockReplaceCode, $layoutContent);
 
 			$loader = new ArrayLoader([
