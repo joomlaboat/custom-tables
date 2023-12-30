@@ -31,8 +31,8 @@ if (!$ct->CheckAuthorization(5)) {
 	//not authorized
 	Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 
-
-	$link = Route::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
+	$returnToEncoded = common::makeReturnToURL();
+	$link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
 	$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
 	return;
 } else {

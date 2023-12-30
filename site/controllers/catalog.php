@@ -71,11 +71,11 @@ if ($task != '') {
 		if ($ct->Env->clean == 1)
 			die('not authorized');
 		else {
-			$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
+			$returnToEncoded = common::makeReturnToURL();
+			$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $returnToEncoded;
 			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
 		}
 	}
-
 } else
 	parent::display();
 

@@ -117,7 +117,7 @@ class RecordToolbar
 			$editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
 		if ($isModal) {
-			$tmp_current_url = base64_encode($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
+			$tmp_current_url = common::makeReturnToURL($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
 			$editLink .= '&amp;returnto=' . $tmp_current_url;
 			$link = 'javascript:ctEditModal(\'' . $editLink . '\',null)';
 		} else {

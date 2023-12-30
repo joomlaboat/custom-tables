@@ -290,8 +290,8 @@ class Params
 
 		//Form Saved
 
-		if (!$blockExternalVars and common::inputGetBase64('returnto'))
-			$this->returnTo = base64_decode(common::inputGetBase64('returnto', ''));
+		if (!$blockExternalVars and common::inputGetCmd('returnto'))
+			$this->returnTo = common::getReturnToURL();
 		else
 			$this->returnTo = $menu_params->get('returnto');
 

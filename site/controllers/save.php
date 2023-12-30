@@ -57,7 +57,8 @@ function CustomTablesDelete($this_)
 			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 			return false;
 		} else {
-			$link = $edit_model->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $ct->Env->encoded_current_url;
+			$returnToEncoded = common::makeReturnToURL();
+			$link = $edit_model->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $returnToEncoded;
 			$this_->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 		}
 		return true;
@@ -97,7 +98,8 @@ function CustomTablesSave($task, $this_)
 		return false;
 
 	if (!$ct->CheckAuthorization(1)) {
-		$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL());
+		$returnToEncoded = common::makeReturnToURL();
+		$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $returnToEncoded;
 		$this_->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 	} else {
 		$msg_ = '';

@@ -24,7 +24,8 @@ $user = new CTUser();
 
 if (!$ct->CheckAuthorization(1)) {
 	//not authorized
-	$link = Route::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
+	$returnToEncoded = common::makeReturnToURL();
+	$link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
 	$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 } else {
 	switch (common::inputGetCmd('task')) {

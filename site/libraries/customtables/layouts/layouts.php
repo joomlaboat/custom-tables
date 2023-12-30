@@ -132,6 +132,9 @@ class Layouts
 			}
 		}
 
+		if ($layoutCode === null)
+			return '';
+
 		//Get all layouts recursively
 		if ($processLayoutTag)
 			$this->processLayoutTag($layoutCode);

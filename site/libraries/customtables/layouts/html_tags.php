@@ -820,7 +820,7 @@ class Twig_Html_Tags
 				break;
 
 			case 'delete':
-				$vlu = $this->renderDeleteButton($optional_class, $title, $redirectlink, $formName);
+				$vlu = $this->renderDeleteButton($optional_class, $title, $redirectlink);
 				break;
 
 			default:
@@ -874,31 +874,36 @@ class Twig_Html_Tags
 		return '<input id="' . $buttonId . '" type="submit" class="' . $the_class . '"' . $attribute . ' onClick=\'' . $onclick . '\' value="' . $title . '">';
 	}
 
-	protected function renderSaveAndCloseButton($optional_class, $title, $redirectlink, $formName)
+	protected function renderSaveAndCloseButton($optional_class, $title, $redirectLink, $formName)
 	{
 		if ($title == '')
 			$title = common::translate('COM_CUSTOMTABLES_SAVEANDCLOSE');
 
-		return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandclose", base64_encode($redirectlink), true, "save");
+		$returnToEncoded = common::makeReturnToURL($redirectLink);
+		return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandclose", $returnToEncoded, true, "save");
 	}
 
-	protected function renderSaveAndPrintButton($optional_class, $title, $redirectlink, $formName)
+	protected function renderSaveAndPrintButton($optional_class, $title, $redirectLink, $formName)
 	{
 		if ($title == '')
 			$title = common::translate('COM_CUSTOMTABLES_NEXT');
 
-		return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandprint", base64_encode($redirectlink), true, "saveandprint");
+		$returnToEncoded = common::makeReturnToURL($redirectLink);
+
+		return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandprint", $returnToEncoded, true, "saveandprint");
 	}
 
-	protected function renderSaveAsCopyButton($optional_class, $title, $redirectlink, $formName)
+	protected function renderSaveAsCopyButton($optional_class, $title, $redirectLink, $formName)
 	{
 		if ($title == '')
 			$title = common::translate('COM_CUSTOMTABLES_SAVEASCOPYANDCLOSE');
 
-		return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandcopy", base64_encode($redirectlink), true, "saveascopy");
+		$returnToEncoded = common::makeReturnToURL($redirectLink);
+
+		return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandcopy", $returnToEncoded, true, "saveascopy");
 	}
 
-	protected function renderCancelButton($optional_class, $title, $redirectlink, $formName)
+	protected function renderCancelButton($optional_class, $title, $redirectLink, $formName)
 	{
 		if ($this->ct->Env->isModal)
 			return '';
@@ -911,10 +916,12 @@ class Twig_Html_Tags
 		else
 			$cancel_class = 'ctEditFormButton btn button-cancel';
 
-		return $this->renderButtonHTML($cancel_class, $title, $formName, "customtables_button_cancel", base64_encode($redirectlink), false, "cancel");
+		$returnToEncoded = common::makeReturnToURL($redirectLink);
+
+		return $this->renderButtonHTML($cancel_class, $title, $formName, "customtables_button_cancel", $returnToEncoded, false, "cancel");
 	}
 
-	protected function renderDeleteButton($optional_class, $title, $redirectlink, $formName)
+	protected function renderDeleteButton($optional_class, $title, $redirectLink)
 	{
 		if ($title == '')
 			$title = common::translate('COM_CUSTOMTABLES_DELETE');
@@ -927,12 +934,14 @@ class Twig_Html_Tags
 		else
 			$class = 'ctEditFormButton btn button-cancel';
 
+		$returnToEncoded = common::makeReturnToURL($redirectLink) ?? '';
+
 		return '<input id="customtables_button_delete" type="button" class="' . $class . '" value="' . $title . '"
 				onClick=\'
                 if (confirm("' . common::translate('COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE') . '"))
                 {
                     this.form.task.value="delete";
-                    ' . ($redirectlink != '' ? 'this.form.returnto.value="' . base64_encode($redirectlink) . '";' : '') . '
+                    ' . ($returnToEncoded != '' ? 'this.form.returnto.value="' . $returnToEncoded . '";' : '') . '
                     this.form.submit();
                 }
                 \'>' . PHP_EOL;

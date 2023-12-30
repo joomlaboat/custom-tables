@@ -57,7 +57,7 @@ class common
 
 		//$value = get_query_var($parameter);
 
-		if (!$value)
+		if ($value === null)
 			return $default;
 
 		$source = wp_strip_all_tags(wp_unslash($value));
@@ -95,7 +95,7 @@ class common
 
 		$value = $_GET[$parameter];
 
-		if (!$value)
+		if ($value === null)
 			return $default;
 
 		// Only use the first floating point value
@@ -149,7 +149,7 @@ class common
 
 		$value = $_GET[$parameter];
 
-		if (!$value)
+		if ($value === null)
 			return $default;
 
 		preg_match('/-?\d+/', (string)$_GET[$parameter], $matches);
@@ -188,7 +188,7 @@ class common
 
 		//$value = get_query_var($parameter);
 
-		if (!$value)
+		if ($value === null)
 			return $default;
 
 		$result = (string)preg_replace('/[^A-Z\d_\.-]/i', '', $value);
@@ -226,7 +226,7 @@ class common
 
 		//$value = get_query_var($parameter);
 
-		if (!$value)
+		if ($value === null)
 			return $default;
 
 		return stripslashes($value);
@@ -264,7 +264,7 @@ class common
 
 		//$value = get_query_var($parameter);
 
-		if (!$value)
+		if ($value === null)
 			return $default;
 
 		// Allow a-z, 0-9, slash, plus, equals.
@@ -287,7 +287,7 @@ class common
 
 		//$value = get_query_var($parameter);
 
-		if (!$value)
+		if ($value === null)
 			return $default;
 
 		// Only allow characters a-z, and underscores
@@ -324,7 +324,7 @@ class common
 
 		$value = $_GET[$parameter];
 
-		if (!$value)
+		if ($value === null)
 			return $default;
 
 		// Allow a-z and 0-9 only
@@ -499,7 +499,7 @@ class common
 			$returnto_key = 'returnto_' . $returnto_id;
 
 			// Start the session (if not started already)
-			if (!session_id()) {
+			if (!headers_sent() and !session_id()) {
 				session_start();
 			}
 
@@ -523,7 +523,7 @@ class common
 
 		$value = $_GET[$parameter] ?? null;
 
-		if (!$value)
+		if ($value === null)
 			return $default;
 
 		// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
@@ -546,7 +546,7 @@ class common
 		$returnto_key = 'returnto_' . $returnto_id;
 
 		// Start the session (if not started already)
-		if (!session_id()) {
+		if (!headers_sent() and !session_id()) {
 			session_start();
 		}
 

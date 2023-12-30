@@ -42,7 +42,7 @@ $form_items = tagProcessor_Edit::process($this->ct, $this->pageLayout, $this->ro
 
 $response_object = [];
 
-$encoded_returnto = base64_encode($this->ct->Params->returnTo);
+$encoded_returnto = common::makeReturnToURL($this->ct->Params->returnTo);
 
 if ($listing_id == 0) {
 	$publishstatus = $this->params->get('publishstatus');

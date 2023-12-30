@@ -90,10 +90,10 @@ class Environment
 		$tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($this->current_url, "listing_id");
 		$tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($tmp_current_url, 'number');
 
-		$this->encoded_current_url = base64_encode($tmp_current_url);
+		$this->encoded_current_url = common::makeReturnToURL($tmp_current_url);
 
 		$tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($tmp_current_url, 'returnto');
-		$this->encoded_current_url_no_return = base64_encode($tmp_current_url);
+		$this->encoded_current_url_no_return = common::makeReturnToURL($tmp_current_url);
 
 		$this->user = new CTUser();
 		$this->isUserAdministrator = $this->user->isUserAdministrator;//in_array(8, $this->user->groups);//8 is Super Users

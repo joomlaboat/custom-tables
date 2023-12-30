@@ -184,7 +184,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			$this->listing_id = $record->listing_id;
 
 			//Prepare "Accept Return To" Link
-			$return2Link = common::inputGet('returnto', '', 'BASE64');
+			$return2Link = common::getReturnToURL();
 			if ($return2Link != '')
 				$link = $this->PrepareAcceptReturnToLink($return2Link);
 
@@ -202,9 +202,9 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 				} catch (Exception $e) {
 					$this->ct->errors[] = 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
 				}
-				$return2Link_Updated = common::inputGet('returnto', '', 'BASE64');
+				$return2Link_Updated = common::getReturnToURL();
 				if ($return2Link != $return2Link_Updated)
-					$link = base64_decode($return2Link_Updated);
+					$link = $return2Link_Updated;
 			}
 
 			common::inputSet("listing_id", $listing_id);
@@ -386,13 +386,8 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return $row[$this->ct->Table->realidfieldname];
 	}
 
-	function PrepareAcceptReturnToLink($encoded_link): string
+	function PrepareAcceptReturnToLink($link): string
 	{
-		if ($encoded_link == '')
-			return '';
-
-		$link = base64_decode($encoded_link);
-
 		if ($link == '')
 			return '';
 

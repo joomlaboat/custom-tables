@@ -168,11 +168,11 @@ class Edit
 		$returnTo = '';
 
 		if (common::inputGetBase64('returnto'))
-			$returnTo = base64_decode(common::inputGetBase64('returnto', ''));
+			$returnTo = common::getReturnToURL();
 		elseif ($this->ct->Params->returnTo)
 			$returnTo = $this->ct->Params->returnTo;
 
-		$encodedReturnTo = base64_encode($returnTo);
+		$encodedReturnTo = common::makeReturnToURL($returnTo);
 
 		if ($listing_id == 0) {
 			$result .= '<input type="hidden" name="published" value="' . (int)$this->ct->Params->publishStatus . '" />';

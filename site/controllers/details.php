@@ -32,7 +32,8 @@ switch ($task) {
 
 		$model = $this->getModel('edititem');
 		if (!$ct->CheckAuthorization(2)) {
-			$link = Route::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
+			$returnToEncoded = common::makeReturnToURL();
+			$link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
 			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 		} else {
 			$app = Factory::getApplication();
@@ -55,8 +56,9 @@ switch ($task) {
 
 		$model = $this->getModel('edititem');
 		if (!$ct->CheckAuthorization(2)) {
-			if ($ct->Env->version != 1.5) $link = Route::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
-			else $link = Route::_('index.php?option=com_user&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
+			$returnToEncoded = common::makeReturnToURL();
+			if ($ct->Env->version != 1.5) $link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
+			else $link = Route::_('index.php?option=com_user&view=login&return=' . $returnToEncoded);
 			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 		} else {
 			$model->load($ct);
