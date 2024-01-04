@@ -75,7 +75,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'sqljoin':
-				$value = common::inputPostString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
 					$value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
@@ -97,7 +97,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'radio':
-				$value = common::inputPostCmd($this->field->comesfieldname);
+				$value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
 					$this->setNewValue($value);
@@ -110,7 +110,7 @@ class SaveFieldQuerySet
 			case 'filelink':
 
 			case 'googlemapcoordinates':
-				$value = common::inputPostString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
 					$this->setNewValue($value);
@@ -119,7 +119,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'color':
-				$value = common::inputPostString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 				if (isset($value)) {
 					if (str_contains($value, 'rgb')) {
 						$parts = str_replace('rgba(', '', $value);
@@ -140,7 +140,7 @@ class SaveFieldQuerySet
 						}
 
 					} else
-						$value = common::inputPostAlnum($this->field->comesfieldname, '');
+						$value = common::inputPostAlnum($this->field->comesfieldname, '', 'create-edit-record');
 
 					$value = strtolower($value);
 					$value = str_replace('#', '', $value);
@@ -152,7 +152,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'alias':
-				$value = common::inputPostString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
 					$value = $this->get_alias_type_value($listing_id);
@@ -171,7 +171,7 @@ class SaveFieldQuerySet
 					} else
 						$postfix = '_' . $lang->sef;
 
-					$value = common::inputPostString($this->field->comesfieldname . $postfix);
+					$value = common::inputPostString($this->field->comesfieldname . $postfix, null, 'create-edit-record');
 
 					if (isset($value)) {
 						$this->row_old[$this->field->realfieldname . $postfix] = $value;
@@ -210,7 +210,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'ordering':
-				$value = common::inputPostInt($this->field->comesfieldname);
+				$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) // always check with isset(). null doesn't work as 0 is null somehow in PHP
 				{
@@ -220,7 +220,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'int':
-				$value = common::inputPostInt($this->field->comesfieldname);
+				$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (!is_null($value)) // always check with isset(). null doesn't work as 0 is null somehow in PHP
 				{
@@ -230,10 +230,10 @@ class SaveFieldQuerySet
 				break;
 
 			case 'user':
-				$value = common::inputPost($this->field->comesfieldname);
+				$value = common::inputPost($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
-					$value = common::inputPostInt($this->field->comesfieldname);
+					$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
 
 					if ($value == 0)
 						$value = null;
@@ -246,7 +246,7 @@ class SaveFieldQuerySet
 
 				if ($this->ct->isRecordNull($this->row_old) or $this->isCopy) {
 
-					$value = common::inputPost($this->field->comesfieldname);
+					$value = common::inputPost($this->field->comesfieldname, null, 'create-edit-record');
 
 					if ((!isset($value) or $value == 0)) {
 
@@ -264,7 +264,7 @@ class SaveFieldQuerySet
 					return;
 				}
 
-				$value = common::inputPostInt($this->field->comesfieldname);
+				$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
 				if ($value == 0)
 					$value = null;
 
@@ -277,7 +277,7 @@ class SaveFieldQuerySet
 			case 'article':
 
 			case 'usergroup':
-				$value = common::inputPostInt($this->field->comesfieldname);
+				$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
 					$this->setNewValue($value);
@@ -296,7 +296,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'float':
-				$value = common::inputPostFloat($this->field->comesfieldname);
+				$value = common::inputPostFloat($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
 					$this->setNewValue((float)$value);
@@ -306,7 +306,7 @@ class SaveFieldQuerySet
 
 			case 'image':
 
-				$to_delete = common::inputPost($this->field->comesfieldname . '_delete', '', 'CMD');
+				$to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
 
 				if ($to_delete == 'true') {
 					$this->setNewValue(null);
@@ -337,7 +337,7 @@ class SaveFieldQuerySet
 					}
 				}
 
-				$tempValue = common::inputPostString($this->field->comesfieldname);
+				$tempValue = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 				if ($tempValue !== null and $tempValue != '') {
 
 					require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php');
@@ -349,7 +349,7 @@ class SaveFieldQuerySet
 
 			case 'blob':
 
-				$to_delete = common::inputPost($this->field->comesfieldname . '_delete', '', 'CMD');
+				$to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
 				$value = CT_FieldTypeTag_file::get_blob_value($this->field);
 
 				$fileNameField = '';
@@ -370,7 +370,7 @@ class SaveFieldQuerySet
 
 					if ($fileNameField != '') {
 						if (!$this->checkIfFieldAlreadyInTheList($fileNameField)) {
-							$file_id = common::inputPost($this->field->comesfieldname, '', 'STRING');
+							$file_id = common::inputPostString($this->field->comesfieldname, '', 'create-edit-record');
 
 							//Delete temporary file name parts
 							//Example: ct_1702267688_PseAH3r3Cy91VhQbhhzwbchYW5rK51sD_001_Li-Rongbo_LOI_PE1214762_26032019_c1b1121b122.doc
@@ -393,7 +393,7 @@ class SaveFieldQuerySet
 
 				$FileFolder = CT_FieldTypeTag_file::getFileFolder($this->field->params[1]);
 
-				$file_id = common::inputPost($this->field->comesfieldname, '', 'STRING');
+				$file_id = common::inputPostString($this->field->comesfieldname, '', 'create-edit-record');
 
 				$filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
 				if (substr($filepath, 0, 1) == DIRECTORY_SEPARATOR)
@@ -407,7 +407,7 @@ class SaveFieldQuerySet
 				} else {
 					$ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
 
-					$to_delete = common::inputPost($this->field->comesfieldname . '_delete', '', 'CMD');
+					$to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
 
 					if ($to_delete == 'true') {
 						$this->setNewValue(null);
@@ -432,7 +432,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'email':
-				$value = common::inputPostString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 				if (isset($value)) {
 					$value = trim($value ?? '');
 					if (Email::checkEmail($value))
@@ -443,7 +443,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'url':
-				$value = common::inputPostString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 				if (isset($value)) {
 					$value = trim($value ?? '');
 					if (filter_var($value, FILTER_VALIDATE_URL))
@@ -454,7 +454,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'checkbox':
-				$value = common::inputPostCmd($this->field->comesfieldname);
+				$value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
 
 				if ($value !== null) {
 					if ((int)$value == 1 or $value == 'on')
@@ -464,7 +464,7 @@ class SaveFieldQuerySet
 
 					$this->setNewValue($value);
 				} else {
-					$value = common::inputPostCmd($this->field->comesfieldname . '_off');
+					$value = common::inputPostCmd($this->field->comesfieldname . '_off', null, 'create-edit-record');
 					if ($value !== null) {
 						if ((int)$value == 1)
 							$this->setNewValue(0);
@@ -475,7 +475,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'date':
-				$value = common::inputPostString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 				if (isset($value)) {
 					if ($value == '' or $value == '0000-00-00') {
 
@@ -572,7 +572,7 @@ class SaveFieldQuerySet
 
 			switch ($selectorPair[0]) {
 				case 'single';
-					$value = common::inputPostInt($field->comesfieldname);
+					$value = common::inputPostInt($field->comesfieldname, null, 'create-edit-record');
 
 					if (isset($value))
 						return $value;
@@ -644,7 +644,7 @@ class SaveFieldQuerySet
 
 	public function get_alias_type_value($listing_id)
 	{
-		$value = common::inputPostString($this->field->comesfieldname);
+		$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 		if (!isset($value))
 			return null;
 
@@ -729,7 +729,7 @@ class SaveFieldQuerySet
 		switch ($this->field->params[0]) {
 			case 'radio':
 			case 'single';
-				$value = common::inputPostString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 				if (isset($value))
 					return ',' . $value . ',';
 
@@ -749,7 +749,7 @@ class SaveFieldQuerySet
 
 	protected function get_customtables_type_language(): ?string
 	{
-		$value = common::inputPostCmd($this->field->comesfieldname);
+		$value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
 
 		if (isset($value))
 			return $value;
@@ -773,7 +773,7 @@ class SaveFieldQuerySet
 
 	protected function get_customtables_type_signature(): ?string
 	{
-		$value = common::inputPostString($this->field->comesfieldname);
+		$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
 		if (isset($value)) {
 			$ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);

@@ -26,8 +26,8 @@ class InputBox_float extends BaseInputBox
 	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($value === null) {
-			$value = common::inputGetFloat($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
+			$value = common::inputGetFloat($this->ct->Env->field_prefix . $this->field->fieldname, null);//, 'create-edit-record');
+			if ($value === null)
 				$value = (float)$defaultValue;
 		}
 

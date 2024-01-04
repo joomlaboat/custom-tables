@@ -280,7 +280,7 @@ class record
 			$whereClause = new MySQLWhereClause();
 			$whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
 
-			$rows = database::loadAssocList($this->ct->Table->realtablename, [$fields_to_save], $whereClause, null, null, 1);
+			$rows = database::loadAssocList($this->ct->Table->realtablename, $fields_to_save, $whereClause, null, null, 1);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 			return false;

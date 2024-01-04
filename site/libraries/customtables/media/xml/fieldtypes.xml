@@ -1276,7 +1276,7 @@
 
     <type ct_name="text" name="text" label="Text Area (Multiple Lines)"
           description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false"
-          priority="1" wordpress="true">
+          priority="1" wordpress="false">
         <params>
             <param name="texteditor" label="Text Editor" description="" hidden="false" default="" type="list">
                 <option value="" label="No Editor"/>
