@@ -47,11 +47,8 @@ class InputBox_usergroups extends BaseInputBox
 
 		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 
-		//Build Query
-		$query = $this->buildQuery();
-
 		try {
-			$records = database::loadObjectList($query);
+			$records = $this->buildQuery();
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
@@ -68,27 +65,35 @@ class InputBox_usergroups extends BaseInputBox
 		};
 	}
 
-	protected function buildQuery(): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function buildQuery(): array
 	{
-		$query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
-		$where = [];
+		$whereClause = new MySQLWhereClause();
+
+		//$query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
+		//$where = [];
 
 		$availableUserGroups = $this->field->params[1] ?? '';
 		$availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', trim($availableUserGroups)));
 
 		if (count($availableUserGroupList) == 0) {
-			$where [] = '#__usergroups.title!=' . database::quote('Super Users');
+			$whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');
+			//$where [] = '#__usergroups.title!=' . database::quote('Super Users');
 		} else {
-			$whereOr = [];
+			//$whereOr = [];
 			foreach ($availableUserGroupList as $availableUserGroup) {
 				if ($availableUserGroup != '')
-					$whereOr[] = '#__usergroups.title=' . database::quote($availableUserGroup);
+					$whereClause->addOrCondition('#__usergroups.title', $availableUserGroup);
+				//$whereOr[] = '#__usergroups.title=' . database::quote($availableUserGroup);
 			}
-			$where [] = (implode(' OR ', $whereOr));
+			//$where [] = (implode(' OR ', $whereOr));
 		}
-		$query .= ' WHERE ' . implode(' AND ', $where);
-		$query .= ' ORDER BY #__usergroups.title';
-		return $query;
+		//$query .= ' WHERE ' . implode(' AND ', $where);
+		//$query .= ' ORDER BY #__usergroups.title';
+		return database::loadObjectList('#__usergroups', ['#__usergroups.id AS id', '#__usergroups.title AS name'], $whereClause, '#__usergroups.title');
 	}
 
 	protected function getSelect(array $records, array $valueArray, bool $multiple = false, ?string $customElementId = null): string

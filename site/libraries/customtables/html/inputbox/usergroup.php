@@ -41,11 +41,8 @@ class InputBox_usergroup extends BaseInputBox
 
 		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 
-		//Build Query
-		$query = $this->buildQuery($showUserWithRecords);
-
 		try {
-			$options = database::loadObjectList($query);
+			$options = $this->buildQuery($showUserWithRecords);
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
@@ -66,33 +63,45 @@ class InputBox_usergroup extends BaseInputBox
 		return $select;
 	}
 
-	protected function buildQuery(bool $showUserWithRecords = false): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function buildQuery(bool $showUserWithRecords = false): array
 	{
-		$query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
+		$whereClause = new MySQLWhereClause();
+
+		//$query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
+
+		$from = '#__usergroups';
 
 		if ($showUserWithRecords)
-			$query .= ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
+			$from .= ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
 
-		$where = [];
+		//$where = [];
 
 		$availableUserGroupsList = ($this->field->params[0] == '' ? [] : $this->field->params);
 
 		if (count($availableUserGroupsList) == 0) {
-			$where [] = '#__usergroups.title!=' . database::quote('Super Users');
+			$whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');
+			//$where [] = '#__usergroups.title!=' . database::quote('Super Users');
 		} else {
-			$whereOr = [];
+			//$whereOr = [];
 			foreach ($availableUserGroupsList as $availableUserGroup) {
 				if ($availableUserGroup != '')
-					$whereOr[] = '#__usergroups.title=' . database::quote($availableUserGroup);
+					$whereClause->addOrCondition('#__usergroups.title', $availableUserGroup);
+				//$whereOr[] = '#__usergroups.title=' . database::quote($availableUserGroup);
 			}
-			$where = '(' . implode(' OR ', $whereOr) . ')';
+			//$where = '(' . implode(' OR ', $whereOr) . ')';
 		}
 
-		if (count($where) > 0)
-			$query .= ' WHERE ' . implode(' AND ', $where);
+		//if (count($where) > 0)
+		//$query .= ' WHERE ' . implode(' AND ', $where);
 
-		$query .= ' GROUP BY #__usergroups.id';
-		$query .= ' ORDER BY #__usergroups.title';
-		return $query;
+		//$query .= ' GROUP BY #__usergroups.id';
+		//$query .= ' ORDER BY #__usergroups.title';
+
+		return database::loadObjectList($from, ['#__usergroups.id AS id', '#__usergroups.title AS name'], $whereClause, '#__usergroups.title', null, null, null, 'OBJECT', '#__usergroups.id');
+		//return $query;
 	}
 }

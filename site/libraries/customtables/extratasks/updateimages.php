@@ -18,9 +18,14 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
+use CustomTables\MySQLWhereClause;
 
 class updateImages
 {
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function process(): array
 	{
 		$ct = new CT;
@@ -49,26 +54,42 @@ class updateImages
 
 		$count = 0;
 		if ($startIndex == 0) {
-			$count = self::countImages($ct->Table->realtablename, $fieldRow->realfieldname, $ct->Table->realidfieldname);
+			$count = self::countImages($ct->Table->realtablename, $ct->Table->realidfieldname);
 			if ($stepSize > $count)
 				$stepSize = $count;
 		}
 
-		$status = self::processImages($ct, $fieldRow, $old_params, $new_params, $startIndex, $stepSize);
+		$status = self::processImages($ct, $fieldRow, $old_params, $new_params);
 		return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);
 	}
 
-	public static function countImages(string $realtablename, string $realfieldname, string $realidfieldname): int
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function countImages(string $realtablename, string $realidfieldname): int
 	{
-		$query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('$realfieldname', null, 'NOT NULL');
+
+		$rows = database::loadAssocList($realtablename, ['count(' . $realidfieldname . ') AS c'], $whereClause, null, null);
 		return (int)$rows[0]['c'];
 	}
 
-	public static function processImages(CT &$ct, $fieldRow, array $old_params, array $new_params, int $startIndex, int $stepSize): ?string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function processImages(CT &$ct, $fieldRow, array $old_params, array $new_params): ?string
 	{
-		$query = 'SELECT ' . $fieldRow->realfieldname . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldRow->realfieldname . ' IS NOT NULL';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT ' . $fieldRow->realfieldname . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldRow->realfieldname . ' IS NOT NULL';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($fieldRow->realfieldname, null, '');
+
+		$rows = database::loadAssocList($ct->Table->realtablename, [$fieldRow->realfieldname], $whereClause, null, null);
 		$old_ImageFolder = '';
 		$imgMethods = new CustomTablesImageMethods;
 
@@ -106,7 +127,7 @@ class updateImages
 		return null;
 	}
 
-	protected static function processImage(&$imgMethods, &$old_imageSizes, &$new_imageSizes, $rowValue, $old_ImageFolder, $new_ImageFolder): ?string
+	protected static function processImage($imgMethods, $old_imageSizes, $new_imageSizes, $rowValue, $old_ImageFolder, $new_ImageFolder): ?string
 	{
 		$original_image_file = '';
 
@@ -115,7 +136,7 @@ class updateImages
 		if ($status !== null)
 			return null;//Skip if original file not found
 
-		$status = self::processImage_Thumbnail($imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder);
+		$status = self::processImage_Thumbnail($rowValue, $old_ImageFolder, $new_ImageFolder);
 		if ($status !== null) {
 			//Create Thumbnail file
 			$r = $imgMethods->ProportionalResize(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file, JPATH_SITE . DIRECTORY_SEPARATOR . $new_ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $rowValue . '.jpg', 150, 150, 1, -1, '');
@@ -148,7 +169,7 @@ class updateImages
 		return null;
 	}
 
-	protected static function processImage_Original(&$imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder, &$original_image_file)
+	protected static function processImage_Original($imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder, &$original_image_file): ?string
 	{
 		//Check original image file
 		$prefix = '_original';
@@ -175,7 +196,7 @@ class updateImages
 		return null;
 	}
 
-	protected static function processImage_Thumbnail(&$imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder): ?string
+	protected static function processImage_Thumbnail($rowValue, $old_ImageFolder, $new_ImageFolder): ?string
 	{
 		//Check thumbnail
 		$prefix = '_esthumb';
@@ -194,7 +215,7 @@ class updateImages
 		return null;
 	}
 
-	protected static function processImage_CustomSizes(&$imgMethods, $imageSizes, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file): ?string
+	protected static function processImage_CustomSizes($imgMethods, $imageSizes, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file): ?string
 	{
 		//Move files if necessary
 		foreach ($imageSizes as $img) {
@@ -205,7 +226,7 @@ class updateImages
 		return null;
 	}
 
-	protected static function processImage_CustomSize_MoveFile($imgMethods, $old_imagesize, $rowValue, $old_ImageFolder, $new_ImageFolder, $prefix, string $imagefile_ext, string $original_image_file)
+	protected static function processImage_CustomSize_MoveFile($imgMethods, $old_imagesize, $rowValue, $old_ImageFolder, $new_ImageFolder, $prefix, string $imagefile_ext, string $original_image_file): ?string
 	{
 		if ($imagefile_ext == '')
 			$imagefile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file);//file extension is unknown - let's find out based on original file
@@ -241,7 +262,7 @@ class updateImages
 		return null;
 	}
 
-	protected static function findChangedOrDeletedCustomSizes($old_imageSizes, $new_imageSizes)
+	protected static function findChangedOrDeletedCustomSizes($old_imageSizes, $new_imageSizes): array
 	{
 		$image_sizes_to_delete = array();
 

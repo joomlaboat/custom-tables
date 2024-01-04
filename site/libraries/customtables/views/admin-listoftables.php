@@ -30,10 +30,9 @@ class ListOfTables
 
 	public static function getNumberOfRecords($realtablename, $realIdField): int
 	{
-		$query = 'SELECT COUNT(' . $realIdField . ') AS count FROM ' . $realtablename . ' LIMIT 1';
-
 		try {
-			$rows = database::loadObjectList($query);
+			$whereClause = new MySQLWhereClause();
+			$rows = database::loadObjectList($realtablename, ['COUNT(' . $realIdField . ') AS count'], $whereClause, null, null, 1);
 		} catch (Exception $e) {
 			if (defined('_JEXEC')) {
 				echo $e->getMessage();
@@ -45,17 +44,24 @@ class ListOfTables
 		return $rows[0]->count;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getItems($published = null, $search = null, $category = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0): array
 	{
-		$query = $this->getListQuery($published, $search, $category, $orderCol, $orderDirection, $limit, $start);
-		return database::loadObjectList($query);
+		return $this->getListQuery($published, $search, $category, $orderCol, $orderDirection, $limit, $start);
 	}
 
-	function getListQuery($published = null, $search = null, $category = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function getListQuery($published = null, $search = null, $category = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0, bool $returnQueryString = false)
 	{
 		$fieldCount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND (fields.published=0 or fields.published=1) LIMIT 1)';
-		$selects = array();
-		$selects[] = ESTables::getTableRowSelects();
+
+		$selects = ESTables::getTableRowSelectArray();
 
 		if (defined('_JEXEC')) {
 			$categoryName = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
@@ -63,45 +69,44 @@ class ListOfTables
 		}
 		$selects[] = $fieldCount . ' AS fieldcount';
 
-		$query = 'SELECT ' . implode(',', $selects) . ' FROM ' . database::quoteName('#__customtables_tables') . ' AS a';
-		$where = [];
+		$whereClause = new MySQLWhereClause();
+
+		$whereClausePublished = new MySQLWhereClause();
 
 		// Filter by published state
 		if (is_numeric($published))
-			$where [] = 'a.published = ' . (int)$published;
-		elseif ($published === null or $published === '')
-			$where [] = '(a.published = 0 OR a.published = 1)';
+			$whereClausePublished->addCondition('a.published', (int)$published);
+		elseif ($published === null or $published === '') {
+			$whereClausePublished->addOrCondition('a.published', 0);
+			$whereClausePublished->addOrCondition('a.published', 1);
+		}
+
+		if ($whereClausePublished->hasConditions())
+			$whereClause->addNestedCondition($whereClausePublished);
 
 		// Filter by search.
 		if (!empty($search)) {
+			$whereClauseSearch = new MySQLWhereClause();
 			if (stripos($search, 'id:') === 0) {
-				$where [] = 'a.id = ' . (int)substr($search, 3);
+				$whereClauseSearch->addCondition('a.id', (int)substr($search, 3));
 			} else {
-				$search = database::quote('%' . $search . '%');
-				$where [] = '(a.tablename LIKE ' . $search . ')';
+				$whereClauseSearch->addCondition('a.tablename', '%' . $search . '%', 'LIKE');
 			}
+			if ($whereClauseSearch->hasConditions())
+				$whereClause->addNestedCondition($whereClauseSearch);
 		}
 
-		// Filter by Tableid.
+		// Filter by Category.
 		if ($category !== null and $category != '' and (int)$category != 0) {
-			$where [] = 'a.tablecategory = ' . database::quote((int)$category);
+			$whereClause->addCondition('a.tablecategory', (int)$category);
 		}
-
-		$query .= ' WHERE ' . implode(' AND ', $where);
-
-		// Add the list ordering clause.
-		if ($orderCol != '')
-			$query .= ' ORDER BY ' . database::quoteName($orderCol) . ' ' . $orderDirection;
-
-		if ($limit != 0)
-			$query .= ' LIMIT ' . $limit;
-
-		if ($start != 0)
-			$query .= ' OFFSET ' . $start;
-
-		return $query;
+		return database::loadAssocList('#__customtables_tables AS a', $selects, $whereClause, $orderCol, $orderDirection, $limit, $start, null, $returnQueryString);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function deleteTable(int $tableId): bool
 	{
 		$table_row = ESTables::getTableRowByID($tableId);
@@ -130,11 +135,17 @@ class ListOfTables
 	}
 
 	//Used in WordPress version
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function save(?int $tableId): ?array
 	{
+		$data = [];
 		// Check if running in WordPress context
 		if (defined('WPINC')) {
-			check_admin_referer('create-table', '_wpnonce_create-table');
+			check_admin_referer('create-edit-table');
 
 			// Check user capabilities
 			if (!current_user_can('install_plugins')) {
@@ -157,16 +168,16 @@ class ListOfTables
 
 		// Process table name
 		if (function_exists("transliterator_transliterate"))
-			$newTableName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPostString('tablename'));
+			$newTableName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPostString('tablename', null, 'create-edit-table'));
 		else
-			$newTableName = common::inputPostString('tablename');
+			$newTableName = common::inputPostString('tablename', null, 'create-edit-table');
 
 		$newTableName = strtolower(trim(preg_replace("/\W/", "", $newTableName)));
 
 		// Save as Copy
 		$old_tablename = '';
-		if (common::inputGetCmd('task') === 'save2copy') {
-			$originalTableId = common::inputGetInt('originaltableid');
+		if (common::inputPostCmd('task', null, 'create-edit-table') === 'save2copy') {
+			$originalTableId = common::inputPostInt('originaltableid', null, 'create-edit-table');
 			if ($originalTableId !== null) {
 				$old_tablename = ESTables::getTableName($originalTableId);
 
@@ -193,7 +204,7 @@ class ListOfTables
 				$id_title .= '_' . $lang->sef;
 				$id_desc .= '_' . $lang->sef;
 			} else {
-				$tableTitle = common::inputPostString($id_title);
+				$tableTitle = common::inputPostString($id_title, null, 'create-edit-table');
 			}
 
 			if (!in_array($id_title, $fields)) {
@@ -203,11 +214,11 @@ class ListOfTables
 			if (!in_array($id_desc, $fields))
 				Fields::addLanguageField('#__customtables_tables', $id_desc, $id_desc, 'null');
 
-			$tableTitleValue = common::inputPostString($id_title);
+			$tableTitleValue = common::inputPostString($id_title, null, 'create-edit-table');
 			if ($tableTitleValue !== null)
 				$data [$id_title] = $tableTitleValue;
 
-			$tableDescription = common::inputPostString($id_desc);
+			$tableDescription = common::inputPostString($id_desc, null, 'create-edit-table');
 			if ($tableDescription !== null)
 				$data [$id_desc] = $tableDescription;
 			$moreThanOneLanguage = true; //More than one language installed
@@ -238,7 +249,7 @@ class ListOfTables
 					return null; //Abort if the table with this name already exists.
 			}
 
-			if (common::inputPostString('customtablename') == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
+			if (common::inputPostString('customtablename', null, 'create-edit-table') == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
 			{
 				//This function will find the old Table Name of existing table and rename MySQL table.
 				ESTables::renameTableIfNeeded($tableId, $database, $dbPrefix, $newTableName);
@@ -254,7 +265,7 @@ class ListOfTables
 
 		//Create MySQLTable
 		$messages = array();
-		$customTableName = common::inputPostString('customtablename');
+		$customTableName = common::inputPostString('customtablename', null, 'create-edit-table');
 		if ($customTableName == '-new-') {
 			// Case: Creating a new third-party table
 			$customTableName = $newTableName;
@@ -266,7 +277,7 @@ class ListOfTables
 			//$messages[] = __('Third-party fields added.', 'customtables');
 		} else {
 			// Case: Updating an existing table or creating a new custom table
-			$originalTableId = common::inputGetInt('originaltableid', 0);
+			$originalTableId = common::inputPostInt('originaltableid', 0, 'create-edit-table');
 
 			if ($originalTableId != 0 and $old_tablename != '') {
 				// Copying an existing table

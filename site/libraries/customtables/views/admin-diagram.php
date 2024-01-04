@@ -11,6 +11,7 @@
 namespace CustomTables;
 
 // no direct access
+use Exception;
 use JoomlaBasicMisc;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -25,6 +26,10 @@ class Diagram
 	var array $colors;
 	var array $text_colors;
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public function __construct(?int $categoryId = null)
 	{
 		$this->AllTables = $this->getAllTables($categoryId);
@@ -32,19 +37,36 @@ class Diagram
 		$this->tables = $this->prepareTables();
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function getAllTables(?int $categoryId = null): array
 	{
-		$query = 'SELECT * FROM #__customtables_tables WHERE published = 1'
-			. ($categoryId !== null ? ' AND tablecategory=' . $categoryId : '')
-			. ' ORDER BY tablename';
+		//$query = 'SELECT * FROM #__customtables_tables WHERE published = 1'
+		//. ($categoryId !== null ? ' AND tablecategory=' . $categoryId : '')
+		//. ' ORDER BY tablename';
 
-		return database::loadAssocList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		if ($categoryId !== null)
+			$whereClause->addCondition('tablecategory', $categoryId);
+
+		return database::loadAssocList('#__customtables_tables', ['*'], $whereClause, 'tablename', null);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function getAllFields(): array
 	{
-		$query = 'SELECT * FROM #__customtables_fields WHERE published = 1 ORDER BY fieldname';
-		return database::loadAssocList($query);
+		//$query = 'SELECT * FROM #__customtables_fields WHERE published = 1 ORDER BY fieldname';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+
+		return database::loadAssocList('#__customtables_fields', ['*'], $whereClause, 'fieldname', null);
 	}
 
 	protected function prepareTables(): array
@@ -101,7 +123,6 @@ class Diagram
 				if ($column['type'] == 'sqljoin' or $column['type'] == 'records') {
 					foreach ($tables as $table) {
 						if ($table['name'] == $column['join']) {
-							$color = $table['color'];
 							$tables[$i]['columns'][$c]['joincolor'] = $table['color'];
 							break;
 						}

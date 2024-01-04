@@ -16,7 +16,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function renderDependencies(int $table_id, string $tablename): string
 {
 	$result = '';
@@ -91,41 +96,68 @@ function _renderTableList($rows): string
 	return $result;
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function _getLayoutsThatUseThisTable($tableId, $tableName)
 {
-	$wheres = array();
-	$wheres[] = 'published=1';
+	//$wheres = array();
+	$whereClause = new MySQLWhereClause();
+	$whereClause->addCondition('published', 1);
+
+	//$wheres[] = 'published=1';
 	$layout_params = ['"' . $tableName . '"', "'" . $tableName . "'"];
-	$w = ['tableid=' . database::quote($tableId)];
+
+	$whereClause->addCondition('tableid', $tableId);
+	//$w = ['tableid=' . database::quote($tableId)];
 
 	foreach ($layout_params as $l)
-		$w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
+		$whereClause->addCondition('layoutcode', $l, 'INSTR');
+	//$w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
-		$w[] = 'INSTR(layoutmobile,' . database::quote($l) . ')';
+		$whereClause->addCondition('layoutmobile', $l, 'INSTR');
+	//$w[] = 'INSTR(layoutmobile,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
-		$w[] = 'INSTR(layoutcss,' . database::quote($l) . ')';
+		$whereClause->addCondition('layoutcss', $l, 'INSTR');
+	//$w[] = 'INSTR(layoutcss,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
-		$w[] = 'INSTR(layoutjs,' . database::quote($l) . ')';
+		$whereClause->addCondition('layoutjs', $l, 'INSTR');
+	//$w[] = 'INSTR(layoutjs,' . database::quote($l) . ')';
 
-	$wheres[] = '(' . implode(' OR ', $w) . ')';
-	$query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
-	return database::loadAssocList($query);
+	//$wheres[] = '(' . implode(' OR ', $w) . ')';
+	//$query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
+	return database::loadAssocList('#__customtables_layouts', ['id', 'layoutname'], $whereClause, null, null);
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function _getMenuItemsThatUseThisTable($tablename)
 {
-	$wheres = array();
-	$wheres[] = 'published=1';
-	$wheres[] = 'INSTR(link,"index.php?option=com_customtables&view=")';
-	$toSearch = '"establename":"' . $tablename . '"';
-	$wheres[] = 'INSTR(params,' . database::quote($toSearch) . ')';
-	$query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
-	return database::loadAssocList($query);
+	$whereClause = new MySQLWhereClause();
+	$whereClause->addCondition('published', 1);
+	$whereClause->addCondition('link', 'index.php?option=com_customtables&view=', 'INSTR');
+
+	//$wheres = array();
+	//$wheres[] = 'published=1';
+	//$wheres[] = 'INSTR(link,"index.php?option=com_customtables&view=")';
+	//$toSearch = '"establename":"' . $tablename . '"';
+	//$wheres[] = 'INSTR(params,' . database::quote($toSearch) . ')';
+	$whereClause->addCondition('params', '"establename":"' . $tablename . '"', 'INSTR');
+	//$query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
+
+	return database::loadAssocList('#__menu', ['id', 'title'], $whereClause, null, null);
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function _getTablesThisTableDependOn($table_id)
 {
 	if ((int)$table_id == 0)
@@ -134,46 +166,69 @@ function _getTablesThisTableDependOn($table_id)
 	$select_tableTitle = '(SELECT id FROM #__customtables_tables AS t1 WHERE t1.id=f.tableid LIMIT 1) ';
 	$serverType = database::getServerType();
 
+	$whereClause = new MySQLWhereClause();
+	$whereClause->addCondition('tableid', (int)$table_id);
+	$whereClause->addCondition('type', 'sqljoin');
+
 	if ($serverType == 'postgresql') {
+
 		$select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE POSITION(CONCAT(t2.tablename,\',\') IN f.typeparams)>0 LIMIT 1) ';
-		$query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tableTitle . ' AS tabletitle FROM #__customtables_fields AS f '
+		/*$query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tableTitle . ' AS tabletitle FROM #__customtables_fields AS f '
 			. 'WHERE'
 			. ' tableid=' . (int)$table_id
 			. ' AND ' . $select_tableNameCheck . ' IS NOT NULL'
 			. ' AND ' . database::quoteName('type') . '=\'sqljoin\''
-			. ' ORDER BY tabletitle';
+			. ' ORDER BY tabletitle';*/
 	} else {
 		$select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE t2.tablename LIKE SUBSTRING_INDEX(f.typeparams,",",1) LIMIT 1) ';
-		$query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tableTitle . ' AS tabletitle FROM #__customtables_fields AS f'
+		/*$query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tableTitle . ' AS tabletitle FROM #__customtables_fields AS f'
 			. ' WHERE'
 			. ' tableid=' . (int)$table_id
 			. ' AND ' . $select_tableNameCheck . ' IS NOT NULL'
 			. ' AND ' . database::quoteName('type') . '="sqljoin"'
-			. ' ORDER BY tabletitle';
+			. ' ORDER BY tabletitle';*/
 	}
-	return database::loadAssocList($query);
+	$whereClause->addCondition($select_tableNameCheck, null, 'NOT NULL');
+
+	return database::loadAssocList('#__customtables_fields AS f', ['id', 'tableid', 'fieldtitle', 'typeparams', $select_tableTitle . ' AS tabletitle'], $whereClause, 'tabletitle');
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function _getTablesThatDependOnThisTable($tablename)
 {
 	if ($tablename === null)
 		return [];
 
+	$whereClause = new MySQLWhereClause();
+	$whereClauseTemp = new MySQLWhereClause();
+	$whereClauseTemp->addOrCondition('published', 1);
+	$whereClauseTemp->addOrCondition('published', 0);
+	$whereClause->addNestedCondition($whereClauseTemp);
+
 	$select_tablename = '(SELECT tabletitle FROM #__customtables_tables AS t WHERE t.id=f.tableid LIMIT 1)';
 
-	$where = [];
-	$where[] = '(published=1 or published=0)';
+	//$where = [];
+	//$where[] = '(published=1 or published=0)';
 	$serverType = database::getServerType();
 	if ($serverType == 'postgresql')
-		$where[] = 'typeparams LIKE \'' . $tablename . ',%\'';
+		$whereClause->addCondition('typeparams', $tablename . ',%', 'LIKE');
+	//$where[] = 'typeparams LIKE \'' . $tablename . ',%\'';
 	else {
-		$where[] = '(typeparams LIKE "' . $tablename . ',%" OR typeparams LIKE \'"' . $tablename . '",%\')';
+		$whereClauseTemp = new MySQLWhereClause();
+		$whereClauseTemp->addOrCondition('typeparams', $tablename . ',%', 'LIKE');
+		$whereClauseTemp->addOrCondition('typeparams', '"' . $tablename . '",%', 'LIKE');
+
+		//$where[] = '(typeparams LIKE "' . $tablename . ',%" OR typeparams LIKE \'"' . $tablename . '",%\')';
+		$whereClause->addNestedCondition($whereClauseTemp);
 	}
 
-	$query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tablename . ' AS tabletitle,published FROM #__customtables_fields AS f WHERE '
-		. implode(' AND ', $where) . ' ORDER BY tabletitle';
+	//$query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tablename . ' AS tabletitle,published FROM #__customtables_fields AS f WHERE '
+	//. implode(' AND ', $where) . ' ORDER BY tabletitle';
 
-	return database::loadAssocList($query);
+	return database::loadAssocList('#__customtables_fields AS f', ['id', 'tableid', 'fieldtitle', 'typeparams', $select_tablename . ' AS tabletitle', 'published'], $whereClause, 'tabletitle', null);
 }
 
 function _renderMenuList($menus): string

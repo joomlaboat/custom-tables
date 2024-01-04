@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
@@ -122,7 +123,10 @@ function getKnownLanguages(): string
 	$list = array();
 
 	if (defined('_JEXEC')) {
-		$rows = database::loadObjectList('SELECT sef, title_native FROM #__languages ORDER BY sef');
+
+		$whereClause = new MySQLWhereClause();
+		$rows = database::loadObjectList('#__languages', ['sef', 'title_native'], $whereClause, 'sef');
+
 		foreach ($rows as $row)
 			$list[] = '["' . $row->sef . '","' . $row->title_native . '"]';
 	} elseif (defined('_JEXEC')) {

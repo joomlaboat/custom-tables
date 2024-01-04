@@ -13,6 +13,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -26,17 +28,13 @@ trait JFormFieldCTTableCommon
 {
 	protected static function getOptionList(): array
 	{
-		$versionObject = new Version;
-		$version = (int)$versionObject->getShortVersion();
+		//$query = 'SELECT id,tablename FROM #__customtables_tables WHERE published=1 ORDER BY tablename';
 
-		if ($version < 4)
-			$db = Factory::getDbo();
-		else
-			$db = Factory::getContainer()->get('DatabaseDriver');
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
 
-		$query = 'SELECT id,tablename FROM #__customtables_tables WHERE published=1 ORDER BY tablename';
-		$db->setQuery($query);
-		$tables = $db->loadObjectList();
+		$tables = database::loadObjectList('#__customtables_tables',
+			['id', 'tablename'], $whereClause, 'tablename');
 
 		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT')];
 

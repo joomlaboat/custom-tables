@@ -46,6 +46,10 @@ class Field
 
 	var ?string $layout; //output layout, used in Search Boxes
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function __construct(CT &$ct, array $fieldRow, $row = null, $parseParams = true)
 	{
 		$this->ct = &$ct;
@@ -132,18 +136,46 @@ class Field
 
 class Fields
 {
-	public static function isFieldNullable(string $realtablename, string $relaFieldName): bool
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function isFieldNullable(string $realtablename, string $realFieldName): bool
 	{
 		$realtablename = database::realTableName($realtablename);
 		$serverType = database::getServerType();
+		$whereClause = new MySQLWhereClause();
+
 		if ($serverType == 'postgresql') {
-			$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename)
-				. ' AND column_name=' . database::quote($relaFieldName);
+
+			$selects = [
+				'column_name',
+				'data_type',
+				'is_nullable',
+				'column_default'
+			];
+
+			//$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename)
+			//. ' AND column_name=' . database::quote($relaFieldName);
+
+			$whereClause->addCondition('table_name', $realtablename);
+			$whereClause->addCondition('column_name', $realFieldName);
+
+			$rows = database::loadAssocList('information_schema.columns', $selects, $whereClause, null, null, 1);
 		} else {
 
 			$database = database::getDataBaseName();
 
-			$query = 'SELECT COLUMN_NAME AS column_name,'
+			$selects = [
+				'COLUMN_NAME AS column_name',
+				'COLUMN_TYPE AS column_type',
+				'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned',
+				'IS_NULLABLE AS is_nullable',
+				'COLUMN_DEFAULT AS column_default',
+				'EXTRA AS extra'
+			];
+
+			/*$query = 'SELECT COLUMN_NAME AS column_name,'
 				. 'DATA_TYPE AS data_type,'
 				. 'COLUMN_TYPE AS column_type,'
 				. 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
@@ -152,15 +184,24 @@ class Fields
 				. 'EXTRA AS extra'
 				. ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . database::quote($database)
 				. ' AND TABLE_NAME=' . database::quote($realtablename)
-				. ' AND column_name=' . database::quote($relaFieldName)
-				. ' LIMIT 1';
+				. ' AND column_name=' . database::quote($realFieldName)
+				. ' LIMIT 1';*/
+
+			$whereClause->addCondition('TABLE_SCHEMA', $database);
+			$whereClause->addCondition('TABLE_NAME', $realtablename);
+			$whereClause->addCondition('column_name', $realFieldName);
+
+			$rows = database::loadAssocList('information_schema.COLUMNS', $selects, $whereClause, null, null, 1);
 		}
 
-		$rows = database::loadAssocList($query);
 		$row = $rows[0];
 		return $row['is_nullable'] == 'YES';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function deleteField_byID(CT &$ct, $fieldid): bool
 	{
 		if ($ct->Table->tablename === null) {
@@ -247,17 +288,20 @@ class Fields
 		return true;
 	}
 
-	public static function getFieldRow($fieldid = 0, $assocList = false)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function getFieldRow(int $fieldid = 0, bool $assocList = false)
 	{
 		if ($fieldid == 0)
 			$fieldid = common::inputGetInt('fieldid', 0);
 
-		$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE id=' . $fieldid . ' LIMIT 1';//published=1 AND
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', $fieldid);
 
-		if ($assocList)
-			$rows = database::loadAssocList($query);
-		else
-			$rows = database::loadObjectList($query);
+		$rows = database::loadObjectList('#__customtables_fields', Fields::getFieldRowSelectArray(),
+			$whereClause, 1, null, null, null, ($assocList ? 'ARRAY_A' : 'OBJECT'));
 
 		if (count($rows) != 1)
 			return null;
@@ -265,7 +309,7 @@ class Fields
 		return $rows[0];
 	}
 
-	protected static function getFieldRowSelects(): string
+	protected static function getFieldRowSelectArray(): array
 	{
 		$serverType = database::getServerType();
 		if ($serverType == 'postgresql')
@@ -273,15 +317,23 @@ class Fields
 		else
 			$realfieldname_query = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
 
-		return '*, ' . $realfieldname_query;
+		return ['*', $realfieldname_query];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function checkIfFieldExists($realtablename, $realfieldname): bool
 	{
 		$realFieldNames = Fields::getListOfExistingFields($realtablename, false);
 		return in_array($realfieldname, $realFieldNames);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getListOfExistingFields($tablename, $add_table_prefix = true): array
 	{
 		$realFieldNames = Fields::getExistingFields($tablename, $add_table_prefix);
@@ -293,7 +345,11 @@ class Fields
 		return $list;
 	}
 
-	public static function getExistingFields($tablename, $add_table_prefix = true)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function getExistingFields($tablename, $add_table_prefix = true): array
 	{
 		if ($add_table_prefix)
 			$realtablename = '#__customtables_table_' . $tablename;
@@ -302,41 +358,47 @@ class Fields
 
 		$realtablename = database::realTableName($realtablename);
 		$serverType = database::getServerType();
+
+		$whereClause = new MySQLWhereClause();
+
 		if ($serverType == 'postgresql') {
 			//,generation_expression
-			$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename);
+			$whereClause->addCondition('table_name', $realtablename);
+			return database::loadAssocList('information_schema.columns', ['column_name', 'data_type', 'is_nullable', 'column_default'], $whereClause, null, null, 1);
 		} else {
 
 			$database = database::getDataBaseName();
-			//Check MySQL Version:
 
+			$selects = [
+				'COLUMN_NAME AS column_name',
+				'DATA_TYPE AS data_type',
+				'COLUMN_TYPE AS column_type',
+				'IF(COLUMN_TYPE LIKE "%unsigned", "YES", "NO") AS is_unsigned',
+				'IS_NULLABLE AS is_nullable',
+				'COLUMN_DEFAULT AS column_default',
+				'EXTRA AS extra'];
+
+			/*
+			//Check MySQL Version:
 			$mySQLVersion = database::getVersion();
 			if ($mySQLVersion < 5.7) {
-				$query = 'SELECT COLUMN_NAME AS column_name,'
-					. 'DATA_TYPE AS data_type,'
-					. 'COLUMN_TYPE AS column_type,'
-					. 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
-					. 'IS_NULLABLE AS is_nullable,'
-					. 'COLUMN_DEFAULT AS column_default,'
-					. 'EXTRA AS extra'
-					. ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . database::quote($database) . ' AND TABLE_NAME=' . database::quote($realtablename);
 				//. '"" AS generation_expression'
 			} else {
-				$query = 'SELECT COLUMN_NAME AS column_name,'
-					. 'DATA_TYPE AS data_type,'
-					. 'COLUMN_TYPE AS column_type,'
-					. 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
-					. 'IS_NULLABLE AS is_nullable,'
-					. 'COLUMN_DEFAULT AS column_default,'
-					. 'EXTRA AS extra'
-					. ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . database::quote($database) . ' AND TABLE_NAME=' . database::quote($realtablename);
 				//. 'GENERATION_EXPRESSION AS generation_expression'
 			}
-		}
+			*/
 
-		return database::loadAssocList($query);
+			$whereClause->addCondition('TABLE_SCHEMA', $database);
+			$whereClause->addCondition('TABLE_NAME', $realtablename);
+
+			return database::loadAssocList('information_schema.COLUMNS', $selects, $whereClause);
+		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function removeForeignKey($realtablename, $realfieldname): bool
 	{
 		$constrances = Fields::getTableConstrances($realtablename, $realfieldname);
@@ -350,6 +412,10 @@ class Fields
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function getTableConstrances($realtablename, $realfieldname): ?array
 	{
 		$serverType = database::getServerType();
@@ -357,8 +423,8 @@ class Fields
 			return null;
 
 		//get constrant name
-		$query = 'show create table ' . $realtablename;
-		$tableCreateQuery = database::loadAssocList($query);
+		//$query = 'show create table ' . $realtablename;
+		$tableCreateQuery = database::showCreateTable($realtablename);//::loadAssocList($query, ['', '', '', ''], $whereClause, null, null);
 
 		if (count($tableCreateQuery) == 0)
 			return null;
@@ -393,6 +459,10 @@ class Fields
 			return $isrequired == 2 or $isrequired == 3;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function deleteMYSQLField($realtablename, $realfieldname, &$msg): bool
 	{
 		if (Fields::checkIfFieldExists($realtablename, $realfieldname)) {
@@ -514,28 +584,10 @@ class Fields
 			return '';
 	}
 
-	public static function getFieldType(string $realtablename, $realfieldname)
-	{
-		$realtablename = database::realTableName($realtablename);
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql')
-			$query = 'SELECT data_type FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename) . ' AND column_name=' . database::quote($realfieldname);
-		else
-			$query = 'SHOW COLUMNS FROM ' . $realtablename . ' WHERE ' . database::quoteName('field') . '=' . database::quote($realfieldname);
-
-		$rows = database::loadAssocList($query);
-
-		if (count($rows) == 0)
-			return '';
-
-		$row = $rows[0];
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql')
-			return $row['data_type'];
-		else
-			return $row['Type'];
-	}
-
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function fixMYSQLField(string $realtablename, string $fieldname, string $PureFieldType, string &$msg): bool
 	{
 		if ($fieldname == 'id') {
@@ -569,6 +621,10 @@ class Fields
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function removeForeignKeyConstrance($realtablename, $constrance): void
 	{
 		$query = 'SET foreign_key_checks = 0;';
@@ -586,34 +642,48 @@ class Fields
 		database::setQuery($query);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getFieldName(int $fieldid): string
 	{
 		if ($fieldid == 0)
 			$fieldid = common::inputGetInt('fieldid', 0);
 
-		$query = 'SELECT fieldname FROM #__customtables_fields AS s WHERE s.published=1 AND s.id=' . $fieldid . ' LIMIT 1';
-		$rows = database::loadObjectList($query);
+		//$query = 'SELECT fieldname FROM #__customtables_fields AS s WHERE s.published=1 AND s.id=' . $fieldid . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', $fieldid);
+
+		$rows = database::loadObjectList('#__customtables_fields', ['fieldname'], $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return '';
 
 		return $rows[0]->fieldname;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getFieldRowByName(string $fieldName, ?int $tableId = null, string $tableName = '')
 	{
 		if ($fieldName == '')
 			return array();
 
-		if ($tableName == '')
-			$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableId . ' AND fieldname=' . database::quote(trim($fieldName)) . ' LIMIT 1';
-		else {
-			$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('s.published', 1);
+		$whereClause->addCondition('s.tableid', $tableId);
+		$whereClause->addCondition('s.fieldname', trim($fieldName));
 
-			INNER JOIN #__customtables_tables AS t ON t.tablename=' . database::quote($tableName) . '
-			WHERE s.published=1 AND s.tableid=t.id AND s.fieldname=' . database::quote(trim($fieldName)) . ' LIMIT 1';
-		}
+		$from = '#__customtables_fields AS s';
+		if ($tableName != '')
+			$from .= ' INNER JOIN #__customtables_tables AS t ON t.tablename=' . database::quote($tableName);
 
-		$rows = database::loadObjectList($query);
+		//$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableId . ' AND fieldname=' . database::quote(trim($fieldName)) . ' LIMIT 1';
+
+		$rows = database::loadObjectList($from, self::getFieldRowSelectArray(), $whereClause, null, null, 1);
 
 		if (count($rows) != 1)
 			return null;
@@ -621,6 +691,10 @@ class Fields
 		return $rows[0];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getFieldAssocByName(string $fieldname, int $tableid): ?array
 	{
 		if ($fieldname == '')
@@ -629,8 +703,15 @@ class Fields
 		if ($fieldname == '')
 			return null;
 
-		$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableid . ' AND fieldname="' . trim($fieldname) . '" LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableid .
+		// ' AND fieldname="' . trim($fieldname) . '" LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('tableid', $tableid);
+		$whereClause->addCondition('fieldname', trim($fieldname));
+
+		$rows = database::loadAssocList('#__customtables_fields', Fields::getFieldRowSelectArray(), $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return null;
 
@@ -694,13 +775,17 @@ class Fields
 		return $field;
 	}
 
-	//MySQL only
-
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function deleteTableLessFields(): void
 	{
 		$query = 'DELETE FROM #__customtables_fields AS f WHERE (SELECT id FROM #__customtables_tables AS t WHERE t.id = f.tableid) IS NULL';
 		database::setQuery($query);
 	}
+
+	//MySQL only
 
 	public static function getSelfParentField($ct)
 	{
@@ -753,22 +838,22 @@ class Fields
 					$id_title .= '_' . $lang->sef;
 					$id_description .= '_' . $lang->sef;
 				}
-				$data[$id_title] = common::inputPostString($id_title);
-				$data[$id_description] = common::inputPostString($id_description);
+				$data[$id_title] = common::inputPostString($id_title, null, 'create-edit-field');
+				$data[$id_description] = common::inputPostString($id_description, null, 'create-edit-field');
 				$moreThanOneLang = true; //More than one language installed
 			}
 
-			$data['type'] = common::inputPostCmd('type');
-			$data['typeparams'] = common::inputPostString('typeparams');
-			$data['isrequired'] = common::inputPostInt('isrequired', 0);
-			$data['defaultvalue'] = common::inputPostString('defaultvalue');
-			$data['allowordering'] = common::inputPostInt('allowordering', 1);
-			$data['valuerule'] = common::inputPostString('valuerule');
-			$data['valuerulecaption'] = common::inputPostString('valuerulecaption');
-			$data['fieldname'] = common::inputPostString('fieldname');
+			$data['type'] = common::inputPostCmd('type', null, 'create-edit-field');
+			$data['typeparams'] = common::inputPostString('typeparams', null, 'create-edit-field');
+			$data['isrequired'] = common::inputPostInt('isrequired', 0, 'create-edit-field');
+			$data['defaultvalue'] = common::inputPostString('defaultvalue', null, 'create-edit-field');
+			$data['allowordering'] = common::inputPostInt('allowordering', 1, 'create-edit-field');
+			$data['valuerule'] = common::inputPostString('valuerule', null, 'create-edit-field');
+			$data['valuerulecaption'] = common::inputPostString('valuerulecaption', null, 'create-edit-field');
+			$data['fieldname'] = common::inputPostString('fieldname', null, 'create-edit-field');
 		}
 
-		$task = common::inputGetCmd('task');
+		$task = common::inputPostCmd('task', null, 'create-edit-field');
 
 		// Process field name
 		if (function_exists("transliterator_transliterate"))
@@ -865,10 +950,19 @@ class Fields
 		return $fieldId;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getFieldID($tableid, $fieldname): int
 	{
-		$query = 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid . ' AND fieldname=' . database::quote($fieldname);
-		$rows = database::loadObjectList($query);
+		//$query = 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid . ' AND fieldname=' . database::quote($fieldname);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('tableid', $tableid);
+		$whereClause->addCondition('fieldname', $fieldname);
+
+		$rows = database::loadObjectList('#__customtables_fields', ['id'], $whereClause, null, null, 1);
 		if (count($rows) == 0)
 			return 0;
 
@@ -876,6 +970,10 @@ class Fields
 		return $row->id;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addLanguageField($tablename, $original_fieldname, $new_fieldname, ?string $AdditionOptions = ''): bool
 	{
 		$fields = Fields::getExistingFields($tablename, false);
@@ -890,6 +988,7 @@ class Fields
 			}
 		}
 
+		//TODO: check it
 		if ($original_fieldname == $new_fieldname) {
 			Fields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field['column_type'], $AdditionOptions);
 			return true;
@@ -926,13 +1025,26 @@ class Fields
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function getMaxOrdering($tableid): int
 	{
-		$query = 'SELECT MAX(ordering) as max_ordering FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid;
-		$rows = database::loadObjectList($query);
+		//$query = 'SELECT MAX(ordering) as max_ordering FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid;
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('tableid', (int)$tableid);
+
+		$rows = database::loadObjectList('#__customtables_fields', ['MAX(ordering) as max_ordering'], $whereClause, null, null, 1);
 		return (int)$rows[0]->max_ordering;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function update_physical_field(CT $ct, object $table_row, int $fieldid, array $data): bool
 	{
 		$realtablename = $table_row->realtablename;
@@ -1053,6 +1165,10 @@ class Fields
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addFieldPrefixToExpression(int $tableId, string $expression): string
 	{
 		//This function adds 'es_' prefix to field name in the expression. Example:
@@ -1102,26 +1218,29 @@ class Fields
 		return $expression;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getFields($tableid_or_name, $as_object = false, $order_fields = true)
 	{
-		if ($order_fields)
-			$order = ' ORDER BY f.ordering, f.fieldname';
-		else
-			$order = '';
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('f.published', 1);
 
-		if ((int)$tableid_or_name > 0)
-			$where = 'f.published=1 AND f.tableid=' . (int)$tableid_or_name;
-		else {
+		if ((int)$tableid_or_name > 0) {
+			$whereClause->addCondition('f.tableid', (int)$tableid_or_name);
+			//$where = 'f.published=1 AND f.tableid=' . (int)$tableid_or_name;
+		} else {
 			$w1 = '(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename=' . database::quote($tableid_or_name) . ' LIMIT 1)';
-			$where = 'f.published=1 AND f.tableid=' . $w1;
+			$whereClause->addCondition('f.tableid', $w1, '=', true);
+			//$where = 'f.published=1 AND f.tableid=' . $w1;
 		}
 
-		$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS f WHERE ' . $where . $order;
+		//$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS f WHERE ' . $where . $order;
 
-		if ($as_object)
-			return database::loadObjectList($query);
-		else
-			return database::loadAssocList($query);
+		$output_type = $as_object ? 'OBJECT' : 'ARRAY_A';
+		return database::loadObjectList('#__customtables_fields AS f', self::getFieldRowSelectArray(), $whereClause,
+			($order_fields ? 'f.ordering, f.fieldname' : null), null, null, null, $output_type);
 	}
 
 	public static function getPureFieldType(string $ct_fieldType, string $typeParams, int $isRequiredOrGenerated = 0, ?string $defaultValue = null): string
@@ -1473,6 +1592,10 @@ class Fields
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addField(CT $ct, string $realtablename, string $realfieldname, string $fieldType, string $PureFieldType, string $fieldTitle, array $fieldRow): void
 	{
 		if ($PureFieldType == '')
@@ -1521,6 +1644,10 @@ class Fields
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function CreateImageGalleryTable($tablename, $fieldname): bool
 	{
 		$image_gallery_table = '#__customtables_gallery_' . $tablename . '_' . $fieldname;
@@ -1538,6 +1665,10 @@ class Fields
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function CreateFileBoxTable($tablename, $fieldname): bool
 	{
 		$filebox_gallery_table = '#__customtables_filebox_' . $tablename . '_' . $fieldname;
@@ -1555,6 +1686,10 @@ class Fields
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addIndexIfNotExist($realtablename, $realfieldname): void
 	{
 		$serverType = database::getServerType();
@@ -1562,8 +1697,8 @@ class Fields
 		if ($serverType == 'postgresql') {
 			//Indexes not yet supported
 		} else {
-			$query = 'SHOW INDEX FROM ' . $realtablename . ' WHERE Key_name = "' . $realfieldname . '"';
-			$rows = database::loadObjectList($query);
+			$rows = database::getTableIndex($realtablename, $realfieldname);
+			//$query = 'SHOW INDEX FROM ' . $realtablename . ' WHERE Key_name = "' . $realfieldname . '"';
 
 			if (count($rows) == 0) {
 				$query = 'ALTER TABLE ' . $realtablename . ' ADD INDEX(' . $realfieldname . ');';
@@ -1572,6 +1707,10 @@ class Fields
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addForeignKey($realtablename_, $realfieldname, string $new_typeparams, string $join_with_table_name, string $join_with_table_field, &$msg): bool
 	{
 		$realtablename = database::realTableName($realtablename_);
@@ -1624,6 +1763,10 @@ class Fields
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field): void
 	{
 		$serverType = database::getServerType();
@@ -1631,11 +1774,16 @@ class Fields
 			return;
 
 		//Find broken records
-		$query = 'SELECT DISTINCT a.' . $realfieldname . ' AS customtables_distinct_temp_id FROM
-			' . $realtablename . ' a LEFT JOIN ' . $join_with_table_name . ' b ON a.' . $realfieldname . '=b.' . $join_with_table_field
-			. ' WHERE b.' . $join_with_table_field . ' IS NULL;';
+		//$query = 'SELECT DISTINCT a.' . $realfieldname . ' AS customtables_distinct_temp_id FROM
+		//' . $realtablename . ' a LEFT JOIN ' . $join_with_table_name . ' b ON a.' . $realfieldname . '=b.' . $join_with_table_field
+		//. ' WHERE b.' . $join_with_table_field . ' IS NULL;';
 
-		$rows = database::loadAssocList($query);
+		$from = $realtablename . ' a LEFT JOIN ' . $join_with_table_name . ' b ON a.' . $realfieldname . '=b.' . $join_with_table_field;
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('b.' . $join_with_table_field, null, 'NULL');
+
+		$rows = database::loadAssocList($from, ['DISTINCT a.' . $realfieldname . ' AS customtables_distinct_temp_id'], $whereClause, null, null);
 		$where_ids = array();
 		$where_ids[] = $realfieldname . '=0';
 
@@ -1663,7 +1811,7 @@ class Fields
 	{
 		$ct = new CT;
 		$table_row_array = (array)$table_row;
-		$ct->setTable($table_row_array, null, false);
+		$ct->setTable($table_row_array, null);
 		$query = 'UPDATE ' . $ct->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . database::quoteName($ct->Table->realidfieldname) . ' WHERE ' . database::quoteName($realFieldName) . ' IS NULL OR ' . database::quoteName($realFieldName) . ' = 0';
 
 		try {
@@ -1674,6 +1822,10 @@ class Fields
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function FixCustomTablesRecords($realtablename, $realfieldname, $optionname, $maxlenght): void
 	{
 		//CustomTables field type
@@ -1682,8 +1834,11 @@ class Fields
 			return;
 
 		$fixCount = 0;
-		$fixQuery = 'SELECT id, ' . $realfieldname . ' AS fldvalue FROM ' . $realtablename;
-		$fixRows = database::loadObjectList($fixQuery);
+		//$fixQuery = 'SELECT id, ' . $realfieldname . ' AS fldvalue FROM ' . $realtablename;
+
+		$whereClause = new MySQLWhereClause();
+
+		$fixRows = database::loadObjectList($realtablename, ['id', $realfieldname . ' AS fldvalue'], $whereClause);
 		foreach ($fixRows as $fixRow) {
 
 			$newRow = Fields::FixCustomTablesRecord($fixRow->fldvalue, $optionname, $maxlenght);
@@ -1731,6 +1886,15 @@ class Fields
 		return $newRow;
 	}
 
+	protected static function getFieldRowSelects(): string
+	{
+		return implode(',', self::getFieldRowSelectArray());
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function checkFieldName($tableId, $fieldName): string
 	{
 		$new_fieldname = $fieldName;

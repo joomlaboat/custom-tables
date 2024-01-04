@@ -39,6 +39,10 @@ class record
 		$this->editForm = new Edit($ct);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function save(?string $listing_id, bool $isCopy): bool
 	{
 		if ($listing_id == '') {
@@ -239,6 +243,10 @@ class record
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function updateLog($listing_id): bool
 	{
 		if ($listing_id == 0 or $listing_id == '')
@@ -265,10 +273,14 @@ class record
 		}
 
 		//get data
-		$query = 'SELECT ' . implode(',', $fields_to_save) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
+		//$query = 'SELECT ' . implode(',', $fields_to_save) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE '
+		//. $this->ct->Table->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
 
 		try {
-			$rows = database::loadAssocList($query);
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
+
+			$rows = database::loadAssocList($this->ct->Table->realtablename, [$fields_to_save], $whereClause, null, null, 1);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 			return false;

@@ -18,10 +18,15 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
+use CustomTables\MySQLWhereClause;
 
 class updateFiles
 {
-	public static function process()
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function process(): array
 	{
 		$ct = new CT;
 
@@ -32,13 +37,13 @@ class updateFiles
 		if ($old_typeparams == '')
 			return array('error' => 'old_typeparams not set');
 
-		$old_params = JoomlaBasicMisc::csv_explode(',', $old_typeparams, '"', false);
+		$old_params = JoomlaBasicMisc::csv_explode(',', $old_typeparams);
 
 		$new_typeparams = base64_decode(common::inputGetBase64('new_typeparams', ''));
 		if ($new_typeparams == '')
 			return array('error' => 'new_typeparams not set');
 
-		$new_params = JoomlaBasicMisc::csv_explode(',', $new_typeparams, '"', false);
+		$new_params = JoomlaBasicMisc::csv_explode(',', $new_typeparams);
 
 		$fieldid = (int)common::inputGetInt('fieldid', 0);
 		if ($fieldid == 0)
@@ -55,22 +60,41 @@ class updateFiles
 				$stepsize = $count;
 		}
 
-		$status = updateFiles::processFiles($ct, $fieldrow, $old_params, $new_params, $startindex, $stepsize);
+		$status = updateFiles::processFiles($ct, $fieldrow, $old_params, $new_params);
 
 		return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
 	}
 
-	protected static function countFiles($realtablename, $realfieldname, $realidfieldname)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected static function countFiles($realtablename, $realfieldname, $realidfieldname): int
 	{
-		$query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL AND ' . $realfieldname . ' != ""';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL AND ' . $realfieldname . ' != ""';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($realfieldname, null, 'NOT NULL');
+		$whereClause->addCondition($realfieldname, '', '!=');
+
+		$rows = database::loadAssocList($realtablename, ['count(' . $realidfieldname . ') AS c'], $whereClause, null, null);
 		return (int)$rows[0]['c'];
 	}
 
-	protected static function processFiles(CT &$ct, $fieldrow, array $old_params, array $new_params, $startindex, $stepsize)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected static function processFiles(CT &$ct, $fieldrow, array $old_params, array $new_params): ?string
 	{
-		$query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldrow->realfieldname . ' IS NOT NULL AND ' . $fieldrow->realfieldname . ' != ""';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE '
+		//. $fieldrow->realfieldname . ' IS NOT NULL AND ' . $fieldrow->realfieldname . ' != ""';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($fieldrow->realfieldname, null, 'NOT NULL');
+		$whereClause->addCondition($fieldrow->realfieldname, '', '!=');
+
+		$rows = database::loadAssocList($ct->Table->realtablename, $ct->Table->selects, $whereClause, null, null);
 
 		foreach ($rows as $file) {
 			$field_row_old = (array)$fieldrow;
@@ -104,7 +128,7 @@ class updateFiles
 		return null;
 	}
 
-	protected static function processFile($filename, $old_FileFolder, $new_FileFolder)
+	protected static function processFile($filename, $old_FileFolder, $new_FileFolder): ?string
 	{
 		$filepath_old = JPATH_SITE . $old_FileFolder . DIRECTORY_SEPARATOR . $filename;
 		$filepath_new = JPATH_SITE . $new_FileFolder . DIRECTORY_SEPARATOR . $filename;

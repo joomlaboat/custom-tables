@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 
 class CT_FieldTypeTag_imagegallery
@@ -21,7 +22,10 @@ class CT_FieldTypeTag_imagegallery
 	public static function getGalleryRows($tableName, $galleryName, $listing_id)
 	{
 		$photoTableName = '#__customtables_gallery_' . $tableName . '_' . $galleryName;
-		return database::loadObjectList('SELECT photoid, photo_ext FROM ' . $photoTableName . ' WHERE listingid=' . (int)$listing_id . ' ORDER BY ordering, photoid');
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('listingid', (int)$listing_id);
+		return database::loadObjectList($photoTableName, ['photoid', 'photo_ext'], $whereClause, 'ordering, photoid');
 	}
 
 	public static function getImageGalleryTagList(array $imageSRCList)//, array $params

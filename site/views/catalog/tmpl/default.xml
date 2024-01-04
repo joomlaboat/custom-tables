@@ -11,8 +11,8 @@
 
     <fields name="params" addfieldpath="/components/com_customtables/fields">
 
-        <fieldset name="PARAMS" addfieldpath="/components/com_customtables/fields"
-                  label="Table &amp; Layouts" description="Basic menu item parameters needed to render the page.">
+        <fieldset name="params" addfieldpath="/components/com_customtables/fields"
+                  label="Table and Layouts" description="Basic menu item parameters needed to render the page.">
             <field type="CTTable" name="establename" label="Table"
                    description="Select the Table for reading the records. You can create a new table in Components/Custom Tables/Tables."
                    required="true"/>
@@ -27,17 +27,14 @@
 
             <field type="CTDetailsLayout" name="esdetailslayout" default="" label="Details Layout"
                    description="Select Record Details Layout. This parameter is available on Record Details and Records menu item type pages."/>
+
         </fieldset>
 
-        <fieldset name="FILTERS" label="COM_MENUS_FILTERS_FIELDSET_LABEL"
+        <fieldset name="filters" label="COM_MENUS_FILTERS_FIELDSET_LABEL"
                   description="Filter or 'where clause' is used to extract only those records that fulfill a specified condition.">
+
             <field type="text" name="filter" filter="raw" default="" label="Search Parameter"
-                   description="Field to search in = (or &#60; or &#60;= or &#62; or &#62;= or != and == 'exact match')
-		value (or Twig tag as {{ user.id }} for example ) to have more then one condition use 'and', 'or'
-		to get a value from the URL query parameter use {{ url.getint('param_name') }} tag or equivalent. Example 'color={{ url.getstring('string') }}' this will read value 'color' from the url query.
-To get the current date use {{ 'now'|date('m/d/Y') }} or {{ 'now'|date('Y') }} for the year or {{ 'now'|date('m') }} for the month. Also you can format the date using MySql date_format() format specifiers, example 1: {now:%m}.
-Example 2: 'birthdate:%m%d' to get the month and the day of the field value.
-"/>
+                   description="Field to search in = (or &#60; or &#60;= or &#62; or &#62;= or != and == 'exact match') value (or Twig tag as {{ user.id }} for example ) to have more then one condition use 'and', 'or' to get a value from the URL query parameter use {{ url.getint('param_name') }} tag or equivalent. Example 'color={{ url.getstring('string') }}' this will read value 'color' from the url query. To get the current date use {{ 'now'|date('m/d/Y') }} or {{ 'now'|date('Y') }} for the year or {{ 'now'|date('m') }} for the month. Also you can format the date using MySql date_format() format specifiers, example 1: {now:%m}. Example 2: 'birthdate:%m%d' to get the month and the day of the field value."/>
             <field type="list" name="showpublished" default="0" label="Show published records"
                    description="Additional filter to show published or unpublished records.">
                 <option value="0">Show Published Only</option>

@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
 use JoomlaBasicMisc;
 
@@ -47,59 +48,62 @@ class ListOfFields
 		$this->dbPrefix = database::getDBPrefix();
 	}
 
-	function getListQuery(int $tableId, $published = null, $search = null, $type = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function getListQuery(int $tableId, $published = null, $search = null, $type = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0, bool $returnQueryString = false)
 	{
 		$this->tableid = common::inputGetInt('tableid', 0);
-		$tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid)';
 		$serverType = database::getServerType();
 
+		$selects = [
+			'a.*',
+			'(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid) AS tabletitle'
+		];
+
 		if ($serverType == 'postgresql')
-			$realfieldname_query = 'CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
+			$selects[] = 'CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
 		else
-			$realfieldname_query = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
+			$selects[] = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
 
-		$query = 'SELECT a.*, ' . $tabletitle . ' AS tabletitle, ' . $realfieldname_query . ' FROM ' . database::quoteName('#__customtables_fields') . ' AS a';
-		$where = [];
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('tableid', $tableId);
 
-		$where [] = 'tableid=' . $tableId;
-
+		$whereClausePublished = new MySQLWhereClause();
 		// Filter by published state
 		if (is_numeric($published))
-			$where [] = 'a.published = ' . (int)$published;
-		elseif (is_null($published) or $published === '')
-			$where [] = '(a.published = 0 OR a.published = 1)';
+			$whereClausePublished->addCondition('a.published', (int)$published);
+		elseif ($published === null or $published === '') {
+			$whereClausePublished->addOrCondition('a.published', 0);
+			$whereClausePublished->addOrCondition('a.published', 1);
+		}
+
+		if ($whereClausePublished->hasConditions())
+			$whereClause->addNestedCondition($whereClausePublished);
 
 		// Filter by search.
 		if (!empty($search)) {
+			$whereClauseSearch = new MySQLWhereClause();
 			if (stripos($search, 'id:') === 0) {
-				$where [] = 'a.id = ' . (int)substr($search, 3);
+				$whereClauseSearch->addCondition('a.id', (int)substr($search, 3));
 			} else {
-				$search = database::quote('%' . $search . '%');
-				$where [] = '(a.fieldname LIKE ' . $search . ' OR a.fieldtitle LIKE ' . $search . ')';
+				$whereClauseSearch->addOrCondition('a.fieldname', '%' . $search . '%', 'LIKE');
+				$whereClauseSearch->addOrCondition('a.fieldtitle', '%' . $search . '%', 'LIKE');
 			}
+			if ($whereClauseSearch->hasConditions())
+				$whereClause->addNestedCondition($whereClauseSearch);
 		}
 
-		// Filter by Type.
+		// Filter by Type
 		if ($type !== null)
-			$where [] = 'a.type = ' . database::quote($type);
+			$whereClause->addCondition('a.type', (int)$type);
 
-		if ($this->tableid != 0) {
-			$where [] = 'a.tableid = ' . database::quote($this->tableid);
-		}
+		// Filter by Type
+		if ($this->tableid != 0)
+			$whereClause->addCondition('a.tableid', (int)$this->tableid);
 
-		$query .= ' WHERE ' . implode(' AND ', $where);
-
-		// Add the list ordering clause.
-		if ($orderCol != '')
-			$query .= ' ORDER BY ' . database::quoteName($orderCol) . ' ' . $orderDirection;
-
-		if ($limit != 0)
-			$query .= ' LIMIT ' . $limit;
-
-		if ($start != 0)
-			$query .= ' OFFSET ' . $start;
-
-		return $query;
+		return database::loadAssocList('#__customtables_fields AS a', $selects, $whereClause, $orderCol, $orderDirection, $limit, $start, null, $returnQueryString);
 	}
 
 	public function renderBody(): string

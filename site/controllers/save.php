@@ -86,6 +86,10 @@ function CustomTablesDelete($this_)
 	return true;
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function CustomTablesSave($task, $this_)
 {
 	$link = common::getReturnToURL();
@@ -97,7 +101,7 @@ function CustomTablesSave($task, $this_)
 	if (!$model->load($ct))
 		return false;
 
-	if (!$ct->CheckAuthorization(1)) {
+	if (!$ct->CheckAuthorization()) {
 		$returnToEncoded = common::makeReturnToURL();
 		$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $returnToEncoded;
 		$this_->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));

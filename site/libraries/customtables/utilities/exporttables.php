@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use Exception;
 use Joomla\CMS\Uri\Uri;
 
 class ExportTables
@@ -22,7 +23,11 @@ class ExportTables
 	//Records can be exported too, if it set in table parameters
 	//file is created in /tmp folder or as set in $path parameter
 
-	public static function export(&$table_ids, $path = 'tmp'): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function export($table_ids, $path = 'tmp'): string
 	{
 		$link = '';
 		$tables = array();
@@ -31,8 +36,13 @@ class ExportTables
 		foreach ($table_ids as $table_id) {
 			//get table
 			$s1 = '(SELECT categoryname FROM #__customtables_categories WHERE #__customtables_categories.id=#__customtables_tables.tablecategory) AS categoryname';
-			$query = 'SELECT *,' . $s1 . ' FROM #__customtables_tables WHERE published=1 AND id=' . (int)$table_id . ' LIMIT 1';
-			$table_rows = database::loadAssocList($query);
+			//$query = 'SELECT *,' . $s1 . ' FROM #__customtables_tables WHERE published=1 AND id=' . (int)$table_id . ' LIMIT 1';
+
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('published', 1);
+			$whereClause->addCondition('id', (int)$table_id);
+
+			$table_rows = database::loadAssocList('#__customtables_tables', ['*', $s1], $whereClause, null, null, 1);
 
 			//Add the table with dependencies to export array
 			if (count($table_rows) == 1) {
@@ -61,7 +71,7 @@ class ExportTables
 			}
 
 			//Save file
-			$link = str_replace(DIRECTORY_SEPARATOR, '/', Uri::root(false));
+			$link = str_replace(DIRECTORY_SEPARATOR, '/', Uri::root());
 
 			if ($link[strlen($link) - 1] != '/' and $path[0] != '/')
 				$link .= '/';
@@ -72,36 +82,61 @@ class ExportTables
 		return $link;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processTable($table): array
 	{
 		//get fields
-		$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$table['id'];
-		$fields = database::loadAssocList($query);
+		//$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$table['id'];
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('tableid', (int)$table['id']);
+
+		$fields = database::loadAssocList('#__customtables_fields', ['*'], $whereClause, null, null);
 
 		//get layouts
-		$query = 'SELECT * FROM #__customtables_layouts WHERE published=1 AND tableid=' . (int)$table['id'];
-		$layouts = database::loadAssocList($query);
+		//$query = 'SELECT * FROM #__customtables_layouts WHERE published=1 AND tableid=' . (int)$table['id'];
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('tableid', (int)$table['id']);
+
+		$layouts = database::loadAssocList('#__customtables_layouts', ['*'], $whereClause, null, null);
 
 		//Get depended menu items
-		$wheres = array();
-		$wheres[] = 'published=1';
+		//$wheres = array();
+		//$wheres[] = 'published=1';
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
 
 		$serverType = database::getServerType();
 		if ($serverType == 'postgresql') {
-			$wheres[] = 'POSITION(' . database::quote("index.php?option=com_customtables&view=") . ' IN link)>0';
-			$wheres[] = 'POSITION(' . database::quote('"establename":"' . $table['tablename'] . '"') . ' IN params)>0';
+			$whereClause->addCondition('POSITION("index.php?option=com_customtables&view=" IN link)', 0, '>');
+			$whereClause->addCondition('POSITION("establename":"' . $table['tablename'] . '" IN params)', 0, '>');
+			//$wheres[] = 'POSITION(' . database::quote("index.php?option=com_customtables&view=") . ' IN link)>0';
+			//$wheres[] = 'POSITION(' . database::quote('"establename":"' . $table['tablename'] . '"') . ' IN params)>0';
 		} else {
-			$wheres[] = 'INSTR(link,' . database::quote("index.php?option=com_customtables&view=") . ')';
-			$wheres[] = 'INSTR(params,' . database::quote('"establename":"' . $table['tablename'] . '"') . ')';
+			$whereClause->addCondition('link', 'index.php?option=com_customtables&view=', 'INSTR');
+			$whereClause->addCondition('params', '"establename":"' . $table['tablename'] . '"', 'INSTR');
+			//$wheres[] = 'INSTR(link,' . database::quote("index.php?option=com_customtables&view=") . ')';
+			//$wheres[] = 'INSTR(params,' . database::quote('"establename":"' . $table['tablename'] . '"') . ')';
 		}
 
-		$query = 'SELECT * FROM #__menu WHERE ' . implode(' AND ', $wheres);
-		$menu = database::loadAssocList($query);
+		//$query = 'SELECT * FROM #__menu WHERE ' . implode(' AND ', $wheres);
+
+		$menu = database::loadAssocList('#__menu', ['*'], $whereClause, null, null);
 
 		//Get depended records
 		if (intval($table['allowimportcontent']) == 1) {
-			$query = 'SELECT * FROM #__customtables_table_' . $table['tablename'] . ' WHERE published=1';
-			$records = database::loadAssocList($query);
+			//$query = 'SELECT * FROM #__customtables_table_' . $table['tablename'] . ' WHERE published=1';
+
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('published', 1);
+
+			$records = database::loadAssocList('#__customtables_table_' . $table['tablename'], ['*'], $whereClause, null, null);
 		} else
 			$records = null;
 

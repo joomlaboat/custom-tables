@@ -19,6 +19,7 @@ use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\Filtering;
 use CustomTables\CustomPHP\CleanExecute;
+use CustomTables\MySQLWhereClause;
 use CustomTables\record;
 use CustomTables\TwigProcessor;
 use CustomTables\SaveFieldQuerySet;
@@ -48,6 +49,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		parent::__construct();
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function CheckAuthorizationACL($access): bool
 	{
 		$this->isAuthorized = false;
@@ -78,10 +83,11 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	function copy(&$msg, &$link): bool
 	{
 		$listing_id = common::inputGetCmd('listing_id', 0);
-		$query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
+		//$query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
 
 		try {
-			$rows = database::loadObjectList($query);
+			$whereClause = new MySQLWhereClause();
+			$rows = database::loadObjectList($this->ct->Table->realtablename, ['MAX(' . $this->ct->Table->realidfieldname . ') AS maxid'], $whereClause, null, null, 1);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 			return false;
@@ -163,10 +169,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			$this->ct->errors[] = $e->getMessage();
 			return false;
 		}
-		return $this->store($msg, $link, true, $new_id);
+		return $this->store($link, true, $new_id);
 	}
 
-	function store(&$msg, &$link, $isCopy = false, string $listing_id = ''): bool
+	function store(&$link, $isCopy = false, string $listing_id = ''): bool
 	{
 		$record = new record($this->ct);
 
@@ -212,6 +218,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function load(CT $ct): bool
 	{
 		$this->ct = $ct;
@@ -291,15 +301,22 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function processCustomListingID(): ?int
 	{
 		if ($this->listing_id !== null and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
 			//Normal listing ID or CMD
-			$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename
-				. ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
+			//$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename
+			//. ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
 
 			try {
-				$rows = database::loadAssocList($query);
+				$whereClause = new MySQLWhereClause();
+				$whereClause->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
+
+				$rows = database::loadAssocList($this->ct->Table->realtablename, $this->ct->Table->selects, $whereClause, null, null, 1);
 			} catch (Exception $e) {
 				$this->ct->errors[] = $e->getMessage();
 				return null;
@@ -333,22 +350,24 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 		$filtering = new Filtering($this->ct, $this->ct->Params->showPublished);
 		$filtering->addWhereExpression($filter);
-		$whereArray = $filtering->where;
+		//$whereArray = $filtering->where;
 
 		if ($this->ct->Table->published_field_found)
-			$whereArray[] = 'published=1';
+			$filtering->whereClause->addCondition('published', 1);
+		//$whereArray[] = 'published=1';
 
-		$where = '';
-		if (count($whereArray) > 0)
-			$where = ' WHERE ' . implode(" AND ", $whereArray);
+		//$where = '';
+		//if (count($filtering->whereClause->conditions) > 0) {
+		//	$where = ' WHERE ' . $filtering->whereClause->getWhereClause();// implode(" AND ", $whereArray);
+		//}
 
-		$query = 'SELECT ' . $this->ct->Table->realidfieldname . ' FROM ' . $this->ct->Table->realtablename . ' ' . $where;
+		//$query = 'SELECT ' . $this->ct->Table->realidfieldname . ' FROM ' . $this->ct->Table->realtablename . ' ' . $where;
 
-		$query .= ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC'; //show last
-		$query .= ' LIMIT 1';
+		//$query .= ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC'; //show last
+		//$query .= ' LIMIT 1';
 
 		try {
-			$rows = database::loadAssocList($query);
+			$rows = database::loadAssocList($this->ct->Table->realtablename, [$this->ct->Table->realidfieldname], $filtering->whereClause, $this->ct->Table->realidfieldname, 'DESC', 1);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 			return null;
@@ -363,17 +382,20 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 	function findRecordByUserID(): ?string
 	{
-		$wheres = array();
+		//$wheres = array();
+		$whereClause = new MySQLWhereClause();
 
 		if ($this->ct->Table->published_field_found)
-			$wheres[] = 'published=1';
+			$whereClause->addCondition('published', 1);
+		//$wheres[] = 'published=1';
 
-		$wheres_user = $this->ct->UserIDField_BuildWheres($this->ct->Params->userIdField, $this->listing_id);
-		$wheres = array_merge($wheres, $wheres_user);
-		$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
+		$whereClauseUser = $this->ct->UserIDField_BuildWheres($this->ct->Params->userIdField, $this->listing_id);
+		$whereClause->addNestedCondition($whereClauseUser);
+		//$wheres = array_merge($wheres, $wheres_user);
+		//$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
 
 		try {
-			$rows = database::loadAssocList($query);
+			$rows = database::loadAssocList($this->ct->Table->realtablename, $this->ct->Table->selects, $whereClause, null, null, 1);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 			return -1;
@@ -391,10 +413,11 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		if ($link == '')
 			return '';
 
-		$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
+		//$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
 
 		try {
-			$rows = database::loadAssocList($query);
+			$whereClause = new MySQLWhereClause();
+			$rows = database::loadAssocList($this->ct->Table->realtablename, $this->ct->Table->selects, $whereClause, $this->ct->Table->realidfieldname, 'DESC', 1);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 			return false;
@@ -587,6 +610,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	}
 	*/
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function Refresh($save_log = 1): int
 	{
 		$listing_ids_str = common::inputPostString('ids', '');
@@ -633,6 +660,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return $this->ct->setPublishStatusSingleRecord($listing_id, $status);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function delete(): int
 	{
 		$listing_ids_str = common::inputPostString('ids', '');

@@ -26,85 +26,95 @@ class ListOfLayouts
 		$this->ct = $ct;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getLayouts()
 	{
-		$query = 'SELECT id,layoutname,tableid,layouttype FROM #__customtables_layouts WHERE published=1 ORDER BY layoutname';
-		return database::loadObjectList($query);
+		//$query = 'SELECT id,layoutname,tableid,layouttype FROM #__customtables_layouts WHERE published=1 ORDER BY layoutname';
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		return database::loadObjectList('#__customtables_layouts', ['id', 'layoutname', 'tableid', 'layouttype'], $whereClause, 'layoutname');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getItems($published, $search, $layoutType, $tableid, $orderCol, $orderDirection, $limit, $start): array
 	{
-		$query = $this->getListQuery($published, $search, $layoutType, $tableid, $orderCol, $orderDirection, $limit, $start);
-
-		$items = database::loadObjectList($query);
+		$items = $this->getListQuery($published, $search, $layoutType, $tableid, $orderCol, $orderDirection, $limit, $start);
 		return $this->translateLayoutTypes($items);
 	}
 
-	function getListQuery($published, $search, $layoutType, $tableid, $orderCol, $orderDirection, $limit = 0, $start = 0): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function getListQuery($published, $search, $layoutType, $tableid, $orderCol, $orderDirection, $limit = 0, $start = 0, bool $returnQueryString = false)
 	{
+		$whereClause = new MySQLWhereClause();
+
 		// Select some fields
 		$tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid LIMIT 1)';
 
 		if (defined('_JEXEC')) {
-			$modifiedby = '(SELECT name FROM #__users AS u WHERE u.id=a.modified_by LIMIT 1)';
+			$modifiedBy = '(SELECT name FROM #__users AS u WHERE u.id=a.modified_by LIMIT 1)';
 		} elseif (defined('WPINC')) {
-			$modifiedby = '(SELECT display_name FROM #__users AS u WHERE u.ID=a.modified_by LIMIT 1)';
+			$modifiedBy = '(SELECT display_name FROM #__users AS u WHERE u.ID=a.modified_by LIMIT 1)';
 		} else
-			$modifiedby = 'NULL';
+			$modifiedBy = 'NULL';
 
 		$layoutSize = 'LENGTH(layoutcode)';
 
-		$query = 'SELECT a.*, ' . $tabletitle . ' AS tabletitle, ' . $modifiedby . ' AS modifiedby, ' . $layoutSize . ' AS layout_size';
+		$selects = [
+			'a.*',
+			$tabletitle . ' AS tabletitle',
+			$modifiedBy . ' AS modifiedby',
+			$layoutSize . ' AS layout_size'
+		];
 
-		// From the customtables_item table
-		$query .= ' FROM ' . database::quoteName('#__customtables_layouts') . ' AS a';
-
-		$where = [];
+		$whereClausePublished = new MySQLWhereClause();
 
 		// Filter by published state
-		if (is_numeric($published))
-			$where [] = 'a.published = ' . (int)$published;
-		elseif (is_null($published) or $published === '')
-			$where [] = 'a.published = 0 OR a.published = 1';
+		if (is_numeric($published)) {
+			$whereClausePublished->addCondition('a.published', (int)$published);
+		} elseif (is_null($published) or $published === '') {
+			$whereClausePublished->addOrCondition('a.published', 0);
+			$whereClausePublished->addOrCondition('a.published', 1);
+		}
+
+		if ($whereClausePublished->hasConditions())
+			$whereClause->addNestedCondition($whereClausePublished);
 
 		// Filter by search.
 		if (!empty($search)) {
+
+			$whereClauseSearch = new MySQLWhereClause();
+
 			if (stripos($search, 'id:') === 0) {
-				$where [] = 'a.id = ' . (int)substr($search, 3);
+				$whereClauseSearch->addCondition('a.id', intval(substr($search, 3)));
 			} else {
-				$search_clean = database::quote('%' . $search . '%');
-				$where [] = '('
-					. ' (a.layoutname LIKE ' . $search_clean . ') OR'
-					. ' INSTR(a.layoutcode,' . database::quote($search) . ') OR'
-					. ' INSTR(a.layoutmobile,' . database::quote($search) . ') OR'
-					. ' INSTR(a.layoutcss,' . database::quote($search) . ') OR'
-					. ' INSTR(a.layoutjs,' . database::quote($search) . ')
-					)';
+				$whereClauseSearch->addOrCondition('a.layoutname', '%' . $search . '%', 'LIKE');
+				$whereClauseSearch->addOrCondition('a.layoutcode', '%' . $search . '%', 'LIKE');
+				$whereClauseSearch->addOrCondition('a.layoutmobile', '%' . $search . '%', 'LIKE');
+				$whereClauseSearch->addOrCondition('a.layoutcss', '%' . $search . '%', 'LIKE');
+				$whereClauseSearch->addOrCondition('a.layoutjs', '%' . $search . '%', 'LIKE');
 			}
+			if ($whereClauseSearch->hasConditions())
+				$whereClause->addNestedCondition($whereClauseSearch);
 		}
 
 		// Filter by Layouttype.
-		if ($layoutType) {
-			$where [] = '(a.layouttype = ' . database::quote($layoutType) . ')';
-		}
+		if ($layoutType)
+			$whereClause->addCondition('a.layouttype', $layoutType);
+
 		// Filter by Tableid.
-		if ($tableid) {
-			$where [] = '(a.tableid = ' . database::quote($tableid) . ')';
-		}
+		if ($tableid)
+			$whereClause->addCondition('a.tableid', $tableid);
 
-		$query .= ' WHERE ' . implode(' AND ', $where);
-
-		// Add the list ordering clause.
-		if ($orderCol != '')
-			$query .= ' ORDER BY ' . database::quoteName($orderCol) . ' ' . $orderDirection;
-
-		if ($limit != 0)
-			$query .= ' LIMIT ' . $limit;
-
-		if ($start != 0)
-			$query .= ' OFFSET ' . $start;
-
-		return $query;
+		return database::loadAssocList('#__customtables_layouts AS a', $selects, $whereClause, $orderCol, $orderDirection, $limit, $start, null, $returnQueryString);
 	}
 
 	function translateLayoutTypes(array $items): array
@@ -143,21 +153,21 @@ class ListOfLayouts
 
 		// Process layout name
 		if (function_exists("transliterator_transliterate"))
-			$newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPostString('layoutname'));
+			$newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPostString('layoutname', null, 'create-edit-field'));
 		else
-			$newLayoutName = common::inputPostString('layoutname');
+			$newLayoutName = common::inputPostString('layoutname', null, 'create-edit-field');
 
 		$newLayoutName = str_replace(" ", "_", $newLayoutName);
 		$newLayoutName = trim(preg_replace("/[^a-z A-Z_\d]/", "", $newLayoutName));
 		$data['layoutname'] = $newLayoutName;//$sets[] = 'layoutname=' . database::quote($newLayoutName);
 		$data['modified_by'] = (int)$this->ct->Env->user->id;//$sets[] = 'modified_by=' . (int)$this->ct->Env->user->id;
 		$data['modified'] = current_time('mysql', 1); // This will use the current date and time in MySQL format;//$sets[] = 'modified=NOW()';
-		$data['layouttype'] = common::inputPostString('layouttype');//$sets[] = 'layouttype=' . database::quote(common::inputPostString('layouttype'));
-		$data['tableid'] = common::inputPostInt('table');//$sets[] = 'tableid=' . common::inputGetInt('table');
-		$data['layoutcode'] = common::inputPostRow('layoutcode');//$sets[] = 'layoutcode=' . database::quote(common::inputGetRow('layoutcode'), true);
-		$data['layoutmobile'] = common::inputPostRow('layoutmobile');//$sets[] = 'layoutmobile=' . database::quote(common::inputGetRow('layoutmobile'), true);
-		$data['layoutcss'] = common::inputPostRow('layoutcss');//$sets[] = 'layoutcss=' . database::quote(common::inputGetRow('layoutcss'), true);
-		$data['layoutjs'] = common::inputPostRow('layoutjs');//$sets[] = 'layoutjs=' . database::quote(common::inputGetRow('layoutjs'), true);
+		$data['layouttype'] = common::inputPostString('layouttype', null, 'create-edit-field');//$sets[] = 'layouttype=' . database::quote(common::inputPostString('layouttype'));
+		$data['tableid'] = common::inputPostInt('table', null, 'create-edit-field');//$sets[] = 'tableid=' . common::inputGetInt('table');
+		$data['layoutcode'] = common::inputPostRow('layoutcode', null, 'create-edit-field');//$sets[] = 'layoutcode=' . database::quote(common::inputGetRow('layoutcode'), true);
+		$data['layoutmobile'] = common::inputPostRow('layoutmobile', null, 'create-edit-field');//$sets[] = 'layoutmobile=' . database::quote(common::inputGetRow('layoutmobile'), true);
+		$data['layoutcss'] = common::inputPostRow('layoutcss', null, 'create-edit-field');//$sets[] = 'layoutcss=' . database::quote(common::inputGetRow('layoutcss'), true);
+		$data['layoutjs'] = common::inputPostRow('layoutjs', null, 'create-edit-field');//$sets[] = 'layoutjs=' . database::quote(common::inputGetRow('layoutjs'), true);
 
 		// set the metadata to the Item Data
 		/*

@@ -136,10 +136,8 @@ class CustomtablesModelListoffields extends ListModel
 		$type = $this->getState('filter.type');
 		$orderCol = $this->state->get('list.ordering', 'a.id');
 		$orderDirection = $this->state->get('list.direction', 'asc');
-		//$limit = $this->state->get('list.limit', 20);
-		//$start = $this->state->get('list.start', 0);
 		$tableId = common::inputGetInt('tableid');
-		return $this->helperListOfFields->getListQuery($tableId, $published, $search, $type, $orderCol, $orderDirection);//, $limit, $start);
+		return $this->helperListOfFields->getListQuery($tableId, $published, $search, $type, $orderCol, $orderDirection, null, null, true);
 	}
 
 	/**

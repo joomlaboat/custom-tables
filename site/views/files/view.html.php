@@ -20,6 +20,7 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
@@ -113,12 +114,19 @@ class CustomTablesViewFiles extends HtmlView
 			return CT_FieldTypeTag_file::getFileFolder($this->field->params[1]) . '/' . $rowValue;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function render_blob_output($filename)
 	{
-		$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' WHERE '
-			. $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
+		//$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' WHERE '
+		//	. $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
 
-		$rows = database::loadAssocList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
+
+		$rows = database::loadAssocList($this->ct->Table->realtablename, [$this->field->realfieldname], $whereClause, null, null, 1);
 
 		if (count($rows) < 1) {
 			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND');

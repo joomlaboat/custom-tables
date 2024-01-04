@@ -79,7 +79,7 @@ class CustomtablesModelListOfLayouts extends ListModel
 		//$limit = $this->state->get('list.limit', 20);
 		//$start = $this->state->get('list.start', 0);
 
-		return $this->helperListOfLayout->getListQuery($published, $search, $layoutType, $tableid, $orderCol, $orderDirection);//, $limit, $start);
+		return $this->helperListOfLayout->getListQuery($published, $search, $layoutType, $tableid, $orderCol, $orderDirection, null, null, true);
 	}
 
 	protected function populateState($ordering = null, $direction = null)

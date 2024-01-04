@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Field;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
@@ -96,6 +97,10 @@ class CT_FieldTypeTag_image
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function get_image_type_value(Field $field, string $realidfieldname, ?string $listing_id): ?string
 	{
 		$imageMethods = new CustomTablesImageMethods;
@@ -107,10 +112,13 @@ class CT_FieldTypeTag_image
 				. $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
 		} else {
 
-			$query = 'SELECT ' . $field->realfieldname . ' FROM ' . $field->ct->Table->realtablename
-				. ' WHERE ' . $realidfieldname . ' = ' . database::quote($listing_id);
+			//$query = 'SELECT ' . $field->realfieldname . ' FROM ' . $field->ct->Table->realtablename
+			//' WHERE ' . $realidfieldname . ' = ' . database::quote($listing_id);
 
-			$ExistingImageRows = database::loadObjectList($query, null, 1);
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition($realidfieldname, $listing_id);
+
+			$ExistingImageRows = database::loadObjectList($field->ct->Table->realtablename, [$field->realfieldname], $whereClause, null, null, 1);
 			if (count($ExistingImageRows) == 0)
 				$ExistingImage = null;
 			else

@@ -16,6 +16,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -206,8 +207,10 @@ class CustomtablesViewListoffields extends HtmlView
 
 	protected function getTheTypeSelections()
 	{
-		$query = 'SELECT ' . database::quoteName('type') . ' FROM ' . database::quoteName('#__customtables_fields') . ' ORDER BY ' . database::quoteName('type');
-		$results = database::loadColumn($query);
+		//$query = 'SELECT ' . database::quoteName('type') . ' FROM ' . database::quoteName('#__customtables_fields') . ' ORDER BY ' . database::quoteName('type');
+
+		$whereClause = new MySQLWhereClause();
+		$results = database::loadColumn('#__customtables_fields', ['type'], $whereClause, 'type');
 
 		if ($results) {
 			$results = array_unique($results);

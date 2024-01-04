@@ -40,16 +40,24 @@ class Value_user extends BaseValue
 	public static function renderUserValue(int $value, string $field = ''): string
 	{
 		if ($field == 'online') {
-			$query = 'SELECT userid FROM #__session WHERE userid=' . $value . ' LIMIT 1';
-			$options = database::loadAssocList($query);
+			//$query = 'SELECT userid FROM #__session WHERE userid=' . $value . ' LIMIT 1';
+
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('userid', $value);
+
+			$options = database::loadAssocList('#__session', ['userid'], $whereClause, null, null, 1);
 			if (count($options) == 0)
 				return 0;
 			else
 				return 1;
 		} elseif ($field == 'usergroups') {
-			$selects = '(SELECT title FROM #__usergroups AS g WHERE g.id = m.group_id LIMIT 1) AS group_title';
-			$query = 'SELECT ' . $selects . ' FROM #__user_usergroup_map AS m WHERE user_id=' . $value;
-			$groups = database::loadObjectList($query);
+			//$selects = '(SELECT title FROM #__usergroups AS g WHERE g.id = m.group_id LIMIT 1) AS group_title';
+			//$query = 'SELECT ' . $selects . ' FROM #__user_usergroup_map AS m WHERE user_id=' . $value;
+
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('user_id', $value);
+
+			$groups = database::loadObjectList('#__user_usergroup_map AS m', ['(SELECT title FROM #__usergroups AS g WHERE g.id = m.group_id LIMIT 1) AS group_title'], $whereClause);
 			$group_list = [];
 
 			foreach ($groups as $group)
@@ -65,8 +73,12 @@ class Value_user extends BaseValue
 			elseif (!in_array($field, $allowedFields))
 				return 'wrong field "' . $field . '" !';
 
-			$query = 'SELECT id, name, username, email, registerDate,lastvisitDate FROM #__users WHERE id=' . $value . ' LIMIT 1';
-			$rows = database::loadAssocList($query);
+			//$query = 'SELECT id, name, username, email, registerDate,lastvisitDate FROM #__users WHERE id=' . $value . ' LIMIT 1';
+
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('id', $value);
+
+			$rows = database::loadAssocList('#__users', ['id', 'name', 'username', 'email', 'registerDate', 'lastvisitDate'], $whereClause, null, null, 1);
 
 			if (count($rows) != 0) {
 				$row = $rows[0];

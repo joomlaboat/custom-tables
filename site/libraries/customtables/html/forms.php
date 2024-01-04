@@ -27,26 +27,27 @@ class Forms
 	 * @param string $objectId The HTML element's ID and name attribute.
 	 * @param string $tableName The name of the database table to query.
 	 * @param array $selects An array of fields to select from the table.
-	 * @param array|null $where An optional array of conditions to apply in the WHERE clause.
+	 * @param MySQLWhereClause $whereClause An optional array of conditions to apply in the WHERE clause.
 	 * @param string|null $orderBy An optional field to use for sorting the results.
 	 *
 	 * @return string The HTML select box element.
 	 *
 	 * @throws Exception If there is an error in the database query.
+	 * @since 3.2.2
 	 */
 
-	public static function renderHTMLSelectBoxFromDB(string $objectId, ?int $value, bool $addSelectOption, string $tableName, array $selects, ?array $where = null, ?string $orderBy = null, array $arguments = []): string
+	public static function renderHTMLSelectBoxFromDB(string $objectId, ?int $value, bool $addSelectOption, string $tableName, array $selects, MySQLWhereClause $whereClause, ?string $orderBy = null, array $arguments = []): string
 	{
+		//$whereClause = new MySQLWhereClause();
+		//$whereClause->addCondition($tableName, $selects);
+		/*
 		$sql = 'SELECT ' . implode(',', $selects) . ' FROM '
 			. $tableName;
 
 		if ($where !== null and count($where) > 0)
 			$sql .= ' WHERE ' . implode(' AND ', $where);
-
-		if ($orderBy !== null)
-			$sql .= ' ORDER BY ' . $orderBy;
-
-		$options = database::loadAssocList($sql);
+*/
+		$options = database::loadAssocList($tableName, $selects, $whereClause, ($orderBy !== null ? $orderBy : null));
 
 		$selectBoxOptions = [];
 

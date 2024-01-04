@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use Exception;
 use JoomlaBasicMisc;
 use LayoutProcessor;
 use tagProcessor_PHP;
@@ -34,6 +35,10 @@ class Details
 		$this->layoutType = 0;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function load($layoutDetailsContent = null): bool
 	{
 		if (!$this->loadRecord())
@@ -75,6 +80,10 @@ class Details
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function loadRecord(): bool
 	{
 		$filter = '';
@@ -134,14 +143,21 @@ class Details
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function checkRecordUserJoin($recordsTable, $recordsUserIdField, $recordsField, $listing_id): bool
 	{
 		//TODO: avoid es_
+		//$query = 'SELECT COUNT(*) AS count FROM #__customtables_table_' . $recordsTable . ' WHERE es_' . $recordsUserIdField . '='
+		//. $this->ct->Env->user->id . ' AND INSTR(es_' . $recordsField . ',",' . $listing_id . ',") LIMIT 1';
 
-		$query = 'SELECT COUNT(*) AS count FROM #__customtables_table_' . $recordsTable . ' WHERE es_' . $recordsUserIdField . '='
-			. $this->ct->Env->user->id . ' AND INSTR(es_' . $recordsField . ',",' . $listing_id . ',") LIMIT 1';
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('es_' . $recordsUserIdField, $this->ct->Env->user->id);
+		$whereClause->addCondition('es_' . $recordsField, ',' . $listing_id . ',', 'INSTR');
 
-		$rows = database::loadAssocList($query);
+		$rows = database::loadAssocList('#__customtables_table_' . $recordsTable, ['COUNT(*)'], $whereClause, null, null, 1);
 		$num_rows = $rows[0]['count'];
 
 		if ($num_rows == 0)
@@ -150,6 +166,10 @@ class Details
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function getDataByFilter($filter)
 	{
 		if ($filter != '') {
@@ -159,14 +179,11 @@ class Details
 			return null;
 		}
 
-		$where = count($this->ct->Filter->where) > 0 ? ' WHERE ' . implode(" AND ", $this->ct->Filter->where) : '';
-
 		$this->ct->Ordering->orderby = $this->ct->Table->realidfieldname . ' DESC';
 		if ($this->ct->Table->published_field_found)
 			$this->ct->Ordering->orderby .= ',published DESC';
 
-		$query = $this->ct->buildQuery($where) . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		$rows = $this->buildQuery($this->ct->Filter->whereClause, 1);
 
 		if (count($rows) < 1)
 			return null;
@@ -180,6 +197,39 @@ class Details
 		return $row;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function buildQuery(MySQLWhereClause $whereClause, ?int $limit): array
+	{
+		$ordering = $this->ct->GroupBy != '' ? [$this->ct->GroupBy] : [];
+
+		if (is_null($this->ct->Table) or is_null($this->ct->Table->tablerow)) {
+			return [];
+		}
+
+		if ($this->ct->Ordering->ordering_processed_string !== null) {
+			$this->ct->Ordering->parseOrderByString();
+		}
+
+		$selects = $this->ct->Table->selects;
+
+		if ($this->ct->Ordering->orderby !== null) {
+			if ($this->ct->Ordering->selects !== null)
+				$selects[] = $this->ct->Ordering->selects;
+
+			$ordering[] = $this->ct->Ordering->orderby;
+		}
+		return database::loadAssocList($this->ct->Table->realtablename, $selects, $whereClause,
+			(count($ordering) > 0 ? implode(',', $ordering) : null), null,
+			$limit, null, $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname);
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function getDataById($listing_id)
 	{
 		if (is_numeric($listing_id) and intval($listing_id) == 0) {
@@ -187,8 +237,10 @@ class Details
 			return null;
 		}
 
-		$query = $this->ct->buildQuery('WHERE id=' . database::quote($listing_id)) . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', $listing_id);
+
+		$rows = $this->buildQuery($whereClause, 1);
 
 		if (count($rows) < 1)
 			return null;
@@ -202,6 +254,10 @@ class Details
 		return $row;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function SaveViewLogForRecord($rec): void
 	{
 		$updateFields = [];

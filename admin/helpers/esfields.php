@@ -9,6 +9,7 @@
  **/
 
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\HTML\HTMLHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -17,15 +18,25 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 class JHTMLCTFields
 {
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function fields($tableid, $currentFieldId, $control_name, $value)
 	{
-		$query = 'SELECT id, fieldname '
-			. ' FROM #__customtables_fields '
-			. ' WHERE published=1 AND tableid=' . (int)$tableid . ' AND id!=' . (int)$currentFieldId
-			. ' AND type="checkbox"'
-			. ' ORDER BY fieldname';
+		/*		$query = 'SELECT id, fieldname '
+					. ' FROM #__customtables_fields '
+					. ' WHERE published=1 AND tableid=' . (int)$tableid . ' AND id!=' . (int)$currentFieldId
+					. ' AND type="checkbox"'
+					. ' ORDER BY fieldname';
+		*/
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('tableid', (int)$tableid);
+		$whereClause->addCondition('id', (int)$currentFieldId, '!=');
+		$whereClause->addCondition('type', 'checkbox');
 
-		$fields = database::loadAssocList($query);
+		$fields = database::loadAssocList('#__customtables_fields', ['id', 'fieldname'], $whereClause, 'fieldname', null);
 		if (!$fields) $fields = array();
 
 		$fields[] = array('id' => '0', 'fieldname' => '- ROOT');

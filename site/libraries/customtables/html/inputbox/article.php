@@ -37,16 +37,19 @@ class InputBox_article extends BaseInputBox
 
 		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 
+		$whereClause = new MySQLWhereClause();
+
 		$catId = (int)$this->field->params[0] ?? '';
-		$query = 'SELECT id, title AS name FROM #__content';
+		//$query = 'SELECT id, title AS name FROM #__content';
 
 		if ($catId != 0)
-			$query .= ' WHERE catid=' . $catId;
+			$whereClause->addCondition('catid', $catId);
+		//$query .= ' WHERE catid=' . $catId;
 
-		$query .= ' ORDER BY title';
+		//$query .= ' ORDER BY title';
 
 		try {
-			$articles = database::loadObjectList($query);
+			$articles = database::loadObjectList('#__content', ['id', 'title AS name'], $whereClause, 'title');
 		} catch (Exception $e) {
 			return 'InputBox_Article::render_article() - Cannot load a list of articles. Details: ' . $e->getMessage();
 		}

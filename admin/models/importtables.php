@@ -19,6 +19,7 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\ImportTables;
 
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\MVC\Model\ListModel;
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
@@ -60,10 +61,10 @@ class CustomTablesModelImportTables extends ListModel
 		return $columns;
 	}
 
-	function parseLine(&$columns, $allowedColumns, $fieldTypes, $line, &$maxId): array
+	function parseLine($allowedColumns, $fieldTypes, $line, &$maxId): array
 	{
 		$result = array();
-		$values = JoomlaBasicMisc::csv_explode(',', $line, '"');
+		$values = JoomlaBasicMisc::csv_explode(',', $line);
 		$maxId++;
 		$result[] = $maxId;                                // id
 
@@ -102,10 +103,16 @@ class CustomTablesModelImportTables extends ListModel
 		return $result;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function findMaxId($table): int
 	{
-		$query = ' SELECT id FROM #__customtables_table_' . $table . ' ORDER BY id DESC LIMIT 1';
-		$maxIdRecords = database::loadObjectList($query);
+		$whereClause = new MySQLWhereClause();
+
+		//$query = ' SELECT id FROM #__customtables_table_' . $table . ' ORDER BY id DESC LIMIT 1';
+		$maxIdRecords = database::loadObjectList('#__customtables_table_' . $table, ['ig'], $whereClause, 'id', 'DESC', 1);
 
 		if (count($maxIdRecords) != 1)
 			return -1;
@@ -113,11 +120,19 @@ class CustomTablesModelImportTables extends ListModel
 		return $maxIdRecords[0]->id;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getLanguageByCODE($code): int
 	{
 		//Example: $code='en-GB';
-		$query = ' SELECT id FROM #__customtables_languages WHERE language="' . $code . '" LIMIT 1';
-		$rows = database::loadObjectList($query);
+		//$query = ' SELECT id FROM #__customtables_languages WHERE language="' . $code . '" LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('language', $code);
+
+		$rows = database::loadObjectList('#__customtables_languages', ['id'], $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return -1;
 

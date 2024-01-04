@@ -398,12 +398,17 @@ class Value
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function blobProcess(?string $value, array $option_list): ?string
 	{
 		if ((int)$value == 0)
 			return null;
 
-		$fieldType = Fields::getFieldType($this->ct->Table->realtablename, $this->field->realfieldname);
+		$fieldType = database::getFieldType($this->ct->Table->realtablename, $this->field->realfieldname);
+
 		if ($fieldType != 'blob' and $fieldType != 'tinyblob' and $fieldType != 'mediumblob' and $fieldType != 'longblob')
 			return self::TextFunctions($value, $option_list);
 
@@ -423,6 +428,10 @@ class Value
 			return "#" . $value;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function articleProcess($rowValue, array $option_list)
 	{
 		if (isset($option_list[0]) and $option_list[0] != '')
@@ -439,11 +448,18 @@ class Value
 			return $article;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function getArticle($articleId, $field)
 	{
-		// get database handle
-		$query = 'SELECT ' . $field . ' FROM #__content WHERE id=' . (int)$articleId . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT ' . $field . ' FROM #__content WHERE id=' . (int)$articleId . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', (int)$articleId);
+
+		$rows = database::loadAssocList('#__content', [$field], $whereClause, null, null, 1);
 
 		if (count($rows) != 1)
 			return ""; //return nothing if article not found

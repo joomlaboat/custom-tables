@@ -20,11 +20,16 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
+use Exception;
 use Joomla\CMS\Factory;
 use ESTables;
 
 class IntegrityFields extends IntegrityChecks
 {
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function checkFields(CT &$ct, $link): string
 	{
 		if (!str_contains($link, '?'))
@@ -297,7 +302,7 @@ class IntegrityFields extends IntegrityChecks
 		return true;
 	}
 
-	protected static function parse_column_type(string $parse_column_type_string)
+	protected static function parse_column_type(string $parse_column_type_string): string
 	{
 		$parts = explode('(', $parse_column_type_string);
 		if (count($parts) > 1) {
@@ -308,6 +313,10 @@ class IntegrityFields extends IntegrityChecks
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addFieldIfNotExists(CT $ct, $realtablename, $ExistingFields, $proj_field, string $fieldType, string $typeParams): bool
 	{
 		if ($fieldType == 'multilangstring' or $fieldType == 'multilangtext') {
@@ -350,6 +359,10 @@ class IntegrityFields extends IntegrityChecks
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function addField($realtablename, $realfieldname, string $fieldType, string $typeParams)
 	{
 		$PureFieldType = Fields::getPureFieldType($fieldType, $typeParams);

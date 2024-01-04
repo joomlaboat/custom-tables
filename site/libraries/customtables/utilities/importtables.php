@@ -10,6 +10,7 @@
 
 namespace CustomTables;
 
+use Exception;
 use Joomla\CMS\Factory;
 use ESTables;
 use JoomlaBasicMisc;
@@ -22,6 +23,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 class ImportTables
 {
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function processFile($filename, $menuType, &$msg, $category = '', $importFields = true, $importLayouts = true, $importMenu = true): bool
 	{
 		$ct = new CT;
@@ -41,6 +46,10 @@ class ImportTables
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function processContent(CT &$ct, $data, $menutype, &$msg, $category = '', $importFields = true, $importLayouts = true, $importMenu = true): bool
 	{
 		$keyword = '<customtablestableexport>';
@@ -56,6 +65,10 @@ class ImportTables
 		return ImportTables::processData($ct, $JSON_data, $menutype, $msg, $category, $importFields, $importLayouts, $importMenu);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processData(CT &$ct, $jsondata, $menutype, &$msg, $category, $importfields, $importlayouts, $importmenu): bool
 	{
 		foreach ($jsondata as $table) {
@@ -89,6 +102,10 @@ class ImportTables
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processTable($table_new, $categoryname)
 	{
 		//This function creates the table and returns table's id.
@@ -126,6 +143,10 @@ class ImportTables
 		return $tableid;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function updateRecords(string $table, array $rows_new, array $rows_old, $addPrefix = true, array $exceptions = array(), bool $force_id = false, $save_checked_out = false): void
 	{
 		if ($addPrefix)
@@ -220,6 +241,10 @@ class ImportTables
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function insertRecords(string $table, array $rows, bool $addPrefix = true, array $exceptions = array(), bool $force_id = false,
 	                                     string $add_field_prefix = '', array $field_conversion_map = array(), bool $save_checked_out = false): ?int
 	{
@@ -273,10 +298,11 @@ class ImportTables
 						//Add language field
 						//Get non language field type
 						$nonLanguageFieldName = Fields::getLanguageLessFieldName($key);
-						$filedType = Fields::getFieldType($mysqlTableName, $nonLanguageFieldName);
 
-						if ($filedType != '') {
-							Fields::AddMySQLFieldNotExist($mysqlTableName, $key, $filedType, '');
+						$fieldType = database::getFieldType($mysqlTableName, $nonLanguageFieldName);
+
+						if ($fieldType != '') {
+							Fields::AddMySQLFieldNotExist($mysqlTableName, $key, $fieldType, '');
 							$data[$fieldname] = $rows[$key];
 						}
 					}
@@ -288,6 +314,10 @@ class ImportTables
 		return database::insert($mysqlTableName, $data);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function updateTableCategory($tableid, $table_new, $categoryName): void
 	{
 		if (isset($table_new['tablecategory']))
@@ -344,6 +374,10 @@ class ImportTables
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getRecordByField($table, $fieldname, $value, $addPrefix = true)
 	{
 		if ($addPrefix)
@@ -351,18 +385,26 @@ class ImportTables
 		else
 			$mysqlTableName = $table;
 
-		if (is_null($value))
-			$query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . ' IS NULL';
-		else
-			$query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . '=' . database::quote($value);
+		$whereClause = new MySQLWhereClause();
 
-		$rows = database::loadAssocList($query);
+		if (is_null($value))
+			$whereClause->addCondition($fieldname, null, 'NULL');
+		//$query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . ' IS NULL';
+		else
+			$whereClause->addCondition($fieldname, $value);
+		//$query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . '=' . database::quote($value);
+
+		$rows = database::loadAssocList($mysqlTableName, ['*'], $whereClause, null, null);
 		if (count($rows) == 0)
 			return 0;
 
 		return $rows[0];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processFields($tableid, $tableName, $fields, &$msg): bool
 	{
 		$ct = new CT;
@@ -379,6 +421,10 @@ class ImportTables
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processField(CT $ct, $tableid, $tableName, &$field_new)
 	{
 		//This function creates the table field and returns field's id.
@@ -405,6 +451,10 @@ class ImportTables
 		return $fieldid;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processLayouts(CT &$ct, $tableid, $layouts, &$msg): bool
 	{
 		foreach ($layouts as $layout) {
@@ -417,6 +467,10 @@ class ImportTables
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processLayout(CT &$ct, $tableid, &$layout_new)
 	{
 		//This function creates layout and returns its id.
@@ -439,12 +493,16 @@ class ImportTables
 		return $layoutId;
 	}
 
-	protected static function processMenu($menu, $menutype, &$msg): bool
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected static function processMenu($menu, $menuType, &$msg): bool
 	{
 		$menus = array();
 		foreach ($menu as $menuitem) {
-			$menuid = ImportTables::processMenuItem($menuitem, $menutype, $menus);
-			if ($menuid != 0) {
+			$menuId = ImportTables::processMenuItem($menuitem, $menuType, $menus);
+			if ($menuId != 0) {
 				//All Good
 			} else {
 				$msg = 'Could not Add or Update menu item "' . $menuitem['title'] . '"';
@@ -454,6 +512,10 @@ class ImportTables
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processMenuItem(&$menuitem_new, $menutype, &$menus)
 	{
 		//This function creates menuitem and returns its id.
@@ -546,10 +608,17 @@ class ImportTables
 		return $menuItemId;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function menuGetMaxRgt()
 	{
-		$query = 'SELECT rgt FROM #__menu ORDER BY rgt DESC LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT rgt FROM #__menu ORDER BY rgt DESC LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$rows = database::loadAssocList('#__menu', ['rgt'], $whereClause, 'rgt', null, 1);
+
 		if (count($rows) == 0)
 			return 0;
 
@@ -565,6 +634,10 @@ class ImportTables
 		return 1;// Root
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processRecords($tableName, $records): bool
 	{
 		$mySQLTableName = '#__customtables_table_' . $tableName;
@@ -580,6 +653,10 @@ class ImportTables
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addMenu($title, $alias, $link, $menuTypeOrTitle, $extension_name, $access_, $menuParamsString, $home = 0): bool
 	{
 		$menuType = JoomlaBasicMisc::slugify($menuTypeOrTitle);
@@ -654,6 +731,10 @@ class ImportTables
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addMenutypeIfNotExist($menutype, $menutype_title): void
 	{
 		$menutype_old = ImportTables::getRecordByField('#__menu_types', 'menutype', $menutype, false);
@@ -684,7 +765,6 @@ class ImportTables
 		if ($menuTable->getError() != '') {
 			Factory::getApplication()->enqueueMessage($menuTable->getError(), 'error');
 		}
-
 		return $menuTable->id;
 	}
 }

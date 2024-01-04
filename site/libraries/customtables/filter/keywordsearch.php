@@ -12,7 +12,7 @@
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
-use CustomTables\Ordering;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -24,11 +24,11 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ordering.php')
 class CustomTablesKeywordSearch
 {
 	var CT $ct;
-	var $PathValue;
-	var $groupby;
-	var $esordering;
+	var array $PathValue;
+	var string $groupby;
+	var string $esordering;
 
-	function __construct(&$ct)
+	function __construct($ct)
 	{
 		$this->ct = $ct;
 		$this->PathValue = [];
@@ -37,7 +37,11 @@ class CustomTablesKeywordSearch
 		$this->esordering = '';
 	}
 
-	function getRowsByKeywords($keywords, &$record_count, $limit, $limitstart)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function getRowsByKeywords($keywords, &$record_count, $limit, $limitstart): array
 	{
 		$result_rows = array();
 
@@ -61,16 +65,21 @@ class CustomTablesKeywordSearch
 		$record_count = count($result_rows);
 
 		//Process Limit
-		$result_rows = $this->processLimit($result_rows, $limit, $limitstart);
-		return $result_rows;
+		return $this->processLimit($result_rows, $limit, $limitstart);
 	}
 
-	function getRowsByKeywords_Processor(string $keywords, array $mod_fieldlist, string $AndOrOr)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function getRowsByKeywords_Processor(string $keywords, array $mod_fieldlist, string $AndOrOr): array
 	{
 		$keyword_arr = explode(' ', $keywords);
 		$count = 0;
 		$result_rows = array();
 		$listing_ids = array();
+
+		$AndOrOr_text = 'UNKNOWN';
 
 		if ($AndOrOr == 'OR')
 			$AndOrOr_text = common::translate('COM_CUSTOMTABLES_OR');
@@ -79,34 +88,45 @@ class CustomTablesKeywordSearch
 			$AndOrOr_text = common::translate('COM_CUSTOMTABLES_AND');
 
 		foreach ($mod_fieldlist as $mod_field) {
-			$where = '';
+			//$where = '';
 			$inner = '';
-			$f = trim($mod_field);
-			$fieldrow = ESTables::FieldRowByName($f, $this->ct->Table->fields);//2011.6.1
+
+			$fieldrow = null;
+			foreach ($this->ct->Table->fields as $f) {
+				if ($f['fieldname'] == trim($mod_field)) {
+					$fieldrow = $f;
+					break;
+				}
+			}
 
 			//exact match
-			if (isset($fieldrow['type']) and isset($fieldrow['fieldname']))
-				$where = $this->getRowsByKeywords_ProcessTypes($fieldrow['type'], $fieldrow['fieldname'], $fieldrow['typeparams'], '[[:<:]]' . $keywords . '[[:>:]]', $inner, $this->ct->Languages->Postfix);
+			if (isset($fieldrow['type']) and isset($fieldrow['fieldname'])) {
+				$whereClause = $this->getRowsByKeywords_ProcessTypes($fieldrow['type'], $fieldrow['fieldname'], $fieldrow['typeparams'],
+					'[[:<:]]' . $keywords . '[[:>:]]', $inner);
 
-			if ($where != '')
-				$this->getKeywordSearch($inner, $where, $result_rows, $count, $listing_ids);
+				if ($whereClause->hasConditions())
+					$this->getKeywordSearch($inner, $whereClause, $result_rows, $count, $listing_ids);
+			}
 
 			$this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . $keywords . '"';
 
 			if (count($keyword_arr) > 1) //Do not search because there is only one keyword, and it's already checked
 			{
-				$where = '';
 				$inner = '';
 
-				$where_arr = array();
+				//$where_arr = array();
 				$inner_arr = array();
-
 				$kw_text_array = array();
+				$whereClause = new MySQLWhereClause();
+
 				foreach ($keyword_arr as $kw) {
 					$inner = '';
-					$w = $this->getRowsByKeywords_ProcessTypes($fieldrow['type'], $fieldrow['fieldname'], $fieldrow['typeparams'], '[[:<:]]' . $kw . '[[:>:]]', $inner);
-					if ($w != '') {
-						$where_arr[] = $w;
+					$whereClauseTemp = $this->getRowsByKeywords_ProcessTypes($fieldrow['type'], $fieldrow['fieldname'], $fieldrow['typeparams'], '[[:<:]]' . $kw . '[[:>:]]', $inner);
+					if ($whereClauseTemp->hasConditions()) {
+
+						$whereClause->addNestedCondition($whereClauseTemp);
+
+						//$where_arr[] = $w;
 						if (!in_array($inner, $inner_arr)) {
 							$inner_arr[] = $inner;
 							$kw_text_array[] = $kw;
@@ -114,62 +134,73 @@ class CustomTablesKeywordSearch
 					}//if($w!='')
 				}
 
-				$where = implode(' ' . $AndOrOr . ' ', $where_arr);
+				//$where = implode(' ' . $AndOrOr . ' ', $where_arr);
 				$inner = implode(' ', $inner_arr);
 
-				if ($where != '')
-					$this->getKeywordSearch($inner, $where, $result_rows, $count, $listing_ids);
+				if ($whereClause->hasConditions())
+					$this->getKeywordSearch($inner, $whereClause, $result_rows, $count, $listing_ids);
 
 				$this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
 			}
 
-			$where = '';
+			//$where = '';
 			$inner = '';
-			$where_arr = array();
+			//$where_arr = array();
+			$whereClause = new MySQLWhereClause();
+
 			$inner_arr = array();
 
 			$kw_text_array = array();
 			foreach ($keyword_arr as $kw) {
 				$inner = '';
 
-				if (isset($fieldrow['type']) and isset($fieldrow['fieldname']))
-					$w = $this->getRowsByKeywords_ProcessTypes($fieldrow['type'], $fieldrow['fieldname'], $fieldrow['typeparams'], '[[:<:]]' . $kw, $inner);
-				else
-					$w = '';
+				if (isset($fieldrow['type']) and isset($fieldrow['fieldname'])) {
+					$whereClauseTemp = $this->getRowsByKeywords_ProcessTypes($fieldrow['type'], $fieldrow['fieldname'], $fieldrow['typeparams'], '[[:<:]]' . $kw, $inner);
 
-				if ($w != '') {
-					$where_arr[] = $w;
-					if (!in_array($inner, $inner_arr)) {
-						$inner_arr[] = $inner;
-						$kw_text_array[] = $kw;
+					if ($whereClauseTemp->hasConditions()) {
+						$whereClause->addNestedCondition($whereClauseTemp);
+
+						//$where_arr[] = $w;
+						if (!in_array($inner, $inner_arr)) {
+							$inner_arr[] = $inner;
+							$kw_text_array[] = $kw;
+						}
 					}
 				}
 			}
 
-			$where = implode(' ' . $AndOrOr . ' ', $where_arr);
+			//$where = implode(' ' . $AndOrOr . ' ', $where_arr);
 			$inner = implode(' ', $inner_arr);
 
-			$where = str_replace('\\', '', $where);
+			//$where = str_replace('\\', '', $where);
 
-			if ($where != '')
-				$this->getKeywordSearch($inner, $where, $result_rows, $count, $listing_ids);
+			if ($whereClause->hasConditions())
+				$this->getKeywordSearch($inner, $whereClause, $result_rows, $count, $listing_ids);
 
 			$this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
 		}
 
 		// -------------------
+		$whereClause = new MySQLWhereClause();
+
 		foreach ($mod_fieldlist as $mod_field) {
 
-			$f = trim($mod_field);
-			$fieldrow = ESTables::FieldRowByName($f, $this->ct->Table->fields);//2011.6.1
+			$fieldrow = null;
+			foreach ($this->ct->Table->fields as $f) {
+				if ($f['fieldname'] == trim($mod_field)) {
+					$fieldrow = $f;
+					break;
+				}
+			}
+			//$fieldrow = ESTables::FieldRowByName($f, $this->ct->Table->fields);//2011.6.1
 
 			//any
 			$keyword_arr = explode(' ', $keywords);
-			$where = '';
+			//$where = '';
 			$inner = '';
 			$inner_arr = array();
-			$where_arr = array();
-			$fieldTypeFound = false;
+			//$where_arr = array();
+			//$fieldTypeFound = false;
 
 			$kw_text_array = array();
 
@@ -186,18 +217,21 @@ class CustomTablesKeywordSearch
 					case 'phponchange':
 					case 'text':
 					case 'email':
-						$where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . ', "' . $kw . '")';
-						$fieldTypeFound = true;
+						$whereClause->addCondition('es_' . $fieldrow['fieldname'], $kw, 'INSTR');
+						//$where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . ', "' . $kw . '")';
+						//$fieldTypeFound = true;
 						break;
 
 					case 'multilangtext':
 					case 'multilangstring':
-						$where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . $this->ct->Languages->Postfix . ', "' . $kw . '")';
-						$fieldTypeFound = true;
+						$whereClause->addCondition('es_' . $fieldrow['fieldname'] . $this->ct->Languages->Postfix, $kw, 'INSTR');
+						//$where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . $this->ct->Languages->Postfix . ', "' . $kw . '")';
+						//$fieldTypeFound = true;
 						break;
 
 					case 'records':
 						$typeParamsArrayy = explode(',', $fieldrow['typeparams']);
+						/*
 						$filtertitle = '';
 						if (count($typeParamsArrayy) < 1)
 							$filtertitle .= 'table not specified';
@@ -207,6 +241,7 @@ class CustomTablesKeywordSearch
 
 						if (count($typeParamsArrayy) < 3)
 							$filtertitle .= 'selector not specified';
+						*/
 
 						$esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
 						$esr_field = $typeParamsArrayy[1];
@@ -215,14 +250,17 @@ class CustomTablesKeywordSearch
 						if (!in_array($inner, $inner_arr))
 							$inner_arr[] = $inner;
 
-						$where_arr[] = 'instr(' . $esr_table . '.es_' . $esr_field . ',"' . $kw . '")';
-						$fieldTypeFound = true;
+
+						$whereClause->addCondition($esr_table . '.es_' . $esr_field, $kw, 'INSTR');
+						//$where_arr[] = 'instr(' . $esr_table . '.es_' . $esr_field . ',"' . $kw . '")';
+						//$fieldTypeFound = true;
 						break;
 
 					case 'sqljoin':
 						Factory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
 
 						$typeParamsArrayy = explode(',', $fieldrow['typeparams']);
+						/*
 						$filtertitle = '';
 						if (count($typeParamsArrayy) < 1)
 							$filtertitle .= 'table not specified';
@@ -232,6 +270,7 @@ class CustomTablesKeywordSearch
 
 						if (count($typeParamsArrayy) < 3)
 							$filtertitle .= 'selector not specified';
+						*/
 
 						$esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
 						$esr_field = $typeParamsArrayy[1];
@@ -240,59 +279,54 @@ class CustomTablesKeywordSearch
 						if (!in_array($inner, $inner_arr))
 							$inner_arr[] = $inner;
 
-						$where_arr[] = 'instr(' . $esr_table . '.es_' . $esr_field . ',"' . $kw . '")';//TODO
-						$fieldTypeFound = true;
+						$whereClause->addCondition($esr_table . '.es_' . $esr_field, $kw, 'INSTR');
+						//$where_arr[] = 'instr(' . $esr_table . '.es_' . $esr_field . ',"' . $kw . '")';//TODO
+						//$fieldTypeFound = true;
 						break;
 
+					case 'userid':
 					case 'user':
 						$inner = 'INNER JOIN #__users ON #__users.id=#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldrow['fieldname'];
 						if (!in_array($inner, $inner_arr))
 							$inner_arr[] = $inner;
 
-						$where_arr[] = ' #__users.name REGEXP "' . $kw . '"';
-						$fieldTypeFound = true;
-						break;
-
-					case 'userid':
-						$inner = 'INNER JOIN #__users ON #__users.id=#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldrow['fieldname'];
-						if (!in_array($inner, $inner_arr))
-							$inner_arr[] = $inner;
-
-						$where_arr[] = ' #__users.name REGEXP "' . $kw . '"';
-						$fieldTypeFound = true;
+						$whereClause->addCondition('#__users.name', $kw, 'REGEXP');
+						//$where_arr[] = ' #__users.name REGEXP "' . $kw . '"';
+						//$fieldTypeFound = true;
 						break;
 				}
 			}
 
-			$where = implode(' ' . $AndOrOr . ' ', $where_arr);
+			//$where = implode(' ' . $AndOrOr . ' ', $where_arr);
 			$inner = implode(' ', $inner_arr);
-			$where = str_replace('\\', '', $where);
+			//$where = str_replace('\\', '', $where);
 
-			if ($where != '')
-				$this->getKeywordSearch($inner, $where, $result_rows, $count, $listing_ids);
+			if ($whereClause->hasConditions())
+				$this->getKeywordSearch($inner, $whereClause, $result_rows, $count, $listing_ids);
 
 			$this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
 		}
 		return $result_rows;
 	}
 
-	function getRowsByKeywords_ProcessTypes($fieldType, $fieldname, $typeParams, $regexpression, &$inner)
+	function getRowsByKeywords_ProcessTypes($fieldType, $fieldname, $typeParams, $regExpression, &$inner): MySQLWhereClause
 	{
-		$where = '';
+		$whereClause = new MySQLWhereClause();
 		$inner = '';
-
 
 		switch ($fieldType) {
 			case 'phponchange':
 			case 'text':
 			case 'phponadd':
 			case 'string':
-				$where = ' es_' . $fieldname . ' REGEXP "' . $regexpression . '"';
+				$whereClause->addCondition('es_' . $fieldname, $regExpression, 'REGEXP');
+				//$where = ' es_' . $fieldname . ' REGEXP "' . $regExpression . '"';
 				break;
 
 			case 'multilangtext':
 			case 'multilangstring':
-				$where = ' es_' . $fieldname . $this->ct->Languages->Postfix . ' REGEXP "' . $regexpression . '"';
+				$whereClause->addCondition('es_' . $fieldname . $this->ct->Languages->Postfix, $regExpression, 'REGEXP');
+				//$where = ' es_' . $fieldname . $this->ct->Languages->Postfix . ' REGEXP "' . $regExpression . '"';
 				break;
 
 			case 'records':
@@ -300,13 +334,14 @@ class CustomTablesKeywordSearch
 				$typeParamsArray = explode(',', $typeParams);
 
 				if (count($typeParamsArray) < 3)
-					return '';
+					return $whereClause;
 
 				$esr_table = '#__customtables_table_' . $typeParamsArray[0];
 				$esr_field = $typeParamsArray[1];
 
 				$inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldname . ',concat(",",' . $esr_table . '.id,","))';//TODO
-				$where = ' ' . $esr_table . '.es_' . $esr_field . ' REGEXP "' . $regexpression . '"';
+				$whereClause->addCondition($esr_table . '.es_' . $esr_field, $regExpression, 'REGEXP');
+				//$where = ' ' . $esr_table . '.es_' . $esr_field . ' REGEXP "' . $regExpression . '"';
 
 				break;
 
@@ -314,45 +349,55 @@ class CustomTablesKeywordSearch
 				Factory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
 				break;
 
+			case 'userid':
 			case 'user':
 				$inner = 'INNER JOIN #__users ON #__users.id=#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldname;
-				$where = ' #__users.name REGEXP "' . $regexpression . '"';
-				break;
-
-			case 'userid':
-
-				$inner = 'INNER JOIN #__users ON #__users.id=#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldname;
-				$where = ' #__users.name REGEXP "' . $regexpression . '"';
+				$whereClause->addCondition('#__users.name', $regExpression, 'REGEXP');
+				//$where = ' #__users.name REGEXP "' . $regExpression . '"';
 				break;
 		}
-		return $where;
-
+		return $whereClause;
 	}
 
-	function getKeywordSearch($inner_str, $where, &$result_rows, &$count, &$listing_ids)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function getKeywordSearch($inner_str, MySQLWhereClause $whereClause, &$result_rows, &$count, &$listing_ids): void
 	{
+		//$whereClause = new MySQLWhereClause();
+		//$whereClause->addCondition('',);
+
+		$selects = [
+			'*',
+			$this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname . ' AS listing_id'
+		];
+
 		$inner = array($inner_str);
-		$query = 'SELECT *, ' . $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname . ' AS listing_id';
+		//$query = 'SELECT *, ' . $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname . ' AS listing_id';
 		if ($this->ct->Table->published_field_found)
-			$query .= ',' . $this->ct->Table->realtablename . '.published As listing_published ';
+			$selects[] = $this->ct->Table->realtablename . '.published As listing_published';
+		//$query .= ',' . $this->ct->Table->realtablename . '.published As listing_published ';
 
 		$ordering = array();
 
 		if ($this->groupby != '')
 			$ordering[] = $this->ct->Env->field_prefix . $this->groupby;
 
-		if ($this->esordering)
-			Ordering::getOrderingQuery($ordering, $query, $inner, $this->esordering, $this->ct->Languages->Postfix, $this->ct->Table->realtablename);
+		//if ($this->esordering)
+		//Ordering::getOrderingQuery($ordering, $query, $inner, $this->esordering, $this->ct->Languages->Postfix, $this->ct->Table->realtablename);
 
-		$query .= ' FROM ' . $this->ct->Table->realtablename;
-		$query .= ' ' . implode(' ', $inner);
-		$query .= ' WHERE ' . $where;
-		$query .= ' GROUP BY listing_id';
+		$from = $this->ct->Table->realtablename . (count($inner) != '' ? ' ' . implode(' ', $inner) : '');
+		//$query .= ' FROM ' . $this->ct->Table->realtablename;
+		//$query .= ' ' . implode(' ', $inner);
+		//$query .= ' WHERE ' . $where;
+		//$query .= ' GROUP BY listing_id';
 
-		if (count($ordering) > 0)
-			$query .= ' ORDER BY ' . implode(',', $ordering);
+		//if (count($ordering) > 0)
+		//$query .= ' ORDER BY ' . implode(',', $ordering);
 
-		$rows = database::loadAssocList($query);
+		$rows = database::loadAssocList($from, $selects,
+			$whereClause, (count($ordering) > 0 ? implode(',', $ordering) : null), null, null, null, 'listing_id');
 
 		foreach ($rows as $row) {
 			if (in_array($row[$this->ct->Table->realidfieldname], $listing_ids))

@@ -19,6 +19,10 @@ use CustomTables\Fields;
 
 class updateImageGallery
 {
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function process(): array
 	{
 		$ct = new CT;
@@ -48,10 +52,10 @@ class updateImageGallery
 
 		$count = 0;
 		if ($startindex == 0) {
-			$count = self::countImages($ct->Table->realtablename, $fieldRow->realfieldname, $ct->Table->realidfieldname);
+			$count = updateImages::countImages($ct->Table->realtablename, $ct->Table->realidfieldname);
 		}
 
-		$status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params, $startindex, $stepsize);
+		$status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params);
 
 		return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
 	}

@@ -10,6 +10,8 @@
 
 namespace CustomTables;
 
+use Exception;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
@@ -23,10 +25,16 @@ class Tables
 		$this->ct = &$ct;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getAllTables(): array
 	{
-		$query = 'SELECT id,tablename,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tablename';
-		$records = database::loadObjectList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+
+		$records = database::loadObjectList('#__customtables_tables', ['id', 'tablename', 'tabletitle'], $whereClause, 'tablename');
 
 		$allTables = [];
 		foreach ($records as $rec)
@@ -35,7 +43,7 @@ class Tables
 		return $allTables;
 	}
 
-	function loadRecords($tablename_or_id, string $filter = '', ?string $orderby = null, int $limit = 0)
+	function loadRecords($tablename_or_id, string $filter = '', ?string $orderby = null, int $limit = 0): ?bool
 	{
 		if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
 			return null;

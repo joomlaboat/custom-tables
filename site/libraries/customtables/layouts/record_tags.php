@@ -51,6 +51,10 @@ class Twig_Record_Tags
 		return $forms->renderFieldLabel((object)$field, $allowSortBy);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function link($add_returnto = false, $menu_item_alias = '', $custom_not_base64_returnto = ''): ?string
 	{
 		if ($this->ct->Table->record === null)
@@ -149,6 +153,10 @@ class Twig_Record_Tags
 		return (int)$this->ct->Table->record['_number'];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function joincount(string $join_table = '', string $filter = ''): ?int
 	{
 		if ($join_table == '') {
@@ -181,6 +189,10 @@ class Twig_Record_Tags
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function advancedJoin($sj_function, $sj_tablename, $field1_findWhat, $field2_lookWhere, $field3_readValue = '_id', $filter = '',
 	                      $order_by_option = '', $value_option_list = [])
 	{
@@ -208,7 +220,7 @@ class Twig_Record_Tags
 		$newCt->setTable($tableRow);
 		$f = new Filtering($newCt, 2);
 		$f->addWhereExpression($filter);
-		$additional_where = implode(' AND ', $f->where);
+		//$additional_where = implode(' AND ', $f->where);
 
 		if ($order_by_option != '') {
 			$field_details = $this->join_getRealFieldName($order_by_option, $tableRow);
@@ -216,11 +228,9 @@ class Twig_Record_Tags
 		} else
 			$order_by_option_realName = '';
 
-		$query = $this->join_buildQuery($sj_function, $tableRow, $field1_findWhat_realName, $field1_type, $field2_lookWhere_realName,
-			$field2_type, $field3_readValue_realName, $additional_where, $order_by_option_realName);
-
 		try {
-			$rows = database::loadAssocList($query);
+			$rows = $this->join_buildQuery($sj_function, $tableRow, $field1_findWhat_realName, $field1_type, $field2_lookWhere_realName,
+				$field2_type, $field3_readValue_realName, $f->whereClause, $order_by_option_realName);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 			return null;
@@ -250,6 +260,10 @@ class Twig_Record_Tags
 		return $vlu;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function join_getRealFieldName($fieldName, $tableRow): ?array
 	{
 		$tableId = $tableRow['id'];
@@ -272,73 +286,101 @@ class Twig_Record_Tags
 		return null;
 	}
 
-	protected function join_buildQuery($sj_function, $tableRow, $field1_findWhat, $field1_type, $field2_lookWhere, $field2_type, $field3_readValue, $additional_where, $order_by_option): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function join_buildQuery($sj_function, $tableRow, $field1_findWhat, $field1_type, $field2_lookWhere,
+	                                   $field2_type, $field3_readValue, MySQLWhereClause $whereClauseAdditional, $order_by_option): array
 	{
+		$whereClause = new MySQLWhereClause();
+		//$whereClause->addCondition('',);
+
+		$selects = [];
+
 		if ($sj_function == 'count')
-			$query = 'SELECT count(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
+			$selects[] = 'count(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+		//$query = 'SELECT count(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		elseif ($sj_function == 'sum')
-			$query = 'SELECT sum(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
+			$selects[] = 'sum(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+		//$query = 'SELECT sum(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		elseif ($sj_function == 'avg')
-			$query = 'SELECT avg(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
+			$selects[] = 'avg(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+		//$query = 'SELECT avg(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		elseif ($sj_function == 'min')
-			$query = 'SELECT min(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
+			$selects[] = 'min(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+		//$query = 'SELECT min(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		elseif ($sj_function == 'max')
-			$query = 'SELECT max(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
+			$selects[] = 'max(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+		//$query = 'SELECT max(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		else {
 			//need to resolve record value if it's "records" type
-			$query = 'SELECT ' . $tableRow['realtablename'] . '.' . $field3_readValue . ' AS vlu '; //value or smart
+			$selects[] = $tableRow['realtablename'] . '.' . $field3_readValue . ' AS vlu';
+			//$query = 'SELECT ' . $tableRow['realtablename'] . '.' . $field3_readValue . ' AS vlu '; //value or smart
 		}
 
-		$query .= ' FROM ' . $this->ct->Table->realtablename . ' ';
+		//$query .= ' FROM ' . $this->ct->Table->realtablename . ' ';
 		$sj_tablename = $tableRow['tablename'];
+
+		$leftJoin = '';
 
 		if ($this->ct->Table->tablename != $sj_tablename) {
 			// Join not needed when we are in the same table
-			$query .= ' LEFT JOIN ' . $tableRow['realtablename'] . ' ON ';
+			$leftJoin = ' LEFT JOIN ' . $tableRow['realtablename'] . ' ON ';
 
 			if ($field1_type == 'records') {
 				if ($field2_type == 'records') {
-					$query .= '1==2'; //todo
+					$leftJoin .= '1==2'; //todo
 				} else {
-					$query .= 'INSTR(' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ',CONCAT(",",' . $tableRow['realtablename'] . '.' . $field2_lookWhere . ',","))';
+					$leftJoin .= 'INSTR(' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ',CONCAT(",",' . $tableRow['realtablename'] . '.' . $field2_lookWhere . ',","))';
 				}
 			} else {
 				if ($field2_type == 'records') {
-					$query .= 'INSTR(' . $tableRow['realtablename'] . '.' . $field2_lookWhere
+					$leftJoin .= 'INSTR(' . $tableRow['realtablename'] . '.' . $field2_lookWhere
 						. ',  CONCAT(",",' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ',","))';
 				} else {
-					$query .= ' ' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ' = '
+					$leftJoin .= ' ' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ' = '
 						. ' ' . $tableRow['realtablename'] . '.' . $field2_lookWhere;
 				}
 			}
 		}
 
-		$wheres = array();
+		//$wheres = array();
 
 		if ($this->ct->Table->tablename != $sj_tablename) {
 			//don't attach to specific record when it is the same table, example : to find averages
-			$wheres[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . database::quote($this->ct->Table->record[$this->ct->Table->realidfieldname]);
-		}// else {
+			$whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], $this->ct->Table->record[$this->ct->Table->realidfieldname]);
+			//$wheres[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . database::quote($this->ct->Table->record[$this->ct->Table->realidfieldname]);
+		}
 
-		if ($additional_where != '')
-			$wheres[] = '(' . $additional_where . ')';
+		if ($whereClauseAdditional->hasConditions())
+			$whereClause->addNestedCondition($whereClauseAdditional);
+		//$wheres[] = '(' . $additional_where . ')';
 
-		if (count($wheres) > 0)
-			$query .= ' WHERE ' . implode(' AND ', $wheres);
+		//if (count($wheres) > 0)
+		//	$query .= ' WHERE ' . implode(' AND ', $wheres);
 
-		if ($order_by_option != '')
-			$query .= ' ORDER BY ' . $tableRow['realtablename'] . '.' . $order_by_option;
+		//$query .= ' LIMIT 1';
+		$from = $this->ct->Table->realtablename . ' ' . $leftJoin;
 
-		$query .= ' LIMIT 1';
-
-		return $query;
+		return database::loadAssocList($from, $selects, $whereClause,
+			($order_by_option != '' ? $tableRow['realtablename'] . '.' . $order_by_option : null), null, 1);
+		//return $query;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function joinavg(string $join_table = '', string $value_field = '', string $filter = '')
 	{
 		return $this->simple_join('avg', $join_table, $value_field, 'record.joinavg', $filter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function simple_join($function, $join_table, $value_field, $tag, string $filter = '')
 	{
 		if ($join_table == '') {
@@ -389,6 +431,10 @@ class Twig_Record_Tags
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function joinmin(string $join_table = '', string $value_field = '', string $filter = '')
 	{
 		return $this->simple_join('min', $join_table, $value_field, 'record.joinmin', $filter);
@@ -396,21 +442,37 @@ class Twig_Record_Tags
 
 	/* --------------------------- PROTECTED FUNCTIONS ------------------- */
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function joinmax(string $join_table = '', string $value_field = '', string $filter = '')
 	{
 		return $this->simple_join('max', $join_table, $value_field, 'record.joinmax', $filter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function joinsum(string $join_table = '', string $value_field = '', string $filter = '')
 	{
 		return $this->simple_join('sum', $join_table, $value_field, 'record.joinsum', $filter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function joinvalue(string $join_table = '', string $value_field = '', string $filter = '')
 	{
 		return $this->simple_join('value', $join_table, $value_field, 'record.joinvalue', $filter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function jointable($layoutname = '', $filter = '', $orderby = '', $limit = 0): string
 	{
 		//Example {{ record.tablejoin("InvoicesPage","_published=1","name") }}
@@ -462,11 +524,19 @@ class Twig_Record_Tags
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function min(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
 		return $this->countOrSumRecords('min', $tableName, $value_field, $filter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function countOrSumRecords(string $function = 'count', string $tableName = '', string $fieldName = '', string $filter = ''): ?int
 	{
 		if ($tableName == '') {
@@ -522,11 +592,9 @@ class Twig_Record_Tags
 
 		$f = new Filtering($newCt, 2);
 		$f->addWhereExpression($filter);
-		$additional_where = implode(' AND ', $f->where);
-		$query = $this->count_buildQuery($function, $tableRow['realtablename'], $fieldRealFieldName, $additional_where);
 
 		try {
-			$rows = database::loadAssocList($query);
+			$rows = $this->count_buildQuery($function, $tableRow['realtablename'], $fieldRealFieldName, $f->whereClause);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 			return null;
@@ -538,49 +606,66 @@ class Twig_Record_Tags
 			return $rows[0]['vlu'];
 	}
 
-	protected function count_buildQuery($sj_function, $realTableName, $realFieldName, $additional_where): ?string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function count_buildQuery($sj_function, $realTableName, $realFieldName, MySQLWhereClause $whereClause): ?array
 	{
+		$selects = [];
+
 		if ($sj_function == 'count')
-			$query = 'SELECT count(' . $realFieldName . ') AS vlu ';
+			$selects[] = 'count(' . $realFieldName . ') AS vlu';
+		//$query = 'SELECT count(' . $realFieldName . ') AS vlu ';
 		elseif ($sj_function == 'sum')
-			$query = 'SELECT sum(' . $realFieldName . ') AS vlu ';
+			$selects[] = 'sum(' . $realFieldName . ') AS vlu';
+		//$query = 'SELECT sum(' . $realFieldName . ') AS vlu ';
 		elseif ($sj_function == 'avg')
-			$query = 'SELECT avg(' . $realFieldName . ') AS vlu ';
+			$selects[] = 'avg(' . $realFieldName . ') AS vlu';
+		//$query = 'SELECT avg(' . $realFieldName . ') AS vlu ';
 		elseif ($sj_function == 'min')
-			$query = 'SELECT min(' . $realFieldName . ') AS vlu ';
+			$selects[] = 'min(' . $realFieldName . ') AS vlu';
+		//$query = 'SELECT min(' . $realFieldName . ') AS vlu ';
 		elseif ($sj_function == 'max')
-			$query = 'SELECT max(' . $realFieldName . ') AS vlu ';
+			$selects[] = 'max(' . $realFieldName . ') AS vlu';
+		//$query = 'SELECT max(' . $realFieldName . ') AS vlu ';
 		else {
 			return null;
 		}
-
-		$query .= ' FROM ' . $realTableName . ' ';
-		$wheres = array();
-		if ($additional_where != '')
-			$wheres[] = '(' . $additional_where . ')';
-
-		if (count($wheres) > 0)
-			$query .= ' WHERE ' . implode(' AND ', $wheres);
-
-		$query .= ' LIMIT 1';
-		return $query;
+		return database::loadAssocList($realTableName, $selects, $whereClause, null, null, 1);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function max(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
 		return $this->countOrSumRecords('max', $tableName, $value_field, $filter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function avg(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
 		return $this->countOrSumRecords('avg', $tableName, $value_field, $filter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function sum(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
 		return $this->countOrSumRecords('sum', $tableName, $value_field, $filter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function count(string $tableName = '', string $filter = ''): ?int
 	{
 		return $this->countOrSumRecords('count', $tableName, '_id', $filter);
@@ -651,7 +736,9 @@ class Twig_Table_Tags
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
 			return 'Table not selected';
 
-		return $this->ct->getNumberOfRecords();
+		$whereClause = new MySQLWhereClause();
+
+		return $this->ct->getNumberOfRecords($whereClause);
 	}
 
 	function records(): int
@@ -732,6 +819,10 @@ class Twig_Tables_Tags
 		$this->ct = &$ct;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getvalue($table = '', $fieldname = '', $record_id_or_filter = '', $orderby = '')
 	{
 		$tag = 'tables.getvalue';
@@ -745,6 +836,8 @@ class Twig_Tables_Tags
 			return '';
 		}
 
+		return 'abc';
+		
 		$join_table_fields = Fields::getFields($table);
 
 		$join_ct = new CT;
@@ -814,6 +907,10 @@ class Twig_Tables_Tags
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getrecord($layoutname = '', $record_id_or_filter = '', $orderby = ''): string
 	{
 		if ($layoutname == '') {
@@ -860,6 +957,10 @@ class Twig_Tables_Tags
 		return $value;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getrecords($layoutname = '', $filter = '', $orderby = '', $limit = 0): string
 	{
 		//Example {{ html.records("InvoicesPage","firstname=john","lastname") }}

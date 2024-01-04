@@ -55,6 +55,10 @@ class SaveFieldQuerySet
 			$this->applyDefaults($fieldRow);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function getSaveFieldSetType()
 	{
 		$listing_id = $this->row_old[$this->ct->Table->realidfieldname];
@@ -307,10 +311,13 @@ class SaveFieldQuerySet
 				if ($to_delete == 'true') {
 					$this->setNewValue(null);
 
-					$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->field->ct->Table->realtablename
-						. ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id);
+					//$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->field->ct->Table->realtablename
+					//. ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id);
 
-					$ExistingImageRows = database::loadObjectList($query, null, 1);
+					$whereClause = new MySQLWhereClause();
+					$whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
+
+					$ExistingImageRows = database::loadObjectList($this->field->ct->Table->realtablename, [$this->field->realfieldname], $whereClause, null, null, 1);
 					if (count($ExistingImageRows) == 0)
 						$ExistingImage = null;
 					else
@@ -521,8 +528,11 @@ class SaveFieldQuerySet
 				if ($this->row_old[$this->ct->Table->realidfieldname] == 0 or $this->row_old[$this->ct->Table->realidfieldname] == '' or $this->isCopy) {
 					$minid = (int)$this->field->params[0];
 
-					$query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
-					$rows = database::loadObjectList($query);
+					//$query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
+
+					$whereClause = new MySQLWhereClause();
+
+					$rows = database::loadObjectList($this->ct->Table->realtablename, ['MAX(' . $this->ct->Table->realidfieldname . ') AS maxid'], $whereClause, null, null, 1);
 					if (count($rows) != 0) {
 						$value = (int)($rows[0]->maxid) + 1;
 						if ($value < $minid)
@@ -673,10 +683,14 @@ class SaveFieldQuerySet
 
 	protected function checkIfAliasExists(?string $exclude_id, string $value, string $realfieldname): bool
 	{
-		$query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
-			. $this->ct->Table->realidfieldname . '!=' . database::quote($exclude_id) . ' AND ' . $realfieldname . '=' . database::quote($value) . ' LIMIT 1';
+		//$query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
+		//. $this->ct->Table->realidfieldname . '!=' . database::quote($exclude_id) . ' AND ' . $realfieldname . '=' . database::quote($value) . ' LIMIT 1';
 
-		$rows = database::loadObjectList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($this->ct->Table->realidfieldname, $exclude_id, '!=');
+		$whereClause->addCondition($realfieldname, $value);
+
+		$rows = database::loadObjectList($this->ct->Table->realtablename, ['count(' . $this->ct->Table->realidfieldname . ') AS c'], $whereClause, null, null, 1);
 		if (count($rows) == 0)
 			return false;
 

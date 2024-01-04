@@ -19,12 +19,185 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
 
-class database
+class MySQLWhereClause
 {
-	public function __construct()
+	public array $conditions = [];
+	private array $orConditions = [];
+	private array $nestedConditions = [];
+	private array $nestedOrConditions = [];
+
+	public function hasConditions(): bool
 	{
+		if (count($this->conditions) > 0)
+			return true;
+
+		if (count($this->orConditions) > 0)
+			return true;
+
+		if (count($this->nestedConditions) > 0)
+			return true;
+
+		if (count($this->nestedOrConditions) > 0)
+			return true;
+
+		return false;
 	}
 
+	public function addConditionsFromArray(array $conditions): void
+	{
+		foreach ($conditions as $fieldName => $fieldValue) {
+			// Assuming default operator is '=' if not specified
+			$this->addCondition($fieldName, $fieldValue);
+		}
+	}
+
+	public function addCondition($fieldName, $fieldValue, $operator = '=', $sanitized = false): void
+	{
+		$operator = strtoupper($operator);
+
+		$possibleOperators = ['=', '>', '<', '!=', '>=', '<=', 'LIKE', 'NULL', 'NOT NULL', 'INSTR', 'NOT INSTR'];
+
+		if (!in_array($operator, $possibleOperators)) {
+			throw new \mysql_xdevapi\Exception('SQL Where Clause operator "' . common::ctStripTags($operator) . '" not recognized.');
+		}
+
+		$this->conditions[] = [
+			'field' => $fieldName,
+			'value' => $fieldValue,
+			'operator' => $operator,
+			'sanitized' => $sanitized
+		];
+	}
+
+	public function addOrCondition($fieldName, $fieldValue, $operator = '=', $sanitized = false): void
+	{
+		$operator = strtoupper($operator);
+
+		$possibleOperators = ['=', '>', '<', '!=', '>=', '<=', 'LIKE', 'NULL', 'NOT NULL', 'INSTR', 'NOT INSTR'];
+
+		if (!in_array($operator, $possibleOperators)) {
+			throw new \mysql_xdevapi\Exception('SQL Where Clause operator "' . common::ctStripTags($operator) . '" not recognized.');
+		}
+
+		$this->orConditions[] = [
+			'field' => $fieldName,
+			'value' => $fieldValue,
+			'operator' => $operator,
+			'sanitized' => $sanitized
+		];
+
+	}
+
+	public function addNestedCondition(MySQLWhereClause $condition): void
+	{
+		$this->nestedConditions[] = $condition;
+	}
+
+	public function addNestedOrCondition(MySQLWhereClause $orCondition): void
+	{
+		$this->nestedOrConditions[] = $orCondition;
+	}
+
+	public function __toString(): string
+	{
+		return $this->getWhereClause();// Returns the "where" clause with %d,%f,%s placeholders
+	}
+
+	public function getWhereClause(string $logicalOperator = 'AND'): string
+	{
+		$where = [];
+
+		// Process regular conditions
+		if (count($this->conditions))
+			$where [] = self::getWhereClauseMergeConditions($this->conditions);
+
+		// Process OR conditions
+		if (count($this->orConditions) > 0)
+			$where [] = '(' . self::getWhereClauseMergeConditions($this->orConditions, 'OR') . ')';
+
+		// Process nested conditions
+		if (count($this->nestedConditions) > 0) {
+
+			foreach ($this->nestedConditions as $nestedCondition)
+				$where [] = $nestedCondition->getWhereClause();
+		}
+
+		// Process nested OR conditions
+		if (count($this->nestedOrConditions) > 0) {
+			foreach ($this->nestedOrConditions as $nestedOrCondition)
+				$where [] = '(' . $nestedOrCondition->getWhereClause('OR') . ')';
+		}
+		return implode(' ' . $logicalOperator . ' ', $where);
+	}
+
+	protected function getWhereClauseMergeConditions($conditions, $logicalOperator = 'AND'): string
+	{
+		$version_object = new Version;
+		$version = (int)$version_object->getShortVersion();
+
+		if ($version < 4)
+			$db = Factory::getDbo();
+		else
+			$db = Factory::getContainer()->get('DatabaseDriver');
+
+		$where = [];
+
+		foreach ($conditions as $condition) {
+
+			if ($condition['value'] === null) {
+				$where [] = $condition['field'];
+			} elseif ($condition['operator'] == 'NULL') {
+				$where [] = $condition['field'] . ' IS NULL';
+			} elseif ($condition['operator'] == 'NOT NULL') {
+				$where [] = $condition['field'] . ' IS NOT NULL';
+			} elseif ($condition['operator'] == 'INSTR') {
+				if ($condition['sanitized']) {
+					$where [] = 'INSTR(' . $condition['field'] . ',' . $condition['value'] . ')';
+				} else {
+					$where [] = 'INSTR(' . $condition['field'] . ',   ' . $db->quote($condition['value']) . '           )';
+				}
+			} elseif ($condition['operator'] == 'NOT INSTR') {
+				if ($condition['sanitized']) {
+					$where [] = '!INSTR(' . $condition['field'] . ',' . $condition['value'] . ')';
+				} else {
+					$where [] = '!INSTR(' . $condition['field'] . ',' . $db->quote($condition['value']) . ')';
+				}
+			} elseif ($condition['operator'] == 'REGEXP') {
+				if ($condition['sanitized']) {
+					$where [] = $condition['field'] . ' REGEXP ' . $condition['value'];
+				} else {
+					$where [] = $condition['field'] . ' REGEXP ' . $db->quote($condition['value']);
+				}
+			} elseif ($condition['operator'] == 'IN') {
+				if ($condition['sanitized']) {
+					$where [] = $condition['field'] . ' IN ' . $condition['value'];
+				} else {
+					$where [] = $db->quote($condition['field']) . ' IN ' . $condition['value'];
+				}
+			} else {
+				if ($condition['sanitized']) {
+					$where [] = $condition['field'] . ' ' . $condition['operator'] . ' ' . $condition['value'];
+				} else {
+
+					$where_string = $condition['field'] . ' ' . $condition['operator'] . ' ';
+
+					if (is_int($condition['value']))
+						$where_string .= (int)$condition['value'];
+					elseif (is_float($condition['value']))
+						$where_string .= (float)$condition['value'];
+					else
+						$where_string .= $db->quote($condition['value']);
+
+					$where [] = $where_string;
+				}
+			}
+		}
+		return implode(' ' . $logicalOperator . ' ', $where);
+	}
+}
+
+class database
+{
 	public static function getDBPrefix(): ?string
 	{
 		$conf = Factory::getConfig();
@@ -33,24 +206,20 @@ class database
 
 	public static function realTableName($tableName): ?string
 	{
-		if (defined('_JEXEC')) {
-
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
-
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			return str_replace('#__', $db->getPrefix(), $tableName);
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-			return str_replace('#__', $wpdb->prefix, $tableName);
-		}
-		return null;
+		$db = self::getDB();
+		return str_replace('#__', $db->getPrefix(), $tableName);
 	}
 
+	protected static function getDB()
+	{
+		$version_object = new Version;
+		$version = (int)$version_object->getShortVersion();
+
+		if ($version < 4)
+			return Factory::getDbo();
+		else
+			return Factory::getContainer()->get('DatabaseDriver');
+	}
 
 	public static function getDataBaseName(): ?string
 	{
@@ -65,87 +234,8 @@ class database
 
 	public static function getServerType(): ?string
 	{
-		if (defined('_JEXEC')) {
-
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
-
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			return $db->serverType == 'postgresql';
-		} elseif (defined('WPINC')) {
-			if (str_contains(DB_HOST, 'mysql')) {
-				return 'mysql';
-			} elseif (str_contains(DB_HOST, 'pgsql')) {
-				return 'postgresql';
-			} else {
-				return 'Unknown';
-			}
-		}
-		return null;
-	}
-
-	public static function loadObjectList($query, $limitStart = null, $limit = null)
-	{
-		if (defined('_JEXEC')) {
-
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
-
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			if ($limitStart !== null and $limit !== null)
-				$db->setQuery($query, $limitStart, $limit);
-			elseif ($limitStart !== null)
-				$db->setQuery($query, $limitStart);
-			else
-				$db->setQuery($query);
-
-			return $db->loadObjectList();
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-
-			if ($limit !== null)
-				$query .= ' LIMIT ' . $limit;
-
-			if ($limitStart !== null)
-				$query .= ' OFFSET ' . $limitStart;
-
-			$results = $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query));
-			if ($wpdb->last_error !== '')
-				throw new Exception($wpdb->last_error);
-
-			return $results;
-		}
-		return null;
-	}
-
-	public static function setQuery($query): void
-	{
-		if (defined('_JEXEC')) {
-
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
-
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			$db->setQuery($query);
-			$db->execute();
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-			$wpdb->query(str_replace('#__', $wpdb->prefix, $query));
-			if ($wpdb->last_error !== '')
-				throw new Exception($wpdb->last_error);
-		}
+		$db = self::getDB();
+		return $db->serverType;
 	}
 
 	/**
@@ -161,104 +251,55 @@ class database
 	 */
 	public static function insert(string $tableName, array $data): ?int
 	{
-		if (defined('_JEXEC')) {
+		$db = self::getDB();
 
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
+		$query = $db->getQuery(true);
 
-			if ($version < 4)
-				$db = Factory::getDbo();
+		// Construct the insert statement
+		$columns = array();
+		$values = array();
+
+		foreach ($data as $key => $value) {
+			$columns[] = $db->quoteName($key);
+
+			if ($value === null)
+				$values[] = 'NULL';
 			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			$query = $db->getQuery(true);
-
-			// Construct the insert statement
-			$columns = array();
-			$values = array();
-
-			foreach ($data as $key => $value) {
-				$columns[] = $db->quoteName($key);
-
-				if ($value === null)
-					$values[] = 'NULL';
-				else
-					$values[] = $db->quote($value);
-			}
-
-			$query->insert($db->quoteName($tableName))
-				->columns($columns)
-				->values(implode(',', $values));
-
-			$db->setQuery($query);
-
-			try {
-				$db->execute();
-				return $db->insertid(); // Return the last inserted ID
-			} catch (Exception $e) {
-				throw new Exception($e->getMessage());
-			}
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-			$wpdb->insert(str_replace('#__', $wpdb->prefix, $tableName), $data);
-
-			if ($wpdb->last_error !== '')
-				throw new Exception($wpdb->last_error);
-
-			$id = $wpdb->insert_id;
-			if (!$id)
-				return null;
-
-			return $id;
+				$values[] = $db->quote($value);
 		}
-		return null;
+
+		$query->insert($db->quoteName($tableName))
+			->columns($columns)
+			->values(implode(',', $values));
+
+		$db->setQuery($query);
+
+		try {
+			$db->execute();
+			return $db->insertid(); // Return the last inserted ID
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 	}
 
-	public static function quoteName($value)
+	public static function quoteName($value): string
 	{
-		if (defined('_JEXEC')) {
-
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
-
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			return $db->quoteName($value);
-		} elseif (defined('WPINC')) {
-			return $value;
-		}
-		return null;
+		$db = self::getDB();
+		return $db->quoteName($value);
 	}
 
 	public static function quote($value, bool $row = true): ?string
 	{
-		if (defined('_JEXEC')) {
+		$db = self::getDB();
+		return $db->quote($value);
+	}
 
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
+	public static function setQuery($query): void
+	{
+		$db = self::getDB();
+		$db->setQuery($query);
+		$db->execute();
 
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			return $db->quote($value);
-		} elseif (defined('WPINC')) {
-
-			global $wpdb;
-
-			if ($row)
-				return '\'' . esc_sql($value) . '\'';
-			else
-				return $wpdb->prepare('%s', $value);
-
-			//    %d for integers
-			//    %f for floating-point numbers
-		}
-		return null;
 	}
 
 	/**
@@ -278,82 +319,56 @@ class database
 		if (count($data) == 0)
 			return true;
 
-		if (defined('_JEXEC')) {
+		$db = self::getDB();
 
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
+		$query = $db->getQuery(true);
 
-			if ($version < 4)
-				$db = Factory::getDbo();
+		// Construct the update statement
+		$fields = array();
+		foreach ($data as $key => $value) {
+			if ($value === null)
+				$fields[] = $db->quoteName($key) . ' = NULL';
 			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			$query = $db->getQuery(true);
-
-			// Construct the update statement
-			$fields = array();
-			foreach ($data as $key => $value) {
-				if ($value === null)
-					$fields[] = $db->quoteName($key) . ' = NULL';
-				else
-					$fields[] = $db->quoteName($key) . ' = ' . $db->quote($value);
-			}
-
-			$conditions = array();
-			foreach ($where as $key => $value) {
-				$conditions[] = $db->quoteName($key) . ' = ' . $db->quote($value);
-			}
-
-			$query->update($db->quoteName($tableName))
-				->set($fields)
-				->where($conditions);
-
-			$db->setQuery($query);
-
-			try {
-				$db->execute();
-				return true; // Update successful
-			} catch (Exception $e) {
-				throw new Exception($e->getMessage());
-			}
-
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-			$wpdb->update(str_replace('#__', $wpdb->prefix, $tableName), $data, $where);
-			if ($wpdb->last_error !== '')
-				throw new Exception($wpdb->last_error);
-
-			return true;
+				$fields[] = $db->quoteName($key) . ' = ' . $db->quote($value);
 		}
-		return false;
+
+		$conditions = array();
+		foreach ($where as $key => $value) {
+			$conditions[] = $db->quoteName($key) . ' = ' . $db->quote($value);
+		}
+
+		$query->update($db->quoteName($tableName))
+			->set($fields)
+			->where($conditions);
+
+		$db->setQuery($query);
+
+		try {
+			$db->execute();
+			return true; // Update successful
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+
 	}
 
 	public static function getNumRowsOnly($query): int
 	{
-		if (defined('_JEXEC')) {
+		$db = self::getDB();
 
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
-
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			$db->setQuery($query);
-			$db->execute();
-			return $db->getNumRows();
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-			$wpdb->query(str_replace('#__', $wpdb->prefix, $query));
-			return $wpdb->num_rows;
-		}
-		return -1;
+		$db->setQuery($query);
+		$db->execute();
+		return $db->getNumRows();
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getVersion(): ?float
 	{
-		$result = self::loadAssocList('select @@version');
+		$db = self::getDB();
+		$result = $db->loadAssocList('select @@version');
 		return floatval($result[0]['@@version']);
 	}
 
@@ -361,110 +376,92 @@ class database
 	 * @throws Exception
 	 * @since 3.1.8
 	 */
-	public static function loadAssocList($query, $limitStart = null, $limit = null)
+	public static function loadAssocList(string  $table, array $selects, MySQLWhereClause $whereClause,
+	                                     ?string $order = null, ?string $orderBy = null,
+	                                     ?int    $limit = null, ?int $limitStart = null,
+	                                     string  $groupBy = null, bool $returnQueryString = false)
 	{
-		if (defined('_JEXEC')) {
-
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
-
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			if ($limitStart !== null and $limit !== null)
-				$db->setQuery($query, $limitStart, $limit);
-			elseif ($limitStart !== null)
-				$db->setQuery($query, $limitStart);
-			else
-				$db->setQuery($query);
-
-			return $db->loadAssocList();
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-
-			if ($limit !== null)
-				$query .= ' LIMIT ' . $limit;
-
-			if ($limitStart !== null)
-				$query .= ' OFFSET ' . $limitStart;
-
-			$result = $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query), ARRAY_A);
-			if ($wpdb->last_error !== '')
-				throw new Exception($wpdb->last_error);
-
-			return $result;
-		}
-		return null;
+		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'ARRAY_A', $groupBy, $returnQueryString);
 	}
 
-	public static function loadRowList($query, $limitStart = null, $limit = null): ?array
+	public static function loadObjectList(string  $table, array $selectsRaw, MySQLWhereClause $whereClause,
+	                                      ?string $order = null, ?string $orderBy = null,
+	                                      ?int    $limit = null, ?int $limitStart = null,
+	                                      string  $output_type = 'OBJECT', string $groupBy = null,
+	                                      bool    $returnQueryString = false)
 	{
-		if (defined('_JEXEC')) {
+		$db = self::getDB();
 
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
+		$selects = $selectsRaw;
 
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
+		$query = 'SELECT ' . (implode(',', $selects)) . ' FROM ' . $table;
 
-			if ($limitStart !== null and $limit !== null)
-				$db->setQuery($query, $limitStart, $limit);
-			elseif ($limitStart !== null)
-				$db->setQuery($query, $limitStart);
-			else
-				$db->setQuery($query);
+		if ($whereClause->hasConditions())
+			$query .= ' WHERE ' . $whereClause->getWhereClause();
 
+		$query .= (!empty($groupBy) != '' ? ' GROUP BY ' . $groupBy : '');
+		$query .= (!empty($order) ? ' ORDER BY ' . $order . ($orderBy !== null and strtolower($orderBy) == 'desc' ? ' DESC' : '') : '');
+
+		if ($returnQueryString) {
+
+			if ($limit != 0)
+				$query .= ' LIMIT ' . $limit;
+
+			if ($limitStart != 0)
+				$query .= ' OFFSET ' . $limitStart;
+
+			return $query;
+		}
+
+		if ($limitStart !== null and $limit !== null)
+			$db->setQuery($query, $limitStart, $limit);
+		elseif ($limitStart !== null)
+			$db->setQuery($query, $limitStart);
+		else
+			$db->setQuery($query);
+
+		if ($output_type == 'OBJECT')
+			return $db->loadObjectList();
+		else if ($output_type == 'ROW_LIST')
 			return $db->loadRowList();
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-
-			if ($limit !== null)
-				$query .= ' LIMIT ' . $limit;
-
-			if ($limitStart !== null)
-				$query .= ' OFFSET ' . $limitStart;
-
-			return $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query), ARRAY_N);
-		}
-		return null;
-	}
-
-	public static function loadColumn($query, $limitStart = null, $limit = null): ?array
-	{
-		if (defined('_JEXEC')) {
-
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
-
-			if ($version < 4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get('DatabaseDriver');
-
-			if ($limitStart !== null and $limit !== null)
-				$db->setQuery($query, $limitStart, $limit);
-			elseif ($limitStart !== null)
-				$db->setQuery($query, $limitStart);
-			else
-				$db->setQuery($query);
-
+		else if ($output_type == 'COLUMN')
 			return $db->loadColumn();
-		} elseif (defined('WPINC')) {
-			global $wpdb;
-
-			if ($limit !== null)
-				$query .= ' LIMIT ' . $limit;
-
-			if ($limitStart !== null)
-				$query .= ' OFFSET ' . $limitStart;
-
-			return $wpdb->get_col(str_replace('#__', $wpdb->prefix, $query));
-		}
-		return null;
+		else
+			return $db->loadAssocList();
 	}
 
+	public static function loadRowList(string  $table, array $selects, MySQLWhereClause $whereClause,
+	                                   ?string $order = null, ?string $orderBy = null,
+	                                   ?int    $limit = null, ?int $limitStart = null,
+	                                   string  $groupBy = null, bool $returnQueryString = false)
+	{
+		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'ROW_LIST', $groupBy, $returnQueryString);
+	}
+
+	public static function loadColumn(string  $table, array $selects, MySQLWhereClause $whereClause,
+	                                  ?string $order = null, ?string $orderBy = null,
+	                                  ?int    $limit = null, ?int $limitStart = null,
+	                                  string  $groupBy = null, bool $returnQueryString = false)
+	{
+		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'COLUMN', $groupBy, $returnQueryString);
+	}
+
+	public static function getTableStatus(string $database, string $tablename)
+	{
+		$conf = Factory::getConfig();
+		$dbPrefix = $conf->get('dbprefix');
+
+		$db = self::getDB();
+
+		$db->setQuery('SHOW TABLE STATUS FROM ' . self::quoteName($database) . ' LIKE ' . self::quote($dbPrefix . 'customtables_table_' . $tablename));
+		return $db->loadObjectList();
+	}
+
+	public static function getTableIndex(string $tableName, string $fieldName)
+	{
+		$db = self::getDB();
+
+		$db->setQuery('SHOW INDEX FROM ' . $tableName . ' WHERE Key_name = "' . $fieldName . '"');
+		return $db->loadObjectList();
+	}
 }

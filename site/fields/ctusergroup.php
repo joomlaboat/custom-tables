@@ -13,6 +13,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -22,18 +24,9 @@ trait JFormFieldCTUserGroupCommon
 {
 	protected static function getOptionList(): array
 	{
-		$versionObject = new Version;
-		$version = (int)$versionObject->getShortVersion();
+		$whereClause = new MySQLWhereClause();
 
-		if ($version < 4)
-			$db = Factory::getDbo();
-		else
-			$db = Factory::getContainer()->get('DatabaseDriver');
-
-		$query = 'SELECT id,title FROM #__usergroups ORDER BY title';
-
-		$db->setQuery($query);
-		$userGroups = $db->loadObjectList();
+		$userGroups = database::loadObjectList('#__usergroups', ['id', 'title'], $whereClause, 'title');
 
 		$options = [];
 

@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\database;
 use CustomTables\IntegrityChecks;
+use CustomTables\MySQLWhereClause;
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -25,6 +26,10 @@ use ESTables;
 
 class IntegrityTables extends IntegrityChecks
 {
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function checkTables(&$ct)
 	{
 		$tables = IntegrityTables::getTables();
@@ -34,8 +39,9 @@ class IntegrityTables extends IntegrityChecks
 		foreach ($tables as $table) {
 
 			//Check if table exists
-			$query_check_table = 'SHOW TABLES LIKE ' . database::quote(database::realTableName($table['tablename']));
-			$rows = database::loadObjectList($query_check_table);
+			$rows = database::getTableStatus(database::getDataBaseName(), database::realTableName($table['tablename']), false);
+			//$query_check_table = 'SHOW TABLES LIKE ' . database::quote();
+
 			$tableExists = !(count($rows) == 0);
 
 			if ($tableExists) {
@@ -67,48 +73,58 @@ class IntegrityTables extends IntegrityChecks
 	protected static function getTables(): ?array
 	{
 		// Create a new query object.
-		$query = self::getTablesQuery();
-
 		try {
-			return database::loadAssocList($query);
+			return self::getTablesQuery();
 		} catch (Exception $e) {
 			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-			//return null;
 		}
 
-		$query = self::getTablesQuery(true);
 		try {
-			return database::loadAssocList($query);
+			self::getTablesQuery(true);
 		} catch (Exception $e) {
 			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-			return null;
 		}
+		return null;
 	}
 
-	protected static function getTablesQuery(bool $simple = false): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected static function getTablesQuery(bool $simple = false): array
 	{
-		$selects = array();
+		$whereClause = new MySQLWhereClause();
 
 		if ($simple) {
+			$selects = [];
 			$selects[] = 'id';
 			$selects[] = 'tablename';
 		} else {
-			$categoryname = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
-			$fieldcount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
+			$categoryName = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
+			$fieldCount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
 
-			$selects[] = ESTables::getTableRowSelects();
-			$selects[] = $categoryname . ' AS categoryname';
-			$selects[] = $fieldcount . ' AS fieldcount';
+			$selects = ESTables::getTableRowSelectArray();
+
+			$selects[] = $categoryName . ' AS categoryname';
+			$selects[] = $fieldCount . ' AS fieldcount';
 		}
 
 		// Add the list ordering clause.
 		$orderCol = 'tablename';
 		$orderDirection = 'asc';
 
-		return 'SELECT ' . implode(',', $selects) . ' FROM ' . database::quoteName('#__customtables_tables') . ' AS a WHERE a.published = 1 ORDER BY '
-			. database::quoteName($orderCol) . ' ' . $orderDirection;
+		$whereClause->addCondition('a.published', 1);
+
+		//return 'SELECT ' . implode(',', $selects) . ' FROM ' . database::quoteName('#__customtables_tables') . ' AS a WHERE a.published = 1 ORDER BY '
+		//. database::quoteName($orderCol) . ' ' . $orderDirection;
+
+		return database::loadAssocList('#__customtables_tables AS a', $selects, $whereClause, $orderCol, $orderDirection);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function checkIfTablesExists($tables_rows)
 	{
 		$dbPrefix = database::getDBPrefix();
@@ -126,12 +142,19 @@ class IntegrityTables extends IntegrityChecks
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function getZeroRecordID($realtablename, $realidfieldname)
 	{
-		$query = 'SELECT COUNT(' . $realidfieldname . ') AS cd_zeroIdRecords FROM ' . database::quoteName($realtablename) . ' AS a'
-			. ' WHERE ' . $realidfieldname . '=0 LIMIT 1';
+		//$query = 'SELECT COUNT(' . $realidfieldname . ') AS cd_zeroIdRecords FROM ' . database::quoteName($realtablename) . ' AS a'
+		//. ' WHERE ' . $realidfieldname . '=0 LIMIT 1';
 
-		$rows = database::loadAssocList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($realidfieldname, 0);
+
+		$rows = database::loadAssocList($realtablename . ' AS a', ['COUNT(' . $realidfieldname . ') AS cd_zeroIdRecords'], $whereClause, null, null, 1);
 		$row = $rows[0];
 
 		return $row['cd_zeroIdRecords'];

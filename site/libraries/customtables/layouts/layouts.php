@@ -42,6 +42,10 @@ class Layouts
 		$this->layoutCode = null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function processLayoutTag(string &$htmlresult): bool
 	{
 		$options = array();
@@ -71,13 +75,19 @@ class Layouts
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getLayout(string|int $layoutNameOrId, bool $processLayoutTag = true, bool $checkLayoutFile = true, bool $addHeaderCode = true): string
 	{
+		$whereClause = new MySQLWhereClause();
+
 		if (is_int($layoutNameOrId)) {
 			if ($layoutNameOrId == 0)
 				return '';
 
-			$where = 'id=' . $layoutNameOrId;
+			$whereClause->addCondition('id', $layoutNameOrId);
 		} else {
 			if ($layoutNameOrId == '')
 				return '';
@@ -86,25 +96,43 @@ class Layouts
 				$this->layoutType = 0;
 				return $layoutNameOrId;
 			}
-
-			$where = 'layoutname=' . database::quote($layoutNameOrId);
+			$whereClause->addCondition('layoutname', $layoutNameOrId);
 		}
 
-
 		$serverType = database::getServerType();
-		if ($serverType == 'postgresql')
-			$query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
-				. 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
-				. 'ELSE extract(epoch FROM modified) AS ts, '
-				. 'layouttype '
-				. 'FROM #__customtables_layouts WHERE ' . $where . ' LIMIT 1';
-		else
+
+		$selects = [
+			'id',
+			'tableid',
+			'layoutname',
+			'layoutcode',
+			'layoutmobile',
+			'layoutcss',
+			'layoutjs',
+			'layouttype'
+		];
+
+		if ($serverType == 'postgresql') {
+			$selects [] = 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) ELSE extract(epoch FROM modified) AS ts';
+
+			/*
+				$query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
+					. 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
+					. 'ELSE extract(epoch FROM modified) AS ts, '
+					. 'layouttype '
+					. 'FROM #__customtables_layouts WHERE ' . $where . ' LIMIT 1';
+			*/
+		} else {
+			$selects [] = 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts';
+			/*
 			$query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
 				. 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts, '
 				. 'layouttype '
 				. 'FROM #__customtables_layouts WHERE ' . $where . ' LIMIT 1';
+			*/
+		}
 
-		$rows = database::loadAssocList($query);
+		$rows = database::loadAssocList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return '';
 
@@ -156,6 +184,10 @@ class Layouts
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public function getLayoutFileContent(int $layout_id, string $layoutName, string $layoutCode, int $db_layout_ts, string $filename, string $fieldName): ?string
 	{
 		if (file_exists($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename)) {
@@ -163,8 +195,12 @@ class Layouts
 
 			if ($db_layout_ts == 0) {
 
-				$query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id=' . $layout_id . ' LIMIT 1';
-				$rows = database::loadAssocList($query);
+				//$query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id=' . $layout_id . ' LIMIT 1';
+
+				$whereClause = new MySQLWhereClause();
+				$whereClause->addCondition('id', $layout_id);
+
+				$rows = database::loadAssocList('#__customtables_layouts', ['UNIX_TIMESTAMP(modified) AS ts'], $whereClause, null, null, 1);
 
 				if (count($rows) != 0) {
 					$row = $rows[0];
@@ -184,6 +220,10 @@ class Layouts
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public function storeLayoutAsFile(int $layout_id, string $layoutName, ?string $layoutCode, string $filename): bool
 	{
 		$layoutCode = trim($layoutCode ?? '');
@@ -230,6 +270,10 @@ class Layouts
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function addCSSandJSIfNeeded(array $layoutRow, bool $checkLayoutFile = true): void
 	{
 		$layoutContent = trim($layoutRow['layoutcss'] ?? '');
@@ -394,6 +438,10 @@ class Layouts
 		return $result;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public function storeAsFile($data): void
 	{
 		if ($this->ct->Env->folderToSaveLayouts !== null) {
@@ -457,6 +505,10 @@ class Layouts
 		return $content;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function renderMixedLayout(int $layoutId): string
 	{
 		$this->getLayout($layoutId);
@@ -483,6 +535,10 @@ class Layouts
 		return 'CustomTable: Unknown Layout Type';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function renderCatalog(): string
 	{
 		if ($this->ct->Env->frmt == 'html')
@@ -517,24 +573,25 @@ class Layouts
 
 			if (isset($cookieValue)) {
 				if ($cookieValue == '') {
-					$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
+					$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], 0);
 				} else {
 					$items = explode(';', $cookieValue);
-					$arr = array();
+					//$arr = array();
 					foreach ($items as $item) {
 						$pair = explode(',', $item);
-						$arr[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . (int)$pair[0];//id must be a number
+						$this->ct->Filter->whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], (int)$pair[0]);
+						//$arr[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . (int)$pair[0];//id must be a number
 					}
-					$this->ct->Filter->where[] = '(' . implode(' OR ', $arr) . ')';
+					//$this->ct->Filter->whereClause->addOrCondition()where[] = '(' . implode(' OR ', $arr) . ')';
 				}
 			} else {
 				//Show only shopping cart items. TODO: check the query
-				$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
+				$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], 0);
 			}
 		}
 
 		if ($this->ct->Params->listing_id !== null)
-			$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . database::quote($this->ct->Params->listing_id);
+			$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], $this->ct->Params->listing_id);
 
 		// --------------------- Sorting
 		$this->ct->Ordering->parseOrderByParam();
@@ -580,22 +637,34 @@ class Layouts
 		return $pageLayout;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getLayoutRowById(int $layoutId): ?array
 	{
 		$serverType = database::getServerType();
-		if ($serverType == 'postgresql')
-			$query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
-				. 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
-				. 'ELSE extract(epoch FROM modified) AS ts, '
-				. 'layouttype '
-				. 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
-		else
-			$query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
-				. 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts, '
-				. 'layouttype '
-				. 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
 
-		$rows = database::loadAssocList($query);
+		$selects = [
+			'id',
+			'tableid',
+			'layoutname',
+			'layoutcode',
+			'layoutmobile',
+			'layoutcss',
+			'layoutjs',
+			'layouttype'
+		];
+
+		if ($serverType == 'postgresql')
+			$selects [] = 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) ELSE extract(epoch FROM modified) AS ts';
+		else
+			$selects [] = 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', $layoutId);
+
+		$rows = database::loadAssocList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return null;
 
@@ -646,7 +715,7 @@ class Layouts
 	{
 		$this->layoutType = 1;
 
-		$result = '<style>' . PHP_EOL . 'datagrid th{text-align:left;}' . PHP_EOL . '.datagrid td{text-align:left;}' . PHP_EOL . '</style>' . PHP_EOL;
+		$result = '<style>' . PHP_EOL . '.datagrid th{text-align:left;}' . PHP_EOL . '.datagrid td{text-align:left;}' . PHP_EOL . '</style>' . PHP_EOL;
 		$result .= '<div style="float:right;">{{ html.recordcount }}</div>' . PHP_EOL;
 
 		if ($addToolbar) {

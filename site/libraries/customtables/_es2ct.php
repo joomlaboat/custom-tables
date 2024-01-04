@@ -12,6 +12,7 @@
 
 use CustomTables\database;
 use CustomTables\Fields;
+use CustomTables\MySQLWhereClause;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -21,15 +22,22 @@ require_once($path . 'helpers' . DIRECTORY_SEPARATOR . 'misc.php');
 require_once($path . 'tables' . DIRECTORY_SEPARATOR . 'tables.php');
 require_once($path . 'fields' . DIRECTORY_SEPARATOR . 'fields.php');
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function updateESTables(): void
 {
 	getESTables();
 }
 
-function getESTables()
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function getESTables(): void
 {
-	$query = 'SHOW TABLES';
-	$tables = database::loadAssocList($query);
+	$tables = database::showTables();
 	$database = database::getDataBaseName();
 
 	foreach ($tables as $table) {
@@ -43,9 +51,8 @@ function getESTables()
 			$query = 'RENAME TABLE ' . $tablename . ' TO ' . $new_tablename;
 			database::setQuery($query);
 
-			if (fixFields($new_tablename)) {
-				//	die;
-			}
+			fixFields($new_tablename);
+
 		} elseif (str_contains($tablename, '_customtables_')) {
 			updateFields($tablename);
 		}
@@ -68,10 +75,14 @@ function getESTables()
 	fixTableCategory();
 }
 
-function fixTableCategory()
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function fixTableCategory(): void
 {
 	$tablename = '#__customtables_tables';
-	$fields = getExistingFields($tablename);
+	$fields = database::getExistingFields($tablename);
 
 	$catid = findFileByName($fields, 'catid');
 	$tablecategory = findFileByName($fields, 'tablecategory');
@@ -101,10 +112,19 @@ function findFileByName($fields, $fieldname)
 	return null;
 }
 
-function updateLayoutVerticalBarTags()
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function updateLayoutVerticalBarTags(): void
 {
-	$query = 'SELECT id, layoutcode FROM #__customtables_layouts WHERE INSTR(layoutcode,"|toolbar") OR INSTR(layoutcode,"|search")';
-	$records = database::loadAssocList($query);
+	//$query = 'SELECT id, layoutcode FROM #__customtables_layouts WHERE INSTR(layoutcode,"|toolbar") OR INSTR(layoutcode,"|search")';
+
+	$whereClause = new MySQLWhereClause();
+	$whereClause->addOrCondition('layoutcode', "%|toolbar%", 'LIKE');
+	$whereClause->addOrCondition('layoutcode', "%|search%", 'LIKE');
+
+	$records = database::loadAssocList('#__customtables_layouts', ['id', 'layoutcode'], $whereClause);
 
 	foreach ($records as $record) {
 		$c = str_replace('|toolbar', '|batchtoolbar', $record['layoutcode']);
@@ -162,13 +182,21 @@ function fixToolBarTags($htmlresult, $w)
 }
 
 
-function updateImageFieldTypeParama()
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function updateImageFieldTypeParama(): void
 {
 	$query = 'UPDATE `#__customtables_fields` SET typeparams=CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\')) WHERE (`type`="image" OR `type`="imagegallery") AND INSTR(typeparams,\'|\')';
 	database::setQuery($query);
 }
 
-function updateMenuItems()
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function updateMenuItems(): void
 {
 	$sets = array();
 
@@ -192,19 +220,31 @@ function updateMenuItems()
 	database::setQuery($query);
 }
 
-function updatefieldTypes()
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function updatefieldTypes(): void
 {
 	$query = 'UPDATE #__customtables_fields SET `type`="customtables" WHERE INSTR(`type`,"extrasearch")';
 	database::setQuery($query);
 }
 
-function updateLayouts()
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function updateLayouts(): void
 {
 	$query = 'UPDATE #__customtables_layouts set layoutcode=replace(layoutcode,"extrasearch","customtables") where instr(layoutcode,"extrasearch")';
 	database::setQuery($query);
 }
 
-function updateContent()
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function updateContent(): void
 {
 	$query = 'UPDATE #__content set introtext=replace(introtext,"{extrasearch","{customtables") where INSTR(introtext,"extrasearch")';
 	database::setQuery($query);
@@ -232,7 +272,11 @@ function fixNewCTTables($mysqltable)
 }
 */
 
-function addCetegoriesTable()
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function addCetegoriesTable(): void
 {
 	$query = 'CREATE TABLE IF NOT EXISTS `#__customtables_categories` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -255,7 +299,7 @@ function addCetegoriesTable()
 	database::setQuery($query);
 }
 
-function updateFields($new_tablename)
+function updateFields($new_tablename): void
 {
 	$dbPrefix = database::getDBPrefix();
 
@@ -323,11 +367,11 @@ function updateFields($new_tablename)
 
 }
 
-function fixFields($tablename)
+function fixFields($tablename): bool
 {
 	$found = false;
 	$a = array('_10', '_1', '_2', '_3', '_4', '_5', '_6', '_7', '_8', '_9');
-	$fields = getExistingFields($tablename);
+	$fields = database::getExistingFields($tablename);
 
 	foreach ($fields as $field) {
 
@@ -362,8 +406,3 @@ function fixFields($tablename)
 	return $found;
 }
 
-function getExistingFields($tablename)
-{
-	$query = 'SHOW COLUMNS FROM ' . $tablename;
-	return database::loadAssocList($query);
-}

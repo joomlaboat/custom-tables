@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use ESTables;
+use Exception;
 
 class Table
 {
@@ -42,6 +43,10 @@ class Table
 	var ?array $fileboxes;
 	var ?array $selects;
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function __construct($Languages, $Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
 	{
 		$this->Languages = $Languages;
@@ -83,6 +88,10 @@ class Table
 		$this->setTable($this->tablerow, $useridfieldname);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function setTable($tableRow, $useridFieldName = null): void
 	{
 		$this->tablerow = $tableRow;
@@ -161,10 +170,18 @@ class Table
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public function getRecordFieldValue($listingId, $resultField)
 	{
-		$query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listingId) . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listingId) . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($this->realidfieldname, $listingId);
+
+		$rows = database::loadAssocList($this->realtablename, [$resultField], $whereClause, null, null, 1);
 
 		if (count($rows) > 0)
 			return $rows[0][$resultField];
@@ -172,10 +189,18 @@ class Table
 		return "";
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function loadRecord($listing_id)
 	{
-		$query = 'SELECT ' . implode(',', $this->selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT ' . implode(',', $this->selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($this->realidfieldname, $listing_id);
+
+		$rows = database::loadAssocList($this->realtablename, $this->selects, $whereClause, null, null, 1);
 
 		if (count($rows) < 1) return $this->record = null;
 
@@ -188,8 +213,17 @@ class Table
 		if ($listing_id === null or $listing_id === '' or (is_numeric($listing_id) and $listing_id === 0))
 			return false;
 
-		$query = 'SELECT ' . $this->realidfieldname . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
-		return database::getNumRowsOnly($query) == 1;
+		//$query = 'SELECT ' . $this->realidfieldname . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
+
+		//return database::loadRowList($query) == 1;
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($this->realidfieldname, $listing_id);
+		$col = database::loadColumn($this->realtablename, ['COUNT(' . $this->realidfieldname . ') AS c'], $whereClause, null, null, 1);
+		if (count($col) == 0)
+			return false;
+
+		return $col[0] == 1;
+		//return database::loadColumn($query) == 1;
 	}
 
 	function isRecordNull(): bool

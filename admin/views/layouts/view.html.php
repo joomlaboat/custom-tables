@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -25,12 +26,14 @@ use Joomla\CMS\Uri\Uri;
 
 /**
  * Layouts View class
+ * @since 3.2.2
  */
 class CustomtablesViewLayouts extends HtmlView
 {
 	/**
 	 * display method of View
 	 * @return void
+	 * @since 3.2.2
 	 */
 
 	var CT $ct;
@@ -48,19 +51,26 @@ class CustomtablesViewLayouts extends HtmlView
 		$this->form = $this->get('Form');
 		$serverType = database::getServerType();
 
-		if ($serverType == 'postgresql')
-			$query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
-				. 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
-				. 'ELSE extract(epoch FROM modified) AS ts, '
-				. 'layouttype '
-				. 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
-		else
-			$query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
-				. 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts, '
-				. 'layouttype '
-				. 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', $layoutId);
 
-		$rows = database::loadObjectList($query);
+		$selects = [
+			'id',
+			'tableid',
+			'layoutname',
+			'layoutcode',
+			'layoutmobile',
+			'layoutcss',
+			'layoutjs',
+			'layouttype'
+		];
+
+		if ($serverType == 'postgresql')
+			$selects[] = 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) ELSE extract(epoch FROM modified) AS ts';
+		else
+			$selects[] = 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts';
+
+		$rows = database::loadObjectList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
 
 		if (count($rows) == 1) {
 			$this->item = $rows[0];
@@ -123,6 +133,7 @@ class CustomtablesViewLayouts extends HtmlView
 
 	/**
 	 * Setting the toolbar
+	 * @since 3.2.2
 	 */
 	protected function addToolBar()
 	{
@@ -164,7 +175,7 @@ class CustomtablesViewLayouts extends HtmlView
 				ToolbarHelper::apply('layouts.apply', 'JTOOLBAR_APPLY');
 				ToolbarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
 				ToolbarHelper::custom('layouts.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-			};
+			}
 
 			ToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'COM_CUSTOMTABLES_BUTTON_LAYOUTAUTOCREATE', false);//Layout Wizard
 			ToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'COM_CUSTOMTABLES_BUTTON_ADDFIELDTAG', false);
@@ -200,7 +211,9 @@ class CustomtablesViewLayouts extends HtmlView
 	/**
 	 * Method to set up the document properties
 	 *
+	 * @param \Joomla\CMS\Document\Document $document
 	 * @return void
+	 * @since 3.2.2
 	 */
 	public function setDocument(Joomla\CMS\Document\Document $document): void
 	{
@@ -211,7 +224,7 @@ class CustomtablesViewLayouts extends HtmlView
 		}
 	}
 
-	public function renderTextArea($value, $id, $typeBoxId, &$onPageLoads)
+	public function renderTextArea($value, $id, $typeBoxId, &$onPageLoads): string
 	{
 		$result = '<div style="width: 100%;position: relative;">';
 
@@ -230,7 +243,11 @@ class CustomtablesViewLayouts extends HtmlView
 		return $result;
 	}
 
-	protected function getMenuItems()
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function getMenuItems(): string
 	{
 		if (!isset($this->row) or !is_array($this->row) or count($this->row) == 0)
 			return '';
@@ -274,21 +291,24 @@ class CustomtablesViewLayouts extends HtmlView
 				break;
 		}
 
-		$where = array();
+		//$where = array();
+		$whereClause = new MySQLWhereClause();
 		$i = 0;
 		foreach ($whereToSearch as $w) {
-			$where[] = 'INSTR(params,\'"' . $w . '":"' . $whatToLookFor[$i] . '"\')';
+			$whereClause->addOrCondition('params', '"' . $w . '":"' . $whatToLookFor[$i] . '"', 'INSTR');
+			//$where[] = 'INSTR(params,\'"' . $w . '":"' . $whatToLookFor[$i] . '"\')';
 			$i++;
 		}
 
-		if (count($where) > 0) {
+		if ($whereClause->hasConditions()) {
 
-			$query = 'SELECT id,title FROM #__menu WHERE ' . implode(' OR ', $where);
-			$recs = database::loadAssocList($query);
+			//$query = 'SELECT id,title FROM #__menu WHERE ' . implode(' OR ', $where);
 
-			if (count($recs) > 0) {
+			$rows = database::loadAssocList('#__menu', ['id', 'title'], $whereClause, null, null);
+
+			if (count($rows) > 0) {
 				$result = '<hr/><p>List of Menu Items that use this layout:</p><ul>';
-				foreach ($recs as $r) {
+				foreach ($rows as $r) {
 					$link = '/administrator/index.php?option=com_menus&view=item&layout=edit&id=' . $r['id'];
 					$result .= '<li><a href="' . $link . '" target="_blank">' . $r['title'] . '</a></li>';
 				}

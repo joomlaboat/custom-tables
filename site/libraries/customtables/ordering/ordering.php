@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use JoomlaBasicMisc;
@@ -79,6 +80,10 @@ class Ordering
 		return self::addEditHTMLTagParams($result, 'tbody', $params);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function parseOrderByString(): bool
 	{
 		if ($this->ordering_processed_string === null or $this->ordering_processed_string == '')
@@ -102,6 +107,10 @@ class Ordering
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function parseOrderByFieldName(string $fieldName, Table $Table): ?string
 	{
 		if ($fieldName == '_id')
@@ -284,6 +293,10 @@ class Ordering
 		return (object)['titles' => $order_list, 'values' => $order_values];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public function saveorder(): bool
 	{
 		// Get the input

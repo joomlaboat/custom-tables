@@ -17,6 +17,7 @@ use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Fields;
 
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
 
@@ -419,11 +420,19 @@ class JoomlaBasicMisc
 		return $fList;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getMenuParams($Itemid, $rawParams = '')
 	{
 		if ($rawParams == '') {
-			$query = 'SELECT params FROM #__menu WHERE id=' . (int)$Itemid . ' LIMIT 1';
-			$rows = database::loadObjectList($query);
+			//$query = 'SELECT params FROM #__menu WHERE id=' . (int)$Itemid . ' LIMIT 1';
+
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('id', (int)$Itemid);
+
+			$rows = database::loadObjectList('#__menu', ['params'], $whereClause, null, null, 1);
 
 			if (count($rows) == 0)
 				return '';
@@ -477,13 +486,19 @@ class JoomlaBasicMisc
 		return $htmlresult;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getGroupIdByTitle($grouptitle): string
 	{
 		// Build the database query to get the rules for the asset.
-		$query = 'SELECT id FROM #__usergroups WHERE title=' . database::quote(trim($grouptitle)) . ' LIMIT 1';
+		//$query = 'SELECT id FROM #__usergroups WHERE title=' . database::quote(trim($grouptitle)) . ' LIMIT 1';
 
 		// Execute the query and load the rules from the result.
-		$rows = database::loadObjectList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('title', trim($grouptitle));
+		$rows = database::loadObjectList('#__usergroups', ['id'], $whereClause, null, null, 1);
 
 		if (count($rows) < 1)
 			return '';
@@ -597,10 +612,19 @@ class JoomlaBasicMisc
 		return $text;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function FindItemidbyAlias($alias)
 	{
-		$query = 'SELECT id FROM #__menu WHERE published=1 AND alias=' . database::quote($alias);
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT id FROM #__menu WHERE published=1 AND alias=' . database::quote($alias);
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('alias', $alias);
+
+		$rows = database::loadAssocList('#__menu', ['id'], $whereClause, null, null);
 		if (!$rows) return 0;
 		if (count($rows) < 1) return 0;
 
@@ -608,10 +632,18 @@ class JoomlaBasicMisc
 		return $r['id'];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function FindMenuItemRowByAlias($alias)
 	{
-		$query = 'SELECT * FROM #__menu WHERE published=1 AND alias=' . database::quote($alias);
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT * FROM #__menu WHERE published=1 AND alias=' . database::quote($alias);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('alias', $alias);
+
+		$rows = database::loadAssocList('#__menu', ['*'], $whereClause, null, null);
 		if (!$rows) return 0;
 		if (count($rows) < 1) return 0;
 
@@ -652,7 +684,7 @@ class JoomlaBasicMisc
 
 				$htmlresult = $article->text;*/
 
-				$htmlresult = Joomla\CMS\HTML\Helpers\Content::prepare($htmlresult, $content_params, 'text');
+				$htmlresult = Joomla\CMS\HTML\Helpers\Content::prepare($htmlresult, $content_params);
 
 			} else {
 				$o = new stdClass();
@@ -661,7 +693,7 @@ class JoomlaBasicMisc
 
 				JPluginHelper::importPlugin('content');
 
-				$dispatcher = \JDispatcher::getInstance();
+				$dispatcher = JDispatcher::getInstance();
 				$dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
 
 				$htmlresult = $o->text;
@@ -745,7 +777,7 @@ class JoomlaBasicMisc
 		return '';
 	}
 
-	static public function mime2ext($mime)
+	static public function mime2ext($mime): ?string
 	{
 		$mime_map = [
 			'video/3gpp2' => '3g2',
@@ -933,10 +965,10 @@ class JoomlaBasicMisc
 			'multipart/x-zip' => 'zip',
 			'text/x-scriptzsh' => 'zsh',
 		];
-		return isset($mime_map[$mime]) ? $mime_map[$mime] : false;
+		return $mime_map[$mime] ?? null;
 	}
 
-	public static function deleteFolderIfEmpty($folder)
+	public static function deleteFolderIfEmpty($folder): void
 	{
 		//Check if the folder is already empty, if it is empty then delete the folder
 		$files = scandir(JPATH_SITE . DIRECTORY_SEPARATOR . $folder);

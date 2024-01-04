@@ -24,14 +24,19 @@ class Filtering
 {
 	var CT $ct;
 	var array $PathValue;
-	var array $where;
+	//var array $where;
+	//var array $whereData;
+	var MySQLWhereClause $whereClause;
 	var int $showPublished;
 
 	function __construct(CT $ct, int $showPublished = 0)
 	{
 		$this->ct = $ct;
 		$this->PathValue = [];
-		$this->where = [];
+		//$this->where = [];
+		//$this->whereData = [];
+		$this->whereClause = new MySQLWhereClause();
+
 		$this->showPublished = $showPublished;
 
 		if ($this->ct->Table->published_field_found) {
@@ -43,14 +48,27 @@ class Filtering
 			//$showPublished = -1 - show published and unpublished
 			//$showPublished = -2 - show trashed
 
-			if ($this->showPublished == 0)
-				$this->where[] = $this->ct->Table->realtablename . '.published=1';
-			if ($this->showPublished == 1)
-				$this->where[] = $this->ct->Table->realtablename . '.published=0';
-			if ($this->showPublished == -1)
-				$this->where[] = '(' . $this->ct->Table->realtablename . '.published=0 OR ' . $this->ct->Table->realtablename . '.published=1)';
-			if ($this->showPublished == -2)
-				$this->where[] = $this->ct->Table->realtablename . '.published=-2';
+			if ($this->showPublished == 0) {
+				$this->whereClause->addCondition($this->ct->Table->realtablename . '.published', 1);
+				//$this->where[] = $this->ct->Table->realtablename . '.published=1';
+				//$this->whereData[$this->ct->Table->realtablename . '.published'] = 1;
+			}
+			if ($this->showPublished == 1) {
+				$this->whereClause->addCondition($this->ct->Table->realtablename . '.published', 0);
+				//$this->where[] = $this->ct->Table->realtablename . '.published=0';
+				//$this->whereData[$this->ct->Table->realtablename . '.published'] = 0;
+			}
+			if ($this->showPublished == -1) {
+				$this->whereClause->addOrCondition($this->ct->Table->realtablename . '.published', 0);
+				$this->whereClause->addOrCondition($this->ct->Table->realtablename . '.published', 1);
+				//$this->where[] = '(' . $this->ct->Table->realtablename . '.published=0 OR ' . $this->ct->Table->realtablename . '.published=1)';
+				//$this->whereData[$this->ct->Table->realtablename . '.published'] = [0, 1];
+			}
+			if ($this->showPublished == -2) {
+				$this->whereClause->addCondition($this->ct->Table->realtablename . '.published', -2);
+				//$this->where[] = $this->ct->Table->realtablename . '.published=-2';
+				//$this->whereData[$this->ct->Table->realtablename . '.published'] = -2;
+			}
 		}
 	}
 
@@ -94,6 +112,8 @@ class Filtering
 				$paramWhere = JoomlaBasicMisc::applyContentPlugins($paramWhere);
 		}
 
+		//This is old and probably not needed any more because we use MySQLWhereClause class that sanitize individual values.
+		//I leave it here just in case
 		$paramWhere = str_ireplace('*', '=', $paramWhere);
 		$paramWhere = str_ireplace('\\', '', $paramWhere);
 		$paramWhere = str_ireplace('drop ', '', $paramWhere);
@@ -114,7 +134,6 @@ class Filtering
 			return;
 
 		$param = $this->sanitizeAndParseFilter($param, true);
-		$wheres = [];
 		$items = common::ExplodeSmartParams($param);
 		$logic_operator = '';
 
@@ -122,7 +141,8 @@ class Filtering
 			$logic_operator = $item[0];
 			$comparison_operator_str = $item[1];
 			$comparison_operator = '';
-			$multi_field_where = [];
+			$whereClauseTemp = new MySQLWhereClause();
+			//$multi_field_where = [];
 
 			if ($logic_operator == 'or' or $logic_operator == 'and') {
 				if (!(!str_contains($comparison_operator_str, '<=')))
@@ -199,30 +219,28 @@ class Filtering
 
 							if (!is_null($fieldrow) and array_key_exists('type', $fieldrow)) {
 								$w = $this->processSingleFieldWhereSyntax($fieldrow, $comparison_operator, $fieldname, $value, $field_extra_param);
-								if ($w !== null and $w != '')
-									$multi_field_where[] = $w;
+
+								if ($w->hasConditions()) {
+									$whereClauseTemp->addNestedOrCondition($w);
+									//$multi_field_where[] = $w;
+								}
 							}
 						}
 					}
 				}
 			}
 
-			if (count($multi_field_where) == 1)
-				$wheres[] = implode(' OR ', $multi_field_where);
-			elseif (count($multi_field_where) > 1)
-				$wheres[] = '(' . implode(' OR ', $multi_field_where) . ')';
+			if ($whereClauseTemp->hasConditions()) {
+
+				if ($logic_operator == 'or')
+					$this->whereClause->addNestedOrCondition($whereClauseTemp);//'(' . implode(' ' . $logic_operator . ' ', $wheres) . ')';
+				else
+					$this->whereClause->addNestedCondition($whereClauseTemp);//'(' . implode(' ' . $logic_operator . ' ', $wheres) . ')';
+			}
 		}
 
 		if ($logic_operator == '') {
 			$this->ct->errors[] = common::translate('Search parameter "' . $param . '" is incorrect');
-			return;
-		}
-
-		if (count($wheres) > 0) {
-			if ($logic_operator == 'or' and count($wheres) > 1)
-				$this->where[] = '(' . implode(' ' . $logic_operator . ' ', $wheres) . ')';
-			else
-				$this->where[] = implode(' ' . $logic_operator . ' ', $wheres);
 		}
 	}
 
@@ -230,7 +248,7 @@ class Filtering
 	 * @throws Exception
 	 * @since 3.1.9
 	 */
-	function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname_, string $value, string $field_extra_param = ''): ?string
+	function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname_, string $value, string $field_extra_param = ''): MySQLWhereClause
 	{
 		if (!array_key_exists('type', $fieldrow)) {
 			throw new Exception('processSingleFieldWhereSyntax: Field not set');
@@ -241,7 +259,8 @@ class Filtering
 		$fieldNameParts = explode('_r_', $fieldname_);
 		$isRange = count($fieldNameParts) == 2;
 		$fieldname = $fieldNameParts[0];
-		$c = '';
+
+		$whereClause = new MySQLWhereClause();
 
 		switch ($fieldrow['type']) {
 			case '_id':
@@ -250,45 +269,42 @@ class Filtering
 					$comparison_operator = '=';
 
 				$vList = explode(',', $value);
-				$cArr = array();
+
 				foreach ($vList as $vL) {
-					$cArr[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname . $comparison_operator . database::quote($vL);
+
+					$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname, $vL, $comparison_operator);
+					//$cArr[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname . $comparison_operator . database::quote($vL);
 
 					$this->PathValue[] = 'ID ' . $comparison_operator . ' ' . $vL;
 				}
-				if (count($cArr) == 1)
-					$c = $cArr[0];
-				else
-					$c = '(' . implode(' OR ', $cArr) . ')';
 
-				break;
+				return $whereClause;
 
 			case '_published':
+
 
 				if ($this->ct->Table->published_field_found) {
 					if ($comparison_operator == '==')
 						$comparison_operator = '=';
 
-					$c = $this->ct->Table->realtablename . '.published' . $comparison_operator . (int)$value;
+					$whereClause->addCondition($this->ct->Table->realtablename . '.published', (int)$value, $comparison_operator);
+					//$c = $this->ct->Table->realtablename . '.published' . $comparison_operator . (int)$value;
 					$this->PathValue[] = 'Published ' . $comparison_operator . ' ' . (int)$value;
 				}
-
-				break;
+				return $whereClause;
 
 			case 'userid':
 			case 'user':
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				$c = $this->Search_User($value, $fieldrow, $comparison_operator, $field_extra_param);
-				break;
+				return $this->Search_User($value, $fieldrow, $comparison_operator, $field_extra_param);
 
 			case 'usergroup':
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				$c = $this->Search_UserGroup($value, $fieldrow, $comparison_operator);
-				break;
+				return $this->Search_UserGroup($value, $fieldrow, $comparison_operator);
 
 			case 'float':
 			case 'viewcount':
@@ -297,35 +313,27 @@ class Filtering
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				$c = $this->Search_Number($value, $fieldrow, $comparison_operator);
-				break;
+				return $this->Search_Number($value, $fieldrow, $comparison_operator);
 
 			case 'checkbox':
-
 				$vList = explode(',', $value);
-				$cArr = array();
+
 				foreach ($vList as $vL) {
 
 					if ($vL == 'true' or $vL == '1') {
-						$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . '=1';
+						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], 1);
+						//$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . '=1';
 						$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix];
 					} else {
-						$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . '=0';
-
+						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], 0);
+						//$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . '=0';
 						$this->PathValue[] = common::translate('COM_CUSTOMTABLES_NOT') . ' ' . $fieldrow['fieldtitle' . $this->ct->Languages->Postfix];
 					}
 				}
-				if (count($cArr) == 1)
-					$c = $cArr[0];
-				else
-					$c = '(' . implode(' OR ', $cArr) . ')';
-
-				break;
+				return $whereClause;
 
 			case 'range':
-
-				$c = $this->getRangeWhere($fieldrow, $value);
-				break;
+				return $this->getRangeWhere($fieldrow, $value);
 
 			case 'email':
 			case 'url':
@@ -334,15 +342,11 @@ class Filtering
 			case 'text':
 			case 'phponadd':
 			case 'radio':
-
-				$c = $this->Search_String($value, $fieldrow, $comparison_operator);
-				break;
+				return $this->Search_String($value, $fieldrow, $comparison_operator);
 
 			case 'md5':
 			case 'alias':
-
-				$c = $this->Search_Alias($value, $fieldrow, $comparison_operator);
-				break;
+				return $this->Search_Alias($value, $fieldrow, $comparison_operator);
 
 			case 'lastviewtime':
 			case 'changetime':
@@ -355,9 +359,7 @@ class Filtering
 
 			case 'multilangtext':
 			case 'multilangstring':
-
-				$c = $this->Search_String($value, $fieldrow, $comparison_operator, true);
-				break;
+				return $this->Search_String($value, $fieldrow, $comparison_operator, true);
 
 			case 'records':
 
@@ -365,7 +367,7 @@ class Filtering
 					. DIRECTORY_SEPARATOR . 'tablejoinlist.php');
 
 				$vList = explode(',', $this->getString_vL($value));
-				$cArr = array();
+
 				foreach ($vList as $vL) {
 					// Filter Title
 					$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams'], '"', false);
@@ -380,15 +382,17 @@ class Filtering
 					if (count($typeParamsArray) < 3)
 						$filterTitle .= 'selector not specified';
 
-					$esr_table = $typeParamsArray[0];
+					//$esr_table = $typeParamsArray[0];
 					$esr_table_full = $this->ct->Table->realtablename;
-					$esr_field = $typeParamsArray[1];
+					//$esr_field = $typeParamsArray[1];
 					$esr_selector = $typeParamsArray[2];
 
+					/*
 					if (count($typeParamsArray) > 3)
 						$esr_filter = $typeParamsArray[3];
 					else
 						$esr_filter = '';
+					*/
 
 					$filterTitle .= Value_tablejoinlist::renderTableJoinListValue($field, $vL);
 
@@ -413,16 +417,19 @@ class Filtering
 					if ($valueNew !== '') {
 
 						if ($comparison_operator == '!=')
-							$cArr[] = '!instr(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ',' . database::quote(',' . $valueNew . ',') . ')';
+							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'NOT INSTR');
+						//$cArr[] = '!instr(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ',' . database::quote(',' . $valueNew . ',') . ')';
 						elseif ($comparison_operator == '!==')
-							$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '!=' . database::quote(',' . $valueNew . ',');//not exact value
+							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', '!=');//exact not value
+						//$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '!=' . database::quote(',' . $valueNew . ',');//not exact value
 						elseif ($comparison_operator == '=')
-							$cArr[] = 'instr(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ',' . database::quote(',' . $valueNew . ',') . ')';
+							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'INSTR');
+						//$cArr[] = 'instr(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ',' . database::quote(',' . $valueNew . ',') . ')';
 						elseif ($comparison_operator == '==')
-							$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '=' . database::quote(',' . $valueNew . ',');//exact value
+							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',');//exact value
+						//$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '=' . database::quote(',' . $valueNew . ',');//exact value
 						else
 							$opt_title = common::translate('COM_CUSTOMTABLES_UNKNOWN_OPERATION');
-
 
 						if ($comparison_operator == '!=' or $comparison_operator == '=') {
 							$this->PathValue[] = $fieldrow['fieldtitle'
@@ -434,12 +441,8 @@ class Filtering
 						}
 					}
 				}
-				if (count($cArr) == 1)
-					$c = $cArr[0];
-				elseif (count($cArr) > 1)
-					$c = '(' . implode(' OR ', $cArr) . ')';
 
-				break;
+				return $whereClause;
 
 			case 'sqljoin':
 
@@ -450,10 +453,9 @@ class Filtering
 					$comparison_operator = '=';
 
 				$vList = explode(',', $this->getString_vL($value));
-				$cArr = array();
 
 				// Filter Title
-				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams'], '"');
+				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams']);
 				$filterTitle = '';
 
 				if (count($typeParamsArray) < 2)
@@ -474,8 +476,8 @@ class Filtering
 						if ($valueNew != '') {
 							if ($comparison_operator == '!=') {
 								$opt_title = common::translate('COM_CUSTOMTABLES_NOT');
-
-								$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '!=' . database::quote($valueNew);
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
+								//$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '!=' . database::quote($valueNew);
 								$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix]
 									. ' '
 									. $opt_title
@@ -486,10 +488,14 @@ class Filtering
 
 								$integerValueNew = $valueNew;
 								if ($integerValueNew == 0 or $integerValueNew == -1) {
-									$cArr[] = '(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . '=0 OR ' . $esr_table_full . '.' . $fieldrow['realfieldname'] . '="" OR '
-										. $esr_table_full . '.' . $fieldrow['realfieldname'] . ' IS NULL)';
+									$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], null, 'NULL');
+									$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], '');
+									$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], 0);
+									//$cArr[] = '(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . '=0 OR ' . $esr_table_full . '.' . $fieldrow['realfieldname'] . '="" OR '
+									//	. $esr_table_full . '.' . $fieldrow['realfieldname'] . ' IS NULL)';
 								} else
-									$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '=' . database::quote($valueNew);
+									$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
+								//$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '=' . database::quote($valueNew);
 
 								$this->PathValue[] = $fieldrow['fieldtitle'
 									. $this->ct->Languages->Postfix]
@@ -501,13 +507,7 @@ class Filtering
 						}
 					}
 				}
-
-				if (count($cArr) == 1)
-					$c = $cArr[0];
-				elseif (count($cArr) > 1)
-					$c = '(' . implode(' OR ', $cArr) . ')';
-
-				break;
+				return $whereClause;
 
 			case 'virtual':
 				if ($comparison_operator == '==')
@@ -521,24 +521,22 @@ class Filtering
 					$isNumber = true;
 				else {
 					$this->PathValue[] = 'Virtual not stored fields cannot be used in filters';
-					return '';
+					return $whereClause;
 				}
 
 				if ($isNumber)
-					$c = $this->Search_Number($value, $fieldrow, $comparison_operator);
+					return $this->Search_Number($value, $fieldrow, $comparison_operator);
 				else
-					$c = $this->Search_String($value, $fieldrow, $comparison_operator);
-
-				break;
+					return $this->Search_String($value, $fieldrow, $comparison_operator);
 		}
-		return $c;
+		return $whereClause;
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function Search_User($value, $fieldrow, $comparison_operator, $field_extra_param = '')
+	function Search_User($value, $fieldrow, $comparison_operator, $field_extra_param = ''): MySQLWhereClause
 	{
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
 			. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
@@ -546,14 +544,20 @@ class Filtering
 		$v = $this->getString_vL($value);
 
 		$vList = explode(',', $v);
-		$cArr = array();
+		$whereClause = new MySQLWhereClause();
+		//$cArr = array();
 
 		if ($field_extra_param == 'usergroups') {
 			foreach ($vList as $vL) {
 				if ($vL != '') {
 					$select1 = '(SELECT title FROM #__usergroups AS g WHERE g.id = m.group_id LIMIT 1)';
-					$cArr[] = '(SELECT m.group_id FROM #__user_usergroup_map AS m WHERE user_id=' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ' AND '
-						. $select1 . $comparison_operator . database::quote($v) . ')';
+					$select2 = 'SELECT m.group_id FROM #__user_usergroup_map AS m WHERE user_id='
+						. $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ' AND ' . $select1;
+
+					$whereClause->addOrCondition($select2, $v, $comparison_operator);
+
+					//$cArr[] = '(SELECT m.group_id FROM #__user_usergroup_map AS m WHERE user_id=' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ' AND '
+					//. $select1 . $comparison_operator . database::quote($v) . ')';
 
 					require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
 						. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
@@ -565,10 +569,14 @@ class Filtering
 		} else {
 			foreach ($vList as $vL) {
 				if ($vL != '') {
-					if ((int)$vL == 0 and $comparison_operator == '=')
-						$cArr[] = '(' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . '=0 OR ' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ' IS NULL)';
-					else
-						$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
+					if ((int)$vL == 0 and $comparison_operator == '=') {
+						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], 0);
+						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], null, 'NULL');
+						//$cArr[] = '(' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . '=0 OR ' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ' IS NULL)';
+					} else {
+						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], (int)$vL, $comparison_operator);
+						//$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
+					}
 
 					$filterTitle = Value_user::renderUserValue($vL);
 					$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
@@ -576,12 +584,13 @@ class Filtering
 			}
 		}
 
-		if (count($cArr) == 0)
-			return '';
-		elseif (count($cArr) == 1)
-			return $cArr[0];
-		else
-			return '(' . implode(' AND ', $cArr) . ')';
+		return $whereClause;
+		//if (count($cArr) == 0)
+		//	return $whereClause;
+		//elseif (count($cArr) == 1)
+		//	return $cArr[0];
+		//else
+		//	return '(' . implode(' AND ', $cArr) . ')';
 	}
 
 	function getString_vL($vL): string
@@ -601,40 +610,49 @@ class Filtering
 		return str_replace('&', '', $v);
 	}
 
-	function Search_UserGroup($value, $fieldrow, $comparison_operator)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function Search_UserGroup($value, $fieldrow, $comparison_operator): MySQLWhereClause
 	{
 		$v = $this->getString_vL($value);
-
 		$vList = explode(',', $v);
-		$cArr = array();
+		$whereClause = new MySQLWhereClause();
+
+		//$cArr = array();
 		foreach ($vList as $vL) {
 			if ($vL != '') {
-				$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], (int)$vL, $comparison_operator);
+				//$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
 				$filterTitle = CTUser::showUserGroup((int)$vL);
 				$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 			}
 		}
 
-		if (count($cArr) == 0)
-			return '';
-		elseif (count($cArr) == 1)
-			return $cArr[0];
-		else
-			return '(' . implode(' AND ', $cArr) . ')';
+		return $whereClause;
+		//if (count($cArr) == 0)
+		//	return '';
+		//elseif (count($cArr) == 1)
+		//	return $cArr[0];
+		//else
+		//	return '(' . implode(' AND ', $cArr) . ')';
 	}
 
-	function Search_Number($value, $fieldrow, $comparison_operator)
+	function Search_Number($value, $fieldrow, $comparison_operator): MySQLWhereClause
 	{
 		if ($comparison_operator == '==')
 			$comparison_operator = '=';
 
 		$v = $this->getString_vL($value);
-
 		$vList = explode(',', $v);
-		$cArr = array();
+		$whereClause = new MySQLWhereClause();
+
+		//$cArr = array();
 		foreach ($vList as $vL) {
 			if ($vL != '') {
-				$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], (int)$vL, $comparison_operator);
+				//$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
 
 				$opt_title = ' ' . $comparison_operator;
 				if ($comparison_operator == '=')
@@ -644,6 +662,8 @@ class Filtering
 			}
 		}
 
+		return $whereClause;
+		/*
 		if (count($cArr) == 0)
 			return '';
 
@@ -651,10 +671,13 @@ class Filtering
 			return $cArr[0];
 		else
 			return '(' . implode(' OR ', $cArr) . ')';
+		*/
 	}
 
-	function getRangeWhere($fieldrow, $value): string
+	function getRangeWhere($fieldrow, $value): MySQLWhereClause
 	{
+		$whereClause = new MySQLWhereClause();
+
 		$fieldTitle = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix];
 
 		if ($fieldrow['typeparams'] == 'date')
@@ -663,14 +686,14 @@ class Filtering
 			$valueArr = explode('-', $value);
 
 		if ($valueArr[0] == '' and $valueArr[1] == '')
-			return '';
+			return $whereClause;
 
 		$range = explode('_r_', $fieldrow['fieldname']);
 		if (count($range) == 1)
-			return '';
+			return $whereClause;
 
 		$valueTitle = '';
-		$rangeWhere = '';
+		//$rangeWhere = '';
 
 		$from_field = '';
 		$to_field = '';
@@ -683,7 +706,7 @@ class Filtering
 		}
 
 		if ($from_field == '' and $to_field == '')
-			return '';
+			return $whereClause;
 
 		if ($fieldrow['typeparams'] == 'date') {
 			$v_min = database::quote($valueArr[0]);
@@ -693,15 +716,19 @@ class Filtering
 			$v_max = (float)$valueArr[1];
 		}
 
-		if ($valueArr[0] != '' and $valueArr[1] != '')
-			$rangeWhere = '(es_' . $from_field . '>=' . $v_min . ' AND es_' . $to_field . '<=' . $v_max . ')';
-		elseif ($valueArr[0] != '' and $valueArr[1] == '')
-			$rangeWhere = '(es_' . $from_field . '>=' . $v_min . ')';
+		if ($valueArr[0] != '' and $valueArr[1] != '') {
+			$whereClause->addCondition('es_' . $from_field, $v_min, '>=');
+			$whereClause->addCondition('es_' . $from_field, $v_max, '<=');
+			//$rangeWhere = '(es_' . $from_field . '>=' . $v_min . ' AND es_' . $to_field . '<=' . $v_max . ')';
+		} elseif ($valueArr[0] != '' and $valueArr[1] == '')
+			$whereClause->addCondition('es_' . $from_field, $v_min, '>=');
+		//$rangeWhere = '(es_' . $from_field . '>=' . $v_min . ')';
 		elseif ($valueArr[1] != '' and $valueArr[0] == '')
-			$rangeWhere = '(es_' . $from_field . '<=' . $v_max . ')';
+			$whereClause->addCondition('es_' . $from_field, $v_max, '<=');
+		//$rangeWhere = '(es_' . $from_field . '<=' . $v_max . ')';
 
-		if ($rangeWhere == '')
-			return '';
+		if (!$whereClause->hasConditions())
+			return $whereClause;
 
 		if ($valueArr[0] != '')
 			$valueTitle .= common::translate('COM_CUSTOMTABLES_FROM') . ' ' . $valueArr[0] . ' ';
@@ -711,11 +738,12 @@ class Filtering
 
 		$this->PathValue[] = $fieldTitle . ': ' . $valueTitle;
 
-		return $rangeWhere;
+		return $whereClause;
 	}
 
-	function Search_String($value, $fieldrow, $comparison_operator, $isMultilingual = false): string
+	function Search_String($value, $fieldrow, $comparison_operator, $isMultilingual = false): MySQLWhereClause
 	{
+		$whereClause = new MySQLWhereClause();
 		$realfieldname = $fieldrow['realfieldname'] . ($isMultilingual ? $this->ct->Languages->Postfix : '');
 		$v = $this->getString_vL($value);
 		$serverType = database::getServerType();
@@ -724,70 +752,93 @@ class Filtering
 			$PathValue = [];
 
 			$vList = explode(',', $v);
-			$cArr = array();
+			$parentWhereClause = new MySQLWhereClause();
+
 			foreach ($vList as $vL) {
 				//this method breaks search sentence to words and creates the LIKE where filter
-				$new_v_list = array();
+				$nestedWhereClause = new MySQLWhereClause();
+
 				$v_list = explode(' ', $vL);
 				foreach ($v_list as $vl) {
 
-					if ($serverType == 'postgresql')
-						$new_v_list[] = 'CAST ( ' . $this->ct->Table->realtablename . '.' . $realfieldname . ' AS text ) LIKE ' . database::quote('%' . $vl . '%');
-					else
-						$new_v_list[] = $this->ct->Table->realtablename . '.' . $realfieldname . ' LIKE ' . database::quote('%' . $vl . '%');
+					if ($serverType == 'postgresql') {
+						$nestedWhereClause->addOrCondition(
+							'CAST ( ' . $this->ct->Table->realtablename . '.' . $realfieldname . ' AS text )',
+							database::quote('%' . $vl . '%'),
+							'LIKE',
+							true
+						);
+						//$new_v_list[] = 'CAST ( ' . $this->ct->Table->realtablename . '.' . $realfieldname . ' AS text ) LIKE ' . database::quote('%' . $vl . '%');
+					} else {
+						$nestedWhereClause->addOrCondition(
+							$this->ct->Table->realtablename . '.' . $realfieldname,
+							database::quote('%' . $vl . '%'),
+							'LIKE',
+							true
+						);
+						//$new_v_list[] = $this->ct->Table->realtablename . '.' . $realfieldname . ' LIKE ' . database::quote('%' . $vl . '%');
+					}
 
 					$PathValue[] = $vl;
 				}
-
-				if (count($new_v_list) > 1)
-					$cArr[] = '(' . implode(' AND ', $new_v_list) . ')';
-				else
-					$cArr[] = implode(' AND ', $new_v_list);
+				if ($nestedWhereClause->hasConditions())//if (count($new_v_list) > 1)
+					$parentWhereClause->addNestedCondition($nestedWhereClause);
 			}
 
 			$opt_title = ':';
 			$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . implode(', ', $PathValue);
 
-			if (count($cArr) > 1)
-				return '(' . implode(' OR ', $cArr) . ')';
-			else
-				return implode(' OR ', $cArr);
+			if ($parentWhereClause->hasConditions())
+				$whereClause->addNestedCondition($parentWhereClause);
+
+			return $whereClause;
 
 		} else {
 			//search exactly what requested
 			if ($comparison_operator == '==')
 				$comparison_operator = '=';
 
-			if ($v == '' and $comparison_operator == '=')
-				$where = '(' . $this->ct->Table->realtablename . '.' . $realfieldname . ' IS NULL OR ' . database::quoteName($realfieldname) . '=' . database::quote('') . ')';
-			elseif ($v == '' and $comparison_operator == '!=')
-				$where = '(' . $this->ct->Table->realtablename . '.' . $realfieldname . ' IS NOT NULL AND ' . database::quoteName($realfieldname) . '!=' . database::quote('') . ')';
-			else
-				$where = $this->ct->Table->realtablename . '.' . $realfieldname . $comparison_operator . database::quote($v);
+			if ($v == '' and $comparison_operator == '=') {
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, null);
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, '');
+				//$where = '(' . $this->ct->Table->realtablename . '.' . $realfieldname . ' IS NULL OR ' . database::quoteName($realfieldname) . '=' . database::quote('') . ')';
+			} elseif ($v == '' and $comparison_operator == '!=') {
+				$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, null, 'NOT NULL');
+				$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, '', '!=');
+				//$where = '(' . $this->ct->Table->realtablename . '.' . $realfieldname . ' IS NOT NULL AND ' . database::quoteName($realfieldname) . '!=' . database::quote('') . ')';
+			} else {
+				$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, $v, $comparison_operator);
+				//$where = $this->ct->Table->realtablename . '.' . $realfieldname . $comparison_operator . database::quote($v);
+			}
 
 			$opt_title = ' ' . $comparison_operator;
 			if ($comparison_operator == '=')
 				$opt_title = ':';
 
 			$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . ($v == '' ? 'NOT SELECTED' : $v);
-			return $where;
+			return $whereClause;
 		}
 	}
 
-	function Search_Alias($value, $fieldrow, $comparison_operator)
+	function Search_Alias($value, $fieldrow, $comparison_operator): MySQLWhereClause
 	{
 		if ($comparison_operator == '==')
 			$comparison_operator = '=';
 
 		$v = $this->getString_vL($value);
-
 		$vList = explode(',', $v);
-		$cArr = array();
+		$whereClause = new MySQLWhereClause();
+
+		//$cArr = array();
 		foreach ($vList as $vL) {
-			if ($vL == "null" and $comparison_operator == '=')
-				$cArr[] = '(' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . '=' . database::quote('') . ' OR ' . $fieldrow['realfieldname'] . ' IS NULL)';
-			else
+			if ($vL == "null" and $comparison_operator == '=') {
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], '', $comparison_operator);
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], null, 'NULL');
+				//$cArr[] = '(' . $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . '=' . database::quote('') . ' OR ' . $fieldrow['realfieldname'] . ' IS NULL)';
+			} else {
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], $vL, $comparison_operator);
 				$cArr[] = $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . $comparison_operator . database::quote($vL);
+			}
 
 			$opt_title = ' ' . $comparison_operator;
 			if ($comparison_operator == '=')
@@ -796,14 +847,20 @@ class Filtering
 			$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . $vL;
 		}
 
+		return $whereClause;
+		/*
 		if (count($cArr) == 1)
 			return $cArr[0];
 		else
 			return '(' . implode(' AND ', $cArr) . ')';
+		*/
 	}
 
-	function Search_DateRange(string $fieldname, string $valueRaw): ?string
+	function Search_DateRange(string $fieldname, string $valueRaw): MySQLWhereClause
 	{
+		$titleStart = '';
+		$whereClause = new MySQLWhereClause();
+
 		$fieldrow1 = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
 
 		if (!is_null($fieldrow1)) {
@@ -860,19 +917,23 @@ class Filtering
 				. common::translate('COM_CUSTOMTABLES_DATE_FROM') . ' ' . $titleStart . ' '
 				. common::translate('COM_CUSTOMTABLES_DATE_TO') . ' ' . $titleEnd;
 
-			return '(' . $fieldrow1['realfieldname'] . '>=' . $valueStart . ' AND ' . $fieldrow1['realfieldname'] . '<=' . $valueEnd . ')';
+			$whereClause->addCondition($fieldrow1['realfieldname'], $valueStart, '>=');
+			$whereClause->addCondition($fieldrow1['realfieldname'], $valueEnd, '<=');
+			//return '(' . $fieldrow1['realfieldname'] . '>=' . $valueStart . ' AND ' . $fieldrow1['realfieldname'] . '<=' . $valueEnd . ')';
 		} elseif ($valueStart and $valueEnd === null) {
 			$this->PathValue[] = $title1 . ' '
 				. common::translate('COM_CUSTOMTABLES_FROM') . ' ' . $titleStart;
 
-			return $fieldrow1['realfieldname'] . '>=' . $valueStart;
+			$whereClause->addCondition($fieldrow1['realfieldname'], $valueStart, '>=');
+			//return $fieldrow1['realfieldname'] . '>=' . $valueStart;
 		} elseif ($valueStart === null and $valueEnd) {
 			$this->PathValue[] = $title1 . ' '
 				. common::translate('COM_CUSTOMTABLES_TO') . ' ' . $valueEnd;
 
-			return $fieldrow1['realfieldname'] . '<=' . $valueEnd;
+			$whereClause->addCondition($fieldrow1['realfieldname'], $valueEnd, '<=');
+			//return $fieldrow1['realfieldname'] . '<=' . $valueEnd;
 		}
-		return null;
+		return $whereClause;
 	}
 
 	protected function processDateSearchTags(string $value, ?array $fieldrow, $esr_table_full): array
@@ -940,8 +1001,10 @@ class Filtering
 		}
 	}
 
-	function Search_Date(string $fieldname, string $valueRaw, string $comparison_operator): ?string
+	function Search_Date(string $fieldname, string $valueRaw, string $comparison_operator): MySQLWhereClause
 	{
+		$whereClause = new MySQLWhereClause();
+
 		//field 1
 		$fieldrow1 = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
 		$answer = $this->processDateSearchTags($fieldname, $fieldrow1, $this->ct->Table->realtablename);
@@ -959,10 +1022,10 @@ class Filtering
 				$value = $valueDateTime->format($dateFormat);
 			} else {
 				// Invalid date format, handle the error or set a default value
-				return null;
+				return $whereClause;
 			}
 		} else
-			return null;
+			return $whereClause;
 
 		$fieldrow2 = Fields::FieldRowByName($value, $this->ct->Table->fields);
 		$answer = $this->processDateSearchTags($value, $fieldrow2, $this->ct->Table->realtablename);
@@ -974,13 +1037,15 @@ class Filtering
 
 		//Query condition
 		if ($value2 == 'NULL' and $comparison_operator == '=')
-			$query = $value1 . ' IS NULL';
+			$whereClause->addCondition($value1, null, 'NULL');
+		//$query = $value1 . ' IS NULL';
 		elseif ($value2 == 'NULL' and $comparison_operator == '!=')
-			$query = $value1 . ' IS NOT NULL';
+			$whereClause->addCondition($value1, null, 'NOT NULL');
+		//$query = $value1 . ' IS NOT NULL';
 		else
-			$query = $value1 . ' ' . $comparison_operator . ' ' . $value2;
-
-		return $query;
+			$whereClause->addCondition($value1, $value2, $comparison_operator);
+		//$query = $value1 . ' ' . $comparison_operator . ' ' . $value2;
+		return $whereClause;
 	}
 
 	function getInt_vL($vL)
@@ -1009,6 +1074,10 @@ class Filtering
 
 class LinkJoinFilters
 {
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function getFilterBox($tableName, $dynamicFilterFieldName, $control_name, $filterValue, $control_name_postfix = ''): string
 	{
 		$fieldRow = Fields::getFieldRowByName($dynamicFilterFieldName, null, $tableName);
@@ -1022,6 +1091,10 @@ class LinkJoinFilters
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static protected function getFilterElement_SqlJoin($typeParams, $control_name, $filterValue, $control_name_postfix = ''): string
 	{
 		$result = '';
@@ -1044,18 +1117,21 @@ class LinkJoinFilters
 		$selects = [];
 		$selects[] = $tableRow['realtablename'] . '.' . $tableRow['realidfieldname'];
 
-		$where = '';
+		$whereClause = new MySQLWhereClause();
+
+		//$where = '';
 		if ($tableRow['published_field_found']) {
 			$selects[] = $tableRow['realtablename'] . '.published AS listing_published';
-			$where = 'WHERE ' . $tableRow['realtablename'] . '.published=1';
+			$whereClause->addCondition($tableRow['realtablename'] . '.published', 1);
+			//$where = 'WHERE ' . $tableRow['realtablename'] . '.published=1';
 		} else {
 			$selects[] = '1 AS listing_published';
 		}
 
 		$selects[] = $tableRow['realtablename'] . '.' . $fieldrow->realfieldname;
 
-		$query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $tableRow['realtablename'] . ' ' . $where . ' ORDER BY ' . $fieldrow->realfieldname;
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $tableRow['realtablename'] . ' ' . $where . ' ORDER BY ' . $fieldrow->realfieldname;
+		$rows = database::loadAssocList($tableRow['realtablename'], $selects, $whereClause, $fieldrow->realfieldname);
 
 		$result .= '
 		<script>

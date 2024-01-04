@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Version;
@@ -32,8 +33,10 @@ if ($version < 4) {
 
 		public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
 		{
-			$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
-			$records = database::loadObjectList((string)$query);
+			//$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('published', 1);
+			$records = database::loadObjectList('#__customtables_tables', ['id', 'tabletitle'], $whereClause, 'tabletitle');
 
 			$options = ['' => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
 
@@ -64,8 +67,10 @@ if ($version < 4) {
 
 		public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
 		{
-			$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
-			$records = database::loadObjectList((string)$query);
+			//$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('published', 1);
+			$records = database::loadObjectList('#__customtables_tables', ['id', 'tabletitle'], $whereClause, 'tabletitle');
 
 			$options = array();
 			if ($records) {

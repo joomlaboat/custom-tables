@@ -9,6 +9,7 @@
  **/
 
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -34,8 +35,12 @@ class CustomTablesFileMethods
 	static public function getFileExtByID($tableName, $fileBoxName, $file_id): string
 	{
 		$fileBoxTableName = '#__customtables_filebox_' . $tableName . '_' . $fileBoxName;
-		$query = 'SELECT file_ext FROM ' . $fileBoxTableName . ' WHERE fileid=' . (int)$file_id . ' LIMIT 1';
-		$fileRows = database::loadObjectList($query);
+		//$query = 'SELECT file_ext FROM ' . $fileBoxTableName . ' WHERE fileid=' . (int)$file_id . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('fileid', (int)$file_id);
+
+		$fileRows = database::loadObjectList($fileBoxTableName, ['file_ext'], $whereClause, null, null, 1);
 		if (count($fileRows) != 1)
 			return '';
 
@@ -46,8 +51,11 @@ class CustomTablesFileMethods
 	static public function DeleteFileBoxFiles($fileBoxTableName, $estableid, $fileBoxName, $typeParams): void
 	{
 		$fileFolder = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $typeParams);
-		$query = 'SELECT fileid FROM ' . $fileBoxTableName;
-		$filerows = database::loadObjectList($query);
+		//$query = 'SELECT fileid FROM ' . $fileBoxTableName;
+
+		$whereClause = new MySQLWhereClause();
+
+		$filerows = database::loadObjectList($fileBoxTableName, ['fileid'], $whereClause);
 
 		foreach ($filerows as $filerow) {
 			CustomTablesFileMethods::DeleteExistingFileBoxFile(

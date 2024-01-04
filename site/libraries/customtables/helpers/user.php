@@ -94,6 +94,10 @@ class CTUser
 		$this->guestCanAddNew = false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function ResetPassword(CT $ct, ?string $listing_id): bool
 	{
 		if ($listing_id === null or $listing_id === '' or $listing_id == 0) {
@@ -157,7 +161,7 @@ class CTUser
 		if ($ct->Env->clean)
 			die;
 
-		if (Email::sendEmail($user_email, $subject, $messageBody, $isHTML = true)) {
+		if (Email::sendEmail($user_email, $subject, $messageBody)) {
 			//clean exit
 
 			Factory::getApplication()->enqueueMessage('User password has been reset and sent to the email "' . $user_email . '".');
@@ -185,10 +189,18 @@ class CTUser
 		return $userid;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function GetUserRow(int $userid): ?array
 	{
-		$query = 'SELECT * FROM #__users WHERE id=' . $userid . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT * FROM #__users WHERE id=' . $userid . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', $userid);
+
+		$rows = database::loadAssocList('#__users', ['*'], $whereClause, null, null, 1);
 		if (count($rows) == 0)
 			return null;
 		else
@@ -198,9 +210,13 @@ class CTUser
 	static public function GetUserGroups(int $userid): string
 	{
 		$groups = Access::getGroupsByUser($userid);
-		$groupIdList = '(' . implode(',', $groups) . ')';
-		$query = 'SELECT title FROM #__usergroups WHERE id IN ' . $groupIdList;
-		$rows = database::loadRowList($query);
+		//$groupIdList = '(' . implode(',', $groups) . ')';
+		//$query = 'SELECT title FROM #__usergroups WHERE id IN ' . $groupIdList;
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', '(' . implode(',', $groups) . ')', 'IN', true);
+		$rows = database::loadRowList('#__usergroups', ['title'], $whereClause, 'rgt');
+
 		$groupList = array();
 		foreach ($rows as $group)
 			$groupList[] = $group[0];
@@ -241,6 +257,10 @@ class CTUser
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function CreateUserAccount(string $fullName, string $username, string $password, string $email, string $group_names, string &$msg): ?int
 	{
 		if ($fullName == '') {
@@ -371,19 +391,23 @@ class CTUser
 	{
 		$new_names = array();
 		$names = explode(',', $group_names);
+
+		$whereClause = new MySQLWhereClause();
+
 		foreach ($names as $name) {
 			$n = preg_replace("/[^[:alnum:][:space:]]/u", '', trim($name));
 			if ($n != '')
-				$new_names[] = 'title=' . database::quote($n);
+				$whereClause->addOrCondition('title', $n);
+			//$new_names[] = 'title=' . database::quote($n);
 		}
 
 		if (count($new_names) == 0)
 			return null;
 
-		$query = 'SELECT id FROM #__usergroups WHERE ' . implode(' OR ', $new_names);
+		//$query = 'SELECT id FROM #__usergroups WHERE ' . implode(' OR ', $new_names);
 
 		try {
-			$rows = database::loadObjectList($query);
+			$rows = database::loadObjectList('#__usergroups', ['id'], $whereClause);
 		} catch (Exception $e) {
 			return null;
 		}
@@ -395,26 +419,47 @@ class CTUser
 		return $usergroup_ids;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function UpdateUserField(string $realtablename, string $realidfieldname, string $useridfieldname, string $existing_user_id, $listing_id): void
 	{
 		$query = 'UPDATE ' . $realtablename . ' SET ' . $useridfieldname . '=' . $existing_user_id . ' WHERE ' . $realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
 		database::setQuery($query);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function CheckIfUserNameExist(string $username): bool
 	{
-		$query = 'SELECT id FROM #__users WHERE username=' . database::quote($username) . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT id FROM #__users WHERE username=' . database::quote($username) . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('username', $username);
+
+		$rows = database::loadAssocList('#__users', ['id'], $whereClause, null, null, 1);
 		if (count($rows) == 1)
 			return true;
 
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function CheckIfUserExist(string $username, string $email)
 	{
-		$query = 'SELECT id FROM #__users WHERE username=' . database::quote($username) . ' AND email=' . database::quote($email) . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT id FROM #__users WHERE username=' . database::quote($username) . ' AND email=' . database::quote($email) . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('username', $username);
+		$whereClause->addCondition('email', $email);
+
+		$rows = database::loadAssocList('#__users', ['id'], $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return 0;
 
@@ -422,12 +467,20 @@ class CTUser
 		return $row['id'];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function CheckIfEmailExist(string $email, &$existing_user, &$existing_name)
 	{
 		$existing_user = '';
 		$existing_name = '';
-		$query = 'SELECT id, username, name FROM #__users WHERE email=' . database::quote($email) . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT id, username, name FROM #__users WHERE email=' . database::quote($email) . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('email', $email);
+
+		$rows = database::loadAssocList('#__users', ['id', 'username', 'name'], $whereClause, null, null, 1);
 		if (count($rows) == 1) {
 			$row = $rows[0];
 			$existing_user = $row['username'];
@@ -460,31 +513,47 @@ class CTUser
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function showUserGroup(int $userid): string
 	{
-		$query = 'SELECT title FROM #__usergroups WHERE id=' . $userid . ' LIMIT 1';
-		$options = database::loadAssocList($query);
+		//$query = 'SELECT title FROM #__usergroups WHERE id=' . $userid . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', $userid);
+
+		$options = database::loadAssocList('#__usergroups', ['title'], $whereClause, null, null, 1);
 		if (count($options) != 0)
 			return $options[0]['title'];
 
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function showUserGroups(?string $valueArrayString): string
 	{
 		if ($valueArrayString == '')
 			return '';
 
-		$where = array();
+		$whereClause = new MySQLWhereClause();
+
+		//$where = array();
 		$valueArray = explode(',', $valueArrayString);
 		foreach ($valueArray as $value) {
 			if ($value != '') {
-				$where[] = 'id=' . (int)$value;
+				$whereClause->addOrCondition('id', (int)$value);
+				//$where[] = 'id=' . (int)$value;
 			}
 		}
 
-		$query = 'SELECT title FROM #__usergroups WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
-		$options = database::loadAssocList($query);
+		//$query = 'SELECT title FROM #__usergroups WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
+
+		$options = database::loadAssocList('#__usergroups', ['title'], $whereClause, 'title');
 
 		if (count($options) == 0)
 			return '';

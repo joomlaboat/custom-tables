@@ -114,7 +114,7 @@ class CustomtablesModelListOfTables extends ListModel
 		$orderCol = $this->state->get('list.ordering', 'a.id');
 		$orderDirection = $this->state->get('list.direction', 'asc');
 
-		return $this->helperListOfTables->getListQuery($published, $search, $category, $orderCol, $orderDirection);//, $limit, $start);
+		return $this->helperListOfTables->getListQuery($published, $search, $category, $orderCol, $orderDirection, null, null, true);
 	}
 
 	/**

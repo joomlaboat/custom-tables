@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\database;
 use CustomTables\DataTypes;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\HTML\HTMLHelper;
 
 //jimport('joomla.form.helper');
@@ -36,10 +37,12 @@ class JFormFieldCTField extends JFormFieldList
 	public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
 	{
 		// Create a new query object.
-		$query = 'SELECT ' . database::quoteName('type') . ' FROM ' . database::quoteName('#__customtables_fields') . ' ORDER BY ' . database::quoteName('type');
+		//$query = 'SELECT ' . database::quoteName('type') . ' FROM ' . database::quoteName('#__customtables_fields') . ' ORDER BY ' . database::quoteName('type');
 
 		// Reset the query using our newly populated query object.
-		$results = database::loadColumn($query);
+		//$results = database::loadColumn($query);
+		$whereClause = new MySQLWhereClause();
+		$results = database::loadColumn('#__customtables_fields', ['type'], $whereClause, 'type');
 
 		$translations = DataTypes::fieldTypeTranslation();
 		$_filter = array();

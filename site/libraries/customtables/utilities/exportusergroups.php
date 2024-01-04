@@ -11,6 +11,7 @@
 use CustomTables\common;
 use CustomTables\database;
 use CustomTables\ImportTables;
+use CustomTables\MySQLWhereClause;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -20,7 +21,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 class ImportExportUserGroups
 {
-	public static function processFile($filename, &$msg)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function processFile($filename, &$msg): bool
 	{
 		if (file_exists($filename)) {
 			$data = file_get_contents($filename);
@@ -39,11 +44,13 @@ class ImportExportUserGroups
 		}
 	}
 
-	protected static function processData($jsondata, &$msg)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected static function processData($jsondata): bool
 	{
-
 		$usergroups = $jsondata['usergroups'];
-
 
 		foreach ($usergroups as $usergroup) {
 			$old = ImportTables::getRecordByField('#__usergroups', 'id', $usergroup['id'], false);
@@ -66,21 +73,26 @@ class ImportExportUserGroups
 		return true;
 	}
 
-	public static function exportUserGroups()
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function exportUserGroups(): ?string
 	{
+		$whereClause = new MySQLWhereClause();
+
 		//This function will export user groups
-		$query = 'SELECT * FROM #__usergroups';
-		$usergroups = database::loadAssocList($query);
+		//$query = 'SELECT * FROM #__usergroups';
+		$usergroups = database::loadAssocList('#__usergroups', ['*'], $whereClause);
 		if (count($usergroups) == 0)
-			return false;
+			return null;
 
-		$query = 'SELECT * FROM #__viewlevels';
-		$viewlevels = database::loadAssocList($query);
-		if (count($viewlevels) == 0)
-			return false;
+		//$query = 'SELECT * FROM #__viewlevels';
+		$viewLevels = database::loadAssocList('#__viewlevels', ['*'], $whereClause);
+		if (count($viewLevels) == 0)
+			return null;
 
-
-		$output = ['usergroups' => $usergroups, 'viewlevels' => $viewlevels];
+		$output = ['usergroups' => $usergroups, 'viewlevels' => $viewLevels];
 
 		if (count($output) > 0) {
 			$output_str = '<usergroupsexport>' . common::ctJsonEncode($output);
@@ -103,10 +115,10 @@ class ImportExportUserGroups
 
 			$link = '/tmp/' . $filename_available;
 			file_put_contents($tmp_path . $filename_available, $output_str);
-			$output_str = null;
+			//$output_str = null;
+			return $link;
 		}
-
-		return $link;
+		return null;
 	}
 
 }

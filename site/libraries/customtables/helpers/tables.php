@@ -17,11 +17,16 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Fields;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 
 class ESTables
 {
 	//This function works with MySQL not PostgreeSQL
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function checkTableName($tablename)
 	{
 		$new_tablename = $tablename;
@@ -42,6 +47,10 @@ class ESTables
 		return $new_tablename;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getTableID(string $tablename): int
 	{
 		if (str_contains($tablename, '"'))
@@ -50,8 +59,11 @@ class ESTables
 		if ($tablename == '')
 			return 0;
 
-		$query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . database::quote($tablename) . ' LIMIT 1';
-		$rows = database::loadObjectList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('tablename', $tablename);
+
+		//$query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . database::quote($tablename) . ' LIMIT 1';
+		$rows = database::loadObjectList('#__customtables_tables', ['id'], $whereClause, null, null, 1);
 
 		if (count($rows) != 1)
 			return 0;
@@ -59,17 +71,27 @@ class ESTables
 		return $rows[0]->id;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function checkIfTableExists(string $realtablename): bool
 	{
 		$database = database::getDataBaseName();
 		$realtablename = database::realTableName($realtablename);
 
-		if (database::getServerType() == 'postgresql')
-			$query = 'SELECT COUNT(*) AS c FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename) . ' LIMIT 1';
-		else
-			$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = ' . database::quote($database) . ' AND table_name = ' . database::quote($realtablename) . ' LIMIT 1';
+		$whereClause = new MySQLWhereClause();
 
-		$rows = database::loadObjectList($query);
+		if (database::getServerType() == 'postgresql') {
+			$whereClause->addCondition('table_name', $realtablename);
+			//$query = 'SELECT COUNT(*) AS c FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename) . ' LIMIT 1';
+			$rows = database::loadObjectList('information_schema.columns', ['COUNT(*) AS c'], $whereClause, null, null, 1);
+		} else {
+			$whereClause->addCondition('table_schema', $database);
+			$whereClause->addCondition('table_name', $realtablename);
+			//$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = ' . database::quote($database) . ' AND table_name = ' . database::quote($realtablename) . ' LIMIT 1';
+			$rows = database::loadObjectList('information_schema.tables', ['COUNT(*) AS c'], $whereClause, null, null, 1);
+		}
 
 		$c = (int)$rows[0]->c;
 		if ($c > 0)
@@ -78,6 +100,10 @@ class ESTables
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getTableRowByID(int $tableid): ?object
 	{
 		if ($tableid == 0)
@@ -90,18 +116,29 @@ class ESTables
 		return (object)$row;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getTableRowByIDAssoc(int $tableid)
 	{
 		if ($tableid == 0)
 			return null;
 
-		return ESTables::getTableRowByWhere('id=' . $tableid);
+		return ESTables::getTableRowByWhere(['id' => $tableid]);
 	}
 
-	public static function getTableRowByWhere($where)
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function getTableRowByWhere(array $where)
 	{
-		$query = 'SELECT ' . ESTables::getTableRowSelects() . ' FROM #__customtables_tables AS s WHERE ' . $where . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addConditionsFromArray($where);
+
+		//$query = 'SELECT ' . ESTables::getTableRowSelects() . ' FROM #__customtables_tables AS s WHERE ' . $where . ' LIMIT 1';
+		$rows = database::loadAssocList('#__customtables_tables', ESTables::getTableRowSelectArray(), $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return null;
 
@@ -119,7 +156,7 @@ class ESTables
 		return $row;
 	}
 
-	public static function getTableRowSelects(): string
+	public static function getTableRowSelectArray(): array
 	{
 		$serverType = database::getServerType();
 		if ($serverType == 'postgresql') {
@@ -130,9 +167,13 @@ class ESTables
 			$realidfieldname_query = 'IF(customidfield!=\'\', customidfield, \'id\') AS realidfieldname';
 		}
 
-		return '*, ' . $realtablename_query . ',' . $realidfieldname_query . ', 1 AS published_field_found';
+		return ['*', $realtablename_query, $realidfieldname_query, '1 AS published_field_found'];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $complete_table_name = ''): bool
 	{
 		$serverType = database::getServerType();
@@ -166,7 +207,7 @@ class ESTables
 			}
 		} else {
 			//Mysql;
-			$rows2 = ESTables::getTableStatus($database, $dbPrefix, $tablename);
+			$rows2 = database::getTableStatus($database, $tablename);
 
 			if (count($rows2) > 0) {
 				if ($complete_table_name == '') {
@@ -206,19 +247,17 @@ class ESTables
 		return false;
 	}
 
-	public static function getTableStatus($database, $dbPrefix, $tablename)
-	{
-		return database::loadObjectList('SHOW TABLE STATUS FROM ' . database::quoteName($database) . ' LIKE ' . database::quote($dbPrefix . 'customtables_table_' . $tablename));
-	}
-
-
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function renameTableIfNeeded($tableid, $database, $dbPrefix, $tablename): void
 	{
 		$old_tablename = ESTables::getTableName($tableid);
 
 		if ($old_tablename != $tablename) {
 			//rename table
-			$tableStatus = ESTables::getTableStatus($database, $dbPrefix, $old_tablename);
+			$tableStatus = database::getTableStatus($database, $old_tablename);
 
 			if (count($tableStatus) > 0) {
 				$query = 'RENAME TABLE ' . database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $old_tablename) . ' TO '
@@ -229,19 +268,30 @@ class ESTables
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getTableName($tableid = 0): ?string
 	{
 		if ($tableid == 0)
 			$tableid = common::inputGetInt('tableid', 0);
 
-		$query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id=' . (int)$tableid . ' LIMIT 1';
-		$rows = database::loadObjectList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('id', (int)$tableid);
+
+		//$query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id=' . (int)$tableid . ' LIMIT 1';
+		$rows = database::loadObjectList('#__customtables_tables AS s', ['tablename'], $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return null;
 
 		return $rows[0]->tablename;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addThirdPartyTableFieldsIfNeeded($database, $tablename, $realtablename): bool
 	{
 		$fields = Fields::getFields($tablename, false, true);
@@ -250,12 +300,28 @@ class ESTables
 
 		//Add third-party fields
 
-		$tablerow = ESTables::getTableRowByName($tablename);
+		$tableRow = ESTables::getTableRowByName($tablename);
+
+		$whereClause = new MySQLWhereClause();
 
 		$serverType = database::getServerType();
-		if ($serverType == 'postgresql')
-			$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename);
-		else
+
+		if ($serverType == 'postgresql') {
+			$selects = ['column_name', 'data_type', 'is_nullable', 'column_default'];
+			//$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename);
+		} else {
+			$selects = [
+				'COLUMN_NAME AS column_name',
+				'DATA_TYPE AS data_type',
+				'COLUMN_TYPE AS column_type',
+				'IF(COLUMN_TYPE LIKE "%unsigned", "YES", "NO") AS is_unsigned',
+				'IS_NULLABLE AS is_nullable',
+				'COLUMN_DEFAULT AS column_default',
+				'COLUMN_COMMENT AS column_comment',
+				'COLUMN_KEY AS column_key',
+				'EXTRA AS extra'
+			];
+			/*
 			$query = 'SELECT '
 				. 'COLUMN_NAME AS column_name,'
 				. 'DATA_TYPE AS data_type,'
@@ -266,8 +332,13 @@ class ESTables
 				. 'COLUMN_COMMENT AS column_comment,'
 				. 'COLUMN_KEY AS column_key,'
 				. 'EXTRA AS extra FROM information_schema.columns WHERE table_schema = ' . database::quote($database) . ' AND table_name = ' . database::quote($realtablename);
+			*/
+			$whereClause->addCondition('table_schema', $database);
+		}
+		$whereClause->addCondition('table_name', $realtablename);
 
-		$fields = database::loadObjectList($query);
+		$fields = database::loadObjectList('information_schema.columns', $selects, $whereClause);
+
 		$set_fieldNames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
 
 		$primary_key_column = '';
@@ -284,7 +355,7 @@ class ESTables
 					return false;
 				}
 
-				$set_values['tableid'] = (int)$tablerow->id;
+				$set_values['tableid'] = (int)$tableRow->id;
 				$set_values['fieldname'] = database::quote(strtolower($field->column_name));
 				$set_values['fieldtitle'] = database::quote(ucwords(strtolower($field->column_name)));
 				$set_values['allowordering'] = 'true';
@@ -307,12 +378,16 @@ class ESTables
 
 		if ($primary_key_column != '') {
 			//Update primary key column
-			$query = 'UPDATE #__customtables_tables SET customidfield = ' . database::quote($primary_key_column) . ' WHERE id = ' . (int)$tablerow->id;
+			$query = 'UPDATE #__customtables_tables SET customidfield = ' . database::quote($primary_key_column) . ' WHERE id = ' . (int)$tableRow->id;
 			database::setQuery($query);
 		}
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getTableRowByName($tablename = ''): ?object
 	{
 		if ($tablename === null)
@@ -325,14 +400,22 @@ class ESTables
 		return (object)$row;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getTableRowByNameAssoc($tablename = '')
 	{
 		if ($tablename === null)
 			return null;
 
-		return ESTables::getTableRowByWhere('tablename=' . database::quote($tablename));
+		return ESTables::getTableRowByWhere(['tablename' => $tablename]);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function copyTable(CT $ct, $originalTableId, $new_table, $old_table, $customTableName = '')
 	{
 		//Copy Table
@@ -374,8 +457,13 @@ class ESTables
 			}
 		}
 
-		$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . $originalTableId;
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . $originalTableId;
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('tableid', $originalTableId);
+
+		$rows = database::loadAssocList('#__customtables_fields', ['*'], $whereClause, null, null);
 
 		if (count($rows) == 0)
 			die('Original table has no fields.');

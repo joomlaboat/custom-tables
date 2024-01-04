@@ -35,7 +35,7 @@ class Twig_Html_Tags
 		$this->button_objects = [];//Not clear where and how this variable used.
 	}
 
-	function recordcount()
+	function recordcount(): string
 	{
 		if ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != '')
 			return '';
@@ -100,7 +100,7 @@ class Twig_Html_Tags
 		return '<a href="' . CUSTOMTABLES_MEDIA_HOME_URL . $link . '" id="ctToolBarAddNew' . $this->ct->Table->tableid . '" class="toolbarIcons">' . $img . '</a>';
 	}
 
-	function importcsv()
+	function importcsv(): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
@@ -148,7 +148,7 @@ class Twig_Html_Tags
 ';
 	}
 
-	function pagination($show_arrow_icons = false)
+	function pagination($show_arrow_icons = false): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
@@ -244,10 +244,7 @@ class Twig_Html_Tags
 			$vlu = '<a href="' . $returnto . '" ' . $attribute . '><div>' . $img . $label . '</div></a>';
 		}
 
-		if ($this->isTwig)
-			return $vlu;
-		else
-			return $vlu;
+		return $vlu;
 	}
 
 	function batch()
@@ -761,8 +758,12 @@ class Twig_Html_Tags
 
 	protected function getReCaptchaParams()
 	{
-		$query = 'SELECT params FROM #__extensions WHERE ' . database::quoteName("name") . '=' . database::quote("plg_captcha_recaptcha") . ' LIMIT 1';
-		$rows = database::loadObjectList($query);
+		//$query = 'SELECT params FROM #__extensions WHERE ' . database::quoteName("name") . '=' . database::quote("plg_captcha_recaptcha") . ' LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('name', 'plg_captcha_recaptcha');
+
+		$rows = database::loadObjectList('#__extensions', ['params', '', '', '', ''], $whereClause, null, null, 1);
 		if (count($rows) == 0)
 			return null;
 

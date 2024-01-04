@@ -119,9 +119,9 @@ class Params
 				//Do not block external var parameters because this is the edit form or a task
 			} elseif (method_exists($this->app, 'getParams')) {
 				try {
-					if ($this->app->getLanguage() !== null)
+					if ($this->app->getLanguage() !== null) {
 						$menu_params = @$this->app->getParams();
-					else
+					} else
 						$menu_params = new Registry;
 				} catch (Exception $e) {
 					$menu_params = new Registry;
@@ -204,8 +204,9 @@ class Params
 				$this->filter = $filter['search'];
 			} else
 				$this->filter = $filter;
-		} else
+		} else {
 			$this->filter = $menu_params->get('filter');
+		}
 
 		$this->showPublished = (int)$menu_params->get('showpublished');
 

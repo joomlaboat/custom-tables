@@ -11,11 +11,16 @@
 
 use CustomTables\common;
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function renderDependencies(object $layout_row): string
 {
 	$count = 0;
@@ -171,52 +176,85 @@ function _renderTableList($rows): string
 	return $result;
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function _getTablesThatUseThisLayout($wF)
 {
 	$fields = '(SELECT GROUP_CONCAT(CONCAT(f.id,",",fieldname),";") FROM #__customtables_fields AS f WHERE ' . $wF . ' ORDER BY fieldname) AS fields';
-	$w = '(SELECT tableid FROM #__customtables_fields AS f WHERE ' . $wF . ' LIMIT 1) IS NOT NULL';
-	$query = 'SELECT id AS tableid, tabletitle,tablename, ' . $fields . ' FROM #__customtables_tables AS t WHERE ' . $w . ' ORDER BY tablename';
-	return database::loadAssocList($query);
+	//$w = '(SELECT tableid FROM #__customtables_fields AS f WHERE ' . $wF . ' LIMIT 1) IS NOT NULL';
+	//$query = 'SELECT id AS tableid, tabletitle,tablename, ' . $fields . ' FROM #__customtables_tables AS t WHERE ' . $w . ' ORDER BY tablename';
+
+	$whereClause = new MySQLWhereClause();
+	$whereClause->addCondition('(SELECT tableid FROM #__customtables_fields AS f WHERE ' . $wF . ' LIMIT 1)', null, 'NOT NULL');
+
+	return database::loadAssocList('#__customtables_tables AS t', ['id AS tableid', 'tabletitle', 'tablename', $fields], $whereClause, 'tablename', null);
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function _getMenuItemsThatUseThisLayout($layoutname)
 {
-	$wheres = array();
-	$wheres[] = 'published=1';
-	$wheres[] = 'INSTR(link,"index.php?option=com_customtables&view=")';
+	//$wheres = array();
+	$whereClause = new MySQLWhereClause();
+	$whereClause->addCondition('published', 1);
+	$whereClause->addCondition('link', 'index.php?option=com_customtables&view=', 'INSTR');
+	//$wheres[] = 'published=1';
+	//$wheres[] = 'INSTR(link,"index.php?option=com_customtables&view=")';
 
 	$layout_params = ['escataloglayout', 'esitemlayout', 'esdetailslayout', 'eseditlayout', 'onrecordaddsendemaillayout', 'cataloglayout'];
-	$w = array();
+	//$w = array();
 	foreach ($layout_params as $l) {
 		$toSearch = '"' . $l . '":"' . $layoutname . '"';
-		$w[] = 'INSTR(params,' . database::quote($toSearch) . ')';
+		$whereClause->addOrCondition('params', $toSearch, 'INSTR');
+		//$w[] = 'INSTR(params,' . database::quote($toSearch) . ')';
 	}
-	$wheres[] = '(' . implode(' OR ', $w) . ')';
-	$query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
-	return database::loadAssocList($query);
+	//$wheres[] = '(' . implode(' OR ', $w) . ')';
+	//$query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
+
+	return database::loadAssocList('#__menu', ['id', 'title'], $whereClause, null, null);
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function _getModulesThatUseThisLayout($layoutname)
 {
-	$wheres = array();
-	$wheres[] = 'published=1';
-	$wheres[] = 'module=' . database::quote('mod_ctcatalog');
+	$whereClause = new MySQLWhereClause();
+	$whereClause->addCondition('published', 1);
+	$whereClause->addCondition('module', 'mod_ctcatalog');
+	//$wheres = array();
+	//$wheres[] = 'published=1';
+	//$wheres[] = 'module=' . database::quote('mod_ctcatalog');
 
 	$layout_params = ['ct_pagelayout', 'ct_itemlayout'];
-	$w = array();
+	//$w = array();
 	foreach ($layout_params as $l) {
 		$toSearch = '"' . $l . '":"' . $layoutname . '"';
-		$w[] = 'INSTR(params,' . database::quote($toSearch) . ')';
+		$whereClause->addOrCondition('params', $toSearch, 'INSTR');
+		//$w[] = 'INSTR(params,' . database::quote($toSearch) . ')';
 	}
-	$wheres[] = '(' . implode(' OR ', $w) . ')';
-	$query = 'SELECT id,title FROM #__modules WHERE ' . implode(' AND ', $wheres);
-	return database::loadAssocList($query);
+	//$wheres[] = '(' . implode(' OR ', $w) . ')';
+	//$query = 'SELECT id,title FROM #__modules WHERE ' . implode(' AND ', $wheres);
+
+	return database::loadAssocList('#__modules', ['id', 'title'], $whereClause, null, null);
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function _getLayoutsThatUseThisLayout(string $layoutName)
 {
-	$wheres = array();
-	$wheres[] = 'published=1';
+	$whereClause = new MySQLWhereClause();
+
+	//$wheres = array();
+	$whereClause->addCondition('published', 1);
+	//$wheres[] = 'published=1';
 
 	$layout_params = ['{layout:' . $layoutName . '}',    //example: {layout:layoutname}
 		':layout:' . $layoutName . ',',    //example: [field:layout,someparameter]
@@ -227,23 +265,25 @@ function _getLayoutsThatUseThisLayout(string $layoutName)
 		"'" . $layoutName . "'",    //example: 'layout'
 		',' . $layoutName . ','];        //For plugins
 
-	$w = [];
+	//$w = [];
 	foreach ($layout_params as $l)
-		$w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
+		$whereClause->addOrCondition('layoutcode', $l, 'INSTR');
+//		$w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
-		$w[] = 'INSTR(layoutmobile,' . database::quote($l) . ')';
+		$whereClause->addOrCondition('layoutmobile', $l, 'INSTR');
+	//$w[] = 'INSTR(layoutmobile,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
-		$w[] = 'INSTR(layoutcss,' . database::quote($l) . ')';
+		$whereClause->addOrCondition('layoutcss', $l, 'INSTR');
+	//$w[] = 'INSTR(layoutcss,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
-		$w[] = 'INSTR(layoutjs,' . database::quote($l) . ')';
+		$whereClause->addOrCondition('layoutjs', $l, 'INSTR');
+	//$w[] = 'INSTR(layoutjs,' . database::quote($l) . ')';
 
-	foreach ($layout_params as $l) {
-		$w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
-	}
-	$wheres[] = '(' . implode(' OR ', $w) . ')';
-	$query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
-	return database::loadAssocList($query);
+	//$wheres[] = '(' . implode(' OR ', $w) . ')';
+	//$query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
+
+	return database::loadAssocList('#__customtables_layouts', ['id', 'layoutname'], $whereClause, null, null);
 }

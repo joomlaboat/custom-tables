@@ -19,6 +19,7 @@ use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
@@ -87,9 +88,17 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 
 	function getFileList()
 	{
-		return database::loadObjectList('SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . database::quote($this->ct->Params->listing_id) . ' ORDER BY fileid');
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('listingid', $this->ct->Params->listing_id);
+
+		return database::loadObjectList($this->fileboxtablename, ['fileid', 'file_ext'], $whereClause, 'fileid');
+		//'SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . database::quote($this->ct->Params->listing_id) . ' ORDER BY fileid');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function delete(): bool
 	{
 		$fileIds = common::inputPostString('fileids', '');
@@ -158,6 +167,10 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 	}
 
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function addFileRecord(string $file_ext, string $title): int
 	{
 		$query = 'INSERT ' . $this->fileboxtablename . ' SET '
@@ -173,8 +186,12 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 			die;
 		}
 
-		$query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . database::quote($this->ct->Params->listing_id) . ' ORDER BY fileid DESC LIMIT 1';
-		$rows = database::loadObjectList($query);
+		//$query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . database::quote($this->ct->Params->listing_id) . ' ORDER BY fileid DESC LIMIT 1';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('listingid', $this->ct->Params->listing_id);
+
+		$rows = database::loadObjectList($this->fileboxtablename, ['fileid'], $whereClause, 'fileid', 'DESC', 1);
 
 		if (count($rows) == 1) {
 			return $rows[0]->fileid;

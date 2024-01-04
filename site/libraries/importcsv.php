@@ -17,7 +17,12 @@ use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\InputBox_time;
+use CustomTables\MySQLWhereClause;
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function importCSVfile($filename, $ct_tableid)
 {
 	if (file_exists($filename))
@@ -44,7 +49,7 @@ function getLines($filename): ?array
 }
 
 //https://stackoverflow.com/questions/26717462/php-best-approach-to-detect-csv-delimiter/59581170  
-function detectDelimiter($csvFile)
+function detectDelimiter($csvFile): string
 {
 	//first line is a list of field name, so this approach is ok here
 	$delimiters = [";" => 0, "," => 0, "\t" => 0, "|" => 0];
@@ -59,6 +64,10 @@ function detectDelimiter($csvFile)
 	return array_search(max($delimiters), $delimiters);
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function processFieldParams($fieldList, array $fields): array
 {
 	foreach ($fieldList as $f_index) {
@@ -89,6 +98,10 @@ function processFieldParams($fieldList, array $fields): array
 	return $fields;
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function importCSVdata(string $filename, $ct_tableid): string
 {
 	$arrayOfLines = getLines($filename);
@@ -116,11 +129,11 @@ function importCSVdata(string $filename, $ct_tableid): string
 
 	for ($i = $offset; $i < count($arrayOfLines); $i++) {
 		if (count($arrayOfLines[$i]) > 0) {
-			$sets = prepareSQLQuery($fieldList, $fields, $arrayOfLines[$i]);
-			$listing_id = findRecord($tableRow->realtablename, $tableRow->realidfieldname, $tableRow->published_field_found, $sets);
+			$result = prepareSQLQuery($fieldList, $fields, $arrayOfLines[$i]);
+			$listing_id = findRecord($tableRow->realtablename, $tableRow->realidfieldname, $tableRow->published_field_found, $result->where);
 
 			if (is_null($listing_id)) {
-				$query = 'INSERT ' . $tableRow->realtablename . ' SET ' . implode(', ', $sets);
+				$query = 'INSERT ' . $tableRow->realtablename . ' SET ' . implode(', ', $result->sets);
 
 				try {
 					database::setQuery($query);
@@ -133,13 +146,19 @@ function importCSVdata(string $filename, $ct_tableid): string
 	return '';
 }
 
-function findRecord($realtablename, $realidfieldname, bool $published_field_found, array $wheres)
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
+function findRecord($realtablename, $realidfieldname, bool $published_field_found, MySQLWhereClause $whereClause)
 {
 	if ($published_field_found)
-		$wheres[] = 'published=1';
+		$whereClause->addCondition('published', 1);
+	//$wheres[] = 'published=1';
 
-	$query = 'SELECT ' . $realidfieldname . ' FROM ' . $realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
-	$rows = database::loadAssocList($query);
+	//$query = 'SELECT ' . $realidfieldname . ' FROM ' . $realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
+
+	$rows = database::loadAssocList($realtablename, [$realidfieldname], $whereClause, null, null, 1);
 
 	if (count($rows) == 0)
 		return null;
@@ -147,20 +166,29 @@ function findRecord($realtablename, $realidfieldname, bool $published_field_foun
 	return $rows[0][$realidfieldname];
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname, bool $published_field_found, $vlus_str): ?array
 {
-	$values = explode(',', $vlus_str);
-	$wheres_or = array();
-	foreach ($values as $vlu)
-		$wheres_or[] = database::quoteName($join_realfieldname) . '=' . database::quote($vlu);
+	$whereClause = new MySQLWhereClause();
 
-	$wheres[] = '(' . implode(' OR ', $wheres_or) . ')';
+	$values = explode(',', $vlus_str);
+	//$wheres_or = array();
+	foreach ($values as $vlu)
+		$whereClause->addOrCondition($join_realfieldname, $vlu);
+	//$wheres_or[] = database::quoteName($join_realfieldname) . '=' . database::quote($vlu);
+
+	//$wheres[] = '(' . implode(' OR ', $wheres_or) . ')';
 
 	if ($published_field_found)
-		$wheres[] = 'published=1';
+		$whereClause->addOrCondition('published', 1);
+	//$wheres[] = 'published=1';
 
-	$query = 'SELECT ' . $realidfieldname . ' FROM ' . $realtablename . ' WHERE ' . implode(' AND ', $wheres);
-	$rows = database::loadAssocList($query);
+	//$query = 'SELECT ' . $realidfieldname . ' FROM ' . $realtablename . ' WHERE ' . implode(' AND ', $wheres);
+
+	$rows = database::loadAssocList($realtablename, [$realidfieldname], $whereClause, null, null);
 
 	if (count($rows) == 0)
 		return null;
@@ -172,13 +200,23 @@ function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname
 	return $listing_ids;
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function findSQLJoin($realtablename, $join_realfieldname, $realidfieldname, bool $published_field_found, $vlu)
 {
-	$wheres = [database::quoteName($join_realfieldname) . '=' . database::quote($vlu)];
+	$whereClause = new MySQLWhereClause();
+	$whereClause->addCondition($join_realfieldname, $vlu);
+	//$wheres = [database::quoteName($join_realfieldname) . '=' . database::quote($vlu)];
 
-	return findRecord($realtablename, $realidfieldname, $published_field_found, $wheres);
+	return findRecord($realtablename, $realidfieldname, $published_field_found, $whereClause);
 }
 
+/**
+ * @throws Exception
+ * @since 3.2.2
+ */
 function addSQLJoinSets($realtablename, $sets): void
 {
 	$query = 'INSERT ' . $realtablename . ' SET ' . implode(',', $sets);
@@ -189,9 +227,11 @@ function addSQLJoinSets($realtablename, $sets): void
  * @throws Exception
  * @since 3.2.2
  */
-function prepareSQLQuery($fieldList, $fields, $line): array
+function prepareSQLQuery($fieldList, $fields, $line): object
 {
-	$sets = array();
+	$sets = [];
+	$whereClause = new MySQLWhereClause();
+
 	$i = 0;
 
 	foreach ($fieldList as $f_index) {
@@ -223,13 +263,15 @@ function prepareSQLQuery($fieldList, $fields, $line): array
 							$fields[$f_index]->sqljoin->realidfieldname,
 							(bool)$fields[$f_index]->sqljoin->published_field_found,
 							$line[$i]);
-
 					}
 
-					if ((int)$vlu > 0)
+					if ((int)$vlu > 0) {
+						$whereClause->addCondition($fields[$f_index]->realfieldnam, (int)$vlu);
 						$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . (int)$vlu;
-					else
+					} else {
+						$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
 						$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
+					}
 				}
 			} elseif ($fieldType == 'records') {
 				if (isset($fields[$f_index]->sqljoin)) {
@@ -255,26 +297,38 @@ function prepareSQLQuery($fieldList, $fields, $line): array
 							$line[$i]);
 					}
 
-					if (!is_null($vlu) and $vlu != '')
+					if (!is_null($vlu) and $vlu != '') {
+						$whereClause->addCondition($fields[$f_index]->realfieldnam, '%,' . implode(',', $vlu) . ',%', 'LIKE');
 						$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . database::quote(',' . implode(',', $vlu) . ',');
-					else
+					} else {
+						$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
 						$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
+					}
 				}
 			} elseif ($fieldType == 'date' or $fieldType == 'creationtime' or $fieldType == 'changetime') {
-				if (isset($line[$i]) and $line[$i] != '')
+				if (isset($line[$i]) and $line[$i] != '') {
+					$whereClause->addCondition($fields[$f_index]->realfieldnam, $line[$i]);
 					$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . database::quote($line[$i]);
-				else
+				} else {
+					$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
 					$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
+				}
 			} elseif ($fieldType == 'int' or $fieldType == 'user' or $fieldType == 'userid') {
-				if (isset($line[$i]) and $line[$i] != '')
+				if (isset($line[$i]) and $line[$i] != '') {
+					$whereClause->addCondition($fields[$f_index]->realfieldnam, (int)$line[$i]);
 					$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . (int)$line[$i];
-				else
+				} else {
+					$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
 					$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
+				}
 			} elseif ($fieldType == 'float') {
-				if (isset($line[$i]) and $line[$i] != '')
+				if (isset($line[$i]) and $line[$i] != '') {
+					$whereClause->addCondition($fields[$f_index]->realfieldnam, (float)$line[$i]);
 					$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . (float)$line[$i];
-				else
+				} else {
+					$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
 					$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
+				}
 			} elseif ($fieldType == 'checkbox') {
 				if (isset($line[$i]) and $line[$i] != '') {
 					if ($line[$i] == 'Yes' or $line[$i] == '1')
@@ -282,6 +336,7 @@ function prepareSQLQuery($fieldList, $fields, $line): array
 					else
 						$vlu = 0;
 
+					$whereClause->addCondition($fields[$f_index]->realfieldnam, $vlu);
 					$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . $vlu;
 				}
 			} elseif ($fieldType == 'time') {
@@ -291,18 +346,21 @@ function prepareSQLQuery($fieldList, $fields, $line): array
 				$seconds = InputBox_Time::formattedTime2Seconds($line[$i]);
 				$ticks = InputBox_Time::seconds2Ticks($seconds, $fieldParams);
 
-				$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . (int)$ticks;
+				$whereClause->addCondition($fields[$f_index]->realfieldnam, $ticks);
+				$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . $ticks;
 
 			} else {
 				if (isset($line[$i])) {
 					$vlu = $line[$i];
+					$whereClause->addCondition($fields[$f_index]->realfieldnam, $vlu);
 					$sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . database::quote($vlu);
 				}
 			}
 		}
 		$i++;
 	}
-	return $sets;
+
+	return (object)['sets' => $sets, 'where' => $whereClause];
 }
 
 /**
@@ -353,7 +411,7 @@ function prepareFieldList(array $fieldNames, array $fields, bool &$first_line_fi
 				$count++;
 				$first_line_fieldnames = true;
 				break;
-			} elseif ((string)$clean_field_name == (string)$fieldName or (string)$field->fieldname == (string)$fieldName or (string)$field->fieldtitle == (string)$fieldName) {
+			} elseif ($clean_field_name == $fieldName or (string)$field->fieldname == $fieldName or (string)$field->fieldtitle == $fieldName) {
 				$fieldList[] = $index;
 				$found = true;
 				$count++;

@@ -18,6 +18,7 @@ use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Details;
+use CustomTables\MySQLWhereClause;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -60,9 +61,13 @@ class CustomTablesViewLog extends HtmlView
 		parent::display($tpl);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getRecords($action, $userid, $tableid)
 	{
-		$mainframe = Factory::getApplication('site');
+		$mainframe = Factory::getApplication();
 		$this->limit = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
 		if ($this->limit == 0)
 			$this->limit = 20;
@@ -78,17 +83,22 @@ class CustomTablesViewLog extends HtmlView
 		$selects[] = '(SELECT fieldname FROM #__customtables_fields WHERE #__customtables_fields.published=1 AND #__customtables_fields.tableid=#__customtables_log.tableid '
 			. 'ORDER BY ordering LIMIT 1) AS FieldName';
 
-		$where = array();
+		$whereClause = new MySQLWhereClause();
+
+		//$where = array();
 		if ($action != -1)
-			$where[] = 'action=' . $action;
+			$whereClause->addCondition('action', $action);
+		//$where[] = 'action=' . $action;
 
 		if ($userid != 0)
-			$where[] = 'userid=' . $userid;
+			$whereClause->addCondition('userid', $userid);
+		//$where[] = 'userid=' . $userid;
 
 		if ($tableid != 0)
-			$where[] = 'tableid=' . $tableid;
+			$whereClause->addCondition('tableid', $tableid);
+		//$where[] = 'tableid=' . $tableid;
 
-		$query = 'SELECT ' . implode(',', $selects) . ' FROM #__customtables_log ' . (count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY datetime DESC';
+		//$query = 'SELECT ' . implode(',', $selects) . ' FROM #__customtables_log ' . (count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY datetime DESC';
 		$this->record_count = 1000;
 
 		$the_limit = $this->limit;
@@ -101,7 +111,7 @@ class CustomTablesViewLog extends HtmlView
 		if ($this->record_count < $this->limitStart or $this->record_count < $the_limit)
 			$this->limitStart = 0;
 
-		return database::loadAssocList($query, $this->limitStart, $the_limit);
+		return database::loadAssocList('#__customtables_log', $selects, $whereClause, 'datetime', 'DESC', $the_limit, $this->limitStart);
 	}
 
 	function ActionFilter($action): string
@@ -119,10 +129,21 @@ class CustomTablesViewLog extends HtmlView
 		return $result;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getUsers($userid): string
 	{
-		$query = 'SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.userid GROUP BY #__users.id ORDER BY name';
-		$rows = database::loadAssocList($query);
+		$from = '#__customtables_log';
+		$from .= 'INNER JOIN #__users ON #__users.id=#__customtables_log.userid';
+
+		//$query = 'SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.userid GROUP BY #__users.id ORDER BY name';
+
+		$whereClause = new MySQLWhereClause();
+
+		$rows = database::loadAssocList($from, ['#__users.id AS id', '#__users.name AS name'], $whereClause, 'name', null, null, null, '#__users.id');
+
 		$result = '<select onchange="UserFilterChanged(this)">';
 		$result .= '<option value="0" ' . ($userid === null ? 'selected="SELECTED"' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 
@@ -133,9 +154,15 @@ class CustomTablesViewLog extends HtmlView
 		return $result;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getTables($tableId): string
 	{
-		$rows = database::loadAssocList('SELECT id,tablename FROM #__customtables_tables ORDER BY tablename');
+		$whereClause = new MySQLWhereClause();
+
+		$rows = database::loadAssocList('#__customtables_tables', ['id', 'tablename'], $whereClause, 'tablename');
 
 		$result = '<select onchange="TableFilterChanged(this)">';
 		$result .= '<option value="0" ' . ($tableId == 0 ? 'selected="SELECTED"' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
@@ -148,6 +175,10 @@ class CustomTablesViewLog extends HtmlView
 		return $result;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function renderLogLine($rec): string
 	{
 		$actions = ['New', 'Edit', 'Publish', 'Unpublish', 'Delete', 'Image Uploaded', 'Image Deleted', 'File Uploaded', 'File Deleted', 'Refreshed'];
@@ -186,6 +217,10 @@ class CustomTablesViewLog extends HtmlView
 		return $result;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getRecordValue($listing_id, $Itemid, $FieldName): string
 	{
 		if (!isset($FieldName) or $FieldName == '')

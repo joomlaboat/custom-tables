@@ -18,6 +18,7 @@ use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 
 if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php'))
@@ -268,8 +269,16 @@ class CT_FieldTypeTag_file
 
 	public static function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field $field): bool
 	{
-		$query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . database::quote($filename) . ' LIMIT 2';
-		return database::getNumRowsOnly($query) > 1;
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($field->realfieldname, $filename);
+		$col = database::loadColumn($field->ct->Table->realtablenam, ['COUNT(*) AS c'], $whereClause, null, null, 2);
+		if (count($col) == 0)
+			return false;
+
+		return $col[0] > 1;
+
+		//$query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . database::quote($filename) . ' LIMIT 2';
+		//return database::getNumRowsOnly($query) > 1;
 	}
 
 	protected static function getCleanAndAvailableFileName(string $filename, string $FileFolder): string
@@ -322,7 +331,7 @@ class CT_FieldTypeTag_file
 			$content = stripslashes($row[$field->realfieldname . '_sample']);
 			$mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
 			$mime_file_extension = JoomlaBasicMisc::mime2ext($mime);
-			if ($mime_file_extension)
+			if ($mime_file_extension !== null)
 				$file_extension = $mime_file_extension;
 
 			if ($valueSize == 0)

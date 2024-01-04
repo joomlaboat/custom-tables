@@ -32,8 +32,12 @@ class Languages
 	function getLanguageList(): array
 	{
 		if (defined('_JEXEC')) {
-			$query = 'SELECT lang_id AS id, lang_code AS language, title AS caption, title, sef AS original_sef FROM #__languages WHERE published=1 ORDER BY lang_id';
-			$rows = database::loadObjectList($query);
+			//$query = 'SELECT lang_id AS id, lang_code AS language, title AS caption, title, sef AS original_sef FROM #__languages WHERE published=1 ORDER BY lang_id';
+
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('published', 1);
+
+			$rows = database::loadObjectList('#__languages', ['lang_id AS id', 'lang_code AS language', 'title AS caption', 'title', 'sef AS original_sef'], $whereClause, 'lang_id');
 
 			$this->LanguageList = array();
 			foreach ($rows as $row) {
@@ -122,8 +126,12 @@ class Languages
 	function getLanguageByCODE($code): int
 	{
 		if (defined('_JEXEC')) {
-			$query = ' SELECT lang_id AS id FROM #__languages WHERE lang_code="' . $code . '" LIMIT 1';
-			$rows = database::loadObjectList($query);
+			//$query = ' SELECT lang_id AS id FROM #__languages WHERE lang_code="' . $code . '" LIMIT 1';
+
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('lang_code', $code);
+
+			$rows = database::loadObjectList('#__languages', ['lang_id AS id'], $whereClause, null, null, 1);
 			if (count($rows) != 1)
 				return -1;
 

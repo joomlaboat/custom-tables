@@ -20,6 +20,7 @@ use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Fields;
 
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
@@ -587,8 +588,11 @@ class CustomtablesModelFields extends AdminModel
 			}
 			// Set ordering to the last item if not set
 			if (empty($table->ordering)) {
-				$query = 'SELECT MAX(ordering) FROM ' . database::quoteName('#__customtables_fields');
-				$col = database::loadColumn($query);
+				//$query = 'SELECT MAX(ordering) FROM ' . database::quoteName('#__customtables_fields');
+
+				$whereClause = new MySQLWhereClause();
+				$col = database::loadColumn('#__customtables_fields', ['MAX(ordering)'], $whereClause, 'rgt');
+				
 				$max = $col[0];
 				$table->ordering = $max + 1;
 			}

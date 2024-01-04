@@ -19,6 +19,7 @@ use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
@@ -178,11 +179,20 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getPhotoList()
 	{
-		$query = 'SELECT ordering, photoid,  title' . $this->ct->Languages->Postfix . ' AS title, photo_ext FROM ' . $this->phototablename
-			. ' WHERE listingid=' . $this->listing_id . ' ORDER BY ordering, photoid';
-		return database::loadObjectList($query);
+		//$query = 'SELECT ordering, photoid,  title' . $this->ct->Languages->Postfix . ' AS title, photo_ext FROM ' . $this->phototablename
+		//. ' WHERE listingid=' . $this->listing_id . ' ORDER BY ordering, photoid';
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('listingid', $this->listing_id);
+
+		return database::loadObjectList($this->phototablename, ['ordering', 'photoid', 'title' . $this->ct->Languages->Postfix . ' AS title', 'photo_ext'],
+			$whereClause, 'ordering, photoid');
 	}
 
 	function delete(): bool
@@ -297,6 +307,10 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		return ($outputfile);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function addPhotoRecord(string $photo_ext, string $title): int
 	{
 		$query = 'INSERT ' . $this->phototablename . ' SET '
@@ -314,9 +328,12 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 
 		$this->AutoReorderPhotos();
 
+		//$query = ' SELECT photoid FROM ' . $this->phototablename . ' WHERE listingid=' . database::quote() . ' ORDER BY photoid DESC LIMIT 1';
 
-		$query = ' SELECT photoid FROM ' . $this->phototablename . ' WHERE listingid=' . database::quote($this->listing_id) . ' ORDER BY photoid DESC LIMIT 1';
-		$rows = database::loadObjectList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('listingid', $this->listing_id);
+
+		$rows = database::loadObjectList($this->phototablename, ['photoid'], $whereClause, 'photoid', 'DESC', 1);
 
 		if (count($rows) == 1)
 			return $rows[0]->photoid;

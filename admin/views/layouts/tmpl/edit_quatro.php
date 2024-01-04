@@ -105,7 +105,7 @@ foreach ($this->allTables as $table) {
 	echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutmobile-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE')); ?>
 	<?php
 	if ($this->ct->Env->advancedTagProcessor) {
-		$layoutCode = $this->item->layoutmobile;
+		$layoutCode = $this->item->layoutmobile ?? '';
 		if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
 			$layouts = new Layouts($this->ct);
 			$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '_mobile.html', 'layoutmobile');
@@ -124,7 +124,7 @@ foreach ($this->allTables as $table) {
 	<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcss-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_CSS')); ?>
 	<?php
 	if ($this->ct->Env->advancedTagProcessor) {
-		$layoutCode = $this->item->layoutcss;
+		$layoutCode = $this->item->layoutcss ?? '';
 		if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
 			$layouts = new Layouts($this->ct);
 			$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '.css', 'layoutcss');
@@ -143,7 +143,7 @@ foreach ($this->allTables as $table) {
 	<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutjs-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_JS')); ?>
 	<?php
 	if ($this->ct->Env->advancedTagProcessor) {
-		$layoutCode = $this->item->layoutjs;
+		$layoutCode = $this->item->layoutjs ?? '';
 		if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
 			$layouts = new Layouts($this->ct);
 			$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '.js', 'layoutjs');

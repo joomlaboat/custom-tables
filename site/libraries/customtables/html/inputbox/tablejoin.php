@@ -28,6 +28,10 @@ class InputBox_tablejoin extends BaseInputBox
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function renderTableJoinSelectorJSON(CT &$ct, $key, $obEndClean = true): ?string
 	{
 		$index = common::inputGetInt('index');
@@ -44,7 +48,12 @@ class InputBox_tablejoin extends BaseInputBox
 		return self::renderTableJoinSelectorJSON_Process($ct, $selectors, $index, $additional_filter, $subFilter, $search, $obEndClean);
 	}
 
-	protected static function renderTableJoinSelectorJSON_Process(CT &$ct, $selectors, $index, $additional_filter, $subFilter, ?string $search = null, $obEndClean = true): ?string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected static function renderTableJoinSelectorJSON_Process(CT      &$ct, $selectors, $index, $additional_filter, $subFilter,
+	                                                              ?string $search = null, $obEndClean = true): ?string
 	{
 		$selector = $selectors[$index];
 
@@ -79,7 +88,9 @@ class InputBox_tablejoin extends BaseInputBox
 			$filter .= base64_decode($filterOverride);
 		}
 
-		$additional_where = '';
+		$whereClauseAdditional = new MySQLWhereClause();
+
+		//$additional_where = '';
 		//Find the field name that has a join to the parent (index-1) table
 		foreach ($ct->Table->fields as $fld) {
 			if ($fld['type'] == 'sqljoin' or $fld['type'] == 'records') {
@@ -95,23 +106,28 @@ class InputBox_tablejoin extends BaseInputBox
 				} else {
 					//Check if this table has self-parent field - the TableJoin field linked with the same table.
 					if ($join_tableName == $tableName) {
-						if ($subFilter == '')
-							$additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
-						else
-							$additional_where = $fld['realfieldname'] . '=' . database::quote($subFilter);
+						if ($subFilter == '') {
+							$whereClauseAdditional->addOrCondition($fld['realfieldname'], null);
+							$whereClauseAdditional->addOrCondition($fld['realfieldname'], '');
+							//$additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
+						} else {
+							$whereClauseAdditional->addCondition($fld['realfieldname'], $subFilter);
+							//$additional_where = $fld['realfieldname'] . '=' . database::quote($subFilter);
+						}
 					}
 				}
 			}
 		}
 
 		$ct->setFilter($filter, $showPublished);
-		if ($additional_where != '')
-			$ct->Filter->where[] = $additional_where;
+		if ($whereClauseAdditional->hasConditions())
+			$ct->Filter->whereClause->addNestedCondition($whereClauseAdditional);
 
 		if ($search !== null and $search != '') {
 			foreach ($ct->Table->fields as $fld) {
 				if ($fieldName_or_layout == $fld['fieldname']) {
-					$ct->Filter->where[] = 'INSTR(' . $fld['realfieldname'] . ',' . database::quote($search) . ')';
+					$ct->Filter->whereClause->addCondition($fld['realfieldname'], $search);
+					//$ct->Filter->where[] = 'INSTR(' . $fld['realfieldname'] . ',' . database::quote($search) . ')';
 				}
 			}
 		}
@@ -544,7 +560,8 @@ class InputBox_tablejoin extends BaseInputBox
 	protected static function getParentFilterID($temp_ct, $parent_id, $join_to_tablename)
 	{
 		$join_realfieldname = '';
-		$where = '';
+
+		$whereClause = new MySQLWhereClause();
 
 		foreach ($temp_ct->Table->fields as $fld) {
 			if ($fld['type'] == 'sqljoin' or $fld['type'] == 'records') {
@@ -555,7 +572,8 @@ class InputBox_tablejoin extends BaseInputBox
 					$join_realfieldname = $fld['realfieldname'];
 
 					//if ($fld['type'] == 'sqljoin')
-					$where = $temp_ct->Table->realidfieldname . '=' . database::quote($parent_id);
+					//$where = $temp_ct->Table->realidfieldname . '=' . database::quote($parent_id);
+					$whereClause->addCondition($temp_ct->Table->realidfieldname, $parent_id);
 					//else
 					//$where = 'INSTR(' . $temp_ct->Table->realidfieldname . ',",' . (int)$parent_id . ',")';
 
@@ -567,14 +585,19 @@ class InputBox_tablejoin extends BaseInputBox
 		if ($join_realfieldname == '')
 			return null;
 
-		$query = 'SELECT ' . $join_realfieldname . ' FROM ' . $temp_ct->Table->realtablename . ' WHERE ' . $where . ' LIMIT 1';
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT ' . $join_realfieldname . ' FROM ' . $temp_ct->Table->realtablename . ' WHERE ' . $where . ' LIMIT 1';
+
+		$rows = database::loadAssocList($temp_ct->Table->realtablename, [$join_realfieldname], $whereClause, null, null, 1);
 		if (count($rows) == 0)
 			return null;
 
 		return $rows[0][$join_realfieldname];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter,
 	                                                $js_filters, $js_filters_FieldName, $value, ?string $addRecordMenuAlias = null, string $cssClass = '', string $Placeholder = '')
 	{
@@ -615,6 +638,10 @@ class InputBox_tablejoin extends BaseInputBox
 			$filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function ctRenderTableJoinSelectBox(CT      &$ct, $control_name, $r, int $index, int $sub_index, $parent_object_id, $formId,
 	                                                             $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, ?string $value,
 	                                                     ?string $addRecordMenuAlias = null, string $cssClass = '', string $Placeholder = '')

@@ -24,7 +24,6 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Component\ComponentHelper;
 use CustomTablesKeywordSearch;
 use Joomla\Registry\Registry;
-use mysql_xdevapi\Exception;
 use CustomTables\CustomPHP\CleanExecute;
 
 class CT
@@ -154,29 +153,48 @@ class CT
 			$this->Filter->addWhereExpression($filter_string);
 	}
 
+	/**
+	 * @throws \Exception
+	 * @since 3.2.2
+	 */
 	function getRecords($all = false, $limit = 0): bool
 	{
-		$where = count($this->Filter->where) > 0 ? ' WHERE ' . implode(' AND ', $this->Filter->where) : '';
-		$where = str_replace('\\', '', $where); //Just to make sure that there is nothing weird in the query
+		//$where = count($this->Filter->where) > 0 ? ' WHERE ' . implode(' AND ', $this->Filter->where) : '';
+		//$where = str_replace('\\', '', $where); //Just to make sure that there is nothing weird in the query
 
-		if ($this->getNumberOfRecords($where) == -1)
+		if ($this->getNumberOfRecords($this->Filter->whereClause) == -1)
 			return false;
 
-		$query = $this->buildQuery($where);
+		if ($this->Ordering->ordering_processed_string !== null) {
+			$this->Ordering->parseOrderByString();
+		}
+
+		$selects = $this->Table->selects;
+		$ordering = [];
+		
+		if ($this->Ordering->orderby !== null) {
+			if ($this->Ordering->selects !== null)
+				$selects[] = $this->Ordering->selects;
+
+			$ordering[] = $this->Ordering->orderby;
+		}
 
 		if ($this->Table->recordcount > 0) {
 
 			if ($limit > 0) {
-				$this->Records = database::loadAssocList($query, 0, $limit);
+				$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
+					(count($ordering) > 0 ? implode(',', $ordering) : null), null, $limit);
 				$this->Limit = $limit;
 			} else {
 				$the_limit = $this->Limit;
 
 				if ($all) {
 					if ($the_limit > 0)
-						$this->Records = database::loadAssocList($query, 0, 20000);
+						$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
+							(count($ordering) > 0 ? implode(',', $ordering) : null), null, 20000, 0);
 					else
-						$this->Records = database::loadAssocList($query);
+						$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
+							(count($ordering) > 0 ? implode(',', $ordering) : null), null);
 				} else {
 					if ($the_limit > 20000)
 						$the_limit = 20000;
@@ -188,10 +206,9 @@ class CT
 						$this->LimitStart = 0;
 
 					try {
-
-						$this->Records = @database::loadAssocList($query, $this->LimitStart, $the_limit);
+						$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
+							(count($ordering) > 0 ? implode(',', $ordering) : null), null, $the_limit, $this->LimitStart);
 					} catch (\Exception $e) {
-						echo $query;
 						echo $e->getMessage();
 						return false;
 					}
@@ -206,18 +223,22 @@ class CT
 		return true;
 	}
 
-	function getNumberOfRecords(string $where = ''): int
+	function getNumberOfRecords(MySQLWhereClause $whereClause): int
 	{
+		/*
 		$query_check_table = 'SHOW TABLES LIKE ' . database::quote(database::realTableName($this->Table->realtablename));
-		$rows = database::loadObjectList($query_check_table);
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('',);
+
 		if (count($rows) == 0)
 			return -1;
-
-		$query_analytical = 'SELECT COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count FROM ' . $this->Table->realtablename . ' ' . $where;
+*/
+		//$query_analytical = 'SELECT COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count FROM ' . $this->Table->realtablename . ' ' . $where;
 
 		try {
-			$rows = database::loadObjectList($query_analytical);
-		} catch (Exception $e) {
+			$rows = database::loadObjectList($this->Table->realtablename, ['COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count'], $whereClause);
+		} catch (\Exception $e) {
 			echo 'Database error happened';
 			echo $e->getMessage();
 			return 0;
@@ -229,38 +250,6 @@ class CT
 			$this->Table->recordcount = intval($rows[0]->count);
 
 		return $this->Table->recordcount;
-	}
-
-	function buildQuery($where): ?string
-	{
-		$ordering = $this->GroupBy != '' ? [$this->GroupBy] : [];
-
-		if (is_null($this->Table) or is_null($this->Table->tablerow)) {
-			$this->errors[] = 'Table not set.';
-			return null;
-		}
-
-		if ($this->Ordering->ordering_processed_string !== null) {
-			$this->Ordering->parseOrderByString();
-		}
-
-		$selects = $this->Table->selects;
-
-		if ($this->Ordering->orderby !== null) {
-			if ($this->Ordering->selects !== null)
-				$selects[] = $this->Ordering->selects;
-
-			$ordering[] = $this->Ordering->orderby;
-		}
-
-		$query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $this->Table->realtablename . ' ';
-		$query .= $where;
-		$query .= ' GROUP BY ' . $this->Table->realtablename . '.' . $this->Table->realidfieldname;
-
-		if (count($ordering) > 0)
-			$query .= ' ORDER BY ' . implode(',', $ordering);
-
-		return $query;
 	}
 
 	function getRecordsByKeyword(): void
@@ -422,13 +411,21 @@ class CT
 		}
 	}
 
+	/**
+	 * @throws \Exception
+	 * @since 3.2.2
+	 */
 	public function deleteSingleRecord($listing_id): int
 	{
 		//delete images if exist
 		$imageMethods = new CustomTablesImageMethods;
 
-		$query = 'SELECT * FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
-		$rows = database::loadAssocList($query);
+		//$query = 'SELECT * FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
+
+		$rows = database::loadAssocList($this->Table->realtablename, ['*'], $whereClause, null, null);
 
 		if (count($rows) == 0)
 			return -1;
@@ -459,8 +456,12 @@ class CT
 				$galleryName = $field->fieldname;
 				$photoTableName = '#__customtables_gallery_' . $this->Table->tablename . '_' . $galleryName;
 
-				$query = 'SELECT photoid FROM ' . $photoTableName . ' WHERE listingid=' . database::quote($listing_id);
-				$photoRows = database::loadObjectList($query);
+				//$query = 'SELECT photoid FROM ' . $photoTableName . ' WHERE listingid=' . database::quote($listing_id);
+
+				$whereClause = new MySQLWhereClause();
+				$whereClause->addCondition('listingid', $listing_id);
+
+				$photoRows = database::loadObjectList($photoTableName, ['photoid'], $whereClause);
 				$imageGalleryPrefix = 'g';
 
 				foreach ($photoRows as $photoRow) {
@@ -505,12 +506,19 @@ class CT
 		return 1;
 	}
 
+	/**
+	 * @throws \Exception
+	 * @since 3.2.2
+	 */
 	public function RefreshSingleRecord($listing_id, $save_log): int
 	{
-		$query = 'SELECT ' . implode(',', $this->Table->selects) . ' FROM ' . $this->Table->realtablename
-			. ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
+		//$query = 'SELECT ' . implode(',', $this->Table->selects) . ' FROM ' . $this->Table->realtablename
+		//. ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
 
-		$rows = database::loadAssocList($query);
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
+
+		$rows = database::loadAssocList($this->Table->realtablename, $this->Table->selects, $whereClause, null, null, 1);
 
 		if (count($rows) == 0)
 			return -1;
@@ -642,24 +650,35 @@ class CT
 		return true;
 	}
 
+	/**
+	 * @throws \Exception
+	 * @since 3.2.2
+	 */
 	public function checkIfItemBelongsToUser(string $listing_id, string $userIdField): bool
 	{
-		$wheres = $this->UserIDField_BuildWheres($userIdField, $listing_id);
-		$query = 'SELECT c.' . $this->Table->realidfieldname . ' FROM ' . $this->Table->realtablename . ' AS c WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
+		$whereClause = $this->UserIDField_BuildWheres($userIdField, $listing_id);
+		//$query = 'SELECT COUNT(c.' . $this->Table->realidfieldname . ') AS record_count FROM ' . $this->Table->realtablename . ' AS c WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
 
-		if (database::getNumRowsOnly($query) == 1) {
+		$rows = database::loadObjectList($this->Table->realtablename . ' AS c', ['COUNT(c.' . $this->Table->realidfieldname . ') AS record_count'], $whereClause, null, null, 1);
+
+		if (count($rows) !== 1)
+			return false;
+
+		if ($rows->record_count == 1)
 			return true;
-		}
+
 		return false;
 	}
 
-	public function UserIDField_BuildWheres(string $userIdField, string $listing_id): array
+	public function UserIDField_BuildWheres(string $userIdField, string $listing_id): MySQLWhereClause
 	{
-		$wheres = [];
+		$whereClause = new MySQLWhereClause();
+		//$wheres = [];
 
 		$statement_items = common::ExplodeSmartParams($userIdField); //"and" and "or" as separators
 
-		$wheres_owner = array();
+		$whereClauseOwner = new MySQLWhereClause();
+		//$wheres_owner = array();
 
 		foreach ($statement_items as $item) {
 			$field = $item[1];
@@ -667,19 +686,20 @@ class CT
 				//example: user
 				//check if the record belong to the current user
 				$user_field_row = Fields::FieldRowByName($field, $this->Table->fields);
-				$wheres_owner[] = [$item[0], $user_field_row['realfieldname'] . '=' . $this->Env->user->id];
+				$whereClauseOwner->addCondition($user_field_row['realfieldname'], $this->Env->user->id);
+				//$wheres_owner[] = [$item[0], $user_field_row['realfieldname'] . '=' . $this->Env->user->id];
 			} else {
 				//example: parents(children).user
 				$statement_parts = explode('.', $field);
 				if (count($statement_parts) != 2) {
 					$this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_USERID_FIELD_ERROR');
-					return [];
+					return $whereClause;
 				}
 
 				$table_parts = explode('(', $statement_parts[0]);
 				if (count($table_parts) != 2) {
 					$this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_USERID_FIELD_ERROR');
-					return [];
+					return $whereClause;
 				}
 
 				$parent_tablename = $table_parts[0];
@@ -690,7 +710,7 @@ class CT
 
 				if (!is_object($parent_table_row)) {
 					$this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR');
-					return [];
+					return $whereClause;
 				}
 
 				$parent_table_fields = Fields::getFields($parent_table_row->id);
@@ -699,12 +719,12 @@ class CT
 
 				if (count($parent_join_field_row) == 0) {
 					$this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR');
-					return [];
+					return $whereClause;
 				}
 
 				if ($parent_join_field_row['type'] != 'sqljoin' and $parent_join_field_row['type'] != 'records') {
 					$this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: Wrong join field type "' . $parent_join_field_row['type'] . '". Accepted types: "sqljoin" and "records" .');
-					return [];
+					return $whereClause;
 				}
 
 				//User field
@@ -713,51 +733,67 @@ class CT
 
 				if (count($parent_user_field_row) == 0) {
 					$this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: User field "' . $parent_user_field . '" not found.');
-					return [];
+					return $whereClause;
 				}
 
 				if ($parent_user_field_row['type'] != 'userid' and $parent_user_field_row['type'] != 'user') {
 					$this->errors[] = common::translate('Menu Item - "UserID Field name" parameter has an error: Wrong user field type "' . $parent_join_field_row['type'] . '". Accepted types: "userid" and "user" .');
-					return [];
+					return $whereClause;
 				}
 
-				$parent_wheres = [];
+				$whereClauseParent = new MySQLWhereClause();
+				//$parent_wheres = [];
 
-				$parent_wheres[] = 'p.' . $parent_user_field_row['realfieldname'] . '=' . $this->Env->user->id;
+				$whereClauseParent->addCondition('p.' . $parent_user_field_row['realfieldname'], $this->Env->user->id);
+				//$parent_wheres[] = 'p.' . $parent_user_field_row['realfieldname'] . '=' . $this->Env->user->id;
 
 				$fieldType = $parent_join_field_row['type'];
 				if ($fieldType != 'sqljoin' and $fieldType != 'records')
-					return [];
+					return $whereClause;
 
-				if ($fieldType == 'sqljoin')
-					$parent_wheres[] = 'p.' . $parent_join_field_row['realfieldname'] . '=c.listing_id';
+				if ($fieldType == 'sqljoin') {
+					$whereClauseParent->addCondition('p.' . $parent_user_field_row['realfieldname'], 'c.listing_id', '=', true);
+//					$parent_wheres[] = 'p.' . $parent_join_field_row['realfieldname'] . '=c.listing_id';
+				}
 
-				if ($fieldType == 'records')
-					$parent_wheres[] = 'INSTR(p.' . $parent_join_field_row['realfieldname'] . ',CONCAT(",",c.' . $this->Table->realidfieldname . ',","))';
+				if ($fieldType == 'records') {
+					$whereClauseParent->addCondition('p.' . $parent_user_field_row['realfieldname'], 'CONCAT(",",c.' . $this->Table->realidfieldname . ',",")', 'INSTR', true);
+					//$parent_wheres[] = 'INSTR(p.' . $parent_join_field_row['realfieldname'] . ',CONCAT(",",c.' . $this->Table->realidfieldname . ',","))';
+				}
 
-				$q = '(SELECT p.' . $parent_table_row->realidfieldname . ' FROM ' . $parent_table_row->realtablename . ' AS p WHERE ' . implode(' AND ', $parent_wheres) . ' LIMIT 1) IS NOT NULL';
+				//$q = '(SELECT p.' . $parent_table_row->realidfieldname . ' FROM ' . $parent_table_row->realtablename . ' AS p WHERE ' . implode(' AND ', $parent_wheres) . ' LIMIT 1) IS NOT NULL';
 
-				$wheres_owner[] = [$item[0], $q];
+				$parent_wheres_string = (string)$whereClauseParent;
+				echo '$parent_wheres_string=' . $parent_wheres_string;
+				die;
+
+				$whereClauseOwner->addCondition('(SELECT p.' . $parent_table_row->realidfieldname . ' FROM ' . $parent_table_row->realtablename . ' AS p WHERE ' . $parent_wheres_string . ' LIMIT 1)', null, 'NOT NULL');
+				//$wheres_owner[] = [$item[0], $q];
 			}
 		}
 
+		$whereClause->addNestedCondition($whereClauseOwner);
+		/*
 		$wheres_owner_str = '';
 		$index = 0;
 		foreach ($wheres_owner as $field) {
-			if ($index == 0)
+			if ($index == 0) {
+				$whereClause->addNestedCondition($whereClauseOwner);
 				$wheres_owner_str .= $field[1];
+			}
 			else
 				$wheres_owner_str .= ' ' . strtoupper($field[0]) . ' ' . $field[1];
 
 			$index += 1;
 		}
-
+*/
 		if ($listing_id != '' and $listing_id != 0)
-			$wheres[] = $this->Table->realidfieldname . '=' . database::quote($listing_id);
+			$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
 
-		if ($wheres_owner_str != '')
-			$wheres[] = '(' . $wheres_owner_str . ')';
+		//if ($wheres_owner_str != '')
+		//$wheres[] = '(' . $wheres_owner_str . ')';
 
-		return $wheres;
+		return $whereClause;
+		//return $wheres;
 	}
 }

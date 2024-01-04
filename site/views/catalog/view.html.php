@@ -19,6 +19,7 @@ use CustomTables\CT;
 use CustomTables\Catalog;
 use CustomTables\database;
 use CustomTables\Inputbox;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewCatalog extends HtmlView
@@ -30,6 +31,22 @@ class CustomTablesViewCatalog extends HtmlView
 
 	function display($tpl = null)
 	{
+		/*
+		$menu = Factory::getApplication()->getMenu();
+		$activeMenuItem = $menu->getActive();
+
+
+		if ($activeMenuItem) {
+			$menuParams = $activeMenuItem->getParams();
+
+			$filter = $menuParams->get('filter');
+
+			// Now $menuParams contains the parameters of the active menu item
+		} else {
+			$menuParams = null;
+		}
+*/
+
 		$this->ct = new CT(null, false);
 
 		$key = common::inputGetCmd('key');

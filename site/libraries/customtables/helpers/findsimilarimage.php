@@ -9,6 +9,7 @@
  **/
 
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -16,25 +17,35 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 class FindSimilarImage
 {
-	static public function find($uploadedfile, $level_identity, $realtablename, $realfieldname, $ImageFolder, $additional_filter = '')
+	static public function find($uploadedFile, $level_identity, $realtablename, $realfieldname, $ImageFolder, MySQLWhereClause $whereClauseAdditional)
 	{
 		if ($level_identity < 0)
 			$level_identity = 0;
 
 		$ci = new compareImages;
-		$photorows = database::loadObjectList('SELECT ' . $realfieldname . ' AS photoid FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0' . ($additional_filter != '' ? ' AND ' . $additional_filter : ''));
 
-		foreach ($photorows as $photorow) {
-			$photoid = $photorow->photoid;
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($realfieldname, 0, '>');
 
-			if ($photoid != 0) {
+		if ($whereClauseAdditional->hasConditions())
+			$whereClause->addNestedCondition($whereClauseAdditional);
 
-				$image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $photoid . '.jpg';///.$ext;
-				if ($image_file != $uploadedfile) {
+		$photoRows = database::loadObjectList($realtablename, [$realfieldname . ' AS photoid'], $whereClause, '', null);
+
+		//$photorows = database::loadObjectList('SELECT ' . $realfieldname . ' AS photoid FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0'
+		//. ($additional_filter != '' ? ' AND ' . $additional_filter : ''));
+
+		foreach ($photoRows as $photoRow) {
+			$photoId = $photoRow->photoid;
+
+			if ($photoId != 0) {
+
+				$image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $photoId . '.jpg';///.$ext;
+				if ($image_file != $uploadedFile) {
 					if (file_exists($image_file)) {
-						$index = $ci->compare($uploadedfile, $image_file);
+						$index = $ci->compare($uploadedFile, $image_file);
 						if ($index <= $level_identity)
-							return $photoid;
+							return $photoId;
 					}
 				}
 			}

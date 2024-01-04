@@ -10,7 +10,10 @@
 
 // no direct access
 use CustomTables\common;
+use CustomTables\CT;
 use CustomTables\database;
+use CustomTables\Filtering;
+use CustomTables\MySQLWhereClause;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -57,6 +60,10 @@ class CustomTablesImageMethods
 		return $ImageFolder;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function DeleteGalleryImages($gallery_table_name, $estableid, $galleryname, $params, $deleteOriginals = false): void
 	{
 		$image_parameters = $params[0];
@@ -69,11 +76,13 @@ class CustomTablesImageMethods
 		$imagegalleryprefix = 'g';
 
 		//delete gallery images if exist
-		//check if table exists
-		$recs = database::loadObjectList('SHOW TABLES LIKE "' . $gallery_table_name . '"');
+		//check is table exists
+		$recs = database::getTableStatus(database::getDataBaseName(), $gallery_table_name, false);
 
 		if (count($recs) > 0) {
-			$photorows = database::loadObjectList('SELECT photoid FROM ' . $gallery_table_name);
+
+			$whereClause = new MySQLWhereClause();
+			$photorows = database::loadObjectList($gallery_table_name, ['photoid'], $whereClause);
 
 			foreach ($photorows as $photorow) {
 				$this->DeleteExistingGalleryImage(
@@ -190,16 +199,23 @@ class CustomTablesImageMethods
 
 		elseif (str_contains($vlu, '#')) {
 
-			$vlu = preg_replace("/[^0-9A-Fa-f]/", '', $vlu); // Gets a proper hex string
+			$vlu = preg_replace("/[^\dA-Fa-f]/", '', $vlu); // Gets a proper hex string
 			return hexdec($vlu);//As of PHP 7.4.0 supplying any invalid characters is deprecated.
 		} else
 			return (int)$vlu;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function DeleteCustomImages($realtablename, $realfieldname, $ImageFolder, $imageparams, $realidfield, $deleteOriginals = false): void
 	{
-		$query = 'SELECT ' . $realfieldname . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0';
-		$imageList = database::loadAssocList($query);
+		//$query = 'SELECT ' . $realfieldname . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0';
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($realfieldname, 0, '>');
+
+		$imageList = database::loadAssocList($realtablename, [$realfieldname], $whereClause, null, null);
 		$customSizes = $this->getCustomImageOptions($imageparams);
 
 		foreach ($imageList as $img) {
@@ -213,6 +229,10 @@ class CustomTablesImageMethods
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static protected function DeleteOriginalImage($ExistingImage, $ImageFolder, $realtablename, $realfieldname, $realIdField): bool
 	{
 		//This function deletes original images in case image not occupied by another record.
@@ -222,8 +242,12 @@ class CustomTablesImageMethods
 		if ($realtablename != '-options') {
 			if ($ExistingImage !== null and is_numeric($ExistingImage) and intval($ExistingImage) != 0) {
 				//If it's an original image not duplicate, find one duplicate and convert it to original
-				$query = 'SELECT ' . $realIdField . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '=-' . $ExistingImage . ' LIMIT 1';
-				$photoRows = database::loadAssocList($query);
+				//$query = 'SELECT ' . $realIdField . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '=-' . $ExistingImage . ' LIMIT 1';
+
+				$whereClause = new MySQLWhereClause();
+				$whereClause->addCondition($realfieldname, '-' . $ExistingImage);
+
+				$photoRows = database::loadAssocList($realtablename, [$realIdField], $whereClause, null, null, 1);
 
 				if (count($photoRows) == 1) //do not compare if there is a child
 				{
@@ -272,6 +296,10 @@ class CustomTablesImageMethods
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function UploadSingleImage(?string $ExistingImage, string $image_file_id, string $realfieldname, string $ImageFolder, array $params, string $realtablename, string $realidfieldname): ?string
 	{
 		$fileNameType = $params[3] ?? '';
@@ -414,6 +442,10 @@ class CustomTablesImageMethods
 		return $outputFile;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function DeleteExistingSingleImage(string $ExistingImage, $ImageFolder, string $imageParams, $realtablename, $realfieldname, $realIdField): void
 	{
 		$customSizes = $this->getCustomImageOptions($imageParams);
@@ -593,6 +625,10 @@ class CustomTablesImageMethods
 		return 1;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function compareThumbs($additional_params, $realtablename, $realfieldname, $ImageFolder, $uploadedfile, $thumbFileName): int
 	{
 		$pair = explode(':', $additional_params);
@@ -602,19 +638,28 @@ class CustomTablesImageMethods
 			if (isset($pair[1]))
 				$level_identity = (int)$pair[1];
 
-			$additional_filter = '';
+			$whereClause = new MySQLWhereClause();
 
-			if (isset($pair[2]))
-				$additional_filter = $pair[2];
+			if (isset($pair[2])) {
 
+				$tablename = str_replace('#__customtables_table_', '', $realtablename);
+				$tableRow = ESTables::getTableRowByNameAssoc($tablename);
+				$newCt = new CT();
+				$newCt->setTable($tableRow);
+				$f = new Filtering($newCt);
+				$f->addWhereExpression($pair[2]);
+				$whereClause = $f->whereClause;
+			}
 			//A bit of sanitation
+			/*
 			$additional_filter = str_replace('"', '', $additional_filter);
 			$additional_filter = str_replace("'", '', $additional_filter);
 			$additional_filter = str_replace(";", '', $additional_filter);
 			$additional_filter = str_replace("/", '', $additional_filter);
 			$additional_filter = str_replace("\\", '', $additional_filter);
+			*/
 
-			$ImageID = -FindSimilarImage::find($uploadedfile, $level_identity, $realtablename, $realfieldname, $ImageFolder, $additional_filter);
+			$ImageID = -FindSimilarImage::find($uploadedfile, $level_identity, $realtablename, $realfieldname, $ImageFolder, $whereClause);
 
 			if ($ImageID !== null) {
 				unlink($uploadedfile);
@@ -625,7 +670,7 @@ class CustomTablesImageMethods
 		return 0;
 	}
 
-	function CheckImage($src, $memorylimit): bool
+	function CheckImage($src, $memoryLimit): bool
 	{
 		if (!file_exists($src))
 			return false;
@@ -634,7 +679,7 @@ class CustomTablesImageMethods
 
 		$ms = $wh[0] * $wh[1] * 4;
 
-		if ($ms > $memorylimit)
+		if ($ms > $memoryLimit)
 			return false;
 
 		return true;

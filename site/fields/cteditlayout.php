@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -23,20 +24,16 @@ trait JFormFieldCTEditLayoutCommon
 {
 	protected static function getOptionList(): array
 	{
-		$versionObject = new Version;
-		$version = (int)$versionObject->getShortVersion();
+		//$query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename FROM #__customtables_layouts'
+		//	. ' WHERE published=1 AND layouttype=2'
+		//	. ' ORDER BY tablename,layoutname';
 
-		if ($version < 4)
-			$db = Factory::getDbo();
-		else
-			$db = Factory::getContainer()->get('DatabaseDriver');
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addOrCondition('layouttype', 2);
 
-		$query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename FROM #__customtables_layouts'
-			. ' WHERE published=1 AND layouttype=2'
-			. ' ORDER BY tablename,layoutname';
-
-		$db->setQuery($query);
-		$layouts = $db->loadObjectList();
+		$layouts = database::loadObjectList('#__customtables_layouts',
+			['id', 'layoutname', '(SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename'], $whereClause, 'tablename,layoutname');
 
 		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_DEFAULT')];
 

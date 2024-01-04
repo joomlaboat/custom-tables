@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 
 class CT_FieldTypeTag_FileBox
 {
@@ -61,7 +62,10 @@ class CT_FieldTypeTag_FileBox
 	public static function getFileBoxRows($tablename, $fieldname, $listing_id)
 	{
 		$fileBoxTableName = '#__customtables_filebox_' . $tablename . '_' . $fieldname;
-		return database::loadObjectList('SELECT fileid, file_ext FROM ' . $fileBoxTableName . ' WHERE listingid=' . (int)$listing_id . ' ORDER BY fileid');
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('listingid', (int)$listing_id);
+		return database::loadObjectList($fileBoxTableName, ['fileid', 'file_ext'], $whereClause, 'fileid');
 	}
 
 	public static function renderFileBoxIcon(CT $ct, string $listing_id, string $fileBoxName, string $title): string

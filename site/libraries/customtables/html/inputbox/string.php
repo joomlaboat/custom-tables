@@ -41,10 +41,13 @@ class InputBox_string extends BaseInputBox
 		if (isset($this->option_list[2]) and $this->option_list[2] == 'autocomplete') {
 			$this->attributes['list'] = $this->attributes['id'] . '_datalist';
 
-			$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' GROUP BY ' . $this->field->realfieldname
-				. ' ORDER BY ' . $this->field->realfieldname;
+			//$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' GROUP BY ' . $this->field->realfieldname
+			//. ' ORDER BY ' . $this->field->realfieldname;
 
-			$records = database::loadObjectList($query);
+			$whereClause = new MySQLWhereClause();
+			//$whereClause->addCondition('',);
+			$records = database::loadObjectList($this->ct->Table->realtablename, [$this->field->realfieldname], $whereClause,
+				$this->field->realfieldname, null, null, null, 'OBJECT', $this->field->realfieldname);
 
 			$dataset = '<datalist id="' . $this->attributes['id'] . '_datalist">'
 				. (count($records) > 0 ? '<option value="' . implode('"><option value="', $records) . '">' : '')

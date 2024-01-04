@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Version;
@@ -37,10 +38,13 @@ if ($version < 4) {
 	{
 		public $type = 'ctcategory';
 
-		public function getOptions($add_empty_option = true)
+		public function getOptions($add_empty_option = true): array
 		{
-			$query = 'SELECT id,categoryname FROM #__customtables_categories WHERE published=1 ORDER BY categoryname';
-			$records = database::loadObjectList($query);
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('published', 1);
+
+			//$query = 'SELECT id,categoryname FROM #__customtables_categories WHERE published=1 ORDER BY categoryname';
+			$records = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, 'categoryname');
 
 			$options = array();
 			if ($records) {
@@ -66,17 +70,28 @@ if ($version < 4) {
 		public $type = 'ctcategory';
 		protected $layout = 'joomla.form.field.list';
 
-		protected function getInput()
+		/**
+		 * @throws Exception
+		 * @since 3.2.2
+		 */
+		protected function getInput(): string
 		{
 			$data = $this->getLayoutData();
 			$data['options'] = $this->getOptions();
 			return $this->getRenderer($this->layout)->render($data);
 		}
 
-		public function getOptions($add_empty_option = true)
+		/**
+		 * @throws Exception
+		 * @since 3.2.2
+		 */
+		public function getOptions($add_empty_option = true): array
 		{
-			$query = 'SELECT id,categoryname FROM #__customtables_categories WHERE published=1 ORDER BY categoryname';
-			$records = database::loadObjectList($query);
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('published', 1);
+
+			//$query = 'SELECT id,categoryname FROM #__customtables_categories WHERE published=1 ORDER BY categoryname';
+			$records = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, 'categoryname');
 
 			$options = array();
 			if ($records) {

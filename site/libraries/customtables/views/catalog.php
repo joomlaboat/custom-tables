@@ -60,6 +60,7 @@ class Catalog
 		}
 
 // --------------------- Filter
+
 		$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 
 		if (!$this->ct->Params->blockExternalVars) {
