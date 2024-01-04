@@ -352,15 +352,6 @@ class database
 
 	}
 
-	public static function getNumRowsOnly($query): int
-	{
-		$db = self::getDB();
-
-		$db->setQuery($query);
-		$db->execute();
-		return $db->getNumRows();
-	}
-
 	/**
 	 * @throws Exception
 	 * @since 3.2.2

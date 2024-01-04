@@ -276,9 +276,6 @@ class CT_FieldTypeTag_file
 			return false;
 
 		return $col[0] > 1;
-
-		//$query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . database::quote($filename) . ' LIMIT 2';
-		//return database::getNumRowsOnly($query) > 1;
 	}
 
 	protected static function getCleanAndAvailableFileName(string $filename, string $FileFolder): string
