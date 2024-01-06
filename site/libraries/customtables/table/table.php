@@ -193,12 +193,13 @@ class Table
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function loadRecord($listing_id)
+	function loadRecord(?string $listing_id)
 	{
 		//$query = 'SELECT ' . implode(',', $this->selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
 
 		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition($this->realidfieldname, $listing_id);
+		if (!empty($listing_id))
+			$whereClause->addCondition($this->realidfieldname, $listing_id);
 
 		$rows = database::loadAssocList($this->realtablename, $this->selects, $whereClause, null, null, 1);
 

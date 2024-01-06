@@ -24,6 +24,7 @@ trait JFormFieldCTUserGroupCommon
 {
 	protected static function getOptionList(): array
 	{
+		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
 		$whereClause = new MySQLWhereClause();
 
 		$userGroups = database::loadObjectList('#__usergroups', ['id', 'title'], $whereClause, 'title');

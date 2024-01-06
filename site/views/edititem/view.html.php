@@ -52,7 +52,10 @@ class CustomTablesViewEditItem extends HtmlView
 			$editForm = new Edit($this->ct);
 			$editForm->load();
 
-			$row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
+			if (!empty($this->ct->Params->listing_id))
+				$row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
+			else
+				$row = null;
 
 			if (isset($row)) {
 				if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
