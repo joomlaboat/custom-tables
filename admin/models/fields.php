@@ -5,7 +5,7 @@
  * @subpackage models/fields.php
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
- * @copyright (C) 2018-2023 Ivan Komlev
+ * @copyright (C) 2018-2024. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -592,7 +592,7 @@ class CustomtablesModelFields extends AdminModel
 
 				$whereClause = new MySQLWhereClause();
 				$col = database::loadColumn('#__customtables_fields', ['MAX(ordering)'], $whereClause, 'rgt');
-				
+
 				$max = $col[0];
 				$table->ordering = $max + 1;
 			}

@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
- * @copyright (C) 2018-2023 Ivan Komlev
+ * @copyright (C) 2018-2024. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -14,6 +14,9 @@ namespace CustomTables;
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
+
+use CustomTables\ProInputBoxTableJoin;
+use CustomTables\ProInputBoxTableJoinList;
 
 class Search_tablejoinlist extends BaseSearch
 {
@@ -71,21 +74,31 @@ class Search_tablejoinlist extends BaseSearch
 		if (is_array($value))
 			$value = implode(',', $value);
 
-		$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
-		require_once($path . 'tablejoin.php');
-		require_once($path . 'tablejoinlist.php');
+		if (defined('_JEXEC')) {
+			$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
 
-		$InputBox_TableJoinList = new InputBox_TableJoinList($this->ct, $this->field, null, [], $this->attributes);
+			if (file_exists($path . 'tablejoin.php') and file_exists($path . 'tablejoinlist.php')) {
+				require_once($path . 'tablejoin.php');
+				require_once($path . 'tablejoinlist.php');
 
-		return $InputBox_TableJoinList->renderOld(
-			$this->field->params,
-			$value,
-			$esr_table,
-			$esr_field,
-			'single',
-			$esr_filter,
-			$dynamic_filter,
-			$sortByField
-		);
+				$inputBoxRenderer = new ProInputBoxTableJoinList($this->ct, $this->field, null, [], $this->attributes);
+
+				return $inputBoxRenderer->renderOld(
+					$this->field->params,
+					$value,
+					$esr_table,
+					$esr_field,
+					'single',
+					$esr_filter,
+					$dynamic_filter,
+					$sortByField
+				);
+
+			} else {
+				return common::translate('COM_CUSTOMTABLES_AVAILABLE');
+			}
+		} else {
+			return 'Table Join List field type is not supported by WordPress version of the Custom Tables yet.';
+		}
 	}
 }

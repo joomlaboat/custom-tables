@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
- * @copyright (C) 2018-2023 Ivan Komlev
+ * @copyright (C) 2018-2024. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -22,6 +22,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
 use JoomlaBasicMisc;
 use LayoutProcessor;
+
+//use CustomTables\ProInputBoxTableJoin;
 
 class Search_tablejoin extends BaseSearch
 {

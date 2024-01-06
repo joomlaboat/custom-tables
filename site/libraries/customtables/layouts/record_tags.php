@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
- * @copyright (C) 2018-2023 Ivan Komlev
+ * @copyright (C) 2018-2024. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -837,7 +837,7 @@ class Twig_Tables_Tags
 		}
 
 		return 'abc';
-		
+
 		$join_table_fields = Fields::getFields($table);
 
 		$join_ct = new CT;
