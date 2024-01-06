@@ -40,8 +40,7 @@ if ($this->version >= 4) {
 	HTMLHelper::_('behavior.keepalive');
 }
 
-require_once(CUSTOMTABLES_LIBRARIES_PATH
-	. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
 
 if (in_array(common::inputGetCmd('extratask', ''), $this->extrataskOptions)) {
 	extraTasks::prepareJS();

@@ -19,6 +19,7 @@ use Exception;
 use JoomlaBasicMisc;
 use LayoutProcessor;
 use tagProcessor_PHP;
+use CustomTables\ctProHelpers;
 
 class Details
 {
@@ -191,8 +192,8 @@ class Details
 		$row = $rows[0];
 
 		if (isset($row)) {
-			$record = new record($this->ct);
-			return $record->getSpecificVersionIfSet($row);
+			if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+				$row = ctProHelpers::getSpecificVersionIfSet($this->ct, $row);
 		}
 		return $row;
 	}
@@ -248,8 +249,8 @@ class Details
 		$row = $rows[0];
 
 		if (isset($row)) {
-			$record = new record($this->ct);
-			return $record->getSpecificVersionIfSet($row);
+			if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+				$row = ctProHelpers::getSpecificVersionIfSet($this->ct, $row);
 		}
 		return $row;
 	}

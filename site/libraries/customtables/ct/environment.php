@@ -131,14 +131,17 @@ class Environment
 
 		if (defined('_JEXEC')) {
 			$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'protagprocessor' . DIRECTORY_SEPARATOR;
-			$phpTagProcessor = $path . 'phptags.php';
-			if (file_exists($phpTagProcessor)) {
+
+			if (file_exists($path . 'phptags.php')) {
 				$this->advancedTagProcessor = true;
-				require_once($phpTagProcessor);
+				require_once($path . 'phptags.php');
 			}
 
 			if (file_exists($path . 'customphp.php'))
 				require_once($path . 'customphp.php');
+
+			if (file_exists($path . 'helpers.php'))
+				require_once($path . 'helpers.php');
 
 			if (file_exists($path . 'servertags.php'))
 				require_once($path . 'servertags.php');

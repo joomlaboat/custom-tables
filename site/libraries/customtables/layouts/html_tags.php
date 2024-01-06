@@ -1022,11 +1022,6 @@ class Twig_Html_Tags
 		return implode('', $icons);
 	}
 
-	function base64encode($str)
-	{
-		return base64_encode($str);
-	}
-
 	function checkboxcount()
 	{
 		return '<span id="ctTable' . $this->ct->Table->tableid . 'CheckboxCount">0</span>';

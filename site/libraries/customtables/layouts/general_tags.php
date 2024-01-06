@@ -19,6 +19,7 @@ use JoomlaBasicMisc;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use LayoutProcessor;
+use CustomTables\ctProHelpers;
 
 class Twig_Fields_Tags
 {
@@ -191,7 +192,10 @@ class Twig_Url_Tags
 
 	function base64(): string
 	{
-		return $this->ct->Env->encoded_current_url;
+		if (defined('_JEXEC'))
+			return $this->ct->Env->encoded_current_url;
+		else
+			return '{{ url.base64() }} - Not supported in WordPress version';
 	}
 
 	function root(): string
@@ -264,7 +268,10 @@ class Twig_Url_Tags
 
 	function getstringandencode($param, $default = ''): string
 	{
-		return base64_encode(common::ctStripTags(common::inputGetString($param, $default)));
+		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+			return ctProHelpers::getstringandencode($param, $default);
+		else
+			return '{{ url.getstringandencode() }} - Not supported in WordPress version';
 	}
 
 	function getstring($param, $default = ''): string
@@ -274,7 +281,10 @@ class Twig_Url_Tags
 
 	function getstringanddecode($param, $default = ''): string
 	{
-		return common::ctStripTags(base64_decode(common::inputGetString($param, $default)));
+		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+			return ctProHelpers::getstringanddecode($param, $default);
+		else
+			return '{{ url.getstringanddecode() }} - Not supported in WordPress version';
 	}
 
 	function itemid(): int

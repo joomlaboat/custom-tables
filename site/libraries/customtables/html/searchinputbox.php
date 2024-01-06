@@ -65,7 +65,8 @@ class SearchInputBox
 			else
 				$where_name = $this->field->fieldname;
 
-			$value = $this->getWhereParameter($where_name);
+			$f = str_replace($this->ct->Env->field_prefix, '', $where_name);//legacy support
+			$value = common::getWhereParameter($f);
 		}
 
 		$objName_ = $prefix . $objName;
@@ -110,39 +111,7 @@ class SearchInputBox
 		return 'SearchBox: Type "' . $this->field->type . ' is unknown or unsupported.';
 	}
 
-	protected function getWhereParameter($field): string
-	{
-		$f = str_replace($this->ct->Env->field_prefix, '', $field);//legacy support
 
-		$list = $this->getWhereParameters();
-
-		foreach ($list as $l) {
-			$p = explode('=', $l);
-			$fld_name = str_replace('_t_', '', $p[0]);
-			$fld_name = str_replace('_r_', '', $fld_name); //range
-
-			if ($fld_name == $f and isset($p[1]))
-				return $p[1];
-
-		}
-		return '';
-	}
-
-	protected function getWhereParameters(): array
-	{
-		$value = common::inputGetString('where');
-		$value = str_replace('update', '', $value);
-		$value = str_replace('select', '', $value);
-		$value = str_replace('drop', '', $value);
-		$value = str_replace('grant', '', $value);
-		$value = str_replace('user', '', $value);
-
-		$b = base64_decode($value);
-		$b = str_replace(' or ', ' and ', $b);
-		$b = str_replace(' OR ', ' and ', $b);
-		$b = str_replace(' AND ', ' and ', $b);
-		return explode(' and ', $b);
-	}
 }
 
 abstract class BaseSearch

@@ -86,7 +86,7 @@ class CT_FieldTypeTag_file
 			ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
 		}
 
-		$fileData = addslashes(file_get_contents($uploadedFile));
+		$fileData = addslashes(common::getStringFromFile($uploadedFile));
 
 		unlink($uploadedFile);
 		return $fileData;
@@ -219,7 +219,7 @@ class CT_FieldTypeTag_file
 
 				$file = common::inputPost($field->comesfieldname, '', 'STRING');
 				$dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
-				CustomTablesFileMethods::base64file_decode($src, $dst);
+				common::base64file_decode($src, $dst);
 				$uploadedFile = $dst;
 			}
 

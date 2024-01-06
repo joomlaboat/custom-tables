@@ -21,6 +21,7 @@ use Joomla\CMS\Component\ComponentHelper;
 
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
+use CustomTables\ctProHelpers;
 use LayoutProcessor;
 use tagProcessor_General;
 use tagProcessor_Item;
@@ -427,8 +428,10 @@ class SaveFieldQuerySet
 
 			case 'signature':
 
-				$value = $this->get_customtables_type_signature();
-				$this->setNewValue($value);
+				if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers')) {
+					$value = ctProHelpers::get_customtables_type_signature($this->field->comesfieldname, $this->field->params, $this->field->params[3] ?? 'png');
+					$this->setNewValue($value);
+				}
 				return;
 
 			case 'email':
@@ -769,42 +772,6 @@ class SaveFieldQuerySet
 	}
 	return false;
 		*/
-	}
-
-	protected function get_customtables_type_signature(): ?string
-	{
-		$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
-
-		if (isset($value)) {
-			$ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
-
-			$format = $this->field->params[3] ?? 'png';
-
-			if ($format == 'svg-db') {
-				return $value;
-			} else {
-				if ($format == 'jpeg')
-					$format = 'jpg';
-
-				//Get new file name and avoid possible duplicate
-
-				$i = 0;
-				do {
-					$ImageID = gmdate("YmdHis") . ($i > 0 ? $i : '');
-					//there is possible error, check all possible ext
-					$image_file = JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder . DIRECTORY_SEPARATOR . $ImageID . '.' . $format;
-					$i++;
-				} while (file_exists($image_file));
-
-				$parts = explode(';base64,', $value);
-
-				$decoded_binary = base64_decode($parts[1]);
-				file_put_contents($image_file, $decoded_binary);
-
-				return $ImageID;
-			}
-		}
-		return null;
 	}
 
 	public static function getUserIP(): string

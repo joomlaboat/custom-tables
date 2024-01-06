@@ -10,6 +10,7 @@
 
 namespace CustomTables;
 
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use JoomlaBasicMisc;
@@ -57,11 +58,6 @@ class common
 	public static function inputPostString($parameter, $default = null): ?string
 	{
 		return Factory::getApplication()->input->post->getString($parameter, $default);
-	}
-
-	public static function inputGetString($parameter, $default = null): ?string
-	{
-		return Factory::getApplication()->input->getString($parameter, $default);
 	}
 
 	public static function inputPostFloat($parameter, $default = null): ?float
@@ -115,11 +111,6 @@ class common
 	}
 
 	public static function inputPostBase64(string $parameter, $default = null)
-	{
-		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
-	}
-
-	public static function inputGetBase64(string $parameter, $default = null)
 	{
 		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
 	}
@@ -332,7 +323,6 @@ class common
 		return json_encode($argument);
 	}
 
-	//Returns base64 encoded/decoded url in Joomla and Sessions ReturnTo variable reference in WP or reference converted to URL
 	public static function getReturnToURL(bool $decode = true): ?string
 	{
 		$returnto = common::inputGet('returnto', null, 'BASE64');
@@ -363,6 +353,8 @@ class common
 		}
 		return null;
 	}
+
+	//Returns base64 encoded/decoded url in Joomla and Sessions ReturnTo variable reference in WP or reference converted to URL
 
 	public static function makeReturnToURL(string $currentURL = null): ?string
 	{
@@ -401,5 +393,93 @@ class common
 			$randomString .= $characters[rand(0, $charactersLength - 1)];
 
 		return $randomString;
+	}
+
+	public static function saveString2File(string $filePath, string $content): ?string
+	{
+		try {
+			@file_put_contents($filePath, $content);
+		} catch (Exception $e) {
+			return $e->getMessage();
+		}
+		return null;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function getStringFromFile(string $filePath): ?string
+	{
+		try {
+			if (file_exists($filePath))
+				return @file_get_contents($filePath);
+			else
+				throw new Exception($filePath . ' not found.');
+
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+		return null;
+	}
+
+	static public function base64file_decode($inputFile, $outputFile)
+	{
+		/* read data (binary) */
+		$ifp = fopen($inputFile, "rb");
+		$srcData = fread($ifp, filesize($inputFile));
+		fclose($ifp);
+		/* encode & write data (binary) */
+		$ifp = fopen($outputFile, "wb");
+		fwrite($ifp, base64_decode($srcData));
+		fclose($ifp);
+		/* return output filename */
+		return ($outputFile);
+	}
+
+	public static function default_timezone_set(): void
+	{
+		date_default_timezone_set('UTC');
+	}
+
+	public static function getWhereParameter($field): string
+	{
+		$list = self::getWhereParameters();
+
+		if ($list === null)
+			return '';
+
+		foreach ($list as $l) {
+			$p = explode('=', $l);
+			$fld_name = str_replace('_t_', '', $p[0]);
+			$fld_name = str_replace('_r_', '', $fld_name); //range
+
+			if ($fld_name == $field and isset($p[1]))
+				return $p[1];
+		}
+		return '';
+	}
+
+	protected static function getWhereParameters(): ?array
+	{
+		$value = common::inputGetString('where');
+		if ($value !== null) {
+			$b = urldecode($value);//base64_decode
+			$b = str_replace(' or ', ' and ', $b);
+			$b = str_replace(' OR ', ' and ', $b);
+			$b = str_replace(' AND ', ' and ', $b);
+			return explode(' and ', $b);
+		}
+		return null;
+	}
+
+	public static function inputGetString($parameter, $default = null): ?string
+	{
+		return Factory::getApplication()->input->getString($parameter, $default);
+	}
+
+	public static function inputGetBase64(string $parameter, $default = null)
+	{
+		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
 	}
 }

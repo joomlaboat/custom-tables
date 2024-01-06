@@ -19,9 +19,8 @@ use CT_FieldTypeTag_FileBox;
 use CT_FieldTypeTag_imagegallery;
 use Exception;
 use Joomla\CMS\Factory;
-use JoomlaBasicMisc;
+use CustomTables\ctProHelpers;
 use Twig\Loader\ArrayLoader;
-use Twig\TwigFilter;
 use Twig\TwigFunction;
 use CT_FieldTypeTag_image;
 
@@ -255,44 +254,14 @@ class TwigProcessor
 		}
 	}
 
-	protected function addTwigFilters()
+	protected function addTwigFilters(): void
 	{
-		$filter = new TwigFilter('base64encode', function ($string) {
-			return base64_encode($string);
-		});
+		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers')) {
+			$filters = ctProHelpers::TwigFilters();
 
-		$this->twig->addFilter($filter);
-
-		$filter = new TwigFilter('base64decode', function ($string) {
-			return base64_decode($string);
-		});
-
-		$this->twig->addFilter($filter);
-
-		$filter = new TwigFilter('ucwords', function ($string) {
-			$string = mb_strtolower($string, "UTF-8");
-			return mb_convert_case($string, MB_CASE_TITLE, "UTF-8");
-		});
-
-		$this->twig->addFilter($filter);
-
-		$filter = new TwigFilter('md5', function ($string) {
-			return md5($string);
-		});
-
-		$this->twig->addFilter($filter);
-
-		$filter = new TwigFilter('json_decode', function ($string) {
-			return json_decode($string);
-		});
-
-		$this->twig->addFilter($filter);
-
-		$filter = new TwigFilter('json_encode', function ($string) {
-			return common::ctJsonEncode($string);
-		});
-
-		$this->twig->addFilter($filter);
+			foreach ($filters as $filter)
+				$this->twig->addFilter($filter);
+		}
 	}
 
 	public function process(?array $row = null): string

@@ -79,10 +79,10 @@ class Filtering
 	function addQueryWhereFilter(): void
 	{
 		if (common::inputGetBase64('where')) {
-			$decodedURL = common::inputGetBase64('where', '');
-			$decodedURL = urldecode($decodedURL);
-			$decodedURL = str_replace(' ', '+', $decodedURL);
-			$filter_string = $this->sanitizeAndParseFilter(base64_decode($decodedURL));
+			$decodedURL = common::inputGetString('where', '');
+			//$decodedURL = urldecode($decodedURL);
+			//$decodedURL = str_replace(' ', '+', $decodedURL);
+			$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));//base64_decode
 
 			if ($filter_string != '')
 				$this->addWhereExpression($filter_string);

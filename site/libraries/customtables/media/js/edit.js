@@ -1248,7 +1248,7 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
     let wrapper = document.getElementById('comes_' + childFieldName + 'Wrapper');
     let key = wrapper.dataset.key;
     let where = childFilterFieldName + '=' + parentValue;
-    let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + Base64.encode(where);
+    let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);//Base64.encode
 
     fetch(url)
 

@@ -171,7 +171,7 @@ class CT
 
 		$selects = $this->Table->selects;
 		$ordering = [];
-		
+
 		if ($this->Ordering->orderby !== null) {
 			if ($this->Ordering->selects !== null)
 				$selects[] = $this->Ordering->selects;
@@ -235,6 +235,9 @@ class CT
 			return -1;
 */
 		//$query_analytical = 'SELECT COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count FROM ' . $this->Table->realtablename . ' ' . $where;
+
+		if ($this->Table === null or $this->Table->tablerow === null or $this->Table->tablerow['realidfieldname'] === null)
+			return 0;
 
 		try {
 			$rows = database::loadObjectList($this->Table->realtablename, ['COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count'], $whereClause);

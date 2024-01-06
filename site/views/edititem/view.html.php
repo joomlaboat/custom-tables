@@ -17,6 +17,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use CustomTables\ctProHelpers;
 
 jimport('joomla.html.pane');
 jimport('joomla.application.component.view'); //Important to get menu parameters
@@ -54,9 +55,8 @@ class CustomTablesViewEditItem extends HtmlView
 			$row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
 
 			if (isset($row)) {
-
-				$record = new \CustomTables\record($this->ct);
-				$row = $record->getSpecificVersionIfSet($row);
+				if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+					$row = ctProHelpers::getSpecificVersionIfSet($this->ct, $row);
 			}
 
 			if ($this->ct->Env->isModal) {

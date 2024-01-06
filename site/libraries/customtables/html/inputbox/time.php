@@ -114,7 +114,7 @@ class InputBox_time extends BaseInputBox
 	 */
 	public static function formattedTime2Seconds($formatted_time, $format = ''): int
 	{
-		date_default_timezone_set('UTC');
+		common::default_timezone_set();
 
 		if ($format === '') {
 			// Guess the format if not provided
@@ -205,7 +205,7 @@ class InputBox_time extends BaseInputBox
 
 	public static function seconds2FormattedTime($seconds, $format = ''): string
 	{
-		date_default_timezone_set('UTC');
+		common::default_timezone_set();
 
 		if ($format != '')
 			return gmdate($format, $seconds);

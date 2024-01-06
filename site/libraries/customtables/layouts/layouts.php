@@ -209,7 +209,7 @@ class Layouts
 			}
 
 			if ($file_ts > $db_layout_ts) {
-				$content = file_get_contents($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
+				$content = common::getStringFromFile($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
 				$query = 'UPDATE #__customtables_layouts SET ' . $fieldName . '="' . addslashes($content) . '",modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
 				database::setQuery($query);
 				return $content;
@@ -241,10 +241,9 @@ class Layouts
 			return true;
 		}
 
-		try {
-			@file_put_contents($path, $layoutCode);
-		} catch (Exception $e) {
-			Factory::getApplication()->enqueueMessage($path . '<br/>' . $e->getMessage(), 'error');
+		$msg = common::saveString2File($path, $layoutCode);
+		if ($msg !== null) {
+			Factory::getApplication()->enqueueMessage($path . '<br/>' . $msg, 'error');
 			return false;
 		}
 

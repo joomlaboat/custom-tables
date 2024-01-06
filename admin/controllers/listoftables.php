@@ -31,6 +31,10 @@ class CustomtablesControllerListOfTables extends AdminController
 		return parent::getModel($name, $prefix, array('ignore_request' => true));
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public function export()
 	{
 		$cIds = common::inputPost('cid', array(), 'array');
@@ -38,7 +42,7 @@ class CustomtablesControllerListOfTables extends AdminController
 
 		$download_link = ExportTables::export($cIds);
 
-		if ($download_link != '') {
+		if ($download_link !== null) {
 			$msg = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';
 
 			if (count($cIds) == 1)

@@ -55,15 +55,15 @@ class CustomTablesFileMethods
 
 		$whereClause = new MySQLWhereClause();
 
-		$filerows = database::loadObjectList($fileBoxTableName, ['fileid'], $whereClause);
+		$fileRows = database::loadObjectList($fileBoxTableName, ['fileid'], $whereClause);
 
-		foreach ($filerows as $filerow) {
+		foreach ($fileRows as $fileRow) {
 			CustomTablesFileMethods::DeleteExistingFileBoxFile(
 				$fileFolder,
 				$estableid,
 				$fileBoxName,
-				$filerow->fileid,
-				$filerow->file_ext
+				$fileRow->fileid,
+				$fileRow->file_ext
 			);
 		}
 	}
@@ -75,20 +75,4 @@ class CustomTablesFileMethods
 		if (file_exists($filename))
 			unlink($filename);
 	}
-
-	static public function base64file_decode($inputfile, $outputfile)
-	{
-		/* read data (binary) */
-		$ifp = fopen($inputfile, "rb");
-		$srcData = fread($ifp, filesize($inputfile));
-		fclose($ifp);
-		/* encode & write data (binary) */
-		$ifp = fopen($outputfile, "wb");
-		fwrite($ifp, base64_decode($srcData));
-		fclose($ifp);
-		/* return output filename */
-		return ($outputfile);
-	}
-
-
 }

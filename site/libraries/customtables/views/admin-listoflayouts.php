@@ -137,7 +137,7 @@ class ListOfLayouts
 	{
 		// Check if running in WordPress context
 		if (defined('WPINC')) {
-			check_admin_referer('create-layout', '_wpnonce_create-layout');
+			check_admin_referer('create-edit-layout');
 
 			// Check user capabilities
 			if (!current_user_can('install_plugins')) {
@@ -153,21 +153,21 @@ class ListOfLayouts
 
 		// Process layout name
 		if (function_exists("transliterator_transliterate"))
-			$newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPostString('layoutname', null, 'create-edit-field'));
+			$newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPostString('layoutname', null, 'create-edit-layout'));
 		else
-			$newLayoutName = common::inputPostString('layoutname', null, 'create-edit-field');
+			$newLayoutName = common::inputPostString('layoutname', null, 'create-edit-layout');
 
 		$newLayoutName = str_replace(" ", "_", $newLayoutName);
 		$newLayoutName = trim(preg_replace("/[^a-z A-Z_\d]/", "", $newLayoutName));
 		$data['layoutname'] = $newLayoutName;//$sets[] = 'layoutname=' . database::quote($newLayoutName);
 		$data['modified_by'] = (int)$this->ct->Env->user->id;//$sets[] = 'modified_by=' . (int)$this->ct->Env->user->id;
 		$data['modified'] = current_time('mysql', 1); // This will use the current date and time in MySQL format;//$sets[] = 'modified=NOW()';
-		$data['layouttype'] = common::inputPostString('layouttype', null, 'create-edit-field');//$sets[] = 'layouttype=' . database::quote(common::inputPostString('layouttype'));
-		$data['tableid'] = common::inputPostInt('table', null, 'create-edit-field');//$sets[] = 'tableid=' . common::inputGetInt('table');
-		$data['layoutcode'] = common::inputPostRow('layoutcode', null, 'create-edit-field');//$sets[] = 'layoutcode=' . database::quote(common::inputGetRow('layoutcode'), true);
-		$data['layoutmobile'] = common::inputPostRow('layoutmobile', null, 'create-edit-field');//$sets[] = 'layoutmobile=' . database::quote(common::inputGetRow('layoutmobile'), true);
-		$data['layoutcss'] = common::inputPostRow('layoutcss', null, 'create-edit-field');//$sets[] = 'layoutcss=' . database::quote(common::inputGetRow('layoutcss'), true);
-		$data['layoutjs'] = common::inputPostRow('layoutjs', null, 'create-edit-field');//$sets[] = 'layoutjs=' . database::quote(common::inputGetRow('layoutjs'), true);
+		$data['layouttype'] = common::inputPostString('layouttype', null, 'create-edit-layout');//$sets[] = 'layouttype=' . database::quote(common::inputPostString('layouttype'));
+		$data['tableid'] = common::inputPostInt('table', null, 'create-edit-layout');//$sets[] = 'tableid=' . common::inputGetInt('table');
+		$data['layoutcode'] = common::inputPostRow('layoutcode', null, 'create-edit-layout');//$sets[] = 'layoutcode=' . database::quote(common::inputGetRow('layoutcode'), true);
+		$data['layoutmobile'] = common::inputPostRow('layoutmobile', null, 'create-edit-layout');//$sets[] = 'layoutmobile=' . database::quote(common::inputGetRow('layoutmobile'), true);
+		$data['layoutcss'] = common::inputPostRow('layoutcss', null, 'create-edit-layout');//$sets[] = 'layoutcss=' . database::quote(common::inputGetRow('layoutcss'), true);
+		$data['layoutjs'] = common::inputPostRow('layoutjs', null, 'create-edit-layout');//$sets[] = 'layoutjs=' . database::quote(common::inputGetRow('layoutjs'), true);
 
 		// set the metadata to the Item Data
 		/*

@@ -32,7 +32,7 @@ class ImportTables
 		$ct = new CT;
 
 		if (file_exists($filename)) {
-			$data = file_get_contents($filename);
+			$data = common::getStringFromFile($filename);
 			if ($data == '') {
 				$msg = 'Uploaded file "' . $filename . '" is empty.';
 				return false;

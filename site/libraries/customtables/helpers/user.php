@@ -210,12 +210,11 @@ class CTUser
 	static public function GetUserGroups(int $userid): string
 	{
 		$groups = Access::getGroupsByUser($userid);
-		//$groupIdList = '(' . implode(',', $groups) . ')';
-		//$query = 'SELECT title FROM #__usergroups WHERE id IN ' . $groupIdList;
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('id', '(' . implode(',', $groups) . ')', 'IN', true);
-		$rows = database::loadRowList('#__usergroups', ['title'], $whereClause, 'rgt');
+
+		$rows = database::loadRowList('#__usergroups', ['title'], $whereClause);
 
 		$groupList = array();
 		foreach ($rows as $group)

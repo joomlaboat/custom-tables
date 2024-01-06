@@ -20,8 +20,7 @@ use Joomla\CMS\MVC\View\HtmlView;
 // import Joomla view library
 jimport('joomla.application.component.view');
 
-$path = CUSTOMTABLES_LIBRARIES_PATH
-	. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR;
+$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR;
 
 require_once($path . 'updateimages.php');
 require_once($path . 'updatefiles.php');

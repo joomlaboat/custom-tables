@@ -12,6 +12,7 @@ use CustomTables\common;
 use CustomTables\database;
 use CustomTables\ImportTables;
 use CustomTables\MySQLWhereClause;
+use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -28,7 +29,7 @@ class ImportExportUserGroups
 	public static function processFile($filename, &$msg): bool
 	{
 		if (file_exists($filename)) {
-			$data = file_get_contents($filename);
+			$data = common::getStringFromFile($filename);
 
 			if (!str_contains($data, '<usergroupsexport>')) {
 				$msg = 'Uploaded file does not contain User Groups JSON data.';
@@ -114,8 +115,12 @@ class ImportExportUserGroups
 			} while (1 == 1);
 
 			$link = '/tmp/' . $filename_available;
-			file_put_contents($tmp_path . $filename_available, $output_str);
-			//$output_str = null;
+
+			$msg = common::saveString2File($tmp_path . $filename_available, $output_str);
+			if ($msg !== null) {
+				Factory::getApplication()->enqueueMessage($tmp_path . $filename_available . '<br/>' . $msg, 'error');
+				return null;
+			}
 			return $link;
 		}
 		return null;

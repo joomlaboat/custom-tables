@@ -201,7 +201,7 @@ class CustomTablesViewFiles extends HtmlView
 			return false;
 		}
 
-		$content = file_get_contents($file);
+		$content = common::getStringFromFile($file);
 
 		$parts = explode('/', $file);
 		$filename = end($parts);

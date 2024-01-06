@@ -225,7 +225,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		if (common::inputGetCmd('base64ecnoded', '') == "true") {
 			$src = $uploadedfile;
 			$dst = "tmp/decoded_" . basename($file['name']);
-			$this->base64file_decode($src, $dst);
+			common::base64file_decode($src, $dst);
 			$uploadedfile = $dst;
 		}
 
@@ -291,20 +291,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		$this->ct->Table->saveLog($this->listing_id, 6);
 
 		return true;
-	}
-
-	function base64file_decode($inputfile, $outputfile)
-	{
-		/* read data (binary) */
-		$ifp = fopen($inputfile, "rb");
-		$srcData = fread($ifp, filesize($inputfile));
-		fclose($ifp);
-		/* encode & write data (binary) */
-		$ifp = fopen($outputfile, "wb");
-		fwrite($ifp, base64_decode($srcData));
-		fclose($ifp);
-		/* return output filename */
-		return ($outputfile);
 	}
 
 	/**

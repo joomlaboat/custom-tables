@@ -26,6 +26,24 @@ if (!function_exists('str_contains')) {
 
 function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', ?bool $loadTwig = null): void
 {
+	/*
+	$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName .
+		DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR;
+
+	require_once($path . 'inputbox.php');
+
+	$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR
+		. 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
+
+
+	echo 'd';
+	if (file_exists($path . 'tablejoin.php')) {
+		echo 'b';
+		require_once($path . 'tablejoin.php');
+		echo 'c';
+	}
+	echo 'a';
+*/
 	if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
 		return;
 

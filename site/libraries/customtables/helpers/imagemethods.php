@@ -322,7 +322,7 @@ class CustomTablesImageMethods
 			if ($is_base64encoded == "true") {
 				$src = $uploadedFile;
 				$dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($image_file_id);//TODO: Check this functionality
-				$this->base64file_decode($src, $dst);
+				common::base64file_decode($src, $dst);
 			}
 
 			//Delete
@@ -426,20 +426,6 @@ class CustomTablesImageMethods
 			return '0';
 		else
 			return null;
-	}
-
-	function base64file_decode($inputFile, $outputFile)
-	{
-		/* read data (binary) */
-		$ifp = fopen($inputFile, "rb");
-		$srcData = fread($ifp, filesize($inputFile));
-		fclose($ifp);
-		/* encode & write data (binary) */
-		$ifp = fopen($outputFile, "wb");
-		fwrite($ifp, base64_decode($srcData));
-		fclose($ifp);
-		/* return output filename */
-		return $outputFile;
 	}
 
 	/**

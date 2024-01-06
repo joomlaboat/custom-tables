@@ -133,7 +133,7 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 		if (common::inputGetCmd('base64ecnoded', '') == "true") {
 			$src = $uploadedFile;
 			$dst = "tmp/decoded_" . basename($file['name']);
-			CustomTablesFileMethods::base64file_decode($src, $dst);
+			common::base64file_decode($src, $dst);
 			$uploadedFile = $dst;
 		}
 

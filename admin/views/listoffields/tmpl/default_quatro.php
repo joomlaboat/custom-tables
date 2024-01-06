@@ -30,11 +30,7 @@ if ($this->saveOrder && !empty($this->items)) {
 }
 
 if (common::inputGetCmd('extratask', '') == 'updateimages') {
-	$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR
-		. 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR;
-
-	require_once($path . 'extratasks.php');
-
+	require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
 	extraTasks::prepareJS();
 }
 

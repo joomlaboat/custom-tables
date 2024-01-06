@@ -22,6 +22,7 @@ use JoomlaBasicMisc;
 use ESTables;
 
 use Joomla\CMS\Factory;
+use CustomTables\ctProHelpers;
 
 class Field
 {
@@ -1108,35 +1109,8 @@ class Fields
 				}
 			}
 
-			$extraTask = '';
-
-			if ($ex_type == $new_type and $new_type == 'image' and ($ex_typeparams != $new_typeparams or str_contains($new_typeparams, '|delete'))) {
-
-				$ex_typeparams_array = JoomlaBasicMisc::csv_explode(',', $ex_typeparams);
-				$new_typeparams_array = JoomlaBasicMisc::csv_explode(',', $new_typeparams);
-
-				if ($ex_typeparams_array[0] != $new_typeparams_array[0])
-					$extraTask = 'updateimages'; //Resize all images if needed
-				elseif (($ex_typeparams_array[2] ?? null) != ($new_typeparams_array[2] ?? null)) {
-					common::inputSet('stepsize', 1000);
-					$extraTask = 'updateimages'; //Move all images if needed
-				}
-			}
-			if ($ex_type == $new_type and $new_type == 'file' and $ex_typeparams != $new_typeparams)
-				$extraTask = 'updatefiles';
-
-			if ($ex_type == $new_type and $new_type == 'imagegallery' and $ex_typeparams != $new_typeparams)
-				$extraTask = 'updateimagegallery'; //Resize or move all images in the gallery if needed
-
-			if ($ex_type == $new_type and $new_type == 'filebox' and $ex_typeparams != $new_typeparams)
-				$extraTask = 'updatefilebox'; //Resize or move all images in the gallery if needed
-
-			if ($extraTask != '') {
-				common::inputSet('extratask', $extraTask);
-				common::inputSet('old_typeparams', base64_encode($ex_typeparams));
-				common::inputSet('new_typeparams', base64_encode($new_typeparams));
-				common::inputSet('fieldid', $fieldid);
-			}
+			if ($ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+				ctProHelpers::update_physical_field_set_extra_tasks($ex_type, $new_type, $ex_typeparams, $new_typeparams, $fieldid);
 		}
 		//---------------------------------- end convert field
 

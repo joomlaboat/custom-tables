@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 class ExportTables
@@ -27,7 +28,7 @@ class ExportTables
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function export($table_ids, $path = 'tmp'): string
+	public static function export($table_ids, $path = 'tmp'): ?string
 	{
 		$link = '';
 		$tables = array();
@@ -77,7 +78,12 @@ class ExportTables
 				$link .= '/';
 
 			$link .= $path . '/' . $filename_available;
-			file_put_contents($tmp_path . $filename_available, $output_str);
+
+			$msg = common::saveString2File($tmp_path . $filename_available, $output_str);
+			if ($msg !== null) {
+				Factory::getApplication()->enqueueMessage($tmp_path . $filename_available . '<br/>' . $msg, 'error');
+				return null;
+			}
 		}
 		return $link;
 	}

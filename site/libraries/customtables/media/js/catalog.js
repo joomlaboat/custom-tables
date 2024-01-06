@@ -240,7 +240,7 @@ function ctSearchBoxDo() {
     }
 
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
-    link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], ["where=" + Base64.encode(w.join(" and "))], link);
+    link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], ["where=" + encodeURIComponent(w.join(" and "))], link);//Base64.encode
     window.location.href = link;
 }
 
