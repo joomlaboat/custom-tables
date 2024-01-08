@@ -1054,7 +1054,7 @@
                    fieldchild="fieldtype_param_1"
                    image="https://joomlaboat.com/images/components/ct/field-types/tablejoin-selecttable.png"/>
             <param name="fieldname" label="Field Name" example="title"
-                   description="Type the field name to return the value by default. You may type layout name instead. options: 'layout:layout_name' or 'tablelesslayout:layout_name'"
+                   description="Type the field name to return the value by default."
                    default="" type="field"/>
             <param name="filter" label="Filter"
                    description="Limits records using filter. Example: [age>30] where age is a field in joining table"
@@ -1081,28 +1081,31 @@
         </params>
 
         <editparams name="sqljoin" label="Input Element Parameters"
-                    description="Input/Select box etc HTML element parameters.">
+                    description="The Table Join field type Twig tag ({{ FieldName.edit }}) for generating a Select Box takes the following parameters:">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."
+                <param type="string" name="cssclass" label="CSS Class"
+                       description="Name or names of CSS class(s) to style the select box."
                        example="inputbox" optional="1"/>
-                <param type="string" name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                <param type="string" name="attributes" label="Attributes" example="data-importance='max'"
+                       description="Optional attributes like disabled, onclick, onchange, etc. that can be added to the select box."
+                       default=""
                        optional="1"/>
                 <param name="parent-selector" label="Parent Selector"
-                       description="Used for multilevel dependencies like Country, City, Street. List of parameters to set the sub-level select box. Example: [city_table_name, city_field_name, allow_unpublished(true or false), filter(population>100000), order_by(name)]. It is also possible to pass multiple selectors. Example: [ [city_table_name, city_field_name],[country_table_name, country_field_name, false]]"
+                       description="Used for multilevel dependencies like Country, City, Street.It comprises a list of parameters to set the sub-level select box. Examples include table names, field names, filters, and sorting orders for sub-level selections. It can accept multiple selectors for various dependencies.***pre***[city_table_name, city_field_name, allow_unpublished, filter, order_by]***end-of-pre***It is also possible to pass multiple selectors.***pre***[ [city_table_name, city_field_name],[country_table_name, country_field_name, false]]***end-of-pre***"
                        default="" type="array"
                        examplenoquotes="1" optional="1"
                        example="[[city_table_name, city_field_name],[country_table_name, country_field_name, false]]"/>
                 <param type="layout" name="layout" label="Title Layout"
-                       description="Optional parameter set the option title format, instead of the field name set in the field type parameter. The layout may contain the field names surrounded by curly brackets. Example: {{ name }} - {{ title }}"
+                       description="Optional parameter setting the option title format instead of using the field name. The layout may contain field names surrounded by curly brackets for customized title display. Example: {{ name }} - {{ title }}"
                        layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json" optional="1"
                        image="https://joomlaboat.com/images/components/ct/field-types/tablejoin-customtitle.png"/>
-                <param type="string" name="menu_item_alias" label="Menu Item alias"
+                <param type="string" name="menu_item_alias" label="Menu Item alias" example="home-page"
                        description="Menu Item alias to open the link using specific menu item parameters."
                        optional="1"/>
                 <param name="improved" label="Improve Select Box"
-                       description="Improve Select box to include in-list search." type="list" default=""
-                       example="reload" optional="1">
+                       description="An option to improve the select box UI, allowing in-list search and other visual enhancements."
+                       type="list" default=""
+                       example="improved" optional="1">
                     <option value="" label="Standard"/>
                     <option value="improved" label="Improved (Joomla)"/>
                     <option value="virtualselect" label="Improved (Virtual Select)"/>

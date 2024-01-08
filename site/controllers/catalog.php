@@ -275,7 +275,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
 		case 'setorderby':
 
-			$order_by = common::inputPostString('orderby', '');
+			$order_by = common::inputGetString('orderby', '');
 			$order_by = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $order_by));
 
 			$ct->app->setUserState('com_customtables.orderby_' . $ct->Params->ItemId, $order_by);

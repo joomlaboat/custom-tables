@@ -131,12 +131,17 @@ class Documentation
 
 				$result .= '<hr/><h5>' . common::translate('COM_CUSTOMTABLES_EDITRECPARAMS') . ':</h5>';
 
+
 				if (!empty($type->editparams)) {
 
 					$editparams_att = $type->editparams->attributes();
 
 					if (isset($editparams_att->image)) {
 						$result .= '<p><img src="' . $editparams_att->image . '" alt="' . $editparams_att->label . '" /></p>';
+					}
+
+					if (isset($editparams_att->description)) {
+						$result .= '<p>' . $editparams_att->description . '</p>';
 					}
 				}
 
@@ -192,7 +197,15 @@ class Documentation
 		foreach ($params->param as $param) {
 
 			$param_att = $param->attributes();
-			$result .= '<li><h6>' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . '</h6>';
+
+			if (isset($param_att->description)) {
+				$param_description = $param_att->description;
+				$param_description = str_replace('***pre***', '<br/><pre>', $param_description);
+				$param_description = str_replace('***end-of-pre***', '</pre><br/>', $param_description);
+			} else
+				$param_description = '';
+
+			$result .= '<li><h6>' . $param_att->label . ($param_description != '' ? ' - ' . $param_description : '') . '</h6>';
 
 			if (isset($param_att->image)) {
 				$result .= '<p><img src="' . $param_att->image . '" alt="' . $param_att->label . '" /></p>';
@@ -212,6 +225,12 @@ class Documentation
 
 		$result_new = '';
 		$cleanedParamsStr = implode(',', $this->cleanParams($example_values));
+
+		$cleanedParamsStr = str_replace('***italic***', '<i>', $cleanedParamsStr);
+		$cleanedParamsStr = str_replace('***end-of-italic***', '</i>', $cleanedParamsStr);
+
+		$cleanedParamsStr = str_replace('***pre***', '<br/><pre>', $cleanedParamsStr);
+		$cleanedParamsStr = str_replace('***end-of-pre***', '</pre><br/>', $cleanedParamsStr);
 
 		if ($tag_name == '') {
 			if (!(int)$hideDefaultExample) {
@@ -510,7 +529,15 @@ class Documentation
 				$param_att = $param->attributes();
 
 				if (count($param_att) != 0) {
-					$result .= $count . '. ' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . '<br/>';
+
+					if (isset($param_att->description)) {
+						$param_description = $param_att->description;
+						$param_description = str_replace('***pre***', '<br/>`', $param_description);
+						$param_description = str_replace('***end-of-pre***', '</pre>`', $param_description);
+					} else
+						$param_description = '';
+
+					$result .= $count . '. ' . $param_att->label . ($param_description != '' ? ' - ' . $param_description : '') . '<br/>';
 
 					if (isset($param_att->image)) {
 						$result .= '![' . $param_att->label . '](' . $param_att->image . ')<br/><br/>';
