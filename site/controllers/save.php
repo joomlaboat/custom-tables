@@ -112,7 +112,7 @@ function CustomTablesSave($task, $this_)
 		if ($task == 'saveascopy')
 			$isOk = $model->copy($msg_, $link);
 		else
-			$isOk = $model->store($msg_, $link);
+			$isOk = $model->store($link);
 
 		if ($task == 'saveandcontinue') {
 			$link = JoomlaBasicMisc::deleteURLQueryOption($link, "listing_id");

@@ -121,44 +121,50 @@ In this case, there will be two checks: the first one will check if the record b
         <fieldset
                 name="email"
                 label="Email Notification"
-                description="Send emails if record added or edited."
+                description="Send email notification(s) after record has been added or edited."
         >
-            <field type="CTEmailLayout" name="onrecordaddsendemaillayout" default="" label="Email Layout"
-                   description="Email Layout"/>
+            <field type="CTEmailLayout" name="onrecordaddsendemaillayout" default="" label="Email Message Layout"
+                   description="Choose the layout type for the email message body creation."/>
 
-            <field type="list" name="onrecordaddsendemail" default="0" label="Send Email When record" description="">
-                <option value="1">Added</option>
-                <option value="2">Saved</option>
-                <option value="3">On Conditions (Works on refresh too)</option>
+            <field type="list" name="onrecordaddsendemail" default="0" label="Send Email Under Conditions"
+                   description="Specify the condition for sending emails. For instance, contact forms may need to be sent when a website visitor adds a record. Note: Changes in the published status count as editing.">
+                <option value="1">When a record is added</option>
+                <option value="2">When a record is saved</option>
+                <option value="3">Based on specific conditions (Works on refresh too)</option>
                 <option value="0">Do not send</option>
             </field>
 
-            <field type="text" name="sendemailcondition" default="" size="50" label="Send Email Condition"
-                   description="Example (That's PHP syntax): approved==1 or name==ivan"/>
+            <field type="text" name="onrecordaddsendemailto" default="" size="1024"
+                   label="Send Email When Record is Added To:"
+                   description="Enter the recipient email addresses for notifications when a record is added. Separate multiple emails with a comma.
 
-            <field type="text" name="onrecordaddsendemailto" default="" size="50" label="On Record Add Send Email to"
-                   description="The email with the data filled in the form will be sent to this email. More than one email is ok. Separate them with the comma.
+            To set a custom subject for an email, append the colon ':' after the email address, followed by the desired subject.
 
-						Also you may use a value of the field of the table to send an email to.
-						To have your own Email Subject please type : after email and then the subject.
-						Example 1: [email]
-						Example 2: test@yahoo.com,test@gmail.com,[email]
-						Example 3: [email]:Thank you for participation
-				"/>
+            You can also utilize field values from the added record by using Twig tags.
 
-            <field type="text" name="onrecordsavesendemailto" default="" size="50" label="On Record Edit Send Email to"
-                   description="The email with the data filled in the form will be sent to this email. More than one email is ok. Separate them with the comma.
+            Example 1: {{ email }}
+            Example 2: test@yahoo.com, test@gmail.com, {{ email }}: My Test Email
+            Example 3: {{ customeremail }}: Thank you {{ name }} for your participation.
+"/>
 
-						Also you may use a value of the field of the table to send an email to.
-						To have your own Email Subject please type : after email and then the subject.
-						Example 1: [email]
-						Example 2: test@yahoo.com,test@gmail.com,[email]
-						Example 3: [email]:Thank you for participation
-				"/>
+            <field type="text" name="onrecordsavesendemailto" default="" size="1024"
+                   label="Send Email When Record is Saved To:"
+                   description="Enter the recipient email addresses for notifications when a record is saved or refreshed. Separate multiple emails with a comma.
 
+            To set a custom subject for an email, append the colon ':' after the email address, followed by the desired subject.
 
-            <field type="string" name="emailsentstatusfield" default="" label="Email Sent Status Field"
-                   description="Field Name where to save the email sending status. Should be int or checkbox type. 1- sent, 0- not sent."/>
+            You can also utilize field values from the saved record by using Twig tags.
+
+            Example 1: {{ email }}
+            Example 2: test@yahoo.com, test@gmail.com, {{ email }}: My Test Email
+            Example 3: {{ customeremail }}: Thank you {{ name }} for your participation.
+"/>
+
+            <field type="text" name="sendemailcondition" default="" size="50" label="Conditions for Sending Email"
+                   description="Specify conditions for triggering the 'Record Saved' event. For example (using PHP syntax): 'approved=1 OR name=='Mark'"/>
+
+            <field type="string" name="emailsentstatusfield" default="" label="Field for Email Sent Status"
+                   description="Designate a field to track the status of email sending. This field should be of type 'integer' or 'checkbox'. '1' represents sent, '0' represents not sent."/>
         </fieldset>
 
         <fieldset name="Advanced" label="Advanced">

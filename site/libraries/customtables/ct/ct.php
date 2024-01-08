@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTablesImageMethods;
 use ESTables;
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -154,7 +155,7 @@ class CT
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 * @since 3.2.2
 	 */
 	function getRecords($all = false, $limit = 0): bool
@@ -208,7 +209,7 @@ class CT
 					try {
 						$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
 							(count($ordering) > 0 ? implode(',', $ordering) : null), null, $the_limit, $this->LimitStart);
-					} catch (\Exception $e) {
+					} catch (Exception $e) {
 						echo $e->getMessage();
 						return false;
 					}
@@ -241,7 +242,7 @@ class CT
 
 		try {
 			$rows = database::loadObjectList($this->Table->realtablename, ['COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count'], $whereClause);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			echo 'Database error happened';
 			echo $e->getMessage();
 			return 0;
@@ -415,7 +416,7 @@ class CT
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 * @since 3.2.2
 	 */
 	public function deleteSingleRecord($listing_id): int
@@ -510,7 +511,7 @@ class CT
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 * @since 3.2.2
 	 */
 	public function RefreshSingleRecord($listing_id, $save_log): int
@@ -563,12 +564,12 @@ class CT
 			CleanExecute::executeCustomPHPfile($this->Table->tablerow['customphp'], $row, $row);
 
 		//Send email note if applicable
-		if ($this->Params->onRecordAddSendEmail == 3 and ($this->Params->onRecordSaveSendEmailTo != '' or $this->Params->onRecordAddSendEmailTo != '')) {
+		if ($this->Params->onRecordAddSendEmail == 3 and !empty($this->Params->onRecordSaveSendEmailTo)) {
 			//check conditions
 
 			if ($saveField->checkSendEmailConditions($listing_id, $this->Params->sendEmailCondition)) {
 				//Send email conditions met
-				$saveField->sendEmailIfAddressSet($listing_id, $row);//,$new_username,$new_password);
+				$saveField->sendEmailIfAddressSet($listing_id, $row, $this->Params->onRecordSaveSendEmailTo);
 			}
 		}
 		return 1;
@@ -654,7 +655,7 @@ class CT
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws Exception
 	 * @since 3.2.2
 	 */
 	public function checkIfItemBelongsToUser(string $listing_id, string $userIdField): bool

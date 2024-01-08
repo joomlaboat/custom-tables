@@ -962,12 +962,9 @@ class SaveFieldQuerySet
 		return false;
 	}
 
-	function sendEmailIfAddressSet(string $listing_id, array $row): void
+	function sendEmailIfAddressSet(string $listing_id, array $row, string $email): void
 	{
-		if ($this->ct->Params->onRecordAddSendEmailTo != '')
-			$status = $this->sendEmailNote($listing_id, $this->ct->Params->onRecordAddSendEmailTo, $row);
-		else
-			$status = $this->sendEmailNote($listing_id, $this->ct->Params->onRecordSaveSendEmailTo, $row);
+		$status = $this->sendEmailNote($listing_id, $email, $row);
 
 		if ($this->ct->Params->emailSentStatusField != '') {
 
