@@ -234,12 +234,6 @@ class database
 		return null;
 	}
 
-	public static function getServerType(): ?string
-	{
-		$db = self::getDB();
-		return $db->serverType;
-	}
-
 	/**
 	 * Inserts data into a database table in a cross-platform manner (Joomla and WordPress).
 	 *
@@ -312,72 +306,6 @@ class database
 		$db->setQuery($query);
 		$db->execute();
 
-	}
-
-	/**
-	 * Updates data in a database table in a cross-platform manner (Joomla and WordPress).
-	 *
-	 * @param string $tableName The name of the table to update.
-	 * @param array $data An associative array of data to update. Keys represent column names, values represent new values.
-	 * @param array $where An associative array specifying which rows to update. Keys represent column names, values represent conditions for the update.
-	 *
-	 * @return bool True if the update operation is successful, otherwise false.
-	 * @throws Exception If an error occurs during the update operation.
-	 *
-	 * @since 3.1.8
-	 */
-	public static function update(string $tableName, array $data, MySQLWhereClause $whereClause): bool
-	{
-		if (!$whereClause->hasConditions()) {
-			throw new Exception('Update database table records without WHERE clause is prohibited.');
-		}
-
-		if (count($data) == 0)
-			return true;
-
-		$db = self::getDB();
-
-		$fields = self::prepareFields($db, $data);
-
-		$query = $db->getQuery(true);
-
-		$query->update($db->quoteName($tableName))
-			->set($fields)
-			->where($whereClause->getWhereClause());
-
-		$db->setQuery($query);
-
-		try {
-			$db->execute();
-			return true; // Update successful
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
-		}
-	}
-
-	protected static function prepareFields($db, $data): array
-	{
-		// Construct the update statement
-		$fields = array();
-		foreach ($data as $key => $value) {
-			if (is_array($value) and count($value) == 2 and $value[1] == 'sanitized') {
-				$fields[] = $db->quoteName($key) . '=' . $value[0];
-			} else {
-				if ($value === null)
-					$valueCleaned = 'NULL';
-				elseif (is_bool($value))
-					$valueCleaned = $value ? 'TRUE' : 'FALSE';
-				elseif (is_int($value))
-					$valueCleaned = $value;
-				elseif (is_float($value))
-					$valueCleaned = $value;
-				else
-					$valueCleaned = $db->quote($value);
-
-				$fields[] = $db->quoteName($key) . '=' . $valueCleaned;
-			}
-		}
-		return $fields;
 	}
 
 	/**
@@ -490,5 +418,135 @@ class database
 
 		$db->setQuery("SHOW CREATE TABLE %i", $tableName);
 		return $db->loadAssocList();
+	}
+
+	/*
+	public static function copyRecord(string $tableName, string $realIdFieldName, string $listing_id, string $new_listing_id)
+	{
+		$db = self::getDB();
+
+		$serverType = self::getServerType();
+		if ($serverType == 'postgresql') {
+			$query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE ' . $db->quoteName($tableName) . ' WITH NO DATA';
+
+			$db->setQuery($query);
+			$db->execute();
+
+			$query = 'INSERT INTO ct_tmp (SELECT * FROM ' . $db->quoteName($tableName) . ' WHERE ' . $db->quoteName($realIdFieldName) . ' = ' . database::quote($listing_id) . ')';
+
+		} else {
+			$query = 'CREATE TEMPORARY TABLE ct_tmp SELECT * FROM ' . $db->quoteName($tableName) . ' WHERE ' . $db->quoteName($realIdFieldName) . ' = ' . database::quote($listing_id);
+		}
+
+		$db->setQuery($query);
+		$db->execute();
+		$query = $db->getQuery(true);
+
+		//Update the ID
+		$query->update($db->quoteName('ct_tmp'))
+			->set([$realIdFieldName => $new_listing_id])
+			->where($db->quoteName($realIdFieldName) . '=' . $db->quote($listing_id));
+
+		$db->setQuery($query);
+		$db->execute();
+
+		//Copy updated record to original table
+		$query = 'INSERT INTO ' . $db->quoteName($tableName) . ' SELECT * FROM '.$db->quoteName('ct_tmp').' WHERE ' . $db->quoteName($realIdFieldName) . '=' . database::quote($new_listing_id);
+		try {
+			database::setQuery($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return false;
+		}
+
+		common::inputSet("listing_id", $new_id);
+		common::inputSet('old_listing_id', $listing_id);
+		$this->listing_id = $new_id;
+		$serverType = database::getServerType();
+		if ($serverType == 'postgresql') {
+			$query = 'DROP TABLE IF EXISTS ct_tmp';
+		} else {
+			$query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
+		}
+
+		try {
+			database::setQuery($query);
+		} catch (Exception $e) {
+			$this->ct->errors[] = $e->getMessage();
+			return false;
+		}
+	}
+	*/
+
+	public static function getServerType(): ?string
+	{
+		$db = self::getDB();
+		return $db->serverType;
+	}
+
+	/**
+	 * Updates data in a database table in a cross-platform manner (Joomla and WordPress).
+	 *
+	 * @param string $tableName The name of the table to update.
+	 * @param array $data An associative array of data to update. Keys represent column names, values represent new values.
+	 * @param array $where An associative array specifying which rows to update. Keys represent column names, values represent conditions for the update.
+	 *
+	 * @return bool True if the update operation is successful, otherwise false.
+	 * @throws Exception If an error occurs during the update operation.
+	 *
+	 * @since 3.1.8
+	 */
+	public static function update(string $tableName, array $data, MySQLWhereClause $whereClause): bool
+	{
+		if (!$whereClause->hasConditions()) {
+			throw new Exception('Update database table records without WHERE clause is prohibited.');
+		}
+
+		if (count($data) == 0)
+			return true;
+
+		$db = self::getDB();
+
+		$fields = self::prepareFields($db, $data);
+
+		$query = $db->getQuery(true);
+
+		$query->update($db->quoteName($tableName))
+			->set($fields)
+			->where($whereClause->getWhereClause());
+
+		$db->setQuery($query);
+
+		try {
+			$db->execute();
+			return true; // Update successful
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+	}
+
+	protected static function prepareFields($db, $data): array
+	{
+		// Construct the update statement
+		$fields = array();
+		foreach ($data as $key => $value) {
+			if (is_array($value) and count($value) == 2 and $value[1] == 'sanitized') {
+				$fields[] = $db->quoteName($key) . '=' . $value[0];
+			} else {
+				if ($value === null)
+					$valueCleaned = 'NULL';
+				elseif (is_bool($value))
+					$valueCleaned = $value ? 'TRUE' : 'FALSE';
+				elseif (is_int($value))
+					$valueCleaned = $value;
+				elseif (is_float($value))
+					$valueCleaned = $value;
+				else
+					$valueCleaned = $db->quote($value);
+
+				$fields[] = $db->quoteName($key) . '=' . $valueCleaned;
+			}
+		}
+		return $fields;
 	}
 }

@@ -166,7 +166,7 @@ class ImportTables
 		}
 
 		foreach ($keys as $key) {
-			$type = null;
+			//$type = null;
 
 			if (!in_array($key, $ignore_fields)) {
 				$fieldname = ImportTables::checkFieldName($key, $force_id, $exceptions);

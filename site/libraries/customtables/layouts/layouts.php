@@ -213,7 +213,7 @@ class Layouts
 
 				$data = [
 					$fieldName => addslashes($content),
-					'modified' => 'FROM_UNIXTIME(' . $file_ts . ')'
+					'modified' => ['FROM_UNIXTIME(' . $file_ts . ')', 'sanitized']
 				];
 				$whereClauseUpdate = new MySQLWhereClause();
 				$whereClauseUpdate->addCondition('id', $layout_id);
@@ -268,7 +268,7 @@ class Layouts
 			return false;
 		} else {
 
-			$data = ['modified' => 'FROM_UNIXTIME(' . $file_ts . ')'];
+			$data = ['modified' => ['FROM_UNIXTIME(' . $file_ts . ')', 'sanitized']];
 			$whereClauseUpdate = new MySQLWhereClause();
 
 			if ($layout_id == 0) {

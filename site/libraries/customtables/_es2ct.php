@@ -195,7 +195,7 @@ function fixToolBarTags($htmlresult, $w)
  */
 function updateImageFieldTypeParams(): void
 {
-	$data = ['typeparams' => 'CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\'))'];
+	$data = ['typeparams' => ['CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\'))', 'sanitized']];
 	$whereClauseUpdate = new MySQLWhereClause();
 	$whereClauseUpdate->addOrCondition('type', 'image');
 	$whereClauseUpdate->addOrCondition('type', 'imagegallery');

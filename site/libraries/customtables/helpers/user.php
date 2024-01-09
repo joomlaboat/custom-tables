@@ -352,8 +352,9 @@ class CTUser
 		//Apply group
 
 		foreach ($group_ids as $group_id) {
-			$query = 'INSERT #__user_usergroup_map SET user_id=' . $user->id . ', group_id=' . $group_id;
-			database::setQuery($query);
+			//$query = 'INSERT #__user_usergroup_map SET user_id=' . $user->id . ', group_id=' . $group_id;
+			database::insert('#__user_usergroup_map', ['user_id' => $user->id, 'group_id' => $group_id]);
+			//database::setQuery($query);
 		}
 
 		// Compile the notification mail values.

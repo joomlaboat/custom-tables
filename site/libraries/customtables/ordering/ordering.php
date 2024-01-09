@@ -163,11 +163,12 @@ class Ordering
 			case 'creationtime':
 			case 'changetime':
 			case 'lastviewtime':
-
-				if (count($field->params) > 0 and $field->params[0] != '') {
-					return 'DATE_FORMAT(' . $field->realfieldname . ', ' . database::quote($field->params[0]) . ')';
-				} else
-					return $field->realfieldname;
+				/*
+								if (count($field->params) > 0 and $field->params[0] != '') {
+									return 'DATE_FORMAT(' . $field->realfieldname . ', ' . database::quote($field->params[0]) . ')';
+								} else
+									*/
+				return $field->realfieldname;
 
 			default:
 				return $field->realfieldname;

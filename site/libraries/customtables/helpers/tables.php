@@ -481,31 +481,41 @@ class ESTables
 
 		foreach ($rows as $row) {
 
-			$inserts = array('tableid=' . $new_table_id);
+			$data = [];
+			$data['tableid'] = $new_table_id;
+			//$inserts = array('tableid=' . $new_table_id);
 			foreach ($fields as $fld) {
 
 				if ($fld == 'parentid') {
 					if ((int)$row[$fld] == 0)
-						$inserts[] = $fld . '=NULL';
+						$data[$fld] = null;
+					//$inserts[] = $fld . '=NULL';
 					else
-						$inserts[] = $fld . '=' . (int)$row[$fld];
+						$data[$fld] = (int)$row[$fld];
+					//$inserts[] = $fld . '=' . (int)$row[$fld];
 				} elseif ($fld == 'created_by' or $fld == 'modified_by') {
 					if ((int)$row[$fld] == 0)
-						$inserts[] = $fld . '=' . $ct->Env->user->id;
+						$data[$fld] = $ct->Env->user->id;
+					//$inserts[] = $fld . '=' . $ct->Env->user->id;
 					else
-						$inserts[] = $fld . '=' . (int)$row[$fld];
+						$data[$fld] = (int)$row[$fld];
+					//$inserts[] = $fld . '=' . (int)$row[$fld];
 				} elseif ($fld == 'created' or $fld == 'modified') {
 					if ($row[$fld] == "")
-						$inserts[] = $fld . '=NOW()';
+						$data[$fld] = ['NOW()', 'sanitized'];
+					//$inserts[] = $fld . '=NOW()';
 					else
-						$inserts[] = $fld . '="' . $row[$fld] . '"';
+						$data[$fld] = $row[$fld];
+					//$inserts[] = $fld . '="' . $row[$fld] . '"';
 				} else {
-					$value = str_replace('"', '\"', $row[$fld]);
-					$inserts[] = $fld . '="' . $value . '"';
+					//$value = str_replace('"', '\"', $row[$fld]);
+					$data[$fld] = str_replace('"', '\"', $row[$fld]);
+					//$inserts[] = $fld . '="' . $value . '"';
 				}
 			}
-			$iq = 'INSERT INTO #__customtables_fields SET ' . implode(', ', $inserts);
-			database::setQuery($iq);
+			database::insert('#__customtables_fields', $data);
+			//$iq = 'INSERT INTO #__customtables_fields SET ' . implode(', ', $inserts);
+			//database::setQuery($iq);
 		}
 		return true;
 	}

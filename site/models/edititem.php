@@ -91,15 +91,26 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 		try {
 			$whereClause = new MySQLWhereClause();
-			$rows = database::loadObjectList($this->ct->Table->realtablename, ['MAX(' . $this->ct->Table->realidfieldname . ') AS maxid'], $whereClause, null, null, 1);
+			$whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
+			$rows = database::loadAssocList($this->ct->Table->realtablename, ['*'], $whereClause, null, null, 1);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
+			$msg = $e->getMessage();
 			return false;
 		}
 
-		if (count($rows) == 0)
-			$msg = 'Table not found or something wrong.';
+		if (count($rows) == 0) {
+			$msg = 'Record not found or something went wrong.';
+			return false;
+		}
 
+		$newRow = $rows[0];
+		$newRow[$this->ct->Table->realidfieldname] = null;
+
+		$new_listing_id = database::insert($this->ct->Table->realidfieldname, $newRow);
+		return $this->store($link, true, $new_listing_id);
+
+		/*
 		$new_id = (int)($rows[0]->maxid) + 1;
 		$serverType = database::getServerType();
 		if ($serverType == 'postgresql')
@@ -113,6 +124,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			$this->ct->errors[] = $e->getMessage();
 			return false;
 		}
+
 
 		$serverType = database::getServerType();
 		if ($serverType == 'postgresql') {
@@ -177,7 +189,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			$this->ct->errors[] = $e->getMessage();
 			return false;
 		}
-		return $this->store($link, true, $new_id);
+		*/
 	}
 
 	/**
