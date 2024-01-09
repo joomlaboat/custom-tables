@@ -561,8 +561,11 @@ class CT
 			}
 		}
 
-		if (count($saveField->row_new) > 0)
-			database::update($this->Table->realtablename, $saveField->row_new, [$this->Table->realidfieldname => $listing_id]);
+		if (count($saveField->row_new) > 0) {
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition($this->Table->realidfieldname, $listing_id);
+			database::update($this->Table->realtablename, $saveField->row_new, $whereClauseUpdate);
+		}
 
 		//End of Apply default values
 

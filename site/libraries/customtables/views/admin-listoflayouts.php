@@ -201,9 +201,12 @@ class ListOfLayouts
 		//$Layouts->storeAsFile($data);
 
 		try {
-			if ($layoutId !== null)
-				database::update('#__customtables_layouts', $data, ['id' => $layoutId]);
-			else
+			if ($layoutId !== null) {
+				$whereClauseUpdate = new MySQLWhereClause();
+				$whereClauseUpdate->addCondition('id', $layoutId);
+
+				database::update('#__customtables_layouts', $data, $whereClauseUpdate);
+			} else
 				database::insert('#__customtables_layouts', $data);
 		} catch (Exception $e) {
 			return false;

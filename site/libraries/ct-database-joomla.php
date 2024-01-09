@@ -314,8 +314,13 @@ class database
 	 *
 	 * @since 3.1.8
 	 */
-	public static function update(string $tableName, array $data, array $where): bool
+	public static function update(string $tableName, array $data, MySQLWhereClause $whereClause): bool
 	{
+		if (!$whereClause->hasConditions()) {
+			throw new Exception('Update database table records without WHERE clause is prohibited.');
+		}
+
+
 		if (count($data) == 0)
 			return true;
 
@@ -332,15 +337,12 @@ class database
 				$fields[] = $db->quoteName($key) . ' = ' . $db->quote($value);
 		}
 
-		$conditions = array();
-		foreach ($where as $key => $value) {
-			$conditions[] = $db->quoteName($key) . ' = ' . $db->quote($value);
-		}
-
 		$query->update($db->quoteName($tableName))
 			->set($fields)
-			->where($conditions);
+			->where($whereClause->getWhereClause());
 
+		echo '$query=' . $query;
+		die;
 		$db->setQuery($query);
 
 		try {
@@ -349,7 +351,6 @@ class database
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
-
 	}
 
 	/**

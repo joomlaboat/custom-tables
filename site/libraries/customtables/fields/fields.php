@@ -874,8 +874,12 @@ class Fields
 			//Checkout
 			try {
 				$update_data = ['checked_out' => 0, 'checked_out_time' => null];
-				$where = ['id' => $fieldId];
-				database::update('#__customtables_fields', $update_data, $where);
+				//$where = ['id' => $fieldId];
+
+				$whereClauseUpdate = new MySQLWhereClause();
+				$whereClauseUpdate->addCondition('id', $fieldId);
+
+				database::update('#__customtables_fields', $update_data, $whereClauseUpdate);
 			} catch (Exception $e) {
 				throw new Exception('Update field checkout problem: ' . $e->getMessage());
 			}
@@ -922,9 +926,13 @@ class Fields
 
 		if ($fieldId !== null) {
 
-			$where = ['id' => $fieldId];
+			//$where = ['id' => $fieldId];
 			try {
-				database::update('#__customtables_fields', $data, $where);
+
+				$whereClauseUpdate = new MySQLWhereClause();
+				$whereClauseUpdate->addCondition('id', $fieldId);
+
+				database::update('#__customtables_fields', $data, $whereClauseUpdate);
 			} catch (Exception $e) {
 				throw new Exception('Add field details: ' . $e->getMessage());
 			}

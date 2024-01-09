@@ -242,7 +242,11 @@ class RecordToolbar
 				//User account deleted, null record value.
 				$data = [$this->Table->useridrealfieldname => null];
 				try {
-					database::update($this->Table->realtablename, $data, [$this->Table->realidfieldname => $this->row[$this->Table->realidfieldname]]);
+
+					$whereClauseUpdate = new MySQLWhereClause();
+					$whereClauseUpdate->addCondition($this->Table->realidfieldname, $this->row[$this->Table->realidfieldname]);
+					
+					database::update($this->Table->realtablename, $data, $whereClauseUpdate);
 				} catch (Exception $e) {
 					return $e->getMessage();
 				}

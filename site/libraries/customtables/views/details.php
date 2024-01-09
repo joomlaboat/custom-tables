@@ -270,8 +270,13 @@ class Details
 				$updateFields[$field['realfieldname']] = ((int)($rec[$field['realfieldname']]) + 1);
 		}
 
-		if (count($updateFields) > 0)
-			database::update($this->ct->Table->realtablename, $updateFields, [$this->ct->Table->realidfieldname => $rec[$this->ct->Table->realidfieldname]]);
+		if (count($updateFields) > 0) {
+
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $rec[$this->ct->Table->realidfieldname]);
+
+			database::update($this->ct->Table->realtablename, $updateFields, $whereClauseUpdate);
+		}
 	}
 
 	protected function UpdatePHPOnView(): bool

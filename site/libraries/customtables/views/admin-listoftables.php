@@ -257,7 +257,10 @@ class ListOfTables
 			}
 
 			try {
-				database::update('#__customtables_tables', $data, ['id' => $tableId]);
+				$whereClauseUpdate = new MySQLWhereClause();
+				$whereClauseUpdate->addCondition('id', $tableId);
+
+				database::update('#__customtables_tables', $data, $whereClauseUpdate);
 			} catch (Exception $e) {
 				return [$e->getMessage()];
 			}
