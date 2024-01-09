@@ -331,10 +331,24 @@ class database
 		// Construct the update statement
 		$fields = array();
 		foreach ($data as $key => $value) {
-			if ($value === null)
-				$fields[] = $db->quoteName($key) . ' = NULL';
-			else
-				$fields[] = $db->quoteName($key) . ' = ' . $db->quote($value);
+
+			if (is_array($value) and count($value) == 2 and $value[1] == 'sanitized') {
+				$fields[] = $db->quoteName($key) . '=' . $value;
+			} else {
+				if ($value === null)
+					$fields[] = $db->quoteName($key) . '=NULL';
+				else {
+
+					if (is_int($value))
+						$valueCleaned = (int)$value;
+					elseif (is_float($value))
+						$valueCleaned = (float)$value;
+					else
+						$valueCleaned = $db->quote($value);
+
+					$fields[] = $db->quoteName($key) . '=' . $valueCleaned;
+				}
+			}
 		}
 
 		$query->update($db->quoteName($tableName))
@@ -455,5 +469,13 @@ class database
 
 		$db->setQuery('SHOW INDEX FROM ' . $tableName . ' WHERE Key_name = "' . $fieldName . '"');
 		return $db->loadObjectList();
+	}
+
+	public static function showCreateTable($tableName): array
+	{
+		$db = self::getDB();
+
+		$db->setQuery("SHOW CREATE TABLE %i", $tableName);
+		return $db->loadAssocList();
 	}
 }

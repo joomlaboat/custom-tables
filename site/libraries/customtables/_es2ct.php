@@ -10,6 +10,7 @@
 
 */
 
+use CustomTables\common;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\MySQLWhereClause;
@@ -64,7 +65,7 @@ function getESTables(): void
 
 	addCetegoriesTable();
 
-	updateImageFieldTypeParama();
+	updateImageFieldTypeParams();
 
 	updatefieldTypes();
 
@@ -137,10 +138,16 @@ function updateLayoutVerticalBarTags(): void
 
 		if ($c != $record['layoutcode']) {
 			//update
-			$query = 'UPDATE `#__customtables_layouts` SET
-				layoutcode=' . database::quote($c) . ' WHERE id=' . $record['id'];
 
-			database::setQuery($query);
+			$data = ['layoutcode' => $c];
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition('id', $record['id']);
+			database::update('#__customtables_layouts', $data, $whereClauseUpdate);
+
+			//$query = 'UPDATE `#__customtables_layouts` SET
+			//	layoutcode=' . database::quote($c) . ' WHERE id=' . $record['id'];
+
+			//database::setQuery($query);
 
 			echo '<p>Layout #' . $record['id'] . ' updated.</p>';
 		}
@@ -186,10 +193,17 @@ function fixToolBarTags($htmlresult, $w)
  * @throws Exception
  * @since 3.2.2
  */
-function updateImageFieldTypeParama(): void
+function updateImageFieldTypeParams(): void
 {
-	$query = 'UPDATE `#__customtables_fields` SET typeparams=CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\')) WHERE (`type`="image" OR `type`="imagegallery") AND INSTR(typeparams,\'|\')';
-	database::setQuery($query);
+	$data = ['typeparams' => 'CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\'))'];
+	$whereClauseUpdate = new MySQLWhereClause();
+	$whereClauseUpdate->addOrCondition('type', 'image');
+	$whereClauseUpdate->addOrCondition('type', 'imagegallery');
+	$whereClauseUpdate->addCondition('typeparams', '|', 'INSTR');
+	database::update('#__customtables_fields', $data, $whereClauseUpdate);
+
+	//$query = 'UPDATE `#__customtables_fields` SET typeparams=CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\')) WHERE (`type`="image" OR `type`="imagegallery") AND INSTR(typeparams,\'|\')';
+	//database::setQuery($query);
 }
 
 /**
@@ -198,26 +212,43 @@ function updateImageFieldTypeParama(): void
  */
 function updateMenuItems(): void
 {
-	$sets = array();
+	//$sets = array();
 
-	$sets[] = 'link=replace(link,"com_extrasearch","com_customtables")';
-	$sets[] = 'component_id=(SELECT extension_id FROM `#__extensions` where element="com_customtables" LIMIT 1)';
+	//$sets[] = 'link=replace(link,"com_extrasearch","com_customtables")';
+	//$sets[] = 'component_id=(SELECT extension_id FROM `#__extensions` where element="com_customtables" LIMIT 1)';
 
-	$query = 'UPDATE #__menu SET ' . implode(',', $sets)
-		. ' WHERE instr(link,"com_extrasearch")';
+	$data = [
+		'link' => ['replace(link,"com_extrasearch","com_customtables")', 'sanitized'],
+		'component_id' => ['(SELECT extension_id FROM `#__extensions` where element="com_customtables" LIMIT 1)', 'sanitized']
+	];
+	$whereClauseUpdate = new MySQLWhereClause();
+	$whereClauseUpdate->addCondition('link', 'com_extrasearch', 'instr');
+	database::update('#__menu', $data, $whereClauseUpdate);
 
-	database::setQuery($query);
+	//$query = 'UPDATE #__menu SET ' . implode(',', $sets)
+	//. ' WHERE instr(link,"com_extrasearch")';
 
-	$sets = array();
+	//database::setQuery($query);
 
-	$sets[] = 'params=replace(params,\'layout":"layout:\',\'layout":"\')';
-	$sets[] = 'params=replace(params,\'"detailslayout":"\',\'"esdetailslayout":"\')';
-	$sets[] = 'params=replace(params,\'"editlayout":"\',\'"eseditlayout":"\')';
+	//$sets = array();
 
-	$query = 'UPDATE #__menu SET ' . implode(',', $sets)
-		. ' WHERE instr(link,"com_customtables")';
+	//$sets[] = 'params=replace(params,\'layout":"layout:\',\'layout":"\')';
+	//$sets[] = 'params=replace(params,\'"detailslayout":"\',\'"esdetailslayout":"\')';
+	//$sets[] = 'params=replace(params,\'"editlayout":"\',\'"eseditlayout":"\')';
 
-	database::setQuery($query);
+	$data = [
+		'params' => ['replace(params,\'layout":"layout:\',\'layout":"\')', 'sanitized'],
+		'params' => ['replace(params,\'"detailslayout":"\',\'"esdetailslayout":"\')', 'sanitized'],
+		'params' => ['replace(params,\'"editlayout":"\',\'"eseditlayout":"\')', 'sanitized']
+	];
+	$whereClauseUpdate = new MySQLWhereClause();
+	$whereClauseUpdate->addCondition('link', 'com_customtables', 'instr');
+	database::update('#__menu', $data, $whereClauseUpdate);
+
+	//$query = 'UPDATE #__menu SET ' . implode(',', $sets)
+	//. ' WHERE instr(link,"com_customtables")';
+
+	//database::setQuery($query);
 }
 
 /**
@@ -226,8 +257,15 @@ function updateMenuItems(): void
  */
 function updatefieldTypes(): void
 {
-	$query = 'UPDATE #__customtables_fields SET `type`="customtables" WHERE INSTR(`type`,"extrasearch")';
-	database::setQuery($query);
+	$data = [
+		'type' => 'customtables'
+	];
+	$whereClauseUpdate = new MySQLWhereClause();
+	$whereClauseUpdate->addCondition('type', 'extrasearch', 'INSTR');
+	database::update('#__customtables_fields', $data, $whereClauseUpdate);
+
+	//$query = 'UPDATE #__customtables_fields SET `type`="customtables" WHERE INSTR(`type`,"extrasearch")';
+	//database::setQuery($query);
 }
 
 /**
@@ -236,8 +274,17 @@ function updatefieldTypes(): void
  */
 function updateLayouts(): void
 {
-	$query = 'UPDATE #__customtables_layouts set layoutcode=replace(layoutcode,"extrasearch","customtables") where instr(layoutcode,"extrasearch")';
-	database::setQuery($query);
+	//$content = common::getStringFromFile($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
+
+	$data = [
+		'layoutcode' => ['replace(layoutcode,"extrasearch","customtables")', 'sanitized']
+	];
+	$whereClauseUpdate = new MySQLWhereClause();
+	$whereClauseUpdate->addCondition('layoutcode', 'extrasearch', 'instr');
+	database::update('#__customtables_layouts', $data, $whereClauseUpdate);
+
+	//$query = 'UPDATE #__customtables_layouts set layoutcode=replace(layoutcode,"extrasearch","customtables") where instr(layoutcode,"extrasearch")';
+	//database::setQuery($query);
 }
 
 /**
@@ -246,8 +293,18 @@ function updateLayouts(): void
  */
 function updateContent(): void
 {
-	$query = 'UPDATE #__content set introtext=replace(introtext,"{extrasearch","{customtables") where INSTR(introtext,"extrasearch")';
-	database::setQuery($query);
+	//$content = common::getStringFromFile($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
+
+	$data = [
+		'introtext' => ['replace(introtext,"{extrasearch","{customtables")', 'sanitized']
+	];
+
+	$whereClauseUpdate = new MySQLWhereClause();
+	$whereClauseUpdate->addCondition('introtext', 'extrasearch', 'INSTR');
+	database::update('#__content', $data, $whereClauseUpdate);
+
+	//$query = 'UPDATE #__content set introtext=replace(introtext,"{extrasearch","{customtables") where INSTR(introtext,"extrasearch")';
+	//database::setQuery($query);
 }
 
 

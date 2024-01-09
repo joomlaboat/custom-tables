@@ -80,6 +80,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function copy(&$msg, &$link): bool
 	{
 		$listing_id = common::inputGetCmd('listing_id', 0);
@@ -134,12 +138,16 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			return false;
 		}
 
-		$sets = array();
-		$sets[] = $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
+		//$sets = array();
+		//$sets[] = $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
 
-		$query = 'UPDATE ct_tmp SET ' . implode(',', $sets) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
+		//$query = 'UPDATE ct_tmp SET ' . implode(',', $sets) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
 		try {
-			database::setQuery($query);
+			$data = [$this->ct->Table->realidfieldname => $new_id];
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $listing_id);
+			database::update('ct_tmp', $data, $whereClauseUpdate);
+			//database::setQuery($query);
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 			return false;
@@ -172,6 +180,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return $this->store($link, true, $new_id);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function store(&$link, $isCopy = false, string $listing_id = ''): bool
 	{
 		$record = new record($this->ct);
@@ -380,6 +392,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return $this->listing_id;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function findRecordByUserID(): ?string
 	{
 		//$wheres = array();
@@ -638,6 +654,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return $this->ct->RefreshSingleRecord($listing_id, $save_log);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function setPublishStatus($status): int
 	{
 		$listing_ids_str = common::inputPostString('ids', '');
@@ -687,6 +707,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return $this->ct->deleteSingleRecord($listing_id);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	public function copyContent($from, $to)
 	{
 		//Copy value from one cell to another (drag and drop functionality)
@@ -784,12 +808,19 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		}
 
 		if ($new_value != '') {
-			$query = 'UPDATE ' . $this->ct->Table->realtablename
-				. ' SET ' . $to_field['realfieldname'] . '= ' . database::quote($new_value)
-				. ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($to_listing_id);
+
+			$data = [
+				$to_field['realfieldname'] => $new_value
+			];
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $to_listing_id);
+
+			//$query = 'UPDATE ' . $this->ct->Table->realtablename
+			//. ' SET ' . $to_field['realfieldname'] . '= ' . database::quote($new_value)
+			//. ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($to_listing_id);
 
 			try {
-				database::setQuery($query);
+				database::update($this->ct->Table->realtablename, $data, $whereClauseUpdate);
 			} catch (Exception $e) {
 				$this->ct->errors[] = $e->getMessage();
 				return false;

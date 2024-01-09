@@ -19,6 +19,7 @@ use CustomTables\CT;
 use CustomTables\Catalog;
 use CustomTables\database;
 use CustomTables\Inputbox;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
@@ -127,24 +128,34 @@ class CustomTablesViewCatalog extends HtmlView
 		return $allowed_fields;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function SaveViewLogForRecord($rec, $allowedFields)
 	{
-		$update_fields = array();
+		//$update_fields = array();
+
+		$data = [];
+		$whereClauseUpdate = new MySQLWhereClause();
+		$whereClauseUpdate->addCondition('id', $rec[$this->ct->Table->realidfieldname]);
 
 		foreach ($this->ct->Table->fields as $mFld) {
 			if (in_array($mFld['fieldname'], $allowedFields)) {
 				if ($mFld['type'] == 'lastviewtime')
-					$update_fields[] = $mFld['realfieldname'] . '="' . gmdate('Y-m-d H:i:s') . '"';
+					$data[$mFld['realfieldname']] = gmdate('Y-m-d H:i:s');
+				//$update_fields[] = $mFld['realfieldname'] . '="' . gmdate('Y-m-d H:i:s') . '"';
 
 				if ($mFld['type'] == 'viewcount')
-					$update_fields[] = $mFld['realfieldname'] . '="' . ((int)($rec[$this->ct->Env->field_prefix . $mFld['fieldname']]) + 1) . '"';
+					$data[$mFld['realfieldname']] = ((int)($rec[$this->ct->Env->field_prefix . $mFld['fieldname']]) + 1);
+				//$update_fields[] = $mFld['realfieldname'] . '="' . ((int)($rec[$this->ct->Env->field_prefix . $mFld['fieldname']]) + 1) . '"';
 			}
 		}
 
-		if (count($update_fields) > 0) {
-
-			$query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $update_fields) . ' WHERE id=' . $rec[$this->ct->Table->realidfieldname];
-			database::setQuery($query);
+		if (count($data) > 0) {
+			database::update($this->ct->Table->realtablename, $data, $whereClauseUpdate);
+			//$query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $update_fields) . ' WHERE id=' . $rec[$this->ct->Table->realidfieldname];
+			//database::setQuery($query);
 		}
 	}
 }

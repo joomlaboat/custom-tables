@@ -254,13 +254,26 @@ class CustomTablesImageMethods
 					$photoRow = $photoRows[0];
 
 					//Null Parent
-					$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=0 WHERE ' . $realfieldname . '=' . $ExistingImage;
-					database::setQuery($query);
+
+					$data = [
+						$realfieldname => 0
+					];
+					$whereClauseUpdate = new MySQLWhereClause();
+					$whereClauseUpdate->addCondition($realfieldname, $ExistingImage);
+					database::update($realtablename, $data, $whereClauseUpdate);
+					//$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=0 WHERE ' . $realfieldname . '=' . $ExistingImage;
+					//database::setQuery($query);
 
 					//Convert Child to Parent
-					$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=' . $ExistingImage . ' WHERE ' . $realIdField . '=' . (int)$photoRow[$realIdField];
+					$data = [
+						$realfieldname => $ExistingImage
+					];
+					$whereClauseUpdate = new MySQLWhereClause();
+					$whereClauseUpdate->addCondition($realIdField, (int)$photoRow[$realIdField]);
+					database::update($realtablename, $data, $whereClauseUpdate);
+					//$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=' . $ExistingImage . ' WHERE ' . $realIdField . '=' . (int)$photoRow[$realIdField];
 
-					database::setQuery($query);
+					//database::setQuery($query);
 					return true;
 				}
 			}//if

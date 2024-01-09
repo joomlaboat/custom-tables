@@ -47,6 +47,10 @@ class SaveFieldQuerySet
 		$this->isCopy = $isCopy;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function getSaveFieldSet($fieldRow): void
 	{
 		$this->field = new Field($this->ct, $fieldRow, $this->row_old);
@@ -60,7 +64,7 @@ class SaveFieldQuerySet
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function getSaveFieldSetType()
+	protected function getSaveFieldSetType(): void
 	{
 		$listing_id = $this->row_old[$this->ct->Table->realidfieldname];
 		switch ($this->field->type) {
@@ -300,7 +304,7 @@ class SaveFieldQuerySet
 				$value = common::inputPostFloat($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
-					$this->setNewValue((float)$value);
+					$this->setNewValue($value);
 					return;
 				}
 				break;
@@ -792,6 +796,10 @@ class SaveFieldQuerySet
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function applyDefaults($fieldRow): void
 	{
 		$this->field = new Field($this->ct, $fieldRow, $this->row_old);
@@ -852,6 +860,10 @@ class SaveFieldQuerySet
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	public function Try2CreateUserAccount($field): bool
 	{
 		$uid = (int)$this->ct->Table->record[$field->realfieldname];
@@ -935,6 +947,10 @@ class SaveFieldQuerySet
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	public function checkSendEmailConditions(string $listing_id, string $condition): bool
 	{
 		if ($condition == '')
@@ -962,6 +978,10 @@ class SaveFieldQuerySet
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function sendEmailIfAddressSet(string $listing_id, array $row, string $email): void
 	{
 		$status = $this->sendEmailNote($listing_id, $email, $row);
@@ -972,14 +992,25 @@ class SaveFieldQuerySet
 				$fieldname = $fieldrow['fieldname'];
 				if ($this->ct->Params->emailSentStatusField == $fieldname) {
 
-					$query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET es_' . $fieldname . '=' . $status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
-					database::setQuery($query);
+					$data = [
+						$fieldrow['realfieldname'] => $status
+					];
+					$whereClauseUpdate = new MySQLWhereClause();
+					$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $listing_id);
+					database::update($this->ct->Table->realtablename, $data, $whereClauseUpdate);
+
+					//$query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET es_' . $fieldname . '=' . $status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
+					//database::setQuery($query);
 					return;
 				}
 			}
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function sendEmailNote(string $listing_id, string $emails, array $row): int
 	{
 		$this->ct->Table->loadRecord($listing_id);

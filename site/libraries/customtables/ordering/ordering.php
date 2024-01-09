@@ -49,7 +49,7 @@ class Ordering
 	public static function addEditHTMLTagParams(string $result, string $tag, array $paramsToAddEdit): string
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace($tag, $options, $result, "<>", ' ', '"');
+		$fList = JoomlaBasicMisc::getListToReplace($tag, $options, $result, "<>", ' ');
 		$i = 0;
 		foreach ($fList as $fItem) {
 
@@ -319,10 +319,18 @@ class Ordering
 			return false;
 
 		for ($i = 0; $i < count($pks); $i++) {
-			$query = 'UPDATE ' . $this->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . $order[$i] . ' WHERE '
-				. database::quoteName($this->Table->realidfieldname) . '=' . (int)$pks[$i];
 
-			database::setQuery($query);
+			$data = [
+				$realFieldName => $order[$i]
+			];
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition($this->Table->realidfieldname, (int)$pks[$i]);
+			database::update($this->Table->realtablename, $data, $whereClauseUpdate);
+
+			//$query = 'UPDATE ' . $this->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . $order[$i] . ' WHERE '
+			//. database::quoteName($this->Table->realidfieldname) . '=' . (int)$pks[$i];
+
+			//database::setQuery($query);
 		}
 		return true;
 	}

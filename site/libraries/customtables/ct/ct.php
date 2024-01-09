@@ -513,13 +513,20 @@ class CT
 	 * @throws Exception
 	 * @since 3.2.3
 	 */
-	public function setPublishStatusSingleRecord($listing_id, $status): int
+	public function setPublishStatusSingleRecord($listing_id, int $status): int
 	{
 		if (!$this->Table->published_field_found)
 			return -1;
 
-		$query = 'UPDATE ' . $this->Table->realtablename . ' SET published=' . (int)$status . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
-		database::setQuery($query);
+		$data = [
+			'published' => $status
+		];
+		$whereClauseUpdate = new MySQLWhereClause();
+		$whereClauseUpdate->addCondition($this->Table->realidfieldname, $listing_id);
+		database::update($this->Table->realtablename, $data, $whereClauseUpdate);
+
+		//$query = 'UPDATE ' . $this->Table->realtablename . ' SET published=' . (int)$status . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
+		//database::setQuery($query);
 
 		if ($status == 1)
 			$this->Table->saveLog($listing_id, 3);
@@ -598,6 +605,10 @@ class CT
 		return 1;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	protected function updateMD5(string $listing_id): void
 	{
 		//TODO: Use savefield
@@ -615,10 +626,17 @@ class CT
 				}
 
 				if (count($fields) > 1) {
-					database::setQuery('UPDATE ' . $this->Table->realtablename . ' SET '
-						. database::quoteName($fieldrow['realfieldname']) . '=MD5(CONCAT_WS(' . implode(',', $fields) . ')) WHERE '
-						. database::quoteName($this->Table->realidfieldname) . '=' . database::quote($listing_id)
-					);
+
+					$data = [
+						$fieldrow['realfieldname'] => ['MD5(CONCAT_WS(' . implode(',', $fields) . '))', 'sanitized']
+					];
+					$whereClauseUpdate = new MySQLWhereClause();
+					$whereClauseUpdate->addCondition($this->Table->realidfieldname, $listing_id);
+					database::update($this->Table->realtablename, $data, $whereClauseUpdate);
+
+					//database::setQuery('UPDATE ' . $this->Table->realtablename . ' SET '
+					//. database::quoteName($fieldrow['realfieldname']) . '=MD5(CONCAT_WS(' . implode(',', $fields) . ')) WHERE '
+					//. database::quoteName($this->Table->realidfieldname) . '=' . database::quote($listing_id)
 				}
 			}
 		}

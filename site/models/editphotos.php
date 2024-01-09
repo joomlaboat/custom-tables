@@ -46,6 +46,10 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		parent::__construct();
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function load(): bool
 	{
 		$this->ct = new CT;
@@ -86,6 +90,10 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function getObject(): bool
 	{
 		$this->row = $this->ct->Table->loadRecord($this->listing_id);
@@ -108,6 +116,10 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function getGallery(): bool
 	{
 		$fieldrow = Fields::getFieldAssocByName($this->galleryname, $this->ct->Table->tableid);
@@ -133,6 +145,10 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function reorder(): bool
 	{
 		$images = $this->getPhotoList();
@@ -170,10 +186,19 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 			$safeTitle = common::inputPostString('esphototitle' . $image->photoid);
 			$safeTitle = str_replace('"', "", $safeTitle);
 
-			$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safeTitle . '" WHERE listingid='
-				. $this->listing_id . ' AND photoid=' . $image->photoid;
+			$data = [
+				'ordering' => $i,
+				'title' . $this->ct->Languages->Postfix => $safeTitle
+			];
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition('listingid', $this->listing_id);
+			$whereClauseUpdate->addCondition('photoid', $image->photoid);
+			database::update($this->phototablename, $data, $whereClauseUpdate);
 
-			database::setQuery($query);
+			//$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safeTitle . '" WHERE listingid='
+			//	. $this->listing_id . ' AND photoid=' . $image->photoid;
+
+			//database::setQuery($query);
 			$i++;
 		}
 		return true;
@@ -214,6 +239,10 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function add(): bool
 	{
 		$file = common::inputFiles('uploadedfile');
@@ -327,6 +356,10 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		return -1;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function AutoReorderPhotos(): bool
 	{
 		$images = $this->getPhotoList();
@@ -336,15 +369,28 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 			$safeTitle = common::inputPostString('esphototitle' . $image->photoid);
 			$safeTitle = str_replace('"', "", $safeTitle);
 
-			if ($safeTitle != '') {
-				$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '=' . database::quote($safeTitle) . ' WHERE listingid='
-					. $this->listing_id . ' AND photoid=' . $image->photoid;
-			} else {
-				$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ' WHERE listingid='
-					. $this->listing_id . ' AND photoid=' . $image->photoid;
-			}
 
-			database::setQuery($query);
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition('listingid', $this->listing_id);
+			$whereClauseUpdate->addCondition('photoid', $image->photoid);
+
+			if ($safeTitle != '') {
+
+				$data = [
+					'ordering' => $i,
+					'title' . $this->ct->Languages->Postfix => $safeTitle
+				];
+				//$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '=' . database::quote($safeTitle) . ' WHERE listingid='
+				//	. $this->listing_id . ' AND photoid=' . $image->photoid;
+			} else {
+
+				$data = ['ordering' => $i];
+				//$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ' WHERE listingid='
+				//	. $this->listing_id . ' AND photoid=' . $image->photoid;
+			}
+			database::update($this->phototablename, $data, $whereClauseUpdate);
+
+			//database::setQuery($query);
 			$i++;
 		}
 		return true;

@@ -210,8 +210,17 @@ class Layouts
 
 			if ($file_ts > $db_layout_ts) {
 				$content = common::getStringFromFile($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
-				$query = 'UPDATE #__customtables_layouts SET ' . $fieldName . '="' . addslashes($content) . '",modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
-				database::setQuery($query);
+
+				$data = [
+					$fieldName => addslashes($content),
+					'modified' => 'FROM_UNIXTIME(' . $file_ts . ')'
+				];
+				$whereClauseUpdate = new MySQLWhereClause();
+				$whereClauseUpdate->addCondition('id', $layout_id);
+				database::update('#__customtables_layouts', $data, $whereClauseUpdate);
+
+				//$query = 'UPDATE #__customtables_layouts SET ' . $fieldName . '="' . addslashes($content) . '",modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
+				//database::setQuery($query);
 				return $content;
 			}
 		} else {
@@ -259,12 +268,18 @@ class Layouts
 			return false;
 		} else {
 
-			if ($layout_id == 0)
-				$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE layoutname=' . database::quote($layoutName);
-			else
-				$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
+			$data = ['modified' => 'FROM_UNIXTIME(' . $file_ts . ')'];
+			$whereClauseUpdate = new MySQLWhereClause();
 
-			database::setQuery($query);
+			if ($layout_id == 0) {
+				$whereClauseUpdate->addCondition('layoutname', $layoutName);
+				//$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE layoutname=' . database::quote($layoutName);
+			} else {
+				$whereClauseUpdate->addCondition('id', $layout_id);
+				//$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
+			}
+			database::update('#__customtables_layouts', $data, $whereClauseUpdate);
+			//database::setQuery($query);
 		}
 		return true;
 	}

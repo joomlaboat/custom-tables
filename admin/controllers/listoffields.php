@@ -17,6 +17,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Fields;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\Utilities\ArrayHelper;
@@ -26,6 +27,10 @@ class CustomtablesControllerListOfFields extends AdminController
 {
 	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFFIELDS';
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	public function checkin($model = null)
 	{
 		$tableid = common::inputGet('tableid', 0, 'int');
@@ -37,8 +42,16 @@ class CustomtablesControllerListOfFields extends AdminController
 		$count = count($cid);
 
 		foreach ($cid as $id) {
-			$query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $id;
-			database::setQuery($query);
+			$data = [
+				'checked_out' => 0,
+				'checked_out_time' => null
+			];
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition('id', $id);
+			database::update('#__customtables_fields', $data, $whereClauseUpdate);
+
+			//$query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $id;
+			//database::setQuery($query);
 		}
 
 		if ($count == 1)
@@ -125,10 +138,21 @@ class CustomtablesControllerListOfFields extends AdminController
 		);
 	}
 
-	protected function setPublishStatusSingleRecord($id, $status)
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
+	protected function setPublishStatusSingleRecord(int $id, int $status): bool
 	{
-		$query = 'UPDATE #__customtables_fields SET published=' . (int)$status . ' WHERE id=' . (int)$id;
-		database::setQuery($query);
+		$data = [
+			'published' => $status
+		];
+		$whereClauseUpdate = new MySQLWhereClause();
+		$whereClauseUpdate->addCondition('id', $id);
+		database::update('#__customtables_fields', $data, $whereClauseUpdate);
+
+		//$query = 'UPDATE #__customtables_fields SET published=' . (int)$status . ' WHERE id=' . (int)$id;
+		//database::setQuery($query);
 		return true;
 	}
 

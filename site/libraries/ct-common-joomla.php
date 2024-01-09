@@ -129,6 +129,20 @@ class common
 		}
 	}
 
+	public static function inputPostAlnum(string $parameter, $default = null)
+	{
+		if (defined('_JEXEC')) {
+			return Factory::getApplication()->input->get($parameter, $default, 'ALNUM');
+		} else {
+			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+			if (!isset($_REQUEST[$parameter]))
+				return $default;
+
+			// Allow a-z and 0-9 only
+			return (string)preg_replace('/[^A-Z\d]/i', '', $_REQUEST[$parameter]);
+		}
+	}
+
 	public static function inputGetAlnum(string $parameter, $default = null)
 	{
 		if (defined('_JEXEC')) {

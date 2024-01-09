@@ -20,6 +20,7 @@ jimport('joomla.installer.helper');
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\IntegrityChecks;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
@@ -75,6 +76,8 @@ class com_customtablesInstallerScript
 	 * method to run after an install/update/uninstall method
 	 *
 	 * @return void
+	 * @throws Exception
+	 * @since 3.2.3
 	 */
 	function postflight($type, $parent)
 	{
@@ -106,15 +109,30 @@ class com_customtablesInstallerScript
 		// set the default component settings
 		if ($type == 'install') {
 			// Install the global extension assets permission.
-			$query = 'UPDATE ' . database::quoteName('#__assets') . ' SET '
-				. database::quoteName('rules') . ' = ' . database::quote('{"site.catalog.access":{"1":1}}')
-				. ' WHERE ' . database::quoteName('name') . ' = ' . database::quote('com_customtables');
-			database::setQuery($query);
 
-			$query = 'UPDATE ' . database::quoteName('#__extensions') . ' SET '
-				. database::quoteName('params') . ' = ' . database::quote('{"autorName":"Ivan Komlev","autorEmail":"support@joomlaboat.com"}')
-				. ' WHERE ' . database::quoteName('element') . ' = ' . database::quote('com_customtables');
-			database::setQuery($query);
+			$data = [
+				'rules' => '{"site.catalog.access":{"1":1}}'
+			];
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition('name', 'com_customtables');
+			database::update('#__assets', $data, $whereClauseUpdate);
+
+			//$query = 'UPDATE ' . database::quoteName('#__assets') . ' SET '
+			//. database::quoteName('rules') . ' = ' . database::quote('{"site.catalog.access":{"1":1}}')
+			//. ' WHERE ' . database::quoteName('name') . ' = ' . database::quote('com_customtables');
+			//database::setQuery($query);
+
+			$data = [
+				'params' => '{"autorName":"Ivan Komlev","autorEmail":"support@joomlaboat.com"}'
+			];
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition('element', 'com_customtables');
+			database::update('#__extensions', $data, $whereClauseUpdate);
+
+			//$query = 'UPDATE ' . database::quoteName('#__extensions') . ' SET '
+			//. database::quoteName('params') . ' = ' . database::quote('{"autorName":"Ivan Komlev","autorEmail":"support@joomlaboat.com"}')
+			//. ' WHERE ' . database::quoteName('element') . ' = ' . database::quote('com_customtables');
+			//database::setQuery($query);
 
 			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
 				<img src="' . Uri::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>

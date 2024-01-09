@@ -378,8 +378,16 @@ class ESTables
 
 		if ($primary_key_column != '') {
 			//Update primary key column
-			$query = 'UPDATE #__customtables_tables SET customidfield = ' . database::quote($primary_key_column) . ' WHERE id = ' . (int)$tableRow->id;
-			database::setQuery($query);
+
+			$data = [
+				'customidfield' => $primary_key_column
+			];
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition('id', (int)$tableRow->id);
+			database::update('#__customtables_tables', $data, $whereClauseUpdate);
+
+			//$query = 'UPDATE #__customtables_tables SET customidfield = ' . database::quote($primary_key_column) . ' WHERE id = ' . (int)$tableRow->id;
+			//database::setQuery($query);
 		}
 		return true;
 	}

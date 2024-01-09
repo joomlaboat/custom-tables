@@ -1225,7 +1225,7 @@ class Fields
 			($order_fields ? 'f.ordering, f.fieldname' : null), null, null, null, $output_type);
 	}
 
-	public static function getPureFieldType(string $ct_fieldType, string $typeParams, int $isRequiredOrGenerated = 0, ?string $defaultValue = null): string
+	public static function getPureFieldType(string $ct_fieldType, string $typeParams, int $isRequiredOrGenerated = 0): string
 	{
 		$ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldType, $typeParams);
 		if ($isRequiredOrGenerated == 2 or $isRequiredOrGenerated == 3) {
@@ -1764,40 +1764,70 @@ class Fields
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('b.' . $join_with_table_field, null, 'NULL');
+		$rows = database::loadAssocList($from, ['DISTINCT a.' . $realfieldname . ' AS customtables_distinct_temp_id'], $whereClause);
 
-		$rows = database::loadAssocList($from, ['DISTINCT a.' . $realfieldname . ' AS customtables_distinct_temp_id'], $whereClause, null, null);
-		$where_ids = array();
-		$where_ids[] = $realfieldname . '=0';
+		$whereClauseUpdate = new MySQLWhereClause();
+		$whereClauseUpdate->addOrCondition($realfieldname, 0);
+		//$where_ids = array();
+		//$where_ids[] = $realfieldname . '=0';
 
 		foreach ($rows as $row) {
 			if ($row['customtables_distinct_temp_id'] != '')
-				$where_ids[] = $realfieldname . '=' . $row['customtables_distinct_temp_id'];
+				$whereClauseUpdate->addOrCondition($realfieldname, $row['customtables_distinct_temp_id']);
+			//$where_ids[] = $realfieldname . '=' . $row['customtables_distinct_temp_id'];
 		}
-		$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=NULL WHERE ' . implode(' OR ', $where_ids) . ';';
-		database::setQuery($query);
+
+		database::update($realtablename, [$realfieldname => null], $whereClauseUpdate);
+
+		//$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=NULL WHERE ' . implode(' OR ', $where_ids) . ';';
+		//database::setQuery($query);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	protected static function findAndFixFieldOrdering(): void
 	{
-		$query = 'UPDATE #__customtables_fields SET ordering=id WHERE ordering IS NULL or ordering = 0';
+		$data = [
+			'ordering' => ['id', 'sanitized']
+		];
+		$whereClauseUpdate = new MySQLWhereClause();
+		$whereClauseUpdate->addOrCondition('ordering', null, 'NULL');
+		$whereClauseUpdate->addOrCondition('ordering', 0);
+
+		//$query = 'UPDATE #__customtables_fields SET ordering=id WHERE ordering IS NULL or ordering = 0';
 
 		try {
-			database::setQuery($query);
+			database::update('#__customtables_fields', $data, $whereClauseUpdate);
 		} catch (Exception $e) {
 			echo 'Caught exception: ', $e->getMessage(), "\n";
 			die;
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	protected static function findAndFixOrderingFieldRecords(object $table_row, string $realFieldName): void
 	{
 		$ct = new CT;
 		$table_row_array = (array)$table_row;
-		$ct->setTable($table_row_array, null);
-		$query = 'UPDATE ' . $ct->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . database::quoteName($ct->Table->realidfieldname) . ' WHERE ' . database::quoteName($realFieldName) . ' IS NULL OR ' . database::quoteName($realFieldName) . ' = 0';
+		$ct->setTable($table_row_array);
+
+		$data = [
+			$realFieldName => $ct->Table->realidfieldname
+		];
+		$whereClauseUpdate = new MySQLWhereClause();
+		$whereClauseUpdate->addOrCondition($realFieldName, null, 'NULL');
+		$whereClauseUpdate->addOrCondition($realFieldName, 0);
+
+		//$query = 'UPDATE ' . $ct->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . database::quoteName($ct->Table->realidfieldname)
+		//' WHERE ' . database::quoteName($realFieldName) . ' IS NULL OR ' . database::quoteName($realFieldName) . ' = 0';
 
 		try {
-			database::setQuery($query);
+			database::update($ct->Table->realtablename, $data, $whereClauseUpdate);
 		} catch (Exception $e) {
 			echo 'Caught exception: ', $e->getMessage(), "\n";
 			die;
@@ -1827,8 +1857,16 @@ class Fields
 
 			if ($fixRow->fldvalue != $newRow) {
 				$fixCount++;
-				$fixitQuery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newRow . '" WHERE id=' . $fixRow->id;
-				database::setQuery($fixitQuery);
+
+				$data = [
+					$realfieldname => $newRow
+				];
+				$whereClauseUpdate = new MySQLWhereClause();
+				$whereClauseUpdate->addCondition('id', $fixRow->id);
+				database::update($realtablename, $data, $whereClauseUpdate);
+
+				//$fixitQuery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newRow . '" WHERE id=' . $fixRow->id;
+				//database::setQuery($fixitQuery);
 			}
 		}
 	}
