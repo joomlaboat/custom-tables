@@ -173,14 +173,21 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 	 */
 	function addFileRecord(string $file_ext, string $title): int
 	{
-		$query = 'INSERT ' . $this->fileboxtablename . ' SET '
+		$data = [
+			'file_ext' => $file_ext,
+			'ordering' => 0,
+			'listingid' => $this->ct->Params->listing_id,
+			'title' => $title
+		];
+
+		/*$query = 'INSERT ' . $this->fileboxtablename . ' SET '
 			. 'file_ext=' . database::quote($file_ext) . ', '
 			. 'ordering=0, '
 			. 'listingid=' . database::quote($this->ct->Params->listing_id) . ', '
-			. 'title=' . database::quote($title);
+			. 'title=' . database::quote($title);*/
 
 		try {
-			database::setQuery($query);
+			database::insert($this->fileboxtablename, $data);
 		} catch (Exception $e) {
 			echo 'Caught exception: ', $e->getMessage(), "\n";
 			die;

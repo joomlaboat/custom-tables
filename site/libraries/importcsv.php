@@ -213,15 +213,14 @@ function findSQLJoin($realtablename, $join_realfieldname, $realidfieldname, bool
 	return findRecord($realtablename, $realidfieldname, $published_field_found, $whereClause);
 }
 
-/**
- * @throws Exception
- * @since 3.2.2
- */
-function addSQLJoinSets($realtablename, $sets): void
+/*
+function addSQLJoinSets(string $realtablename, array $data): void
 {
-	$query = 'INSERT ' . $realtablename . ' SET ' . implode(',', $sets);
-	database::setQuery($query);
+	//$query = 'INSERT ' . $realtablename . ' SET ' . implode(',', $sets);
+	database::insert($realtablename, $data);
+	//database::setQuery($query);
 }
+*/
 
 /**
  * @throws Exception
@@ -251,11 +250,13 @@ function prepareSQLQuery($fieldList, $fields, $line): object
 						(bool)$fields[$f_index]->sqljoin->published_field_found,
 						$line[$i]);
 
-					if (is_null($vlu))//Join table record doesn't exists
+					if (is_null($vlu))//Join table record doesn't exist
 					{
-						$sub_sets = [];
-						$sub_sets[] = database::quoteName($fields[$f_index]->sqljoin->field) . '=' . database::quote($line[$i]);
-						addSQLJoinSets($realtablename, $sub_sets);
+						$data = [$fields[$f_index]->sqljoin->field => $line[$i]];
+						database::insert($realtablename, $data);
+						//$sub_sets = [];
+						//$sub_sets[] = database::quoteName($fields[$f_index]->sqljoin->field) . '=' . database::quote($line[$i]);
+						//addSQLJoinSets($realtablename, $data);
 
 						$vlu = findSQLJoin(
 							$realtablename,
@@ -285,9 +286,13 @@ function prepareSQLQuery($fieldList, $fields, $line): object
 						$line[$i]);
 
 					if (is_null($vlu)) {
-						$sub_sets = [];
-						$sub_sets[] = database::quoteName($fields[$f_index]->sqljoin->field) . '=' . database::quote($line[$i]);
-						addSQLJoinSets($realtablename, $sub_sets);
+
+						$data = [$fields[$f_index]->sqljoin->field => $line[$i]];
+						database::insert($realtablename, $data);
+
+						//$sub_sets = [];
+						//$sub_sets[] = database::quoteName($fields[$f_index]->sqljoin->field) . '=' . database::quote($line[$i]);
+						//addSQLJoinSets($realtablename, $sub_sets);
 
 						$vlu = findSQLRecordJoin(
 							$realtablename,

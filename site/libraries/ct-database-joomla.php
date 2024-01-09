@@ -181,10 +181,12 @@ class MySQLWhereClause
 
 					$where_string = $condition['field'] . ' ' . $condition['operator'] . ' ';
 
-					if (is_int($condition['value']))
-						$where_string .= (int)$condition['value'];
+					if (is_bool($condition['value']))
+						$where_string .= $condition['value'] ? 'TRUE' : 'FALSE';
+					elseif (is_int($condition['value']))
+						$where_string .= $condition['value'];
 					elseif (is_float($condition['value']))
-						$where_string .= (float)$condition['value'];
+						$where_string .= $condition['value'];
 					else
 						$where_string .= $db->quote($condition['value']);
 
@@ -262,10 +264,20 @@ class database
 		foreach ($data as $key => $value) {
 			$columns[] = $db->quoteName($key);
 
-			if ($value === null)
-				$values[] = 'NULL';
-			else
-				$values[] = $db->quote($value);
+			if (is_array($value) and count($value) == 2 and $value[1] == 'sanitized') {
+				$values[] = $value[0];
+			} else {
+				if ($value === null)
+					$values[] = 'NULL';
+				elseif (is_bool($value))
+					$values[] = $value ? 'TRUE' : 'FALSE';
+				elseif (is_int($value))
+					$values[] = $value;
+				elseif (is_float($value))
+					$values[] = $value;
+				else
+					$values[] = $db->quote($value);
+			}
 		}
 
 		$query->insert($db->quoteName($tableName))
@@ -320,43 +332,19 @@ class database
 			throw new Exception('Update database table records without WHERE clause is prohibited.');
 		}
 
-
 		if (count($data) == 0)
 			return true;
 
 		$db = self::getDB();
 
+		$fields = self::prepareFields($db, $data);
+
 		$query = $db->getQuery(true);
-
-		// Construct the update statement
-		$fields = array();
-		foreach ($data as $key => $value) {
-
-			if (is_array($value) and count($value) == 2 and $value[1] == 'sanitized') {
-				$fields[] = $db->quoteName($key) . '=' . $value;
-			} else {
-				if ($value === null)
-					$fields[] = $db->quoteName($key) . '=NULL';
-				else {
-
-					if (is_int($value))
-						$valueCleaned = (int)$value;
-					elseif (is_float($value))
-						$valueCleaned = (float)$value;
-					else
-						$valueCleaned = $db->quote($value);
-
-					$fields[] = $db->quoteName($key) . '=' . $valueCleaned;
-				}
-			}
-		}
 
 		$query->update($db->quoteName($tableName))
 			->set($fields)
 			->where($whereClause->getWhereClause());
 
-		echo '$query=' . $query;
-		die;
 		$db->setQuery($query);
 
 		try {
@@ -365,6 +353,31 @@ class database
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
+	}
+
+	protected static function prepareFields($db, $data): array
+	{
+		// Construct the update statement
+		$fields = array();
+		foreach ($data as $key => $value) {
+			if (is_array($value) and count($value) == 2 and $value[1] == 'sanitized') {
+				$fields[] = $db->quoteName($key) . '=' . $value[0];
+			} else {
+				if ($value === null)
+					$valueCleaned = 'NULL';
+				elseif (is_bool($value))
+					$valueCleaned = $value ? 'TRUE' : 'FALSE';
+				elseif (is_int($value))
+					$valueCleaned = $value;
+				elseif (is_float($value))
+					$valueCleaned = $value;
+				else
+					$valueCleaned = $db->quote($value);
+
+				$fields[] = $db->quoteName($key) . '=' . $valueCleaned;
+			}
+		}
+		return $fields;
 	}
 
 	/**

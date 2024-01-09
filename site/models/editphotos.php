@@ -328,14 +328,20 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	 */
 	protected function addPhotoRecord(string $photo_ext, string $title): int
 	{
-		$query = 'INSERT ' . $this->phototablename . ' SET '
+		$data = [
+			'ordering' => 100,
+			'photo_ext' => $photo_ext,
+			'listingid' => $this->listing_id,
+			'title' => $title
+		];
+		/*$query = 'INSERT ' . $this->phototablename . ' SET '
 			. 'ordering=100, '
 			. 'photo_ext=' . database::quote($photo_ext) . ', '
 			. 'listingid=' . database::quote($this->listing_id) . ', '
-			. 'title=' . database::quote($title);
+			. 'title=' . database::quote($title);*/
 
 		try {
-			database::setQuery($query);
+			database::insert($this->phototablename, $data);
 		} catch (Exception $e) {
 			echo 'Caught exception: ', $e->getMessage(), "\n";
 			die;

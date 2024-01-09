@@ -339,7 +339,7 @@ class ESTables
 
 		$fields = database::loadObjectList('information_schema.columns', $selects, $whereClause);
 
-		$set_fieldNames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
+		//$set_fieldNames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
 
 		$primary_key_column = '';
 		$ordering = 1;
@@ -347,7 +347,7 @@ class ESTables
 			if ($primary_key_column == '' and strtolower($field->column_key) == 'pri') {
 				$primary_key_column = $field->column_name;
 			} else {
-				$set_values = [];
+				//$set_values = [];
 
 				$ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type, $field->column_type);
 				if ($ct_field_type['type'] === null) {
@@ -355,23 +355,26 @@ class ESTables
 					return false;
 				}
 
-				$set_values['tableid'] = (int)$tableRow->id;
-				$set_values['fieldname'] = database::quote(strtolower($field->column_name));
-				$set_values['fieldtitle'] = database::quote(ucwords(strtolower($field->column_name)));
-				$set_values['allowordering'] = 'true';
-				$set_values['type'] = database::quote($ct_field_type['type']);
+				//$set_fieldNames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
+
+				$data['tableid'] = (int)$tableRow->id;
+				$data['fieldname'] = strtolower($field->column_name);
+				$data['fieldtitle'] = ucwords(strtolower($field->column_name));
+				$data['allowordering'] = true;
+				$data['type'] = $ct_field_type['type'];
 
 				if (key_exists('typeparams', $ct_field_type))
-					$set_values['typeparams'] = database::quote($ct_field_type['typeparams']);
+					$data['typeparams'] = $ct_field_type['typeparams'];
 
-				$set_values['ordering'] = $ordering;
-				$set_values['defaultvalue'] = $field->column_default != '' ? database::quote($field->column_default) : 'NULL';
-				$set_values['description'] = $field->column_comment != '' ? database::quote($field->column_comment) : 'NULL';
-				$set_values['customfieldname'] = database::quote($field->column_name);
-				$set_values['isrequired'] = 0;
+				$data['ordering'] = $ordering;
+				$data['defaultvalue'] = $field->column_default != '' ? $field->column_default : null;
+				$data['description'] = $field->column_comment != '' ? $field->column_comment : null;
+				$data['customfieldname'] = $field->column_name;
+				$data['isrequired'] = 0;
 
-				$query = 'INSERT INTO #__customtables_fields (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
-				database::setQuery($query);
+				//$query = 'INSERT INTO #__customtables_fields (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
+				database::insert('#__customtables_fields', $data);
+				//database::setQuery($query);
 				$ordering += 1;
 			}
 		}

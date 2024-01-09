@@ -19,8 +19,9 @@ use Exception;
 
 trait Logs
 {
-	public function saveLog($listing_id, $action): void
+	public function saveLog($listing_id, int $action): void
 	{
+		// Actions:
 		// 1 - New
 		// 2 - Edit
 		// 3 - Publish
@@ -31,20 +32,27 @@ trait Logs
 		// 8 - File Uploaded
 		// 9 - File Deleted
 
-		$sets = array();
-		$sets[] = (int)$this->Env->user->id;
+		//$sets = array();
+		$data = [];
+		$data ['userid'] = (int)$this->Env->user->id;
+		$data ['datetime'] = ['NOW()', 'sanitized'];
+		$data ['tableid'] = $this->tableid;
+		$data ['listingid'] = (int)$listing_id;
+		$data ['action'] = (int)$action;
+		$data ['Itemid'] = (int)common::inputGetInt('Itemid', 0);
+		/*$sets[] = (int)$this->Env->user->id;
 		$sets[] = 'NOW()';
 		$sets[] = (int)$this->tableid;
 		$sets[] = (int)$listing_id;
 		$sets[] = (int)$action;
-		$sets[] = (int)common::inputGetInt('Itemid', 0);
+		$sets[] = (int)common::inputGetInt('Itemid', 0);*/
 
 		//Value from sets
-		$fields = ['userid', 'datetime', 'tableid', 'listingid', 'action', 'Itemid'];
-		$query = 'INSERT INTO #__customtables_log (' . implode(',', $fields) . ') VALUES (' . implode(',', $sets) . ')';
+		//$fields = ['userid', 'datetime', 'tableid', 'listingid', 'action', 'Itemid'];
+		//$query = 'INSERT INTO #__customtables_log (' . implode(',', $fields) . ') VALUES (' . implode(',', $sets) . ')';
 
 		try {
-			@database::setQuery($query);
+			database::insert('#__customtables_log', $data);
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
