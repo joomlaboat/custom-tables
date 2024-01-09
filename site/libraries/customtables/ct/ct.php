@@ -111,6 +111,10 @@ class CT
 		$this->Params->setParams($menuParams, $blockExternalVars, $ModuleId);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function getTable($tableNameOrID, $userIdFieldName = null): void
 	{
 		$this->Table = new Table($this->Languages, $this->Env, $tableNameOrID, $userIdFieldName);
@@ -118,6 +122,10 @@ class CT
 		$this->prepareSEFLinkBase();
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	public function setTable(array $tableRow, $userIdFieldName = null): void
 	{
 		$this->Table = new Table($this->Languages, $this->Env, 0);
@@ -147,6 +155,10 @@ class CT
 		$this->alias_fieldname = null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function setFilter(?string $filter_string = null, int $showpublished = 0): void
 	{
 		$this->Filter = new Filtering($this, $showpublished);
@@ -195,7 +207,7 @@ class CT
 							(count($ordering) > 0 ? implode(',', $ordering) : null), null, 20000, 0);
 					else
 						$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-							(count($ordering) > 0 ? implode(',', $ordering) : null), null);
+							(count($ordering) > 0 ? implode(',', $ordering) : null));
 				} else {
 					if ($the_limit > 20000)
 						$the_limit = 20000;
@@ -256,6 +268,10 @@ class CT
 		return $this->Table->recordcount;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function getRecordsByKeyword(): void
 	{
 		//Joomla Method
@@ -429,7 +445,7 @@ class CT
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
 
-		$rows = database::loadAssocList($this->Table->realtablename, ['*'], $whereClause, null, null);
+		$rows = database::loadAssocList($this->Table->realtablename, ['*'], $whereClause);
 
 		if (count($rows) == 0)
 			return -1;
@@ -493,6 +509,10 @@ class CT
 		return 1;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	public function setPublishStatusSingleRecord($listing_id, $status): int
 	{
 		if (!$this->Table->published_field_found)
@@ -601,6 +621,10 @@ class CT
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	public function CheckAuthorization(int $action = 1): bool
 	{
 		$listing_id = $this->Params->listing_id;
@@ -674,6 +698,10 @@ class CT
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	public function UserIDField_BuildWheres(string $userIdField, string $listing_id): MySQLWhereClause
 	{
 		$whereClause = new MySQLWhereClause();
@@ -768,9 +796,6 @@ class CT
 				//$q = '(SELECT p.' . $parent_table_row->realidfieldname . ' FROM ' . $parent_table_row->realtablename . ' AS p WHERE ' . implode(' AND ', $parent_wheres) . ' LIMIT 1) IS NOT NULL';
 
 				$parent_wheres_string = (string)$whereClauseParent;
-				echo '$parent_wheres_string=' . $parent_wheres_string;
-				die;
-
 				$whereClauseOwner->addCondition('(SELECT p.' . $parent_table_row->realidfieldname . ' FROM ' . $parent_table_row->realtablename . ' AS p WHERE ' . $parent_wheres_string . ' LIMIT 1)', null, 'NOT NULL');
 				//$wheres_owner[] = [$item[0], $q];
 			}

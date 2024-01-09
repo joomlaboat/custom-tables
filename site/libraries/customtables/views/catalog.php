@@ -31,6 +31,11 @@ class Catalog
 	}
 
 //TODO
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
 	function render(string|int|null $layoutName = null, $limit = 0): string
 	{
 		if ($this->ct->Env->frmt == 'html')
@@ -79,24 +84,31 @@ class Catalog
 
 			if (isset($cookieValue)) {
 				if ($cookieValue == '') {
-					$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
+					$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], 0);
+					//$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
 				} else {
 					$items = explode(';', $cookieValue);
-					$arr = array();
+
+					$whereClauseTemp = new MySQLWhereClause();
+					//$arr = array();
 					foreach ($items as $item) {
 						$pair = explode(',', $item);
-						$arr[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . (int)$pair[0];//id must be a number
+						$whereClauseTemp->addOrCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], (int)$pair[0]);
+						//$arr[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . (int)$pair[0];//id must be a number
 					}
-					$this->ct->Filter->where[] = '(' . implode(' OR ', $arr) . ')';
+					$this->ct->Filter->whereClause->addNestedCondition($whereClauseTemp);
 				}
 			} else {
 				//Show only shopping cart items. TODO: check the query
-				$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
+				$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], 0);
+				//$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
 			}
 		}
 
-		if ($this->ct->Params->listing_id !== null)
-			$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . database::quote($this->ct->Params->listing_id);
+		if ($this->ct->Params->listing_id !== null) {
+			$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], $this->ct->Params->listing_id);
+			//$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . database::quote($this->ct->Params->listing_id);
+		}
 
 // --------------------- Sorting
 		$this->ct->Ordering->parseOrderByParam();
