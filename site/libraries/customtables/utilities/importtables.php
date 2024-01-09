@@ -299,7 +299,16 @@ class ImportTables
 						//Get non language field type
 						$nonLanguageFieldName = Fields::getLanguageLessFieldName($key);
 
-						$fieldType = database::getFieldType($mysqlTableName, $nonLanguageFieldName);
+						//TODO: check how it works
+						$whereClause = new MySQLWhereClause();
+						$whereClause->addCondition('tableid', '(SELECT id A FROM #__customtables_tables WHERE tablename=' . database::quote($table) . ')', '=', true);
+						$whereClause->addCondition('fieldname', str_replace('es_', '', $nonLanguageFieldName));
+						$col = database::loadColumn('#__customtables_fields', ['type'], $whereClause, null, null, 1);
+						//$fieldType = database::getFieldType($mysqlTableName, $nonLanguageFieldName);
+						$fieldType = '';
+						if (count($col) == 1) {
+							$fieldType = $col[0];
+						}
 
 						if ($fieldType != '') {
 							Fields::AddMySQLFieldNotExist($mysqlTableName, $key, $fieldType, '');

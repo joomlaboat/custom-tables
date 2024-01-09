@@ -407,9 +407,7 @@ class Value
 		if ((int)$value == 0)
 			return null;
 
-		$fieldType = database::getFieldType($this->ct->Table->realtablename, $this->field->realfieldname);
-
-		if ($fieldType != 'blob' and $fieldType != 'tinyblob' and $fieldType != 'mediumblob' and $fieldType != 'longblob')
+		if ($this->field->type != 'blob' and $this->field->type != 'tinyblob' and $this->field->type != 'mediumblob' and $this->field->type != 'longblob')
 			return self::TextFunctions($value, $option_list);
 
 		$filename = CT_FieldTypeTag_file::getBlobFileName($this->field, $value, $this->row, $this->ct->Table->fields);
