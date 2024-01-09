@@ -675,8 +675,10 @@ class Fields
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('s.published', 1);
-		$whereClause->addCondition('s.tableid', $tableId);
-		$whereClause->addCondition('s.fieldname', trim($fieldName));
+		if ($tableId !== null)
+			$whereClause->addCondition('s.tableid', $tableId);
+		else
+			$whereClause->addCondition('s.fieldname', trim($fieldName));
 
 		$from = '#__customtables_fields AS s';
 		if ($tableName != '')

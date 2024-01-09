@@ -138,7 +138,8 @@ class ESTables
 		$whereClause->addConditionsFromArray($where);
 
 		//$query = 'SELECT ' . ESTables::getTableRowSelects() . ' FROM #__customtables_tables AS s WHERE ' . $where . ' LIMIT 1';
-		$rows = database::loadAssocList('#__customtables_tables', ESTables::getTableRowSelectArray(), $whereClause, null, null, 1);
+		$rows = database::loadAssocList('#__customtables_tables AS s', ESTables::getTableRowSelectArray(), $whereClause, null, null, 1);
+
 		if (count($rows) != 1)
 			return null;
 

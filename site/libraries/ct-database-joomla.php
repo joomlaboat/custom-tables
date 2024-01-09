@@ -364,6 +364,8 @@ class database
 			$db->setQuery($query, $limitStart, $limit);
 		elseif ($limitStart !== null)
 			$db->setQuery($query, $limitStart);
+		if ($limitStart === null and $limit !== null)
+			$db->setQuery($query, null, $limit);
 		else
 			$db->setQuery($query);
 
