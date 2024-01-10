@@ -308,6 +308,7 @@ class Filtering
 
 			case 'float':
 			case 'viewcount':
+			case 'id':
 			case 'image':
 			case 'int':
 				if ($comparison_operator == '==')

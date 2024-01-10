@@ -154,7 +154,7 @@ class MySQLWhereClause
 				if ($condition['sanitized']) {
 					$where [] = 'INSTR(' . $condition['field'] . ',' . $condition['value'] . ')';
 				} else {
-					$where [] = 'INSTR(' . $condition['field'] . ',   ' . $db->quote($condition['value']) . '           )';
+					$where [] = 'INSTR(' . $condition['field'] . ',' . $db->quote($condition['value']) . ')';
 				}
 			} elseif ($condition['operator'] == 'NOT INSTR') {
 				if ($condition['sanitized']) {
@@ -421,64 +421,6 @@ class database
 		$db->setQuery("SHOW CREATE TABLE %i", $tableName);
 		return $db->loadAssocList();
 	}
-
-	/*
-	public static function copyRecord(string $tableName, string $realIdFieldName, string $listing_id, string $new_listing_id)
-	{
-		$db = self::getDB();
-
-		$serverType = self::getServerType();
-		if ($serverType == 'postgresql') {
-			$query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE ' . $db->quoteName($tableName) . ' WITH NO DATA';
-
-			$db->setQuery($query);
-			$db->execute();
-
-			$query = 'INSERT INTO ct_tmp (SELECT * FROM ' . $db->quoteName($tableName) . ' WHERE ' . $db->quoteName($realIdFieldName) . ' = ' . database::quote($listing_id) . ')';
-
-		} else {
-			$query = 'CREATE TEMPORARY TABLE ct_tmp SELECT * FROM ' . $db->quoteName($tableName) . ' WHERE ' . $db->quoteName($realIdFieldName) . ' = ' . database::quote($listing_id);
-		}
-
-		$db->setQuery($query);
-		$db->execute();
-		$query = $db->getQuery(true);
-
-		//Update the ID
-		$query->update($db->quoteName('ct_tmp'))
-			->set([$realIdFieldName => $new_listing_id])
-			->where($db->quoteName($realIdFieldName) . '=' . $db->quote($listing_id));
-
-		$db->setQuery($query);
-		$db->execute();
-
-		//Copy updated record to original table
-		$query = 'INSERT INTO ' . $db->quoteName($tableName) . ' SELECT * FROM '.$db->quoteName('ct_tmp').' WHERE ' . $db->quoteName($realIdFieldName) . '=' . database::quote($new_listing_id);
-		try {
-			database::setQuery($query);
-		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
-		}
-
-		common::inputSet("listing_id", $new_id);
-		common::inputSet('old_listing_id', $listing_id);
-		$this->listing_id = $new_id;
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql') {
-			$query = 'DROP TABLE IF EXISTS ct_tmp';
-		} else {
-			$query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
-		}
-
-		try {
-			database::setQuery($query);
-		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
-		}
-	}
-	*/
 
 	public static function getServerType(): ?string
 	{

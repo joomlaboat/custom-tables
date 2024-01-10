@@ -230,7 +230,7 @@ class ListOfTables
 			if ($already_exists == 0) {
 				$data ['tablename'] = $newTableName;
 			} else {
-				return null; //Abort if the table with this name already exists.
+				return ['Table with this name already exists2.'];
 			}
 
 			try {
@@ -245,8 +245,9 @@ class ListOfTables
 			$this->ct->getTable($tableId);
 			if ($newTableName != $this->ct->Table->tablename) {
 				$already_exists = ESTables::getTableID($newTableName);
-				if ($already_exists != 0)
-					return null; //Abort if the table with this name already exists.
+				if ($already_exists != 0) {
+					return ['Table rename aborted. Table with this name already exists.'];
+				}
 			}
 
 			if (common::inputPostString('customtablename', null, 'create-edit-table') == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
@@ -259,7 +260,6 @@ class ListOfTables
 			try {
 				$whereClauseUpdate = new MySQLWhereClause();
 				$whereClauseUpdate->addCondition('id', $tableId);
-
 				database::update('#__customtables_tables', $data, $whereClauseUpdate);
 			} catch (Exception $e) {
 				return [$e->getMessage()];
