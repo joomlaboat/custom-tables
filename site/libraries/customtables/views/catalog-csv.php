@@ -48,17 +48,10 @@ class CatalogExportCSV
 	{
 		$pageLayoutContent = $this->catalog->render($layout);
 		$pageLayoutContent = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $pageLayoutContent);
-		/*
-		$pageLayoutContent = str_ireplace('</tr>', '****linebrake****', $pageLayoutContent);
-		*/
+
 		if ($this->ct->Params->allowContentPlugins)
 			JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);
 
-//$pageLayoutContent = str_ireplace('****linebrake****', "\r" . "\n", $pageLayoutContent);
-
-//echo chr(255).chr(254);
-//$bom = pack("CCC", 0xef, 0xbb, 0xbf);
-//echo $bom.mb_convert_encoding($pageLayoutContent, 'UTF-16LE', 'UTF-8');
 		return $pageLayoutContent;
 	}
 }

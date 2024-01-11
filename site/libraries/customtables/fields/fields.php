@@ -1803,8 +1803,7 @@ class Fields
 		try {
 			database::update('#__customtables_fields', $data, $whereClauseUpdate);
 		} catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			die;
+			throw new Exception($e->getMessage());
 		}
 	}
 
@@ -1831,8 +1830,7 @@ class Fields
 		try {
 			database::update($ct->Table->realtablename, $data, $whereClauseUpdate);
 		} catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			die;
+			throw new Exception($e->getMessage());
 		}
 	}
 

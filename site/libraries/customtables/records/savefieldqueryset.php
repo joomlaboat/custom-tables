@@ -839,13 +839,11 @@ class SaveFieldQuerySet
 					$value = @$twig->process($this->row_old);
 
 					if ($twig->errorMessage !== null) {
-						echo $twig->errorMessage;
 						$this->ct->errors[] = $twig->errorMessage;
 						return;
 					}
 
 				} catch (Exception $e) {
-					echo $e->getMessage();
 					$this->ct->errors[] = $e->getMessage();
 					return;
 				}

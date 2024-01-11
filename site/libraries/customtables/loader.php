@@ -35,14 +35,9 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 	$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR
 		. 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
 
-
-	echo 'd';
 	if (file_exists($path . 'tablejoin.php')) {
-		echo 'b';
 		require_once($path . 'tablejoin.php');
-		echo 'c';
 	}
-	echo 'a';
 */
 	if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
 		return;

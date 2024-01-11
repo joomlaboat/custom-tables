@@ -58,7 +58,7 @@ class Details
 				$this->pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
 				if ($Layouts->layoutType === null) {
-					echo 'Layout "' . $this->ct->Params->detailsLayout . '" not found or the type is not set.';
+					$this->ct->errors[] = 'Layout "' . $this->ct->Params->detailsLayout . '" not found or the type is not set.';
 					return false;
 				}
 

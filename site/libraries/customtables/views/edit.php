@@ -47,7 +47,7 @@ class Edit
 			$this->pageLayoutNameString = $this->ct->Params->editLayout;
 
 			if (!isset($Layouts->layoutId)) {
-				echo 'Layout: "' . $this->ct->Params->editLayout . '" not found.';
+				$this->ct->errors[] = $this->ct->Params->editLayout . '" not found.';
 				return false;
 			}
 
@@ -112,7 +112,7 @@ class Edit
 				HTMLHelper::_('jquery.framework');
 				jimport('joomla.html.html.bootstrap');
 			}
-			$this->ct->loadJSAndCSS();
+			common::loadJSAndCSS($this->ct->Params, $this->ct->Env);
 		}
 
 		if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {

@@ -544,7 +544,7 @@
 
     <type ct_name="googlemapcoordinates" label="GPS Coordinates"
           description="Google Map Coordinates (Latitude and Longitude) with selection map" priority="2"
-          wordpress="true">
+          wordpress="false">
         <editparams name="googlemapcoordinates" label="Input Element Parameters" description="">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>

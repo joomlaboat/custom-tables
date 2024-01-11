@@ -39,7 +39,7 @@ class Catalog
 	function render(string|int|null $layoutName = null, $limit = 0): string
 	{
 		if ($this->ct->Env->frmt == 'html')
-			$this->ct->loadJSAndCSS();
+			common::loadJSAndCSS($this->ct->Params, $this->ct->Env);
 
 		if ($this->ct->Env->legacySupport) {
 
@@ -136,7 +136,7 @@ class Catalog
 				$pageLayoutNameString = (($layoutName ?? '') == '' ? 'InlinePageLayout' : $layoutName);
 				$pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 			} else {
-				echo 'Layout "' . $layoutName . '" not found.';
+				$this->ct->errors[] = 'Layout "' . $layoutName . '" not found.';
 			}
 		} else {
 			if ($this->ct->Env->frmt == 'csv') {

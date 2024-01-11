@@ -598,13 +598,17 @@ class CTUser
 		return false;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.3.3
+	 */
 	function authorise(string $action, ?string $assetName): bool
 	{
 		if (defined('_JEXEC')) {
 			$user = Factory::getApplication()->getIdentity();
 			return $user->authorise($action, $assetName);
 		} else {
-			echo 'User->authorise not implemented for WordPress yet.';
+			throw new Exception('User->authorise not implemented for WordPress yet.');
 		}
 		return false;
 	}

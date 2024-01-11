@@ -15,7 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-$this->ct->loadJSAndCSS();
+common::loadJSAndCSS($this->ct->Params, $this->ct->Env);
 $results = $this->details->render();
 
 if ($this->ct->Env->frmt == 'csv') {

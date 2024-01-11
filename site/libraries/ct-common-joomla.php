@@ -11,8 +11,11 @@
 namespace CustomTables;
 
 use Exception;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 use JoomlaBasicMisc;
 
 use Joomla\CMS\Uri\Uri;
@@ -495,5 +498,78 @@ class common
 	public static function inputGetBase64(string $parameter, $default = null)
 	{
 		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
+	}
+
+	function loadJSAndCSS(?Registry $params, Environment $env): void
+	{
+		$app = Factory::getApplication();
+		$document = $app->getDocument();
+
+		if ($params->ModuleId === null or (int)$params->ModuleId == 0) {
+			//JQuery and Bootstrap
+			if ($env->version < 4) {
+				$document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/jquery.min.js"></script>');
+				$document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/bootstrap.min.js"></script>');
+			} else {
+				if (defined('_JEXEC')) {
+					HTMLHelper::_('jquery.framework');
+					$document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/media/system/css/fields/switcher.css">');
+				}
+			}
+		}
+
+		if (defined('_JEXEC')) {
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/jquery.uploadfile.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/jquery.form.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base64.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/catalog.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/edit.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/esmulti.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/modal.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/uploader.js"></script>');
+
+			$document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.js"></script>');
+			$document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.css" />');
+		}
+
+		if (defined('_JEXEC')) {
+			$params = ComponentHelper::getParams('com_customtables');
+			$googleMapAPIKey = $params->get('googlemapapikey');
+
+			if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
+				$document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
+
+			$document->addCustomTag('<script>let ctWebsiteRoot = "' . $env->WebsiteRoot . '";</script>');
+
+			if ($params->ModuleId == null)
+				$document->addCustomTag('<script>ctItemId = "' . $params->ItemId . '";</script>');
+
+			//Styles
+			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" type="text/css" rel="stylesheet" >');
+			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/modal.css" type="text/css" rel="stylesheet" >');
+			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/uploadfile.css" rel="stylesheet">');
+
+			$document->addCustomTag('<link href="' . URI::root(true) . '/media/system/css/fields/calendar.min.css" rel="stylesheet" />');
+			$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar-locales/date/gregorian/date-helper.min.js" defer></script>');
+			$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar.min.js" defer></script>');
+
+			Text::script('COM_CUSTOMTABLES_JS_SELECT_RECORDS');
+			Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1');
+			Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
+			Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
+			Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
+			Text::script('COM_CUSTOMTABLES_SELECT');
+			Text::script('COM_CUSTOMTABLES_SELECT_NOTHING');
+			Text::script('COM_CUSTOMTABLES_ADD');
+			Text::script('COM_CUSTOMTABLES_REQUIRED');
+			Text::script('COM_CUSTOMTABLES_NOT_SELECTED');
+			Text::script('COM_CUSTOMTABLES_JS_EMAIL_INVALID');
+			Text::script('COM_CUSTOMTABLES_JS_URL_INVALID');
+			Text::script('COM_CUSTOMTABLES_JS_SECURE_URL_INVALID');
+			Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
+			Text::script('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID');
+			Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
+		}
 	}
 }

@@ -383,7 +383,7 @@ class fieldObject
 		try {
 			$this->field = new Field($ct, $fieldRow, $this->ct->Table->record, $this->parseParams);
 		} catch (Exception $e) {
-			echo $e->getMessage();
+			$ct->errors[] = $e->getMessage();
 		}
 		$this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
 	}
