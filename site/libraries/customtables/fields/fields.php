@@ -675,16 +675,19 @@ class Fields
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('s.published', 1);
-		if ($tableId !== null)
+
+		if (!empty($tableId))
 			$whereClause->addCondition('s.tableid', $tableId);
+		elseif (!empty($tableName))
+			$whereClause->addCondition('s.tablename', $tableId);
 		else
-			$whereClause->addCondition('s.fieldname', trim($fieldName));
+			return null;
+
+		$whereClause->addCondition('s.fieldname', trim($fieldName));
 
 		$from = '#__customtables_fields AS s';
 		if ($tableName != '')
 			$from .= ' INNER JOIN #__customtables_tables AS t ON t.tablename=' . database::quote($tableName);
-
-		//$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableId . ' AND fieldname=' . database::quote(trim($fieldName)) . ' LIMIT 1';
 
 		$rows = database::loadObjectList($from, self::getFieldRowSelectArray(), $whereClause, null, null, 1);
 

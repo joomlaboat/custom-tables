@@ -264,9 +264,9 @@ class Twig_Record_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function join_getRealFieldName($fieldName, $tableRow): ?array
+	protected function join_getRealFieldName(string $fieldName, array $tableRow): ?array
 	{
-		$tableId = $tableRow['id'];
+		$tableId = (int)$tableRow['id'];
 
 		if ($fieldName == '_id') {
 			return [$tableRow['realidfieldname'], '_id'];
@@ -294,32 +294,23 @@ class Twig_Record_Tags
 	                                   $field2_type, $field3_readValue, MySQLWhereClause $whereClauseAdditional, $order_by_option): array
 	{
 		$whereClause = new MySQLWhereClause();
-		//$whereClause->addCondition('',);
-
 		$selects = [];
 
 		if ($sj_function == 'count')
 			$selects[] = 'count(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
-		//$query = 'SELECT count(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		elseif ($sj_function == 'sum')
 			$selects[] = 'sum(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
-		//$query = 'SELECT sum(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		elseif ($sj_function == 'avg')
 			$selects[] = 'avg(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
-		//$query = 'SELECT avg(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		elseif ($sj_function == 'min')
 			$selects[] = 'min(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
-		//$query = 'SELECT min(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		elseif ($sj_function == 'max')
 			$selects[] = 'max(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
-		//$query = 'SELECT max(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
 		else {
 			//need to resolve record value if it's "records" type
-			$selects[] = $tableRow['realtablename'] . '.' . $field3_readValue . ' AS vlu';
-			//$query = 'SELECT ' . $tableRow['realtablename'] . '.' . $field3_readValue . ' AS vlu '; //value or smart
+			$selects[] = $tableRow['realtablename'] . '.' . $field3_readValue . ' AS vlu';//value or smart
 		}
 
-		//$query .= ' FROM ' . $this->ct->Table->realtablename . ' ';
 		$sj_tablename = $tableRow['tablename'];
 
 		$leftJoin = '';
@@ -345,8 +336,6 @@ class Twig_Record_Tags
 			}
 		}
 
-		//$wheres = array();
-
 		if ($this->ct->Table->tablename != $sj_tablename) {
 			//don't attach to specific record when it is the same table, example : to find averages
 			$whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], $this->ct->Table->record[$this->ct->Table->realidfieldname]);
@@ -357,15 +346,10 @@ class Twig_Record_Tags
 			$whereClause->addNestedCondition($whereClauseAdditional);
 		//$wheres[] = '(' . $additional_where . ')';
 
-		//if (count($wheres) > 0)
-		//	$query .= ' WHERE ' . implode(' AND ', $wheres);
-
-		//$query .= ' LIMIT 1';
 		$from = $this->ct->Table->realtablename . ' ' . $leftJoin;
 
 		return database::loadAssocList($from, $selects, $whereClause,
 			($order_by_option != '' ? $tableRow['realtablename'] . '.' . $order_by_option : null), null, 1);
-		//return $query;
 	}
 
 	/**
