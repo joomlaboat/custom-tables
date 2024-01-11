@@ -500,7 +500,7 @@ class common
 		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
 	}
 
-	function loadJSAndCSS(?Registry $params, Environment $env): void
+	public static function loadJSAndCSS(Params $params, Environment $env): void
 	{
 		$app = Factory::getApplication();
 		$document = $app->getDocument();
@@ -534,8 +534,8 @@ class common
 		}
 
 		if (defined('_JEXEC')) {
-			$params = ComponentHelper::getParams('com_customtables');
-			$googleMapAPIKey = $params->get('googlemapapikey');
+			$joomla_params = ComponentHelper::getParams('com_customtables');
+			$googleMapAPIKey = $joomla_params->get('googlemapapikey');
 
 			if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
 				$document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
