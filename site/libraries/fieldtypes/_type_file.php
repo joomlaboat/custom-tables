@@ -96,7 +96,7 @@ class CT_FieldTypeTag_file
 	{
 		$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
 		require_once($path . 'loader.php');
-		CTLoader();
+		CustomTablesLoader();
 
 		if (str_contains(end($segments), '.')) {
 

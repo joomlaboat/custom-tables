@@ -17,28 +17,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Component\ComponentHelper;
 
-if (!function_exists('str_contains')) {
-	function str_contains($haystack, $needle): bool
-	{
-		return $needle !== '' && mb_strpos($haystack, $needle) !== false;
-	}
-}
-
-function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', ?bool $loadTwig = null): void
+function CustomTablesLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', ?bool $loadTwig = null): void
 {
-	/*
-	$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName .
-		DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR;
-
-	require_once($path . 'inputbox.php');
-
-	$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR
-		. 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
-
-	if (file_exists($path . 'tablejoin.php')) {
-		require_once($path . 'tablejoin.php');
-	}
-*/
 	if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
 		return;
 

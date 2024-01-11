@@ -25,7 +25,7 @@ if (!file_exists($path))
 	die('CT Loader not found.');
 
 require_once($path);
-CTLoader(true);
+CustomTablesLoader(true);
 
 // Access check.
 $user = new CTUser();

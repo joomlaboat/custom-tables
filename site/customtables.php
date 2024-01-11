@@ -22,7 +22,7 @@ if (!file_exists($path))
 	die('CT Loader not found.');
 
 require_once($path);
-CTLoader(false, $include_html = true);
+CustomTablesLoader(false, $include_html = true);
 
 // Require the base controller
 require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'controller.php';
