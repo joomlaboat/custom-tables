@@ -355,6 +355,9 @@ class database
 		if (!empty($order))
 			$query->order($order . ($orderBy !== null and strtolower($orderBy) == 'desc' ? ' DESC' : ''));
 
+		if ($returnQueryString)
+			return $query;
+
 		if ($limitStart !== null and $limit !== null)
 			$query->setLimit($limit, $limitStart);
 		elseif ($limitStart !== null and $limit === null)
