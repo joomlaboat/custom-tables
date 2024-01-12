@@ -90,7 +90,7 @@ function CustomTablesDelete($this_)
  * @throws Exception
  * @since 3.2.2
  */
-function CustomTablesSave($task, $this_)
+function CustomTablesSave(string $task, $this_)
 {
 	$link = common::getReturnToURL();
 
@@ -107,7 +107,6 @@ function CustomTablesSave($task, $this_)
 		$this_->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 	} else {
 		$msg_ = '';
-		$isOk = true;
 
 		if ($task == 'saveascopy')
 			$isOk = $model->copy($msg_, $link);

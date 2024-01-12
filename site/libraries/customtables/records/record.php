@@ -46,19 +46,19 @@ class record
 	 */
 	function save(?string $listing_id, bool $isCopy): bool
 	{
-		if ($listing_id == '') {
+		if (empty($listing_id)) {
 			$listing_id = $this->ct->Params->listing_id;
 			if ($listing_id == 0)
 				$listing_id = '';
 		}
 
-		if ($listing_id == '') {
+		if (empty($listing_id)) {
 			$listing_id = common::inputGetCmd('listing_id', ''); //TODO : this inconsistency must be fixed
 			if ($listing_id == 0)
 				$listing_id = '';
 		}
 
-		if ($listing_id == 0 or $listing_id == '')
+		if (empty($listing_id))
 			$listing_id = null;
 
 		if ($listing_id !== null) {

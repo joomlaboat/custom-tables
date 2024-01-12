@@ -343,6 +343,7 @@ class common
 	public static function getReturnToURL(bool $decode = true): ?string
 	{
 		$returnto = common::inputGet('returnto', null, 'BASE64');
+
 		if ($returnto === null)
 			return null;
 

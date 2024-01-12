@@ -196,7 +196,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	 * @throws Exception
 	 * @since 3.2.3
 	 */
-	function store(&$link, $isCopy = false, string $listing_id = ''): bool
+	function store(string &$link, bool $isCopy = false, string $listing_id = null): bool
 	{
 		$record = new record($this->ct);
 
@@ -215,9 +215,9 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 			//Prepare "Accept Return To" Link
 			$return2Link = common::getReturnToURL();
-			if ($return2Link != '')
-				$link = $this->PrepareAcceptReturnToLink($return2Link);
 
+			//if ($return2Link != '')
+			//$link = $this->PrepareAcceptReturnToLink($return2Link);
 			//$link = str_replace('*new*', $row[$this->ct->Table->realidfieldname], $link);
 
 			//Refresh menu if needed
@@ -237,7 +237,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 					$link = $return2Link_Updated;
 			}
 
-			common::inputSet("listing_id", $listing_id);
+			common::inputSet("listing_id", $this->listing_id);
 		}
 		return true;
 	}
@@ -436,20 +436,30 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		return $row[$this->ct->Table->realidfieldname];
 	}
 
-	function PrepareAcceptReturnToLink($link): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.4
+	 */
+	/*
+	 *
+	 * This method can be replaced with in layout return link variable
+	 *
+	function PrepareAcceptReturnToLink($link): ?string
 	{
+
 		if ($link == '')
 			return '';
 
 		//$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
 
-		try {
-			$whereClause = new MySQLWhereClause();
-			$rows = database::loadAssocList($this->ct->Table->realtablename, $this->ct->Table->selects, $whereClause, $this->ct->Table->realidfieldname, 'DESC', 1);
-		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
-		}
+		//try {
+		$whereClause = new MySQLWhereClause();
+		$rows = database::loadAssocList($this->ct->Table->realtablename, $this->ct->Table->selects, $whereClause, $this->ct->Table->realidfieldname, 'DESC', 1);
+
+		//} catch (Exception $e) {
+		//	$this->ct->errors[] = $e->getMessage();
+		//	return false;
+		//}
 
 		if (count($rows) != 1) {
 			$this->ct->errors[] = 'Record not saved';
@@ -468,9 +478,11 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		$twig = new TwigProcessor($this->ct, $link);
 		try {
 			$link = $twig->process($row);
+			//$this->ct->errors[] = $twig->errorMessage;
+
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
-			$this->ct->errors[] = $twig->errorMessage;
+
 			$link = '';
 		}
 
@@ -480,6 +492,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		}
 		return $link;
 	}
+	*/
 
 	/*
 	function CheckValueRule($prefix,$fieldname, $fieldType, $typeParams)

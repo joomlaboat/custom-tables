@@ -220,7 +220,6 @@ function addSQLJoinSets(string $realtablename, array $data): void
 {
 	//$query = 'INSERT ' . $realtablename . ' SET ' . implode(',', $sets);
 	database::insert($realtablename, $data);
-	//database::setQuery($query);
 }
 */
 
