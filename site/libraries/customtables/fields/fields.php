@@ -679,7 +679,7 @@ class Fields
 		if (!empty($tableId))
 			$whereClause->addCondition('s.tableid', $tableId);
 		elseif (!empty($tableName))
-			$whereClause->addCondition('s.tablename', $tableId);
+			$whereClause->addCondition('t.tablename', $tableId);
 		else
 			return null;
 
