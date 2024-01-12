@@ -170,7 +170,7 @@ class CT
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function getRecords($all = false, $limit = 0): bool
+	function getRecords(bool $all = false, int $limit = 0): bool
 	{
 		//$where = count($this->Filter->where) > 0 ? ' WHERE ' . implode(' AND ', $this->Filter->where) : '';
 		//$where = str_replace('\\', '', $where); //Just to make sure that there is nothing weird in the query
@@ -313,7 +313,7 @@ class CT
 		return $recordList;
 	}
 
-	function applyLimits($limit = 0): void
+	function applyLimits(int $limit = 0): void
 	{
 		if ($limit != 0) {
 			$this->Limit = $limit;

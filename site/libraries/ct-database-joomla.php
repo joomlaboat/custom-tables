@@ -341,33 +341,28 @@ class database
 
 		$selects = $selectsRaw;
 
-		$query = 'SELECT ' . (implode(',', $selects)) . ' FROM ' . $table;
+		$query = $db->getQuery(true);
+
+		$query->select(implode(',', $selects));
+		$query->from($table);
 
 		if ($whereClause->hasConditions())
-			$query .= ' WHERE ' . $whereClause->getWhereClause();
+			$query->where($whereClause->getWhereClause());
 
-		$query .= (!empty($groupBy) != '' ? ' GROUP BY ' . $groupBy : '');
-		$query .= (!empty($order) ? ' ORDER BY ' . $order . ($orderBy !== null and strtolower($orderBy) == 'desc' ? ' DESC' : '') : '');
+		if (!empty($groupBy))
+			$query->group($groupBy);
 
-		if ($returnQueryString) {
-
-			if ($limit != 0)
-				$query .= ' LIMIT ' . $limit;
-
-			if ($limitStart != 0)
-				$query .= ' OFFSET ' . $limitStart;
-
-			return $query;
-		}
+		if (!empty($order))
+			$query->order($order . ($orderBy !== null and strtolower($orderBy) == 'desc' ? ' DESC' : ''));
 
 		if ($limitStart !== null and $limit !== null)
-			$db->setQuery($query, $limitStart, $limit);
-		elseif ($limitStart !== null)
-			$db->setQuery($query, $limitStart);
+			$query->setLimit($limit, $limitStart);
+		elseif ($limitStart !== null and $limit === null)
+			$query->setLimit(20000, $limitStart);
 		if ($limitStart === null and $limit !== null)
-			$db->setQuery($query, null, $limit);
-		else
-			$db->setQuery($query);
+			$query->setLimit($limit);
+
+		$db->setQuery($query);
 
 		if ($output_type == 'OBJECT')
 			return $db->loadObjectList();
