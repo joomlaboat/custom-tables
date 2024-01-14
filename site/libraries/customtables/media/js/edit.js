@@ -15,7 +15,7 @@ class CustomTablesEdit {
         // Iterate over keysObject and append each key-value pair
         for (const key in fieldsAndValues) {
             if (fieldsAndValues.hasOwnProperty(key)) {
-                postData.append(key, fieldsAndValues[key]);
+                postData.append('comes_' + key, fieldsAndValues[key]);
             }
         }
 
@@ -32,20 +32,17 @@ class CustomTablesEdit {
                     if (successCallback && typeof successCallback === 'function') {
                         successCallback(data);
                     } else {
-                        alert('Saved!');
+
                     }
                 } else if (data.status === 'error') {
                     if (errorCallback && typeof errorCallback === 'function') {
                         errorCallback(data);
                     } else {
-                        alert(data.message);
+                        console.error(data.message);
                     }
                 }
             })
             .catch(error => {
-
-                alert(JSON.stringify(error));
-
                 if (errorCallback && typeof errorCallback === 'function') {
                     errorCallback({
                         status: 'error',
