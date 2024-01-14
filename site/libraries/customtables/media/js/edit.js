@@ -1,20 +1,10 @@
-//How to use:
-//If you want to edit table records using JavaScript, here is and example: const record = new CustomTablesEdit();
-//
-// record.saveRecord(
-//     '/myCustomTablesMenuItemAlias',
-//     { 'name': 'Ivan', 'email': 'info@ct4.us' },
-//     36,
-// );
-// where 36 is the record ID
-// record.reloadRecord(36);//to reload the table row (record) after the changes
-
 class CustomTablesEdit {
 
     constructor() {
 
     }
 
+    //A method to create or update table records using JavaScript. CustomTables handles data sanitization and validation.
     saveRecord(url, fieldsAndValues, listing_id, successCallback, errorCallback) {
 
         let completeURL = url + '?view=edititem&task=save&tmpl=component&clean=1';
@@ -37,7 +27,23 @@ class CustomTablesEdit {
             },
             body: postData,
         })
-            .then(response => response.json())
+            .then(response => {
+
+                if (response.status == 200) {
+                    if (errorCallback && typeof errorCallback === 'function') {
+                        errorCallback('Login required or not authorised.');
+                    } else {
+                        console.error('Login required or not authorised. Error status code 200: Redirect.');
+                    }
+                    return;
+                }
+
+                if (!response.ok) {
+                    // If the HTTP status code is not successful, throw an error object that includes the response
+                    throw {status: 'error', message: 'HTTP status code: ' + response.status, response: response};
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.status === 'saved') {
                     if (successCallback && typeof successCallback === 'function') {
@@ -58,7 +64,6 @@ class CustomTablesEdit {
                     errorCallback({
                         status: 'error',
                         message: 'An error occurred during the request.',
-                        response: error.response
                     });
                 } else {
                     console.error('Error', error);
@@ -66,12 +71,12 @@ class CustomTablesEdit {
             });
     }
 
+    //Reloads a particular table row (record) after changes have been made. It identifies the table and the specific row based on the provided listing_id and then triggers a refresh to update the displayed data.
     reloadRecord(listing_id) {
 
         // Select all table elements whose id attribute starts with 'ctTable_'
         const tables = document.querySelectorAll('table[id^="ctTable_"]');
         tables.forEach(table => {
-            //console.log(table.id); // This will log the ID of each table
             let parts = table.id.split("_");
             if (parts.length === 2) {
                 let tableId = parts[1];

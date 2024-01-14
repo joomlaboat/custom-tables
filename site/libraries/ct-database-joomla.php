@@ -653,7 +653,6 @@ class database
 		$db->execute();
 
 		database::changeColumn($realNewTableName, 'id', 'id', 'INT UNSIGNED', false, 'AUTO_INCREMENT');
-		//$query = 'ALTERTABLE ' . $realNewTableName . ' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
 	}
 
 	public static function changeColumn(string $realTableName, string $oldColumnName, string $newColumnName, string $type, ?bool $nullable, ?string $extra = null, ?string $comment = null): void
