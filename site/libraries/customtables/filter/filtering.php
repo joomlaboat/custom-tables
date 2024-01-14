@@ -417,19 +417,23 @@ class Filtering
 
 					if ($valueNew !== '') {
 
-						if ($comparison_operator == '!=')
-							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'NOT INSTR');
-						//$cArr[] = '!instr(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ',' . database::quote(',' . $valueNew . ',') . ')';
-						elseif ($comparison_operator == '!==')
-							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', '!=');//exact not value
-						//$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '!=' . database::quote(',' . $valueNew . ',');//not exact value
-						elseif ($comparison_operator == '=')
+						if ($comparison_operator == '!=') {
+							$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
+							$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'NOT INSTR');
+							//$cArr[] = '!instr(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ',' . database::quote(',' . $valueNew . ',') . ')';
+						} elseif ($comparison_operator == '!==') {
+							$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
+							$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', '!=');//exact not value
+							//$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '!=' . database::quote(',' . $valueNew . ',');//not exact value
+						} elseif ($comparison_operator == '=') {
+							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
 							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'INSTR');
-						//$cArr[] = 'instr(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ',' . database::quote(',' . $valueNew . ',') . ')';
-						elseif ($comparison_operator == '==')
+							//$cArr[] = 'instr(' . $esr_table_full . '.' . $fieldrow['realfieldname'] . ',' . database::quote(',' . $valueNew . ',') . ')';
+						} elseif ($comparison_operator == '==') {
+							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
 							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',');//exact value
-						//$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '=' . database::quote(',' . $valueNew . ',');//exact value
-						else
+							//$cArr[] = $esr_table_full . '.' . $fieldrow['realfieldname'] . '=' . database::quote(',' . $valueNew . ',');//exact value
+						} else
 							$opt_title = common::translate('COM_CUSTOMTABLES_UNKNOWN_OPERATION');
 
 						if ($comparison_operator == '!=' or $comparison_operator == '=') {

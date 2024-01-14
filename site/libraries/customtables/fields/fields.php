@@ -87,13 +87,25 @@ class Field
 					$this->description = $vlu;
 			}
 
-			$this->isrequired = intval($fieldRow['isrequired']);
-			$this->defaultvalue = $fieldRow['defaultvalue'];
-			$this->valuerule = $fieldRow['valuerule'];
-			$this->valuerulecaption = $fieldRow['valuerulecaption'];
+			if (isset($fieldRow['isrequired']))
+				$this->isrequired = intval($fieldRow['isrequired']);
+
+			if (isset($fieldRow['defaultvalue']))
+				$this->defaultvalue = $fieldRow['defaultvalue'];
+
+			if (isset($fieldRow['valuerule']))
+				$this->valuerule = $fieldRow['valuerule'];
+
+			if (isset($fieldRow['valuerulecaption']))
+				$this->valuerulecaption = $fieldRow['valuerulecaption'];
+
 			$this->prefix = $this->ct->Env->field_input_prefix;
 			$this->comesfieldname = $this->prefix . $this->fieldname;
-			$this->params = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
+
+			if (isset($fieldRow['typeparams']))
+				$this->params = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
+			else
+				$this->params = null;
 
 			if ($parseParams and $this->type != 'virtual')
 				$this->parseParams($row, $this->type);
