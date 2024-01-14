@@ -155,7 +155,6 @@ class CustomTablesViewCatalog extends HtmlView
 		if (count($data) > 0) {
 			database::update($this->ct->Table->realtablename, $data, $whereClauseUpdate);
 			//$query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $update_fields) . ' WHERE id=' . $rec[$this->ct->Table->realidfieldname];
-			//database::setQuery($query);
 		}
 	}
 }

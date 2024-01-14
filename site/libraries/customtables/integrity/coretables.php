@@ -55,70 +55,53 @@ class IntegrityCoreTables extends IntegrityChecks
 		//https://dev.mysql.com/doc/refman/5.7/en/innodb-row-format.html
 
 		$serverType = database::getServerType();
-		$fields_sql = IntegrityCoreTables::prepareAddFieldQuery($ct, $table->fields, ($serverType == 'postgresql' ? 'postgresql_type' : 'mysql_type'));
+		$fields_sql = IntegrityCoreTables::prepareAddFieldQuery($ct, $table->fields, ($serverType == 'postgresql' ? 'postgresql_type' : 'mysql_type'), true);
 		$indexes_sql = IntegrityCoreTables::prepareAddIndexQuery($table->indexes);
 
+		//Check if table exists
+		$tableExists = false;
 		if ($serverType == 'postgresql') {
-			//PostgreeSQL
 			$fields = Fields::getListOfExistingFields($table->realtablename, false);
 
-			if (count($fields) == 0) {
-				//create new table
-				database::setQuery('CREATE SEQUENCE IF NOT EXISTS ' . $table->realtablename . '_seq');
-
-				$query = '
-				CREATE TABLE IF NOT EXISTS ' . $table->realtablename . '
-				(
-					' . implode(',', $fields_sql) . ',
-					PRIMARY KEY (id)
-				)';
-
-				database::setQuery($query);
-				database::setQuery('ALTER SEQUENCE ' . $table->realtablename . '_seq RESTART WITH 1');
-
-				Factory::getApplication()->enqueueMessage('Table "' . $table->realtablename . '" added.', 'notice');
-				return true;
-			}
+			if (count($fields) > 0)
+				$tableExists = true;
 		} else {
-			//Mysql
+			//Mysql;
+			$rows = database::getTableStatus(database::getDataBaseName(), $table->realtablename);
 
-			$query = '
-			CREATE TABLE IF NOT EXISTS ' . $table->realtablename . '
-				(
-					' . implode(',', $fields_sql) . ',
-					PRIMARY KEY (id)
-					
-					' . (count($indexes_sql) > 0 ? ',' . implode(',', $indexes_sql) : '') . '
-					
-				) ENGINE=InnoDB' . (isset($table->comments) and $table->comments !== null ? ' COMMENT=' . database::quoteName($table->comments) : '')
-				. ' DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
-			';
-
-			database::setQuery($query);
-			CustomTables\common::enqueueMessage('Table "' . $table->realtablename . '" added.', 'notice');
-			return true;
+			if (count($rows) > 0)
+				$tableExists = true;
 		}
+
+		if (!$tableExists)
+			database::createTable($table->realtablename, 'id', $fields_sql, $table->comments, $indexes_sql);
+
+		CustomTables\common::enqueueMessage('Table "' . $table->realtablename . '" added.', 'notice');
+		return true;
+
 		return false;
 	}
 
-	protected static function prepareAddFieldQuery(CT &$ct, $fields, $db_type): array
+	protected static function prepareAddFieldQuery(CT &$ct, $fields, $db_type, $ignoreId = false): array
 	{
 		$fields_sql = [];
 		foreach ($fields as $field) {
-			if (isset($field['multilang']) and $field['multilang'] == true) {
-				$moreThanOneLanguage = false;
-				foreach ($ct->Languages->LanguageList as $lang) {
-					$fieldname = $field['name'];
+			if (!$ignoreId or $field['name'] != 'id') {
+				if (isset($field['multilang']) and $field['multilang'] == true) {
+					$moreThanOneLanguage = false;
+					foreach ($ct->Languages->LanguageList as $lang) {
+						$fieldname = $field['name'];
 
-					if ($moreThanOneLanguage)
-						$fieldname .= '_' . $lang->sef;
+						if ($moreThanOneLanguage)
+							$fieldname .= '_' . $lang->sef;
 
-					$fields_sql[] = database::quoteName($fieldname) . ' ' . $field[$db_type];
+						$fields_sql[] = database::quoteName($fieldname) . ' ' . $field[$db_type];
 
-					$moreThanOneLanguage = true;
+						$moreThanOneLanguage = true;
+					}
+				} else {
+					$fields_sql[] = database::quoteName($field['name']) . ' ' . $field[$db_type];
 				}
-			} else {
-				$fields_sql[] = database::quoteName($field['name']) . ' ' . $field[$db_type];
 			}
 		}
 		return $fields_sql;

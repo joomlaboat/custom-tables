@@ -200,12 +200,6 @@ class MySQLWhereClause
 
 class database
 {
-	public static function getDBPrefix(): ?string
-	{
-		$conf = Factory::getConfig();
-		return $conf->get('dbprefix');
-	}
-
 	public static function realTableName($tableName): ?string
 	{
 		$db = self::getDB();
@@ -221,17 +215,6 @@ class database
 			return Factory::getDbo();
 		else
 			return Factory::getContainer()->get('DatabaseDriver');
-	}
-
-	public static function getDataBaseName(): ?string
-	{
-		if (defined('_JEXEC')) {
-			$conf = Factory::getConfig();
-			return $conf->get('db');
-		} elseif (defined('WPINC')) {
-			return DB_NAME;
-		}
-		return null;
 	}
 
 	/**
@@ -298,14 +281,6 @@ class database
 	{
 		$db = self::getDB();
 		return $db->quote($value);
-	}
-
-	public static function setQuery($query): void
-	{
-		$db = self::getDB();
-		$db->setQuery($query);
-		$db->execute();
-
 	}
 
 	/**
@@ -420,12 +395,6 @@ class database
 		return $db->loadAssocList();
 	}
 
-	public static function getServerType(): ?string
-	{
-		$db = self::getDB();
-		return $db->serverType;
-	}
-
 	/**
 	 * Updates data in a database table in a cross-platform manner (Joomla and WordPress).
 	 *
@@ -490,5 +459,247 @@ class database
 			}
 		}
 		return $fields;
+	}
+
+	public static function deleteRecord(string $tableName, string $realIdFieldName, $id): void
+	{
+		$db = self::getDB();
+
+		if (is_int($id))
+			$query = 'DELETE FROM ' . $db->qouteName($tableName) . ' WHERE ' . $db->quoteName($realIdFieldName) . '=' . $id;
+		else
+			$query = 'DELETE FROM ' . $db->qouteName($tableName) . ' WHERE ' . $db->quoteName($realIdFieldName) . '=' . $db->quote($id);
+
+		$db->setQuery($query);
+		$db->execute();
+	}
+
+	public static function deleteTableLessFields(): void
+	{
+		$db = self::getDB();
+		$db->setQuery('DELETE FROM #__customtables_fields AS f WHERE (SELECT id FROM #__customtables_tables AS t WHERE t.id = f.tableid) IS NULL');
+		$db->execute();
+	}
+
+	public static function dropTableIfExists($realtablename): void
+	{
+		$db = self::getDB();
+
+		$serverType = self::getServerType();
+
+		if ($serverType == 'postgresql') {
+
+			$db->setQuery('DROP TABLE IF EXISTS ' . $realtablename);
+			$db->execute();
+
+			$db->setQuery('DROP SEQUENCE IF EXISTS ' . $realtablename . '_seq CASCADE');
+			$db->execute();
+
+		} else {
+			$query = 'DROP TABLE IF EXISTS ' . database::quoteName($realtablename);
+			$db->setQuery($query);
+			$db->execute();
+		}
+	}
+
+	public static function getServerType(): ?string
+	{
+		$db = self::getDB();
+		return $db->serverType;
+	}
+
+	public static function dropColumn(string $realTableName, string $columnName): void
+	{
+		$db = self::getDB();
+
+		$db->setQuery('SET foreign_key_checks = 0');
+		$db->execute();
+
+		$db->setQuery('ALTER TABLE `' . $realTableName . '` DROP COLUMN `' . $columnName . '`');
+		$db->execute();
+
+		$db->setQuery('SET foreign_key_checks = 1');
+		$db->execute();
+	}
+
+	public static function addForeignKey(string $realTableName, string $columnName, string $join_with_table_name, string $join_with_table_field): void
+	{
+		$db = self::getDB();
+		$db->setQuery('ALTER TABLE ' . database::quoteName($realTableName) . ' ADD FOREIGN KEY (' . $columnName . ') REFERENCES '
+			. database::quoteName(self::getDataBaseName() . '.' . $join_with_table_name) . ' (' . $join_with_table_field . ') ON DELETE RESTRICT ON UPDATE RESTRICT');
+		$db->execute();
+	}
+
+	public static function getDataBaseName(): ?string
+	{
+		if (defined('_JEXEC')) {
+			$conf = Factory::getConfig();
+			return $conf->get('db');
+		} elseif (defined('WPINC')) {
+			return DB_NAME;
+		}
+		return null;
+	}
+
+	public static function dropForeignKey(string $realTableName, string $constrance): void
+	{
+		$db = self::getDB();
+
+		$db->setQuery('SET foreign_key_checks = 0');
+		$db->execute();
+
+		$db->setQuery('ALTER TABLE ' . $realTableName . ' DROP FOREIGN KEY ' . $constrance);
+		$db->execute();
+
+		$db->setQuery('SET foreign_key_checks = 1');
+		$db->execute();
+	}
+
+	public static function setTableInnoDBEngine(string $realTableName, string $comment): void
+	{
+		$db = self::getDB();
+		$db->setQuery('ALTER TABLE ' . $realTableName . ' ENGINE = InnoDB');
+		$db->execute();
+	}
+
+	public static function changeTableComment(string $realTableName, string $comment): void
+	{
+		$db = self::getDB();
+		$db->setQuery('ALTER TABLE ' . $realTableName . ' COMMENT ' . $db->quote($comment));
+		$db->execute();
+	}
+
+	public static function addIndex(string $realTableName, string $columnName): void
+	{
+		$db = self::getDB();
+		$db->setQuery('ALTER TABLE ' . $realTableName . ' ADD INDEX (' . $columnName . ')');
+		$db->execute();
+	}
+
+	public static function addColumn(string $realTableName, string $columnName, string $type, ?bool $nullable, ?string $extra = null, ?string $comment = null): void
+	{
+		$db = self::getDB();
+
+		$db->setQuery('ALTER TABLE ' . $realTableName . ' ADD COLUMN ' . $columnName . ' ' . $type
+			. ($nullable !== null ? ($nullable ? ' NULL' : ' NOT NULL') : '')
+			. ($extra !== null ? ' ' . $extra : '')
+			. ($comment !== null ? ' COMMENT ' . database::quote($comment) : ''));
+		$db->execute();
+	}
+
+	public static function createTable(string $realTableName, string $privateKey, array $columns, string $comment, array $keys = null, string $primaryKeyType = 'int'): void
+	{
+		$db = self::getDB();
+
+		if (self::getServerType() == 'postgresql') {
+
+			$db->setQuery('CREATE SEQUENCE IF NOT EXISTS ' . $realTableName . '_seq');
+			$db->execute();
+
+			$allColumns = array_merge([$privateKey . ' ' . $primaryKeyType . ' NOT NULL DEFAULT nextval (\'' . $realTableName . '_seq\')'], $columns);
+
+			$query = 'CREATE TABLE IF NOT EXISTS ' . $realTableName . '(' . implode(',', $allColumns) . ')';
+			$db->setQuery($query);
+			$db->execute();
+
+			$db->setQuery('ALTER SEQUENCE ' . $realTableName . '_seq RESTART WITH 1');
+			$db->execute();
+
+		} else {
+
+			$primaryKeyTypeString = 'INT';//(11)
+			if ($primaryKeyType !== 'int')
+				$primaryKeyTypeString = $primaryKeyType;
+
+			$allColumns = array_merge(['`' . $privateKey . '` ' . $primaryKeyTypeString . ' NOT NULL AUTO_INCREMENT'], $columns, ['PRIMARY KEY  (`id`)']);
+
+			if ($keys !== null)
+				$allColumns = array_merge($allColumns, $keys);
+
+			$query = 'CREATE TABLE IF NOT EXISTS ' . $realTableName
+				. '(' . implode(',', $allColumns) . ') ENGINE=InnoDB COMMENT="' . $comment . '"'
+				. ' DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;';
+
+			echo $query;
+			die;
+
+			$db->setQuery($query);
+			$db->execute();
+		}
+	}
+
+	public static function copyCTTable(string $newTableName, string $oldTableName): void
+	{
+		$db = self::getDB();
+
+		$realNewTableName = '#__customtables_table_' . $newTableName;
+
+		if (self::getServerType() == 'postgresql') {
+
+			$db->setQuery('CREATE SEQUENCE IF NOT EXISTS ' . $realNewTableName . '_seq');
+			$db->execute();
+
+			$db->setQuery('CREATE TABLE ' . $realNewTableName . ' AS TABLE #__customtables_table_' . $oldTableName);
+			$db->execute();
+
+			$db->setQuery('ALTER SEQUENCE ' . $realNewTableName . '_seq RESTART WITH 1');
+			$db->execute();
+		} else {
+			$db->setQuery('CREATE TABLE #__customtables_table_' . $newTableName . ' AS SELECT * FROM #__customtables_table_' . $oldTableName);
+			$db->execute();
+		}
+
+		$db->setQuery('ALTER TABLE ' . $realNewTableName . ' ADD PRIMARY KEY (id)');
+		$db->execute();
+
+		database::changeColumn($realNewTableName, 'id', 'id', 'INT UNSIGNED', false, 'AUTO_INCREMENT');
+		//$query = 'ALTERTABLE ' . $realNewTableName . ' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
+	}
+
+	public static function changeColumn(string $realTableName, string $oldColumnName, string $newColumnName, string $type, ?bool $nullable, ?string $extra = null, ?string $comment = null): void
+	{
+		$db = self::getDB();
+
+		if (self::getServerType() == 'postgresql') {
+
+			$parts = explode(' ', $type);
+
+			$db->setQuery('ALTER TABLE ' . $db->quoteName($realTableName) . ' ALTER COLUMN'
+				. ' ' . $db->quoteName($newColumnName)
+				. ' TYPE ' . $parts[0]
+			);
+		} else {
+			$db->setQuery('ALTER TABLE ' . $db->quoteName($realTableName) . ' CHANGE'
+				. ' ' . $db->quoteName($oldColumnName)
+				. ' ' . $db->quoteName($newColumnName)
+				. ' ' . $type
+				. ($nullable !== null ? ($nullable ? ' NULL' : ' NOT NULL') : '')
+				. ($extra !== null ? ' ' . $extra : '')
+				. ($comment !== null ? ' COMMENT ' . database::quote($comment) : '')
+			);
+		}
+
+		$db->execute();
+	}
+
+	public static function showTables()
+	{
+		$db = self::getDB();
+		return $db->loadAssocList('SHOW TABLES');
+	}
+
+	public static function renameTable(string $oldTableName, string $newTableName): void
+	{
+		$db = self::getDB();
+		$database = self::getDataBaseName();
+		$db->setQuery('RENAME TABLE ' . database::quoteName($database . '.' . $oldTableName) . ' TO '
+			. database::quoteName($database . '.' . $newTableName));
+		$db->execute();
+	}
+
+	public static function getDBPrefix(): ?string
+	{
+		$conf = Factory::getConfig();
+		return $conf->get('dbprefix');
 	}
 }

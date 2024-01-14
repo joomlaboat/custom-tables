@@ -47,10 +47,10 @@ function getESTables(): void
 		if (str_contains($tablename, '_extrasearch_'))//dont change this line _e x t r a  s e a r c h_
 		{
 			$new_tablename = str_replace('_extrasearch_', '_customtables_', $tablename);//dont change this line. First must be _e x t r a  s e a r c h_
-			$query = 'DROP TABLE IF EXISTS ' . $new_tablename;
-			database::setQuery($query);
-			$query = 'RENAME TABLE ' . $tablename . ' TO ' . $new_tablename;
-			database::setQuery($query);
+			database::dropTableIfExists($new_tablename);
+
+			database::renameTable($tablename, $new_tablename);
+			///$query = 'RENAME TABLE ' . $tablename . ' TO ' . $new_tablename;
 
 			fixFields($new_tablename);
 
@@ -63,7 +63,7 @@ function getESTables(): void
 
 	updateLayouts();
 
-	addCetegoriesTable();
+	addCategoriesTable();
 
 	updateImageFieldTypeParams();
 
@@ -86,20 +86,20 @@ function fixTableCategory(): void
 	$fields = database::getExistingFields($tablename);
 
 	$catid = findFileByName($fields, 'catid');
-	$tablecategory = findFileByName($fields, 'tablecategory');
+	$tableCategory = findFileByName($fields, 'tablecategory');
 
-	if ($tablecategory == null and is_array($catid)) {
+	if ($tableCategory == null and is_array($catid)) {
 		//rename field
-		$query = 'ALTER TABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
-		database::setQuery($query);
+		database::changeColumn($tablename, 'catid', 'tablecategory', 'int(11)', true);
+		//$query = 'ALTERTABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
 
-	} elseif (is_array($tablecategory) and is_array($catid)) {
+	} elseif (is_array($tableCategory) and is_array($catid)) {
 		//delete tablecategory
-		$query = 'ALTER TABLE `' . $tablename . '` DROP column `tablecategory`';
-		database::setQuery($query);
+		database::dropColumn($tablename, 'tablecategory');
+		//$query = 'ALTERTABLE `' . $tablename . '` DROP column `tablecategory`';
 
-		$query = 'ALTER TABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
-		database::setQuery($query);
+		database::changeColumn($tablename, 'catid', 'tablecategory', 'int(11)', true);
+		//$query = 'ALTERTABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
 	}
 }
 
@@ -146,9 +146,6 @@ function updateLayoutVerticalBarTags(): void
 
 			//$query = 'UPDATE `#__customtables_layouts` SET
 			//	layoutcode=' . database::quote($c) . ' WHERE id=' . $record['id'];
-
-			//database::setQuery($query);
-
 			echo '<p>Layout #' . $record['id'] . ' updated.</p>';
 		}
 	}
@@ -203,7 +200,6 @@ function updateImageFieldTypeParams(): void
 	database::update('#__customtables_fields', $data, $whereClauseUpdate);
 
 	//$query = 'UPDATE `#__customtables_fields` SET typeparams=CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\')) WHERE (`type`="image" OR `type`="imagegallery") AND INSTR(typeparams,\'|\')';
-	//database::setQuery($query);
 }
 
 /**
@@ -225,17 +221,6 @@ function updateMenuItems(): void
 	$whereClauseUpdate->addCondition('link', 'com_extrasearch', 'instr');
 	database::update('#__menu', $data, $whereClauseUpdate);
 
-	//$query = 'UPDATE #__menu SET ' . implode(',', $sets)
-	//. ' WHERE instr(link,"com_extrasearch")';
-
-	//database::setQuery($query);
-
-	//$sets = array();
-
-	//$sets[] = 'params=replace(params,\'layout":"layout:\',\'layout":"\')';
-	//$sets[] = 'params=replace(params,\'"detailslayout":"\',\'"esdetailslayout":"\')';
-	//$sets[] = 'params=replace(params,\'"editlayout":"\',\'"eseditlayout":"\')';
-
 	$data = [
 		'params' => ['replace(params,\'layout":"layout:\',\'layout":"\')', 'sanitized'],
 		'params' => ['replace(params,\'"detailslayout":"\',\'"esdetailslayout":"\')', 'sanitized'],
@@ -244,11 +229,6 @@ function updateMenuItems(): void
 	$whereClauseUpdate = new MySQLWhereClause();
 	$whereClauseUpdate->addCondition('link', 'com_customtables', 'instr');
 	database::update('#__menu', $data, $whereClauseUpdate);
-
-	//$query = 'UPDATE #__menu SET ' . implode(',', $sets)
-	//. ' WHERE instr(link,"com_customtables")';
-
-	//database::setQuery($query);
 }
 
 /**
@@ -265,7 +245,6 @@ function updatefieldTypes(): void
 	database::update('#__customtables_fields', $data, $whereClauseUpdate);
 
 	//$query = 'UPDATE #__customtables_fields SET `type`="customtables" WHERE INSTR(`type`,"extrasearch")';
-	//database::setQuery($query);
 }
 
 /**
@@ -282,9 +261,6 @@ function updateLayouts(): void
 	$whereClauseUpdate = new MySQLWhereClause();
 	$whereClauseUpdate->addCondition('layoutcode', 'extrasearch', 'instr');
 	database::update('#__customtables_layouts', $data, $whereClauseUpdate);
-
-	//$query = 'UPDATE #__customtables_layouts set layoutcode=replace(layoutcode,"extrasearch","customtables") where instr(layoutcode,"extrasearch")';
-	//database::setQuery($query);
 }
 
 /**
@@ -302,9 +278,6 @@ function updateContent(): void
 	$whereClauseUpdate = new MySQLWhereClause();
 	$whereClauseUpdate->addCondition('introtext', 'extrasearch', 'INSTR');
 	database::update('#__content', $data, $whereClauseUpdate);
-
-	//$query = 'UPDATE #__content set introtext=replace(introtext,"{extrasearch","{customtables") where INSTR(introtext,"extrasearch")';
-	//database::setQuery($query);
 }
 
 
@@ -324,8 +297,7 @@ function fixNewCTTables($mysqltable)
     $ads[]='`version` INT(10) unsigned NOT NULL DEFAULT 1';
     $ads[]='`hits` INT(10) unsigned NOT NULL DEFAULT 0';
     $ads[]='`ordering` INT(11) NOT NULL DEFAULT 0';
-    $query='ALTER TABLE `ow94h_customtables_categories` ADD '.implode(', ADD ',$ads);
-    database::setQuery( $query );
+    $query='ALTERTABLE `ow94h_customtables_categories` ADD '.implode(', ADD ',$ads);
 }
 */
 
@@ -333,27 +305,27 @@ function fixNewCTTables($mysqltable)
  * @throws Exception
  * @since 3.2.2
  */
-function addCetegoriesTable(): void
+function addCategoriesTable(): void
 {
-	$query = 'CREATE TABLE IF NOT EXISTS `#__customtables_categories` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT,
-	`published` TINYINT(3) NOT NULL DEFAULT 1,
-	`categoryname` VARCHAR(255) NOT NULL DEFAULT "",
-	`created_by` INT(10) unsigned NOT NULL DEFAULT 0,
-	`modified_by` INT(10) unsigned NOT NULL DEFAULT 0,
-	`created` DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00",
-	`modified` DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00",
-	`checked_out` int(11) unsigned NOT NULL DEFAULT 0,
-	`checked_out_time` DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00",
-	PRIMARY KEY  (`id`),
-	KEY `idx_checkout` (`checked_out`),
-	KEY `idx_createdby` (`created_by`),
-	KEY `idx_modifiedby` (`modified_by`),
-	KEY `idx_state` (`published`),
-	KEY `idx_categoryname` (`categoryname`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
+	$columns = [
+		'`published` TINYINT(3) NOT NULL DEFAULT 1',
+		'`categoryname` VARCHAR(255) NOT NULL DEFAULT ""',
+		'`created_by` INT(10) unsigned NOT NULL DEFAULT 0',
+		'`modified_by` INT(10) unsigned NOT NULL DEFAULT 0',
+		'`created` DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"',
+		'`modified` DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"',
+		'`checked_out` int(11) unsigned NOT NULL DEFAULT 0',
+		'`checked_out_time` DATETIME NOT NULL DEFAULT "0000-00-00 00:00:00"',
+	];
 
-	database::setQuery($query);
+	$keys = [
+		'KEY `idx_checkout` (`checked_out`)',
+		'KEY `idx_createdby` (`created_by`)',
+		'KEY `idx_modifiedby` (`modified_by`)',
+		'KEY `idx_state` (`published`)',
+		'KEY `idx_categoryname` (`categoryname`)',
+	];
+	database::createTable('#__customtables_categories', 'id', $columns, 'Table Categories', $keys);
 }
 
 function updateFields($new_tablename): void
@@ -443,18 +415,18 @@ function fixFields($tablename): bool
 
 				if ($b == '_1' and !str_contains($fn, '_10')) {
 					//rename
-					$newcolumnname = str_replace('_1', '', $field['Field']);
-					$query = 'ALTER TABLE `' . $tablename . '` CHANGE `' . $fn . '` `' . $newcolumnname . '` ' . $type . ' ' . ($null != 'NO' ? 'NULL' : '') . ';';
+					$newColumnName = str_replace('_1', '', $field['Field']);
+					database::changeColumn($tablename, $fn, $newColumnName, $type, $null != 'NO');
+					//$query = 'ALTERTABLE `' . $tablename . '` CHANGE `' . $fn . '` `' . $newcolumnname . '` ' . $type . ' ' . ($null != 'NO' ? 'NULL' : '') . ';';
 				} elseif ($b == '_2') {
 					//rename
-					$newcolumnname = str_replace('_2', '_es', $field['Field']);
-					$query = 'ALTER TABLE `' . $tablename . '` CHANGE `' . $fn . '` `' . $newcolumnname . '` ' . $type . ' ' . ($null != 'NO' ? 'NULL' : '') . ';';
+					$newColumnName = str_replace('_2', '_es', $field['Field']);
+					database::changeColumn($tablename, $fn, $newColumnName, $type, $null != 'NO');
+					//$query = 'ALTERTABLE `' . $tablename . '` CHANGE `' . $fn . '` `' . $newcolumnname . '` ' . $type . ' ' . ($null != 'NO' ? 'NULL' : '') . ';';
 				} else {
 					//delete
-					$query = 'ALTER TABLE `' . $tablename . '` DROP column `' . $fn . '`';
+					database::dropColumn($tablename, $fn);
 				}
-
-				database::setQuery($query);
 				$found = true;
 				break;
 			}

@@ -177,40 +177,30 @@ class ESTables
 	 */
 	public static function createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $complete_table_name = ''): bool
 	{
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql') {
-			//PostgreSQL
-			//Check if table exists
-			if ($complete_table_name == '')
-				$table_name = $dbPrefix . 'customtables_table_' . $tablename;
-			elseif ($complete_table_name == '-new-')
-				$table_name = $tablename;
-			else
-				$table_name = $complete_table_name;// used for custom table names - to connect to third-part tables for example
+		if ($complete_table_name == '')
+			$table_name = $dbPrefix . 'customtables_table_' . $tablename;
+		elseif ($complete_table_name == '-new-')
+			$table_name = $tablename;
+		else
+			$table_name = $complete_table_name;// used for custom table names - to connect to third-part tables for example
 
+		$serverType = database::getServerType();
+
+		//Check if table exists
+		$tableExists = false;
+		if ($serverType == 'postgresql') {
 			$fields = Fields::getListOfExistingFields($table_name, false);
 
-			if (count($fields) == 0) {
-				//create new table
-				database::setQuery('CREATE SEQUENCE IF NOT EXISTS ' . $table_name . '_seq');
-
-				$query = '
-				CREATE TABLE IF NOT EXISTS ' . $table_name . '
-				(
-					id int NOT NULL DEFAULT nextval (\'' . $table_name . '_seq\'),
-					published smallint NOT NULL DEFAULT 1,
-					PRIMARY KEY (id)
-				)';
-
-				database::setQuery($query);
-				database::setQuery('ALTER SEQUENCE ' . $table_name . '_seq RESTART WITH 1');
-				return true;
-			}
+			if (count($fields) > 0)
+				$tableExists = true;
 		} else {
 			//Mysql;
 			$rows2 = database::getTableStatus($database, $tablename);
 
 			if (count($rows2) > 0) {
+
+				$tableExists = true;
+
 				if ($complete_table_name == '') {
 					//do not modify third-party tables
 					$row2 = $rows2[0];
@@ -218,32 +208,23 @@ class ESTables
 					$table_name = $dbPrefix . 'customtables_table_' . $tablename;
 
 					if ($row2->Engine != 'InnoDB') {
-						$query = 'ALTER TABLE ' . $table_name . ' ENGINE = InnoDB';
-						database::setQuery($query);
+						database::setTableInnoDBEngine($table_name);
+						//$query = 'ALTERTABLE ' . $table_name . ' ENGINE = InnoDB';
 					}
 
-					$query = 'ALTER TABLE ' . $table_name . ' COMMENT = "' . $tabletitle . '";';
-					database::setQuery($query);
+					database::changeTableComment($table_name, $tabletitle);
+					//$query = 'ALTERTABLE ' . $table_name . ' COMMENT = "' . $tabletitle . '";';
 					return false;
 				}
-			} else {
-
-				if ($complete_table_name == '')
-					$table_name = $dbPrefix . 'customtables_table_' . $tablename;
-				elseif ($complete_table_name == '-new-')
-					$table_name = $tablename;
-				else
-					$table_name = $complete_table_name;// used for custom table names - to connect to third-part tables for example
-
-				$query = 'CREATE TABLE IF NOT EXISTS ' . $table_name . '
-					(
-						id int(10) UNSIGNED NOT NULL auto_increment,
-						published tinyint(1) NOT NULL DEFAULT 1,
-						PRIMARY KEY (id)
-					) ENGINE=InnoDB COMMENT="' . $tabletitle . '" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;';
-				database::setQuery($query);
-				return true;
 			}
+		}
+
+		if (!$tableExists) {
+			$columns = [
+				'published tinyint(1) NOT NULL DEFAULT 1'
+			];
+			database::createTable($table_name, 'id', $columns, $tabletitle);
+			return true;
 		}
 		return false;
 	}
@@ -261,10 +242,10 @@ class ESTables
 			$tableStatus = database::getTableStatus($database, $old_tablename);
 
 			if (count($tableStatus) > 0) {
-				$query = 'RENAME TABLE ' . database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $old_tablename) . ' TO '
-					. database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $tablename) . ';';
 
-				database::setQuery($query);
+				database::renameTable($dbPrefix . 'customtables_table_' . $old_tablename, $dbPrefix . 'customtables_table_' . $tablename);
+				//$query = 'RENAME TABLE ' . database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $old_tablename) . ' TO '
+				//. database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $tablename) . ';';
 			}
 		}
 	}
@@ -375,7 +356,6 @@ class ESTables
 
 				//$query = 'INSERT INTO #__customtables_fields (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
 				database::insert('#__customtables_fields', $data);
-				//database::setQuery($query);
 				$ordering += 1;
 			}
 		}
@@ -391,7 +371,6 @@ class ESTables
 			database::update('#__customtables_tables', $data, $whereClauseUpdate);
 
 			//$query = 'UPDATE #__customtables_tables SET customidfield = ' . database::quote($primary_key_column) . ' WHERE id = ' . (int)$tableRow->id;
-			//database::setQuery($query);
 		}
 		return true;
 	}
@@ -436,19 +415,7 @@ class ESTables
 
 		if ($customTableName === null) {
 			//Do not copy real third-party tables
-			$serverType = database::getServerType();
-			if ($serverType == 'postgresql')
-				$query = 'CREATE TABLE #__customtables_table_' . $new_table . ' AS TABLE #__customtables_table_' . $old_table;
-			else
-				$query = 'CREATE TABLE #__customtables_table_' . $new_table . ' AS SELECT * FROM #__customtables_table_' . $old_table;
-
-			database::setQuery($query);
-
-			$query = 'ALTER TABLE #__customtables_table_' . $new_table . ' ADD PRIMARY KEY (id)';
-			database::setQuery($query);
-
-			$query = 'ALTER TABLE #__customtables_table_' . $new_table . ' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
-			database::setQuery($query);
+			database::copyCTTable($new_table, $old_table);
 		}
 
 		//Copy Fields
@@ -484,39 +451,29 @@ class ESTables
 
 			$data = [];
 			$data['tableid'] = $new_table_id;
-			//$inserts = array('tableid=' . $new_table_id);
+
 			foreach ($fields as $fld) {
 
 				if ($fld == 'parentid') {
 					if ((int)$row[$fld] == 0)
 						$data[$fld] = null;
-					//$inserts[] = $fld . '=NULL';
 					else
 						$data[$fld] = (int)$row[$fld];
-					//$inserts[] = $fld . '=' . (int)$row[$fld];
 				} elseif ($fld == 'created_by' or $fld == 'modified_by') {
 					if ((int)$row[$fld] == 0)
 						$data[$fld] = $ct->Env->user->id;
-					//$inserts[] = $fld . '=' . $ct->Env->user->id;
 					else
 						$data[$fld] = (int)$row[$fld];
-					//$inserts[] = $fld . '=' . (int)$row[$fld];
 				} elseif ($fld == 'created' or $fld == 'modified') {
 					if ($row[$fld] == "")
 						$data[$fld] = ['NOW()', 'sanitized'];
-					//$inserts[] = $fld . '=NOW()';
 					else
 						$data[$fld] = $row[$fld];
-					//$inserts[] = $fld . '="' . $row[$fld] . '"';
 				} else {
-					//$value = str_replace('"', '\"', $row[$fld]);
 					$data[$fld] = str_replace('"', '\"', $row[$fld]);
-					//$inserts[] = $fld . '="' . $value . '"';
 				}
 			}
 			database::insert('#__customtables_fields', $data);
-			//$iq = 'INSERT INTO #__customtables_fields SET ' . implode(', ', $inserts);
-			//database::setQuery($iq);
 		}
 		return true;
 	}

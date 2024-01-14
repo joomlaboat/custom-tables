@@ -220,7 +220,6 @@ class Layouts
 				database::update('#__customtables_layouts', $data, $whereClauseUpdate);
 
 				//$query = 'UPDATE #__customtables_layouts SET ' . $fieldName . '="' . addslashes($content) . '",modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
-				//database::setQuery($query);
 				return $content;
 			}
 		} else {
@@ -279,7 +278,6 @@ class Layouts
 				//$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
 			}
 			database::update('#__customtables_layouts', $data, $whereClauseUpdate);
-			//database::setQuery($query);
 		}
 		return true;
 	}

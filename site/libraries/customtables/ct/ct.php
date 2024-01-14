@@ -427,8 +427,9 @@ class CT
 			}
 		}
 
-		$query = 'DELETE FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
-		database::setQuery($query);
+		database::deleteRecord($this->Table->realidfieldname, $this->Table->realidfieldname, $listing_id);
+		//$query = 'DELETEFROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
+
 		$this->Table->saveLog($listing_id, 5);
 		$new_row = array();
 
@@ -455,7 +456,6 @@ class CT
 		database::update($this->Table->realtablename, $data, $whereClauseUpdate);
 
 		//$query = 'UPDATE ' . $this->Table->realtablename . ' SET published=' . (int)$status . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
-		//database::setQuery($query);
 
 		if ($status == 1)
 			$this->Table->saveLog($listing_id, 3);
@@ -563,7 +563,7 @@ class CT
 					$whereClauseUpdate->addCondition($this->Table->realidfieldname, $listing_id);
 					database::update($this->Table->realtablename, $data, $whereClauseUpdate);
 
-					//database::setQuery('UPDATE ' . $this->Table->realtablename . ' SET '
+					//database::set Query('UPDATE ' . $this->Table->realtablename . ' SET '
 					//. database::quoteName($fieldrow['realfieldname']) . '=MD5(CONCAT_WS(' . implode(',', $fields) . ')) WHERE '
 					//. database::quoteName($this->Table->realidfieldname) . '=' . database::quote($listing_id)
 				}

@@ -110,8 +110,8 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 
 				CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->ct->Table->tableid, $this->fileboxname, $fileid, $file_ext);
 
-				$query = 'DELETE FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->ct->Params->listing_id . ' AND fileid=' . $fileid;
-				database::setQuery($query);
+				database::deleteRecord($this->fileboxtablename, 'fileid', $fileid);
+				//$query = 'DELETEFROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->ct->Params->listing_id . ' AND fileid=' . $fileid;
 			}
 		}
 

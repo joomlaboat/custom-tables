@@ -113,25 +113,10 @@ class ListOfTables
 		$table_row = ESTables::getTableRowByID($tableId);
 
 		if (isset($table_row->tablename) and (!isset($table_row->customtablename))) // do not delete third-party tables
-		{
-			$realtablename = database::getDBPrefix() . 'customtables_table_' . $table_row->tablename; //not available for custom tablenames
-			$serverType = database::getServerType();
-			if ($serverType == 'postgresql')
-				$query = 'DROP TABLE IF EXISTS ' . $realtablename;
-			else
-				$query = 'DROP TABLE IF EXISTS ' . database::quoteName($realtablename);
+			database::dropTableIfExists(database::getDBPrefix() . 'customtables_table_' . $table_row->tablename);
 
-			database::setQuery($query);
-			$serverType = database::getServerType();
-
-			if ($serverType == 'postgresql') {
-				$query = 'DROP SEQUENCE IF EXISTS ' . $realtablename . '_seq CASCADE';
-				database::setQuery($query);
-			}
-		}
-		database::setQuery('DELETE FROM #__customtables_tables WHERE id=' . $tableId);
-
-		Fields::deleteTableLessFields();
+		database::deleteRecord('#__customtables_tables', 'id', $tableId);
+		database::deleteTableLessFields();
 		return true;
 	}
 

@@ -262,7 +262,6 @@ class CustomTablesImageMethods
 					$whereClauseUpdate->addCondition($realfieldname, $ExistingImage);
 					database::update($realtablename, $data, $whereClauseUpdate);
 					//$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=0 WHERE ' . $realfieldname . '=' . $ExistingImage;
-					//database::setQuery($query);
 
 					//Convert Child to Parent
 					$data = [
@@ -272,8 +271,6 @@ class CustomTablesImageMethods
 					$whereClauseUpdate->addCondition($realIdField, (int)$photoRow[$realIdField]);
 					database::update($realtablename, $data, $whereClauseUpdate);
 					//$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=' . $ExistingImage . ' WHERE ' . $realIdField . '=' . (int)$photoRow[$realIdField];
-
-					//database::setQuery($query);
 					return true;
 				}
 			}//if

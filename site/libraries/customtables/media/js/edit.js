@@ -1,3 +1,85 @@
+class CustomTablesEdit {
+
+    constructor(url) {
+
+    }
+
+    saveRecord(url, fieldsAndValues, listing_id, successCallback, errorCallback) {
+
+        let completeURL = url + '?view=edititem&task=save&tmpl=component&clean=1';
+        if (listing_id !== undefined && listing_id !== null)
+            completeURL += '&listing_id=' + listing_id;
+
+        let postData = new URLSearchParams();
+
+        // Iterate over keysObject and append each key-value pair
+        for (const key in fieldsAndValues) {
+            if (fieldsAndValues.hasOwnProperty(key)) {
+                postData.append(key, fieldsAndValues[key]);
+            }
+        }
+
+        fetch(completeURL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: postData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'saved') {
+                    if (successCallback && typeof successCallback === 'function') {
+                        successCallback(data);
+                    } else {
+                        alert('Saved!');
+                    }
+                } else if (data.status === 'error') {
+                    if (errorCallback && typeof errorCallback === 'function') {
+                        errorCallback(data);
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            })
+            .catch(error => {
+
+                alert(JSON.stringify(error));
+
+                if (errorCallback && typeof errorCallback === 'function') {
+                    errorCallback({
+                        status: 'error',
+                        message: 'An error occurred during the request.',
+                        response: error.response
+                    });
+                } else {
+                    console.error('Error', error);
+                }
+            });
+    }
+
+    reloadRecord(listing_id) {
+
+        // Select all table elements whose id attribute starts with 'ctTable_'
+        const tables = document.querySelectorAll('table[id^="ctTable_"]');
+        tables.forEach(table => {
+            //console.log(table.id); // This will log the ID of each table
+            let parts = table.id.split("_");
+            if (parts.length === 2) {
+                let tableId = parts[1];
+                let trId = 'ctTable_' + tableId + '_' + listing_id;
+                const records = table.querySelectorAll('tr[id^="' + trId + '"]');
+                if (records.length == 1) {
+                    let index = findRowIndexById(table.id, trId);
+                    ctCatalogUpdate(tableId, listing_id, index);
+                }
+            }
+        });
+    }
+}
+
+//---------------------------------
+
 let ctItemId = 0;
 
 function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField) {
@@ -1331,3 +1413,4 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
         console.error("Error:", error);
     }
 }
+

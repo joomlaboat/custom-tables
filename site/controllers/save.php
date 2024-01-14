@@ -92,7 +92,7 @@ function CustomTablesDelete($this_)
  */
 function CustomTablesSave(string $task, $this_)
 {
-	$link = common::getReturnToURL();
+	$link = common::getReturnToURL() ?? '';
 
 	common::inputSet('task', '');
 	$ct = new CT(null, false);

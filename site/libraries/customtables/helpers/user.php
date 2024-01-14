@@ -193,7 +193,6 @@ class CTUser
 		database::update('#__users', $data, $whereClauseUpdate);
 
 		//$query = 'UPDATE #__users SET password=md5("' . $password . '"), requireReset=0 WHERE id=' . $userid;
-		//database::setQuery($query); // Consider using prepared statements to prevent SQL injection.
 		return $userid;
 	}
 
@@ -354,7 +353,6 @@ class CTUser
 		foreach ($group_ids as $group_id) {
 			//$query = 'INSERT #__user_usergroup_map SET user_id=' . $user->id . ', group_id=' . $group_id;
 			database::insert('#__user_usergroup_map', ['user_id' => $user->id, 'group_id' => $group_id]);
-			//database::setQuery($query);
 		}
 
 		// Compile the notification mail values.
@@ -445,7 +443,6 @@ class CTUser
 		database::update($realtablename, $data, $whereClauseUpdate);
 
 		//$query = 'UPDATE ' . $realtablename . ' SET ' . $userIdFieldName . '=' . $existing_user_id . ' WHERE ' . $realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
-		//database::setQuery($query);
 	}
 
 	/**

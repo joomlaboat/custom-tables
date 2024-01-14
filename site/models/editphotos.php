@@ -197,8 +197,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 
 			//$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safeTitle . '" WHERE listingid='
 			//	. $this->listing_id . ' AND photoid=' . $image->photoid;
-
-			//database::setQuery($query);
 			$i++;
 		}
 		return true;
@@ -230,8 +228,8 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 				$this->imagemethods->DeleteExistingGalleryImage($this->imagefolder, $this->imagemainprefix, $this->ct->Table->tableid, $this->galleryname,
 					$photoId, $this->field->params[0] ?? '', true);
 
-				$query = 'DELETE FROM ' . $this->phototablename . ' WHERE listingid=' . $this->listing_id . ' AND photoid=' . $photoId;
-				database::setQuery($query);
+				database::deleteRecord($this->phototablename, 'photoid', $photoId);
+				//$query = 'DELETEFROM ' . $this->phototablename . ' WHERE listingid=' . $this->listing_id . ' AND photoid=' . $photoId;
 			}
 		}
 
@@ -395,8 +393,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 				//	. $this->listing_id . ' AND photoid=' . $image->photoid;
 			}
 			database::update($this->phototablename, $data, $whereClauseUpdate);
-
-			//database::setQuery($query);
 			$i++;
 		}
 		return true;

@@ -138,7 +138,6 @@ function importCSVdata(string $filename, $ct_tableid): string
 
 				try {
 					database::insert($tableRow->realtablename, $result->data);
-					//database::setQuery($query);
 				} catch (Exception $e) {
 					return $e->getMessage();
 				}

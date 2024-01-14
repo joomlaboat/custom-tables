@@ -232,8 +232,7 @@ class Fields
 				$imageMethods->DeleteGalleryImages($gallery_table_name, $field->fieldrow['tableid'], $field->fieldname, $field->params, true);
 
 				//Delete gallery table
-				$query = 'DROP TABLE IF EXISTS ' . $gallery_table_name;
-				database::setQuery($query);
+				database::dropTableIfExists($gallery_table_name);
 			} elseif ($field->type == 'filebox') {
 				//Delete all files belongs to the filebox
 
@@ -241,8 +240,8 @@ class Fields
 				CustomTablesFileMethods::DeleteFileBoxFiles($fileBoxTableName, $field->fieldrow['tableid'], $field->fieldname, $field->params);
 
 				//Delete gallery table
-				$query = 'DROP TABLE IF EXISTS ' . $fileBoxTableName;
-				database::setQuery($query);
+				database::dropTableIfExists($fileBoxTableName);
+
 			} elseif ($field->type == 'image') {
 				if (Fields::checkIfFieldExists($tableRow['realtablename'], $field->realfieldname)) {
 					if (defined('_JEXEC')) {
@@ -284,8 +283,8 @@ class Fields
 		}
 
 		//Delete field from the list
-		$query = 'DELETE FROM #__customtables_fields WHERE id=' . $fieldid;
-		database::setQuery($query);
+		database::deleteRecord('#__customtables_fields', 'id', $fieldid);
+		//$query = 'DELETEFROM #__customtables_fields WHERE id=' . $fieldid;
 		return true;
 	}
 
@@ -468,16 +467,7 @@ class Fields
 	{
 		if (Fields::checkIfFieldExists($realtablename, $realfieldname)) {
 			try {
-				$query = 'SET foreign_key_checks = 0;';
-				database::setQuery($query);
-
-				$query = 'ALTER TABLE ' . $realtablename . ' DROP ' . $realfieldname;
-
-				database::setQuery($query);
-
-				$query = 'SET foreign_key_checks = 1;';
-				database::setQuery($query);
-
+				database::dropColumn($realtablename, $realfieldname);
 				return true;
 			} catch (Exception $e) {
 				$msg = '<p style="color:#ff0000;">Caught exception: ' . $e->getMessage() . '</p>';
@@ -591,29 +581,31 @@ class Fields
 	 */
 	public static function fixMYSQLField(string $realtablename, string $fieldname, string $PureFieldType, string &$msg): bool
 	{
-		if ($fieldname == 'id') {
-			$constrances = Fields::getTableConstrances($realtablename, '');
-
-			//Delete same table child-parent constrances
-			if (!is_null($constrances)) {
-				foreach ($constrances as $constrance) {
-					if ($constrance[7] == '(id)')
-						Fields::removeForeignKeyConstrance($realtablename, $constrance[1]);
-				}
-			}
-
-			$query = 'ALTER TABLE ' . $realtablename . ' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
-			database::setQuery($query);
-
-			$msg = '';
-			return true;
-		} elseif ($fieldname == 'published')
-			$query = 'ALTER TABLE ' . $realtablename . ' CHANGE published published TINYINT NOT NULL DEFAULT 1';
-		else
-			$query = 'ALTER TABLE ' . $realtablename . ' CHANGE ' . $fieldname . ' ' . $fieldname . ' ' . $PureFieldType;
-
 		try {
-			database::setQuery($query);
+
+			if ($fieldname == 'id') {
+				$constrances = Fields::getTableConstrances($realtablename, '');
+
+				//Delete same table child-parent constrances
+				if (!is_null($constrances)) {
+					foreach ($constrances as $constrance) {
+						if ($constrance[7] == '(id)')
+							Fields::removeForeignKeyConstrance($realtablename, $constrance[1]);
+					}
+				}
+
+				database::changeColumn($realtablename, 'id', 'id', 'INT UNSIGNED', false, 'AUTO_INCREMENT');
+				//$query = 'ALTERTABLE ' . $realtablename . ' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
+
+				$msg = '';
+				return true;
+			} elseif ($fieldname == 'published')
+				database::changeColumn($realtablename, 'published', 'published', 'TINYINT', false, 'DEFAULT 1');
+			//$query = 'ALTERTABLE ' . $realtablename . ' CHANGE published published TINYINT NOT NULL DEFAULT 1';
+			else
+				database::changeColumn($realtablename, $fieldname, $fieldname, $PureFieldType);
+			//$query = 'ALTERTABLE ' . $realtablename . ' CHANGE ' . $fieldname . ' ' . $fieldname . ' ' . $PureFieldType;
+
 			$msg = '';
 			return true;
 		} catch (Exception $e) {
@@ -628,19 +620,11 @@ class Fields
 	 */
 	protected static function removeForeignKeyConstrance($realtablename, $constrance): void
 	{
-		$query = 'SET foreign_key_checks = 0;';
-		database::setQuery($query);
-
-		$query = 'ALTER TABLE ' . $realtablename . ' DROP FOREIGN KEY ' . $constrance;
-
 		try {
-			database::setQuery($query);
+			database::dropForeignKey($realtablename, $constrance);
 		} catch (Exception $e) {
 			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 		}
-
-		$query = 'SET foreign_key_checks = 1;';
-		database::setQuery($query);
 	}
 
 	/**
@@ -781,18 +765,7 @@ class Fields
 		return $field;
 	}
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function deleteTableLessFields(): void
-	{
-		$query = 'DELETE FROM #__customtables_fields AS f WHERE (SELECT id FROM #__customtables_tables AS t WHERE t.id = f.tableid) IS NULL';
-		database::setQuery($query);
-	}
-
 	//MySQL only
-
 	public static function getSelfParentField($ct)
 	{
 		//Check if this table has self-parent field - the TableJoin field linked with the same table.
@@ -1021,20 +994,12 @@ class Fields
 			throw new Exception('Add New Field: Field name cannot be empty.');
 
 		if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
-			$query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
 
-			if (defined('_JEXEC')) {
-				try {
-					database::setQuery($query);
-				} catch (Exception $e) {
-					throw new Exception($e->getMessage());
-				}
-			} elseif (defined('WPINC')) {
-				try {
-					database::setQuery($query);
-				} catch (Exception $e) {
-					throw new Exception($e->getMessage());
-				}
+			try {
+				database::addColumn($realtablename, $realfieldname, $fieldType, null, $options);
+				//$query = 'ALTERTABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
 			}
 		}
 	}
@@ -1559,20 +1524,18 @@ class Fields
 
 		$PureFieldType_ = $PureFieldType;
 
-		$serverType = database::getServerType();
-
-		if ($serverType == 'postgresql') {
-			$parts = explode(' ', $PureFieldType_);
-			$query = 'ALTER TABLE ' . $realtablename
-				. ' ALTER COLUMN ' . $realfieldname . ' TYPE ' . $parts[0];
-
-		} else {
-			$query = 'ALTER TABLE ' . $realtablename . ' CHANGE ' . $realfieldname . ' ' . $realfieldname . ' ' . $PureFieldType_;
-			$query .= ' COMMENT ' . database::quote($fieldtitle);
-		}
-
+		//$serverType = database::getServerType();
 		try {
-			database::setQuery($query);
+			//if ($serverType == 'postgresql') {
+			//	$parts = explode(' ', $PureFieldType_);
+			//	$query = 'ALTERTABLE ' . $realtablename
+			//		. ' ALTER COLUMN ' . $realfieldname . ' TYPE ' . $parts[0];
+
+			//} else {
+			database::changeColumn($realtablename, $realfieldname, $realfieldname, $PureFieldType, null, null, $fieldtitle);
+			//$query = 'ALTERTABLE ' . $realtablename . ' CHANGE ' . $realfieldname . ' ' . $realfieldname . ' ' . $PureFieldType_;
+			//$query .= ' COMMENT ' . database::quote($fieldtitle);
+			//}
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
@@ -1637,18 +1600,13 @@ class Fields
 	 */
 	public static function CreateImageGalleryTable($tablename, $fieldname): bool
 	{
-		$image_gallery_table = '#__customtables_gallery_' . $tablename . '_' . $fieldname;
-
-		$query = 'CREATE TABLE IF not EXISTS ' . $image_gallery_table . ' (
-  photoid bigint not null auto_increment,
-  listingid bigint not null,
-  ordering int not null,
-  photo_ext varchar(10) not null,
-  title varchar(100) null,
-   PRIMARY KEY  (photoid)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1 ;
-';
-		database::setQuery($query);
+		$columns = [
+			'listingid bigint not null',
+			'ordering int not null',
+			'photo_ext varchar(10) not null',
+			'title varchar(100) null'
+		];
+		database::createTable('#__customtables_gallery_' . $tablename . '_' . $fieldname, 'photoid', $columns, 'Image Gallery', 'bigint');
 		return true;
 	}
 
@@ -1658,18 +1616,13 @@ class Fields
 	 */
 	public static function CreateFileBoxTable($tablename, $fieldname): bool
 	{
-		$filebox_gallery_table = '#__customtables_filebox_' . $tablename . '_' . $fieldname;
-
-		$query = 'CREATE TABLE IF not EXISTS ' . $filebox_gallery_table . ' (
-  fileid bigint not null auto_increment,
-  listingid bigint not null,
-  ordering int not null,
-  file_ext varchar(10) not null,
-  title varchar(100) not null,
-   PRIMARY KEY  (fileid)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1 ;
-';
-		database::setQuery($query);
+		$columns = [
+			'listingid bigint not null',
+			'ordering int not null',
+			'file_ext varchar(10) not null',
+			'title varchar(100) null'
+		];
+		database::createTable('#__customtables_filebox_' . $tablename . '_' . $fieldname, 'fileid', $columns, null, 'File Box', 'bigint');
 		return true;
 	}
 
@@ -1688,8 +1641,8 @@ class Fields
 			//$query = 'SHOW INDEX FROM ' . $realtablename . ' WHERE Key_name = "' . $realfieldname . '"';
 
 			if (count($rows) == 0) {
-				$query = 'ALTER TABLE ' . $realtablename . ' ADD INDEX(' . $realfieldname . ');';
-				database::setQuery($query);
+				database::addIndex($realtablename, $realfieldname);
+				//$query = 'ALTERTABLE ' . $realtablename . ' ADD INDEX(' . $realfieldname . ');';
 			}
 		}
 	}
@@ -1734,14 +1687,13 @@ class Fields
 
 		Fields::removeForeignKey($realtablename, $realfieldname);
 
-		if (isset($typeParams[7]) and $typeParams[7] == 'addforignkey') {
+		if (isset($typeParams[7]) and $typeParams[7] == 'addforeignkey') {
 			Fields::cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field);
 
-			$query = 'ALTER TABLE ' . database::quoteName($realtablename) . ' ADD FOREIGN KEY (' . $realfieldname . ') REFERENCES '
-				. database::quoteName($database . '.' . $join_with_table_name) . ' (' . $join_with_table_field . ') ON DELETE RESTRICT ON UPDATE RESTRICT;';
-
 			try {
-				database::setQuery($query);
+				database::addForeignKey($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field);
+				//$query = 'ALTERTABLE ' . database::quoteName($realtablename) . ' ADD FOREIGN KEY (' . $realfieldname . ') REFERENCES '
+				//. database::quoteName($database . '.' . $join_with_table_name) . ' (' . $join_with_table_field . ') ON DELETE RESTRICT ON UPDATE RESTRICT;';
 				return true;
 			} catch (Exception $e) {
 				$msg = $e->getMessage();
@@ -1783,9 +1735,7 @@ class Fields
 		}
 
 		database::update($realtablename, [$realfieldname => null], $whereClauseUpdate);
-
 		//$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=NULL WHERE ' . implode(' OR ', $where_ids) . ';';
-		//database::setQuery($query);
 	}
 
 	/**
@@ -1869,7 +1819,6 @@ class Fields
 				database::update($realtablename, $data, $whereClauseUpdate);
 
 				//$fixitQuery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newRow . '" WHERE id=' . $fixRow->id;
-				//database::setQuery($fixitQuery);
 			}
 		}
 	}

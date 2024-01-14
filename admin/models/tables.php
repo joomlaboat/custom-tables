@@ -132,7 +132,8 @@ class CustomtablesModelTables extends AdminModel
 	 *
 	 * @return  boolean  True if successful, false if an error occurs.
 	 *
-	 * @since   12.2
+	 * @throws Exception
+	 * @since 3.2.5
 	 */
 	public function delete(&$pks)
 	{
@@ -140,29 +141,13 @@ class CustomtablesModelTables extends AdminModel
 			$table_row = ESTables::getTableRowByID($tableid);
 
 			if (isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename === null)) // do not delete third-party tables
-			{
-				$realtablename = database::getDBPrefix() . 'customtables_table_' . $table_row->tablename; //not available for custom tablenames
-				$serverType = database::getServerType();
-				if ($serverType == 'postgresql')
-					$query = 'DROP TABLE IF EXISTS ' . $realtablename;
-				else
-					$query = 'DROP TABLE IF EXISTS ' . database::quoteName($realtablename);
-
-				database::setQuery($query);
-
-				$serverType = database::getServerType();
-
-				if ($serverType == 'postgresql') {
-					$query = 'DROP SEQUENCE IF EXISTS ' . $realtablename . '_seq CASCADE';
-					database::setQuery($query);
-				}
-			}
+				database::dropTableIfExists(database::getDBPrefix() . 'customtables_table_' . $table_row->tablename);
 		}
 
 		if (!parent::delete($pks))
 			return false;
 
-		Fields::deleteTableLessFields();
+		database::deleteTableLessFields();
 
 		return true;
 	}

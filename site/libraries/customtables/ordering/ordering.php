@@ -330,8 +330,6 @@ class Ordering
 
 			//$query = 'UPDATE ' . $this->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . $order[$i] . ' WHERE '
 			//. database::quoteName($this->Table->realidfieldname) . '=' . (int)$pks[$i];
-
-			//database::setQuery($query);
 		}
 		return true;
 	}

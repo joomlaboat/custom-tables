@@ -51,7 +51,6 @@ class CustomtablesControllerListOfFields extends AdminController
 			database::update('#__customtables_fields', $data, $whereClauseUpdate);
 
 			//$query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $id;
-			//database::setQuery($query);
 		}
 
 		if ($count == 1)
@@ -152,7 +151,6 @@ class CustomtablesControllerListOfFields extends AdminController
 		database::update('#__customtables_fields', $data, $whereClauseUpdate);
 
 		//$query = 'UPDATE #__customtables_fields SET published=' . (int)$status . ' WHERE id=' . (int)$id;
-		//database::setQuery($query);
 		return true;
 	}
 

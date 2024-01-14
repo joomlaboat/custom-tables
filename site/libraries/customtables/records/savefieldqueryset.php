@@ -187,10 +187,10 @@ class SaveFieldQuerySet
 
 			case 'text':
 
-				$value = ComponentHelper::filterText(common::inputPost($this->field->comesfieldname, null, 'raw'));
+				$value = common::inputPost($this->field->comesfieldname, null, 'raw');
 
 				if (isset($value)) {
-					$this->setNewValue($value);
+					$this->setNewValue(ComponentHelper::filterText($value));
 					return;
 				}
 				break;
@@ -440,6 +440,7 @@ class SaveFieldQuerySet
 
 			case 'email':
 				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+
 				if (isset($value)) {
 					$value = trim($value ?? '');
 					if (Email::checkEmail($value))
@@ -998,7 +999,6 @@ class SaveFieldQuerySet
 					database::update($this->ct->Table->realtablename, $data, $whereClauseUpdate);
 
 					//$query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET es_' . $fieldname . '=' . $status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
-					//database::setQuery($query);
 					return;
 				}
 			}

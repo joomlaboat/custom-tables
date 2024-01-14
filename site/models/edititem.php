@@ -86,8 +86,9 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	 */
 	function copy(&$msg, &$link): bool
 	{
-		$listing_id = common::inputGetCmd('listing_id', 0);
-		//$query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
+		$listing_id = common::inputGetCmd('listing_id');
+		if ($listing_id === null)
+			return false;
 
 		try {
 			$whereClause = new MySQLWhereClause();
@@ -106,90 +107,9 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 		$newRow = $rows[0];
 		$newRow[$this->ct->Table->realidfieldname] = null;
+		$new_listing_id = database::insert($this->ct->Table->realtablename, $newRow);
 
-		$new_listing_id = database::insert($this->ct->Table->realidfieldname, $newRow);
 		return $this->store($link, true, $new_listing_id);
-
-		/*
-		$new_id = (int)($rows[0]->maxid) + 1;
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql')
-			$query = 'DROP TABLE IF EXISTS ct_tmp';
-		else
-			$query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
-
-		try {
-			database::setQuery($query);
-		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
-		}
-
-
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql') {
-			$query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE ' . $this->ct->Table->realtablename . ' WITH NO DATA';
-
-			try {
-				database::setQuery($query);
-			} catch (Exception $e) {
-				$this->ct->errors[] = $e->getMessage();
-				return false;
-			}
-
-			$query = 'INSERT INTO ct_tmp (SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id) . ')';
-
-		} else {
-			$query = 'CREATE TEMPORARY TABLE ct_tmp SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id);
-		}
-
-		try {
-			database::setQuery($query);
-		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
-		}
-
-		//$sets = array();
-		//$sets[] = $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
-
-		//$query = 'UPDATE ct_tmp SET ' . implode(',', $sets) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
-		try {
-			$data = [$this->ct->Table->realidfieldname => $new_id];
-			$whereClauseUpdate = new MySQLWhereClause();
-			$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $listing_id);
-			database::update('ct_tmp', $data, $whereClauseUpdate);
-			//database::setQuery($query);
-		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
-		}
-
-		$query = 'INSERT INTO ' . $this->ct->Table->realtablename . ' SELECT * FROM ct_tmp WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
-		try {
-			database::setQuery($query);
-		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
-		}
-
-		common::inputSet("listing_id", $new_id);
-		common::inputSet('old_listing_id', $listing_id);
-		$this->listing_id = $new_id;
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql') {
-			$query = 'DROP TABLE IF EXISTS ct_tmp';
-		} else {
-			$query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
-		}
-
-		try {
-			database::setQuery($query);
-		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
-		}
-		*/
 	}
 
 	/**
