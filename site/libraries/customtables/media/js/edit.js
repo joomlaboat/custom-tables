@@ -1,6 +1,17 @@
+//How to use:
+//If you want to edit table records using JavaScript, here is and example: const record = new CustomTablesEdit();
+//
+// record.saveRecord(
+//     '/myCustomTablesMenuItemAlias',
+//     { 'name': 'Ivan', 'email': 'info@ct4.us' },
+//     36,
+// );
+// where 36 is the record ID
+// record.reloadRecord(36);//to reload the table row (record) after the changes
+
 class CustomTablesEdit {
 
-    constructor(url) {
+    constructor() {
 
     }
 
