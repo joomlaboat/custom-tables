@@ -526,8 +526,15 @@
         <tag name="missingfieldslist" label="Returns an Array of required fields that are missing." startchar="{"
              endchar="}" proversion="1" twigclass="record"
              description="Returns an Array of required fields (field names) that are missing or NULL."/>
-        <!-- Deprecated -->
 
+        <tag name="islast"
+             label="Check if Record is Last in List"
+             startchar="{"
+             endchar="}" proversion="1" twigclass="record"
+             description="Evaluates whether the current record is the last in the sequence being rendered. This is particularly useful for formatting output lists where a trailing character, such as a comma, is not required after the last item."
+             example="{% if not record.islast %},{% endif %}"/>
+
+        <!-- Deprecated -->
         <tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1"
              layouttypes="1,6,3,4,8,9,10" proversion="1"
              description="Returns Shopping Cart item count or renders Add to Shopping Cart button" deprecated="1">

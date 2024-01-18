@@ -1001,7 +1001,7 @@ function getLayout_JSON() {
             firstfield = false;
         }
     }
-    result += '},\r\n{% endblock %}]\r\n';
+    result += '}{% if not record.islast %},{% endif %}\r\n{% endblock %}]\r\n';
     return result;
 }
 
