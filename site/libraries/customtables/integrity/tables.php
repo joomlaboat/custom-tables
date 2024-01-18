@@ -40,7 +40,6 @@ class IntegrityTables extends IntegrityChecks
 
 			//Check if table exists
 			$rows = database::getTableStatus(database::getDataBaseName(), database::realTableName($table['tablename']), false);
-			//$query_check_table = 'SHOW TABLES LIKE ' . database::quote();
 
 			$tableExists = !(count($rows) == 0);
 
@@ -115,9 +114,6 @@ class IntegrityTables extends IntegrityChecks
 
 		$whereClause->addCondition('a.published', 1);
 
-		//return 'SELECT ' . implode(',', $selects) . ' FROM ' . database::quoteName('#__customtables_tables') . ' AS a WHERE a.published = 1 ORDER BY '
-		//. database::quoteName($orderCol) . ' ' . $orderDirection;
-
 		return database::loadAssocList('#__customtables_tables AS a', $selects, $whereClause, $orderCol, $orderDirection);
 	}
 
@@ -148,9 +144,6 @@ class IntegrityTables extends IntegrityChecks
 	 */
 	protected static function getZeroRecordID($realtablename, $realidfieldname)
 	{
-		//$query = 'SELECT COUNT(' . $realidfieldname . ') AS cd_zeroIdRecords FROM ' . database::quoteName($realtablename) . ' AS a'
-		//. ' WHERE ' . $realidfieldname . '=0 LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($realidfieldname, 0);
 

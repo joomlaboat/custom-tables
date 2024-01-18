@@ -111,10 +111,6 @@ class CT_FieldTypeTag_image
 			$value = $imageMethods->UploadSingleImage('', $fileId, $field->realfieldname, JPATH_SITE . DIRECTORY_SEPARATOR
 				. $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
 		} else {
-
-			//$query = 'SELECT ' . $field->realfieldname . ' FROM ' . $field->ct->Table->realtablename
-			//' WHERE ' . $realidfieldname . ' = ' . database::quote($listing_id);
-
 			$whereClause = new MySQLWhereClause();
 			$whereClause->addCondition($realidfieldname, $listing_id);
 

@@ -71,37 +71,21 @@ class InputBox_usergroup extends BaseInputBox
 	{
 		$whereClause = new MySQLWhereClause();
 
-		//$query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
-
 		$from = '#__usergroups';
 
 		if ($showUserWithRecords)
 			$from .= ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
 
-		//$where = [];
-
 		$availableUserGroupsList = ($this->field->params[0] == '' ? [] : $this->field->params);
 
 		if (count($availableUserGroupsList) == 0) {
 			$whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');
-			//$where [] = '#__usergroups.title!=' . database::quote('Super Users');
 		} else {
-			//$whereOr = [];
 			foreach ($availableUserGroupsList as $availableUserGroup) {
 				if ($availableUserGroup != '')
 					$whereClause->addOrCondition('#__usergroups.title', $availableUserGroup);
-				//$whereOr[] = '#__usergroups.title=' . database::quote($availableUserGroup);
 			}
-			//$where = '(' . implode(' OR ', $whereOr) . ')';
 		}
-
-		//if (count($where) > 0)
-		//$query .= ' WHERE ' . implode(' AND ', $where);
-
-		//$query .= ' GROUP BY #__usergroups.id';
-		//$query .= ' ORDER BY #__usergroups.title';
-
 		return database::loadObjectList($from, ['#__usergroups.id AS id', '#__usergroups.title AS name'], $whereClause, '#__usergroups.title', null, null, null, 'OBJECT', '#__usergroups.id');
-		//return $query;
 	}
 }

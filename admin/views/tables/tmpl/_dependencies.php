@@ -102,34 +102,23 @@ function _renderTableList($rows): string
  */
 function _getLayoutsThatUseThisTable($tableId, $tableName)
 {
-	//$wheres = array();
 	$whereClause = new MySQLWhereClause();
 	$whereClause->addCondition('published', 1);
-
-	//$wheres[] = 'published=1';
 	$layout_params = ['"' . $tableName . '"', "'" . $tableName . "'"];
-
 	$whereClause->addCondition('tableid', $tableId);
-	//$w = ['tableid=' . database::quote($tableId)];
 
 	foreach ($layout_params as $l)
 		$whereClause->addCondition('layoutcode', $l, 'INSTR');
-	//$w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
 		$whereClause->addCondition('layoutmobile', $l, 'INSTR');
-	//$w[] = 'INSTR(layoutmobile,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
 		$whereClause->addCondition('layoutcss', $l, 'INSTR');
-	//$w[] = 'INSTR(layoutcss,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
 		$whereClause->addCondition('layoutjs', $l, 'INSTR');
-	//$w[] = 'INSTR(layoutjs,' . database::quote($l) . ')';
 
-	//$wheres[] = '(' . implode(' OR ', $w) . ')';
-	//$query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
 	return database::loadAssocList('#__customtables_layouts', ['id', 'layoutname'], $whereClause, null, null);
 }
 
@@ -142,15 +131,7 @@ function _getMenuItemsThatUseThisTable($tablename)
 	$whereClause = new MySQLWhereClause();
 	$whereClause->addCondition('published', 1);
 	$whereClause->addCondition('link', 'index.php?option=com_customtables&view=', 'INSTR');
-
-	//$wheres = array();
-	//$wheres[] = 'published=1';
-	//$wheres[] = 'INSTR(link,"index.php?option=com_customtables&view=")';
-	//$toSearch = '"establename":"' . $tablename . '"';
-	//$wheres[] = 'INSTR(params,' . database::quote($toSearch) . ')';
 	$whereClause->addCondition('params', '"establename":"' . $tablename . '"', 'INSTR');
-	//$query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
-
 	return database::loadAssocList('#__menu', ['id', 'title'], $whereClause, null, null);
 }
 
@@ -171,22 +152,9 @@ function _getTablesThisTableDependOn($table_id)
 	$whereClause->addCondition('type', 'sqljoin');
 
 	if ($serverType == 'postgresql') {
-
 		$select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE POSITION(CONCAT(t2.tablename,\',\') IN f.typeparams)>0 LIMIT 1) ';
-		/*$query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tableTitle . ' AS tabletitle FROM #__customtables_fields AS f '
-			. 'WHERE'
-			. ' tableid=' . (int)$table_id
-			. ' AND ' . $select_tableNameCheck . ' IS NOT NULL'
-			. ' AND ' . database::quoteName('type') . '=\'sqljoin\''
-			. ' ORDER BY tabletitle';*/
 	} else {
 		$select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE t2.tablename LIKE SUBSTRING_INDEX(f.typeparams,",",1) LIMIT 1) ';
-		/*$query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tableTitle . ' AS tabletitle FROM #__customtables_fields AS f'
-			. ' WHERE'
-			. ' tableid=' . (int)$table_id
-			. ' AND ' . $select_tableNameCheck . ' IS NOT NULL'
-			. ' AND ' . database::quoteName('type') . '="sqljoin"'
-			. ' ORDER BY tabletitle';*/
 	}
 	$whereClause->addCondition($select_tableNameCheck, null, 'NOT NULL');
 

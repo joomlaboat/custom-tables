@@ -315,10 +315,6 @@ class SaveFieldQuerySet
 
 				if ($to_delete == 'true') {
 					$this->setNewValue(null);
-
-					//$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->field->ct->Table->realtablename
-					//. ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id);
-
 					$whereClause = new MySQLWhereClause();
 					$whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
 
@@ -691,9 +687,6 @@ class SaveFieldQuerySet
 
 	protected function checkIfAliasExists(?string $exclude_id, string $value, string $realfieldname): bool
 	{
-		//$query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
-		//. $this->ct->Table->realidfieldname . '!=' . database::quote($exclude_id) . ' AND ' . $realfieldname . '=' . database::quote($value) . ' LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($this->ct->Table->realidfieldname, $exclude_id, '!=');
 		$whereClause->addCondition($realfieldname, $value);
@@ -997,8 +990,6 @@ class SaveFieldQuerySet
 					$whereClauseUpdate = new MySQLWhereClause();
 					$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $listing_id);
 					database::update($this->ct->Table->realtablename, $data, $whereClauseUpdate);
-
-					//$query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET es_' . $fieldname . '=' . $status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
 					return;
 				}
 			}

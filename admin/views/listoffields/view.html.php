@@ -204,25 +204,4 @@ class CustomtablesViewListoffields extends HtmlView
 			}
 		}
 	}
-
-	protected function getTheTypeSelections()
-	{
-		//$query = 'SELECT ' . database::quoteName('type') . ' FROM ' . database::quoteName('#__customtables_fields') . ' ORDER BY ' . database::quoteName('type');
-
-		$whereClause = new MySQLWhereClause();
-		$results = database::loadColumn('#__customtables_fields', ['type'], $whereClause, 'type');
-
-		if ($results) {
-			$results = array_unique($results);
-			$_filter = array();
-			foreach ($results as $type) {
-				// Translate the type selection
-				$text = '987';//$model->selectionTranslation($type, 'type');
-				// Now add the type and its text to the options array
-				$_filter[] = HTMLHelper::_('select.option', $type, common::translate($text));
-			}
-			return $_filter;
-		}
-		return false;
-	}
 }

@@ -22,9 +22,9 @@ use Joomla\CMS\Version;
 class MySQLWhereClause
 {
 	public array $conditions = [];
-	private array $orConditions = [];
-	private array $nestedConditions = [];
-	private array $nestedOrConditions = [];
+	public array $orConditions = [];
+	public array $nestedConditions = [];
+	public array $nestedOrConditions = [];
 
 	public function hasConditions(): bool
 	{
@@ -112,21 +112,27 @@ class MySQLWhereClause
 			$where [] = self::getWhereClauseMergeConditions($this->conditions);
 
 		// Process OR conditions
-		if (count($this->orConditions) > 0)
-			$where [] = '(' . self::getWhereClauseMergeConditions($this->orConditions, 'OR') . ')';
-
+		if (count($this->orConditions) > 0) {
+			if (count($this->orConditions) === 1)
+				$where [] = self::getWhereClauseMergeConditions($this->orConditions, 'OR');
+			else
+				$where [] = '(' . self::getWhereClauseMergeConditions($this->orConditions, 'OR') . ')';
+		}
 		// Process nested conditions
-		if (count($this->nestedConditions) > 0) {
+		foreach ($this->nestedConditions as $nestedCondition)
+			$where [] = $nestedCondition->getWhereClause();
 
-			foreach ($this->nestedConditions as $nestedCondition)
-				$where [] = $nestedCondition->getWhereClause();
+		$orWhere = [];
+		foreach ($this->nestedOrConditions as $nestedOrCondition) {
+			if ($nestedOrCondition->countConditions() == 1)
+				$orWhere [] = $nestedOrCondition->getWhereClause('OR');
+			else
+				$orWhere [] = '(' . $nestedOrCondition->getWhereClause('OR') . ')';
 		}
 
-		// Process nested OR conditions
-		if (count($this->nestedOrConditions) > 0) {
-			foreach ($this->nestedOrConditions as $nestedOrCondition)
-				$where [] = '(' . $nestedOrCondition->getWhereClause('OR') . ')';
-		}
+		if (count($orWhere) > 0)
+			$where [] = implode(' OR ', $orWhere);
+
 		return implode(' ' . $logicalOperator . ' ', $where);
 	}
 
@@ -150,6 +156,8 @@ class MySQLWhereClause
 				$where [] = $condition['field'] . ' IS NULL';
 			} elseif ($condition['operator'] == 'NOT NULL') {
 				$where [] = $condition['field'] . ' IS NOT NULL';
+			} elseif ($condition['operator'] == 'LIKE') {
+				$where [] = $condition['field'] . ' LIKE ' . $db->quote($condition['value']);
 			} elseif ($condition['operator'] == 'INSTR') {
 				if ($condition['sanitized']) {
 					$where [] = 'INSTR(' . $condition['field'] . ',' . $condition['value'] . ')';
@@ -195,6 +203,11 @@ class MySQLWhereClause
 			}
 		}
 		return implode(' ' . $logicalOperator . ' ', $where);
+	}
+
+	public function countConditions(): int
+	{
+		return count($this->conditions) + count($this->orConditions) + count($this->nestedConditions) + count($this->nestedOrConditions);
 	}
 }
 
@@ -619,9 +632,6 @@ class database
 			$query = 'CREATE TABLE IF NOT EXISTS ' . $realTableName
 				. '(' . implode(',', $allColumns) . ') ENGINE=InnoDB COMMENT="' . $comment . '"'
 				. ' DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;';
-
-			echo $query;
-			die;
 
 			$db->setQuery($query);
 			$db->execute();

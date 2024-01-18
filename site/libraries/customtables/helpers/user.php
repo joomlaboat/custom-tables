@@ -399,22 +399,17 @@ class CTUser
 
 	static protected function getUserGroupIDsByName(string $group_names): ?array
 	{
-		$new_names = array();
 		$names = explode(',', $group_names);
-
 		$whereClause = new MySQLWhereClause();
 
 		foreach ($names as $name) {
 			$n = preg_replace("/[^[:alnum:][:space:]]/u", '', trim($name));
 			if ($n != '')
 				$whereClause->addOrCondition('title', $n);
-			//$new_names[] = 'title=' . database::quote($n);
 		}
 
-		if (count($new_names) == 0)
+		if (!$whereClause->hasConditions())
 			return null;
-
-		//$query = 'SELECT id FROM #__usergroups WHERE ' . implode(' OR ', $new_names);
 
 		try {
 			$rows = database::loadObjectList('#__usergroups', ['id'], $whereClause);
@@ -441,8 +436,6 @@ class CTUser
 		$whereClauseUpdate = new MySQLWhereClause();
 		$whereClauseUpdate->addCondition($realidfieldname, $listing_id);
 		database::update($realtablename, $data, $whereClauseUpdate);
-
-		//$query = 'UPDATE ' . $realtablename . ' SET ' . $userIdFieldName . '=' . $existing_user_id . ' WHERE ' . $realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
 	}
 
 	/**
@@ -451,8 +444,6 @@ class CTUser
 	 */
 	static public function CheckIfUserNameExist(string $username): bool
 	{
-		//$query = 'SELECT id FROM #__users WHERE username=' . database::quote($username) . ' LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('username', $username);
 
@@ -469,8 +460,6 @@ class CTUser
 	 */
 	static public function CheckIfUserExist(string $username, string $email)
 	{
-		//$query = 'SELECT id FROM #__users WHERE username=' . database::quote($username) . ' AND email=' . database::quote($email) . ' LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('username', $username);
 		$whereClause->addCondition('email', $email);
@@ -491,7 +480,6 @@ class CTUser
 	{
 		$existing_user = '';
 		$existing_name = '';
-		//$query = 'SELECT id, username, name FROM #__users WHERE email=' . database::quote($email) . ' LIMIT 1';
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('email', $email);
@@ -535,8 +523,6 @@ class CTUser
 	 */
 	public static function showUserGroup(int $userid): string
 	{
-		//$query = 'SELECT title FROM #__usergroups WHERE id=' . $userid . ' LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('id', $userid);
 
@@ -558,17 +544,12 @@ class CTUser
 
 		$whereClause = new MySQLWhereClause();
 
-		//$where = array();
 		$valueArray = explode(',', $valueArrayString);
 		foreach ($valueArray as $value) {
 			if ($value != '') {
 				$whereClause->addOrCondition('id', (int)$value);
-				//$where[] = 'id=' . (int)$value;
 			}
 		}
-
-		//$query = 'SELECT title FROM #__usergroups WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
-
 		$options = database::loadAssocList('#__usergroups', ['title'], $whereClause, 'title');
 
 		if (count($options) == 0)

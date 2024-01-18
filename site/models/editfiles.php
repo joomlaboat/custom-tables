@@ -90,9 +90,7 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 	{
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('listingid', $this->ct->Params->listing_id);
-
 		return database::loadObjectList($this->fileboxtablename, ['fileid', 'file_ext'], $whereClause, 'fileid');
-		//'SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . database::quote($this->ct->Params->listing_id) . ' ORDER BY fileid');
 	}
 
 	/**
@@ -107,11 +105,8 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 		foreach ($file_arr as $fileid) {
 			if ($fileid != '') {
 				$file_ext = CustomTablesFileMethods::getFileExtByID($this->ct->Table->tablename, $this->fileboxname, $fileid);
-
 				CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->ct->Table->tableid, $this->fileboxname, $fileid, $file_ext);
-
 				database::deleteRecord($this->fileboxtablename, 'fileid', $fileid);
-				//$query = 'DELETEFROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->ct->Params->listing_id . ' AND fileid=' . $fileid;
 			}
 		}
 
@@ -180,20 +175,12 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 			'title' => $title
 		];
 
-		/*$query = 'INSERT ' . $this->fileboxtablename . ' SET '
-			. 'file_ext=' . database::quote($file_ext) . ', '
-			. 'ordering=0, '
-			. 'listingid=' . database::quote($this->ct->Params->listing_id) . ', '
-			. 'title=' . database::quote($title);*/
-
 		try {
 			database::insert($this->fileboxtablename, $data);
 		} catch (Exception $e) {
 			echo 'Caught exception: ', $e->getMessage(), "\n";
 			die;
 		}
-
-		//$query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . database::quote($this->ct->Params->listing_id) . ' ORDER BY fileid DESC LIMIT 1';
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('listingid', $this->ct->Params->listing_id);

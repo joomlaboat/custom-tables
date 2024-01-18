@@ -758,12 +758,10 @@ class Twig_Html_Tags
 
 	protected function getReCaptchaParams()
 	{
-		//$query = 'SELECT params FROM #__extensions WHERE ' . database::quoteName("name") . '=' . database::quote("plg_captcha_recaptcha") . ' LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('name', 'plg_captcha_recaptcha');
 
-		$rows = database::loadObjectList('#__extensions', ['params', '', '', '', ''], $whereClause, null, null, 1);
+		$rows = database::loadObjectList('#__extensions', ['params'], $whereClause, null, null, 1);
 		if (count($rows) == 0)
 			return null;
 

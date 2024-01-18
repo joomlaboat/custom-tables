@@ -238,17 +238,6 @@ class CT
 
 	function getNumberOfRecords(MySQLWhereClause $whereClause): int
 	{
-		/*
-		$query_check_table = 'SHOW TABLES LIKE ' . database::quote(database::realTableName($this->Table->realtablename));
-
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('',);
-
-		if (count($rows) == 0)
-			return -1;
-*/
-		//$query_analytical = 'SELECT COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count FROM ' . $this->Table->realtablename . ' ' . $where;
-
 		if ($this->Table === null or $this->Table->tablerow === null or $this->Table->tablerow['realidfieldname'] === null)
 			return 0;
 
@@ -369,8 +358,6 @@ class CT
 		//delete images if exist
 		$imageMethods = new CustomTablesImageMethods;
 
-		//$query = 'SELECT * FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
 
@@ -405,8 +392,6 @@ class CT
 				$galleryName = $field->fieldname;
 				$photoTableName = '#__customtables_gallery_' . $this->Table->tablename . '_' . $galleryName;
 
-				//$query = 'SELECT photoid FROM ' . $photoTableName . ' WHERE listingid=' . database::quote($listing_id);
-
 				$whereClause = new MySQLWhereClause();
 				$whereClause->addCondition('listingid', $listing_id);
 
@@ -427,8 +412,7 @@ class CT
 			}
 		}
 
-		database::deleteRecord($this->Table->realidfieldname, $this->Table->realidfieldname, $listing_id);
-		//$query = 'DELETEFROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
+		database::deleteRecord($this->Table->realtablename, $this->Table->realidfieldname, $listing_id);
 
 		$this->Table->saveLog($listing_id, 5);
 		$new_row = array();
@@ -455,8 +439,6 @@ class CT
 		$whereClauseUpdate->addCondition($this->Table->realidfieldname, $listing_id);
 		database::update($this->Table->realtablename, $data, $whereClauseUpdate);
 
-		//$query = 'UPDATE ' . $this->Table->realtablename . ' SET published=' . (int)$status . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
-
 		if ($status == 1)
 			$this->Table->saveLog($listing_id, 3);
 		else
@@ -472,9 +454,6 @@ class CT
 	 */
 	public function RefreshSingleRecord($listing_id, $save_log): int
 	{
-		//$query = 'SELECT ' . implode(',', $this->Table->selects) . ' FROM ' . $this->Table->realtablename
-		//. ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
 
@@ -489,12 +468,8 @@ class CT
 		//Apply default values
 		foreach ($this->Table->fields as $fieldRow) {
 
-			if (!$saveField->checkIfFieldAlreadyInTheList($fieldRow['realfieldname'])) {
+			if (!$saveField->checkIfFieldAlreadyInTheList($fieldRow['realfieldname']))
 				$saveField->applyDefaults($fieldRow);
-				//if ($saveFieldSet !== null) {
-				//$saveField->saveQuery[] = $saveFieldSet;
-				//}
-			}
 		}
 
 		if (count($saveField->row_new) > 0) {
@@ -562,10 +537,6 @@ class CT
 					$whereClauseUpdate = new MySQLWhereClause();
 					$whereClauseUpdate->addCondition($this->Table->realidfieldname, $listing_id);
 					database::update($this->Table->realtablename, $data, $whereClauseUpdate);
-
-					//database::set Query('UPDATE ' . $this->Table->realtablename . ' SET '
-					//. database::quoteName($fieldrow['realfieldname']) . '=MD5(CONCAT_WS(' . implode(',', $fields) . ')) WHERE '
-					//. database::quoteName($this->Table->realidfieldname) . '=' . database::quote($listing_id)
 				}
 			}
 		}

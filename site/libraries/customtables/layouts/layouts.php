@@ -272,10 +272,8 @@ class Layouts
 
 			if ($layout_id == 0) {
 				$whereClauseUpdate->addCondition('layoutname', $layoutName);
-				//$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE layoutname=' . database::quote($layoutName);
 			} else {
 				$whereClauseUpdate->addCondition('id', $layout_id);
-				//$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
 			}
 			database::update('#__customtables_layouts', $data, $whereClauseUpdate);
 		}

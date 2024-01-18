@@ -120,9 +120,6 @@ class CustomTablesViewFiles extends HtmlView
 	 */
 	function render_blob_output($filename)
 	{
-		//$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' WHERE '
-		//	. $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
 

@@ -163,11 +163,6 @@ class Ordering
 			case 'creationtime':
 			case 'changetime':
 			case 'lastviewtime':
-				/*
-								if (count($field->params) > 0 and $field->params[0] != '') {
-									return 'DATE_FORMAT(' . $field->realfieldname . ', ' . database::quote($field->params[0]) . ')';
-								} else
-									*/
 				return $field->realfieldname;
 
 			default:
@@ -327,9 +322,6 @@ class Ordering
 			$whereClauseUpdate = new MySQLWhereClause();
 			$whereClauseUpdate->addCondition($this->Table->realidfieldname, (int)$pks[$i]);
 			database::update($this->Table->realtablename, $data, $whereClauseUpdate);
-
-			//$query = 'UPDATE ' . $this->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . $order[$i] . ' WHERE '
-			//. database::quoteName($this->Table->realidfieldname) . '=' . (int)$pks[$i];
 		}
 		return true;
 	}

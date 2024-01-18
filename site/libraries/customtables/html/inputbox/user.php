@@ -63,8 +63,6 @@ class InputBox_user extends BaseInputBox
 		if ($showUserWithRecords)
 			$from .= ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__users.id';
 
-		//	$where = [];
-
 		//User Group Filter
 		$userGroup = $this->field->params[0] ?? '';
 		if ($userGroup != '') {
@@ -72,25 +70,14 @@ class InputBox_user extends BaseInputBox
 			$from .= ' INNER JOIN #__usergroups ON #__usergroups.id=#__user_usergroup_map.group_id';
 
 			$ug = explode(",", $userGroup);
-//			$w = array();
 			foreach ($ug as $u)
 				$whereClause->addOrCondition('#__usergroups.title', $u);
-			//$w[] = '#__usergroups.title=' . database::quote($u);
-
-			//if (count($w) > 0)
-			//$where [] = '(' . implode(' OR ', $w) . ')';
 		}
 
 		//Name Filter
 		if (isset($this->field->params[3]))
 			$whereClause->addCondition('name', '%' . $this->field->params[3] . '%', 'LIKE');
-		//$where [] = 'INSTR(name,"' . $this->field->params[3] . '")';
 
-		//if (count($where) > 0)
-		//$query .= ' WHERE ' . implode(' AND ', $where);
-
-		//$query .= ' GROUP BY #__users.id';
-		//$query .= ' ORDER BY #__users.name';
 		return database::loadObjectList($from, ['#__users.id AS id', '#__users.name AS name'], $whereClause, '#__users.name', null, null, null, 'OBJECT', '#__users.id');
 	}
 }

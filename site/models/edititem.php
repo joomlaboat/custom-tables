@@ -252,10 +252,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	function processCustomListingID(): ?int
 	{
 		if ($this->listing_id !== null and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
-			//Normal listing ID or CMD
-			//$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename
-			//. ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
-
 			try {
 				$whereClause = new MySQLWhereClause();
 				$whereClause->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
@@ -759,10 +755,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			];
 			$whereClauseUpdate = new MySQLWhereClause();
 			$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $to_listing_id);
-
-			//$query = 'UPDATE ' . $this->ct->Table->realtablename
-			//. ' SET ' . $to_field['realfieldname'] . '= ' . database::quote($new_value)
-			//. ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($to_listing_id);
 
 			try {
 				database::update($this->ct->Table->realtablename, $data, $whereClauseUpdate);

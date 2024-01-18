@@ -47,10 +47,9 @@ class CustomTablesViewCatalog extends HtmlView
 			$menuParams = null;
 		}
 */
-
 		$this->ct = new CT(null, false);
-
 		$key = common::inputGetCmd('key');
+
 		if ($key != '')
 			Inputbox::renderTableJoinSelectorJSON($this->ct, $key);
 		else

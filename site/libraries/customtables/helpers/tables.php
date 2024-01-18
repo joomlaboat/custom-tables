@@ -61,8 +61,6 @@ class ESTables
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('tablename', $tablename);
-
-		//$query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . database::quote($tablename) . ' LIMIT 1';
 		$rows = database::loadObjectList('#__customtables_tables', ['id'], $whereClause, null, null, 1);
 
 		if (count($rows) != 1)
@@ -84,12 +82,10 @@ class ESTables
 
 		if (database::getServerType() == 'postgresql') {
 			$whereClause->addCondition('table_name', $realtablename);
-			//$query = 'SELECT COUNT(*) AS c FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename) . ' LIMIT 1';
 			$rows = database::loadObjectList('information_schema.columns', ['COUNT(*) AS c'], $whereClause, null, null, 1);
 		} else {
 			$whereClause->addCondition('table_schema', $database);
 			$whereClause->addCondition('table_name', $realtablename);
-			//$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = ' . database::quote($database) . ' AND table_name = ' . database::quote($realtablename) . ' LIMIT 1';
 			$rows = database::loadObjectList('information_schema.tables', ['COUNT(*) AS c'], $whereClause, null, null, 1);
 		}
 
@@ -241,12 +237,8 @@ class ESTables
 			//rename table
 			$tableStatus = database::getTableStatus($database, $old_tablename);
 
-			if (count($tableStatus) > 0) {
-
+			if (count($tableStatus) > 0)
 				database::renameTable($dbPrefix . 'customtables_table_' . $old_tablename, $dbPrefix . 'customtables_table_' . $tablename);
-				//$query = 'RENAME TABLE ' . database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $old_tablename) . ' TO '
-				//. database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $tablename) . ';';
-			}
 		}
 	}
 
@@ -290,7 +282,6 @@ class ESTables
 
 		if ($serverType == 'postgresql') {
 			$selects = ['column_name', 'data_type', 'is_nullable', 'column_default'];
-			//$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename);
 		} else {
 			$selects = [
 				'COLUMN_NAME AS column_name',
@@ -303,25 +294,10 @@ class ESTables
 				'COLUMN_KEY AS column_key',
 				'EXTRA AS extra'
 			];
-			/*
-			$query = 'SELECT '
-				. 'COLUMN_NAME AS column_name,'
-				. 'DATA_TYPE AS data_type,'
-				. 'COLUMN_TYPE AS column_type,'
-				. 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
-				. 'IS_NULLABLE AS is_nullable,'
-				. 'COLUMN_DEFAULT AS column_default,'
-				. 'COLUMN_COMMENT AS column_comment,'
-				. 'COLUMN_KEY AS column_key,'
-				. 'EXTRA AS extra FROM information_schema.columns WHERE table_schema = ' . database::quote($database) . ' AND table_name = ' . database::quote($realtablename);
-			*/
 			$whereClause->addCondition('table_schema', $database);
 		}
 		$whereClause->addCondition('table_name', $realtablename);
-
 		$fields = database::loadObjectList('information_schema.columns', $selects, $whereClause);
-
-		//$set_fieldNames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
 
 		$primary_key_column = '';
 		$ordering = 1;
@@ -329,15 +305,11 @@ class ESTables
 			if ($primary_key_column == '' and strtolower($field->column_key) == 'pri') {
 				$primary_key_column = $field->column_name;
 			} else {
-				//$set_values = [];
-
 				$ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type, $field->column_type);
 				if ($ct_field_type['type'] === null) {
 					Factory::getApplication()->enqueueMessage('third-party table field type "' . $field->data_type . '" is unknown.', 'error');
 					return false;
 				}
-
-				//$set_fieldNames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
 
 				$data['tableid'] = (int)$tableRow->id;
 				$data['fieldname'] = strtolower($field->column_name);
@@ -354,7 +326,6 @@ class ESTables
 				$data['customfieldname'] = $field->column_name;
 				$data['isrequired'] = 0;
 
-				//$query = 'INSERT INTO #__customtables_fields (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
 				database::insert('#__customtables_fields', $data);
 				$ordering += 1;
 			}
@@ -369,8 +340,6 @@ class ESTables
 			$whereClauseUpdate = new MySQLWhereClause();
 			$whereClauseUpdate->addCondition('id', (int)$tableRow->id);
 			database::update('#__customtables_tables', $data, $whereClauseUpdate);
-
-			//$query = 'UPDATE #__customtables_tables SET customidfield = ' . database::quote($primary_key_column) . ' WHERE id = ' . (int)$tableRow->id;
 		}
 		return true;
 	}

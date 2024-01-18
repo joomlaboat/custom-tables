@@ -226,35 +226,6 @@ class ImportTables
 		return '';
 	}
 
-	/*
-	protected static function dbQuoteByType($value, $type = null): float|int|string|null
-	{
-		if ($type === null) {
-			if ($value === null)
-				return 'NULL';
-
-			if (is_numeric($value)) {
-				if (floor($value) != $value)
-					$type = 'float';
-				else
-					$type = 'int';
-			} else
-				$type = 'string';
-		}
-
-		if ($type == '' or $type == 'string')
-			return database::quote($value);
-
-		if ($type == 'int')
-			return (int)$value;
-
-		if ($type == 'float')
-			return (float)$value;
-
-		return null;
-	}
-	*/
-
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
@@ -279,13 +250,11 @@ class ImportTables
 
 		foreach ($keys as $key) {
 			$isOk = false;
-			//$type = null;
 
 			if (isset($field_conversion_map[$key])) {
 				$isOk = true;
 				if (is_array($field_conversion_map[$key])) {
 					$fieldname = $field_conversion_map[$key]['name'];
-					//$type = $field_conversion_map[$key]['type'];
 				} else
 					$fieldname = $field_conversion_map[$key];
 			} elseif (count($field_conversion_map) > 0 and in_array($key, $field_conversion_map)) {
@@ -418,12 +387,10 @@ class ImportTables
 
 		if (is_null($value))
 			$whereClause->addCondition($fieldname, null, 'NULL');
-		//$query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . ' IS NULL';
 		else
 			$whereClause->addCondition($fieldname, $value);
-		//$query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . '=' . database::quote($value);
 
-		$rows = database::loadAssocList($mysqlTableName, ['*'], $whereClause, null, null);
+		$rows = database::loadAssocList($mysqlTableName, ['*'], $whereClause);
 		if (count($rows) == 0)
 			return 0;
 
@@ -770,11 +737,11 @@ class ImportTables
 
 		if (!is_array($menutype_old) or count($menutype_old) == 0) {
 			//Create new menu type
-			$inserts = array();
-			$inserts[] = 'asset_id=0';
-			$inserts[] = 'menutype=' . database::quote($menutype);
-			$inserts[] = 'title=' . database::quote($menutype_title);
-			$inserts[] = 'description=' . database::quote('Menu Type created by CustomTables');
+			$data = [];
+			$data['asset_id=0'];
+			$data['menutype'] = $menutype;
+			$data['title'] = $menutype_title;
+			$data['description'] = 'Menu Type created by CustomTables';
 		}
 	}
 

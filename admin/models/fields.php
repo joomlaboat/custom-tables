@@ -588,10 +588,8 @@ class CustomtablesModelFields extends AdminModel
 			}
 			// Set ordering to the last item if not set
 			if (empty($table->ordering)) {
-				//$query = 'SELECT MAX(ordering) FROM ' . database::quoteName('#__customtables_fields');
-
 				$whereClause = new MySQLWhereClause();
-				$col = database::loadColumn('#__customtables_fields', ['MAX(ordering)'], $whereClause, 'rgt');
+				$col = database::loadColumn('#__customtables_fields', ['MAX(ordering)'], $whereClause);
 
 				$max = $col[0];
 				$table->ordering = $max + 1;

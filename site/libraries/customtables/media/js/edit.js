@@ -29,7 +29,7 @@ class CustomTablesEdit {
         })
             .then(response => {
 
-                if (response.status == 200) {
+                if (response.status == 304) {
                     if (errorCallback && typeof errorCallback === 'function') {
                         errorCallback('Login required or not authorised.');
                     } else {

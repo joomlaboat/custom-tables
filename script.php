@@ -117,10 +117,6 @@ class com_customtablesInstallerScript
 			$whereClauseUpdate->addCondition('name', 'com_customtables');
 			database::update('#__assets', $data, $whereClauseUpdate);
 
-			//$query = 'UPDATE ' . database::quoteName('#__assets') . ' SET '
-			//. database::quoteName('rules') . ' = ' . database::quote('{"site.catalog.access":{"1":1}}')
-			//. ' WHERE ' . database::quoteName('name') . ' = ' . database::quote('com_customtables');
-
 			$data = [
 				'params' => '{"autorName":"Ivan Komlev","autorEmail":"support@joomlaboat.com"}'
 			];
@@ -128,20 +124,16 @@ class com_customtablesInstallerScript
 			$whereClauseUpdate->addCondition('element', 'com_customtables');
 			database::update('#__extensions', $data, $whereClauseUpdate);
 
-			//$query = 'UPDATE ' . database::quoteName('#__extensions') . ' SET '
-			//. database::quoteName('params') . ' = ' . database::quote('{"autorName":"Ivan Komlev","autorEmail":"support@joomlaboat.com"}')
-			//. ' WHERE ' . database::quoteName('element') . ' = ' . database::quote('com_customtables');
-
-			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
-				<img src="' . Uri::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>
-				</a>';
+			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">'
+				. '<img src="' . Uri::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>'
+				. '</a>';
 		}
 		// do any updates needed
 		if ($type == 'update') {
-			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
-				<img src="' . Uri::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>
-				</a>
-				<h3>Upgrade was Successful!</h3>';
+			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">'
+				. '<img src="' . Uri::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>'
+				. '</a>'
+				. '<h3>Upgrade was Successful!</h3>';
 		}
 
 		/*

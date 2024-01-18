@@ -73,26 +73,17 @@ class InputBox_usergroups extends BaseInputBox
 	{
 		$whereClause = new MySQLWhereClause();
 
-		//$query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
-		//$where = [];
-
 		$availableUserGroups = $this->field->params[1] ?? '';
 		$availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', trim($availableUserGroups)));
 
 		if (count($availableUserGroupList) == 0) {
 			$whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');
-			//$where [] = '#__usergroups.title!=' . database::quote('Super Users');
 		} else {
-			//$whereOr = [];
 			foreach ($availableUserGroupList as $availableUserGroup) {
 				if ($availableUserGroup != '')
 					$whereClause->addOrCondition('#__usergroups.title', $availableUserGroup);
-				//$whereOr[] = '#__usergroups.title=' . database::quote($availableUserGroup);
 			}
-			//$where [] = (implode(' OR ', $whereOr));
 		}
-		//$query .= ' WHERE ' . implode(' AND ', $where);
-		//$query .= ' ORDER BY #__usergroups.title';
 		return database::loadObjectList('#__usergroups', ['#__usergroups.id AS id', '#__usergroups.title AS name'], $whereClause, '#__usergroups.title');
 	}
 

@@ -101,14 +101,11 @@ class Catalog
 			} else {
 				//Show only shopping cart items. TODO: check the query
 				$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], 0);
-				//$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
 			}
 		}
 
-		if ($this->ct->Params->listing_id !== null) {
+		if ($this->ct->Params->listing_id !== null)
 			$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], $this->ct->Params->listing_id);
-			//$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . database::quote($this->ct->Params->listing_id);
-		}
 
 // --------------------- Sorting
 		$this->ct->Ordering->parseOrderByParam();
@@ -168,14 +165,13 @@ class Catalog
 
 // -------------------- Load Records
 		if (!$this->ct->getRecords()) {
-
 			if (defined('_JEXEC'))
 				$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
 
 			return 'CustomTables: Records not loaded.';
 		}
-
 // -------------------- Parse Layouts
+
 		if ($this->ct->Env->legacySupport) {
 
 			if ($this->ct->Env->frmt == 'json') {

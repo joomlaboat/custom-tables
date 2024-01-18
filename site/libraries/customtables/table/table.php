@@ -176,8 +176,6 @@ class Table
 	 */
 	public function getRecordFieldValue($listingId, $resultField)
 	{
-		//$query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listingId) . ' LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($this->realidfieldname, $listingId);
 
@@ -195,8 +193,6 @@ class Table
 	 */
 	function loadRecord(?string $listing_id)
 	{
-		//$query = 'SELECT ' . implode(',', $this->selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		if (!empty($listing_id))
 			$whereClause->addCondition($this->realidfieldname, $listing_id);
@@ -214,9 +210,6 @@ class Table
 		if ($listing_id === null or $listing_id === '' or (is_numeric($listing_id) and $listing_id === 0))
 			return false;
 
-		//$query = 'SELECT ' . $this->realidfieldname . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
-
-		//return database::loadRowList($query) == 1;
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($this->realidfieldname, $listing_id);
 		$col = database::loadColumn($this->realtablename, ['COUNT(' . $this->realidfieldname . ') AS c'], $whereClause, null, null, 1);
@@ -224,7 +217,6 @@ class Table
 			return false;
 
 		return $col[0] == 1;
-		//return database::loadColumn($query) == 1;
 	}
 
 	function isRecordNull(): bool

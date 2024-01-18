@@ -98,6 +98,8 @@ class Field
 
 			if (isset($fieldRow['valuerulecaption']))
 				$this->valuerulecaption = $fieldRow['valuerulecaption'];
+			else
+				$this->valuerulecaption = null;
 
 			$this->prefix = $this->ct->Env->field_input_prefix;
 			$this->comesfieldname = $this->prefix . $this->fieldname;
@@ -168,9 +170,6 @@ class Fields
 				'column_default'
 			];
 
-			//$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename)
-			//. ' AND column_name=' . database::quote($relaFieldName);
-
 			$whereClause->addCondition('table_name', $realtablename);
 			$whereClause->addCondition('column_name', $realFieldName);
 
@@ -188,25 +187,12 @@ class Fields
 				'EXTRA AS extra'
 			];
 
-			/*$query = 'SELECT COLUMN_NAME AS column_name,'
-				. 'DATA_TYPE AS data_type,'
-				. 'COLUMN_TYPE AS column_type,'
-				. 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
-				. 'IS_NULLABLE AS is_nullable,'
-				. 'COLUMN_DEFAULT AS column_default,'
-				. 'EXTRA AS extra'
-				. ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . database::quote($database)
-				. ' AND TABLE_NAME=' . database::quote($realtablename)
-				. ' AND column_name=' . database::quote($realFieldName)
-				. ' LIMIT 1';*/
-
 			$whereClause->addCondition('TABLE_SCHEMA', $database);
 			$whereClause->addCondition('TABLE_NAME', $realtablename);
 			$whereClause->addCondition('column_name', $realFieldName);
 
 			$rows = database::loadAssocList('information_schema.COLUMNS', $selects, $whereClause, null, null, 1);
 		}
-
 		$row = $rows[0];
 		return $row['is_nullable'] == 'YES';
 	}
@@ -683,7 +669,7 @@ class Fields
 
 		$from = '#__customtables_fields AS s';
 		if ($tableName != '')
-			$from .= ' INNER JOIN #__customtables_tables AS t ON t.tablename=' . database::quote($tableName);
+			$from .= ' INNER JOIN #__customtables_tables AS t ON t.tablename=`' . $tableName . '`';
 
 		$rows = database::loadObjectList($from, self::getFieldRowSelectArray(), $whereClause, null, null, 1);
 
@@ -955,7 +941,6 @@ class Fields
 	 */
 	public static function getFieldID($tableid, $fieldname): int
 	{
-		//$query = 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid . ' AND fieldname=' . database::quote($fieldname);
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
 		$whereClause->addCondition('tableid', $tableid);
@@ -1193,14 +1178,10 @@ class Fields
 
 		if ((int)$tableid_or_name > 0) {
 			$whereClause->addCondition('f.tableid', (int)$tableid_or_name);
-			//$where = 'f.published=1 AND f.tableid=' . (int)$tableid_or_name;
 		} else {
 			$w1 = '(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename=' . database::quote($tableid_or_name) . ' LIMIT 1)';
 			$whereClause->addCondition('f.tableid', $w1, '=', true);
-			//$where = 'f.published=1 AND f.tableid=' . $w1;
 		}
-
-		//$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS f WHERE ' . $where . $order;
 
 		$output_type = $as_object ? 'OBJECT' : 'ARRAY_A';
 		return database::loadObjectList('#__customtables_fields AS f', self::getFieldRowSelectArray(), $whereClause,
@@ -1534,20 +1515,8 @@ class Fields
 		if (in_array($new_type, $inconvertible_types) or in_array($ex_type, $inconvertible_types))
 			return false;
 
-		$PureFieldType_ = $PureFieldType;
-
-		//$serverType = database::getServerType();
 		try {
-			//if ($serverType == 'postgresql') {
-			//	$parts = explode(' ', $PureFieldType_);
-			//	$query = 'ALTERTABLE ' . $realtablename
-			//		. ' ALTER COLUMN ' . $realfieldname . ' TYPE ' . $parts[0];
-
-			//} else {
 			database::changeColumn($realtablename, $realfieldname, $realfieldname, $PureFieldType, null, null, $fieldtitle);
-			//$query = 'ALTERTABLE ' . $realtablename . ' CHANGE ' . $realfieldname . ' ' . $realfieldname . ' ' . $PureFieldType_;
-			//$query .= ' COMMENT ' . database::quote($fieldtitle);
-			//}
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
@@ -1704,8 +1673,6 @@ class Fields
 
 			try {
 				database::addForeignKey($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field);
-				//$query = 'ALTERTABLE ' . database::quoteName($realtablename) . ' ADD FOREIGN KEY (' . $realfieldname . ') REFERENCES '
-				//. database::quoteName($database . '.' . $join_with_table_name) . ' (' . $join_with_table_field . ') ON DELETE RESTRICT ON UPDATE RESTRICT;';
 				return true;
 			} catch (Exception $e) {
 				$msg = $e->getMessage();
@@ -1725,10 +1692,6 @@ class Fields
 			return;
 
 		//Find broken records
-		//$query = 'SELECT DISTINCT a.' . $realfieldname . ' AS customtables_distinct_temp_id FROM
-		//' . $realtablename . ' a LEFT JOIN ' . $join_with_table_name . ' b ON a.' . $realfieldname . '=b.' . $join_with_table_field
-		//. ' WHERE b.' . $join_with_table_field . ' IS NULL;';
-
 		$from = $realtablename . ' a LEFT JOIN ' . $join_with_table_name . ' b ON a.' . $realfieldname . '=b.' . $join_with_table_field;
 
 		$whereClause = new MySQLWhereClause();
@@ -1737,17 +1700,12 @@ class Fields
 
 		$whereClauseUpdate = new MySQLWhereClause();
 		$whereClauseUpdate->addOrCondition($realfieldname, 0);
-		//$where_ids = array();
-		//$where_ids[] = $realfieldname . '=0';
 
 		foreach ($rows as $row) {
 			if ($row['customtables_distinct_temp_id'] != '')
 				$whereClauseUpdate->addOrCondition($realfieldname, $row['customtables_distinct_temp_id']);
-			//$where_ids[] = $realfieldname . '=' . $row['customtables_distinct_temp_id'];
 		}
-
 		database::update($realtablename, [$realfieldname => null], $whereClauseUpdate);
-		//$query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=NULL WHERE ' . implode(' OR ', $where_ids) . ';';
 	}
 
 	/**
@@ -1788,9 +1746,6 @@ class Fields
 		$whereClauseUpdate = new MySQLWhereClause();
 		$whereClauseUpdate->addOrCondition($realFieldName, null, 'NULL');
 		$whereClauseUpdate->addOrCondition($realFieldName, 0);
-
-		//$query = 'UPDATE ' . $ct->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . database::quoteName($ct->Table->realidfieldname)
-		//' WHERE ' . database::quoteName($realFieldName) . ' IS NULL OR ' . database::quoteName($realFieldName) . ' = 0';
 
 		try {
 			database::update($ct->Table->realtablename, $data, $whereClauseUpdate);

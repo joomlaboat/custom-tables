@@ -332,11 +332,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 			'listingid' => $this->listing_id,
 			'title' => $title
 		];
-		/*$query = 'INSERT ' . $this->phototablename . ' SET '
-			. 'ordering=100, '
-			. 'photo_ext=' . database::quote($photo_ext) . ', '
-			. 'listingid=' . database::quote($this->listing_id) . ', '
-			. 'title=' . database::quote($title);*/
 
 		try {
 			database::insert($this->phototablename, $data);
@@ -346,12 +341,8 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		}
 
 		$this->AutoReorderPhotos();
-
-		//$query = ' SELECT photoid FROM ' . $this->phototablename . ' WHERE listingid=' . database::quote() . ' ORDER BY photoid DESC LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('listingid', $this->listing_id);
-
 		$rows = database::loadObjectList($this->phototablename, ['photoid'], $whereClause, 'photoid', 'DESC', 1);
 
 		if (count($rows) == 1)
@@ -384,13 +375,8 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 					'ordering' => $i,
 					'title' . $this->ct->Languages->Postfix => $safeTitle
 				];
-				//$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '=' . database::quote($safeTitle) . ' WHERE listingid='
-				//	. $this->listing_id . ' AND photoid=' . $image->photoid;
 			} else {
-
 				$data = ['ordering' => $i];
-				//$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ' WHERE listingid='
-				//	. $this->listing_id . ' AND photoid=' . $image->photoid;
 			}
 			database::update($this->phototablename, $data, $whereClauseUpdate);
 			$i++;

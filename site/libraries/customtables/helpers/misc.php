@@ -492,9 +492,6 @@ class JoomlaBasicMisc
 	 */
 	public static function getGroupIdByTitle($grouptitle): string
 	{
-		// Build the database query to get the rules for the asset.
-		//$query = 'SELECT id FROM #__usergroups WHERE title=' . database::quote(trim($grouptitle)) . ' LIMIT 1';
-
 		// Execute the query and load the rules from the result.
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('title', trim($grouptitle));
@@ -618,8 +615,6 @@ class JoomlaBasicMisc
 	 */
 	public static function FindItemidbyAlias($alias)
 	{
-		//$query = 'SELECT id FROM #__menu WHERE published=1 AND alias=' . database::quote($alias);
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
 		$whereClause->addCondition('alias', $alias);
@@ -638,12 +633,11 @@ class JoomlaBasicMisc
 	 */
 	public static function FindMenuItemRowByAlias($alias)
 	{
-		//$query = 'SELECT * FROM #__menu WHERE published=1 AND alias=' . database::quote($alias);
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
 		$whereClause->addCondition('alias', $alias);
 
-		$rows = database::loadAssocList('#__menu', ['*'], $whereClause, null, null);
+		$rows = database::loadAssocList('#__menu', ['*'], $whereClause);
 		if (!$rows) return 0;
 		if (count($rows) < 1) return 0;
 

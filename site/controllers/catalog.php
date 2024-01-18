@@ -76,8 +76,9 @@ if ($task != '') {
 			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
 		}
 	}
-} else
+} else {
 	parent::display();
+}
 
 function doTheTask(CT &$ct, $task, $edit_model, $this_)
 {
@@ -247,7 +248,6 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
 			$saveField = new SaveFieldQuerySet($ct, $ct->Table->record, false);
 			$field = new Field($ct, $fieldrow);
-
 
 			if ($saveField->Try2CreateUserAccount($field))
 				return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'), 'status' => 'notice');

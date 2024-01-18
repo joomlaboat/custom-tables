@@ -72,6 +72,10 @@ class Tables
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.4
+	 */
 	function loadRecord($tablename_or_id, string $recordId)
 	{
 		if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
@@ -88,7 +92,7 @@ class Tables
 		}
 		$this->ct->Table->recordcount = 0;
 		$this->ct->setFilter('', 2);
-		$this->ct->Filter->where[] = $this->ct->Table->realidfieldname . '=' . database::quote($recordId);
+		$this->ct->Filter->whereClause->addCondition($this->ct->Table->realidfieldname, $recordId);
 		$this->ct->Limit = 1;
 		$this->ct->LimitStart = 0;
 		$this->ct->getRecords();

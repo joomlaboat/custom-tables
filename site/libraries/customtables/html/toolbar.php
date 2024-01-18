@@ -242,10 +242,9 @@ class RecordToolbar
 				//User account deleted, null record value.
 				$data = [$this->Table->useridrealfieldname => null];
 				try {
-
 					$whereClauseUpdate = new MySQLWhereClause();
 					$whereClauseUpdate->addCondition($this->Table->realidfieldname, $this->row[$this->Table->realidfieldname]);
-					
+
 					database::update($this->Table->realtablename, $data, $whereClauseUpdate);
 				} catch (Exception $e) {
 					return $e->getMessage();
@@ -263,7 +262,7 @@ class RecordToolbar
 				$img = '<img src="' . $this->iconPath . 'key-add.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
 			$resetLabel = common::translate('COM_CUSTOMTABLES_USERWILLBECREATED') . ' ' . $this->firstFieldValueLabel();
-			$action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . $this->ct->Params->ModuleId . ')';
+			$action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . ($this->ct->Params->ModuleId ?? 0) . ')';
 		} else {
 			$user_full_name = ucwords(strtolower($userRow['name']));
 

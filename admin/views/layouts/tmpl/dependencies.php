@@ -75,7 +75,6 @@ function renderDependencies(object $layout_row): string
 		$count += count($menus);
 		$result .= '<h3>' . common::translate('COM_CUSTOMTABLES_LAYOUTS_MENUS') . '</h3>';
 		$result .= _renderMenuList($menus);
-
 	}
 
 	$modules = _getModulesThatUseThisLayout($layout_row->layoutname);
@@ -210,12 +209,8 @@ function _getMenuItemsThatUseThisLayout($layoutname)
 	foreach ($layout_params as $l) {
 		$toSearch = '"' . $l . '":"' . $layoutname . '"';
 		$whereClause->addOrCondition('params', $toSearch, 'INSTR');
-		//$w[] = 'INSTR(params,' . database::quote($toSearch) . ')';
 	}
-	//$wheres[] = '(' . implode(' OR ', $w) . ')';
-	//$query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
-
-	return database::loadAssocList('#__menu', ['id', 'title'], $whereClause, null, null);
+	return database::loadAssocList('#__menu', ['id', 'title'], $whereClause);
 }
 
 /**
@@ -227,21 +222,14 @@ function _getModulesThatUseThisLayout($layoutname)
 	$whereClause = new MySQLWhereClause();
 	$whereClause->addCondition('published', 1);
 	$whereClause->addCondition('module', 'mod_ctcatalog');
-	//$wheres = array();
-	//$wheres[] = 'published=1';
-	//$wheres[] = 'module=' . database::quote('mod_ctcatalog');
 
 	$layout_params = ['ct_pagelayout', 'ct_itemlayout'];
-	//$w = array();
+
 	foreach ($layout_params as $l) {
 		$toSearch = '"' . $l . '":"' . $layoutname . '"';
 		$whereClause->addOrCondition('params', $toSearch, 'INSTR');
-		//$w[] = 'INSTR(params,' . database::quote($toSearch) . ')';
 	}
-	//$wheres[] = '(' . implode(' OR ', $w) . ')';
-	//$query = 'SELECT id,title FROM #__modules WHERE ' . implode(' AND ', $wheres);
-
-	return database::loadAssocList('#__modules', ['id', 'title'], $whereClause, null, null);
+	return database::loadAssocList('#__modules', ['id', 'title'], $whereClause);
 }
 
 /**
@@ -251,10 +239,7 @@ function _getModulesThatUseThisLayout($layoutname)
 function _getLayoutsThatUseThisLayout(string $layoutName)
 {
 	$whereClause = new MySQLWhereClause();
-
-	//$wheres = array();
 	$whereClause->addCondition('published', 1);
-	//$wheres[] = 'published=1';
 
 	$layout_params = ['{layout:' . $layoutName . '}',    //example: {layout:layoutname}
 		':layout:' . $layoutName . ',',    //example: [field:layout,someparameter]
@@ -265,25 +250,17 @@ function _getLayoutsThatUseThisLayout(string $layoutName)
 		"'" . $layoutName . "'",    //example: 'layout'
 		',' . $layoutName . ','];        //For plugins
 
-	//$w = [];
 	foreach ($layout_params as $l)
 		$whereClause->addOrCondition('layoutcode', $l, 'INSTR');
-//		$w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
 		$whereClause->addOrCondition('layoutmobile', $l, 'INSTR');
-	//$w[] = 'INSTR(layoutmobile,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
 		$whereClause->addOrCondition('layoutcss', $l, 'INSTR');
-	//$w[] = 'INSTR(layoutcss,' . database::quote($l) . ')';
 
 	foreach ($layout_params as $l)
 		$whereClause->addOrCondition('layoutjs', $l, 'INSTR');
-	//$w[] = 'INSTR(layoutjs,' . database::quote($l) . ')';
-
-	//$wheres[] = '(' . implode(' OR ', $w) . ')';
-	//$query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
 
 	return database::loadAssocList('#__customtables_layouts', ['id', 'layoutname'], $whereClause, null, null);
 }

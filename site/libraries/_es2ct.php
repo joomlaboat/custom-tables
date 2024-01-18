@@ -143,9 +143,6 @@ function updateLayoutVerticalBarTags(): void
 			$whereClauseUpdate = new MySQLWhereClause();
 			$whereClauseUpdate->addCondition('id', $record['id']);
 			database::update('#__customtables_layouts', $data, $whereClauseUpdate);
-
-			//$query = 'UPDATE `#__customtables_layouts` SET
-			//	layoutcode=' . database::quote($c) . ' WHERE id=' . $record['id'];
 			echo '<p>Layout #' . $record['id'] . ' updated.</p>';
 		}
 	}
