@@ -100,9 +100,10 @@ class CustomtablesModelListOfRecords extends ListModel
 
 	protected function getListQuery()
 	{
+		$db = database::getDB();
 		// Create a new query object.
 		$query = 'SELECT ' . implode(',', $this->ct->Table->selects)
-			. ' FROM ' . database::quoteName($this->ct->Table->realtablename);
+			. ' FROM ' . $db->quoteName($this->ct->Table->realtablename);
 
 		$wheres_and = [];
 		// Filter by published state
@@ -124,7 +125,7 @@ class CustomtablesModelListOfRecords extends ListModel
 			foreach ($this->ct->Table->fields as $fieldRow) {
 				if ($fieldRow['type'] == 'string') {
 					$realfieldname = $fieldRow['realfieldname'];
-					$where = database::quote('%' . $search . '%');
+					$where = $db->quote('%' . $search . '%');
 					$wheres[] = ('(' . $this->ct->Table->realtablename . '.' . $realfieldname . ' LIKE ' . $where . ')');
 				}
 			}
@@ -149,7 +150,7 @@ class CustomtablesModelListOfRecords extends ListModel
 			elseif ($orderCol == 'custom' and $this->ordering_realfieldname != '')
 				$order_by_Col = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
 		}
-		$query .= ' ORDER BY ' . database::quoteName($order_by_Col) . ' ' . $orderDirection;
+		$query .= ' ORDER BY ' . $db->quoteName($order_by_Col) . ' ' . $orderDirection;
 		return $query;
 	}
 

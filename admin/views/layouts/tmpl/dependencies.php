@@ -31,11 +31,11 @@ function renderDependencies(object $layout_row): string
 	$serverType = database::getServerType();
 
 	if ($serverType == 'postgresql') {
-		$w1 = '(' . database::quoteName('type') . '=\'sqljoin\' OR ' . database::quoteName('type') . '=\'records\')';
+		$w1 = '(`type`=\'sqljoin\' OR `type`=\'records\')';
 		$w2a = 'POSITOIN(\'layout:' . $layoutname . '\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
 		$w2b = 'POSITOIN(\'tablelesslayout:' . $layoutname . '\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
 	} else {
-		$w1 = '(' . database::quoteName('type') . '="sqljoin" OR ' . database::quoteName('type') . '="records")';
+		$w1 = '(`type`="sqljoin" OR `type`="records")';
 		$w2a = 'INSTR(SUBSTRING_INDEX(typeparams,",",2),"layout:' . $layoutname . '")';
 		$w2b = 'INSTR(SUBSTRING_INDEX(typeparams,",",2),"tablelesslayout:' . $layoutname . '")';
 	}

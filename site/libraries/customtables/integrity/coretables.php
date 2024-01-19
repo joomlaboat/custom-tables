@@ -95,12 +95,12 @@ class IntegrityCoreTables extends IntegrityChecks
 						if ($moreThanOneLanguage)
 							$fieldname .= '_' . $lang->sef;
 
-						$fields_sql[] = database::quoteName($fieldname) . ' ' . $field[$db_type];
+						$fields_sql[] = '`' . $fieldname . '` ' . $field[$db_type];
 
 						$moreThanOneLanguage = true;
 					}
 				} else {
-					$fields_sql[] = database::quoteName($field['name']) . ' ' . $field[$db_type];
+					$fields_sql[] = '`' . ($field['name']) . '` ' . $field[$db_type];
 				}
 			}
 		}
@@ -110,11 +110,9 @@ class IntegrityCoreTables extends IntegrityChecks
 	protected static function prepareAddIndexQuery($indexes): array
 	{
 		$indexes_sql = [];
-		foreach ($indexes as $index) {
-			$index_name = database::quoteName($index['name']);
-			$fld = database::quoteName($index['field']);
-			$indexes_sql[] = 'KEY ' . $index_name . ' (' . $fld . ')';
-		}
+		foreach ($indexes as $index)
+			$indexes_sql[] = 'KEY `' . $index['name'] . '` (`' . $index['field'] . '`)';
+
 		return $indexes_sql;
 	}
 

@@ -104,7 +104,8 @@ class Value_tablejoinlist extends BaseValue
 
 		//this is important because it has been selected somehow.
 		$ct->setFilter($filter, $showpublished);
-		$ct->Filter->where[] = 'INSTR(' . database::quote($rowValue) . ',' . $ct->Table->realidfieldname . ')';
+		$ct->Filter->whereClause->addCondition($rowValue, $ct->Table->realidfieldname, 'INSTR');
+		//$ct->Filter->where[] = 'INSTR(' . databasequote($rowValue) . ',' . $ct->Table->realidfieldname . ')';
 		$ct->getRecords();
 
 		return self::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records, $separatorCharacter);

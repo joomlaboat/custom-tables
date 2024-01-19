@@ -18,6 +18,7 @@ if (!defined('_JEXEC')) {
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
+use Joomla\Database\DatabaseInterface;
 
 class MySQLWhereClause
 {
@@ -219,7 +220,7 @@ class database
 		return str_replace('#__', $db->getPrefix(), $tableName);
 	}
 
-	protected static function getDB()
+	public static function getDB(): DatabaseInterface
 	{
 		$version_object = new Version;
 		$version = (int)$version_object->getShortVersion();
@@ -227,7 +228,9 @@ class database
 		if ($version < 4)
 			return Factory::getDbo();
 		else
-			return Factory::getContainer()->get('DatabaseDriver');
+			//return Factory::getContainer()->get('DatabaseDriver');
+			return Factory::getContainer()->get(DatabaseInterface::class);
+
 	}
 
 	/**
@@ -282,12 +285,6 @@ class database
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
-	}
-
-	public static function quoteName($value): string
-	{
-		$db = self::getDB();
-		return $db->quoteName($value);
 	}
 
 	public static function quote($value, bool $row = true): ?string
@@ -388,7 +385,7 @@ class database
 
 		$db = self::getDB();
 
-		$db->setQuery('SHOW TABLE STATUS FROM ' . self::quoteName($database) . ' LIKE ' . self::quote($dbPrefix . 'customtables_table_' . $tablename));
+		$db->setQuery('SHOW TABLE STATUS FROM ' . $db->quoteName($database) . ' LIKE ' . $db->quote($dbPrefix . 'customtables_table_' . $tablename));
 		return $db->loadObjectList();
 	}
 
@@ -478,10 +475,13 @@ class database
 	{
 		$db = self::getDB();
 
+		$query = $db->getQuery(true);
+		$query->delete($tableName);
+
 		if (is_int($id))
-			$query = 'DELETE FROM ' . $db->qouteName($tableName) . ' WHERE ' . $db->quoteName($realIdFieldName) . '=' . $id;
+			$query->where($db->quoteName($realIdFieldName) . '=' . $id);
 		else
-			$query = 'DELETE FROM ' . $db->qouteName($tableName) . ' WHERE ' . $db->quoteName($realIdFieldName) . '=' . $db->quote($id);
+			$query->where($db->quoteName($realIdFieldName) . '=' . $db->quote($id));
 
 		$db->setQuery($query);
 		$db->execute();
@@ -509,7 +509,7 @@ class database
 			$db->execute();
 
 		} else {
-			$query = 'DROP TABLE IF EXISTS ' . database::quoteName($realtablename);
+			$query = 'DROP TABLE IF EXISTS ' . $db->quoteName($realtablename);
 			$db->setQuery($query);
 			$db->execute();
 		}
@@ -538,8 +538,8 @@ class database
 	public static function addForeignKey(string $realTableName, string $columnName, string $join_with_table_name, string $join_with_table_field): void
 	{
 		$db = self::getDB();
-		$db->setQuery('ALTER TABLE ' . database::quoteName($realTableName) . ' ADD FOREIGN KEY (' . $columnName . ') REFERENCES '
-			. database::quoteName(self::getDataBaseName() . '.' . $join_with_table_name) . ' (' . $join_with_table_field . ') ON DELETE RESTRICT ON UPDATE RESTRICT');
+		$db->setQuery('ALTER TABLE ' . $db->quoteName($realTableName) . ' ADD FOREIGN KEY (' . $columnName . ') REFERENCES '
+			. $db->quoteName(self::getDataBaseName() . '.' . $join_with_table_name) . ' (' . $join_with_table_field . ') ON DELETE RESTRICT ON UPDATE RESTRICT');
 		$db->execute();
 	}
 
@@ -701,8 +701,8 @@ class database
 	{
 		$db = self::getDB();
 		$database = self::getDataBaseName();
-		$db->setQuery('RENAME TABLE ' . database::quoteName($database . '.' . $oldTableName) . ' TO '
-			. database::quoteName($database . '.' . $newTableName));
+		$db->setQuery('RENAME TABLE ' . $db->quoteName($database . '.' . $oldTableName) . ' TO '
+			. $db->quoteName($database . '.' . $newTableName));
 		$db->execute();
 	}
 

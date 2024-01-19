@@ -197,7 +197,7 @@ class Params
 		//Filter
 		$this->userIdField = $menu_params->get('useridfield');
 
-		if (!$blockExternalVars and common::inputGetString('filter', '')) {
+		if (!$blockExternalVars and common::inputGetString('filter')) {
 
 			$filter = common::inputGetString('filter', '');
 			if (is_array($filter)) {

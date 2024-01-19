@@ -90,7 +90,8 @@ class CustomtablesModelListofcategories extends ListModel
 	 */
 	protected function getListQuery()
 	{
-		$query = 'SELECT a.* FROM ' . database::quoteName('#__customtables_categories') . ' AS a';
+		$db = database::getDB();
+		$query = 'SELECT a.* FROM ' . $db->quoteName('#__customtables_categories') . ' AS a';
 		$where = [];
 		// Filter by published state
 		$published = $this->getState('filter.published');
@@ -105,7 +106,7 @@ class CustomtablesModelListofcategories extends ListModel
 			if (stripos($search, 'id:') === 0) {
 				$where [] = 'a.id = ' . (int)substr($search, 3);
 			} else {
-				$search = database::quote('%' . $search . '%');
+				$search = $db->quote('%' . $search . '%');
 				$where [] = '(a.categoryname LIKE ' . $search . ')';
 			}
 		}
@@ -115,7 +116,7 @@ class CustomtablesModelListofcategories extends ListModel
 		$orderCol = $this->state->get('list.ordering', 'a.id');
 		$orderDirn = $this->state->get('list.direction', 'asc');
 		if ($orderCol != '')
-			$query .= ' ORDER BY ' . database::quoteName($orderCol) . ' ' . $orderDirn;
+			$query .= ' ORDER BY ' . $db->quoteName($orderCol) . ' ' . $orderDirn;
 
 		return $query;
 	}
