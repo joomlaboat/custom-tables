@@ -194,9 +194,12 @@ class Table
 	function loadRecord(?string $listing_id)
 	{
 		$whereClause = new MySQLWhereClause();
-		if (!empty($listing_id))
-			$whereClause->addCondition($this->realidfieldname, $listing_id);
+		if (empty($listing_id)) {
+			$this->record = null;
+			return null;
+		}
 
+		$whereClause->addCondition($this->realidfieldname, $listing_id);
 		$rows = database::loadAssocList($this->realtablename, $this->selects, $whereClause, null, null, 1);
 
 		if (count($rows) < 1) return $this->record = null;
