@@ -51,7 +51,7 @@ class Field
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function __construct(CT &$ct, array $fieldRow, $row = null, $parseParams = true)
+	function __construct(CT &$ct, array $fieldRow, ?array $row = null, bool $parseParams = true)
 	{
 		$this->ct = &$ct;
 
@@ -89,12 +89,18 @@ class Field
 
 			if (isset($fieldRow['isrequired']))
 				$this->isrequired = intval($fieldRow['isrequired']);
+			else
+				$this->isrequired = false;
 
 			if (isset($fieldRow['defaultvalue']))
 				$this->defaultvalue = $fieldRow['defaultvalue'];
+			else
+				$this->defaultvalue = null;
 
 			if (isset($fieldRow['valuerule']))
 				$this->valuerule = $fieldRow['valuerule'];
+			else
+				$this->valuerule = null;
 
 			if (isset($fieldRow['valuerulecaption']))
 				$this->valuerulecaption = $fieldRow['valuerulecaption'];

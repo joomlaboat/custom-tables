@@ -35,8 +35,8 @@ class CustomtablesTableFields extends Table
 	var $alwaysupdatevalue = null;
 	var $type = null;
 	var $typeParams = null;
-	var $valuerule = null;
-	var $valuerulecaption = null;
+	var ?string $valuerule = null;
+	var ?string $valuerulecaption = null;
 	var $published = null;
 	var $parentid = null;
 	var $created_by = null;
