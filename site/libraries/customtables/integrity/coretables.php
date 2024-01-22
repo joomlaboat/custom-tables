@@ -40,7 +40,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Log());
 	}
 
-	protected static function createCoreTableIfNotExists(CT &$ct, $table)
+	protected static function createCoreTableIfNotExists(CT &$ct, object $table)
 	{
 		if (!ESTables::checkIfTableExists($table->realtablename))
 			IntegrityCoreTables::createCoreTable($ct, $table);
@@ -48,7 +48,7 @@ class IntegrityCoreTables extends IntegrityChecks
 			IntegrityCoreTables::checkCoreTable($ct, $table->realtablename, $table->fields);
 	}
 
-	protected static function createCoreTable(CT &$ct, $table): bool
+	protected static function createCoreTable(CT &$ct, object $table): bool
 	{
 		//TODO:
 		//Add InnoDB Row Formats to config file
@@ -74,7 +74,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		}
 
 		if (!$tableExists)
-			database::createTable($table->realtablename, 'id', $fields_sql, $table->comments, $indexes_sql);
+			database::createTable($table->realtablename, 'id', $fields_sql, $table->comment, $indexes_sql);
 
 		CustomTables\common::enqueueMessage('Table "' . $table->realtablename . '" added.', 'notice');
 		return true;

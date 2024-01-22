@@ -401,7 +401,7 @@ class database
 	{
 		$db = self::getDB();
 
-		$db->setQuery("SHOW CREATE TABLE %i", $tableName);
+		$db->setQuery("SHOW CREATE TABLE " . $tableName);
 		return $db->loadAssocList();
 	}
 
@@ -600,7 +600,7 @@ class database
 		$db->execute();
 	}
 
-	public static function createTable(string $realTableName, string $privateKey, array $columns, string $comment, array $keys = null, string $primaryKeyType = 'int'): void
+	public static function createTable(string $realTableName, string $privateKey, array $columns, string $comment, ?array $keys = null, string $primaryKeyType = 'int'): void
 	{
 		$db = self::getDB();
 
@@ -665,7 +665,8 @@ class database
 		database::changeColumn($realNewTableName, 'id', 'id', 'INT UNSIGNED', false, 'AUTO_INCREMENT');
 	}
 
-	public static function changeColumn(string $realTableName, string $oldColumnName, string $newColumnName, string $type, ?bool $nullable, ?string $extra = null, ?string $comment = null): void
+	public static function changeColumn(string $realTableName, string $oldColumnName, string $newColumnName, string $type,
+	                                    ?bool  $nullable = true, ?string $extra = null, ?string $comment = null): void
 	{
 		$db = self::getDB();
 

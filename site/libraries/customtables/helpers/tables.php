@@ -171,12 +171,12 @@ class ESTables
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $complete_table_name = ''): bool
+	public static function createTableIfNotExists($database, $dbPrefix, $tableName, $tableTitle, $complete_table_name = ''): bool
 	{
 		if ($complete_table_name == '')
-			$table_name = $dbPrefix . 'customtables_table_' . $tablename;
+			$table_name = $dbPrefix . 'customtables_table_' . $tableName;
 		elseif ($complete_table_name == '-new-')
-			$table_name = $tablename;
+			$table_name = $tableName;
 		else
 			$table_name = $complete_table_name;// used for custom table names - to connect to third-part tables for example
 
@@ -191,7 +191,7 @@ class ESTables
 				$tableExists = true;
 		} else {
 			//Mysql;
-			$rows2 = database::getTableStatus($database, $tablename);
+			$rows2 = database::getTableStatus($database, $tableName);
 
 			if (count($rows2) > 0) {
 
@@ -201,14 +201,14 @@ class ESTables
 					//do not modify third-party tables
 					$row2 = $rows2[0];
 
-					$table_name = $dbPrefix . 'customtables_table_' . $tablename;
+					$table_name = $dbPrefix . 'customtables_table_' . $tableName;
 
 					if ($row2->Engine != 'InnoDB') {
 						database::setTableInnoDBEngine($table_name);
 						//$query = 'ALTERTABLE ' . $table_name . ' ENGINE = InnoDB';
 					}
 
-					database::changeTableComment($table_name, $tabletitle);
+					database::changeTableComment($table_name, $tableTitle);
 					//$query = 'ALTERTABLE ' . $table_name . ' COMMENT = "' . $tabletitle . '";';
 					return false;
 				}
@@ -219,7 +219,7 @@ class ESTables
 			$columns = [
 				'published tinyint(1) NOT NULL DEFAULT 1'
 			];
-			database::createTable($table_name, 'id', $columns, $tabletitle);
+			database::createTable($table_name, 'id', $columns, $tableTitle);
 			return true;
 		}
 		return false;

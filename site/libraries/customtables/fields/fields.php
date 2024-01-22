@@ -29,7 +29,7 @@ class Field
 	var CT $ct;
 
 	var int $id;
-	var array $params;
+	var ?array $params;
 	var ?string $type;
 	var int $isrequired;
 	var ?string $defaultvalue;
@@ -427,7 +427,6 @@ class Fields
 			return null;
 
 		//get constrant name
-		//$query = 'show create table ' . $realtablename;
 		$tableCreateQuery = database::showCreateTable($realtablename);//::loadAssocList($query, ['', '', '', ''], $whereClause, null, null);
 
 		if (count($tableCreateQuery) == 0)
@@ -585,37 +584,50 @@ class Fields
 	 */
 	public static function fixMYSQLField(string $realtablename, string $fieldname, string $PureFieldType, string &$msg): bool
 	{
-		try {
 
-			if ($fieldname == 'id') {
+
+		if ($fieldname == 'id') {
+			try {
 				$constrances = Fields::getTableConstrances($realtablename, '');
+			} catch (Exception $e) {
+				$msg = '<p style="color:red;">Caught exception fixMYSQLField->Fields::getTableConstrances: ' . $e->getMessage() . '</p>';
+				return false;
+			}
 
-				//Delete same table child-parent constrances
-				if (!is_null($constrances)) {
-					foreach ($constrances as $constrance) {
-						if ($constrance[7] == '(id)')
-							Fields::removeForeignKeyConstrance($realtablename, $constrance[1]);
-					}
+			//Delete same table child-parent constrances
+			if (!is_null($constrances)) {
+				foreach ($constrances as $constrance) {
+					if ($constrance[7] == '(id)')
+						Fields::removeForeignKeyConstrance($realtablename, $constrance[1]);
 				}
+			}
 
+			try {
 				database::changeColumn($realtablename, 'id', 'id', 'INT UNSIGNED', false, 'AUTO_INCREMENT');
-				//$query = 'ALTERTABLE ' . $realtablename . ' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
-
-				$msg = '';
-				return true;
-			} elseif ($fieldname == 'published')
-				database::changeColumn($realtablename, 'published', 'published', 'TINYINT', false, 'DEFAULT 1');
-			//$query = 'ALTERTABLE ' . $realtablename . ' CHANGE published published TINYINT NOT NULL DEFAULT 1';
-			else
-				database::changeColumn($realtablename, $fieldname, $fieldname, $PureFieldType);
-			//$query = 'ALTERTABLE ' . $realtablename . ' CHANGE ' . $fieldname . ' ' . $fieldname . ' ' . $PureFieldType;
+			} catch (Exception $e) {
+				$msg = '<p style="color:red;">Caught exception fixMYSQLField 1: ' . $e->getMessage() . '</p>';
+			}
 
 			$msg = '';
 			return true;
-		} catch (Exception $e) {
-			$msg = '<p style="color:red;">Caught exception fixMYSQLField: ' . $e->getMessage() . '</p>';
-			return false;
+		} elseif ($fieldname == 'published') {
+			try {
+				database::changeColumn($realtablename, 'published', 'published', 'TINYINT', false, 'DEFAULT 1');
+			} catch (Exception $e) {
+				$msg = '<p style="color:red;">Caught exception fixMYSQLField 2: ' . $e->getMessage() . '</p>';
+			}
+		} else {
+			try {
+				database::changeColumn($realtablename, $fieldname, $fieldname, $PureFieldType);
+			} catch (Exception $e) {
+				$msg = '<p style="color:red;">Caught exception fixMYSQLField 3: ' . $e->getMessage() . '</p>';
+				return false;
+			}
 		}
+
+		$msg = '';
+		return true;
+
 	}
 
 	/**
@@ -1593,7 +1605,9 @@ class Fields
 			'photo_ext varchar(10) not null',
 			'title varchar(100) null'
 		];
-		database::createTable('#__customtables_gallery_' . $tablename . '_' . $fieldname, 'photoid', $columns, 'Image Gallery', 'bigint');
+		database::createTable('#__customtables_gallery_' . $tablename . '_' . $fieldname, 'photoid',
+			$columns, 'Image Gallery', null, 'bigint');
+
 		return true;
 	}
 
@@ -1609,7 +1623,9 @@ class Fields
 			'file_ext varchar(10) not null',
 			'title varchar(100) null'
 		];
-		database::createTable('#__customtables_filebox_' . $tablename . '_' . $fieldname, 'fileid', $columns, null, 'File Box', 'bigint');
+		database::createTable('#__customtables_filebox_' . $tablename . '_' . $fieldname, 'fileid', $columns,
+			'File Box', null, 'bigint');
+
 		return true;
 	}
 

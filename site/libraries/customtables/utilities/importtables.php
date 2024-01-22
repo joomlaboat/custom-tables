@@ -126,26 +126,14 @@ class ImportTables
 		}
 
 		//Create mysql table
-		$tabletitle = $table_new['tabletitle'] ?? $table_new['tabletitle_1'];
+		$tableTitle = $table_new['tabletitle'] ?? $table_new['tabletitle_1'];
 
 		$columns = [
 			'id int(10) NOT NULL auto_increment',
 			'published tinyint(1) DEFAULT "1"',
 			'PRIMARY KEY  (id)',
 		];
-		database::createTable('#__customtables_table_' . $tablename, $columns, $tabletitle);
-
-		/*
-		$query = '
-                CREATETABLE IF NOT EXISTS #__customtables_table_' . $tablename . '
-                (
-                	id int(10) NOT NULL auto_increment,
-                	published tinyint(1) DEFAULT "1",
-                	PRIMARY KEY  (id)
-                ) ENGINE=InnoDB COMMENT="' . $tabletitle . '" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
-        ';
-		*/
-
+		database::createTable('#__customtables_table_' . $tablename, $columns, $tableTitle);
 		ImportTables::updateTableCategory($tableid, $table_new, $categoryname);
 		return $tableid;
 	}
