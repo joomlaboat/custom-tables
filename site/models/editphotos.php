@@ -122,7 +122,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	 */
 	function getGallery(): bool
 	{
-		$fieldrow = Fields::getFieldAssocByName($this->galleryname, $this->ct->Table->tableid);
+		$fieldrow = Fields::getFieldRowByName($this->galleryname, $this->ct->Table->tableid);
 		if ($fieldrow === null)
 			return false;
 

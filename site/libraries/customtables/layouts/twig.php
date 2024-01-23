@@ -45,9 +45,12 @@ class TwigProcessor
 	var string $itemLayoutName;
 	var string $itemLayoutLineStart;
 	var bool $parseParams;
+	var bool $debug;
 
 	public function __construct(CT $ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
 	{
+		$this->debug = false;
+
 		$this->parseParams = $parseParams;
 		$this->errorMessage = null;
 		$this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
@@ -229,7 +232,7 @@ class TwigProcessor
 							$args = func_get_args();
 
 							$valueProcessor = new Value($this->ct);
-							return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args, true));
+							return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
 						});
 					} else {
 						$function = new TwigFunction($fieldRow['fieldname'], function () use (&$ct, $index) {
@@ -283,20 +286,24 @@ class TwigProcessor
 		if ($isSingleRecord) {
 			$result = '';
 		} else {
-			//try {
-			$result = @$this->twig->render($this->pageLayoutName, $this->variables);
-			/*} catch (Exception $e) {
-				$msg = $e->getMessage() . $e->getFile() . $e->getLine() . $e->getTraceAsString();
-				$this->errorMessage = $msg;
-				$this->ct->errors[] = $msg;
+
+			if ($this->debug) {
+				$result = $this->twig->render($this->pageLayoutName, $this->variables);
+			} else {
+				try {
+					$result = @$this->twig->render($this->pageLayoutName, $this->variables);
+				} catch (Exception $e) {
+					$msg = $e->getMessage() . $e->getFile() . $e->getLine() . $e->getTraceAsString();
+					$this->errorMessage = $msg;
+					$this->ct->errors[] = $msg;
 
 //				$msg = $e->getMessage();
-				if ($this->pageLayoutLink !== null)
-					$msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
+					if ($this->pageLayoutLink !== null)
+						$msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
 
-				return 'Error: ' . $msg;
+					return 'Error: ' . $msg;
+				}
 			}
-			*/
 		}
 
 		if ($this->recordBlockFound) {
@@ -309,27 +316,31 @@ class TwigProcessor
 					$blockRow['_islast'] = $number == count($this->ct->Records);
 
 					$this->ct->Table->record = $blockRow;
-					//try {
-					$row_result = @$this->twig->render($this->itemLayoutName, $this->variables);
-					/*} catch (Exception $e) {
-						$this->errorMessage = $e->getMessage();
 
-						$msg = $e->getMessage();
-						$pos = strpos($msg, '" at line ');
+					if ($this->debug) {
+						$row_result = $this->twig->render($this->itemLayoutName, $this->variables);
+					} else {
+						try {
+							$row_result = @$this->twig->render($this->itemLayoutName, $this->variables);
+						} catch (Exception $e) {
+							$this->errorMessage = $e->getMessage();
 
-						if ($pos !== false) {
-							$lineNumberString = intval(substr($msg, $pos + 10, -1));
-							$lineNumber = intval($lineNumberString);
-							$msg = str_replace('" at line ' . $lineNumberString, '" at line ' . ($lineNumber + $this->itemLayoutLineStart), $msg);
+							$msg = $e->getMessage();
+							$pos = strpos($msg, '" at line ');
+
+							if ($pos !== false) {
+								$lineNumber = intval(substr($msg, $pos + 10, -1));
+								$msg = str_replace('" at line ' . $lineNumber, '" at line ' . ($lineNumber + $this->itemLayoutLineStart), $msg);
+							}
+
+							$msg = str_replace($this->itemLayoutName, $this->pageLayoutName, $msg);
+
+							if ($this->pageLayoutLink !== null)
+								$msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
+
+							return 'Error: ' . $msg;
 						}
-
-						$msg = str_replace($this->itemLayoutName, $this->pageLayoutName, $msg);
-
-						if ($this->pageLayoutLink !== null)
-							$msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
-
-						return 'Error: ' . $msg;
-					}*/
+					}
 
 					$TR_tag_params = array();
 					$TR_tag_params['id'] = 'ctTable_' . $this->ct->Table->tableid . '_' . $blockRow[$this->ct->Table->realidfieldname];
@@ -388,6 +399,10 @@ class fieldObject
 		$this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.5
+	 */
 	public function __toString()
 	{
 		if (!isset($this->field))
@@ -656,17 +671,9 @@ class fieldObject
 
 			return Value_tablejoin::renderTableJoinValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
 		} elseif ($this->field->type == 'records') {
-			//2. ?string $showPublishedString = ''
-			if (isset($functionParams[1]) and is_array($functionParams[1]))
-				$showPublishedString = $functionParams[1];
-			else
-				$showPublishedString = '';
+			$showPublishedString = $functionParams[1] ?? '';
 
-			//3. ?string $separatorCharacter = ''
-			if (isset($functionParams[2]) and is_array($functionParams[2]))
-				$separatorCharacter = $functionParams[2];
-			else
-				$separatorCharacter = null;
+			$separatorCharacter = $functionParams[2] ?? null;
 
 			$layoutcode = '{{ ' . $fieldName . ' }}';
 
@@ -720,21 +727,16 @@ class fieldObject
 		} elseif ($this->field->type == 'records') {
 
 			//2. ?string $showPublishedString = ''
-			if (isset($functionParams[1]) and is_array($functionParams[1]))
-				$showPublishedString = $functionParams[1];
-			else
-				$showPublishedString = '';
+			$showPublishedString = $functionParams[1] ?? '';
 
 			//3. ?string $separatorCharacter = ''
-			if (isset($functionParams[2]) and is_array($functionParams[2]))
-				$separatorCharacter = $functionParams[2];
-			else
-				$separatorCharacter = null;
+			$separatorCharacter = $functionParams[2] ?? null;
 
 			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
 				. DIRECTORY_SEPARATOR . 'tablejoinlist.php');
 
-			return Value_tablejoinlist::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
+			return Value_tablejoinlist::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname],
+				$showPublishedString, $separatorCharacter);
 		} else {
 			$this->ct->errors[] = '{{ ' . $this->field->fieldname . '.getvalue }}. Wrong field type "' . $this->field->type . '". ".getvalue" method is only available for Table Join and Records filed types.';
 			return '';

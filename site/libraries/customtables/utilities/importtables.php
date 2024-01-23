@@ -417,7 +417,8 @@ class ImportTables
 		$field_new['tableid'] = $tableid;//replace tableid
 		$fieldName = $field_new['fieldname'];
 
-		$field_old = Fields::getFieldAssocByName($fieldName, $tableid);
+		$field_old = Fields::getFieldRowByName($fieldName, $tableid);
+
 		if (is_array($field_old) and count($field_old) > 0) {
 			$fieldid = $field_old['id'];
 			ImportTables::updateRecords('fields', $field_new, $field_old);

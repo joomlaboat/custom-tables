@@ -72,7 +72,12 @@ class Value_tablejoinlist extends BaseValue
 		return Value_tablejoinlist::resolveRecordTypeValue($field, $layoutCode, $rowValue, '', $separatorCharacter);
 	}
 
-	public static function resolveRecordTypeValue(Field &$field, string $layoutcode, ?string $rowValue, string $showPublishedString = '', ?string $separatorCharacter = ','): string
+	/**
+	 * @throws Exception
+	 * @since 3.4.5
+	 */
+	public static function resolveRecordTypeValue(Field   &$field, string $layoutcode, ?string $rowValue, string $showPublishedString = '',
+	                                              ?string $separatorCharacter = ','): string
 	{
 		if ($rowValue === null)
 			return '';
@@ -104,9 +109,13 @@ class Value_tablejoinlist extends BaseValue
 
 		//this is important because it has been selected somehow.
 		$ct->setFilter($filter, $showpublished);
-		$ct->Filter->whereClause->addCondition($rowValue, $ct->Table->realidfieldname, 'INSTR');
-		//$ct->Filter->where[] = 'INSTR(' . databasequote($rowValue) . ',' . $ct->Table->realidfieldname . ')';
-		$ct->getRecords();
+		$ct->Filter->whereClause->addCondition('"' . $rowValue . '"', $ct->Table->realidfieldname, 'INSTR', true);
+
+		try {
+			$ct->getRecords();
+		} catch (Exception $e) {
+			return $e->getMessage();
+		}
 
 		return self::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records, $separatorCharacter);
 	}

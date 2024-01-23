@@ -679,7 +679,7 @@ class Fields
 		if (!empty($tableId))
 			$whereClause->addCondition('s.tableid', $tableId);
 		elseif (!empty($tableName))
-			$whereClause->addCondition('t.tablename', $tableId);
+			$whereClause->addCondition('t.tablename', $tableName);
 		else
 			return null;
 
@@ -687,37 +687,10 @@ class Fields
 
 		$from = '#__customtables_fields AS s';
 		if ($tableName != '')
-			$from .= ' INNER JOIN #__customtables_tables AS t ON t.tablename=`' . $tableName . '`';
+			$from .= ' INNER JOIN #__customtables_tables AS t ON t.id=s.tableid';
 
 		$rows = database::loadObjectList($from, self::getFieldRowSelectArray(), $whereClause, null, null, 1);
 
-		if (count($rows) != 1)
-			return null;
-
-		return $rows[0];
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function getFieldAssocByName(string $fieldname, int $tableid): ?array
-	{
-		if ($fieldname == '')
-			$fieldname = common::inputGetCmd('fieldname', '');
-
-		if ($fieldname == '')
-			return null;
-
-		//$query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableid .
-		// ' AND fieldname="' . trim($fieldname) . '" LIMIT 1';
-
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('published', 1);
-		$whereClause->addCondition('tableid', $tableid);
-		$whereClause->addCondition('fieldname', trim($fieldname));
-
-		$rows = database::loadAssocList('#__customtables_fields', Fields::getFieldRowSelectArray(), $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return null;
 
@@ -736,9 +709,9 @@ class Fields
 		return null;
 	}
 
-	public static function getRealFieldName($fieldname, $ctfields, $all_fields = false)
+	public static function getRealFieldName($fieldname, $ctFields, $all_fields = false)
 	{
-		foreach ($ctfields as $row) {
+		foreach ($ctFields as $row) {
 			if (($all_fields or $row['allowordering'] == 1) and $row['fieldname'] == $fieldname)
 				return $row['realfieldname'];
 		}
@@ -1686,7 +1659,6 @@ class Fields
 		}
 
 		$join_with_table_name = database::realTableName($join_with_table_name);
-		$database = database::getDataBaseName();
 
 		Fields::removeForeignKey($realtablename, $realfieldname);
 

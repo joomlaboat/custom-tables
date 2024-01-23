@@ -716,11 +716,12 @@ class Twig_Table_Tags
 	function recordstotal(): int
 	{
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
-			return 'Table not selected';
+			return -1;//Table not selected
 
 		$whereClause = new MySQLWhereClause();
+		$count = $this->ct->getNumberOfRecords($whereClause);
 
-		return $this->ct->getNumberOfRecords($whereClause);
+		return $count === null ? -1 : $count;
 	}
 
 	function records(): int

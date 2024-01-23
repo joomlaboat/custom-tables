@@ -163,13 +163,20 @@ class Catalog
 
 		$this->ct->LayoutVariables['layout_type'] = $Layouts->layoutType;
 
-// -------------------- Load Records
-		if (!$this->ct->getRecords()) {
+		// -------------------- Load Records
+		try {
+			$recordsLoaded = $this->ct->getRecords();
+		} catch (Exception $e) {
+			return $e->getMessage();
+		}
+
+		if (!$recordsLoaded) {
 			if (defined('_JEXEC'))
 				$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
 
 			return 'CustomTables: Records not loaded.';
 		}
+
 // -------------------- Parse Layouts
 
 		if ($this->ct->Env->legacySupport) {
@@ -212,8 +219,7 @@ class Catalog
 
 		try {
 			$twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
-
-			$pageLayout = @$twig->process();
+			$pageLayout = $twig->process();
 		} catch (Exception $e) {
 			$this->ct->errors[] = $e->getMessage();
 		}

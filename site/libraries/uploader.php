@@ -136,7 +136,7 @@ class ESFileUploader
 			$fieldname = common::inputGetCmd('fieldname', '');
 			$tableRow = ESFileUploader::getTableRawByItemid();
 			$tableId = $tableRow['id'];
-			$fieldRow = Fields::getFieldAssocByName($fieldname, $tableId);
+			$fieldRow = Fields::getFieldRowByName($fieldname, $tableId);
 			if ($fieldRow === null)
 				return [];
 

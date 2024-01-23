@@ -175,7 +175,9 @@ class CT
 		//$where = count($this->Filter->where) > 0 ? ' WHERE ' . implode(' AND ', $this->Filter->where) : '';
 		//$where = str_replace('\\', '', $where); //Just to make sure that there is nothing weird in the query
 
-		if ($this->getNumberOfRecords($this->Filter->whereClause) == -1)
+		$count = $this->getNumberOfRecords($this->Filter->whereClause);
+
+		if ($count === null)
 			return false;
 
 		if ($this->Ordering->ordering_processed_string !== null) {
@@ -236,20 +238,20 @@ class CT
 		return true;
 	}
 
-	function getNumberOfRecords(MySQLWhereClause $whereClause): int
+	function getNumberOfRecords(MySQLWhereClause $whereClause): ?int
 	{
 		if ($this->Table === null or $this->Table->tablerow === null or $this->Table->tablerow['realidfieldname'] === null)
-			return 0;
+			return null;
 
 		try {
 			$rows = database::loadObjectList($this->Table->realtablename, ['COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count'], $whereClause);
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
-			return 0;
+			return null;
 		}
 
 		if (count($rows) == 0)
-			$this->Table->recordcount = -1;
+			$this->Table->recordcount = null;
 		else
 			$this->Table->recordcount = intval($rows[0]->count);
 
