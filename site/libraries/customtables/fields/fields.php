@@ -1715,8 +1715,6 @@ class Fields
 		$whereClauseUpdate->addOrCondition('ordering', null, 'NULL');
 		$whereClauseUpdate->addOrCondition('ordering', 0);
 
-		//$query = 'UPDATE #__customtables_fields SET ordering=id WHERE ordering IS NULL or ordering = 0';
-
 		try {
 			database::update('#__customtables_fields', $data, $whereClauseUpdate);
 		} catch (Exception $e) {
@@ -1734,9 +1732,7 @@ class Fields
 		$table_row_array = (array)$table_row;
 		$ct->setTable($table_row_array);
 
-		$data = [
-			$realFieldName => $ct->Table->realidfieldname
-		];
+		$data = [$realFieldName => [$ct->Table->realidfieldname, 'sanitized']];
 		$whereClauseUpdate = new MySQLWhereClause();
 		$whereClauseUpdate->addOrCondition($realFieldName, null, 'NULL');
 		$whereClauseUpdate->addOrCondition($realFieldName, 0);

@@ -34,8 +34,8 @@ if ($version < 4) {
 		{
 			$options = [];
 			$options[] = HTMLHelper::_('select.option', '', common::translate('JOPTION_SELECT_PUBLISHED'));
-			$options[] = HTMLHelper::_('select.option', 1, common::translate('JPUBLISHED'));
-			$options[] = HTMLHelper::_('select.option', 0, common::translate('JUNPUBLISHED'));
+			$options[] = HTMLHelper::_('select.option', 1, common::translate('COM_CUSTOMTABLES_PUBLISHED'));
+			$options[] = HTMLHelper::_('select.option', 0, common::translate('COM_CUSTOMTABLES_UNPUBLISHED'));
 			return $options;
 		}
 	}
@@ -57,8 +57,8 @@ if ($version < 4) {
 		{
 			$options = [];
 			$options[] = ['value' => '', 'text' => common::translate('JOPTION_SELECT_PUBLISHED')];
-			$options[] = ['value' => '1', 'text' => common::translate('JPUBLISHED')];
-			$options[] = ['value' => '0', 'text' => common::translate('JOPTION_SELECT_PUBLISHED')];
+			$options[] = ['value' => '1', 'text' => common::translate('COM_CUSTOMTABLES_PUBLISHED')];
+			$options[] = ['value' => '0', 'text' => common::translate('COM_CUSTOMTABLES_UNPUBLISHED')];
 			return $options;
 		}
 	}

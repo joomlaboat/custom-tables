@@ -819,7 +819,8 @@ class SaveFieldQuerySet
 			} else {
 				$this->setNewValue($value);
 			}
-
+		} elseif ($fieldRow['type'] == 'ordering') {
+			$this->setNewValue(0);
 		} elseif ($fieldRow['type'] == 'virtual') {
 
 			$storage = $this->field->params[1] ?? '';
