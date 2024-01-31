@@ -113,7 +113,7 @@ class ListOfTables
 		$table_row = ESTables::getTableRowByID($tableId);
 
 		if (isset($table_row->tablename) and (!isset($table_row->customtablename))) // do not delete third-party tables
-			database::dropTableIfExists(database::getDBPrefix() . 'customtables_table_' . $table_row->tablename);
+			database::dropTableIfExists($table_row->tablename);
 
 		database::deleteRecord('#__customtables_tables', 'id', $tableId);
 		database::deleteTableLessFields();
@@ -239,7 +239,7 @@ class ListOfTables
 			if (common::inputPostString('customtablename', null, 'create-edit-table') == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
 			{
 				//This function will find the old Table Name of existing table and rename MySQL table.
-				ESTables::renameTableIfNeeded($tableId, $database, $dbPrefix, $newTableName);
+				ESTables::renameTableIfNeeded($tableId, $newTableName);
 				$data['tablename'] = $newTableName;
 			}
 

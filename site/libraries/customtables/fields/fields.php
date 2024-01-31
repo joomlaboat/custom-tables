@@ -232,11 +232,11 @@ class Fields
 				//Delete all photos belongs to the gallery
 
 				$imageMethods = new CustomTablesImageMethods;
-				$gallery_table_name = '#__customtables_gallery_' . $tableRow['tablename'] . '_' . $field->fieldname;
-				$imageMethods->DeleteGalleryImages($gallery_table_name, $field->fieldrow['tableid'], $field->fieldname, $field->params, true);
+				$imageMethods->DeleteGalleryImages($tableRow['tablename'] . '_' . $field->fieldname, $field->fieldrow['tableid']
+					, $field->fieldname, $field->params, true);
 
 				//Delete gallery table
-				database::dropTableIfExists($gallery_table_name);
+				database::dropTableIfExists($tableRow['tablename'] . '_' . $field->fieldname, 'gallery');
 			} elseif ($field->type == 'filebox') {
 				//Delete all files belongs to the filebox
 
@@ -244,7 +244,7 @@ class Fields
 				CustomTablesFileMethods::DeleteFileBoxFiles($fileBoxTableName, $field->fieldrow['tableid'], $field->fieldname, $field->params);
 
 				//Delete gallery table
-				database::dropTableIfExists($fileBoxTableName);
+				database::dropTableIfExists($tableRow['tablename'] . '_' . $field->fieldname, 'filebox');
 
 			} elseif ($field->type == 'image') {
 				if (Fields::checkIfFieldExists($tableRow['realtablename'], $field->realfieldname)) {

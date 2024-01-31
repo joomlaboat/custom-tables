@@ -29,9 +29,7 @@ class Search_date extends BaseSearch
 
 	function render($value): string
 	{
-		HTMLHelper::_('jquery.framework');
-		HTMLHelper::_('script', 'https://code.jquery.com/ui/1.13.2/jquery-ui.js');
-		HTMLHelper::_('stylesheet', 'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
+		common::loadJQueryUI();
 
 		$this->ct->document->addCustomTag('<script>
 

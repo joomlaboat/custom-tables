@@ -199,7 +199,7 @@ class Environment
 	//https://stackoverflow.com/questions/6524301/detect-mobile-browser
 	public static function check_user_agent($type = NULL): bool
 	{
-		$user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+		$user_agent = strtolower(common::getServerParam('HTTP_USER_AGENT') ?? '');
 		if ($type == 'bot') {
 			// matches popular bots
 			if (preg_match("/googlebot|adsbot|yahooseeker|yahoobot|msnbot|watchmouse|pingdom\.com|feedfetcher-google/", $user_agent)) {
@@ -228,7 +228,7 @@ class Environment
 
 	public static function check_user_agent_for_ie(): bool
 	{
-		$u = $_SERVER['HTTP_USER_AGENT'];
+		$u = common::getServerParam('HTTP_USER_AGENT');
 		if (str_contains($u, 'MSIE'))
 			return true;
 		elseif (str_contains($u, 'Trident'))
@@ -239,7 +239,7 @@ class Environment
 
 	public static function check_user_agent_for_apple(): bool
 	{
-		$user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+		$user_agent = strtolower(common::getServerParam('HTTP_USER_AGENT'));
 		if (preg_match("/iphone|itouch|ipod|ipad/", $user_agent)) {
 			// these are the most common
 			return true;

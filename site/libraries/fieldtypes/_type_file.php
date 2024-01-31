@@ -560,7 +560,7 @@ class CT_FieldTypeTag_file
 			$secs = 10000;
 
 		$tplus = floor(($t + $secs) / $secs) * $secs;
-		$ip = $_SERVER['REMOTE_ADDR'];
+		$ip = common::getServerParam('REMOTE_ADDR');
 
 		//get secs key char
 		$sep = $security;//($secs==1000 ? 'a' : 'b');

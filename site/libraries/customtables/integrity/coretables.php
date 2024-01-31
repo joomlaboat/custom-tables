@@ -67,7 +67,7 @@ class IntegrityCoreTables extends IntegrityChecks
 				$tableExists = true;
 		} else {
 			//Mysql;
-			$rows = database::getTableStatus(database::getDataBaseName(), $table->realtablename);
+			$rows = database::getTableStatus($table->tablename);
 
 			if (count($rows) > 0)
 				$tableExists = true;

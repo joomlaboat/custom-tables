@@ -174,24 +174,24 @@ class ESTables
 	public static function createTableIfNotExists($database, $dbPrefix, $tableName, $tableTitle, $complete_table_name = ''): bool
 	{
 		if ($complete_table_name == '')
-			$table_name = $dbPrefix . 'customtables_table_' . $tableName;
+			$realTableName = $dbPrefix . 'customtables_table_' . $tableName;
 		elseif ($complete_table_name == '-new-')
-			$table_name = $tableName;
+			$realTableName = $tableName;
 		else
-			$table_name = $complete_table_name;// used for custom table names - to connect to third-part tables for example
+			$realTableName = $complete_table_name;// used for custom table names - to connect to third-part tables for example
 
 		$serverType = database::getServerType();
 
 		//Check if table exists
 		$tableExists = false;
 		if ($serverType == 'postgresql') {
-			$fields = Fields::getListOfExistingFields($table_name, false);
+			$fields = Fields::getListOfExistingFields($realTableName, false);
 
 			if (count($fields) > 0)
 				$tableExists = true;
 		} else {
 			//Mysql;
-			$rows2 = database::getTableStatus($database, $tableName);
+			$rows2 = database::getTableStatus($realTableName, 'native');
 
 			if (count($rows2) > 0) {
 
@@ -201,14 +201,14 @@ class ESTables
 					//do not modify third-party tables
 					$row2 = $rows2[0];
 
-					$table_name = $dbPrefix . 'customtables_table_' . $tableName;
+					$realTableName = $dbPrefix . 'customtables_table_' . $tableName;
 
 					if ($row2->Engine != 'InnoDB') {
-						database::setTableInnoDBEngine($table_name);
+						database::setTableInnoDBEngine($realTableName);
 						//$query = 'ALTERTABLE ' . $table_name . ' ENGINE = InnoDB';
 					}
 
-					database::changeTableComment($table_name, $tableTitle);
+					database::changeTableComment($realTableName, $tableTitle);
 					//$query = 'ALTERTABLE ' . $table_name . ' COMMENT = "' . $tabletitle . '";';
 					return false;
 				}
@@ -219,7 +219,7 @@ class ESTables
 			$columns = [
 				'published tinyint(1) NOT NULL DEFAULT 1'
 			];
-			database::createTable($table_name, 'id', $columns, $tableTitle);
+			database::createTable($realTableName, 'id', $columns, $tableTitle);
 			return true;
 		}
 		return false;
@@ -229,16 +229,16 @@ class ESTables
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function renameTableIfNeeded($tableid, $database, $dbPrefix, $tablename): void
+	public static function renameTableIfNeeded($tableid, $tablename): void
 	{
 		$old_tablename = ESTables::getTableName($tableid);
 
 		if ($old_tablename != $tablename) {
 			//rename table
-			$tableStatus = database::getTableStatus($database, $old_tablename);
+			$tableStatus = database::getTableStatus($old_tablename);
 
 			if (count($tableStatus) > 0)
-				database::renameTable($dbPrefix . 'customtables_table_' . $old_tablename, $dbPrefix . 'customtables_table_' . $tablename);
+				database::renameTable($old_tablename, $tablename);
 		}
 	}
 

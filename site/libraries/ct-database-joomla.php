@@ -378,14 +378,24 @@ class database
 		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'COLUMN', $groupBy, $returnQueryString);
 	}
 
-	public static function getTableStatus(string $database, string $tablename)
+	public static function getTableStatus(string $tablename, string $type = 'table')
 	{
 		$conf = Factory::getConfig();
+		$database = $conf->get('db');
 		$dbPrefix = $conf->get('dbprefix');
 
 		$db = self::getDB();
 
-		$db->setQuery('SHOW TABLE STATUS FROM ' . $db->quoteName($database) . ' LIKE ' . $db->quote($dbPrefix . 'customtables_table_' . $tablename));
+		if ($type == 'gallery')
+			$realTableName = $dbPrefix . 'customtables_gallery_' . $tablename;
+		elseif ($type == 'filebox')
+			$realTableName = $dbPrefix . 'customtables_filebox_' . $tablename;
+		elseif ($type == 'native')
+			$realTableName = $tablename;
+		else
+			$realTableName = $dbPrefix . 'customtables_' . $tablename;
+
+		$db->setQuery('SHOW TABLE STATUS FROM ' . $db->quoteName($database) . ' LIKE ' . $db->quote($realTableName));
 		return $db->loadObjectList();
 	}
 
@@ -494,22 +504,29 @@ class database
 		$db->execute();
 	}
 
-	public static function dropTableIfExists($realtablename): void
+	public static function dropTableIfExists(string $tablename, string $type = 'table'): void
 	{
 		$db = self::getDB();
+
+		if ($type == 'gallery')
+			$realTableName = '#__customtables_gallery_' . $tablename;
+		elseif ($type == 'filebox')
+			$realTableName = '#__customtables_filebox_' . $tablename;
+		else
+			$realTableName = '#__customtables_' . $tablename;
 
 		$serverType = self::getServerType();
 
 		if ($serverType == 'postgresql') {
 
-			$db->setQuery('DROP TABLE IF EXISTS ' . $realtablename);
+			$db->setQuery('DROP TABLE IF EXISTS ' . $realTableName);
 			$db->execute();
 
-			$db->setQuery('DROP SEQUENCE IF EXISTS ' . $realtablename . '_seq CASCADE');
+			$db->setQuery('DROP SEQUENCE IF EXISTS ' . $realTableName . '_seq CASCADE');
 			$db->execute();
 
 		} else {
-			$query = 'DROP TABLE IF EXISTS ' . $db->quoteName($realtablename);
+			$query = 'DROP TABLE IF EXISTS ' . $db->quoteName($realTableName);
 			$db->setQuery($query);
 			$db->execute();
 		}
@@ -545,13 +562,8 @@ class database
 
 	public static function getDataBaseName(): ?string
 	{
-		if (defined('_JEXEC')) {
-			$conf = Factory::getConfig();
-			return $conf->get('db');
-		} elseif (defined('WPINC')) {
-			return DB_NAME;
-		}
-		return null;
+		$conf = Factory::getConfig();
+		return $conf->get('db');
 	}
 
 	public static function dropForeignKey(string $realTableName, string $constrance): void
@@ -698,10 +710,22 @@ class database
 		return $db->loadAssocList('SHOW TABLES');
 	}
 
-	public static function renameTable(string $oldTableName, string $newTableName): void
+	public static function renameTable(string $oldCTTableName, string $newCTTableName, string $type = 'table'): void
 	{
 		$db = self::getDB();
 		$database = self::getDataBaseName();
+
+		if ($type == 'gallery') {
+			$oldTableName = '#__customtables_gallery_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $oldCTTableName)));
+			$newTableName = '#__customtables_gallery_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $newCTTableName)));
+		} elseif ($type == 'filebox') {
+			$oldTableName = '#__customtables_filebox_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $oldCTTableName)));
+			$newTableName = '#__customtables_filebox_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $newCTTableName)));
+		} else {
+			$oldTableName = '#__customtables_table_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $oldCTTableName)));
+			$newTableName = '#__customtables_table_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $newCTTableName)));
+		}
+
 		$db->setQuery('RENAME TABLE ' . $db->quoteName($database . '.' . $oldTableName) . ' TO '
 			. $db->quoteName($database . '.' . $newTableName));
 		$db->execute();

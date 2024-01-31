@@ -135,17 +135,6 @@ class com_customtablesInstallerScript
 				. '</a>'
 				. '<h3>Upgrade was Successful!</h3>';
 		}
-
-		/*
-		$file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
-			. 'libraries' . DIRECTORY_SEPARATOR . '_es2ct.php';
-
-		if (file_exists($file)) {
-			echo 'Updating Extrasearch Tables';
-			require_once($file);
-			updateESTables();
-		}
-		*/
 	}
 
 	/**

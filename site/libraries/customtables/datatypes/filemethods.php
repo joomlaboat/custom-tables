@@ -51,10 +51,7 @@ class CustomTablesFileMethods
 	static public function DeleteFileBoxFiles($fileBoxTableName, $estableid, $fileBoxName, $typeParams): void
 	{
 		$fileFolder = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $typeParams);
-		//$query = 'SELECT fileid FROM ' . $fileBoxTableName;
-
 		$whereClause = new MySQLWhereClause();
-
 		$fileRows = database::loadObjectList($fileBoxTableName, ['fileid'], $whereClause);
 
 		foreach ($fileRows as $fileRow) {

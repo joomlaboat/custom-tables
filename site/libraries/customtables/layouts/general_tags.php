@@ -304,7 +304,7 @@ class Twig_Url_Tags
 
 	function server($param)
 	{
-		return $_SERVER[$param];
+		return common::getServerParam($param);
 	}
 
 	function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $layoutname = '', $csv_column_separator = ','): string

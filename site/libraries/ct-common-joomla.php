@@ -385,7 +385,7 @@ class common
 	public static function curPageURL(): string
 	{
 		$WebsiteRoot = str_replace(Uri::root(true), '', Uri::root());
-		$RequestURL = $_SERVER["REQUEST_URI"];
+		$RequestURL = common::getServerParam("REQUEST_URI");
 
 		if ($WebsiteRoot != '' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/') {
 			if ($RequestURL != '' and $RequestURL[0] == '/') {
@@ -395,6 +395,11 @@ class common
 		}
 
 		return $WebsiteRoot . $RequestURL;
+	}
+
+	public static function getServerParam(string $param)
+	{
+		return $_SERVER[$param];
 	}
 
 	public static function ctParseUrl($argument)
@@ -501,6 +506,13 @@ class common
 		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
 	}
 
+	public static function loadJQueryUI(): void
+	{
+		HTMLHelper::_('jquery.framework');
+		HTMLHelper::_('script', 'https://code.jquery.com/ui/1.13.2/jquery-ui.js');
+		HTMLHelper::_('stylesheet', 'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
+	}
+
 	public static function loadJSAndCSS(Params $params, Environment $env): void
 	{
 		$app = Factory::getApplication();
@@ -520,15 +532,15 @@ class common
 		}
 
 		if (defined('_JEXEC')) {
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/jquery.uploadfile.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/jquery.form.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/jquery.uploadfile.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/jquery.form.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/uploader.js"></script>');
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base64.js"></script>');
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/catalog.js"></script>');
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/edit.js"></script>');
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/esmulti.js"></script>');
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/modal.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/uploader.js"></script>');
 
 			$document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.js"></script>');
 			$document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.css" />');

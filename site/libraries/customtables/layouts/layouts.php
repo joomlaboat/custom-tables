@@ -551,8 +551,10 @@ class Layouts
 	 */
 	protected function renderCatalog(): string
 	{
-		if ($this->ct->Env->frmt == 'html')
-			common::loadJSAndCSS($this->ct->Params, $this->ct->Env);
+		if ($this->ct->Env->frmt == 'html') {
+			if (defined('_JEXEC'))
+				common::loadJSAndCSS($this->ct->Params, $this->ct->Env);
+		}
 
 		// -------------------- Table
 
@@ -609,7 +611,7 @@ class Layouts
 		if ($this->ct->Params->listing_id !== null)
 			$this->ct->applyLimits(1);
 		else
-			$this->ct->applyLimits($this->ct->Params->limit);
+			$this->ct->applyLimits($this->ct->Params->limit ?? 0);
 
 		$this->ct->LayoutVariables['layout_type'] = $this->layoutType;
 

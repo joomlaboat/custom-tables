@@ -39,7 +39,7 @@ class IntegrityTables extends IntegrityChecks
 		foreach ($tables as $table) {
 
 			//Check if table exists
-			$rows = database::getTableStatus(database::getDataBaseName(), database::realTableName($table['tablename']), false);
+			$rows = database::getTableStatus($table['tablename']);
 
 			$tableExists = !(count($rows) == 0);
 

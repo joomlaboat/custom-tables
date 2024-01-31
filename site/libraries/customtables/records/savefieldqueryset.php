@@ -774,20 +774,18 @@ class SaveFieldQuerySet
 
 	public static function getUserIP(): string
 	{
-		if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-			if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',') > 0) {
-				if ($_SERVER['HTTP_X_FORWARDED_FOR'] == '')
-					return '';
-
-				$address = explode(",", $_SERVER['HTTP_X_FORWARDED_FOR']);
-
-				return trim($address[0]);
-			} else {
-				return $_SERVER['HTTP_X_FORWARDED_FOR'];
-			}
-		} else {
-			return $_SERVER['REMOTE_ADDR'];
-		}
+		if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+			$forwardAddress = common::getServerParam('HTTP_X_FORWARDED_FOR');
+			if (!empty($forwardAddress)) {
+				if (str_contains($forwardAddress, ',')) {
+					$address = explode(",", $forwardAddress);
+					return trim($address[0]);
+				} else
+					return $forwardAddress;
+			} else
+				return common::getServerParam('REMOTE_ADDR');
+		} else
+			return common::getServerParam('REMOTE_ADDR');
 	}
 
 	/**

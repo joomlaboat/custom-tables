@@ -41,6 +41,8 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	if (defined('_JEXEC')) {
 		define('CUSTOMTABLES_MEDIA_WEBPATH', URI::root(false) . 'components/com_customtables/libraries/customtables/media/');
 
+		define('CUSTOMTABLES_PLUGIN_WEBPATH', URI::root(false) . 'plugins/content/customtables/');
+
 		$url = URI::root(false);
 		if (strlen($url) > 0 and $url[strlen($url) - 1] == '/')
 			$url = substr($url, 0, strlen($url) - 1);

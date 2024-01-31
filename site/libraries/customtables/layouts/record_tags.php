@@ -819,8 +819,6 @@ class Twig_Tables_Tags
 			return '';
 		}
 
-		return 'abc';
-
 		$join_table_fields = Fields::getFields($table);
 
 		$join_ct = new CT;

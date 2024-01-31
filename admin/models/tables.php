@@ -141,7 +141,7 @@ class CustomtablesModelTables extends AdminModel
 			$table_row = ESTables::getTableRowByID($tableid);
 
 			if (isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename === null)) // do not delete third-party tables
-				database::dropTableIfExists(database::getDBPrefix() . 'customtables_table_' . $table_row->tablename);
+				database::dropTableIfExists($table_row->tablename);
 		}
 
 		if (!parent::delete($pks))
@@ -336,7 +336,7 @@ class CustomtablesModelTables extends AdminModel
 
 		if ($tableid != 0 and (string)$data['customtablename'] == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
 		{
-			ESTables::renameTableIfNeeded($tableid, $database, $dbPrefix, $tablename);
+			ESTables::renameTableIfNeeded($tableid, $tablename);
 		}
 
 		$old_tablename = '';

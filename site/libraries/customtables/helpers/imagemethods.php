@@ -64,37 +64,37 @@ class CustomTablesImageMethods
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function DeleteGalleryImages($gallery_table_name, $estableid, $galleryname, $params, $deleteOriginals = false): void
+	function DeleteGalleryImages($gallery_name, $tableId, $fieldname, $params, $deleteOriginals = false): void
 	{
 		$image_parameters = $params[0];
 
-		$imagefolderword = '';
+		$imageFolderWord = '';
 		if (isset($image_parameters[1]))
-			$imagefolderword = $image_parameters[1];
+			$imageFolderWord = $image_parameters[1];
 
-		$imagefolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . str_replace('/', DIRECTORY_SEPARATOR, $imagefolderword);
-		$imagegalleryprefix = 'g';
+		$imageFolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . str_replace('/', DIRECTORY_SEPARATOR, $imageFolderWord);
+		$imageGalleryPrefix = 'g';
 
 		//delete gallery images if exist
 		//check is table exists
-		$recs = database::getTableStatus(database::getDataBaseName(), $gallery_table_name, false);
+		$recs = database::getTableStatus($gallery_name, 'gallery');
 
 		if (count($recs) > 0) {
 
 			$whereClause = new MySQLWhereClause();
-			$photorows = database::loadObjectList($gallery_table_name, ['photoid'], $whereClause);
+			$photoRows = database::loadObjectList('#__customtables_gallery_' . $gallery_name, ['photoid'], $whereClause);
 
-			foreach ($photorows as $photorow) {
+			foreach ($photoRows as $photoRow) {
 				$this->DeleteExistingGalleryImage(
-					$imagefolder,
-					$imagegalleryprefix,
-					$estableid,
-					$galleryname,
-					$photorow->photoid,
+					$imageFolder,
+					$imageGalleryPrefix,
+					$tableId,
+					$fieldname,
+					$photoRow->photoid,
 					$image_parameters,
 					$deleteOriginals
 				);
-			}//foreach($photorows as $photorow)
+			}
 		}
 	}
 
