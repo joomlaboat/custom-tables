@@ -38,18 +38,8 @@ trait Logs
 		$data ['datetime'] = ['NOW()', 'sanitized'];
 		$data ['tableid'] = $this->tableid;
 		$data ['listingid'] = (int)$listing_id;
-		$data ['action'] = (int)$action;
+		$data ['action'] = $action;
 		$data ['Itemid'] = (int)common::inputGetInt('Itemid', 0);
-		/*$sets[] = (int)$this->Env->user->id;
-		$sets[] = 'NOW()';
-		$sets[] = (int)$this->tableid;
-		$sets[] = (int)$listing_id;
-		$sets[] = (int)$action;
-		$sets[] = (int)common::inputGetInt('Itemid', 0);*/
-
-		//Value from sets
-		//$fields = ['userid', 'datetime', 'tableid', 'listingid', 'action', 'Itemid'];
-		//$query = 'INSERT INTO #__customtables_log (' . implode(',', $fields) . ') VALUES (' . implode(',', $sets) . ')';
 
 		try {
 			database::insert('#__customtables_log', $data);

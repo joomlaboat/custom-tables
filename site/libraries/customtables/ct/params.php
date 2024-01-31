@@ -222,7 +222,7 @@ class Params
 		$this->forceSortBy = $menu_params->get('forcesortby');
 
 		//Limit
-		$this->limit = common::inputGetInt('limit', ($menu_params->get('limit') ?? 20));
+		$this->limit = common::inputGetInt('limit', (int)($menu_params->get('limit') ?? 20));
 
 		//Layouts
 		$this->pageLayout = $menu_params->get('escataloglayout');

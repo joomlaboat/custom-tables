@@ -287,7 +287,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
 		case 'setlimit':
 
-			$limit = common::inputGetInt('limit', '');
+			$limit = common::inputGetInt('limit', 0);
 
 			$ct->app->setUserState('com_customtables.limit_' . $ct->Params->ItemId, $limit);
 

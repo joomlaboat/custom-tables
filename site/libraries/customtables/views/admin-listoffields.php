@@ -202,7 +202,7 @@ class ListOfFields
                 </td>';
 
 		$result .= '<td>' . common::translate($item->typeLabel) . '</td>';
-		$result .= '<td>' . common::escape($item->typeparams) . $this->checkTypeParams($item->type, $item->typeparams) . '</td>';
+		$result .= '<td>' . common::escape($item->typeparams) . $this->checkTypeParams($item->type, $item->typeparams ?? '') . '</td>';
 		$result .= '<td>' . common::translate($item->isrequired) . '</td>';
 		$result .= '<td>' . common::escape($this->ct->Table->tabletitle) . '</td>';
 		$result .= '<td class="text-center btns d-none d-md-table-cell">';

@@ -29,22 +29,27 @@ class CustomTablesEdit {
         })
             .then(response => {
 
-                if (response.status == 304) {
+                if (response.redirected) {
                     if (errorCallback && typeof errorCallback === 'function') {
-                        errorCallback('Login required or not authorised.');
+                        errorCallback('Login required or not authorized.');
                     } else {
-                        console.error('Login required or not authorised. Error status code 200: Redirect.');
+                        console.error('Login required or not authorized. Error status code 200: Redirect.');
                     }
-                    return;
+                    return null;
                 }
 
                 if (!response.ok) {
                     // If the HTTP status code is not successful, throw an error object that includes the response
                     throw {status: 'error', message: 'HTTP status code: ' + response.status, response: response};
+                    return null;
                 }
                 return response.json();
             })
             .then(data => {
+                if (data === null)
+                    return;
+
+                console.log("data.status");
                 if (data.status === 'saved') {
                     if (successCallback && typeof successCallback === 'function') {
                         successCallback(data);
