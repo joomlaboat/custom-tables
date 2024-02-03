@@ -671,7 +671,7 @@ class database
 			$db->setQuery('ALTER SEQUENCE ' . $realNewTableName . '_seq RESTART WITH 1');
 			$db->execute();
 		} else {
-			$db->setQuery('CREATE TABLE #__customtables_table_' . $newTableName . ' AS SELECT * FROM #__customtables_table_' . $oldTableName);
+			$db->setQuery('CREATE TABLE ' . $realNewTableName . ' AS SELECT * FROM #__customtables_table_' . $oldTableName);
 			$db->execute();
 		}
 

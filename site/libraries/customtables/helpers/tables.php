@@ -405,13 +405,11 @@ class ESTables
 			}
 		}
 
-		//$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . $originalTableId;
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
 		$whereClause->addCondition('tableid', $originalTableId);
 
-		$rows = database::loadAssocList('#__customtables_fields', ['*'], $whereClause, null, null);
+		$rows = database::loadAssocList('#__customtables_fields', ['*'], $whereClause);
 
 		if (count($rows) == 0)
 			die('Original table has no fields.');
@@ -439,7 +437,7 @@ class ESTables
 					else
 						$data[$fld] = $row[$fld];
 				} else {
-					$data[$fld] = str_replace('"', '\"', $row[$fld]);
+					$data[$fld] = $row[$fld];//str_replace('"', '\"', $row[$fld]);
 				}
 			}
 			database::insert('#__customtables_fields', $data);
