@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\database;
 use CustomTables\MySQLWhereClause;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;

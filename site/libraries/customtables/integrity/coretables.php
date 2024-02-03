@@ -136,13 +136,13 @@ class IntegrityCoreTables extends IntegrityChecks
 					if (isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams'] != '')
 						$typeParams = $projected_field['ct_typeparams'];
 
-					IntegrityCoreTables::checkCoreTableFields($realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeParams);
+					IntegrityCoreTables::checkCoreTableFields($realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeParams, $projected_field['name']);
 				}
 			}
 		}
 	}
 
-	public static function checkCoreTableFields($realtablename, $ExistingFields, $realfieldname, $ct_fieldType, $ct_typeparams = '')
+	public static function checkCoreTableFields($realtablename, $ExistingFields, $realfieldname, $ct_fieldType, string $ct_typeparams = '', ?string $field_title = null)
 	{
 		$existingFieldFound = null;
 		foreach ($ExistingFields as $ExistingField) {
@@ -162,7 +162,7 @@ class IntegrityCoreTables extends IntegrityChecks
 				$PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
 				$msg = '';
-				if (!Fields::fixMYSQLField($realtablename, $realfieldname, $PureFieldType, $msg)) {
+				if (!Fields::fixMYSQLField($realtablename, $realfieldname, $PureFieldType, $msg, $field_title)) {
 					Factory::getApplication()->enqueueMessage($msg, 'error');
 					return false;
 				}

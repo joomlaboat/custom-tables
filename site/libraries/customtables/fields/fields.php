@@ -582,10 +582,8 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function fixMYSQLField(string $realtablename, string $fieldname, string $PureFieldType, string &$msg): bool
+	public static function fixMYSQLField(string $realtablename, string $fieldname, array $PureFieldType, string &$msg, string $title): bool
 	{
-
-
 		if ($fieldname == 'id') {
 			try {
 				$constrances = Fields::getTableConstrances($realtablename, '');
@@ -603,7 +601,7 @@ class Fields
 			}
 
 			try {
-				database::changeColumn($realtablename, 'id', 'id', 'INT UNSIGNED', false, 'AUTO_INCREMENT');
+				database::changeColumn($realtablename, 'id', 'id', $PureFieldType, 'Primary Key');
 			} catch (Exception $e) {
 				$msg = '<p style="color:red;">Caught exception fixMYSQLField 1: ' . $e->getMessage() . '</p>';
 			}
@@ -612,13 +610,13 @@ class Fields
 			return true;
 		} elseif ($fieldname == 'published') {
 			try {
-				database::changeColumn($realtablename, 'published', 'published', 'TINYINT', false, 'DEFAULT 1');
+				database::changeColumn($realtablename, 'published', 'published', $PureFieldType, 'Publish Status');
 			} catch (Exception $e) {
 				$msg = '<p style="color:red;">Caught exception fixMYSQLField 2: ' . $e->getMessage() . '</p>';
 			}
 		} else {
 			try {
-				database::changeColumn($realtablename, $fieldname, $fieldname, $PureFieldType);
+				database::changeColumn($realtablename, $fieldname, $fieldname, $PureFieldType, $title);
 			} catch (Exception $e) {
 				$msg = '<p style="color:red;">Caught exception fixMYSQLField 3: ' . $e->getMessage() . '</p>';
 				return false;
@@ -627,7 +625,6 @@ class Fields
 
 		$msg = '';
 		return true;
-
 	}
 
 	/**
@@ -985,7 +982,6 @@ class Fields
 
 			try {
 				database::addColumn($realtablename, $realfieldname, $fieldType, null, $options);
-				//$query = 'ALTERTABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
@@ -1045,16 +1041,9 @@ class Fields
 		if ($new_type === null)
 			return false;
 
-		//Virtuality
-		if (isset($data['isrequired']) == 2 and ((int)$data['isrequired'] == 2 or (int)$data['isrequired'] == 3)) {
-			$defaultValue = self::addFieldPrefixToExpression($table_row->id, $data['defaultvalue']);
-		} else {
-			$defaultValue = $data['defaultvalue'];
-		}
-
-		$PureFieldType = '';
-		if ($new_type !== null and $new_typeparams !== null)
-			$PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams, (int)$data['isrequired'], $defaultValue);
+		$PureFieldType = null;
+		if ($new_typeparams !== null)
+			$PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams);
 
 		if ($realfieldname != '')
 			$fieldFound = Fields::checkIfFieldExists($realtablename, $realfieldname);
@@ -1063,7 +1052,7 @@ class Fields
 
 		if ($fieldid != 0 and $fieldFound) {
 
-			if ($PureFieldType != '') {
+			if ($PureFieldType !== null) {
 				try {
 					if (!Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldTitle)) {
 						$ct->errors[] = 'Field cannot be converted to new type.';
@@ -1082,7 +1071,7 @@ class Fields
 
 		if ($fieldid == 0 or !$fieldFound) {
 			//Add Field
-			Fields::addField($ct, $realtablename, $realfieldname, $new_type, $PureFieldType, $fieldTitle, $data);
+			Fields::addField($ct, $realtablename, $realfieldname, $PureFieldType, $fieldTitle, $data);
 		}
 
 		if ($new_type == 'sqljoin') {
@@ -1105,91 +1094,9 @@ class Fields
 		return true;
 	}
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function addFieldPrefixToExpression(int $tableId, string $expression): string
-	{
-		//This function adds 'es_' prefix to field name in the expression. Example:
-		//concat(namelat," ",namerus)
-		//concat(es_namelat," ",es_namerus)
-		$prefix = 'es_';
-
-		$fields = self::getFields($tableId);
-
-		foreach ($fields as $field) {
-			$fieldName = $field['fieldname'];
-			$pos = 0;
-			while (1) {
-				$pos1 = strpos($expression, $fieldName, $pos);
-
-				if ($pos1) {
-
-					$word = true;
-					if ($pos1 > 0) {
-						if (ctype_alnum($expression[$pos1 - 1]))
-							$word = false;
-					}
-
-					if ($pos1 + strlen($fieldName) < strlen($expression)) {
-						if (ctype_alnum($expression[$pos1 + strlen($fieldName)]))
-							$word = false;
-					}
-
-					if ($word) {
-						$pos2 = strpos($expression, $prefix . $fieldName, $pos);
-
-						if ($pos1 - 3 != $pos2) {
-							$expression1 = substr($expression, 0, $pos1);
-							$expression2 = substr($expression, $pos1 + strlen($fieldName), strlen($expression) - strlen($fieldName));
-							$expression = $expression1 . $prefix . $fieldName . $expression2;
-						} else {
-							$pos = $pos1 + strlen($fieldName);
-						}
-					} else {
-						$pos = $pos1 + strlen($fieldName);
-					}
-				} else {
-					break;
-				}
-			}
-		}
-		return $expression;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function getFields($tableid_or_name, $as_object = false, $order_fields = true)
-	{
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('f.published', 1);
-
-		if ((int)$tableid_or_name > 0) {
-			$whereClause->addCondition('f.tableid', (int)$tableid_or_name);
-		} else {
-			$w1 = '(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename=' . database::quote($tableid_or_name) . ' LIMIT 1)';
-			$whereClause->addCondition('f.tableid', $w1, '=', true);
-		}
-
-		$output_type = $as_object ? 'OBJECT' : 'ARRAY_A';
-		return database::loadObjectList('#__customtables_fields AS f', self::getFieldRowSelectArray(), $whereClause,
-			($order_fields ? 'f.ordering, f.fieldname' : null), null, null, null, $output_type);
-	}
-
-	public static function getPureFieldType(string $ct_fieldType, string $typeParams, int $isRequiredOrGenerated = 0): string
+	public static function getPureFieldType(string $ct_fieldType, string $typeParams): array
 	{
 		$ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldType, $typeParams);
-		if ($isRequiredOrGenerated == 2 or $isRequiredOrGenerated == 3) {
-			//$ct_fieldTypeArray['generation_expression'] = $defaultValue;
-			$ct_fieldTypeArray['extra'] = ($isRequiredOrGenerated == 2 ? 'VIRTUAL' : 'STORED') . ' GENERATED';
-			//$ct_fieldTypeArray['required_or_generated'] = $isRequiredOrGenerated;
-		} else {
-			//$ct_fieldTypeArray['required_or_generated'] = null;
-		}
-
 		return Fields::makeProjectedFieldType($ct_fieldTypeArray);
 	}
 
@@ -1203,30 +1110,30 @@ class Fields
 
 		switch (trim($ct_fieldType)) {
 			case '_id':
-				return ['data_type' => 'int', 'is_nullable' => false, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => 'auto_increment'];
+				return ['data_type' => 'int', 'is_nullable' => false, 'is_unsigned' => true, 'length' => null, 'default' => null, 'autoincrement' => true];
 
 			case '_published':
-				return ['data_type' => 'tinyint', 'is_nullable' => false, 'is_unsigned' => false, 'length' => null, 'default' => 1, 'extra' => null];
+				return ['data_type' => 'tinyint', 'is_nullable' => false, 'is_unsigned' => false, 'length' => null, 'default' => 1];
 
 			case 'filelink':
 			case 'file':
 			case 'alias':
 			case 'url':
-				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 1024, 'default' => null, 'extra' => null];
+				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 1024, 'default' => null];
 			case 'color':
-				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 8, 'default' => null, 'extra' => null];
+				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 8, 'default' => null];
 			case 'string':
 			case 'multilangstring':
 				$l = (int)$typeParams;
-				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 1024))), 'default' => null, 'extra' => null];
+				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 1024))), 'default' => null];
 			case 'signature':
 
 				$format = $typeParamsArray[3] ?? 'svg';
 
 				if ($format == 'svg-db')
-					return ['data_type' => 'text', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+					return ['data_type' => 'text', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null];
 				else
-					return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
+					return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null];
 
 			case 'blob':
 
@@ -1239,7 +1146,7 @@ class Fields
 				else
 					$type = 'blob';
 
-				return ['data_type' => $type, 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+				return ['data_type' => $type, 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null];
 
 			case 'text':
 			case 'multilangtext':
@@ -1254,16 +1161,16 @@ class Fields
 						$type = 'longtext';
 				}
 
-				return ['data_type' => $type, 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+				return ['data_type' => $type, 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null];
 
 			case 'log':
 				//mediumtext
-				return ['data_type' => 'text', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+				return ['data_type' => 'text', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null];
 			case 'ordering':
-				return ['data_type' => 'int', 'is_nullable' => false, 'is_unsigned' => true, 'length' => null, 'default' => 0, 'extra' => null];
+				return ['data_type' => 'int', 'is_nullable' => false, 'is_unsigned' => true, 'length' => null, 'default' => 0];
 			case 'time':
 			case 'int':
-				return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
+				return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null];
 			case 'float':
 
 				if (count($typeParamsArray) == 1)
@@ -1272,7 +1179,7 @@ class Fields
 					$l = (int)$typeParamsArray[1] . ',' . (int)$typeParamsArray[0];
 				else
 					$l = '20,2';
-				return ['data_type' => 'decimal', 'is_nullable' => true, 'is_unsigned' => false, 'length' => $l, 'default' => null, 'extra' => null];
+				return ['data_type' => 'decimal', 'is_nullable' => true, 'is_unsigned' => false, 'length' => $l, 'default' => null];
 
 			case 'userid':
 			case 'user':
@@ -1280,7 +1187,7 @@ class Fields
 			case 'sqljoin':
 			case 'article':
 				//case 'multilangarticle':
-				return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
+				return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null];
 
 			case 'image':
 				$fileNameType = $typeParamsArray[3] ?? '';
@@ -1293,198 +1200,178 @@ class Fields
 					$length = 1024;
 				}
 
-				return ['data_type' => $type, 'is_nullable' => true, 'is_unsigned' => false, 'length' => $length, 'default' => null, 'extra' => null];
+				return ['data_type' => $type, 'is_nullable' => true, 'is_unsigned' => false, 'length' => $length, 'default' => null];
 
 			case 'checkbox':
-				return ['data_type' => 'tinyint', 'is_nullable' => false, 'is_unsigned' => false, 'length' => null, 'default' => 0, 'extra' => null];
+				return ['data_type' => 'tinyint', 'is_nullable' => false, 'is_unsigned' => false, 'length' => null, 'default' => 0];
 
 			case 'date':
 				if ($typeParamsArray !== null and $typeParamsArray[0] == 'datetime')
-					return ['data_type' => 'datetime', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+					return ['data_type' => 'datetime', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null];
 				else
-					return ['data_type' => 'date', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+					return ['data_type' => 'date', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null];
 
 			case 'creationtime':
 			case 'changetime':
 			case 'lastviewtime':
-				return ['data_type' => 'datetime', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
+				return ['data_type' => 'datetime', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null];
 
 			case 'viewcount':
 			case 'imagegallery':
 			case 'id':
 			case 'filebox':
-				return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
+				return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null];
 
 			case 'language':
-				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 5, 'default' => null, 'extra' => null];
+				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 5, 'default' => null];
 
 			case 'dummy':
-				return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+				return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null];
 
 			case 'virtual':
 				$storage = $typeParamsArray[1] ?? '';
 
 				if ($storage == 'storedstring') {
 					$l = (int)$typeParamsArray[2] ?? 255;
-					return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 4069))), 'default' => null, 'extra' => null];
+					return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 4069))), 'default' => null];
 				} elseif ($storage == 'storedintegersigned')
-					return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
+					return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null];
 				elseif ($storage == 'storedintegerunsigned')
-					return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
+					return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null];
 				else
-					return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+					return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null];
 
 			case 'md5':
-				return ['data_type' => 'char', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 32, 'default' => null, 'extra' => null];
+				return ['data_type' => 'char', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 32, 'default' => null];
 
 			case 'phponadd':
 			case 'phponchange':
 			case 'phponview':
 				if (isset($typeParamsArray[1]) and $typeParamsArray[1] == 'dynamic')
-					return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null]; //do not store field values
+					return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null]; //do not store field values
 				else
-					return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
+					return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 255, 'default' => null];
 
 			default:
-				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
+				return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 255, 'default' => null];
 		}
 	}
 
-	public static function makeProjectedFieldType(array $ct_fieldTypeArray): string
+	public static function makeProjectedFieldType(array $ct_fieldTypeArray): array
 	{
 		$type = (object)$ct_fieldTypeArray;
 		$elements = [];
+		$elements['is_nullable'] = true;
+		$elements['default'] = null;
+		$elements['autoincrement'] = $ct_fieldTypeArray['autoincrement'] ?? false;
 
-		switch ($type->data_type) {
+		switch ($ct_fieldTypeArray['data_type']) {
 			case 'varchar':
-				$elements[] = 'varchar(' . $type->length . ')';
+				$elements['data_type'] = 'varchar(' . $type->length . ')';
 				break;
 
 			case 'tinytext':
-				$elements[] = 'tinytext';
+				$elements['data_type'] = 'tinytext';
 				break;
 
 			case 'text':
-				$elements[] = 'text';
+				$elements['data_type'] = 'text';
 				break;
 
 			case 'mediumtext':
-				$elements[] = 'mediumtext';
+				$elements['data_type'] = 'mediumtext';
 				break;
 
 			case 'longtext':
-				$elements[] = 'longtext';
+				$elements['data_type'] = 'longtext';
 				break;
 
 			case 'tinyblob':
-				$elements[] = 'tinyblob';
+				$elements['data_type'] = 'tinyblob';
 				break;
 
 			case 'blob':
-				$elements[] = 'blob';
+				$elements['data_type'] = 'blob';
 				break;
 
 			case 'mediumblob':
-				$elements[] = 'mediumblob';
+				$elements['data_type'] = 'mediumblob';
 				break;
 
 			case 'longblob':
-				$elements[] = 'longblob';
+				$elements['data_type'] = 'longblob';
 				break;
 
 			case 'char':
-				$elements[] = 'char(' . $type->length . ')';
+				$elements['data_type'] = 'char';
+				$elements['length'] = $type->length;
 				break;
 
 			case 'int':
-				$elements[] = 'int';
+				$elements['data_type'] = 'int';
 				$serverType = database::getServerType();
 				if ($serverType != 'postgresql') {
-					if ($type->is_nullable !== null and $type->is_unsigned)
-						$elements[] = 'unsigned';
+					$elements['is_unsigned'] = $type->is_unsigned;
 				}
 				break;
 
 			case 'bigint':
-				$elements[] = 'bigint';
+				$elements['data_type'] = 'bigint';
 				$serverType = database::getServerType();
 				if ($serverType != 'postgresql') {
-					if ($type->is_nullable !== null and $type->is_unsigned)
-						$elements[] = 'unsigned';
+					$elements['is_unsigned'] = $type->is_unsigned;
 				}
 				break;
 
 			case 'decimal':
 				$serverType = database::getServerType();
 				if ($serverType == 'postgresql')
-					$elements[] = 'numeric(' . $type->length . ')';
+					$elements['data_type'] = 'numeric';
 				else
-					$elements[] = 'decimal(' . $type->length . ')';
+					$elements['data_type'] = 'decimal';
+
+				$elements['length'] = $type->length;
 
 				break;
 
 			case 'tinyint':
 				$serverType = database::getServerType();
 				if ($serverType == 'postgresql')
-					$elements[] = 'smallint';
+					$elements['data_type'] = 'smallint';
 				else
-					$elements[] = 'tinyint';
+					$elements['data_type'] = 'tinyint';
 
 				break;
 
 			case 'date':
-				$elements[] = 'date';
+				$elements['data_type'] = 'date';
 				break;
 
 			case 'datetime':
 				$serverType = database::getServerType();
 				if ($serverType == 'postgresql')
-					$elements[] = 'TIMESTAMP';
+					$elements['data_type'] = 'TIMESTAMP';
 				else
-					$elements[] = 'datetime';
+					$elements['data_type'] = 'datetime';
 
 				break;
 
 			default:
-				return '';
+				return [];
 		}
 
-		//Check for virtuality
-		if (isset($type->extra) and str_contains($type->extra, 'GENERATED')) {
-
-			$type->default = null;
-			/*
-			if ($type->extra == 'VIRTUAL GENERATED')
-				$elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') VIRTUAL';
-
-			if ($type->extra == 'STORED GENERATED')
-				$elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') STORED';
-			*/
-
-		} elseif (isset($type->required_or_generated)) {
-
-			$type->default = null;
-			/*
-			if ($type->required_or_generated == 2)
-				$elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') VIRTUAL';
-
-			if ($type->required_or_generated == 3)
-				$elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') STORED';
-			*/
-		}
-
-		if ($type->is_nullable)
-			$elements[] = 'null';
+		if (is_string($type->is_nullable))
+			$elements['is_nullable'] = $type->is_nullable == 'YES';
 		else
-			$elements[] = 'not null';
+			$elements['is_nullable'] = $type->is_nullable;
 
 		if (isset($type->default))
-			$elements[] = 'default ' . (is_numeric($type->default) ? $type->default : database::quote($type->default));
+			$elements['default'] = $type->default;
 
-		if ($type->extra !== null and !str_contains($type->extra, 'GENERATED'))
-			$elements[] = $type->extra;
+		if (isset($type->column_default))
+			$elements['default'] = $type->column_default;
 
-		return implode(' ', $elements);
+		return $elements;
 	}
 
 	/**
@@ -1507,7 +1394,7 @@ class Fields
 			return false;
 
 		try {
-			database::changeColumn($realtablename, $realfieldname, $realfieldname, $PureFieldType, null, null, $fieldtitle);
+			database::changeColumn($realtablename, $realfieldname, $realfieldname, $PureFieldType, $fieldtitle);
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
@@ -1518,19 +1405,21 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function addField(CT $ct, string $realtablename, string $realfieldname, string $fieldType, string $PureFieldType, string $fieldTitle, array $fieldRow): void
+	public static function addField(CT $ct, string $realtablename, string $realfieldname, array $PureFieldType, string $fieldTitle, array $fieldRow): void
 	{
-		if ($PureFieldType == '')
+		if (count($PureFieldType) == 0)
 			return;
 
-		if (!str_contains($fieldType, 'multilang')) {
+		if (!str_contains($PureFieldType['data_type'], 'multilang')) {
 			$AdditionOptions = '';
 			$serverType = database::getServerType();
 			if ($serverType != 'postgresql')
 				$AdditionOptions = ' COMMENT ' . database::quote($fieldTitle);
 
-			if ($fieldType != 'dummy' and !Fields::isVirtualField($fieldRow))
-				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, $AdditionOptions);
+			if ($PureFieldType['data_type'] != 'dummy' and !Fields::isVirtualField($fieldRow)) {
+				$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
+				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldTypeString, $AdditionOptions);
+			}
 		} else {
 			$index = 0;
 			foreach ($ct->Languages->LanguageList as $lang) {
@@ -1544,26 +1433,42 @@ class Fields
 				if ($serverType != 'postgresql')
 					$AdditionOptions = ' COMMENT ' . database::quote($fieldTitle);
 
-				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname . $postfix, $PureFieldType, $AdditionOptions);
+				$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
+				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname . $postfix, $fieldTypeString, $AdditionOptions);
 
 				$index++;
 			}
 		}
 
-		if ($fieldType == 'imagegallery') {
+		if ($PureFieldType['data_type'] == 'imagegallery') {
 			//Create table
 			//get CT table name if possible
 
 			$tableName = str_replace(database::getDBPrefix() . 'customtables_table', '', $realtablename);
 			$fieldName = str_replace($ct->Env->field_prefix, '', $realfieldname);
 			Fields::CreateImageGalleryTable($tableName, $fieldName);
-		} elseif ($fieldType == 'filebox') {
+		} elseif ($PureFieldType['data_type'] == 'filebox') {
 			//Create table
 			//get CT table name if possible
 			$tableName = str_replace(database::getDBPrefix() . 'customtables_table', '', $realtablename);
 			$fieldName = str_replace($ct->Env->field_prefix, '', $realfieldname);
 			Fields::CreateFileBoxTable($tableName, $fieldName);
 		}
+	}
+
+	public static function projectedFieldTypeToString(array $PureFieldType): string
+	{
+		if (key_exists('is_nullable', $PureFieldType) and is_string($PureFieldType['is_nullable']))
+			$is_nullable = $PureFieldType['is_nullable'] == 'YES';
+		else
+			$is_nullable = $PureFieldType['is_nullable'] ?? true;
+
+		return $PureFieldType['data_type']
+			. (($PureFieldType['length'] ?? null) !== null ? '(' . $PureFieldType['length'] . ')' : '')
+			. (($PureFieldType['is_unsigned'] ?? false) ? ' UNSIGNED' : '')
+			. ($is_nullable ? ' NULL' : ' NOT NULL')
+			. (($PureFieldType['default'] ?? null) !== null ? ' DEFAULT ' . $PureFieldType['default'] : '')
+			. (($PureFieldType['autoincrement'] ?? false) ? ' AUTO_INCREMENT' : '');
 	}
 
 	/**
@@ -1579,7 +1484,7 @@ class Fields
 			'title varchar(100) null'
 		];
 		database::createTable('#__customtables_gallery_' . $tablename . '_' . $fieldname, 'photoid',
-			$columns, 'Image Gallery', null, 'bigint');
+			$columns, 'Image Gallery', null, 'BIGINT UNSIGNED');
 
 		return true;
 	}
@@ -1597,7 +1502,7 @@ class Fields
 			'title varchar(100) null'
 		];
 		database::createTable('#__customtables_filebox_' . $tablename . '_' . $fieldname, 'fileid', $columns,
-			'File Box', null, 'bigint');
+			'File Box', null, 'BIGINT UNSIGNED');
 
 		return true;
 	}
@@ -1742,6 +1647,111 @@ class Fields
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function addFieldPrefixToExpression(int $tableId, string $expression): string
+	{
+		//This function adds 'es_' prefix to field name in the expression. Example:
+		//concat(namelat," ",namerus)
+		//concat(es_namelat," ",es_namerus)
+		$prefix = 'es_';
+
+		$fields = self::getFields($tableId);
+
+		foreach ($fields as $field) {
+			$fieldName = $field['fieldname'];
+			$pos = 0;
+			while (1) {
+				$pos1 = strpos($expression, $fieldName, $pos);
+
+				if ($pos1) {
+
+					$word = true;
+					if ($pos1 > 0) {
+						if (ctype_alnum($expression[$pos1 - 1]))
+							$word = false;
+					}
+
+					if ($pos1 + strlen($fieldName) < strlen($expression)) {
+						if (ctype_alnum($expression[$pos1 + strlen($fieldName)]))
+							$word = false;
+					}
+
+					if ($word) {
+						$pos2 = strpos($expression, $prefix . $fieldName, $pos);
+
+						if ($pos1 - 3 != $pos2) {
+							$expression1 = substr($expression, 0, $pos1);
+							$expression2 = substr($expression, $pos1 + strlen($fieldName), strlen($expression) - strlen($fieldName));
+							$expression = $expression1 . $prefix . $fieldName . $expression2;
+						} else {
+							$pos = $pos1 + strlen($fieldName);
+						}
+					} else {
+						$pos = $pos1 + strlen($fieldName);
+					}
+				} else {
+					break;
+				}
+			}
+		}
+		return $expression;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function getFields($tableid_or_name, $as_object = false, $order_fields = true)
+	{
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('f.published', 1);
+
+		if ((int)$tableid_or_name > 0) {
+			$whereClause->addCondition('f.tableid', (int)$tableid_or_name);
+		} else {
+			$w1 = '(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename=' . database::quote($tableid_or_name) . ' LIMIT 1)';
+			$whereClause->addCondition('f.tableid', $w1, '=', true);
+		}
+
+		$output_type = $as_object ? 'OBJECT' : 'ARRAY_A';
+		return database::loadObjectList('#__customtables_fields AS f', self::getFieldRowSelectArray(), $whereClause,
+			($order_fields ? 'f.ordering, f.fieldname' : null), null, null, null, $output_type);
+	}
+
+	public static function convertRawFieldType(array $rawDataType): array
+	{
+		$newData = [];
+		$newData['data_type'] = $rawDataType['data_type'];
+
+		if ($rawDataType['data_type'] == 'varchar' or $rawDataType['data_type'] == 'char' or $rawDataType['data_type'] == 'decimal') {
+
+			$newData['length'] = self::parse_column_type($rawDataType['column_type']);
+			if ($newData['length'] == '')
+				$newData['length'] = null;
+		}
+
+		$newData['is_nullable'] = $rawDataType['is_nullable'] == 'YES';
+		$newData['is_unsigned'] = $rawDataType['is_unsigned'] == 'YES';
+		$newData['default'] = $rawDataType['column_default'] ?? null;
+		$newData['autoincrement'] = ($rawDataType['extra'] ?? '') == 'auto_increment';
+
+		return $newData;
+	}
+
+	protected static function parse_column_type(string $parse_column_type_string): string
+	{
+		$parts = explode('(', $parse_column_type_string);
+		if (count($parts) > 1) {
+			$length = str_replace(')', '', $parts[1]);
+			if ($length != '')
+				return $length;
+		}
+		return '';
 	}
 
 	/**

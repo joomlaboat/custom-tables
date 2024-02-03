@@ -287,7 +287,7 @@ class database
 		}
 	}
 
-	public static function quote($value, bool $row = true): ?string
+	public static function quote($value): ?string
 	{
 		$db = self::getDB();
 		return $db->quote($value);
@@ -632,7 +632,7 @@ class database
 
 		} else {
 
-			$primaryKeyTypeString = 'INT';//(11)
+			$primaryKeyTypeString = 'INT UNSIGNED';//(11)
 			if ($primaryKeyType !== 'int')
 				$primaryKeyTypeString = $primaryKeyType;
 
@@ -650,6 +650,10 @@ class database
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.5
+	 */
 	public static function copyCTTable(string $newTableName, string $oldTableName): void
 	{
 		$db = self::getDB();
@@ -674,34 +678,64 @@ class database
 		$db->setQuery('ALTER TABLE ' . $realNewTableName . ' ADD PRIMARY KEY (id)');
 		$db->execute();
 
-		database::changeColumn($realNewTableName, 'id', 'id', 'INT UNSIGNED', false, 'AUTO_INCREMENT');
+		$PureFieldType = [
+			'data_type' => 'int',
+			'is_unsigned' => true,
+			'is_nullable' => false,
+			'autoincrement' => true
+		];
+		database::changeColumn($realNewTableName, 'id', 'id', $PureFieldType, 'Primary Key');
 	}
 
-	public static function changeColumn(string $realTableName, string $oldColumnName, string $newColumnName, string $type,
-	                                    ?bool  $nullable = true, ?string $extra = null, ?string $comment = null): void
+	/**
+	 * @throws Exception
+	 * @since 3.2.5
+	 */
+	public static function changeColumn(string $realTableName, string $oldColumnName, string $newColumnName, array $PureFieldType, ?string $comment = null): void
 	{
+		if (!str_contains($realTableName, 'customtables_'))
+			throw new Exception('Only CustomTables tables can be modified.');
+
 		$db = self::getDB();
 
 		if (self::getServerType() == 'postgresql') {
 
-			$parts = explode(' ', $type);
+			if ($oldColumnName != $newColumnName)
+				$db->setQuery('ALTER TABLE ' . $db->quoteName($realTableName) . ' RENAME COLUMN ' . $db->quoteName($oldColumnName) . ' TO ' . $db->quoteName($newColumnName));
+
+			$db->execute();
 
 			$db->setQuery('ALTER TABLE ' . $db->quoteName($realTableName) . ' ALTER COLUMN'
 				. ' ' . $db->quoteName($newColumnName)
-				. ' TYPE ' . $parts[0]
+				. ' TYPE ' . $PureFieldType['data_type']
 			);
+			$db->execute();
 		} else {
-			$db->setQuery('ALTER TABLE ' . $db->quoteName($realTableName) . ' CHANGE'
-				. ' ' . $db->quoteName($oldColumnName)
-				. ' ' . $db->quoteName($newColumnName)
-				. ' ' . $type
-				. ($nullable !== null ? ($nullable ? ' NULL' : ' NOT NULL') : '')
-				. ($extra !== null ? ' ' . $extra : '')
-				. ($comment !== null ? ' COMMENT ' . database::quote($comment) : '')
-			);
-		}
 
-		$db->execute();
+			$type = $PureFieldType['data_type'];
+			if (($PureFieldType['length'] ?? '') != '') {
+				if (str_contains($PureFieldType['length'], ',')) {
+					$parts = explode(',', $PureFieldType['length']);
+					$partsInt = [];
+					foreach ($parts as $part)
+						$partsInt[] = (int)$part;
+
+					$type .= '(' . implode(',', $partsInt) . ')';
+				} else
+					$type .= '(' . (int)$PureFieldType['length'] . ')';
+			}
+
+			if ($PureFieldType['is_unsigned'] ?? false)
+				$type .= ' UNSIGNED';
+
+			$db->setQuery('ALTER TABLE ' . $db->quoteName($realTableName) . ' CHANGE ' . $db->quoteName($oldColumnName) . ' ' . $db->quoteName($newColumnName)
+				. ' ' . $type
+				. (($PureFieldType['is_nullable'] ?? false) ? ' NULL' : ' NOT NULL')
+				. (($PureFieldType['default'] ?? '') != "" ? ' DEFAULT ' . (is_numeric($PureFieldType['default']) ? $PureFieldType['default'] : $db->quote($PureFieldType['default'])) : '')
+				. (($PureFieldType['autoincrement'] ?? false) ? ' AUTO_INCREMENT' : '')
+				. ' COMMENT ' . $db->quote($comment));
+			$db->execute();
+		}
 	}
 
 	public static function showTables()

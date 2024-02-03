@@ -76,17 +76,20 @@ class IntegrityFields extends IntegrityChecks
 			$found = false;
 
 			foreach ($projected_fields as $projected_field) {
+
 				$found_field = '';
 
 				if ($projected_field['realfieldname'] == 'id' and $existingFieldName == 'id') {
 					$found = true;
 					$found_field = '_id';
+					$projected_field['fieldtitle'] = 'Primary Key';
 					$projected_data_type = Fields::getProjectedFieldType('_id', null);
 
 					break;
 				} elseif ($projected_field['realfieldname'] == 'published' and $existingFieldName == 'published') {
 					$found = true;
 					$found_field = '_published';
+					$projected_field['fieldtitle'] = 'Publish Status';
 					$projected_data_type = Fields::getProjectedFieldType('_published', null);
 
 					break;
@@ -167,31 +170,9 @@ class IntegrityFields extends IntegrityChecks
 				}
 			} elseif ($found_field != '') {
 
-				//Check for virtuality
-				$isRequiredOrGenerated = (int)$projected_field['isrequired'];
-				if ($isRequiredOrGenerated == 2 or $isRequiredOrGenerated == 3) {
-					$expression = Fields::addFieldPrefixToExpression($ct->Table->tableid, $projected_field['defaultvalue']);
-					//$projected_data_type['generation_expression'] = $expression;
-					$projected_data_type['extra'] = ($isRequiredOrGenerated == 2 ? 'VIRTUAL' : 'STORED') . ' GENERATED';
-					//$projected_data_type['required_or_generated'] = $isRequiredOrGenerated;
-				} else {
-					//$projected_data_type['required_or_generated'] = null;
-				}
+				$ExistingFieldConvertedType = Fields::convertRawFieldType($ExistingField);
 
-
-				if (isset($ExistingField['extra']) and str_contains($ExistingField['extra'], 'GENERATED')) {
-
-					/*
-					$ExistingField['generation_expression'] = str_replace("_utf8mb3", "", $ExistingField['generation_expression']);
-					$ExistingField['generation_expression'] = str_replace('_utf8mb4\\\'', '\'', $ExistingField['generation_expression']);
-					$ExistingField['generation_expression'] = str_replace('\\\'', '\'', $ExistingField['generation_expression']);
-					$ExistingField['generation_expression'] = str_replace('`', '', $ExistingField['generation_expression']);
-					*/
-				}
-
-				if (!IntegrityFields::compareFieldTypes($ExistingField, $projected_data_type)) {
-
-					$PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
+				if (!IntegrityFields::compareFieldTypes($ExistingFieldConvertedType, $projected_data_type)) {
 
 					if ($found_field == '_id')
 						$nice_field_name = $ct->Table->realtablename . '.' . $ct->Table->realidfieldname;
@@ -212,7 +193,9 @@ class IntegrityFields extends IntegrityChecks
 						else
 							$real_field_name = $found_field;
 
-						if (Fields::fixMYSQLField($ct->Table->realtablename, $real_field_name, $PureFieldType, $msg)) {
+						$PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
+
+						if (Fields::fixMYSQLField($ct->Table->realtablename, $real_field_name, $PureFieldType, $msg, $projected_field['fieldtitle'])) {
 							$result .= '<p>' . common::translate('COM_CUSTOMTABLES_FIELD') . ' <span style="color:green;">'
 								. $nice_field_name . '</span> ' . common::translate('COM_CUSTOMTABLES_FIELD_FIXED') . '.</p>';
 						} else {
@@ -227,12 +210,12 @@ class IntegrityFields extends IntegrityChecks
 						if ($length != '')
 							$ExistingField['length'] = $length;
 
-						$existing_field_type_string = Fields::makeProjectedFieldType($ExistingField);
+						$existing_field_type_string = Fields::projectedFieldTypeToString($ExistingFieldConvertedType);
 
 						$result .= '<p>' . common::translate('COM_CUSTOMTABLES_FIELD') . ' <span style="color:orange;">' . $nice_field_name . '</span>'
 							. ' ' . common::translate('COM_CUSTOMTABLES_FIELD_HAS_WRONG_TYPE') . ' <span style="color:red;">'
 							. $existing_field_type_string . '</span> ' . common::translate('COM_CUSTOMTABLES_FIELD_INSTEAD_OF') . ' <span style="color:green;">'
-							. $PureFieldType . '</span> <a href="' . $link . 'task=fixfieldtype&fieldname=' . $existingFieldName . '">' . common::translate('COM_CUSTOMTABLES_FIELD_TOFIX') . '</a></p>';
+							. Fields::projectedFieldTypeToString($projected_data_type) . '</span> <a href="' . $link . 'task=fixfieldtype&fieldname=' . $existingFieldName . '">' . common::translate('COM_CUSTOMTABLES_FIELD_TOFIX') . '</a></p>';
 					}
 				}
 			}
@@ -249,56 +232,19 @@ class IntegrityFields extends IntegrityChecks
 		return $result;
 	}
 
-	public static function compareFieldTypes(array $existing_field_data_type, array $projected_field_data_type): bool
+	public static function compareFieldTypes(array $existing, array $projected): bool
 	{
-		$existing = (object)$existing_field_data_type;
-		$projected = (object)$projected_field_data_type;
+		// Check if the values for each key are the same
+		foreach ($existing as $key => $value) {
+			if ($value === null)
+				$value = '';
 
-		if ($existing->data_type != $projected->data_type)
-			return false;
-
-		//parse column_type
-		if ($existing->data_type == 'varchar' or $existing->data_type == 'char' or $existing->data_type == 'decimal') {
-
-			$length = self::parse_column_type($existing->column_type);
-
-			if ($length != '') {
-
-				if ($projected->length === null)
+			if (isset($projected[$key])) {
+				if (($projected[$key] ?? '') != ($value ?? '')) {
 					return false;
-
-				$projected_length = (string)$projected->length;
-
-				if ($length != $projected_length)
-					return false;
+				}
 			}
 		}
-
-		if (($existing->is_nullable == 'YES') != $projected->is_nullable) {
-			return false;
-		}
-
-		if ($projected->is_unsigned !== null) {
-			if (($existing->is_unsigned == 'YES') != $projected->is_unsigned) {
-				return false;
-			}
-		}
-
-		if ($projected->default !== null and $existing->column_default != $projected->default) {
-			return false;
-		}
-
-		if ($existing->extra != $projected->extra) {
-			return false;
-		} else {
-			/*
-			if (($existing->extra == 'VIRTUAL GENERATED' or $existing->extra == 'STORED GENERATED') and
-				$existing->generation_expression != $projected->generation_expression) {
-				return false;
-			}
-			*/
-		}
-
 		return true;
 	}
 
@@ -366,7 +312,8 @@ class IntegrityFields extends IntegrityChecks
 	protected static function addField($realtablename, $realfieldname, string $fieldType, string $typeParams)
 	{
 		$PureFieldType = Fields::getPureFieldType($fieldType, $typeParams);
-		Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, '');
+		$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
+		Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldTypeString, '');
 
 		if (defined('_JEXEC'))
 			Factory::getApplication()->enqueueMessage('Field "' . $realfieldname . '" added.', 'notice');

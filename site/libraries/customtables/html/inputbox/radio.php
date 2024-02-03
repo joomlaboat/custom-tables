@@ -47,9 +47,9 @@ class InputBox_radio extends BaseInputBox
 			if ($value == $v)
 				$this->attributes['checked'] = 'checked';
 
-			$this->attributes['id'] = $element_id . '_' . $i;
+			//$this->attributes['id'] = $element_id . '_' . $i;
 
-			$result .= '<input ' . self::attributes2String($this->attributes) . ' />'
+			$result .= '<input id="' . $element_id . '_' . $i . '" ' . self::attributes2String($this->attributes) . ' />'
 				. '<label for="' . $element_id . '_' . $i . '">' . $v . '</label></li>';
 
 			$i++;

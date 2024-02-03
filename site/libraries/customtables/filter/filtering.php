@@ -849,9 +849,9 @@ class Filtering
 			} else {
 				// Invalid date format, handle the error or set a default value
 				$fieldrowStart = Fields::FieldRowByName($valueStart, $this->ct->Table->fields);
-				$answer = $this->processDateSearchTags($valueStart, $fieldrowStart, $this->ct->Table->realtablename);
-				$valueStart = $answer['query'];
-				$titleStart = $answer['caption'];
+				//$answer = $valueStart;//$this->processDateSearchTags($valueStart, $fieldrowStart, $this->ct->Table->realtablename);
+				$valueStart = $valueStart;//$answer['query'];
+				$titleStart = $fieldrowStart['fieldtitle' . $this->ct->Languages->Postfix];//$answer['caption'];
 			}
 		}
 
@@ -864,9 +864,9 @@ class Filtering
 			} else {
 				// Invalid date format, handle the error or set a default value
 				$fieldrowEnd = Fields::FieldRowByName($valueEnd, $this->ct->Table->fields);
-				$answer = $this->processDateSearchTags($valueEnd, $fieldrowEnd, $this->ct->Table->realtablename);
-				$valueEnd = $answer['query'];
-				$titleEnd = $answer['caption'];
+				//$answer = $valueEnd;//$this->processDateSearchTags($valueEnd, $fieldrowEnd, $this->ct->Table->realtablename);
+				$valueEnd = $valueEnd;//$answer['query'];
+				$titleEnd = $fieldrowEnd['fieldtitle' . $this->ct->Languages->Postfix];//$answer['caption'];
 			}
 		}
 
@@ -893,6 +893,87 @@ class Filtering
 			//return $fieldrow1['realfieldname'] . '<=' . $valueEnd;
 		}
 		return $whereClause;
+	}
+
+	function Search_Date(string $fieldname, string $valueRaw, string $comparison_operator): MySQLWhereClause
+	{
+		$whereClause = new MySQLWhereClause();
+
+		//field 1
+		$fieldrow1 = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
+		if ($fieldrow1 !== null) {
+			//$answer = $this->processDateSearchTags($fieldname, $fieldrow1, $this->ct->Table->realtablename);
+			$value1 = $fieldrow1['realfieldname'];//$answer['query'];
+			$title1 = $fieldrow1['fieldtitle' . $this->ct->Languages->Postfix];//$answer['caption'];
+		} else {
+			$value1 = $fieldname;
+			$title1 = $fieldname;
+		}
+
+		//field 2
+		// Sanitize and validate date format
+		$dateFormat = 'Y-m-d'; // Adjust the format according to your needs
+
+		if ($valueRaw) {
+			$valueDateTime = DateTime::createFromFormat($dateFormat, $valueRaw);
+
+			if ($valueDateTime !== false) {
+				$value = $valueDateTime->format($dateFormat);
+			} else {
+				// Invalid date format, handle the error or set a default value
+				return $whereClause;
+			}
+		} else
+			return $whereClause;
+
+		$fieldrow2 = Fields::FieldRowByName($value, $this->ct->Table->fields);
+		if ($fieldrow2 !== null) {
+			//$answer = $this->processDateSearchTags($value, $fieldrow2, $this->ct->Table->realtablename);
+			$value2 = $value;//$answer['query'];
+			echo '$value2=' . $value2 . '<br>';
+			$title2 = $fieldrow2['fieldtitle' . $this->ct->Languages->Postfix];//$answer['caption'];$answer['caption'];
+		} else {
+			$value2 = $value;
+			$title2 = $value;
+		}
+
+
+		//Breadcrumbs
+		$this->PathValue[] = $title1 . ' ' . $comparison_operator . ' ' . $title2;
+
+		//Query condition
+		if ($value2 == 'NULL' and $comparison_operator == '=')
+			$whereClause->addCondition($value1, null, 'NULL');
+		//$query = $value1 . ' IS NULL';
+		elseif ($value2 == 'NULL' and $comparison_operator == '!=')
+			$whereClause->addCondition($value1, null, 'NOT NULL');
+		//$query = $value1 . ' IS NOT NULL';
+		else
+			$whereClause->addCondition($value1, $value2, $comparison_operator);
+		//$query = $value1 . ' ' . $comparison_operator . ' ' . $value2;
+		return $whereClause;
+	}
+
+	function getInt_vL($vL)
+	{
+		if (str_contains($vL, '$get_')) {
+			$getPar = str_replace('$get_', '', $vL);
+			$a = common::inputGetCmd($getPar, '');
+			if ($a == '')
+				return '';
+			return common::inputGetInt($getPar);
+		}
+		return $vL;
+	}
+
+	function getCmd_vL($vL)
+	{
+		if (str_contains($vL, '$get_')) {
+			$getPar = str_replace('$get_', '', $vL);
+			return common::inputGetCmd($getPar, '');
+		}
+
+		return $vL;
 	}
 
 	protected function processDateSearchTags(string $value, ?array $fieldrow, $esr_table_full): array
@@ -958,75 +1039,6 @@ class Filtering
 					'caption' => common::translate('COM_CUSTOMTABLES_DATE_NOW')];
 			}
 		}
-	}
-
-	function Search_Date(string $fieldname, string $valueRaw, string $comparison_operator): MySQLWhereClause
-	{
-		$whereClause = new MySQLWhereClause();
-
-		//field 1
-		$fieldrow1 = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
-		$answer = $this->processDateSearchTags($fieldname, $fieldrow1, $this->ct->Table->realtablename);
-		$value1 = $answer['query'];
-		$title1 = $answer['caption'];
-
-		//field 2
-		// Sanitize and validate date format
-		$dateFormat = 'Y-m-d'; // Adjust the format according to your needs
-
-		if ($valueRaw) {
-			$valueDateTime = DateTime::createFromFormat($dateFormat, $valueRaw);
-
-			if ($valueDateTime !== false) {
-				$value = $valueDateTime->format($dateFormat);
-			} else {
-				// Invalid date format, handle the error or set a default value
-				return $whereClause;
-			}
-		} else
-			return $whereClause;
-
-		$fieldrow2 = Fields::FieldRowByName($value, $this->ct->Table->fields);
-		$answer = $this->processDateSearchTags($value, $fieldrow2, $this->ct->Table->realtablename);
-		$value2 = $answer['query'];
-		$title2 = $answer['caption'];
-
-		//Breadcrumbs
-		$this->PathValue[] = $title1 . ' ' . $comparison_operator . ' ' . $title2;
-
-		//Query condition
-		if ($value2 == 'NULL' and $comparison_operator == '=')
-			$whereClause->addCondition($value1, null, 'NULL');
-		//$query = $value1 . ' IS NULL';
-		elseif ($value2 == 'NULL' and $comparison_operator == '!=')
-			$whereClause->addCondition($value1, null, 'NOT NULL');
-		//$query = $value1 . ' IS NOT NULL';
-		else
-			$whereClause->addCondition($value1, $value2, $comparison_operator);
-		//$query = $value1 . ' ' . $comparison_operator . ' ' . $value2;
-		return $whereClause;
-	}
-
-	function getInt_vL($vL)
-	{
-		if (str_contains($vL, '$get_')) {
-			$getPar = str_replace('$get_', '', $vL);
-			$a = common::inputGetCmd($getPar, '');
-			if ($a == '')
-				return '';
-			return common::inputGetInt($getPar);
-		}
-		return $vL;
-	}
-
-	function getCmd_vL($vL)
-	{
-		if (str_contains($vL, '$get_')) {
-			$getPar = str_replace('$get_', '', $vL);
-			return common::inputGetCmd($getPar, '');
-		}
-
-		return $vL;
 	}
 
 }//end class
