@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
+use CustomTables\LayoutEditor;
 use CustomTables\MySQLWhereClause;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
@@ -37,12 +38,17 @@ class CustomtablesViewLayouts extends HtmlView
 	 */
 
 	var CT $ct;
-	var $allTables;
+	var array $allTables;
 	var $document;
 	var $item;
+	var LayoutEditor $layoutEditor;
 
 	public function display($tpl = null)
 	{
+		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
+			. 'libraries' . DIRECTORY_SEPARATOR . 'layouteditor.php');
+		$this->layoutEditor = new LayoutEditor();
+
 		$model = $this->getModel();
 		$this->ct = $model->ct;
 		$layoutId = common::inputGetInt('id', 0);
@@ -229,17 +235,16 @@ class CustomtablesViewLayouts extends HtmlView
 		$result = '<div style="width: 100%;position: relative;">';
 
 		if ($value != "")
-			$result .= '				<div class="ct_tip">TIP: Double-Click on a Layout Tag to edit parameters.</div>';
-		$result .= '	</div>
-';
+			$result .= '<div class="ct_tip">TIP: Double-Click on a Layout Tag to edit parameters.</div>';
+
+		$result .= '</div>';
 
 		$textAreaId = 'jform_' . $id;
-		$textAreaCode = '<textarea name="jform[' . $id . ']" id="' . $textAreaId . '" filter="raw" style="width:100%" rows="30">' . htmlspecialchars($value ?? '') . '</textarea>';
+		$textAreaCode = '<textarea name="jform[' . $id . ']" id="' . $textAreaId . '" filter="raw" style="width:100%;" rows="30">' . htmlspecialchars($value ?? '') . '</textarea>';
 		$textAreaTabId = $id . '-tab';
 
-		$result .= renderEditor($textAreaCode, $textAreaId, $typeBoxId, $textAreaTabId, $onPageLoads);
-		$result .= '
-';
+		$result .= $this->layoutEditor->renderEditor($textAreaCode, $textAreaId, $typeBoxId, $textAreaTabId, $onPageLoads);
+
 		return $result;
 	}
 

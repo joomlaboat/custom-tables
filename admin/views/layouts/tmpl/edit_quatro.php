@@ -33,9 +33,6 @@ $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
-	. 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'layouteditor' . DIRECTORY_SEPARATOR . 'layouteditor.php');
-
-require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
 	. 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoflayouts.php');
 
 $onPageLoads = array();
@@ -168,7 +165,7 @@ foreach ($this->allTables as $table) {
 
     <div class="clearfix"></div>
 	<?php //echo JLayoutHelper::render('layouts.details_under', $this);
-	echo render_onPageLoads($onPageLoads, 4);
+	echo $this->layoutEditor->render_onPageLoads($onPageLoads, 4);
 	$this->getMenuItems();
 	?>
 
