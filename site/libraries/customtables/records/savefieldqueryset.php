@@ -761,15 +761,6 @@ class SaveFieldQuerySet
 	function checkIfFieldAlreadyInTheList(string $realFieldName): bool
 	{
 		return isset($this->row_new[$realFieldName]);
-		/*
-	foreach ($this->saveQuery as $query) {
-		$parts = explode('=', $query);
-
-		if ($parts[0] == $fieldName)
-			return true;
-	}
-	return false;
-		*/
 	}
 
 	public static function getUserIP(): string
