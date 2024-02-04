@@ -19,7 +19,6 @@ use Exception;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
-use JoomlaBasicMisc;
 
 class Params
 {
@@ -165,7 +164,7 @@ class Params
 		$this->getForceItemId($menu_params);
 
 		if (!$blockExternalVars and common::inputGetString('alias', ''))
-			$this->alias = JoomlaBasicMisc::slugify(common::inputGetString('alias'));
+			$this->alias = CTMiscHelper::slugify(common::inputGetString('alias'));
 		else
 			$this->alias = null;
 
@@ -366,7 +365,7 @@ class Params
 					return;
 				}
 			} elseif ($forceItemId != '') {
-				$this->ItemId = (int)JoomlaBasicMisc::FindItemidbyAlias($forceItemId);//Accepts menu Itemid and alias
+				$this->ItemId = (int)CTMiscHelper::FindItemidbyAlias($forceItemId);//Accepts menu Itemid and alias
 				return;
 			}
 		}

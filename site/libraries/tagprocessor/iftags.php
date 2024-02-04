@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 
 class tagProcessor_If
 {
@@ -31,7 +32,7 @@ class tagProcessor_If
 	public static function process(CT &$ct, string &$pageLayout, ?array &$row): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('if', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('if', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -56,7 +57,7 @@ class tagProcessor_If
 	protected static function parseIfStatements(string $statement, CT &$ct, string &$htmlresult, ?array &$row): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplaceAdvanced('{if:' . $statement . '}', '{endif}', $options, $htmlresult, '{if:');
+		$fList = CTMiscHelper::getListToReplaceAdvanced('{if:' . $statement . '}', '{endif}', $options, $htmlresult, '{if:');
 
 		$i = 0;
 
@@ -73,7 +74,7 @@ class tagProcessor_If
 					$opr = tagProcessor_If::getOpr($equation);
 
 					if ($opr != '') {
-						$pair = JoomlaBasicMisc::csv_explode($opr, $equation, '"', false);//true
+						$pair = CTMiscHelper::csv_explode($opr, $equation, '"', false);//true
 					} else {
 						//this to process boolean values. use example {if:[paid]}<b>Paid</b>{endif} TODO: or {if:paid}<b>Paid</b>{endif}, {if:paid} exuals to {if:[_value:paid]}
 						$opr = '!=';
@@ -243,7 +244,7 @@ class tagProcessor_If
 	public static function IFUserTypeStatment(string &$htmlresult, &$user, $currentUserId)
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('_if_usertype', $options, $htmlresult, '[]');
+		$fList = CTMiscHelper::getListToReplace('_if_usertype', $options, $htmlresult, '[]');
 
 		if ($currentUserId == 0 or count($user->groups) == 0) {
 			foreach ($options as $check_user_type) {

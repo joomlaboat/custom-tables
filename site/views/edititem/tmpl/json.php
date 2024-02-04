@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
 
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Session\Session;
 
 if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading)
@@ -53,7 +54,7 @@ $response_object['form'] = $form_items;
 $response_object['returnto'] = $encoded_returnto;
 $response_object['token'] = Session::getFormToken();
 
-$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Params->pageTitle, 'json');
+$filename = CTMiscHelper::makeNewFileName($this->ct->Params->pageTitle, 'json');
 
 header('Content-Disposition: attachment; filename="' . $filename . '"');
 header('Content-Type: application/json; charset=utf-8');

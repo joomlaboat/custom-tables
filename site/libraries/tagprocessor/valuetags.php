@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\CTUser;
 
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
@@ -55,7 +56,7 @@ class tagProcessor_Value
 					$items_to_replace = array_merge($items_to_replace, $temp_items_to_replace);
 
 				$ValueOptions = array();
-				$ValueList = JoomlaBasicMisc::getListToReplace($field->fieldname, $ValueOptions, $pageLayout, $tag_chars);
+				$ValueList = CTMiscHelper::getListToReplace($field->fieldname, $ValueOptions, $pageLayout, $tag_chars);
 
 				$fieldType = $field->type;
 				$fieldname = $field->fieldname;
@@ -101,7 +102,7 @@ class tagProcessor_Value
 				} else {
 					$i = 0;
 					foreach ($ValueOptions as $ValueOption) {
-						$value_option_list = JoomlaBasicMisc::csv_explode(',', $ValueOption, '"', false);
+						$value_option_list = CTMiscHelper::csv_explode(',', $ValueOption, '"', false);
 
 						$vlu = tagProcessor_Value::getValueByType($ct, $fieldRow, $row, $value_option_list);
 
@@ -133,7 +134,7 @@ class tagProcessor_Value
 		$items_to_replace = array();
 
 		$pureValueOptions = array();
-		$pureValueList = JoomlaBasicMisc::getListToReplace('_value', $pureValueOptions, $htmlresult, $tag_chars);
+		$pureValueList = CTMiscHelper::getListToReplace('_value', $pureValueOptions, $htmlresult, $tag_chars);
 		$p = 0;
 		foreach ($pureValueOptions as $pureValueOption) {
 			$pureValueOptionArr = explode(':', $pureValueOption);
@@ -260,7 +261,7 @@ class tagProcessor_Value
 
 							require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
 								. 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'filebox.php');
-							
+
 							$vlu = InputBox_filebox::process($getFileBoxRows[$fieldname], $field, $row[$ct->Table->realidfieldname], ['', 'link', '32', '_blank', ';']);
 						} elseif ($fieldType == 'records') {
 							$a = explode(",", $row[$field->realfieldname]);
@@ -382,7 +383,7 @@ class tagProcessor_Value
 	{
 		$items_to_replace = array();
 		$pureValueOptions = array();
-		$pureValueList = JoomlaBasicMisc::getListToReplace('_edit', $pureValueOptions, $htmlresult, $tag_chars);
+		$pureValueList = CTMiscHelper::getListToReplace('_edit', $pureValueOptions, $htmlresult, $tag_chars);
 
 		if (count($pureValueList) > 0) {
 			require_once(JPATH_SITE
@@ -429,7 +430,7 @@ class tagProcessor_Value
 
 						$value_option_list = array();
 						if (isset($pureValueOptionArr[1]))
-							$value_option_list = JoomlaBasicMisc::csv_explode(',', $pureValueOptionArr[1], '"', false);
+							$value_option_list = CTMiscHelper::csv_explode(',', $pureValueOptionArr[1], '"', false);
 
 						if ($fieldRow['type'] == 'multilangstring') {
 							if (isset($value_option_list[4])) {

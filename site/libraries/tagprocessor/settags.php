@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 
 /* All tags already implemented using Twig */
@@ -32,11 +33,11 @@ class tagProcessor_Set
 	protected static function setHeadTag(CT &$ct, string &$htmlresult)
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('headtag', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('headtag', $options, $htmlresult, '{}');
 
 		$i = 0;
 		foreach ($fList as $fItem) {
-			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+			$opts = CTMiscHelper::csv_explode(',', $options[$i], '"', false);
 
 			if ($ct->Env->isModal) {
 				$htmlresult = str_replace($fItem, $opts[0], $htmlresult);
@@ -52,11 +53,11 @@ class tagProcessor_Set
 	protected static function setMetaDescription(CT &$ct, string &$htmlresult)
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('metadescription', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('metadescription', $options, $htmlresult, '{}');
 
 		$i = 0;
 		foreach ($fList as $fItem) {
-			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+			$opts = CTMiscHelper::csv_explode(',', $options[$i], '"', false);
 			if ($ct->Env->isModal) {
 			} else {
 				$doc = Factory::getDocument();
@@ -73,11 +74,11 @@ class tagProcessor_Set
 	protected static function setMetaKeywords(CT &$ct, string &$htmlresult)
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('metakeywords', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('metakeywords', $options, $htmlresult, '{}');
 
 		$i = 0;
 		foreach ($fList as $fItem) {
-			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+			$opts = CTMiscHelper::csv_explode(',', $options[$i], '"', false);
 
 			if ($ct->Env->isModal) {
 
@@ -96,11 +97,11 @@ class tagProcessor_Set
 	protected static function setPageTitle(CT &$ct, string &$htmlresult)
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('pagetitle', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('pagetitle', $options, $htmlresult, '{}');
 		$document = Factory::getDocument();
 		$i = 0;
 		foreach ($fList as $fItem) {
-			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+			$opts = CTMiscHelper::csv_explode(',', $options[$i], '"', false);
 
 			if (!$ct->Env->isModal)
 				$document->setTitle(common::translate($opts[0]));

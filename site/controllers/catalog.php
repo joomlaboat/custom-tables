@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\CTUser;
@@ -91,7 +92,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 		$link .= (is_null($ct->Params->ModuleId) ? '' : '&ModuleId=' . $ct->Params->ModuleId);
 	}
 
-	$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
+	$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
 	if (!$edit_model->load($ct, false))
 		die('Model not loaded');
@@ -280,8 +281,8 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
 			$ct->app->setUserState('com_customtables.orderby_' . $ct->Params->ItemId, $order_by);
 
-			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
-			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');
+			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
+			$link = CTMiscHelper::deleteURLQueryOption($link, 'orderby');
 
 			return (object)array('link' => $link, 'msg' => null, 'status' => null);
 
@@ -291,8 +292,8 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
 			$ct->app->setUserState('com_customtables.limit_' . $ct->Params->ItemId, $limit);
 
-			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
-			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'limit');
+			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
+			$link = CTMiscHelper::deleteURLQueryOption($link, 'limit');
 
 			return (object)array('link' => $link, 'msg' => null, 'status' => null);
 
@@ -351,12 +352,12 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 				if ($ct->Params->cartReturnTo) {
 					$link = $ct->Params->cartReturnTo;
 				} else {
-					$theLink = JoomlaBasicMisc::curPageURL();
+					$theLink = CTMiscHelper::curPageURL();
 					$pair = explode('?', $theLink);
 					if (isset($pair[1])) {
-						$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'task');
-						$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'cartprefix');
-						$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], "listing_id");
+						$pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'task');
+						$pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'cartprefix');
+						$pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], "listing_id");
 					}
 
 					$link = implode('?', $pair);

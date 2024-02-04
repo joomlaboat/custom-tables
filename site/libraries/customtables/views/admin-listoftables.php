@@ -11,12 +11,12 @@
 namespace CustomTables;
 
 // no direct access
-use ESTables;
-use Exception;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
+
+use ESTables;
+use Exception;
 
 class ListOfTables
 {

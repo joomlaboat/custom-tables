@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 //use CustomTablesImageMethods;
-use Edit;
 use Exception;
 use JCaptcha;
 use Joomla\CMS\Factory;

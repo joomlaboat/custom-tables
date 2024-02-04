@@ -10,6 +10,7 @@
 
 // no direct access
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -37,11 +38,11 @@ class tagProcessor_CatalogTableView
 
 		//Catalog Table View
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('catalogtable', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('catalogtable', $options, $pageLayout, '{}');
 
 		$i = 0;
 		foreach ($fList as $fItem) {
-			$pair = JoomlaBasicMisc::csv_explode(';', $options[$i], '"', true);
+			$pair = CTMiscHelper::csv_explode(';', $options[$i], '"', true);
 			$fields = $pair[0];
 
 			if ($ct->Env->frmt == 'csv') {

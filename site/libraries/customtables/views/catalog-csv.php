@@ -10,8 +10,6 @@
 
 namespace CustomTables;
 
-use JoomlaBasicMisc;
-
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -50,7 +48,7 @@ class CatalogExportCSV
 		$pageLayoutContent = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $pageLayoutContent);
 
 		if ($this->ct->Params->allowContentPlugins)
-			JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);
+			CTMiscHelper::applyContentPlugins($pageLayoutContent);
 
 		return $pageLayoutContent;
 	}

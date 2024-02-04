@@ -10,6 +10,7 @@
 
 // no direct access
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -19,7 +20,7 @@ common::loadJSAndCSS($this->ct->Params, $this->ct->Env);
 $results = $this->details->render();
 
 if ($this->ct->Env->frmt == 'csv') {
-	$filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'csv');
+	$filename = CTMiscHelper::makeNewFileName($this->ct->document->getTitle(), 'csv');
 
 	if (ob_get_contents())
 		ob_end_clean();
@@ -33,7 +34,7 @@ if ($this->ct->Env->frmt == 'csv') {
 
 	die;//clean exit
 } elseif ($this->ct->Env->frmt == 'xml') {
-	$filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'xml');
+	$filename = CTMiscHelper::makeNewFileName($this->ct->document->getTitle(), 'xml');
 
 	ob_end_clean();
 

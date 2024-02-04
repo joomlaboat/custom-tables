@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\MySQLWhereClause;
@@ -171,13 +172,13 @@ class CT_FieldTypeTag_image
 
 	protected static function renderUploaderLimitations(): string
 	{
-		$max_file_size = JoomlaBasicMisc::file_upload_max_size();
+		$max_file_size = CTMiscHelper::file_upload_max_size();
 
 		return '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
 				' . common::translate("COM_CUSTOMTABLES_MIN_SIZE") . ': 10px x 10px<br/>
 				' . common::translate("COM_CUSTOMTABLES_MAX_SIZE") . ': 1000px x 1000px<br/>
-				' . common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '<br/>
+				' . common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '<br/>
 				' . common::translate("COM_CUSTOMTABLES_FORMAT") . ': JPEG, GIF, PNG, WEBP
 				</div>';
 	}

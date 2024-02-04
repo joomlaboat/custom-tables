@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\ImportTables;
 
@@ -64,7 +65,7 @@ class CustomTablesModelImportTables extends ListModel
 	function parseLine($allowedColumns, $fieldTypes, $line, &$maxId): array
 	{
 		$result = array();
-		$values = JoomlaBasicMisc::csv_explode(',', $line);
+		$values = CTMiscHelper::csv_explode(',', $line);
 		$maxId++;
 		$result[] = $maxId;                                // id
 

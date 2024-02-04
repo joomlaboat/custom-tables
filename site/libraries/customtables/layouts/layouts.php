@@ -18,7 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
-use JoomlaBasicMisc;
 use LayoutProcessor;
 
 class Layouts
@@ -48,14 +47,14 @@ class Layouts
 	function processLayoutTag(string &$htmlresult): bool
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('layout', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('layout', $options, $htmlresult, '{}');
 
 		if (count($fList) == 0)
 			return false;
 
 		$i = 0;
 		foreach ($fList as $fItem) {
-			$parts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+			$parts = CTMiscHelper::csv_explode(',', $options[$i], '"', false);
 			$layoutname = $parts[0];
 
 			$ProcessContentPlugins = false;
@@ -65,7 +64,7 @@ class Layouts
 			$layout = $this->getLayout($layoutname);
 
 			if ($ProcessContentPlugins)
-				JoomlaBasicMisc::applyContentPlugins($layout);
+				CTMiscHelper::applyContentPlugins($layout);
 
 			$htmlresult = str_replace($fItem, $layout, $htmlresult);
 			$i++;
@@ -509,7 +508,7 @@ class Layouts
 			$this->ct->errors[] = $twig->errorMessage;
 
 		if ($applyContentPlugins and $this->ct->Params->allowContentPlugins)
-			$content = JoomlaBasicMisc::applyContentPlugins($content);
+			$content = CTMiscHelper::applyContentPlugins($content);
 
 		return $content;
 	}
@@ -642,7 +641,7 @@ class Layouts
 				$this->ct->errors[] = $twig->errorMessage;
 
 			if ($this->ct->Params->allowContentPlugins)
-				$pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
+				$pageLayout = CTMiscHelper::applyContentPlugins($pageLayout);
 		}
 		return $pageLayout;
 	}

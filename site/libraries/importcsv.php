@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\InputBox_time;
@@ -74,7 +75,7 @@ function processFieldParams($fieldList, array $fields): array
 		if ($f_index >= 0) {
 			$fieldType = $fields[$f_index]->type;
 			if ($fieldType == 'sqljoin') {
-				$type_params = JoomlaBasicMisc::csv_explode(',', $fields[$f_index]->typeparams);
+				$type_params = CTMiscHelper::csv_explode(',', $fields[$f_index]->typeparams);
 
 				$tableName = $type_params[0];
 				$fieldName = $type_params[1];
@@ -222,7 +223,7 @@ function prepareSQLQuery($fieldList, $fields, $line): object
 		if ($f_index >= 0) {
 			$fieldType = $fields[$f_index]->type;
 			$fieldParamsString = $fields[$f_index]->typeparams;
-			$fieldParams = JoomlaBasicMisc::csv_explode(',', $fieldParamsString);
+			$fieldParams = CTMiscHelper::csv_explode(',', $fieldParamsString);
 
 			if ($fieldType == 'sqljoin') {
 				if (isset($fields[$f_index]->sqljoin)) {

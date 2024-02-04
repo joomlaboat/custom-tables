@@ -42,6 +42,7 @@ New:
 
 */
 
+use CustomTables\CTMiscHelper;
 use \CustomTables\Twig_Html_Tags;
 use \CustomTables\Twig_Url_Tags;
 use \CustomTables\Twig_Record_Tags;
@@ -71,7 +72,7 @@ class tagProcessor_Page
 	public static function FormatLink(Twig_Url_Tags &$ct_url, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('format', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('format', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -96,7 +97,7 @@ class tagProcessor_Page
 	public static function PathValue(Twig_Html_Tags &$ct_html, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('navigation', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('navigation', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -116,7 +117,7 @@ class tagProcessor_Page
 	protected static function AddNew(Twig_Html_Tags &$ct_html, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('add', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('add', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -138,7 +139,7 @@ class tagProcessor_Page
 	protected static function Pagination(Twig_Html_Tags &$ct_html, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('pagination', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('pagination', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -173,7 +174,7 @@ class tagProcessor_Page
 	protected static function PageToolBar(Twig_Html_Tags &$ct_html, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('batchtoolbar', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('batchtoolbar', $options, $pageLayout, '{}');
 
 		$i = 0;
 		foreach ($fList as $fItem) {
@@ -188,7 +189,7 @@ class tagProcessor_Page
 	static protected function PageToolBarCheckBox(Twig_Html_Tags &$ct_html, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('checkbox', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('checkbox', $options, $pageLayout, '{}');
 
 		foreach ($fList as $fItem) {
 			$vlu = $ct_html->batch('checkbox');
@@ -199,7 +200,7 @@ class tagProcessor_Page
 	static protected function SearchButton(Twig_Html_Tags &$ct_html, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('searchbutton', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('searchbutton', $options, $pageLayout, '{}');
 
 		if (count($fList) > 0) {
 			$opair = explode(',', $options[0]);
@@ -213,7 +214,7 @@ class tagProcessor_Page
 	static protected function SearchBOX(Twig_Html_Tags &$ct_html, string &$pageLayout)
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('search', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('search', $options, $pageLayout, '{}');
 
 		if (count($fList) == 0)
 			return;
@@ -224,7 +225,7 @@ class tagProcessor_Page
 			$vlu = '';
 
 			if ($options[$i] != '') {
-				$opair = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+				$opair = CTMiscHelper::csv_explode(',', $options[$i], '"', false);
 
 				$list_of_fields_string_array = explode(',', $opair[0]);
 
@@ -241,7 +242,7 @@ class tagProcessor_Page
 	static protected function RecordCountValue(CT &$ct, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('count', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('count', $options, $pageLayout, '{}');
 
 		foreach ($fList as $fItem) {
 
@@ -253,7 +254,7 @@ class tagProcessor_Page
 	static protected function RecordCount(CT &$ct, Twig_Html_Tags &$ct_html, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('recordcount', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('recordcount', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -271,7 +272,7 @@ class tagProcessor_Page
 	static protected function PrintButton(Twig_Html_Tags &$ct_html, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('print', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('print', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -290,7 +291,7 @@ class tagProcessor_Page
 	protected static function processRecordlist(string &$pageLayout, Twig_Record_Tags &$ct_record): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('recordlist', $options, $pageLayout, '{}', ':', '"');
+		$fList = CTMiscHelper::getListToReplace('recordlist', $options, $pageLayout, '{}', ':', '"');
 
 		$i = 0;
 

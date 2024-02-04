@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
-use JoomlaBasicMisc;
 
 class ListOfFields
 {
@@ -232,7 +231,7 @@ class ListOfFields
 	protected function checkTypeParams(string $type, string $typeParams): string
 	{
 		if ($type == 'sqljoin' or $type == 'records') {
-			$params = JoomlaBasicMisc::csv_explode(',', $typeParams, '"', false);
+			$params = CTMiscHelper::csv_explode(',', $typeParams, '"', false);
 
 			$error = [];
 
@@ -259,7 +258,7 @@ class ListOfFields
 
 	function getFieldTypesFromXML(bool $onlyWordpress = false): ?array
 	{
-		$xml = JoomlaBasicMisc::getXMLData('fieldtypes.xml');
+		$xml = CTMiscHelper::getXMLData('fieldtypes.xml');
 		if (count($xml) == 0 or !isset($xml->type))
 			return null;
 

@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\HTML\HTMLHelper;
-use JoomlaBasicMisc;
 use JESPagination;
 use JPluginHelper;
 
@@ -115,7 +114,7 @@ class Twig_Html_Tags
 		if (!$this->ct->Env->isUserAdministrator and !in_array($this->ct->Params->addUserGroups, $usergroups))
 			return ''; //Not permitted
 
-		$max_file_size = JoomlaBasicMisc::file_upload_max_size();
+		$max_file_size = CTMiscHelper::file_upload_max_size();
 
 		$fileid = common::generateRandomString();
 		$fieldid = '9999999';//some unique number. TODO
@@ -142,7 +141,7 @@ class Twig_Html_Tags
                     </script>
                     <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectname . '" id="' . $this->ct->Env->field_input_prefix . $objectname . '" value="" />
                     <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectname . '_filename" id="' . $this->ct->Env->field_input_prefix . $objectname . '_filename" value="" />
-			' . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
+			' . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '
                     </form>
                 </div>
 ';

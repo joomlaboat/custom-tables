@@ -39,7 +39,7 @@ if ($this->ct->Env->frmt == 'json') {
     if (is_null($filename))
         $filename = 'ct';
 
-    $filename = JoomlaBasicMisc::makeNewFileName($filename, 'json');
+    $filename = CTMiscHelper::makeNewFileName($filename, 'json');
 
     header('Content-Disposition: attachment; filename="' . $filename . '"');
     header('Content-Type: application/json; charset=utf-8');

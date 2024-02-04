@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\Filtering;
@@ -213,7 +214,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 								//Following apply to current table fields only and to only one (the last one in the statement)
 								$params = $fieldrow['typeparams'];
-								$parts = JoomlaBasicMisc::csv_explode(',', $params);
+								$parts = CTMiscHelper::csv_explode(',', $params);
 
 								$this->userIdField_UniqueUsers = false;
 								if (isset($parts[4]) and $parts[4] == 'unique')

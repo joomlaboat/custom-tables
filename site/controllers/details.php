@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
@@ -40,8 +41,8 @@ switch ($task) {
 
 			$model->load($ct);
 			$count = $model->setPublishStatus(1);
-			$link = JoomlaBasicMisc::curPageURL();
-			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
+			$link = CTMiscHelper::curPageURL();
+			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
 			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED');
 			if ($count == 1)
@@ -63,8 +64,8 @@ switch ($task) {
 		} else {
 			$model->load($ct);
 			$count = $model->setPublishStatus(0);
-			$link = JoomlaBasicMisc::curPageURL();
-			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
+			$link = CTMiscHelper::curPageURL();
+			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
 			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED');
 			if ($count == 1)
@@ -83,11 +84,11 @@ switch ($task) {
 			if ($ct->Params->cartReturnTo) {
 				$link = $ct->Params->cartReturnTo;
 			} else {
-				$theLink = JoomlaBasicMisc::curPageURL();
+				$theLink = CTMiscHelper::curPageURL();
 				$pair = explode('?', $theLink);
 				if (isset($pair[1])) {
-					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'task');
-					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'cartprefix');
+					$pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'task');
+					$pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'cartprefix');
 				}
 				$link = implode('?', $pair); //'index.php?option=com_customtables&view=catalog&Itemid='.common::inputGetInt(
 			}

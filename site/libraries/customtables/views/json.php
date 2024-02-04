@@ -10,8 +10,6 @@
 
 namespace CustomTables;
 
-use JoomlaBasicMisc;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
@@ -34,7 +32,7 @@ class ViewJSON
 			return (object)array('msg' => $twig->errorMessage, 'status' => 'error');
 
 		if ($this->ct->Params->allowContentPlugins)
-			JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);
+			CTMiscHelper::applyContentPlugins($pageLayoutContent);
 
 		if ($obEndClean) {
 
@@ -44,7 +42,7 @@ class ViewJSON
 			if (is_null($filename))
 				$filename = 'ct';
 
-			$filename = JoomlaBasicMisc::makeNewFileName($filename, 'json');
+			$filename = CTMiscHelper::makeNewFileName($filename, 'json');
 
 			header('Content-Disposition: attachment; filename="' . $filename . '"');
 			header('Content-Type: application/json; charset=utf-8');

@@ -18,7 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTablesImageMethods;
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
-use JoomlaBasicMisc;
 
 use CT_FieldTypeTag_file;
 use CT_FieldTypeTag_image;
@@ -388,12 +387,12 @@ class Value
 					$cleanQuotes = false;
 
 				if ($parameters[0] == "chars")
-					return JoomlaBasicMisc::charsTrimText($content, $count, $cleanBraces, $cleanQuotes);
+					return CTMiscHelper::charsTrimText($content, $count, $cleanBraces, $cleanQuotes);
 				else
-					return JoomlaBasicMisc::wordsTrimText($content, $count, $cleanBraces, $cleanQuotes);
+					return CTMiscHelper::wordsTrimText($content, $count, $cleanBraces, $cleanQuotes);
 
 			case "firstimage" :
-				return JoomlaBasicMisc::getFirstImage($content);
+				return CTMiscHelper::getFirstImage($content);
 
 			default:
 				return $content;
@@ -423,7 +422,7 @@ class Value
 			$value = '000000';
 
 		if (($option_list[0] ?? '') == "rgba") {
-			return JoomlaBasicMisc::colorStringValueToCSSRGB($value);
+			return CTMiscHelper::colorStringValueToCSSRGB($value);
 		} else
 			return "#" . $value;
 	}

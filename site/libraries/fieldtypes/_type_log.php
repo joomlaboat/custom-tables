@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\Fields;
 use CustomTables\Value_user;
 
@@ -28,8 +29,8 @@ class CT_FieldTypeTag_log
 	{
 		$current_json_data_size = CT_FieldTypeTag_log::getVersionDataSize($ct, $row);
 
-		$url = JoomlaBasicMisc::curPageURL();
-		$new_url = JoomlaBasicMisc::deleteURLQueryOption($url, 'version');
+		$url = CTMiscHelper::curPageURL();
+		$new_url = CTMiscHelper::deleteURLQueryOption($url, 'version');
 
 		$result = '';
 		$versions = explode(';', $rowValue);

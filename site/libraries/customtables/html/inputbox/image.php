@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CT_FieldTypeTag_image;
 use CustomTablesImageMethods;
-use JoomlaBasicMisc;
 use Joomla\CMS\Uri\Uri;
 
 class InputBox_image extends BaseInputBox
@@ -61,7 +60,7 @@ class InputBox_image extends BaseInputBox
 
 	protected function renderUploader(): string
 	{
-		$max_file_size = JoomlaBasicMisc::file_upload_max_size();
+		$max_file_size = CTMiscHelper::file_upload_max_size();
 		$fileId = common::generateRandomString();
 		$style = 'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
 		$element_id = 'ct_uploadfile_box_' . $this->field->fieldname;
@@ -102,6 +101,6 @@ class InputBox_image extends BaseInputBox
                 ' . $ct_getUploader . '
            </script>
            ' . $inputBoxFieldName . $inputBoxFieldName_FileName
-			. common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '</div>';
+			. common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '</div>';
 	}
 }

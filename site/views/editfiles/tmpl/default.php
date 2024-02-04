@@ -10,6 +10,7 @@
 
 // no direct access
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -111,7 +112,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                 </tr>
                 <tr>
                     <td colspan="2">
-						<?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?>
+						<?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . CTMiscHelper::formatSizeUnits($this->max_file_size); ?>
                         <br/>
 						<?php echo common::translate("COM_CUSTOMTABLES_FORMATS"); ?>:
                         <b><?php echo str_replace(' ', ', ', $this->allowedExtensions); ?></b>

@@ -17,6 +17,7 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . 
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
@@ -77,7 +78,7 @@ class CustomTablesViewFiles extends HtmlView
 				$fileNameField = $fileNameField_Row['realfieldname'];
 				$filepath = $this->row[$fileNameField];
 			} else {
-				$filepath = 'blob-' . strtolower(str_replace(' ', '', JoomlaBasicMisc::formatSizeUnits((int)$this->row[$this->field->realfieldname]))) . '.bin';
+				$filepath = 'blob-' . strtolower(str_replace(' ', '', CTMiscHelper::formatSizeUnits((int)$this->row[$this->field->realfieldname]))) . '.bin';
 			}
 
 		} else {
@@ -138,7 +139,7 @@ class CustomTablesViewFiles extends HtmlView
 		$mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
 
 		if ($filename == '') {
-			$file_extension = JoomlaBasicMisc::mime2ext($mime);
+			$file_extension = CTMiscHelper::mime2ext($mime);
 			$filename = 'blob.' . $file_extension;
 		}
 

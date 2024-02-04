@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 
 $document = Factory::getDocument();
@@ -73,7 +74,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/image
                     <td colspan="2">
                         <!--<?php //echo common::translate("COM_CUSTOMTABLES_MIN_SIZE"); ?>: 90px x 90px<br/>
                         <?php //echo common::translate("COM_CUSTOMTABLES_MAX_SIZE"); ?>: 1000px x 1000px<br/>-->
-						<?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?>
+						<?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . CTMiscHelper::formatSizeUnits($this->max_file_size); ?>
                         <br/>
 						<?php echo common::translate("COM_CUSTOMTABLES_FORMAT"); ?>: JPEG, GIF, PNG, WEBP
                     </td>

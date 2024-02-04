@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 
 class tagProcessor_Shopping
@@ -24,11 +25,11 @@ class tagProcessor_Shopping
 		$app = Factory::getApplication();
 
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('cart', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('cart', $options, $htmlresult, '{}');
 
 		$opt_i = 0;
 		foreach ($fList as $fItem) {
-			$theLink = JoomlaBasicMisc::curPageURL();
+			$theLink = CTMiscHelper::curPageURL();
 
 			$option_pair = explode(',', $options[$opt_i]);
 

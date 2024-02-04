@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
-use JoomlaBasicMisc;
 use ESTables;
 
 use Joomla\CMS\Router\Route;
@@ -67,13 +66,13 @@ class Twig_Record_Tags
 		$view_link = '';
 
 		if ($menu_item_alias != "") {
-			$menu_item = JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
+			$menu_item = CTMiscHelper::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
 			if ($menu_item != 0) {
 				$menu_item_id = (int)$menu_item['id'];
 				$link = $menu_item['link'];
 
 				if ($link != '')
-					$view_link = JoomlaBasicMisc::deleteURLQueryOption($link, 'view');
+					$view_link = CTMiscHelper::deleteURLQueryOption($link, 'view');
 			}
 		}
 
@@ -94,7 +93,7 @@ class Twig_Record_Tags
 
 		$view_link .= '&amp;Itemid=' . ($menu_item_id == 0 ? $this->ct->Params->ItemId : $menu_item_id);
 		$view_link .= (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId);
-		$view_link = JoomlaBasicMisc::deleteURLQueryOption($view_link, 'returnto');
+		$view_link = CTMiscHelper::deleteURLQueryOption($view_link, 'returnto');
 
 		if ($add_returnto) {
 			if ($custom_not_base64_returnto)
@@ -178,7 +177,7 @@ class Twig_Record_Tags
 
 		foreach ($join_table_fields as $join_table_field) {
 			if ($join_table_field['type'] == 'sqljoin') {
-				$typeParams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
+				$typeParams = CTMiscHelper::csv_explode(',', $join_table_field['typeparams'], '"', false);
 				$join_table_join_to_table = $typeParams[0];
 				if ($join_table_join_to_table == $this->ct->Table->tablename)
 					return intval($this->advancedJoin('count', $join_table, '_id', $join_table_field['fieldname'], '_id', $filter));
@@ -402,7 +401,7 @@ class Twig_Record_Tags
 
 		foreach ($join_table_fields as $join_table_field) {
 			if ($join_table_field['type'] == 'sqljoin') {
-				$typeParams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
+				$typeParams = CTMiscHelper::csv_explode(',', $join_table_field['typeparams'], '"', false);
 				$join_table_join_to_table = $typeParams[0];
 				if ($join_table_join_to_table == $this->ct->Table->tablename)
 					return $this->advancedJoin($function, $join_table, '_id', $join_table_field['fieldname'], $value_field, $filter);
@@ -478,7 +477,7 @@ class Twig_Record_Tags
 
 		foreach ($join_table_fields as $join_table_field) {
 			if ($join_table_field['type'] == 'sqljoin') {
-				$typeParams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
+				$typeParams = CTMiscHelper::csv_explode(',', $join_table_field['typeparams'], '"', false);
 				$join_table_join_to_table = $typeParams[0];
 				if ($join_table_join_to_table == $this->ct->Table->tablename) {
 					$complete_filter = $join_table_field['fieldname'] . '=' . $this->ct->Table->record[$this->ct->Table->realidfieldname];

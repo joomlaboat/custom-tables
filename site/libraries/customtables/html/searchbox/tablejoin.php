@@ -19,7 +19,6 @@ use ESTables;
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
-use JoomlaBasicMisc;
 use LayoutProcessor;
 
 //use CustomTables\ProInputBoxTableJoin;
@@ -197,7 +196,7 @@ class Search_tablejoin extends BaseSearch
 					$ct->errors[] = $twig->errorMessage;
 
 			} else
-				$v = JoomlaBasicMisc::processValue($field, $ct, $row);//TODO try to replace processValue function
+				$v = CTMiscHelper::processValue($field, $ct, $row);//TODO try to replace processValue function
 
 			if ($dynamic_filter != '')
 				$d = $row[$ct->Env->field_prefix . $dynamic_filter];

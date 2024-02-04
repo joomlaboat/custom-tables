@@ -20,6 +20,7 @@ require_once('render_csv.php');
 require_once('render_json.php');
 require_once('render_image.php');
 
+use CustomTables\CTMiscHelper;
 use CustomTables\Fields;
 use CustomTables\TwigProcessor;
 
@@ -35,11 +36,11 @@ class tagProcessor_Catalog
 	{
 		$vlu = '';
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('catalog', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('catalog', $options, $pageLayout, '{}');
 
 		$i = 0;
 		foreach ($fList as $fItem) {
-			$pair = JoomlaBasicMisc::csv_explode(',', $options[$i]);
+			$pair = CTMiscHelper::csv_explode(',', $options[$i]);
 
 			$tableClass = $pair[0];
 			$notable = $pair[1] ?? '';

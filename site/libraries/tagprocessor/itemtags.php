@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\RecordToolbar;
 use CustomTables\CTUser;
 use CustomTables\Twig_Record_Tags;
@@ -123,7 +124,7 @@ class tagProcessor_Item
 	protected static function processLink(Twig_Record_Tags $ct_record, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('link', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('link', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -138,7 +139,7 @@ class tagProcessor_Item
 	protected static function processNoReturnLink(Twig_Record_Tags $ct_record, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('linknoreturn', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('linknoreturn', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -155,7 +156,7 @@ class tagProcessor_Item
 		$htmlresult = str_replace('{_value:published}', $row['listing_published'] == 1, $htmlresult);
 
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('published', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('published', $options, $htmlresult, '{}');
 
 		$i = 0;
 		foreach ($fList as $fItem) {
@@ -175,13 +176,13 @@ class tagProcessor_Item
 	protected static function GetSQLJoin(Twig_Record_Tags $ct_record, string &$htmlresult): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('sqljoin', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('sqljoin', $options, $htmlresult, '{}');
 		if (count($fList) == 0)
 			return;
 
 		$i = 0;
 		foreach ($fList as $fItem) {
-			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i]);
+			$opts = CTMiscHelper::csv_explode(',', $options[$i]);
 
 			if (count($opts) >= 5) //don't even try if less than 5 parameters
 			{
@@ -190,7 +191,7 @@ class tagProcessor_Item
 				$field1_findWhat = $opts[2];
 				$field2_lookWhere = $opts[3];
 
-				$opt4_pair = JoomlaBasicMisc::csv_explode(':', $opts[4]);
+				$opt4_pair = CTMiscHelper::csv_explode(':', $opts[4]);
 				$FieldName = $opt4_pair[0]; //The field to get value from
 				if (isset($opt4_pair[1])) //Custom parameters
 				{
@@ -215,7 +216,7 @@ class tagProcessor_Item
 	protected static function GetCustomToolBar(CT &$ct, string &$htmlresult, ?array $row): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('toolbar', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('toolbar', $options, $htmlresult, '{}');
 
 		if (count($fList) == 0)
 			return;

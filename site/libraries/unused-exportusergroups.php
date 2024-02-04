@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component and WordPress 6.x Plugin
+ * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -8,14 +8,13 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-use CustomTables\common;
-use CustomTables\database;
-use CustomTables\ImportTables;
-use CustomTables\MySQLWhereClause;
+namespace CustomTables;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC')) {
 	die('Restricted access');
 }
+
+use Exception;
 
 //------------- CURRENTLY UNUSED
 

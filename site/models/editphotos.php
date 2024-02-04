@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
@@ -57,7 +58,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		$app = Factory::getApplication();
 		$params = $app->getParams();
 
-		$this->maxfilesize = JoomlaBasicMisc::file_upload_max_size();
+		$this->maxfilesize = CTMiscHelper::file_upload_max_size();
 
 		$this->imagefolderword = 'esimages';
 		$this->imagefolderweb = 'images/esimages';
@@ -256,7 +257,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		}
 
 		//Check file
-		if (!$this->imagemethods->CheckImage($uploadedfile, JoomlaBasicMisc::file_upload_max_size()))//$this->maxfilesize
+		if (!$this->imagemethods->CheckImage($uploadedfile, CTMiscHelper::file_upload_max_size()))//$this->maxfilesize
 		{
 			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'), 'error');
 			unlink($uploadedfile);

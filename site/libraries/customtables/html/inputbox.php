@@ -24,8 +24,6 @@ use tagProcessor_Value;
 use CustomTables\ProInputBoxTableJoin;
 use CustomTables\ProInputBoxTableJoinList;
 
-use JoomlaBasicMisc;
-
 class Inputbox
 {
 	var CT $ct;
@@ -258,7 +256,7 @@ class Inputbox
 
 					if ($value != '') {
 						if ($this->ct->Params->allowContentPlugins)
-							JoomlaBasicMisc::applyContentPlugins($value);
+							CTMiscHelper::applyContentPlugins($value);
 
 						if ($this->field->type == 'alias') {
 							$listing_id = $row[$this->ct->Table->realidfieldname] ?? 0;

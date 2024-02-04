@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\TwigProcessor;
 
 trait render_csv
@@ -46,7 +47,7 @@ trait render_csv
 		$fields = str_replace("\n", '', $fields);
 		$fields = str_replace("\r", '', $fields);
 
-		$fieldarray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
+		$fieldarray = CTMiscHelper::csv_explode(',', $fields, '"', true);
 
 		//prepare header and record layouts
 		$result = '';
@@ -56,7 +57,7 @@ trait render_csv
 		$header_fields = array();
 		$line_fields = array();
 		foreach ($fieldarray as $field) {
-			$fieldpair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
+			$fieldpair = CTMiscHelper::csv_explode(':', $field, '"', false);
 			$header_fields[] = trim(common::ctStripTags(html_entity_decode($fieldpair[0])));//header
 			if (isset($fieldpair[1]))
 				$vlu = str_replace('"', '', $fieldpair[1]);

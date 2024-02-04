@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Version;
-use JoomlaBasicMisc;
 
 class Documentation
 {
@@ -40,7 +39,7 @@ class Documentation
 
 	function getFieldTypes(): string
 	{
-		$xml = JoomlaBasicMisc::getXMLData('fieldtypes.xml');
+		$xml = CTMiscHelper::getXMLData('fieldtypes.xml');
 		if (count($xml) == 0 or !isset($xml->type))
 			return '';
 
@@ -692,7 +691,7 @@ class Documentation
 
 	function getLayoutTags(): string
 	{
-		$xml = JoomlaBasicMisc::getXMLData('tags.xml');
+		$xml = CTMiscHelper::getXMLData('tags.xml');
 
 		if (count($xml) == 0)
 			return '';
@@ -910,7 +909,7 @@ if ($this->onlyWordpress) {
 		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'views'
 			. DIRECTORY_SEPARATOR . 'catalog' . DIRECTORY_SEPARATOR . 'tmpl';
 
-		$xml = JoomlaBasicMisc::getXMLData('default.xml', $path);
+		$xml = CTMiscHelper::getXMLData('default.xml', $path);
 
 		if (count($xml) == 0)
 			return '';

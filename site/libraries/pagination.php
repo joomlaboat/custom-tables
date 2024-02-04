@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Object\CMSObject;
@@ -320,8 +321,8 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
 			}
 		}
 
-		$query_paramsPlusPrefix = JoomlaBasicMisc::curPageURL();
-		$query_paramsPlusPrefix = JoomlaBasicMisc::deleteURLQueryOption($query_paramsPlusPrefix, 'start');
+		$query_paramsPlusPrefix = CTMiscHelper::curPageURL();
+		$query_paramsPlusPrefix = CTMiscHelper::deleteURLQueryOption($query_paramsPlusPrefix, 'start');
 
 		if ($query_params != '')
 			$query_paramsPlusPrefix .= (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . $this->prefix;

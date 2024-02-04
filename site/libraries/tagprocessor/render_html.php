@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\TwigProcessor;
 
 trait render_html
@@ -29,7 +30,7 @@ trait render_html
 		$fields = str_replace("\n", '', $fields);
 		$fields = str_replace("\r", '', $fields);
 
-		$fieldarray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
+		$fieldarray = CTMiscHelper::csv_explode(',', $fields, '"', true);
 
 		//prepare header and record layouts
 		$result = '
@@ -38,7 +39,7 @@ trait render_html
 		$recordLine = '<tr id="ctTable_' . $ct->Table->tableid . '_{{ record.id }}">';
 
 		foreach ($fieldarray as $field) {
-			$fieldpair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
+			$fieldpair = CTMiscHelper::csv_explode(':', $field, '"', false);
 
 			if (isset($fieldpair[2]) and $fieldpair[2] != '')
 				$result .= '<th ' . $fieldpair[2] . '>' . $fieldpair[0] . '</th>';//header
@@ -109,7 +110,7 @@ trait render_html
 		$fieldsFound = [];
 		foreach ($ct->Table->fields as $field) {
 			$options = array();
-			$fList = JoomlaBasicMisc::getListToReplace($field['fieldname'], $options, $htmlresult, '[]', ':', '"');
+			$fList = CTMiscHelper::getListToReplace($field['fieldname'], $options, $htmlresult, '[]', ':', '"');
 			if (count($fList) > 0)
 				$fieldsFound[] = $field['fieldname'];
 		}

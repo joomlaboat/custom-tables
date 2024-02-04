@@ -91,7 +91,7 @@ class InputBox_filebox extends BaseInputBox
 
 		foreach ($FileBoxRows as $fileRow) {
 			$filename = $field->ct->Table->tableid . '_' . $field->fieldname . '_' . $fileRow->fileid . '.' . $fileRow->file_ext;
-			$fileSRCListArray[] = self::process($filename, $field, $option_list, $listing_id);
+			$fileSRCListArray[] = self::process($filename, $field, $listing_id, $option_list);
 		}
 
 		$listFormat = '';

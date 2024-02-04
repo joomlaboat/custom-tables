@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use DateTime;
 use ESTables;
 use Exception;
-use JoomlaBasicMisc;
 use LayoutProcessor;
 
 class Filtering
@@ -104,7 +103,7 @@ class Filtering
 				$this->ct->errors[] = $twig->errorMessage;
 
 			if ($this->ct->Params->allowContentPlugins)
-				$paramWhere = JoomlaBasicMisc::applyContentPlugins($paramWhere);
+				$paramWhere = CTMiscHelper::applyContentPlugins($paramWhere);
 		}
 
 		//This is old and probably not needed any more because we use MySQLWhereClause class that sanitize individual values.
@@ -158,7 +157,7 @@ class Filtering
 					$comparison_operator = '>';
 
 				if ($comparison_operator != '') {
-					$whr = JoomlaBasicMisc::csv_explode($comparison_operator, $comparison_operator_str, '"', false);
+					$whr = CTMiscHelper::csv_explode($comparison_operator, $comparison_operator_str, '"', false);
 
 					if (count($whr) == 2) {
 						$fieldNamesString = trim(preg_replace("/[^a-zA-Z\d,:\-_;]/", "", trim($whr[0])));
@@ -360,7 +359,7 @@ class Filtering
 
 				foreach ($vList as $vL) {
 					// Filter Title
-					$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams'], '"', false);
+					$typeParamsArray = CTMiscHelper::csv_explode(',', $fieldrow['typeparams'], '"', false);
 
 					$filterTitle = '';
 					if (count($typeParamsArray) < 1)
@@ -445,7 +444,7 @@ class Filtering
 				$vList = explode(',', $this->getString_vL($value));
 
 				// Filter Title
-				$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams']);
+				$typeParamsArray = CTMiscHelper::csv_explode(',', $fieldrow['typeparams']);
 				$filterTitle = '';
 
 				if (count($typeParamsArray) < 2)
@@ -1020,7 +1019,7 @@ class Filtering
 			}
 
 			$options = array();
-			$fList = JoomlaBasicMisc::getListToReplace('now', $options, $value, '{}');
+			$fList = CTMiscHelper::getListToReplace('now', $options, $value, '{}');
 
 			if (count($fList) == 0) {
 				return ['query' => database::quote($value),
@@ -1069,7 +1068,7 @@ class LinkJoinFilters
 	static protected function getFilterElement_SqlJoin($typeParams, $control_name, $filterValue, $control_name_postfix = ''): string
 	{
 		$result = '';
-		$pair = JoomlaBasicMisc::csv_explode(',', $typeParams, '"', false);
+		$pair = CTMiscHelper::csv_explode(',', $typeParams, '"', false);
 
 		$tablename = $pair[0];
 		if (isset($pair[1]))

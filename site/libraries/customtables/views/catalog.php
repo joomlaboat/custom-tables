@@ -11,7 +11,6 @@
 namespace CustomTables;
 
 use Exception;
-use JoomlaBasicMisc;
 use LayoutProcessor;
 use tagProcessor_Catalog;
 use tagProcessor_CatalogTableView;
@@ -230,7 +229,7 @@ class Catalog
 		}
 
 		if ($this->ct->Params->allowContentPlugins)
-			$pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
+			$pageLayout = CTMiscHelper::applyContentPlugins($pageLayout);
 
 		return $pageLayout;
 	}

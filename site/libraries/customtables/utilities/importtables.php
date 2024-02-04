@@ -12,7 +12,6 @@ namespace CustomTables;
 
 use Exception;
 use ESTables;
-use JoomlaBasicMisc;
 use JTableNested;
 
 // no direct access
@@ -521,7 +520,7 @@ class ImportTables
 			$new_menuType = $menuitem_new['menutype'];
 
 		//Check NEW $menuitem_new['menutype']
-		$new_menutype_alias = substr(JoomlaBasicMisc::slugify($new_menuType), 0, 24);
+		$new_menutype_alias = substr(CTMiscHelper::slugify($new_menuType), 0, 24);
 		$menutype_old = ImportTables::getRecordByField('#__menu_types', 'menutype', $new_menutype_alias, false);
 
 		if (!is_array($menutype_old) or count($menutype_old) == 0) {
@@ -643,7 +642,7 @@ class ImportTables
 	 */
 	public static function addMenu($title, $alias, $link, $menuTypeOrTitle, $extension_name, $access_, $menuParamsString, $home = 0): bool
 	{
-		$menuType = JoomlaBasicMisc::slugify($menuTypeOrTitle);
+		$menuType = CTMiscHelper::slugify($menuTypeOrTitle);
 		ImportTables::addMenutypeIfNotExist($menuType, $menuTypeOrTitle);
 
 		if ((int)$access_ == 0) {

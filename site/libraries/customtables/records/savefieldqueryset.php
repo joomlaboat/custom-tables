@@ -29,7 +29,6 @@ use tagProcessor_If;
 use tagProcessor_Page;
 use tagProcessor_Value;
 use CustomTables\CustomPHP\CleanExecute;
-use JoomlaBasicMisc;
 
 class SaveFieldQuerySet
 {
@@ -661,7 +660,7 @@ class SaveFieldQuerySet
 
 	public function prepare_alias_type_value(?string $listing_id, string $value)
 	{
-		$value = JoomlaBasicMisc::slugify($value);
+		$value = CTMiscHelper::slugify($value);
 
 		if ($value == '')
 			return '';
@@ -995,11 +994,11 @@ class SaveFieldQuerySet
 		$this->ct->Table->loadRecord($listing_id);
 
 		//Prepare Email List
-		$emails_raw = JoomlaBasicMisc::csv_explode(',', $emails, '"', true);
+		$emails_raw = CTMiscHelper::csv_explode(',', $emails, '"', true);
 
 		$emails = array();
 		foreach ($emails_raw as $SendToEmail) {
-			$EmailPair = JoomlaBasicMisc::csv_explode(':', trim($SendToEmail));
+			$EmailPair = CTMiscHelper::csv_explode(':', trim($SendToEmail));
 			$Layouts = new Layouts($this->ct);
 			$EmailTo = $Layouts->parseRawLayoutContent(trim($EmailPair[0]), false);
 
@@ -1029,7 +1028,7 @@ class SaveFieldQuerySet
 			$attachments = [];
 
 			$options = array();
-			$fList = JoomlaBasicMisc::getListToReplace('attachment', $options, $note, '{}');
+			$fList = CTMiscHelper::getListToReplace('attachment', $options, $note, '{}');
 			$i = 0;
 			$note_final = $note;
 			foreach ($fList as $fItem) {

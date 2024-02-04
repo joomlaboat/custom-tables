@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -44,7 +45,7 @@ class CustomTablesViewEditFiles extends HtmlView
 		foreach ($this->files as $file)
 			$this->idList[] = $file->fileid;
 
-		$this->max_file_size = JoomlaBasicMisc::file_upload_max_size();
+		$this->max_file_size = CTMiscHelper::file_upload_max_size();
 		$this->FileBoxTitle = $this->Model->FileBoxTitle;
 		$this->listing_id = $this->Model->ct->Params->listing_id;
 		$this->fileboxname = $this->Model->fileboxname;

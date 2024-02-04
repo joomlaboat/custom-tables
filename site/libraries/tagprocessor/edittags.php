@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\Fields;
 use CustomTables\Twig_Html_Tags;
 
@@ -34,7 +35,7 @@ class tagProcessor_Edit
 	protected static function process_captcha($ct_html, &$pageLayout): void
 	{
 		$options = [];
-		$captchas = JoomlaBasicMisc::getListToReplace('captcha', $options, $pageLayout, '{}');
+		$captchas = CTMiscHelper::getListToReplace('captcha', $options, $pageLayout, '{}');
 
 		foreach ($captchas as $captcha) {
 			$captcha_code = $ct_html->captcha();
@@ -45,13 +46,13 @@ class tagProcessor_Edit
 	protected static function process_button($ct_html, &$pageLayout)
 	{
 		$options = [];
-		$buttons = JoomlaBasicMisc::getListToReplace('button', $options, $pageLayout, '{}');
+		$buttons = CTMiscHelper::getListToReplace('button', $options, $pageLayout, '{}');
 
 		if (count($buttons) == 0)
 			return null;
 
 		for ($i = 0; $i < count($buttons); $i++) {
-			$option = JoomlaBasicMisc::csv_explode(',', $options[$i]);
+			$option = CTMiscHelper::csv_explode(',', $options[$i]);
 
 			if ($option[0] != '')
 				$type = $option[0];//button set
@@ -104,7 +105,7 @@ class tagProcessor_Edit
 		for ($f = 0; $f < count($inputBox->ct->Table->fields); $f++) {
 			$fieldrow = $inputBox->ct->Table->fields[$f];
 			$options = array();
-			$entries = JoomlaBasicMisc::getListToReplace($fieldrow['fieldname'], $options, $pageLayout, '[]');
+			$entries = CTMiscHelper::getListToReplace($fieldrow['fieldname'], $options, $pageLayout, '[]');
 
 			if (count($entries) > 0) {
 				for ($i = 0; $i < count($entries); $i++) {
@@ -113,7 +114,7 @@ class tagProcessor_Edit
 						$ct->editFields[] = $fieldrow['fieldname'];
 						$newReplaceItCode = '';
 					} else {
-						$option_list = JoomlaBasicMisc::csv_explode(',', $options[$i]);
+						$option_list = CTMiscHelper::csv_explode(',', $options[$i]);
 
 						$result = '';
 

@@ -11,6 +11,7 @@
 
 // no direct access
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\TwigProcessor;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -29,7 +30,7 @@ trait render_image
 
 		$IG = new IG();
 
-		$IG->filename = JoomlaBasicMisc::makeNewFileName($ct->Params->pageTitle, '');
+		$IG->filename = CTMiscHelper::makeNewFileName($ct->Params->pageTitle, '');
 		$IG->setImageGeneratorProfileFromText($pageLayout);
 
 		$image_width = $IG->width;

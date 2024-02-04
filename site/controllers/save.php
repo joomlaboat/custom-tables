@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 
@@ -114,7 +115,7 @@ function CustomTablesSave(string $task, $this_)
 			$isOk = $model->store($link);
 
 		if ($task == 'saveandcontinue') {
-			$link = JoomlaBasicMisc::deleteURLQueryOption($link, "listing_id");
+			$link = CTMiscHelper::deleteURLQueryOption($link, "listing_id");
 
 			if (!str_contains($link, "?"))
 				$link .= '?';

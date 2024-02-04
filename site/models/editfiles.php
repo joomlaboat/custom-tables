@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
@@ -44,7 +45,7 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 
 		$this->allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb pages';
 
-		$this->maxfilesize = JoomlaBasicMisc::file_upload_max_size();
+		$this->maxfilesize = CTMiscHelper::file_upload_max_size();
 		$this->filemethods = new CustomTablesFileMethods;
 
 		$this->ct->getTable($this->ct->Params->tableName, null);

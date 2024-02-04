@@ -11,6 +11,7 @@
 // no direct access
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -21,7 +22,7 @@ trait render_xlsx
 
 	protected static function get_CatalogTable_XLSX(CT &$ct, $fields)
 	{
-		$filename = JoomlaBasicMisc::makeNewFileName($ct->Params->pageTitle, 'xlsx');
+		$filename = CTMiscHelper::makeNewFileName($ct->Params->pageTitle, 'xlsx');
 
 		if (ob_get_contents()) ob_end_clean();
 		/** Include PHPExcel */
@@ -34,7 +35,7 @@ trait render_xlsx
 		$fields = str_replace("\n", '', $fields);
 		$fields = str_replace("\r", '', $fields);
 
-		$fieldArray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
+		$fieldArray = CTMiscHelper::csv_explode(',', $fields, '"', true);
 
 		$sheet_name = $ct->Params->pageTitle;
 
@@ -55,13 +56,13 @@ trait render_xlsx
 		$column = 0;
 		foreach ($fieldArray as $field) {
 
-			$fieldPair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
+			$fieldPair = CTMiscHelper::csv_explode(':', $field, '"', false);
 
 			$pos = self::num2alpha($column) . '1';
 
 			$value = $fieldPair[0];
 
-			$value = JoomlaBasicMisc::strip_tags_content($value, '<p><br><i><u><b><span>', FALSE);
+			$value = CTMiscHelper::strip_tags_content($value, '<p><br><i><u><b><span>', FALSE);
 
 			$value = common::ctStripTags($value);//, '<center><p><br><i><u><b><span>');
 			self::simpleHTMLCorrections($value);
@@ -82,7 +83,7 @@ trait render_xlsx
 
 			foreach ($ct->Records as $row) {
 				$htmlresult = $LayoutProc->fillLayout($row);
-				$htmlresult = JoomlaBasicMisc::strip_tags_content($htmlresult, '<a><p><br><i><u><b><span>', FALSE);
+				$htmlresult = CTMiscHelper::strip_tags_content($htmlresult, '<a><p><br><i><u><b><span>', FALSE);
 				$htmlresult = common::ctStripTags($htmlresult);//, '<center><p><br><i><u><b><span>');
 				$records[] = $htmlresult;//$richText;
 			}

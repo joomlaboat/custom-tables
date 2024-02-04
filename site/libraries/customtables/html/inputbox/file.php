@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CT_FieldTypeTag_file;
 use ESFileUploader;
-use JoomlaBasicMisc;
 use Joomla\CMS\Uri\Uri;
 
 class InputBox_file extends BaseInputBox
@@ -138,7 +137,7 @@ class InputBox_file extends BaseInputBox
 				$custom_max_size = $custom_max_size * 1000000; //to change 20 to 20MB
 		}
 
-		$max_file_size = JoomlaBasicMisc::file_upload_max_size($custom_max_size);
+		$max_file_size = CTMiscHelper::file_upload_max_size($custom_max_size);
 
 		$file_id = common::generateRandomString();
 		$urlstr = Uri::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
@@ -185,7 +184,7 @@ class InputBox_file extends BaseInputBox
 			. '<input type="hidden" name="' . $field->prefix . $field->fieldname . '" id="' . $field->prefix . $field->fieldname . '" value="" />'
 			. '<input type="hidden" name="' . $field->prefix . $field->fieldname . '_filename" id="' . $field->prefix . $field->fieldname . '_filename" value="" />'
 			. common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>'
-			. common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size)
+			. common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size)
 			. '</div>';
 	}
 }

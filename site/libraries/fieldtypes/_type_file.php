@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Field;
@@ -326,14 +327,14 @@ class CT_FieldTypeTag_file
 			$file_extension = 'bin';
 			$content = stripslashes($row[$field->realfieldname . '_sample']);
 			$mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
-			$mime_file_extension = JoomlaBasicMisc::mime2ext($mime);
+			$mime_file_extension = CTMiscHelper::mime2ext($mime);
 			if ($mime_file_extension !== null)
 				$file_extension = $mime_file_extension;
 
 			if ($valueSize == 0)
 				$filename = '';
 			else
-				$filename = 'blob-' . strtolower(str_replace(' ', '', JoomlaBasicMisc::formatSizeUnits($valueSize))) . '.' . $file_extension;
+				$filename = 'blob-' . strtolower(str_replace(' ', '', CTMiscHelper::formatSizeUnits($valueSize))) . '.' . $file_extension;
 		}
 		return $filename;
 	}
@@ -442,7 +443,7 @@ class CT_FieldTypeTag_file
 				return $fileExtension;
 
 			case 'file-size':
-				return JoomlaBasicMisc::formatSizeUnits($file_size);
+				return CTMiscHelper::formatSizeUnits($file_size);
 
 			default:
 				return $filepath;
@@ -492,8 +493,8 @@ class CT_FieldTypeTag_file
 		//make the key
 		$key = CT_FieldTypeTag_file::makeTheKey($filepath, $security, $recId, $fieldid, $tableid);
 
-		$currentURL = JoomlaBasicMisc::curPageURL();
-		$currentURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'returnto');
+		$currentURL = CTMiscHelper::curPageURL();
+		$currentURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'returnto');
 
 		//prepare new file name that includes the key
 		$fna = explode('.', $rowValue);

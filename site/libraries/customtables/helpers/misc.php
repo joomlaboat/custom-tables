@@ -8,20 +8,21 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+namespace CustomTables;
+
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CustomTables\common;
-use CustomTables\database;
-use CustomTables\Fields;
-
-use CustomTables\MySQLWhereClause;
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
+use JPluginHelper;
+use stdClass;
+use tagProcessor_Value;
 
-class JoomlaBasicMisc
+class CTMiscHelper
 {
 	static public function array_insert(array &$array, $insert, $position = -1)
 	{
@@ -53,14 +54,14 @@ class JoomlaBasicMisc
 
 		if ($max_size < 0) {
 			// Start with post_max_size.
-			$post_max_size = JoomlaBasicMisc::parse_size(ini_get('post_max_size'));
+			$post_max_size = CTMiscHelper::parse_size(ini_get('post_max_size'));
 			if ($post_max_size > 0) {
 				$max_size = $post_max_size;
 			}
 
 			// If upload_max_size is less, then reduce. Except if upload_max_size is
 			// zero, which indicates no limit.
-			$upload_max = JoomlaBasicMisc::parse_size(ini_get('upload_max_filesize'));
+			$upload_max = CTMiscHelper::parse_size(ini_get('upload_max_filesize'));
 			if ($upload_max > 0 && $upload_max < $max_size) {
 				$max_size = $upload_max;
 			}
@@ -151,12 +152,12 @@ class JoomlaBasicMisc
 		$img = array();
 		preg_match_all('/(src|alt)=("[^"]*")/i', $img_tag, $img, PREG_SET_ORDER);
 
-		$image = JoomlaBasicMisc::getSrcParam($img);
+		$image = CTMiscHelper::getSrcParam($img);
 
 		if ($image == '') {
 			$img = array();
 			preg_match_all("/(src|alt)=('[^']*')/i", $img_tag, $img, PREG_SET_ORDER);
-			$image = JoomlaBasicMisc::getSrcParam($img);
+			$image = CTMiscHelper::getSrcParam($img);
 
 			if ($image == '')
 				return '';
@@ -678,7 +679,7 @@ class JoomlaBasicMisc
 
 				$htmlresult = $article->text;*/
 
-				$htmlresult = Joomla\CMS\HTML\Helpers\Content::prepare($htmlresult, $content_params);
+				$htmlresult = \Joomla\CMS\HTML\Helpers\Content::prepare($htmlresult, $content_params);
 
 			} else {
 				$o = new stdClass();
@@ -725,10 +726,10 @@ class JoomlaBasicMisc
 
 	public static function getHTMLTagParameters($tag): array
 	{
-		$params = JoomlaBasicMisc::csv_explode(' ', $tag, '"', true);
+		$params = CTMiscHelper::csv_explode(' ', $tag, '"', true);
 		$result = [];
 		foreach ($params as $param) {
-			$param = JoomlaBasicMisc::csv_explode('=', $param, '"', false);
+			$param = CTMiscHelper::csv_explode('=', $param, '"', false);
 			if (count($param) == 2) {
 				$result[strtolower($param[0])] = $param[1];
 			}

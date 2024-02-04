@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
@@ -144,7 +145,7 @@ class ESFileUploader
 				return array('image/gif', 'image/png', 'image/jpeg', 'image/svg+xml', 'image/webp');
 
 			$fieldParams = $fieldRow['typeparams'];
-			$parts = JoomlaBasicMisc::csv_explode(',', $fieldParams);
+			$parts = CTMiscHelper::csv_explode(',', $fieldParams);
 
 			if (!isset($parts[2]))
 				return [];

@@ -18,7 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTablesFileMethods;
 use CustomTablesImageMethods;
 use Exception;
-use JoomlaBasicMisc;
 use ESTables;
 use CustomTables\ctProHelpers;
 
@@ -109,7 +108,7 @@ class Field
 			$this->comesfieldname = $this->prefix . $this->fieldname;
 
 			if (isset($fieldRow['typeparams']))
-				$this->params = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
+				$this->params = CTMiscHelper::csv_explode(',', $fieldRow['typeparams'], '"', false);
 			else
 				$this->params = null;
 
@@ -454,7 +453,7 @@ class Fields
 		$isrequired = (int)$fieldRow['isrequired'];
 
 		if ($fieldRow['type'] == 'virtual') {
-			$paramsList = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
+			$paramsList = CTMiscHelper::csv_explode(',', $fieldRow['typeparams'], '"', false);
 			return ($paramsList[1] ?? 'virtual') == 'virtual' or '';
 		} else
 			return $isrequired == 2 or $isrequired == 3;
@@ -737,7 +736,7 @@ class Fields
 		$field['isdisabled'] = $fieldRow['isdisabled'];
 		$field['type'] = $fieldRow['type'];
 
-		$typeParams = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
+		$typeParams = CTMiscHelper::csv_explode(',', $fieldRow['typeparams'], '"', false);
 		$field['typeparams'] = $typeParams;
 		$field['valuerule'] = $fieldRow['valuerule'];
 		$field['valuerulecaption'] = $fieldRow['valuerulecaption'];
@@ -759,7 +758,7 @@ class Fields
 
 		foreach ($ct->Table->fields as $fld) {
 			if ($fld['type'] == 'sqljoin') {
-				$type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams'], '"', false);
+				$type_params = CTMiscHelper::csv_explode(',', $fld['typeparams'], '"', false);
 				$join_tablename = $type_params[0];
 
 				if ($join_tablename == $ct->Table->tablename) {
@@ -1104,7 +1103,7 @@ class Fields
 	{
 		//Returns an array of mysql column parameters
 		if ($typeParams !== null)
-			$typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
+			$typeParamsArray = CTMiscHelper::csv_explode(',', $typeParams);
 		else
 			$typeParamsArray = null;
 

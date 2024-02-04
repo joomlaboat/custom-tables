@@ -9,13 +9,15 @@
  **/
 
 // no direct access
+use CustomTables\CTMiscHelper;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-$currentURL = JoomlaBasicMisc::curPageURL();
-$cleanURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'action');
-$cleanURL = JoomlaBasicMisc::deleteURLQueryOption($cleanURL, 'user');
+$currentURL = CTMiscHelper::curPageURL();
+$cleanURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'action');
+$cleanURL = CTMiscHelper::deleteURLQueryOption($cleanURL, 'user');
 
 if (!str_contains($cleanURL, "?"))
 	$cleanURL .= '?';

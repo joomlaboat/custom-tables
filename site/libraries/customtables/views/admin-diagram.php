@@ -12,7 +12,6 @@ namespace CustomTables;
 
 // no direct access
 use Exception;
-use JoomlaBasicMisc;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -85,7 +84,7 @@ class Diagram
 				$attr = ["name" => $field['fieldname'], "type" => $field['type']];
 
 				if ($field['type'] == 'sqljoin' or $field['type'] == 'records') {
-					$params = JoomlaBasicMisc::csv_explode(',', $field['typeparams'], '"', false);
+					$params = CTMiscHelper::csv_explode(',', $field['typeparams'], '"', false);
 					$jointable = $params[0];
 					$attr["join"] = $jointable;
 					$attr["joincolor"] = '';

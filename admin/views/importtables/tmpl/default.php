@@ -10,6 +10,7 @@
 
 // no direct access
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
@@ -37,7 +38,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/jque
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/uploader.js"></script>');
 
 $fileId = common::generateRandomString();
-$max_file_size = JoomlaBasicMisc::file_upload_max_size();
+$max_file_size = CTMiscHelper::file_upload_max_size();
 
 echo '<form method="post" action="" id="esFileUploaderForm_Tables">';
 echo '<h2>Import Tables</h2>';
@@ -66,7 +67,7 @@ echo '
 	<input type="hidden" name="option" value="com_customtables" />
 	<!--<input type="hidden" name="controller" value="importtables" />-->
 	<input type="hidden" name="task" value="importtables.importtables" />
-' . common::translate('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
+' . common::translate('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '
     ' . HTMLHelper::_('form.token') . '
 	</form>
 	';

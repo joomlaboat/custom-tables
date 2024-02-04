@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
@@ -36,13 +37,13 @@ class updateImages
 		if ($old_typeparams == '')
 			return array('error' => 'old_typeparams not set');
 
-		$old_params = JoomlaBasicMisc::csv_explode(',', $old_typeparams);
+		$old_params = CTMiscHelper::csv_explode(',', $old_typeparams);
 
 		$new_typeparams = base64_decode(common::inputGetBase64('new_typeparams', ''));
 		if ($new_typeparams == '')
 			return array('error' => 'new_typeparams not set');
 
-		$new_params = JoomlaBasicMisc::csv_explode(',', $new_typeparams);
+		$new_params = CTMiscHelper::csv_explode(',', $new_typeparams);
 
 		$fieldid = common::inputGetInt('fieldid', 0);
 		if ($fieldid == 0)
@@ -123,7 +124,7 @@ class updateImages
 					return $status;
 			}
 		}
-		JoomlaBasicMisc::deleteFolderIfEmpty($old_ImageFolder);
+		CTMiscHelper::deleteFolderIfEmpty($old_ImageFolder);
 		return null;
 	}
 

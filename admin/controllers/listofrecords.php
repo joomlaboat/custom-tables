@@ -17,6 +17,7 @@ use CustomTables\Catalog;
 use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
@@ -209,7 +210,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 			if (ob_get_contents())
 				ob_end_clean();
 
-			$filename = JoomlaBasicMisc::makeNewFileName($ct->Table->tablename, 'csv');
+			$filename = CTMiscHelper::makeNewFileName($ct->Table->tablename, 'csv');
 			header('Content-Disposition: attachment; filename="' . $filename . '"');
 			header('Content-Type: text/csv; charset=utf-16');
 			header("Pragma: no-cache");

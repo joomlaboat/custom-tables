@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\Edit;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 use CustomTables\ctProHelpers;

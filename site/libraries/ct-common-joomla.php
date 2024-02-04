@@ -15,7 +15,6 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use JoomlaBasicMisc;
 
 use Joomla\CMS\Uri\Uri;
 use RecursiveDirectoryIterator;
@@ -230,9 +229,9 @@ class common
 		if ($param === null)
 			return $items;
 
-		$a = JoomlaBasicMisc::csv_explode(' and ', $param, '"', true);
+		$a = CTMiscHelper::csv_explode(' and ', $param, '"', true);
 		foreach ($a as $b) {
-			$c = JoomlaBasicMisc::csv_explode(' or ', $b, '"', true);
+			$c = CTMiscHelper::csv_explode(' or ', $b, '"', true);
 
 			if (count($c) == 1)
 				$items[] = array('and', $b);
@@ -384,7 +383,7 @@ class common
 	public static function makeReturnToURL(string $currentURL = null): ?string
 	{
 		if ($currentURL === null)
-			$currentURL = JoomlaBasicMisc::curPageURL();
+			$currentURL = CTMiscHelper::curPageURL();
 
 		return base64_encode($currentURL);
 	}

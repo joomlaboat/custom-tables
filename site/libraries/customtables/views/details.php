@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
-use JoomlaBasicMisc;
 use LayoutProcessor;
 use tagProcessor_PHP;
 use CustomTables\ctProHelpers;
@@ -314,7 +313,7 @@ class Details
 			$this->ct->errors[] = $twig->errorMessage;
 
 		if ($this->ct->Params->allowContentPlugins)
-			$layoutDetailsContent = JoomlaBasicMisc::applyContentPlugins($layoutDetailsContent);
+			$layoutDetailsContent = CTMiscHelper::applyContentPlugins($layoutDetailsContent);
 
 		return $layoutDetailsContent;
 	}

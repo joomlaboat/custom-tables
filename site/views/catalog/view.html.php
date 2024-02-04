@@ -17,6 +17,7 @@ use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Catalog;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Inputbox;
 use CustomTables\MySQLWhereClause;
@@ -46,6 +47,7 @@ class CustomTablesViewCatalog extends HtmlView
 			$menuParams = null;
 		}
 */
+
 		$this->ct = new CT(null, false);
 		$key = common::inputGetCmd('key');
 
@@ -68,7 +70,7 @@ class CustomTablesViewCatalog extends HtmlView
 			require_once($pathViews . 'catalog-csv.php');
 			$catalogCSV = new CatalogExportCSV($this->ct, $this->catalog);
 			if (!$catalogCSV->error) {
-				$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Params->pageTitle, 'csv');
+				$filename = CTMiscHelper::makeNewFileName($this->ct->Params->pageTitle, 'csv');
 				header('Content-Disposition: attachment; filename="' . $filename . '"');
 				header('Content-Type: text/csv; charset=utf-16');
 				header("Pragma: no-cache");
@@ -115,7 +117,7 @@ class CustomTablesViewCatalog extends HtmlView
 				} else
 					$user_group = $pair[0];
 
-				$group_id = JoomlaBasicMisc::getGroupIdByTitle($user_group);
+				$group_id = CTMiscHelper::getGroupIdByTitle($user_group);
 
 				if ($user_group != '') {
 					if (in_array($group_id, $user_groups))

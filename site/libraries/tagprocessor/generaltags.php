@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\CTUser;
@@ -54,7 +55,7 @@ class tagProcessor_General
 	protected static function tableDesc(CT $ct, string &$pageLayout, string $tag, string $default = ''): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace($tag, $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace($tag, $options, $pageLayout, '{}');
 		$i = 0;
 		foreach ($fList as $fItem) {
 			$vlu = '';
@@ -93,7 +94,7 @@ class tagProcessor_General
 	protected static function getDate(string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('date', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('date', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -111,11 +112,11 @@ class tagProcessor_General
 	protected static function getUser(CT &$ct, string &$pageLayout, ?array &$row): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('user', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('user', $options, $pageLayout, '{}');
 
 		$i = 0;
 		foreach ($fList as $fItem) {
-			$opts = JoomlaBasicMisc::csv_explode(',', $options[$i]);
+			$opts = CTMiscHelper::csv_explode(',', $options[$i]);
 
 			if (isset($opts[1])) {
 				$userid_value = $opts[1];
@@ -202,7 +203,7 @@ class tagProcessor_General
 
 
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('currentuserid', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('currentuserid', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -215,7 +216,7 @@ class tagProcessor_General
 	protected static function Itemid(CT $ct, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('itemid', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('itemid', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -233,12 +234,12 @@ class tagProcessor_General
 	protected static function CurrentURL(CT $ct, string &$pageLayout): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('currenturl', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('currenturl', $options, $pageLayout, '{}');
 
 		$i = 0;
 
 		foreach ($fList as $fItem) {
-			$optionPair = JoomlaBasicMisc::csv_explode(',', $options[$i]);
+			$optionPair = CTMiscHelper::csv_explode(',', $options[$i]);
 
 			if (isset($optionPair[1]) and $optionPair[1] != '') {
 				switch ($optionPair[0]) {
@@ -311,7 +312,7 @@ class tagProcessor_General
 	{
 		//Deprecated. Use 	{currenturl:base64} instead
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('returnto', $options, $pageLayout, '{}');
+		$fList = CTMiscHelper::getListToReplace('returnto', $options, $pageLayout, '{}');
 
 		$i = 0;
 
@@ -324,7 +325,7 @@ class tagProcessor_General
 	protected static function WebsiteRoot(string &$htmlresult): void
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('websiteroot', $options, $htmlresult, '{}');
+		$fList = CTMiscHelper::getListToReplace('websiteroot', $options, $htmlresult, '{}');
 
 		$i = 0;
 		foreach ($fList as $fItem) {
@@ -359,7 +360,7 @@ class tagProcessor_General
 		$returnto = common::getReturnToURL();
 
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace('gobackbutton', $options, $layout_code, '{}');
+		$fList = CTMiscHelper::getListToReplace('gobackbutton', $options, $layout_code, '{}');
 
 		$i = 0;
 

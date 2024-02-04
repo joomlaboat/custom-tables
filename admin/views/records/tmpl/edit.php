@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\Edit;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;

@@ -18,7 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use Exception;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
-use JoomlaBasicMisc;
 use Joomla\Utilities\ArrayHelper;
 
 class Ordering
@@ -49,11 +48,11 @@ class Ordering
 	public static function addEditHTMLTagParams(string $result, string $tag, array $paramsToAddEdit): string
 	{
 		$options = array();
-		$fList = JoomlaBasicMisc::getListToReplace($tag, $options, $result, "<>", ' ');
+		$fList = CTMiscHelper::getListToReplace($tag, $options, $result, "<>", ' ');
 		$i = 0;
 		foreach ($fList as $fItem) {
 
-			$params = JoomlaBasicMisc::getHTMLTagParameters(strtolower($options[$i]));
+			$params = CTMiscHelper::getHTMLTagParameters(strtolower($options[$i]));
 
 			foreach ($paramsToAddEdit as $key => $value) {
 				$params[$key] = $value;

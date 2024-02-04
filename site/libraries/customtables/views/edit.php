@@ -8,17 +8,17 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-// no direct access
+namespace CustomTables;
 
+// no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CustomTables\common;
-use CustomTables\CT;
-use CustomTables\Layouts;
-use CustomTables\TwigProcessor;
+use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
+use LayoutProcessor;
+use tagProcessor_Edit;
 
 class Edit
 {
@@ -161,7 +161,7 @@ class Edit
 		}
 
 		if ($this->ct->Params->allowContentPlugins)
-			$pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
+			$pageLayout = CTMiscHelper::applyContentPlugins($pageLayout);
 
 		$result .= $pageLayout;
 

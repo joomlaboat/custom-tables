@@ -14,13 +14,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\TwigProcessor;
 
 trait render_xml
 {
 	protected static function get_CatalogTable_XML(CT &$ct, $layoutType, $fields)
 	{
-		$fieldarray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
+		$fieldarray = CTMiscHelper::csv_explode(',', $fields, '"', true);
 
 		//prepare header and record layouts
 
@@ -31,7 +32,7 @@ trait render_xml
 		$header_fields = array();
 		$line_fields = array();
 		foreach ($fieldarray as $field) {
-			$fieldpair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
+			$fieldpair = CTMiscHelper::csv_explode(':', $field, '"', false);
 
 			$header_fields[] = str_replace("'", '"', $fieldpair[0]);
 

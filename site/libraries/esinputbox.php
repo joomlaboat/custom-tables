@@ -40,7 +40,7 @@ class ESInputBox
 			$shortFieldObject = Fields::shortFieldObject($fieldrow, ($row[$realFieldName] ?? null), $option_list);
 
 			if ($fieldrow['type'] == 'sqljoin') {
-				$typeParams = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams']);
+				$typeParams = CTMiscHelper::csv_explode(',', $fieldrow['typeparams']);
 
 				if (isset($option_list[2]) and $option_list[2] != '')
 					$typeParams[2] = $option_list[2];//Overwrites field type filter parameter.

@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\TwigProcessor;
 
 trait render_json
@@ -45,9 +46,9 @@ trait render_json
 		$line_fields = [];
 		$fields = str_replace("\n", '', $fields);
 		$fields = str_replace("\r", '', $fields);
-		$fieldArray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
+		$fieldArray = CTMiscHelper::csv_explode(',', $fields, '"', true);
 		foreach ($fieldArray as $field) {
-			$fieldPair = JoomlaBasicMisc::csv_explode(':', $field);
+			$fieldPair = CTMiscHelper::csv_explode(':', $field);
 			$header_fields[] = $fieldPair[0];//$result;//header
 
 			$vlu = $fieldPair[1] ?? "";
