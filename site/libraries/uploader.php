@@ -9,13 +9,14 @@
  **/
 
 // no direct access
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
+use CustomTables\TableHelper;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
@@ -183,7 +184,7 @@ class ESFileUploader
 		$menuItem = $app->getMenu()->getItem($Itemid);
 		// Get params for menuItem
 
-		$esTable = new ESTables;
+		$esTable = new TableHelper;
 		$tableName = $menuItem->params->get('tableName');
 		if ($tableName === null)
 			return 0;

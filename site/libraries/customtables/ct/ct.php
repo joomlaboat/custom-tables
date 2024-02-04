@@ -11,12 +11,11 @@
 namespace CustomTables;
 
 // no direct access
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTablesImageMethods;
-use ESTables;
 use Exception;
 use Joomla\CMS\Factory;
 use CustomTablesKeywordSearch;
@@ -657,7 +656,7 @@ class CT
 				$parent_join_field = str_replace(')', '', $table_parts[1]);
 				$parent_user_field = $statement_parts[1];
 
-				$parent_table_row = ESTables::getTableRowByName($parent_tablename);
+				$parent_table_row = TableHelper::getTableRowByName($parent_tablename);
 
 				if (!is_object($parent_table_row)) {
 					$this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR');

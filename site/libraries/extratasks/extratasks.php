@@ -9,11 +9,12 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
+use CustomTables\TableHelper;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
@@ -27,7 +28,7 @@ class extraTasks
 
 		$field_row = Fields::getFieldRow($fieldid);
 		$tableid = $field_row->tableid;
-		$table_row = ESTables::getTableRowByID($tableid);
+		$table_row = TableHelper::getTableRowByID($tableid);
 
 		$document = Factory::getDocument();
 		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/extratasks.js"></script>');

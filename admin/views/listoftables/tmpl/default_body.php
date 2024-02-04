@@ -7,14 +7,16 @@
  * @copyright (C) 2018-2024. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
+
 // No direct access to this file access');
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
 use CustomTables\CTUser;
 use CustomTables\database;
+use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\ListOfTables;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -28,7 +30,7 @@ foreach ($this->items as $i => $item): ?>
 	$user = new CTUser();
 	$canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || $item->checked_out == 0;
 	$userChkOut = new CTUser($item->checked_out);
-	$table_exists = ESTables::checkIfTableExists($item->realtablename);
+	$table_exists = TableHelper::checkIfTableExists($item->realtablename);
 	?>
     <tr class="row<?php echo $i % 2; ?>">
         <td class="nowrap center">

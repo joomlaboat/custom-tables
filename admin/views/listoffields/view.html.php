@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
+use CustomTables\TableHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -74,7 +75,7 @@ class CustomtablesViewListoffields extends HtmlView
 		$this->tableid = common::inputGetInt('tableid', 0);
 
 		if ($this->tableid != 0) {
-			$tableRow = ESTables::getTableRowByIDAssoc($this->tableid);
+			$tableRow = TableHelper::getTableRowByIDAssoc($this->tableid);
 			if (!is_object($tableRow) and $tableRow == 0) {
 				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				$this->tableid = 0;

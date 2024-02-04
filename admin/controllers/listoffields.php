@@ -9,13 +9,14 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
+use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
@@ -89,7 +90,7 @@ class CustomtablesControllerListOfFields extends AdminController
 		$tableid = common::inputGet('tableid', 0, 'int');
 
 		if ($tableid != 0) {
-			$table = ESTables::getTableRowByID($tableid);
+			$table = TableHelper::getTableRowByID($tableid);
 			if (!is_object($table) and $table == 0) {
 				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return;

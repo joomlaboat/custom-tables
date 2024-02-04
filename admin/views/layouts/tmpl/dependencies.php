@@ -13,7 +13,7 @@ use CustomTables\common;
 use CustomTables\database;
 use CustomTables\MySQLWhereClause;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 

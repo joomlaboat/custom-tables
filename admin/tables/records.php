@@ -9,11 +9,12 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
+use CustomTables\TableHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 
@@ -34,7 +35,7 @@ class CustomtablesTableRecords extends Table
 	{
 		$tableid = common::inputGetInt('tableid', 0);
 		if ($tableid != 0) {
-			$table = ESTables::getTableRowByID($tableid);
+			$table = TableHelper::getTableRowByID($tableid);
 			if (!is_object($table) and $table == 0) {
 				Factory::getApplication()->enqueueMessage('Table not found.', 'error');
 				return null;

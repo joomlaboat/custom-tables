@@ -8,18 +8,16 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+namespace CustomTables;
+
 // no direct access
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
-use CustomTables\common;
-use CustomTables\CT;
-use CustomTables\database;
-use CustomTables\Fields;
-use CustomTables\MySQLWhereClause;
+use Exception;
 
-class ESTables
+class TableHelper
 {
 	//This function works with MySQL not PostgreeSQL
 	/**
@@ -32,7 +30,7 @@ class ESTables
 		$i = 1;
 		while (1) {
 
-			$already_exists = ESTables::getTableID($new_tablename);
+			$already_exists = self::getTableID($new_tablename);
 			if ($already_exists != 0) {
 				$pair = explode('_', $new_tablename);
 
@@ -104,7 +102,7 @@ class ESTables
 		if ($tableid == 0)
 			return null;
 
-		$row = ESTables::getTableRowByIDAssoc($tableid);
+		$row = self::getTableRowByIDAssoc($tableid);
 		if (!is_array($row))
 			return null;
 
@@ -120,7 +118,7 @@ class ESTables
 		if ($tableid == 0)
 			return null;
 
-		return ESTables::getTableRowByWhere(['id' => $tableid]);
+		return self::getTableRowByWhere(['id' => $tableid]);
 	}
 
 	/**
@@ -132,8 +130,8 @@ class ESTables
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addConditionsFromArray($where);
 
-		//$query = 'SELECT ' . ESTables::getTableRowSelects() . ' FROM #__customtables_tables AS s WHERE ' . $where . ' LIMIT 1';
-		$rows = database::loadAssocList('#__customtables_tables AS s', ESTables::getTableRowSelectArray(), $whereClause, null, null, 1);
+		//$query = 'SELECT ' . self::getTableRowSelects() . ' FROM #__customtables_tables AS s WHERE ' . $where . ' LIMIT 1';
+		$rows = database::loadAssocList('#__customtables_tables AS s', self::getTableRowSelectArray(), $whereClause, null, null, 1);
 
 		if (count($rows) != 1)
 			return null;
@@ -203,7 +201,7 @@ class ESTables
 					$realTableName = $dbPrefix . 'customtables_table_' . $tableName;
 
 					if ($row2->Engine != 'InnoDB') {
-						database::setTableInnoDBEngine($realTableName);
+						database::setTableInnoDBEngine($realTableName, $tableTitle);
 						//$query = 'ALTERTABLE ' . $table_name . ' ENGINE = InnoDB';
 					}
 
@@ -230,7 +228,7 @@ class ESTables
 	 */
 	public static function renameTableIfNeeded($tableid, $tablename): void
 	{
-		$old_tablename = ESTables::getTableName($tableid);
+		$old_tablename = self::getTableName($tableid);
 
 		if ($old_tablename != $tablename) {
 			//rename table
@@ -267,13 +265,13 @@ class ESTables
 	 */
 	public static function addThirdPartyTableFieldsIfNeeded($database, $tablename, $realtablename): bool
 	{
-		$fields = Fields::getFields($tablename, false, true);
+		$fields = Fields::getFields($tablename);
 		if (count($fields) > 0)
 			return false;
 
 		//Add third-party fields
 
-		$tableRow = ESTables::getTableRowByName($tablename);
+		$tableRow = self::getTableRowByName($tablename);
 
 		$whereClause = new MySQLWhereClause();
 
@@ -352,7 +350,7 @@ class ESTables
 		if ($tablename === null)
 			return null;
 
-		$row = ESTables::getTableRowByNameAssoc($tablename);
+		$row = self::getTableRowByNameAssoc($tablename);
 		if (!is_array($row))
 			return null;
 
@@ -368,7 +366,7 @@ class ESTables
 		if ($tablename === null)
 			return null;
 
-		return ESTables::getTableRowByWhere(['tablename' => $tablename]);
+		return self::getTableRowByWhere(['tablename' => $tablename]);
 	}
 
 	/**
@@ -379,7 +377,7 @@ class ESTables
 	{
 		//Copy Table
 		//get ID of new table
-		$new_table_id = ESTables::getTableID($new_table);
+		$new_table_id = self::getTableID($new_table);
 
 		if ($customTableName === null) {
 			//Do not copy real third-party tables

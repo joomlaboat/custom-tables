@@ -12,7 +12,7 @@
 use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 

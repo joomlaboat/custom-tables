@@ -11,14 +11,13 @@
 namespace CustomTables;
 
 // no direct access
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTablesFileMethods;
 use CustomTablesImageMethods;
 use Exception;
-use ESTables;
 use CustomTables\ctProHelpers;
 
 class Field
@@ -781,7 +780,7 @@ class Fields
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'utilities' . DIRECTORY_SEPARATOR . 'importtables.php');
 
 		$ct = new CT;
-		$table_row = ESTables::getTableRowByID($tableId);
+		$table_row = TableHelper::getTableRowByID($tableId);
 		if (!is_object($table_row)) {
 			common::enqueueMessage('Table not found');
 			return null;
@@ -1552,7 +1551,7 @@ class Fields
 				return false;    // Exit if field not set (just in case)
 			}
 
-			$tableRow = ESTables::getTableRowByName($typeParams[0]); //[0] - is tablename
+			$tableRow = TableHelper::getTableRowByName($typeParams[0]); //[0] - is tablename
 			if (!is_object($tableRow)) {
 				$msg = 'Join with table "' . $join_with_table_name . '" not found.';
 				return false;    // Exit if table to connect with not found

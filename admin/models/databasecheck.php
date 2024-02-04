@@ -10,7 +10,7 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 

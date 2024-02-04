@@ -10,12 +10,11 @@
 
 namespace CustomTables;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use DateTime;
-use ESTables;
 use Exception;
 use LayoutProcessor;
 
@@ -1076,7 +1075,7 @@ class LinkJoinFilters
 		else
 			return '<p style="color:white;background-color:red;">sqljoin: field not set</p>';
 
-		$tableRow = ESTables::getTableRowByNameAssoc($tablename);
+		$tableRow = TableHelper::getTableRowByNameAssoc($tablename);
 		if (!is_array($tableRow))
 			return '<p style="color:white;background-color:red;">sqljoin: table "' . $tablename . '" not found</p>';
 

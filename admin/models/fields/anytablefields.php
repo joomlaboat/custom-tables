@@ -9,11 +9,12 @@
  **/
 
 // no direct access
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
+use CustomTables\TableHelper;
 use CustomTables\Fields;
 use Joomla\CMS\HTML\HTMLHelper;
 
@@ -32,7 +33,7 @@ class JFormFieldAnyTableFields extends JFormFieldList
 		$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
 		$tableid = common::inputGetInt('tableid', 0);
 		if ($tableid != 0) {
-			$table_row = ESTables::getTableRowByID($tableid);
+			$table_row = TableHelper::getTableRowByID($tableid);
 			if ($table_row->customtablename != '') {
 				$fields = Fields::getExistingFields($table_row->customtablename, false);
 

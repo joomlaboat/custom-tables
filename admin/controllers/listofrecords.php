@@ -9,7 +9,7 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
@@ -18,6 +18,7 @@ use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
+use CustomTables\TableHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
@@ -38,7 +39,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$tableid = common::inputGet('tableid', 0, 'int');
 
 		if ($tableid != 0) {
-			$tableRow = ESTables::getTableRowByIDAssoc($tableid);
+			$tableRow = TableHelper::getTableRowByIDAssoc($tableid);
 			if (!is_array($tableRow) and $tableRow == 0) {
 				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return;
@@ -99,7 +100,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$tableid = common::inputGet('tableid', 0, 'int');
 
 		if ($tableid != 0) {
-			$tableRow = ESTables::getTableRowByIDAssoc($tableid);
+			$tableRow = TableHelper::getTableRowByIDAssoc($tableid);
 			if (!is_array($tableRow) and $tableRow == 0) {
 				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return;
@@ -170,7 +171,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$tableid = common::inputGet('tableid', 0, 'int');
 
 		if ($tableid != 0) {
-			$table = ESTables::getTableRowByID($tableid);
+			$table = TableHelper::getTableRowByID($tableid);
 			if (!is_object($table) and $table == 0) {
 				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return false;

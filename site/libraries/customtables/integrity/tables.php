@@ -11,18 +11,17 @@
 
 namespace CustomTables\Integrity;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
 use CustomTables\database;
+use CustomTables\TableHelper;
 use CustomTables\IntegrityChecks;
 use CustomTables\MySQLWhereClause;
 use Exception;
 use Joomla\CMS\Uri\Uri;
-
-use ESTables;
 
 class IntegrityTables extends IntegrityChecks
 {
@@ -102,7 +101,7 @@ class IntegrityTables extends IntegrityChecks
 			$categoryName = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
 			$fieldCount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
 
-			$selects = ESTables::getTableRowSelectArray();
+			$selects = TableHelper::getTableRowSelectArray();
 
 			$selects[] = $categoryName . ' AS categoryname';
 			$selects[] = $fieldCount . ' AS fieldcount';
@@ -126,11 +125,11 @@ class IntegrityTables extends IntegrityChecks
 		$dbPrefix = database::getDBPrefix();
 
 		foreach ($tables_rows as $row) {
-			if (!ESTables::checkIfTableExists($dbPrefix . 'customtables_table_' . $row['tablename'])) {
+			if (!TableHelper::checkIfTableExists($dbPrefix . 'customtables_table_' . $row['tablename'])) {
 				$database = database::getDataBaseName();
 
 				if ($row['customtablename'] === null or $row['customtablename'] == '') {
-					if (ESTables::createTableIfNotExists($database, $dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'])) {
+					if (TableHelper::createTableIfNotExists($database, $dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'])) {
 						common::enqueueMessage('Table "' . $row['tabletitle'] . '" created.');
 					}
 				}

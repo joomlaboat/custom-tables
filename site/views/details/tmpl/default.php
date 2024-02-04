@@ -12,7 +12,7 @@
 use CustomTables\common;
 use CustomTables\CTMiscHelper;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 

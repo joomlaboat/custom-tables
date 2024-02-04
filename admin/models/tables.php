@@ -10,7 +10,7 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
@@ -18,6 +18,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\database;
+use CustomTables\TableHelper;
 use CustomTables\Fields;
 
 use Joomla\CMS\Factory;
@@ -138,7 +139,7 @@ class CustomtablesModelTables extends AdminModel
 	public function delete(&$pks)
 	{
 		foreach ($pks as $tableid) {
-			$table_row = ESTables::getTableRowByID($tableid);
+			$table_row = TableHelper::getTableRowByID($tableid);
 
 			if (isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename === null)) // do not delete third-party tables
 				database::dropTableIfExists($table_row->tablename);
@@ -330,13 +331,13 @@ class CustomtablesModelTables extends AdminModel
 
 		//If it's a new table, check if field name is unique or add number "_1" if it's not.
 		if ($tableid == 0)
-			$tablename = ESTables::checkTableName($tablename);
+			$tablename = TableHelper::checkTableName($tablename);
 
 		$data['tablename'] = $tablename;
 
 		if ($tableid != 0 and (string)$data['customtablename'] == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
 		{
-			ESTables::renameTableIfNeeded($tableid, $tablename);
+			TableHelper::renameTableIfNeeded($tableid, $tablename);
 		}
 
 		$old_tablename = '';
@@ -346,12 +347,12 @@ class CustomtablesModelTables extends AdminModel
 			$originalTableId = common::inputGetInt('originaltableid', 0);
 
 			if ($originalTableId != 0) {
-				$old_tablename = ESTables::getTableName($originalTableId);
+				$old_tablename = TableHelper::getTableName($originalTableId);
 
 				if ($old_tablename == $tablename)
 					$tablename = 'copy_of_' . $tablename;
 
-				while (ESTables::getTableID($tablename) != 0)
+				while (TableHelper::getTableID($tablename) != 0)
 					$tablename = 'copy_of_' . $tablename;
 
 				$data['tablename'] = $tablename;
@@ -364,7 +365,7 @@ class CustomtablesModelTables extends AdminModel
 
 			if (parent::save($data)) {
 
-				ESTables::createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $data['customtablename']);
+				TableHelper::createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $data['customtablename']);
 				return true;
 			}
 		} else {
@@ -372,13 +373,13 @@ class CustomtablesModelTables extends AdminModel
 				$originalTableId = common::inputGetInt('originaltableid', 0);
 
 				if ($originalTableId != 0 and $old_tablename != '')
-					ESTables::copyTable($this->ct, $originalTableId, $tablename, $old_tablename, $data['customtablename']);
+					TableHelper::copyTable($this->ct, $originalTableId, $tablename, $old_tablename, $data['customtablename']);
 
-				ESTables::createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $data['customtablename']);
+				TableHelper::createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $data['customtablename']);
 
 				//Add fields if it's a third-party table and no fields added yet.
 				if ($data['customtablename'] !== null and $data['customtablename'] != '')
-					ESTables::addThirdPartyTableFieldsIfNeeded($database, $tablename, $data['customtablename']);
+					TableHelper::addThirdPartyTableFieldsIfNeeded($database, $tablename, $data['customtablename']);
 
 				return true;
 			}
@@ -388,7 +389,7 @@ class CustomtablesModelTables extends AdminModel
 
 	public function copyTable($originaltableid, $new_table, $old_table)
 	{
-		return ESTables::copyTable($this->ct, $originaltableid, $new_table, $old_table);
+		return TableHelper::copyTable($this->ct, $originaltableid, $new_table, $old_table);
 	}
 
 	/**

@@ -9,7 +9,7 @@
  **/
 
 // If this file is called directly, abort.
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 

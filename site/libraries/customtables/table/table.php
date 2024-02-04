@@ -11,11 +11,10 @@
 namespace CustomTables;
 
 // no direct access
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
-use ESTables;
 use Exception;
 
 class Table
@@ -73,10 +72,10 @@ class Table
 		if ($tablename_or_id_not_sanitized === null or $tablename_or_id_not_sanitized == '')
 			return;
 		elseif (is_numeric($tablename_or_id_not_sanitized)) {
-			$this->tablerow = ESTables::getTableRowByIDAssoc((int)$tablename_or_id_not_sanitized);// int sanitizes the input
+			$this->tablerow = TableHelper::getTableRowByIDAssoc((int)$tablename_or_id_not_sanitized);// int sanitizes the input
 		} else {
 			$tablename_or_id = strtolower(trim(preg_replace('/\W/', '', $tablename_or_id_not_sanitized)));//[^a-zA-Z_\d]
-			$this->tablerow = ESTables::getTableRowByNameAssoc($tablename_or_id);
+			$this->tablerow = TableHelper::getTableRowByNameAssoc($tablename_or_id);
 		}
 
 		if (is_null($this->tablerow))

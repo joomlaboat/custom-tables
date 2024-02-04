@@ -14,7 +14,7 @@ use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\TwigProcessor;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 

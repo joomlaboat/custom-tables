@@ -10,12 +10,13 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\TableHelper;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -57,7 +58,7 @@ class CustomtablesViewFields extends HtmlView
 		else
 			$this->tableid = $this->item->tableid;
 
-		$this->table_row = ESTables::getTableRowByID($this->tableid);
+		$this->table_row = TableHelper::getTableRowByID($this->tableid);
 
 		$this->script = $this->get('Script');
 		$this->state = $this->get('State');

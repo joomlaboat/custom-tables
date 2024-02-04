@@ -11,17 +11,17 @@
 
 namespace CustomTables\Integrity;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
+use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
 use Exception;
-use ESTables;
 
 class IntegrityFields extends IntegrityChecks
 {
@@ -48,7 +48,7 @@ class IntegrityFields extends IntegrityChecks
 		$database = database::getDataBaseName();
 		$dbPrefix = database::getDBPrefix();
 
-		if (ESTables::createTableIfNotExists($database, $dbPrefix, $ct->Table->tablename, $ct->Table->tabletitle, $ct->Table->customtablename))
+		if (TableHelper::createTableIfNotExists($database, $dbPrefix, $ct->Table->tablename, $ct->Table->tabletitle, $ct->Table->customtablename))
 			$result .= '<p>Table "<span style="color:green;">' . $ct->Table->tabletitle . '</span>" <span style="color:green;">added.</span></p>';
 
 		$ExistingFields = Fields::getExistingFields($ct->Table->realtablename, false);

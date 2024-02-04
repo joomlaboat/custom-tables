@@ -9,13 +9,14 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
 use CustomTables\common;
 use CustomTables\CTMiscHelper;
 use CustomTables\database;
+use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\InputBox_time;
 use CustomTables\MySQLWhereClause;
@@ -79,7 +80,7 @@ function processFieldParams($fieldList, array $fields): array
 
 				$tableName = $type_params[0];
 				$fieldName = $type_params[1];
-				$tableRow = ESTables::getTableRowByName($tableName);
+				$tableRow = TableHelper::getTableRowByName($tableName);
 
 				if (!is_object($tableRow)) {
 					echo common::ctJsonEncode(['error' => 'sqljoin field(' . $fields[$f_index]->fieldtitle . ') table not found']);
@@ -109,7 +110,7 @@ function importCSVdata(string $filename, $ct_tableid): string
 	if ($arrayOfLines === null)
 		return common::translate('COM_CUSTOMTABLES_CSV_FILE_EMPTY');
 
-	$tableRow = ESTables::getTableRowByID($ct_tableid);
+	$tableRow = TableHelper::getTableRowByID($ct_tableid);
 	$fields = Fields::getFields($ct_tableid, true);
 
 	$first_line_fieldnames = false;

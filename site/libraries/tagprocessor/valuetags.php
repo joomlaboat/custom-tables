@@ -9,7 +9,7 @@
  **/
 
 // no direct access
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
@@ -24,7 +24,7 @@ require_once($types_path . '_type_gallery.php');
 require_once($types_path . '_type_image.php');
 require_once($types_path . '_type_log.php');
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 

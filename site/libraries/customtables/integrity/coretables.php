@@ -11,7 +11,7 @@
 
 namespace CustomTables\Integrity;
 
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
@@ -19,9 +19,9 @@ use CustomTables;
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
+use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
-use ESTables;
 
 class IntegrityCoreTables extends IntegrityChecks
 {
@@ -39,7 +39,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
 	protected static function createCoreTableIfNotExists(CT &$ct, object $table)
 	{
-		if (!ESTables::checkIfTableExists($table->realtablename))
+		if (!TableHelper::checkIfTableExists($table->realtablename))
 			IntegrityCoreTables::createCoreTable($ct, $table);
 		else
 			IntegrityCoreTables::checkCoreTable($ct, $table->realtablename, $table->fields);

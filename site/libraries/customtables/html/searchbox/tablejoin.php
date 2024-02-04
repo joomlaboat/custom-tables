@@ -11,11 +11,10 @@
 namespace CustomTables;
 
 // no direct access
-if (!defined('_JEXEC') and !defined('WPINC')) {
+if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
 
-use ESTables;
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
@@ -80,7 +79,7 @@ class Search_tablejoin extends BaseSearch
 		else
 			$allowUnpublished = false;
 
-		if (ESTables::getTableID($tableName) == '') {
+		if (TableHelper::getTableID($tableName) == '') {
 			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
 			return '';
 		}
