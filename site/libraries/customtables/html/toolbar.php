@@ -10,7 +10,6 @@
 
 namespace CustomTables;
 
-use CT_FieldTypeTag_FileBox;
 use Exception;
 
 class RecordToolbar
@@ -169,8 +168,11 @@ class RecordToolbar
 	{
 		$fileBoxes = [];
 
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
+			. 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'filebox.php');
+
 		foreach ($this->Table->fileboxes as $fileBox)
-			$fileBoxes[] = CT_FieldTypeTag_FileBox::renderFileBoxIcon($this->ct, $this->listing_id, $fileBox[0], $fileBox[1]);
+			$fileBoxes[] = InputBox_filebox::renderFileBoxIcon($this->ct, $this->listing_id, $fileBox[0], $fileBox[1]);
 
 		return implode('', $fileBoxes);
 	}
@@ -296,7 +298,7 @@ class RecordToolbar
 		return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
 	}
 
-	protected function renderPublishIcon()
+	protected function renderPublishIcon(): string
 	{
 		if ($this->isPublishable) {
 			$rid = 'esPublishIcon' . $this->rid;

@@ -28,6 +28,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\Field;
+use CustomTables\InputBox_filebox;
 
 class tagProcessor_Value
 {
@@ -72,18 +73,11 @@ class tagProcessor_Value
 						$isEmpty = false;
 
 				} elseif ($fieldType == 'filebox') {
-					/*
-										if (count($isFileBoxLoaded) > 0) {
+					require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
+						. 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'filebox.php');
 
-											if (!$isFileBoxLoaded[$fieldname]) {
-												$isFileBoxLoaded[$fieldname] = true;
-												$getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
-											}
-											*/
-					//} else {
 					$isFileBoxLoaded[$fieldname] = true;
-					$getFileBoxRows[$fieldname] = CT_FieldTypeTag_FileBox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
-					//}
+					$getFileBoxRows[$fieldname] = InputBox_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
 
 					if (isset($isFileBoxLoaded[$fieldname]) and count($getFileBoxRows[$fieldname]) == 0)
 						$isEmpty = true;
@@ -175,17 +169,22 @@ class tagProcessor_Value
 						else
 							$isEmpty = false;
 					} elseif ($fieldType == 'filebox') {
+
+						require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
+							. 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'filebox.php');
+
 						if (count($isFileBoxLoaded) > 0) {
 							if (!$isFileBoxLoaded[$fieldname]) {
 								//load if not loaded
 								$isFileBoxLoaded[$fieldname] = true;
-								$getFileBoxRows[$fieldname] = CT_FieldTypeTag_FileBox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+
+								$getFileBoxRows[$fieldname] = InputBox_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
 							}
 
 						} else {
 							//load if not loaded
 							$isFileBoxLoaded[$fieldname] = true;
-							$getFileBoxRows[$fieldname] = CT_FieldTypeTag_FileBox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+							$getFileBoxRows[$fieldname] = InputBox_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
 						}
 
 						if (count($getFileBoxRows[$fieldname]) == 0)
@@ -258,7 +257,11 @@ class tagProcessor_Value
 							}
 
 						} elseif ($fieldType == 'filebox') {
-							$vlu = CT_FieldTypeTag_FileBox::process($getFileBoxRows[$fieldname], $field, $row[$ct->Table->realidfieldname], ['', 'link', '32', '_blank', ';']);
+
+							require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
+								. 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'filebox.php');
+							
+							$vlu = InputBox_filebox::process($getFileBoxRows[$fieldname], $field, $row[$ct->Table->realidfieldname], ['', 'link', '32', '_blank', ';']);
 						} elseif ($fieldType == 'records') {
 							$a = explode(",", $row[$field->realfieldname]);
 							$b = array();

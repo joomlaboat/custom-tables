@@ -102,7 +102,6 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 
 	$pathDataTypes = $path . 'datatypes' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'datatypes.php');
-	require_once($pathDataTypes . 'filebox.php');
 	require_once($pathDataTypes . 'filemethods.php');
 
 	$pathDataTypes = $path . 'layouts' . DIRECTORY_SEPARATOR;

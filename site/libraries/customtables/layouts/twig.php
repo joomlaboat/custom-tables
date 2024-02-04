@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
-use CT_FieldTypeTag_FileBox;
 use CT_FieldTypeTag_imagegallery;
 use Exception;
 use CustomTables\ctProHelpers;
@@ -473,7 +472,10 @@ class fieldObject
 
 		} elseif ($this->field->type == 'filebox') {
 
-			$files = CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->ct->Table->record[$this->ct->Table->realidfieldname]);
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
+				. 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'filebox.php');
+			
+			$files = InputBox_filebox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->ct->Table->record[$this->ct->Table->realidfieldname]);
 			$fileList = [];
 			foreach ($files as $file)
 				$fileList[] = $file->fileid . '.' . $file->file_ext;

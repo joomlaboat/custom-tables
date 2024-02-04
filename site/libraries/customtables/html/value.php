@@ -23,7 +23,6 @@ use JoomlaBasicMisc;
 use CT_FieldTypeTag_file;
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_imagegallery;
-use CT_FieldTypeTag_FileBox;
 use CT_FieldTypeTag_log;
 
 use Joomla\CMS\Factory;
@@ -229,12 +228,15 @@ class Value
 
 			case 'filebox':
 
-				$FileBoxRows = CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->row[$this->ct->Table->realidfieldname]);
+				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
+					. 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'filebox.php');
+
+				$FileBoxRows = InputBox_filebox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->row[$this->ct->Table->realidfieldname]);
 
 				if (($option_list[0] ?? '') == '_count')
 					return count($FileBoxRows);
 
-				return CT_FieldTypeTag_FileBox::process($FileBoxRows, $this->field, $this->row[$this->ct->Table->realidfieldname], $option_list);
+				return InputBox_filebox::process($FileBoxRows, $this->field, $this->row[$this->ct->Table->realidfieldname], $option_list);
 
 			case 'sqljoin':
 			case 'userid':
