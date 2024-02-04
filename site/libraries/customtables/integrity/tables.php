@@ -15,11 +15,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\database;
 use CustomTables\IntegrityChecks;
 use CustomTables\MySQLWhereClause;
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 use ESTables;
@@ -75,13 +75,13 @@ class IntegrityTables extends IntegrityChecks
 		try {
 			return self::getTablesQuery();
 		} catch (Exception $e) {
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			common::enqueueMessage($e->getMessage());
 		}
 
 		try {
 			self::getTablesQuery(true);
 		} catch (Exception $e) {
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			common::enqueueMessage($e->getMessage());
 		}
 		return null;
 	}
@@ -131,7 +131,7 @@ class IntegrityTables extends IntegrityChecks
 
 				if ($row['customtablename'] === null or $row['customtablename'] == '') {
 					if (ESTables::createTableIfNotExists($database, $dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'])) {
-						Factory::getApplication()->enqueueMessage('Table "' . $row['tabletitle'] . '" created.', 'notice');
+						common::enqueueMessage('Table "' . $row['tabletitle'] . '" created.');
 					}
 				}
 			}

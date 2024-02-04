@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use DateTime;
-use Joomla\CMS\HTML\HTMLHelper;
 
 class Search_date extends BaseSearch
 {

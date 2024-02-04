@@ -12,7 +12,6 @@ use CustomTables\common;
 use CustomTables\database;
 use CustomTables\ImportTables;
 use CustomTables\MySQLWhereClause;
-use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -118,7 +117,7 @@ class ImportExportUserGroups
 
 			$msg = common::saveString2File($tmp_path . $filename_available, $output_str);
 			if ($msg !== null) {
-				Factory::getApplication()->enqueueMessage($tmp_path . $filename_available . '<br/>' . $msg, 'error');
+				common::enqueueMessage($tmp_path . $filename_available . ': ' . $msg);
 				return null;
 			}
 			return $link;

@@ -20,8 +20,6 @@ use CustomTablesImageMethods;
 use Exception;
 use JoomlaBasicMisc;
 use ESTables;
-
-use Joomla\CMS\Factory;
 use CustomTables\ctProHelpers;
 
 class Field
@@ -588,7 +586,7 @@ class Fields
 			try {
 				$constrances = Fields::getTableConstrances($realtablename, '');
 			} catch (Exception $e) {
-				$msg = '<p style="color:red;">Caught exception fixMYSQLField->Fields::getTableConstrances: ' . $e->getMessage() . '</p>';
+				$msg = 'Caught exception fixMYSQLField->Fields::getTableConstrances: ' . $e->getMessage();
 				return false;
 			}
 
@@ -603,7 +601,7 @@ class Fields
 			try {
 				database::changeColumn($realtablename, 'id', 'id', $PureFieldType, 'Primary Key');
 			} catch (Exception $e) {
-				$msg = '<p style="color:red;">Caught exception fixMYSQLField 1: ' . $e->getMessage() . '</p>';
+				$msg = 'Caught exception fixMYSQLField 1: ' . $e->getMessage();
 			}
 
 			$msg = '';
@@ -612,15 +610,15 @@ class Fields
 			try {
 				database::changeColumn($realtablename, 'published', 'published', $PureFieldType, 'Publish Status');
 			} catch (Exception $e) {
-				$msg = '<p style="color:red;">Caught exception fixMYSQLField 2: ' . $e->getMessage() . '</p>';
+				$msg = 'Caught exception fixMYSQLField 2: ' . $e->getMessage();
 			}
 		} else {
-			try {
-				database::changeColumn($realtablename, $fieldname, $fieldname, $PureFieldType, $title);
-			} catch (Exception $e) {
-				$msg = '<p style="color:red;">Caught exception fixMYSQLField 3: ' . $e->getMessage() . '</p>';
-				return false;
-			}
+			//try {
+			database::changeColumn($realtablename, $fieldname, $fieldname, $PureFieldType, $title);
+			//} catch (Exception $e) {
+			//$msg = 'Caught exception fixMYSQLField 3: ' . $e->getMessage();
+			//return false;
+			//}
 		}
 
 		$msg = '';
@@ -636,7 +634,7 @@ class Fields
 		try {
 			database::dropForeignKey($realtablename, $constrance);
 		} catch (Exception $e) {
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			common::enqueueMessage($e->getMessage());
 		}
 	}
 
@@ -783,8 +781,7 @@ class Fields
 		$ct = new CT;
 		$table_row = ESTables::getTableRowByID($tableId);
 		if (!is_object($table_row)) {
-			if (defined('_JEXEC'))
-				Factory::getApplication()->enqueueMessage('Table not found', 'error');
+			common::enqueueMessage('Table not found');
 			return null;
 		}
 

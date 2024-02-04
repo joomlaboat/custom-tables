@@ -63,7 +63,7 @@ class Email
 			$send = @$mailer->Send();
 		} catch (Exception $e) {
 			$msg = $e->getMessage();
-			Factory::getApplication()->enqueueMessage($msg, 'error');
+			common::enqueueMessage($msg);
 			return false;
 		}
 

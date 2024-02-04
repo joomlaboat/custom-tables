@@ -229,15 +229,6 @@ class Ordering
 		foreach ($this->Table->fields as $row) {
 			if ($row['allowordering'] == 1) {
 
-				/*
-				if (!array_key_exists($row['fieldtitle' . $this->Table->Languages->Postfix])) {
-
-					Factory::getApplication()->enqueueMessage('1:' .
-						common::translate('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'), 'Error');
-					return null;
-				}
-				*/
-
 				$fieldType = $row['type'];
 				$fieldname = $row['fieldname'];
 

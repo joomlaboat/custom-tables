@@ -11,7 +11,6 @@
 namespace CustomTables;
 
 use Exception;
-use Joomla\CMS\Factory;
 use ESTables;
 use JoomlaBasicMisc;
 use JTableNested;
@@ -94,7 +93,7 @@ class ImportTables
 					ImportTables::processRecords($table['table']['tablename'], $table['records']);
 			} else {
 				$msg = 'Could not Add or Update table "' . $table['table']['tablename'] . '"';
-				Factory::getApplication()->enqueueMessage($msg, 'error');
+				common::enqueueMessage($msg);
 
 				return false;
 			}
@@ -652,7 +651,7 @@ class ImportTables
 
 			$access_row = ImportTables::getRecordByField('#__viewlevels', 'title', $access_, false);
 			if (!is_array($access_row) or count($access_row) == 0) {
-				Factory::getApplication()->enqueueMessage('Cannot find access level "' . $access_ . '"', 'error');
+				common::enqueueMessage('Cannot find access level "' . $access_ . '"');
 				return false;
 			}
 			$access = $access_row['id'];
@@ -660,7 +659,7 @@ class ImportTables
 			$access = $access_;
 
 		if ($access == 0) {
-			Factory::getApplication()->enqueueMessage('Cannot find access level "' . $access_ . '", found 0.', 'error');
+			common::enqueueMessage('Cannot find access level "' . $access_ . '", found 0.');
 			return false;
 		}
 
@@ -698,7 +697,7 @@ class ImportTables
 		$menuitem_old = ImportTables::getRecordByField('#__menu', 'alias', $alias, false);
 
 		if (is_array($menuitem_old) and count($menuitem_old) > 0) {
-			Factory::getApplication()->enqueueMessage('Updating external menu Item "' . $alias . '".', 'notice');
+			common::enqueueMessage('Updating external menu Item "' . $alias . '".', 'notice');
 
 			$menuitem_new['parent_id'] = 1; //TODO: Add menu parent functionality
 			$menuitem_new['level'] = 1;
@@ -708,11 +707,9 @@ class ImportTables
 
 			ImportTables::updateRecords('#__menu', $menuitem_new, $menuitem_old, false);
 		} else {
-			Factory::getApplication()->enqueueMessage('Adding external menu Item "' . $alias . '".', 'notice');
-
+			common::enqueueMessage('Adding external menu Item "' . $alias . '".', 'notice');
 			ImportTables::rebuildMenuTree($menuitem_new);//,'oxford-sms','tos-shared-files',$component_id);
 		}
-
 		return true;
 	}
 
@@ -748,7 +745,7 @@ class ImportTables
 		// save is the shortcut method for bind, check and store
 		$menuTable->save($menuitem_new);
 		if ($menuTable->getError() != '') {
-			Factory::getApplication()->enqueueMessage($menuTable->getError(), 'error');
+			common::enqueueMessage($menuTable->getError());
 		}
 		return $menuTable->id;
 	}

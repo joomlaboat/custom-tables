@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 use ESTables;
 use Exception;
-use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -34,12 +33,7 @@ class ListOfTables
 			$whereClause = new MySQLWhereClause();
 			$rows = database::loadObjectList($realtablename, ['COUNT(' . $realIdField . ') AS count'], $whereClause, null, null, 1);
 		} catch (Exception $e) {
-			if (defined('_JEXEC')) {
-				$app = Factory::getApplication();
-				$app->enqueueMessage('Table "' . $realtablename . '" - ' . $e->getMessage(), 'error');
-			} else {
-				throw new Exception($e->getMessage());
-			}
+			common::enqueueMessage('Table "' . $realtablename . '" - ' . $e->getMessage());
 			return 0;
 		}
 		return $rows[0]->count;

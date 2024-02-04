@@ -101,7 +101,7 @@ class CTUser
 	public static function ResetPassword(CT $ct, ?string $listing_id): bool
 	{
 		if ($listing_id === null or $listing_id === '' or $listing_id == 0) {
-			Factory::getApplication()->enqueueMessage('Table record selected.', 'error');
+			common::enqueueMessage('Table record selected.');
 			return false;
 		}
 
@@ -109,14 +109,14 @@ class CTUser
 			if (ob_get_contents()) ob_end_clean();
 
 		if ($ct->Table->useridrealfieldname === null or $ct->Table->useridrealfieldname == '') {
-			Factory::getApplication()->enqueueMessage('User ID field not found.', 'error');
+			common::enqueueMessage('User ID field not found.');
 			return false;
 		}
 
 		$ct->Table->loadRecord($listing_id);
 
 		if ($ct->Table->record === null) {
-			Factory::getApplication()->enqueueMessage('User record ID: "' . $listing_id . '" not found.', 'error');
+			common::enqueueMessage('User record ID: "' . $listing_id . '" not found.');
 			return false;
 		}
 
@@ -163,8 +163,7 @@ class CTUser
 
 		if (Email::sendEmail($user_email, $subject, $messageBody)) {
 			//clean exit
-
-			Factory::getApplication()->enqueueMessage('User password has been reset and sent to the email "' . $user_email . '".');
+			common::enqueueMessage(common::translate('User password has been reset and sent to the email "' . $user_email . '"'));
 			return true;
 		}
 
@@ -237,7 +236,7 @@ class CTUser
 	public static function CreateUser(string $realtablename, string $realidfieldname, string $email, string $name, string $usergroups, string $listing_id, string $useridfieldname): bool
 	{
 		if ($name == '') {
-			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET'), 'error');
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET'));
 			return false;
 		}
 
@@ -246,23 +245,23 @@ class CTUser
 		$articleId = 0;
 
 		if (!@Email::checkEmail($email)) {
-			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"', 'error');
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"');
 			return false;
 		}
 
 		$realUserId = CTUser::CreateUserAccount($name, $email, $password, $email, $usergroups, $msg, $articleId);
 
 		if ($msg != '') {
-			Factory::getApplication()->enqueueMessage($msg, 'error');
+			common::enqueueMessage($msg);
 			return false;
 		}
 
 		if ($realUserId !== null) {
 			CTUser::UpdateUserField($realtablename, $realidfieldname, $useridfieldname, $realUserId, $listing_id);
-			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'));
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'));
 		} else {
 			$msg = common::translate('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED');
-			Factory::getApplication()->enqueueMessage($msg, 'error');
+			common::enqueueMessage($msg);
 		}
 		return true;
 	}

@@ -20,7 +20,6 @@ use CustomTables\Catalog;
 use CustomTables\database;
 use CustomTables\Inputbox;
 use CustomTables\MySQLWhereClause;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewCatalog extends HtmlView

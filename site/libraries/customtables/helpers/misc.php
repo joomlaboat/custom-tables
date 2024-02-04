@@ -273,7 +273,7 @@ class JoomlaBasicMisc
 
 				$count++;
 				if ($count > 1000) {
-					Factory::getApplication()->enqueueMessage('Quote count > 1000', 'error');
+					common::enqueueMessage('Quote count > 1000');
 					return [];
 				}
 
@@ -363,7 +363,7 @@ class JoomlaBasicMisc
 
 				$count++;
 				if ($count > 1000) {
-					Factory::getApplication()->enqueueMessage('Too many quotes.', 'error');
+					common::enqueueMessage('Too many quotes.');
 					return [];
 				}
 

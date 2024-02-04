@@ -127,7 +127,7 @@ class CT_FieldTypeTag_image
 		if ($value == "-1" or $value == "2") {
 			// -1 if file extension not supported
 			// 2 if file already exists
-			Factory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
+			common::enqueueMessage('Could not upload image file.');
 			$value = null;
 		}
 		return $value;

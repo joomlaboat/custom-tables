@@ -18,7 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
-use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
 use LayoutProcessor;
 
@@ -242,7 +241,7 @@ class Layouts
 				try {
 					unlink($path);
 				} catch (Exception $e) {
-					Factory::getApplication()->enqueueMessage($path . '<br/>' . $e->getMessage(), 'error');
+					common::enqueueMessage($path . ': ' . $e->getMessage());
 					return false;
 				}
 
@@ -251,19 +250,19 @@ class Layouts
 
 		$msg = common::saveString2File($path, $layoutCode);
 		if ($msg !== null) {
-			Factory::getApplication()->enqueueMessage($path . '<br/>' . $msg, 'error');
+			common::enqueueMessage($path . ': ' . $msg);
 			return false;
 		}
 
 		try {
 			@$file_ts = filemtime($path);
 		} catch (Exception $e) {
-			Factory::getApplication()->enqueueMessage($path . '<br/>' . $e->getMessage(), 'error');
+			common::enqueueMessage($path . ': ' . $e->getMessage());
 			return false;
 		}
 
 		if ($file_ts == '') {
-			Factory::getApplication()->enqueueMessage($path . '<br/>No permission -  file not saved', 'error');
+			common::enqueueMessage($path . ': No permission -  file not saved');
 			return false;
 		} else {
 
@@ -338,7 +337,7 @@ class Layouts
 				try {
 					@unlink($path);
 				} catch (Exception $e) {
-					Factory::getApplication()->enqueueMessage($path . '<br/>' . $e->getMessage(), 'error');
+					common::enqueueMessage($path . ': ' . $e->getMessage());
 					return false;
 				}
 			}

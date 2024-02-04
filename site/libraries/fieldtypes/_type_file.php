@@ -19,7 +19,6 @@ use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\MySQLWhereClause;
-use Joomla\CMS\Factory;
 
 if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php'))
 	require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
@@ -181,7 +180,7 @@ class CT_FieldTypeTag_file
 
 	public static function wrong(): bool
 	{
-		Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+		common::enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
 		return false;
 	}
 

@@ -696,6 +696,12 @@ class database
 		if (!str_contains($realTableName, 'customtables_'))
 			throw new Exception('Only CustomTables tables can be modified.');
 
+		$possibleTypes = ['varchar', 'tinytext', 'text', 'mediumtext', 'longtext', 'tinyblob', 'blob', 'mediumblob',
+			'longblob', 'char', 'int', 'bigint', 'numeric', 'decimal', 'smallint', 'tinyint', 'date', 'TIMESTAMP', 'datetime'];
+
+		if (!in_array($PureFieldType['data_type'], $possibleTypes))
+			throw new Exception('Change Column type: unsupported column type "' . $PureFieldType['data_type'] . '"');
+
 		$db = self::getDB();
 
 		if (self::getServerType() == 'postgresql') {

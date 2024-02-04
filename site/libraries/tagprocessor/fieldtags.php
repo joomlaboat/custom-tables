@@ -17,7 +17,6 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Forms;
 use CustomTables\Field;
-use Joomla\CMS\Factory;
 
 class tagProcessor_Field
 {
@@ -38,8 +37,7 @@ class tagProcessor_Field
 		} else {
 			foreach ($ct->Table->fields as $fieldrow) {
 				if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldrow)) {
-					Factory::getApplication()->enqueueMessage(
-						common::translate('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'), 'Error');
+					common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'));
 					$pageLayout = str_replace('*' . $fieldrow['fieldname'] . '*', '*fieldtitle' . $ct->Languages->Postfix . ' - not found*', $pageLayout);
 				} else {
 					$pageLayout = str_replace('*' . $fieldrow['fieldname'] . '*', $fieldrow['fieldtitle' . $ct->Languages->Postfix] ?? '', $pageLayout);

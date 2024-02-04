@@ -18,7 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CT_FieldTypeTag_FileBox;
 use CT_FieldTypeTag_imagegallery;
 use Exception;
-use Joomla\CMS\Factory;
 use CustomTables\ctProHelpers;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;
@@ -69,7 +68,7 @@ class TwigProcessor
 
 		if (!class_exists('Twig\Loader\ArrayLoader')) {
 			$this->errorMessage = 'Twig not loaded. Go to Global Configuration/ Custom Tables Configuration to enable it.';
-			Factory::getApplication()->enqueueMessage($this->errorMessage, 'error');
+			common::enqueueMessage($this->errorMessage);
 			return;
 		}
 

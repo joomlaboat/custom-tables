@@ -16,14 +16,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables;
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
-
-//use CustomTables\Integrity\IntegrityFields;
-
-use Joomla\CMS\Factory;
 use ESTables;
 
 class IntegrityCoreTables extends IntegrityChecks
@@ -163,7 +160,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
 				$msg = '';
 				if (!Fields::fixMYSQLField($realtablename, $realfieldname, $PureFieldType, $msg, $field_title)) {
-					Factory::getApplication()->enqueueMessage($msg, 'error');
+					common::enqueueMessage($msg);
 					return false;
 				}
 			}

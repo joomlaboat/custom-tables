@@ -23,9 +23,17 @@ use RecursiveIteratorIterator;
 
 class common
 {
-	public static function enqueueMessage($text, $type): void
+	public static function enqueueMessage($text, $type = 'error'): void
 	{
-		echo '<div class="success-message">' . $text . '</div>';
+		//Types: error, success-message, notice
+
+		if (defined('_JEXEC'))
+			Factory::getApplication()->enqueueMessage($text, $type);
+		elseif (defined('WPINC')) {
+			if ($type == 'notice')
+				$type = 'success-message';
+			echo '<div class="' . esc_attr($type) . '"><p>' . esc_html($text) . '</p></div>';
+		}
 	}
 
 	public static function translate(string $text, int|float $value = null): string

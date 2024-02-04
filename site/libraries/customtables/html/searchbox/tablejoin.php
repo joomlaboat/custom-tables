@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use ESTables;
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
 use JoomlaBasicMisc;
@@ -62,12 +61,12 @@ class Search_tablejoin extends BaseSearch
 		$typeParams = $this->field->params;
 
 		if (count($typeParams) < 1) {
-			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'), 'error');
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'));
 			return '';
 		}
 
 		if (count($typeParams) < 2) {
-			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'), 'error');
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'));
 			return '';
 		}
 
@@ -83,7 +82,7 @@ class Search_tablejoin extends BaseSearch
 			$allowUnpublished = false;
 
 		if (ESTables::getTableID($tableName) == '') {
-			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
 			return '';
 		}
 
@@ -167,7 +166,7 @@ class Search_tablejoin extends BaseSearch
 		if (count($pair) == 2) {
 			$layout_mode = true;
 			if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout') {
-				Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' search_tablejoin.php' . $field . '"', 'error');
+				common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' search_tablejoin.php' . $field . '"');
 				return array();
 			}
 
@@ -175,7 +174,7 @@ class Search_tablejoin extends BaseSearch
 			$layoutcode = $Layouts->getLayout($pair[1]);
 
 			if (!isset($layoutcode) or $layoutcode == '') {
-				Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' search_tablejoin.php' . $pair[1] . '"', 'error');
+				common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' search_tablejoin.php' . $pair[1] . '"');
 				return array();
 			}
 		}

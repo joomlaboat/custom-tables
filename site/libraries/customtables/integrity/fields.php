@@ -21,7 +21,6 @@ use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
 use Exception;
-use Joomla\CMS\Factory;
 use ESTables;
 
 class IntegrityFields extends IntegrityChecks
@@ -199,7 +198,7 @@ class IntegrityFields extends IntegrityChecks
 							$result .= '<p>' . common::translate('COM_CUSTOMTABLES_FIELD') . ' <span style="color:green;">'
 								. $nice_field_name . '</span> ' . common::translate('COM_CUSTOMTABLES_FIELD_FIXED') . '.</p>';
 						} else {
-							Factory::getApplication()->enqueueMessage($msg, 'error');
+							common::enqueueMessage($msg);
 						}
 
 						if ($msg != '')
@@ -314,8 +313,6 @@ class IntegrityFields extends IntegrityChecks
 		$PureFieldType = Fields::getPureFieldType($fieldType, $typeParams);
 		$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
 		Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldTypeString, '');
-
-		if (defined('_JEXEC'))
-			Factory::getApplication()->enqueueMessage('Field "' . $realfieldname . '" added.', 'notice');
+		common::enqueueMessage(common::translate('Field "' . $realfieldname . '" added.'), 'notice');
 	}
 }

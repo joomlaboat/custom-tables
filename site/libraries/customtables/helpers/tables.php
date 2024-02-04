@@ -18,7 +18,6 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\MySQLWhereClause;
-use Joomla\CMS\Factory;
 
 class ESTables
 {
@@ -307,7 +306,7 @@ class ESTables
 			} else {
 				$ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type, $field->column_type);
 				if ($ct_field_type['type'] === null) {
-					Factory::getApplication()->enqueueMessage('third-party table field type "' . $field->data_type . '" is unknown.', 'error');
+					common::enqueueMessage('third-party table field type "' . $field->data_type . '" is unknown.');
 					return false;
 				}
 

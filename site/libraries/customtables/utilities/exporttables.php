@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 class ExportTables
@@ -81,7 +80,7 @@ class ExportTables
 
 			$msg = common::saveString2File($tmp_path . $filename_available, $output_str);
 			if ($msg !== null) {
-				Factory::getApplication()->enqueueMessage($tmp_path . $filename_available . '<br/>' . $msg, 'error');
+				common::enqueueMessage($tmp_path . $filename_available . ': ' . $msg);
 				return null;
 			}
 		}

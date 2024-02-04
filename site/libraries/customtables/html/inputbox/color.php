@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
 
 class InputBox_color extends BaseInputBox
 {
@@ -52,7 +51,7 @@ class InputBox_color extends BaseInputBox
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/spectrum.js"></script>');
 			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/spectrum.css" type="text/css" rel="stylesheet" >');
 		}
-		
+
 		// JavaScript code to initialize Spectrum Color Picker
 		//palette: [ ['#ff0000', '#00ff00', '#0000ff'],['#ffff00', '#ff00ff', '#00ffff'] ]
 
