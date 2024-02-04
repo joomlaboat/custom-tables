@@ -122,7 +122,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	 */
 	function getGallery(): bool
 	{
-		$fieldrow = Fields::getFieldRowByName($this->galleryname, $this->ct->Table->tableid);
+		$fieldrow = Fields::getFieldRowByName($this->galleryname, $this->ct->Table->tableid, '', true);
 		if ($fieldrow === null)
 			return false;
 
@@ -141,7 +141,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 			Factory::getApplication()->enqueueMessage('Path ' . $this->imagefolder . ' not found.', 'error');
 			mkdir($this->imagefolder, 0755, true);
 		}
-
 		return true;
 	}
 

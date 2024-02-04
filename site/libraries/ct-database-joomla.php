@@ -338,7 +338,7 @@ class database
 			$query->group($groupBy);
 
 		if (!empty($order))
-			$query->order($order . ($orderBy !== null and strtolower($orderBy) == 'desc' ? ' DESC' : ''));
+			$query->order($order . (($orderBy !== null and strtolower($orderBy) == 'desc') ? ' DESC' : ''));
 
 		if ($returnQueryString)
 			return $query;

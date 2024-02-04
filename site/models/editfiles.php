@@ -121,9 +121,10 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 
 		$uploadedFile = "tmp/" . basename($file['name']);
 
-		if (!move_uploaded_file($file['tmp_name'], $uploadedFile))
+		if (!move_uploaded_file($file['tmp_name'], $uploadedFile)) {
+			common::enqueueMessage('Cannot move uploaded file.');
 			return false;
-
+		}
 
 		if (common::inputGetCmd('base64ecnoded', '') == "true") {
 			$src = $uploadedFile;
@@ -137,7 +138,7 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 		if ($file_ext == '') {
 			//unknown file extension (type)
 			unlink($uploadedFile);
-
+			common::enqueueMessage('Unknown file extensions.');
 			return false;
 		}
 
@@ -145,18 +146,21 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 		$filename = end($filenameParts);
 		$title = str_replace('.' . $file_ext, '', $filename);
 
-		$fileid = $this->addFileRecord($file_ext, $title);
+		try {
+			$fileId = $this->addFileRecord($file_ext, $title);
+		} catch (Exception $e) {
+			common::enqueueMessage('Cannot add new file record: ' . $e->getMessage());
+		}
 
-		//es Thumb
-		$newfilename = $this->fileboxfolder . DIRECTORY_SEPARATOR . $this->ct->Table->tableid . '_' . $this->fileboxname . '_' . $fileid . "." . $file_ext;
+		$newfilename = $this->fileboxfolder . DIRECTORY_SEPARATOR . $this->ct->Table->tableid . '_' . $this->fileboxname . '_' . $fileId . "." . $file_ext;
 
 		if (!copy($uploadedFile, $newfilename)) {
 			unlink($uploadedFile);
+			common::enqueueMessage('Cannot copy file');
 			return false;
 		}
 
 		unlink($uploadedFile);
-
 		$this->ct->Table->saveLog($this->ct->Params->listing_id, 8);
 		return true;
 	}
@@ -178,8 +182,8 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 		try {
 			database::insert($this->fileboxtablename, $data);
 		} catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			die;
+			common::enqueueMessage('Caught exception: ' . $e->getMessage());
+			return -1;
 		}
 
 		$whereClause = new MySQLWhereClause();
@@ -190,7 +194,6 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 		if (count($rows) == 1) {
 			return $rows[0]->fileid;
 		}
-
 		return -1;
 	}
 }

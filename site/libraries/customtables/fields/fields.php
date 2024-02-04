@@ -663,7 +663,7 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function getFieldRowByName(string $fieldName, ?int $tableId = null, string $tableName = '')
+	public static function getFieldRowByName(string $fieldName, ?int $tableId = null, string $tableName = '', bool $assocList = false)
 	{
 		if ($fieldName == '')
 			return array();
@@ -684,7 +684,10 @@ class Fields
 		if ($tableName != '')
 			$from .= ' INNER JOIN #__customtables_tables AS t ON t.id=s.tableid';
 
-		$rows = database::loadObjectList($from, self::getFieldRowSelectArray(), $whereClause, null, null, 1);
+		if ($assocList)
+			$rows = database::loadAssocList($from, self::getFieldRowSelectArray(), $whereClause, null, null, 1);
+		else
+			$rows = database::loadObjectList($from, self::getFieldRowSelectArray(), $whereClause, null, null, 1);
 
 		if (count($rows) != 1)
 			return null;
