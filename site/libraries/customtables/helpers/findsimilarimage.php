@@ -8,8 +8,9 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-use CustomTables\database;
-use CustomTables\MySQLWhereClause;
+namespace CustomTables;
+
+use compareImages;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
 	die('Restricted access');
@@ -30,10 +31,7 @@ class FindSimilarImage
 		if ($whereClauseAdditional->hasConditions())
 			$whereClause->addNestedCondition($whereClauseAdditional);
 
-		$photoRows = database::loadObjectList($realtablename, [$realfieldname . ' AS photoid'], $whereClause, '', null);
-
-		//$photorows = database::loadObjectList('SELECT ' . $realfieldname . ' AS photoid FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0'
-		//. ($additional_filter != '' ? ' AND ' . $additional_filter : ''));
+		$photoRows = database::loadObjectList($realtablename, [$realfieldname . ' AS photoid'], $whereClause);
 
 		foreach ($photoRows as $photoRow) {
 			$photoId = $photoRow->photoid;

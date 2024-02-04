@@ -13,6 +13,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Filtering;
+use CustomTables\FindSimilarImage;
 use CustomTables\MySQLWhereClause;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
