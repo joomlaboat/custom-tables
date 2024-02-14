@@ -90,8 +90,8 @@ class Inputbox
 		$this->attributesArray['title'] = $this->field->title;
 		$this->attributesArray['data-label'] = $this->field->title;
 		$this->attributesArray['placeholder'] = $this->field->title;
-		$this->attributesArray['data-valuerule'] = str_replace('"', '&quot;', $this->field->valuerule);
-		$this->attributesArray['data-valuerulecaption'] = str_replace('"', '&quot;', $this->field->valuerulecaption);
+		$this->attributesArray['data-valuerule'] = str_replace('"', '&quot;', $this->field->valuerule ?? '');
+		$this->attributesArray['data-valuerulecaption'] = str_replace('"', '&quot;', $this->field->valuerulecaption ?? '');
 		$this->attributesArray['onchange'] = $this->onchange;
 
 		//For old input boxes

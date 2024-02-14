@@ -496,7 +496,8 @@ class Layouts
 	 */
 	function renderMixedLayout(int $layoutId): string
 	{
-		$this->getLayout($layoutId);
+		if ($layoutId !== 0)
+			$this->getLayout($layoutId);
 		//$this->getLayoutRowById($layoutId);
 
 		if ($this->layoutType === null)

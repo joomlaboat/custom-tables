@@ -936,14 +936,12 @@ class Fields
 	 */
 	protected static function getMaxOrdering($tableid): int
 	{
-		//$query = 'SELECT MAX(ordering) as max_ordering FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid;
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
 		$whereClause->addCondition('tableid', (int)$tableid);
 
-		$rows = database::loadObjectList('#__customtables_fields', ['MAX(ordering) as max_ordering'], $whereClause, null, null, 1);
-		return (int)$rows[0]->max_ordering;
+		$rows = database::loadObjectList('#__customtables_fields', [['MAX', '#__customtables_fields', 'ordering']], $whereClause, null, null, 1);
+		return (int)$rows[0]->vlu;
 	}
 
 	/**
@@ -1209,7 +1207,8 @@ class Fields
 
 		switch ($ct_fieldTypeArray['data_type']) {
 			case 'varchar':
-				$elements['data_type'] = 'varchar(' . $type->length . ')';
+				$elements['data_type'] = 'varchar';
+				$elements['length'] = $type->length;
 				break;
 
 			case 'tinytext':
