@@ -41,11 +41,7 @@ class InputBox_string extends BaseInputBox
 		if (isset($this->option_list[2]) and $this->option_list[2] == 'autocomplete') {
 			$this->attributes['list'] = $this->attributes['id'] . '_datalist';
 
-			//$query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' GROUP BY ' . $this->field->realfieldname
-			//. ' ORDER BY ' . $this->field->realfieldname;
-
 			$whereClause = new MySQLWhereClause();
-			//$whereClause->addCondition('',);
 			$records = database::loadObjectList($this->ct->Table->realtablename, [$this->field->realfieldname], $whereClause,
 				$this->field->realfieldname, null, null, null, 'OBJECT', $this->field->realfieldname);
 
@@ -56,7 +52,7 @@ class InputBox_string extends BaseInputBox
 
 		$this->attributes['type'] = 'text';
 		$this->attributes['value'] = htmlspecialchars($value ?? '');
-		$this->attributes['maxlength'] = ($this->field->params !== null and count($this->field->params) > 0 and (int)$this->field->params[0] > 0 ? (int)$this->field->params[0] : 255);
+		$this->attributes['maxlength'] = (($this->field->params !== null and count($this->field->params) > 0 and (int)$this->field->params[0] > 0) ? (int)$this->field->params[0] : 255);
 
 		$input = '<input ' . self::attributes2String($this->attributes) . ' />';
 
