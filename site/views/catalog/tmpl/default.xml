@@ -13,12 +13,13 @@
 
         <fieldset name="params" addfieldpath="/components/com_customtables/fields"
                   label="Table and Layouts" description="Basic menu item parameters needed to render the page.">
+
             <field type="CTTable" name="establename" label="Table"
                    description="Select the Table for reading the records. You can create a new table in Components/Custom Tables/Tables."
                    required="true"/>
-
             <field type="CTCatalogLayout" name="escataloglayout" default="" label="Page Layout"
                    description="Select Catalog Page Layout. This parameter is available on Custom Tables - Records menu item type."/>
+
             <field type="CTItemLayout" name="esitemlayout" default="" label="Item Layout"
                    description="Select Item Layout. This parameter can be used on Records menu item and if Page layout type is Catalog Page not Simple Catalog."/>
 
@@ -83,7 +84,6 @@ In this case, there will be two checks: first, it will check if the record belon
                 <option value="0">Only registered can add new records</option>
                 <option value="-1">Disable Add New records</option>
             </field>
-
 
             <field name="addusergroups" type="CTUserGroup" default="8" label="Who may add records"
                    description="Select the user group that may add the records."/>

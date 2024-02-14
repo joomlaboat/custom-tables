@@ -32,7 +32,7 @@ class InputBox_color extends BaseInputBox
 				$value = $defaultValue;
 		}
 
-		$showAlpha = $this->option_list[0] == 'transparent';
+		$showAlpha = ($this->option_list[0] ?? '') == 'transparent';
 
 		if (isset($this->option_list[1]) and $this->option_list[1] != "")
 			$palette = explode(',', $this->option_list[1]);

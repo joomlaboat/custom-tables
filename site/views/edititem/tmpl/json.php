@@ -62,4 +62,4 @@ header("Pragma: no-cache");
 header("Expires: 0");
 
 echo common::ctJsonEncode($response_object);
-die;
+die;//JSON output

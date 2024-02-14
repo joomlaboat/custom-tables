@@ -86,7 +86,7 @@ foreach ($this->allTables as $table) {
 	$layoutCode = $this->item->layoutcode;
 	if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
 		$layouts = new Layouts($this->ct);
-		$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '.html', 'layoutcode');
+		$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->modified_timestamp, $this->item->layoutname . '.html', 'layoutcode');
 		if ($content != null)
 			$layoutCode = $content;
 	}
@@ -105,7 +105,7 @@ foreach ($this->allTables as $table) {
 		$layoutCode = $this->item->layoutmobile ?? '';
 		if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
 			$layouts = new Layouts($this->ct);
-			$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '_mobile.html', 'layoutmobile');
+			$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->modified_timestamp, $this->item->layoutname . '_mobile.html', 'layoutmobile');
 			if ($content != null)
 				$layoutCode = $content;
 		}
@@ -124,7 +124,7 @@ foreach ($this->allTables as $table) {
 		$layoutCode = $this->item->layoutcss ?? '';
 		if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
 			$layouts = new Layouts($this->ct);
-			$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '.css', 'layoutcss');
+			$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->modified_timestamp, $this->item->layoutname . '.css', 'layoutcss');
 			if ($content != null)
 				$layoutCode = $content;
 		}
@@ -143,7 +143,7 @@ foreach ($this->allTables as $table) {
 		$layoutCode = $this->item->layoutjs ?? '';
 		if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
 			$layouts = new Layouts($this->ct);
-			$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '.js', 'layoutjs');
+			$content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->modified_timestamp, $this->item->layoutname . '.js', 'layoutjs');
 			if ($content != null)
 				$layoutCode = $content;
 		}
@@ -158,7 +158,6 @@ foreach ($this->allTables as $table) {
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
 	<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
-
 
     <input type="hidden" name="task" value="layouts.edit"/>
 	<?php echo HTMLHelper::_('form.token'); ?>

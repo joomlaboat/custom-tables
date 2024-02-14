@@ -70,13 +70,11 @@ class updateImages
 	 */
 	public static function countImages(string $realtablename, string $realidfieldname): int
 	{
-		//$query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL';
-
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('$realfieldname', null, 'NOT NULL');
 
-		$rows = database::loadAssocList($realtablename, ['count(' . $realidfieldname . ') AS c'], $whereClause, null, null);
-		return (int)$rows[0]['c'];
+		$rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause, null, null);
+		return (int)$rows[0]['record_count'];
 	}
 
 	/**

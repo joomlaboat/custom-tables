@@ -63,9 +63,7 @@ class Value_tablejoin extends BaseValue
 		//$selector = $field->params[6] ?? 'dropdown';
 
 		$row = $ct->Table->loadRecord($listing_id);
-
 		$twig = new TwigProcessor($ct, $layoutcode);
-
 		$value = $twig->process($row);
 
 		if ($twig->errorMessage !== null)

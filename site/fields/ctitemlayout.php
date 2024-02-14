@@ -27,22 +27,19 @@ trait JFormFieldCTItemLayoutCommon
 {
 	protected static function getOptionList(): array
 	{
-		//$query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename'
-		//	. ' FROM #__customtables_layouts WHERE published=1 AND layouttype=6 ORDER BY tablename,layoutname';
 		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
 		$whereClause->addOrCondition('layouttype', 6);
 
-		$layouts = database::loadObjectList('#__customtables_layouts',
-			['id', 'layoutname', '(SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename'], $whereClause, 'tablename,layoutname');
-
+		$layouts = database::loadObjectList('#__customtables_layouts AS a',
+			['id', 'layoutname', 'TABLE_NAME'], $whereClause, 'TABLE_NAME,layoutname');
 
 		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_DEFAULT')];
 
 		if ($layouts) {
 			foreach ($layouts as $layout)
-				$options[] = HTMLHelper::_('select.option', $layout->layoutname, $layout->tablename . ' - ' . $layout->layoutname);
+				$options[] = HTMLHelper::_('select.option', $layout->layoutname, $layout->TABLE_NAME . ' - ' . $layout->layoutname);
 		}
 		return $options;
 	}

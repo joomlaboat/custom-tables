@@ -688,7 +688,7 @@ class CTMiscHelper
 
 				JPluginHelper::importPlugin('content');
 
-				$dispatcher = JDispatcher::getInstance();
+				$dispatcher = \JDispatcher::getInstance();
 				$dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
 
 				$htmlresult = $o->text;

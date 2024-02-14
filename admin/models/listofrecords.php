@@ -102,8 +102,11 @@ class CustomtablesModelListOfRecords extends ListModel
 	{
 		$db = database::getDB();
 		// Create a new query object.
-		$query = 'SELECT ' . implode(',', $this->ct->Table->selects)
-			. ' FROM ' . $db->quoteName($this->ct->Table->realtablename);
+
+		//Select columns sanitation
+		$selects_sanitized = database::sanitizeSelects($this->ct->Table->selects, $this->ct->Table->realtablename);
+
+		$query = 'SELECT ' . $selects_sanitized . ' FROM ' . $db->quoteName($this->ct->Table->realtablename);
 
 		$wheres_and = [];
 		// Filter by published state
@@ -151,14 +154,14 @@ class CustomtablesModelListOfRecords extends ListModel
 				$order_by_Col = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
 		}
 		$query .= ' ORDER BY ' . $db->quoteName($order_by_Col) . ' ' . $orderDirection;
+
 		return $query;
 	}
 
 	/**
 	 * Method to get a store id based on model configuration state.
-	 *
-	 * @return  string  A store id.
-	 *
+	 * @return string A store id.
+	 * @since 1.0.0
 	 */
 	protected function getStoreId($id = '')
 	{

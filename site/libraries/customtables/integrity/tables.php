@@ -98,13 +98,10 @@ class IntegrityTables extends IntegrityChecks
 			$selects[] = 'id';
 			$selects[] = 'tablename';
 		} else {
-			$categoryName = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
-			$fieldCount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
-
 			$selects = TableHelper::getTableRowSelectArray();
 
-			$selects[] = $categoryName . ' AS categoryname';
-			$selects[] = $fieldCount . ' AS fieldcount';
+			$selects[] = 'CATEGORY_NAME';
+			$selects[] = 'FIELD_COUNT';
 		}
 
 		// Add the list ordering clause.
@@ -146,9 +143,9 @@ class IntegrityTables extends IntegrityChecks
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($realidfieldname, 0);
 
-		$rows = database::loadAssocList($realtablename . ' AS a', ['COUNT(' . $realidfieldname . ') AS cd_zeroIdRecords'], $whereClause, null, null, 1);
+		$rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
 		$row = $rows[0];
 
-		return $row['cd_zeroIdRecords'];
+		return $row['record_count'];
 	}
 }

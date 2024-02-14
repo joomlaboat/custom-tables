@@ -119,7 +119,17 @@ function _getLayoutsThatUseThisTable($tableId, $tableName)
 	foreach ($layout_params as $l)
 		$whereClause->addCondition('layoutjs', $l, 'INSTR');
 
-	return database::loadAssocList('#__customtables_layouts', ['id', 'layoutname'], $whereClause, null, null);
+	$db = database::getDB();
+
+	$query = 'SELECT id, layoutname FROM #__customtables_layouts WHERE ' . $whereClause;
+
+	try {
+		$db->setQuery($query);
+	} catch (Exception $e) {
+		echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+	}
+
+	return $db->loadAssocList();
 }
 
 /**
@@ -132,7 +142,18 @@ function _getMenuItemsThatUseThisTable($tablename)
 	$whereClause->addCondition('published', 1);
 	$whereClause->addCondition('link', 'index.php?option=com_customtables&view=', 'INSTR');
 	$whereClause->addCondition('params', '"establename":"' . $tablename . '"', 'INSTR');
-	return database::loadAssocList('#__menu', ['id', 'title'], $whereClause, null, null);
+
+	$db = database::getDB();
+
+	$query = 'SELECT id, title FROM #__menu WHERE ' . $whereClause;
+
+	try {
+		$db->setQuery($query);
+	} catch (Exception $e) {
+		echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+	}
+
+	return $db->loadAssocList();
 }
 
 /**
@@ -144,7 +165,6 @@ function _getTablesThisTableDependOn($table_id)
 	if ((int)$table_id == 0)
 		return array();
 
-	$select_tableTitle = '(SELECT id FROM #__customtables_tables AS t1 WHERE t1.id=f.tableid LIMIT 1) ';
 	$serverType = database::getServerType();
 
 	$whereClause = new MySQLWhereClause();
@@ -152,13 +172,24 @@ function _getTablesThisTableDependOn($table_id)
 	$whereClause->addCondition('type', 'sqljoin');
 
 	if ($serverType == 'postgresql') {
-		$select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE POSITION(CONCAT(t2.tablename,\',\') IN f.typeparams)>0 LIMIT 1) ';
+		$select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE POSITION(CONCAT(t2.tablename,\',\') IN a.typeparams)>0 LIMIT 1) ';
 	} else {
-		$select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE t2.tablename LIKE SUBSTRING_INDEX(f.typeparams,",",1) LIMIT 1) ';
+		$select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE t2.tablename LIKE SUBSTRING_INDEX(a.typeparams,",",1) LIMIT 1) ';
 	}
+
 	$whereClause->addCondition($select_tableNameCheck, null, 'NOT NULL');
 
-	return database::loadAssocList('#__customtables_fields AS f', ['id', 'tableid', 'fieldtitle', 'typeparams', $select_tableTitle . ' AS tabletitle'], $whereClause, 'tabletitle');
+	$db = database::getDB();
+
+	$query = 'SELECT id, tableid, fieldtitle, typeparams, TABLE_TITLE FROM #__customtables_fields AS a WHERE ' . $whereClause . ' ORDER BY tabletitle';
+
+	try {
+		$db->setQuery($query);
+	} catch (Exception $e) {
+		echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+	}
+
+	return $db->loadAssocList();
 }
 
 /**
@@ -176,10 +207,6 @@ function _getTablesThatDependOnThisTable($tablename)
 	$whereClauseTemp->addOrCondition('published', 0);
 	$whereClause->addNestedCondition($whereClauseTemp);
 
-	$select_tablename = '(SELECT tabletitle FROM #__customtables_tables AS t WHERE t.id=f.tableid LIMIT 1)';
-
-	//$where = [];
-	//$where[] = '(published=1 or published=0)';
 	$serverType = database::getServerType();
 	if ($serverType == 'postgresql')
 		$whereClause->addCondition('typeparams', $tablename . ',%', 'LIKE');
@@ -193,10 +220,17 @@ function _getTablesThatDependOnThisTable($tablename)
 		$whereClause->addNestedCondition($whereClauseTemp);
 	}
 
-	//$query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tablename . ' AS tabletitle,published FROM #__customtables_fields AS f WHERE '
-	//. implode(' AND ', $where) . ' ORDER BY tabletitle';
+	$db = database::getDB();
 
-	return database::loadAssocList('#__customtables_fields AS f', ['id', 'tableid', 'fieldtitle', 'typeparams', $select_tablename . ' AS tabletitle', 'published'], $whereClause, 'tabletitle', null);
+	$query = 'SELECT id, tableid, fieldtitle, typeparams, TABLE_TITLE, published FROM #__customtables_fields AS f WHERE ' . $whereClause . ' ORDER BY tabletitle';
+
+	try {
+		$db->setQuery($query);
+	} catch (Exception $e) {
+		echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+	}
+
+	return $db->loadAssocList();
 }
 
 function _renderMenuList($menus): string

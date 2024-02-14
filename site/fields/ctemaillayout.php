@@ -29,14 +29,14 @@ trait JFormFieldCTEmailLayoutCommon
 		$whereClause->addCondition('published', 1);
 		$whereClause->addOrCondition('layouttype', 7);
 
-		$layouts = database::loadObjectList('#__customtables_layouts',
-			['id', 'layoutname', '(SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename'], $whereClause, 'tablename,layoutname');
+		$layouts = database::loadObjectList('#__customtables_layouts AS a',
+			['id', 'layoutname', 'TABLE_NAME'], $whereClause, 'TABLE_NAME,layoutname');
 
 		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_DEFAULT')];
 
 		if ($layouts) {
 			foreach ($layouts as $layout)
-				$options[] = HTMLHelper::_('select.option', $layout->layoutname, $layout->tablename . ' - ' . $layout->layoutname);
+				$options[] = HTMLHelper::_('select.option', $layout->layoutname, $layout->TABLE_NAME . ' - ' . $layout->layoutname);
 		}
 		return $options;
 	}

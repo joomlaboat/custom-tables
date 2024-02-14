@@ -78,27 +78,21 @@ class CustomTablesViewLog extends HtmlView
 
 		$selects = array();
 		$selects[] = '*';
-		$selects[] = '(SELECT name FROM #__users WHERE id=userid) AS UserName';
-		$selects[] = '(SELECT tabletitle FROM #__customtables_tables WHERE id=tableid) AS TableName';
-		$selects[] = '(SELECT fieldname FROM #__customtables_fields WHERE #__customtables_fields.published=1 AND #__customtables_fields.tableid=#__customtables_log.tableid '
-			. 'ORDER BY ordering LIMIT 1) AS FieldName';
+		$selects[] = 'USER_NAME';
+		$selects[] = 'TABLE_TITLE';
+		$selects[] = 'FIELD_NAME';
 
 		$whereClause = new MySQLWhereClause();
 
-		//$where = array();
 		if ($action != -1)
 			$whereClause->addCondition('action', $action);
-		//$where[] = 'action=' . $action;
 
 		if ($userid != 0)
 			$whereClause->addCondition('userid', $userid);
-		//$where[] = 'userid=' . $userid;
 
 		if ($tableid != 0)
 			$whereClause->addCondition('tableid', $tableid);
-		//$where[] = 'tableid=' . $tableid;
 
-		//$query = 'SELECT ' . implode(',', $selects) . ' FROM #__customtables_log ' . (count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY datetime DESC';
 		$this->record_count = 1000;
 
 		$the_limit = $this->limit;
@@ -111,7 +105,7 @@ class CustomTablesViewLog extends HtmlView
 		if ($this->record_count < $this->limitStart or $this->record_count < $the_limit)
 			$this->limitStart = 0;
 
-		return database::loadAssocList('#__customtables_log', $selects, $whereClause, 'datetime', 'DESC', $the_limit, $this->limitStart);
+		return database::loadAssocList('#__customtables_log AS a', $selects, $whereClause, 'datetime', 'DESC', $the_limit, $this->limitStart);
 	}
 
 	function ActionFilter($action): string
@@ -136,9 +130,7 @@ class CustomTablesViewLog extends HtmlView
 	function getUsers($userid): string
 	{
 		$from = '#__customtables_log';
-		$from .= 'INNER JOIN #__users ON #__users.id=#__customtables_log.userid';
-
-		//$query = 'SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.userid GROUP BY #__users.id ORDER BY name';
+		$from .= ' INNER JOIN #__users ON #__users.id=#__customtables_log.userid';
 
 		$whereClause = new MySQLWhereClause();
 
@@ -198,15 +190,15 @@ class CustomTablesViewLog extends HtmlView
 			$result .= '<img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' style="width:16px;height:16px;" />';
 
 		$result .= '</td>'
-			. '<td>' . $rec['UserName'] . '</td>';
+			. '<td>' . $rec['USER_NAME'] . '</td>';
 
 		$link = '/index.php?option=com_customtables&view=details&listing_id=' . $rec['listingid'] . '&Itemid=' . $rec['Itemid'];
 
 		$result .= '<td><a href="' . $link . '" target="_blank">' . $rec['datetime'] . '</a></td>'
-			. '<td style="vertical-align:top;">' . $rec['TableName'] . '</td>';
+			. '<td style="vertical-align:top;">' . $rec['tabletitle'] . '</td>';
 
 
-		$recordValue = $this->getRecordValue($rec['listingid'], $rec['Itemid'], $rec['FieldName']);
+		$recordValue = $this->getRecordValue($rec['listingid'], $rec['Itemid'], $rec['FIELD_NAME']);
 		if ($recordValue != '')
 			$recordValue .= '<br/>';
 

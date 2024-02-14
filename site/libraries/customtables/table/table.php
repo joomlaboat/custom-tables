@@ -142,15 +142,14 @@ class Table
 
 		if ($this->tablerow['published_field_found']) {
 
-			$this->selects[] = $this->realtablename . '.published AS listing_published';
-			//$this->selects[] = $this->realtablename . '.published AS published'; //TODO: not used
+			$this->selects[] = 'LISTING_PUBLISHED';
 		} else
-			$this->selects[] = '1 AS listing_published';
+			$this->selects[] = 'LISTING_PUBLISHED_1';
 
 		foreach ($this->fields as $field) {
 			if ($field['type'] == 'blob') {
-				$this->selects[] = 'OCTET_LENGTH(' . $this->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
-				$this->selects[] = 'SUBSTRING(' . $this->realtablename . '.' . $field['realfieldname'] . ',1,255) AS ' . $field['realfieldname'] . '_sample';
+				$this->selects[] = ['OCTET_LENGTH', $this->realtablename, $field['realfieldname'], $field['realfieldname']];
+				$this->selects[] = ['SUBSTRING_255', $this->realtablename, $field['realfieldname'], $field['realfieldname'] . '_sample'];
 			} elseif ($field['type'] == 'multilangstring' or $field['type'] == 'multilangtext') {// or $field['type'] == 'multilangarticle') {
 
 				$firstLanguage = true;
@@ -214,7 +213,7 @@ class Table
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($this->realidfieldname, $listing_id);
-		$col = database::loadColumn($this->realtablename, ['COUNT(' . $this->realidfieldname . ') AS c'], $whereClause, null, null, 1);
+		$col = database::loadColumn($this->realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
 		if (count($col) == 0)
 			return false;
 

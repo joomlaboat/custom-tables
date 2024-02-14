@@ -56,23 +56,11 @@ class ListOfLayouts
 	{
 		$whereClause = new MySQLWhereClause();
 
-		// Select some fields
-		$tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid LIMIT 1)';
-
-		if (defined('_JEXEC')) {
-			$modifiedBy = '(SELECT name FROM #__users AS u WHERE u.id=a.modified_by LIMIT 1)';
-		} elseif (defined('WPINC')) {
-			$modifiedBy = '(SELECT display_name FROM #__users AS u WHERE u.ID=a.modified_by LIMIT 1)';
-		} else
-			$modifiedBy = 'NULL';
-
-		$layoutSize = 'LENGTH(layoutcode)';
-
 		$selects = [
 			'a.*',
-			$tabletitle . ' AS tabletitle',
-			$modifiedBy . ' AS modifiedby',
-			$layoutSize . ' AS layout_size'
+			'TABLE_TITLE',
+			'MODIFIED_BY',
+			'LAYOUT_SIZE'
 		];
 
 		$whereClausePublished = new MySQLWhereClause();

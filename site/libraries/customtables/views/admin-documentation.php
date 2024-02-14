@@ -111,7 +111,7 @@ class Documentation
 				if (!empty($type->valueparams)) {
 					foreach ($type->valueparams as $p) {
 						$params = $p->params;
-						//$result.='<h5>'.common::translate('COM_CUSTOMTABLES_VALUEPARAMS').':</h5>'
+
 						$result .= $this->renderParametersInternal($params,
 							'{{ ',
 							'<i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',

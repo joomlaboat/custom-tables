@@ -182,13 +182,21 @@ function _renderTableList($rows): string
 function _getTablesThatUseThisLayout($wF)
 {
 	$fields = '(SELECT GROUP_CONCAT(CONCAT(f.id,",",fieldname),";") FROM #__customtables_fields AS f WHERE ' . $wF . ' ORDER BY fieldname) AS fields';
-	//$w = '(SELECT tableid FROM #__customtables_fields AS f WHERE ' . $wF . ' LIMIT 1) IS NOT NULL';
-	//$query = 'SELECT id AS tableid, tabletitle,tablename, ' . $fields . ' FROM #__customtables_tables AS t WHERE ' . $w . ' ORDER BY tablename';
 
 	$whereClause = new MySQLWhereClause();
 	$whereClause->addCondition('(SELECT tableid FROM #__customtables_fields AS f WHERE ' . $wF . ' LIMIT 1)', null, 'NOT NULL');
 
-	return database::loadAssocList('#__customtables_tables AS t', ['id AS tableid', 'tabletitle', 'tablename', $fields], $whereClause, 'tablename', null);
+	$db = database::getDB();
+
+	$query = 'SELECT id AS tableid, tabletitle, tablename, ' . $fields . ' FROM #__customtables_tables AS t WHERE ' . $whereClause . ' ORDER BY tablename';
+
+	try {
+		$db->setQuery($query);
+	} catch (Exception $e) {
+		echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+	}
+
+	return $db->loadAssocList();
 }
 
 /**
@@ -197,20 +205,28 @@ function _getTablesThatUseThisLayout($wF)
  */
 function _getMenuItemsThatUseThisLayout($layoutname)
 {
-	//$wheres = array();
 	$whereClause = new MySQLWhereClause();
 	$whereClause->addCondition('published', 1);
 	$whereClause->addCondition('link', 'index.php?option=com_customtables&view=', 'INSTR');
-	//$wheres[] = 'published=1';
-	//$wheres[] = 'INSTR(link,"index.php?option=com_customtables&view=")';
 
 	$layout_params = ['escataloglayout', 'esitemlayout', 'esdetailslayout', 'eseditlayout', 'onrecordaddsendemaillayout', 'cataloglayout'];
-	//$w = array();
+
+	$db = database::getDB();
+
 	foreach ($layout_params as $l) {
 		$toSearch = '"' . $l . '":"' . $layoutname . '"';
 		$whereClause->addOrCondition('params', $toSearch, 'INSTR');
 	}
-	return database::loadAssocList('#__menu', ['id', 'title'], $whereClause);
+
+	$query = 'SELECT id,title FROM #__menu WHERE ' . $whereClause . ' ORDER BY title';
+
+	try {
+		$db->setQuery($query);
+	} catch (Exception $e) {
+		echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+	}
+
+	return $db->loadAssocList();
 }
 
 /**
@@ -229,7 +245,18 @@ function _getModulesThatUseThisLayout($layoutname)
 		$toSearch = '"' . $l . '":"' . $layoutname . '"';
 		$whereClause->addOrCondition('params', $toSearch, 'INSTR');
 	}
-	return database::loadAssocList('#__modules', ['id', 'title'], $whereClause);
+
+	$db = database::getDB();
+
+	$query = 'SELECT id,title FROM #__modules WHERE ' . $whereClause . ' ORDER BY title';
+
+	try {
+		$db->setQuery($query);
+	} catch (Exception $e) {
+		echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+	}
+
+	return $db->loadAssocList();
 }
 
 /**
@@ -262,5 +289,15 @@ function _getLayoutsThatUseThisLayout(string $layoutName)
 	foreach ($layout_params as $l)
 		$whereClause->addOrCondition('layoutjs', $l, 'INSTR');
 
-	return database::loadAssocList('#__customtables_layouts', ['id', 'layoutname'], $whereClause, null, null);
+	$db = database::getDB();
+
+	$query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . $whereClause;
+
+	try {
+		$db->setQuery($query);
+	} catch (Exception $e) {
+		echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+	}
+
+	return $db->loadAssocList();
 }

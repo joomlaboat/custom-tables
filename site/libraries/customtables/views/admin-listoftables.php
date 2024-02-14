@@ -30,12 +30,12 @@ class ListOfTables
 	{
 		try {
 			$whereClause = new MySQLWhereClause();
-			$rows = database::loadObjectList($realtablename, ['COUNT(' . $realIdField . ') AS count'], $whereClause, null, null, 1);
+			$rows = database::loadObjectList($realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
 		} catch (Exception $e) {
 			common::enqueueMessage('Table "' . $realtablename . '" - ' . $e->getMessage());
 			return 0;
 		}
-		return $rows[0]->count;
+		return $rows[0]->record_count;
 	}
 
 	/**
@@ -53,15 +53,12 @@ class ListOfTables
 	 */
 	function getListQuery($published = null, $search = null, $category = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0, bool $returnQueryString = false)
 	{
-		$fieldCount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND (fields.published=0 or fields.published=1) LIMIT 1)';
-
 		$selects = TableHelper::getTableRowSelectArray();
 
-		if (defined('_JEXEC')) {
-			$categoryName = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
-			$selects[] = $categoryName . ' AS categoryname';
-		}
-		$selects[] = $fieldCount . ' AS fieldcount';
+		if (defined('_JEXEC'))
+			$selects[] = 'CATEGORY_NAME';
+
+		$selects[] = 'FIELD_COUNT';
 
 		$whereClause = new MySQLWhereClause();
 

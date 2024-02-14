@@ -269,7 +269,7 @@ class CustomtablesModelTables extends AdminModel
 	 */
 	protected function batchCopy($values, $pks, $contexts)
 	{
-		die;
+		die;//Batch table copy not implemented
 	}
 
 	/**
@@ -285,7 +285,7 @@ class CustomtablesModelTables extends AdminModel
 	 */
 	protected function batchMove($values, $pks, $contexts)
 	{
-		die;
+		die;//Batch table move not implemented
 	}
 
 	public function save($data)

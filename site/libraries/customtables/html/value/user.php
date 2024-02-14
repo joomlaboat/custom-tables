@@ -51,13 +51,10 @@ class Value_user extends BaseValue
 			else
 				return 1;
 		} elseif ($field == 'usergroups') {
-			//$selects = '(SELECT title FROM #__usergroups AS g WHERE g.id = m.group_id LIMIT 1) AS group_title';
-			//$query = 'SELECT ' . $selects . ' FROM #__user_usergroup_map AS m WHERE user_id=' . $value;
-
 			$whereClause = new MySQLWhereClause();
 			$whereClause->addCondition('user_id', $value);
 
-			$groups = database::loadObjectList('#__user_usergroup_map AS m', ['(SELECT title FROM #__usergroups AS g WHERE g.id = m.group_id LIMIT 1) AS group_title'], $whereClause);
+			$groups = database::loadObjectList('#__user_usergroup_map AS m', ['GROUP_TITLE'], $whereClause);
 			$group_list = [];
 
 			foreach ($groups as $group)

@@ -61,7 +61,7 @@ class InputBox_multilingualtext extends BaseInputBox
 
 			$result .= '<div id="' . $fieldname . '_div" class="multilangtext">';
 
-			if ($this->field->params[0] == 'rich') {
+			if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] == 'rich') {
 				$result .= '<span class="language_label_rich">' . $lang->caption . '</span>';
 
 				$w = 500;

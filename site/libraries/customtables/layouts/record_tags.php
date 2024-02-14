@@ -294,41 +294,40 @@ class Twig_Record_Tags
 		$selects = [];
 
 		if ($sj_function == 'count')
-			$selects[] = 'count(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+			$selects[] = ['VALUE', $tableRow['realtablename'], $field3_readValue];
 		elseif ($sj_function == 'sum')
-			$selects[] = 'sum(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+			$selects[] = ['SUM', $tableRow['realtablename'], $field3_readValue];
 		elseif ($sj_function == 'avg')
-			$selects[] = 'avg(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+			$selects[] = ['AVG', $tableRow['realtablename'], $field3_readValue];
 		elseif ($sj_function == 'min')
-			$selects[] = 'min(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+			$selects[] = ['VALUE', $tableRow['realtablename'], $field3_readValue];
 		elseif ($sj_function == 'max')
-			$selects[] = 'max(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu';
+			$selects[] = ['MAX', $tableRow['realtablename'], $field3_readValue];
 		else {
 			//need to resolve record value if it's "records" type
-			$selects[] = $tableRow['realtablename'] . '.' . $field3_readValue . ' AS vlu';//value or smart
+			$selects[] = ['VALUE', $tableRow['realtablename'], $field3_readValue];
 		}
 
 		$sj_tablename = $tableRow['tablename'];
-
 		$leftJoin = '';
 
 		if ($this->ct->Table->tablename != $sj_tablename) {
 			// Join not needed when we are in the same table
-			$leftJoin = ' LEFT JOIN ' . $tableRow['realtablename'] . ' ON ';
+			$leftJoin = ' LEFT JOIN `' . $tableRow['realtablename'] . '` ON ';
 
 			if ($field1_type == 'records') {
 				if ($field2_type == 'records') {
 					$leftJoin .= '1==2'; //todo
 				} else {
-					$leftJoin .= 'INSTR(' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ',CONCAT(",",' . $tableRow['realtablename'] . '.' . $field2_lookWhere . ',","))';
+					$leftJoin .= 'INSTR(`' . $this->ct->Table->realtablename . '`.`' . $field1_findWhat . '`,CONCAT(",",`' . $tableRow['realtablename'] . '`.`' . $field2_lookWhere . '`,","))';
 				}
 			} else {
 				if ($field2_type == 'records') {
-					$leftJoin .= 'INSTR(' . $tableRow['realtablename'] . '.' . $field2_lookWhere
-						. ',  CONCAT(",",' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ',","))';
+					$leftJoin .= 'INSTR(`' . $tableRow['realtablename'] . '`.`' . $field2_lookWhere . '`'
+						. ',  CONCAT(",",`' . $this->ct->Table->realtablename . '`.`' . $field1_findWhat . '`,","))';
 				} else {
-					$leftJoin .= ' ' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ' = '
-						. ' ' . $tableRow['realtablename'] . '.' . $field2_lookWhere;
+					$leftJoin .= ' `' . $this->ct->Table->realtablename . '`.`' . $field1_findWhat . '` = '
+						. ' `' . $tableRow['realtablename'] . '`.`' . $field2_lookWhere . '`';
 				}
 			}
 		}
@@ -580,9 +579,15 @@ class Twig_Record_Tags
 		}
 
 		if (count($rows) == 0)
-			return 'no records found';
-		else
+			return null;
+		else {
+
+			if (!key_exists('vlu', $rows[0])) {
+				echo '*************';
+				print_r($rows);
+			}
 			return $rows[0]['vlu'];
+		}
 	}
 
 	/**
@@ -594,22 +599,18 @@ class Twig_Record_Tags
 		$selects = [];
 
 		if ($sj_function == 'count')
-			$selects[] = 'count(' . $realFieldName . ') AS vlu';
-		//$query = 'SELECT count(' . $realFieldName . ') AS vlu ';
+			$selects[] = ['COUNT', $realTableName, $realFieldName];
 		elseif ($sj_function == 'sum')
-			$selects[] = 'sum(' . $realFieldName . ') AS vlu';
-		//$query = 'SELECT sum(' . $realFieldName . ') AS vlu ';
+			$selects[] = ['SUM', $realTableName, $realFieldName];
 		elseif ($sj_function == 'avg')
-			$selects[] = 'avg(' . $realFieldName . ') AS vlu';
-		//$query = 'SELECT avg(' . $realFieldName . ') AS vlu ';
+			$selects[] = ['AVG', $realTableName, $realFieldName];
 		elseif ($sj_function == 'min')
-			$selects[] = 'min(' . $realFieldName . ') AS vlu';
-		//$query = 'SELECT min(' . $realFieldName . ') AS vlu ';
+			$selects[] = ['MIN', $realTableName, $realFieldName];
 		elseif ($sj_function == 'max')
-			$selects[] = 'max(' . $realFieldName . ') AS vlu';
-		//$query = 'SELECT max(' . $realFieldName . ') AS vlu ';
+			$selects[] = ['MAX', $realTableName, $realFieldName];
 		else {
-			return null;
+			//need to resolve record value if it's "records" type
+			$selects[] = ['VALUE', $realTableName, $realFieldName];
 		}
 		return database::loadAssocList($realTableName, $selects, $whereClause, null, null, 1);
 	}
@@ -662,7 +663,7 @@ class Twig_Record_Tags
 
 		$fieldTitles = [];
 		foreach ($this->ct->Table->fields as $field) {
-			if ($field['listing_published'] == 1 and $field['isrequired'] == 1 and !Fields::isVirtualField($field)) {
+			if ($field['published'] == 1 and $field['isrequired'] == 1 and !Fields::isVirtualField($field)) {
 				$value = $this->ct->Table->record[$field['realfieldname']];
 				if ($value === null or $value == '') {
 					if (!array_key_exists('fieldtitle' . $this->ct->Languages->Postfix, $field)) {

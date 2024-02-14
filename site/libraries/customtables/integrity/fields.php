@@ -51,7 +51,7 @@ class IntegrityFields extends IntegrityChecks
 		if (TableHelper::createTableIfNotExists($database, $dbPrefix, $ct->Table->tablename, $ct->Table->tabletitle, $ct->Table->customtablename))
 			$result .= '<p>Table "<span style="color:green;">' . $ct->Table->tabletitle . '</span>" <span style="color:green;">added.</span></p>';
 
-		$ExistingFields = Fields::getExistingFields($ct->Table->realtablename, false);
+		$ExistingFields = database::getExistingFields($ct->Table->realtablename, false);
 		$projected_fields = Fields::getFields($ct->Table->tableid, false, false);
 
 		//Delete unnecessary fields:

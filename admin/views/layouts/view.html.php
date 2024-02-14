@@ -68,20 +68,16 @@ class CustomtablesViewLayouts extends HtmlView
 			'layoutmobile',
 			'layoutcss',
 			'layoutjs',
-			'layouttype'
+			'layouttype',
+			'MODIFIED_TIMESTAMP'
 		];
-
-		if ($serverType == 'postgresql')
-			$selects[] = 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) ELSE extract(epoch FROM modified) AS ts';
-		else
-			$selects[] = 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts';
 
 		$rows = database::loadObjectList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
 
 		if (count($rows) == 1) {
 			$this->item = $rows[0];
 		} else {
-			$emptyItem = ['id' => 0, 'tableid' => null, 'layoutname' => null, 'layoutcode' => null, 'layoutmobile' => null, 'layoutcss' => null, 'layoutjs' => null, 'ts' => 0];
+			$emptyItem = ['id' => 0, 'tableid' => null, 'layoutname' => null, 'layoutcode' => null, 'layoutmobile' => null, 'layoutcss' => null, 'layoutjs' => null, 'modified_timestamp' => 0];
 			$this->item = (object)$emptyItem;
 		}
 

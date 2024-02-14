@@ -130,7 +130,7 @@ class ImportTables
 			'published tinyint(1) DEFAULT "1"',
 			'PRIMARY KEY  (id)',
 		];
-		database::createTable('#__customtables_table_' . $tablename, $columns, $tableTitle);
+		database::createTable('#__customtables_table_' . $tablename, 'id', $columns, $tableTitle);
 		ImportTables::updateTableCategory($tableid, $table_new, $categoryname);
 		return $tableid;
 	}
@@ -272,7 +272,7 @@ class ImportTables
 						$whereClause->addCondition('tableid', '(SELECT id A FROM #__customtables_tables WHERE tablename=' . database::quote($table) . ')', '=', true);
 						$whereClause->addCondition('fieldname', str_replace('es_', '', $nonLanguageFieldName));
 						$col = database::loadColumn('#__customtables_fields', ['type'], $whereClause, null, null, 1);
-						//$fieldType = database::getFieldType($mysqlTableName, $nonLanguageFieldName);
+
 						$fieldType = '';
 						if (count($col) == 1) {
 							$fieldType = $col[0];
@@ -427,7 +427,7 @@ class ImportTables
 				//Lets create mysql field
 				$PureFieldType = Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
 				Fields::addField($ct, '#__customtables_table_' . $tableName, $ct->Env->field_prefix . $fieldName,
-					$field_new['type'], $PureFieldType, $field_new['fieldtitle'], $field_new);
+					$PureFieldType, $field_new['fieldtitle'], $field_new);
 			}
 		}
 		return $fieldid;

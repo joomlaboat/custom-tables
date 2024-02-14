@@ -518,7 +518,7 @@ class SaveFieldQuerySet
 
 			case 'server':
 
-				if (count($this->field->params) == 0)
+				if ($this->field->params === null or count($this->field->params) == 0)
 					$value = self::getUserIP(); //Try to get client real IP
 				else
 					$value = common::inputServer($this->field->params[0], '', 'STRING');
@@ -529,15 +529,13 @@ class SaveFieldQuerySet
 			case 'id':
 				//get max id
 				if ($this->row_old[$this->ct->Table->realidfieldname] == 0 or $this->row_old[$this->ct->Table->realidfieldname] == '' or $this->isCopy) {
-					$minid = (int)$this->field->params[0];
-
-					//$query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
+					$minid = (($this->field->params !== null and count($this->field->params) > 0) ? (int)$this->field->params[0] : 0);
 
 					$whereClause = new MySQLWhereClause();
 
-					$rows = database::loadObjectList($this->ct->Table->realtablename, ['MAX(' . $this->ct->Table->realidfieldname . ') AS maxid'], $whereClause, null, null, 1);
+					$rows = database::loadObjectList($this->ct->Table->realtablename, [['MAX', $this->ct->Table->realtablename, $this->ct->Table->realidfieldname]], $whereClause, null, null, 1);
 					if (count($rows) != 0) {
-						$value = (int)($rows[0]->maxid) + 1;
+						$value = (int)($rows[0]->vlu) + 1;
 						if ($value < $minid)
 							$value = $minid;
 
@@ -549,7 +547,7 @@ class SaveFieldQuerySet
 			case 'md5':
 
 				$vlu = '';
-				$fields = explode(',', $this->field->params[0]);
+				$fields = explode(',', ($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] : '');
 				foreach ($fields as $f1) {
 					if ($f1 != $this->field->fieldname) {
 						//to make sure that field exists
@@ -690,11 +688,11 @@ class SaveFieldQuerySet
 		$whereClause->addCondition($this->ct->Table->realidfieldname, $exclude_id, '!=');
 		$whereClause->addCondition($realfieldname, $value);
 
-		$rows = database::loadObjectList($this->ct->Table->realtablename, ['count(' . $this->ct->Table->realidfieldname . ') AS c'], $whereClause, null, null, 1);
+		$rows = database::loadObjectList($this->ct->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
 		if (count($rows) == 0)
 			return false;
 
-		$c = (int)$rows[0]->c;
+		$c = (int)$rows[0]->record_count;
 
 		if ($c > 0)
 			return true;
@@ -726,7 +724,7 @@ class SaveFieldQuerySet
 
 	protected function get_usergroups_type_value(): ?string
 	{
-		switch ($this->field->params[0]) {
+		switch (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] : '') {
 			case 'radio':
 			case 'single';
 				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
@@ -816,7 +814,7 @@ class SaveFieldQuerySet
 			if ($storage == "storedintegersigned" or $storage == "storedintegerunsigned" or $storage == "storedstring") {
 
 				try {
-					$code = str_replace('****quote****', '"', $this->field->params[0]);
+					$code = str_replace('****quote****', '"', ($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] : '');
 					$code = str_replace('****apos****', "'", $code);
 					$twig = new TwigProcessor($this->ct, $code, false, false, true);
 					$value = @$twig->process($this->row_old);

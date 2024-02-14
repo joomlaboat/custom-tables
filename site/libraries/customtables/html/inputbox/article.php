@@ -39,14 +39,10 @@ class InputBox_article extends BaseInputBox
 
 		$whereClause = new MySQLWhereClause();
 
-		$catId = (int)$this->field->params[0] ?? '';
-		//$query = 'SELECT id, title AS name FROM #__content';
+		$catId = (int)((count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params : 0);
 
 		if ($catId != 0)
 			$whereClause->addCondition('catid', $catId);
-		//$query .= ' WHERE catid=' . $catId;
-
-		//$query .= ' ORDER BY title';
 
 		try {
 			$articles = database::loadObjectList('#__content', ['id', 'title AS name'], $whereClause, 'title');

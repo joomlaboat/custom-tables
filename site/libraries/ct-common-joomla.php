@@ -308,7 +308,7 @@ class common
 		return false;
 	}
 
-	public static function ctStripTags($argument): bool|string
+	public static function ctStripTags(string $argument): string
 	{
 		return strip_tags($argument);
 	}
@@ -341,7 +341,7 @@ class common
 		return $string;
 	}
 
-	public static function ctJsonEncode($argument): bool|string
+	public static function ctJsonEncode($argument): string
 	{
 		return json_encode($argument);
 	}

@@ -271,7 +271,7 @@ class CT_FieldTypeTag_file
 	{
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($field->realfieldname, $filename);
-		$col = database::loadColumn($field->ct->Table->realtablename, ['COUNT(*) AS c'], $whereClause, null, null, 2);
+		$col = database::loadColumn($field->ct->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, 2);
 		if (count($col) == 0)
 			return false;
 

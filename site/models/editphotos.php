@@ -226,7 +226,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		foreach ($photo_arr as $photoId) {
 			if ($photoId != '') {
 				$this->imagemethods->DeleteExistingGalleryImage($this->imagefolder, $this->imagemainprefix, $this->ct->Table->tableid, $this->galleryname,
-					$photoId, $this->field->params[0] ?? '', true);
+					$photoId, (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : ''), true);
 
 				database::deleteRecord($this->phototablename, 'photoid', $photoId);
 				//$query = 'DELETEFROM ' . $this->phototablename . ' WHERE listingid=' . $this->listing_id . ' AND photoid=' . $photoId;
@@ -281,7 +281,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		if ($r != 1)
 			$isOk = false;
 
-		$customSizes = $this->imagemethods->getCustomImageOptions($this->field->params[0] ?? '');
+		$customSizes = $this->imagemethods->getCustomImageOptions(($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : '');
 
 		foreach ($customSizes as $imagesize) {
 			$prefix = $imagesize[0];
@@ -336,8 +336,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		try {
 			database::insert($this->phototablename, $data);
 		} catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			die;
+			die('Caught exception: ' . $e->getMessage() . "\n");
 		}
 
 		$this->AutoReorderPhotos();

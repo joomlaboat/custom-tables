@@ -26,9 +26,9 @@ class InputBox_signature extends BaseInputBox
 	{
 		$elementId = $this->attributes['id'];
 
-		$width = $this->field->params[0] ?? 300;
-		$height = $this->field->params[1] ?? 150;
-		$format = $this->field->params[3] ?? 'svg';
+		$width = (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? 300 : 300);
+		$height = (($this->field->params !== null and count($this->field->params) > 1) ? $this->field->params[1] ?? 150 : 150);
+		$format = (($this->field->params !== null and count($this->field->params) > 3) ? $this->field->params[3] ?? 'svg' : 'svg');
 		if ($format == 'svg-db')
 			$format = 'svg';
 

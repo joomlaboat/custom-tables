@@ -65,7 +65,7 @@ class CustomTablesViewEditItem extends HtmlView
 
 			if ($this->ct->Env->isModal) {
 				echo $editForm->render($row, $formLink, 'ctEditModalForm');
-				die;
+				die;//Modal Edit Form
 			} else
 				echo $editForm->render($row, $formLink, 'ctEditForm');
 

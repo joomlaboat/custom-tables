@@ -51,7 +51,12 @@ if ($this->ct->Env->frmt == 'json') {
     die($pageLayoutContent);
 }
 */
-echo $this->catalog->render();
+
+try {
+	echo $this->catalog->render();
+} catch (Exception $e) {
+	echo 'Error during the Catalog rendering: ' . $e->getMessage();
+}
 
 if (count($this->catalog->ct->errors)) {
 	Factory::getApplication()->enqueueMessage(implode(',', $this->catalog->ct->errors), 'error');
@@ -86,6 +91,6 @@ if ($this->ct->Env->frmt == 'html') {
 </div>
 <!-- end of the modal -->';
 	} else {
-		die;
+		//die;//Not sure why is it here
 	}
 }

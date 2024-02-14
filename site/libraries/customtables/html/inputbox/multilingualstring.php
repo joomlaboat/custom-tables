@@ -51,7 +51,7 @@ class InputBox_multilingualstring extends BaseInputBox
 		}
 
 		$this->attributes['type'] = 'text';
-		$this->attributes['maxlength'] = ((int)$this->field->params[0] > 0 ? (int)$this->field->params[0] : 255);
+		$this->attributes['maxlength'] = (($this->field->params !== null and count($this->field->params) > 0 and (int)$this->field->params[0] > 0) ? (int)$this->field->params[0] : 255);
 
 		//show all languages
 		$result .= '<div class="form-horizontal">';
@@ -88,7 +88,7 @@ class InputBox_multilingualstring extends BaseInputBox
 		$attributes['name'] = $elementId . $postfix;
 		$attributes['value'] = $value;
 
-		if (str_contains($this->attributes['onchange'], 'ct_UpdateSingleValue(')) {
+		if (str_contains($this->attributes['onchange'] ?? '', 'ct_UpdateSingleValue(')) {
 			$attributes['onchange'] = "ct_UpdateSingleValue('" . $this->ct->Env->WebsiteRoot . "',"
 				. $this->ct->Params->ItemId . ",'" . $this->field->fieldname . $postfix . "',"
 				. "'" . $this->row[$this->ct->Table->realidfieldname] . "',"

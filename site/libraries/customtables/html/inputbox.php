@@ -347,7 +347,7 @@ abstract class BaseInputBox
 	{
 		$result = '';
 		foreach ($attributes as $key => $attr)
-			$result .= ' ' . htmlspecialchars($key) . '="' . htmlspecialchars($attr) . '"';
+			$result .= ' ' . htmlspecialchars($key) . '="' . htmlspecialchars($attr ?? '') . '"';
 
 		return $result;
 	}

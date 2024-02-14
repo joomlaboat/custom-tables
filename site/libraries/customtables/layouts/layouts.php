@@ -97,8 +97,6 @@ class Layouts
 			$whereClause->addCondition('layoutname', $layoutNameOrId);
 		}
 
-		$serverType = database::getServerType();
-
 		$selects = [
 			'id',
 			'tableid',
@@ -107,28 +105,9 @@ class Layouts
 			'layoutmobile',
 			'layoutcss',
 			'layoutjs',
-			'layouttype'
+			'layouttype',
+			'MODIFIED_TIMESTAMP'
 		];
-
-		if ($serverType == 'postgresql') {
-			$selects [] = 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) ELSE extract(epoch FROM modified) AS ts';
-
-			/*
-				$query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
-					. 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
-					. 'ELSE extract(epoch FROM modified) AS ts, '
-					. 'layouttype '
-					. 'FROM #__customtables_layouts WHERE ' . $where . ' LIMIT 1';
-			*/
-		} else {
-			$selects [] = 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts';
-			/*
-			$query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
-				. 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts, '
-				. 'layouttype '
-				. 'FROM #__customtables_layouts WHERE ' . $where . ' LIMIT 1';
-			*/
-		}
 
 		$rows = database::loadAssocList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
 		if (count($rows) != 1)
@@ -143,7 +122,7 @@ class Layouts
 
 			$layoutCode = $row['layoutmobile'];
 			if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
-				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['ts'], $layoutNameOrId . '_mobile.html', 'layoutmobile');
+				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['modified_timestamp'], $layoutNameOrId . '_mobile.html', 'layoutmobile');
 				if ($content != null)
 					$layoutCode = $content;
 			}
@@ -152,7 +131,7 @@ class Layouts
 
 			$layoutCode = $row['layoutcode'];
 			if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
-				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['ts'], $layoutNameOrId . '.html', 'layoutcode');
+				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['modified_timestamp'], $layoutNameOrId . '.html', 'layoutcode');
 				if ($content != null)
 					$layoutCode = $content;
 			}
@@ -198,11 +177,11 @@ class Layouts
 				$whereClause = new MySQLWhereClause();
 				$whereClause->addCondition('id', $layout_id);
 
-				$rows = database::loadAssocList('#__customtables_layouts', ['UNIX_TIMESTAMP(modified) AS ts'], $whereClause, null, null, 1);
+				$rows = database::loadAssocList('#__customtables_layouts', ['MODIFIED_TIMESTAMP'], $whereClause, null, null, 1);
 
 				if (count($rows) != 0) {
 					$row = $rows[0];
-					$db_layout_ts = $row['ts'];
+					$db_layout_ts = $row['modified_timestamp'];
 				}
 			}
 
@@ -216,8 +195,6 @@ class Layouts
 				$whereClauseUpdate = new MySQLWhereClause();
 				$whereClauseUpdate->addCondition('id', $layout_id);
 				database::update('#__customtables_layouts', $data, $whereClauseUpdate);
-
-				//$query = 'UPDATE #__customtables_layouts SET ' . $fieldName . '="' . addslashes($content) . '",modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
 				return $content;
 			}
 		} else {
@@ -287,7 +264,7 @@ class Layouts
 		$layoutContent = trim($layoutRow['layoutcss'] ?? '');
 
 		if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['ts'], $layoutRow['layoutname'] . '.css', 'layoutcss');
+			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['modified_timestamp'], $layoutRow['layoutname'] . '.css', 'layoutcss');
 			if ($content != null)
 				$layoutContent = $content;
 		}
@@ -306,7 +283,7 @@ class Layouts
 
 		$layoutContent = trim($layoutRow['layoutjs'] ?? '');
 		if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['ts'], $layoutRow['layoutname'] . '.js', 'layoutjs');
+			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['modified_timestamp'], $layoutRow['layoutname'] . '.js', 'layoutjs');
 			if ($content != null)
 				$layoutContent = $content;
 		}
@@ -652,8 +629,6 @@ class Layouts
 	 */
 	function getLayoutRowById(int $layoutId): ?array
 	{
-		$serverType = database::getServerType();
-
 		$selects = [
 			'id',
 			'tableid',
@@ -662,13 +637,9 @@ class Layouts
 			'layoutmobile',
 			'layoutcss',
 			'layoutjs',
-			'layouttype'
+			'layouttype',
+			'MODIFIED_TIMESTAMP'
 		];
-
-		if ($serverType == 'postgresql')
-			$selects [] = 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) ELSE extract(epoch FROM modified) AS ts';
-		else
-			$selects [] = 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts';
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('id', $layoutId);

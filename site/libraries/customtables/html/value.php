@@ -81,12 +81,12 @@ class Value
 		switch ($this->field->type) {
 			case 'int':
 			case 'viewcount':
-				$thousand_sep = $option_list[0] ?? ($this->field->params[0] ?? '');
+				$thousand_sep = $option_list[0] ?? (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : '');
 				return number_format((int)$rowValue, 0, '', $thousand_sep);
 
 			case 'float':
 
-				$params_value = ((count($this->field->params) > 0 and $this->field->params[0] != '') ? (int)$this->field->params[0] : 2);
+				$params_value = (($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] != '') ? (int)$this->field->params[0] : 2);
 				$decimals = $params_value;
 				$decimals_sep = '.';
 				$thousand_sep = '';
@@ -198,7 +198,7 @@ class Value
 				$imageFile = $ImageFolder . DIRECTORY_SEPARATOR . $rowValue . '.' . $format;
 
 				if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile)) {
-					$width = $this->field->params[0] ?? '300px';
+					$width = (($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params[0] ?? '300px' : '300px');
 					if (((string)intval($width)) == $width)
 						$width .= 'px';
 
@@ -311,7 +311,7 @@ class Value
 		$edit_userGroup = (int)$this->ct->Params->editUserGroups;
 		$isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
 
-		$orderby_pair = explode(' ', $this->ct->Ordering->orderby);
+		$orderby_pair = explode(' ', $this->ct->Ordering->orderby ?? '');
 
 		if ($orderby_pair[0] == $this->field->realfieldname and $isEditable)
 			$iconClass = '';
@@ -482,8 +482,11 @@ class Value
 			return HTMLHelper::date($PHPDate);
 	}
 
-	protected function timeProcess($value, array $option_list): string
+	protected function timeProcess(?string $value, array $option_list): string
 	{
+		if ($value === null)
+			return '';
+
 		$PHPDate = strtotime($value);
 		if (isset($option_list[0]) and $option_list[0] != '') {
 			if ($option_list[0] == 'timestamp')
@@ -503,7 +506,7 @@ class Value
 		if (count($this->field->params) == 0)
 			return '';
 
-		$layout = str_replace('****quote****', '"', $this->field->params[0]);
+		$layout = str_replace('****quote****', '"', ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params[0] : '');
 		$layout = str_replace('****apos****', '"', $layout);
 
 		try {
@@ -511,9 +514,9 @@ class Value
 			$value = @$twig->process($this->row);
 
 			if ($twig->errorMessage !== null)
-				return 'Error:' . $twig->errorMessage;
+				return 'virtualProcess Error:' . $twig->errorMessage;
 		} catch (Exception $e) {
-			return 'Error:' . $e->getMessage();
+			return 'virtualProcess Error:' . $e->getMessage();
 		}
 		return $value;
 	}

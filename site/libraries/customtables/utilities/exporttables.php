@@ -34,15 +34,11 @@ class ExportTables
 		$output = array();
 
 		foreach ($table_ids as $table_id) {
-			//get table
-			$s1 = '(SELECT categoryname FROM #__customtables_categories WHERE #__customtables_categories.id=#__customtables_tables.tablecategory) AS categoryname';
-			//$query = 'SELECT *,' . $s1 . ' FROM #__customtables_tables WHERE published=1 AND id=' . (int)$table_id . ' LIMIT 1';
-
 			$whereClause = new MySQLWhereClause();
 			$whereClause->addCondition('published', 1);
 			$whereClause->addCondition('id', (int)$table_id);
 
-			$table_rows = database::loadAssocList('#__customtables_tables', ['*', $s1], $whereClause, null, null, 1);
+			$table_rows = database::loadAssocList('#__customtables_tables', ['*', 'CATEGORY_NAME'], $whereClause, null, null, 1);
 
 			//Add the table with dependencies to export array
 			if (count($table_rows) == 1) {

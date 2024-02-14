@@ -53,7 +53,7 @@ class InputBox_usergroups extends BaseInputBox
 			throw new Exception($e->getMessage());
 		}
 
-		$selector = $this->field->params[0];
+		$selector = (($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params[0] : '');
 
 		return match ($selector) {
 			'single' => $this->getSelect($records, $valueArray),

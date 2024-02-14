@@ -33,6 +33,10 @@ class Value_tablejoinlist extends BaseValue
 		return self::renderTableJoinListValue($this->field, $this->rowValue, $this->option_list);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.6
+	 */
 	public static function renderTableJoinListValue(Field &$field, ?string $rowValue, array $option_list = []): string
 	{
 		if ($rowValue === null)
@@ -41,14 +45,17 @@ class Value_tablejoinlist extends BaseValue
 		$ct = new CT;
 		$ct->getTable($field->params[0]);
 
-		if (count($option_list) == 0)
-			$fieldName = $field->params[1];
-		else
+		$fieldName = $field->params[1] ?? '';
+
+		if (count($option_list) > 0 and $option_list[0] !== '')
 			$fieldName = $option_list[0];
+
+		if ($fieldName == '')
+			return 'Table Join List "' . $field['fieldname'] . '" value field not set.';
 
 		$fieldNameParts = explode(':', $fieldName);
 
-		if (count($fieldNameParts) == 2) {
+		if (count($fieldNameParts) > 1) {
 			//It's not a fieldname but layout. Example: tablelesslayout:PersonName
 			if ($fieldNameParts[0] == 'tablelesslayout' or $fieldNameParts[0] == 'layout') {
 				$Layouts = new Layouts($ct);
@@ -114,14 +121,16 @@ class Value_tablejoinlist extends BaseValue
 		try {
 			$ct->getRecords();
 		} catch (Exception $e) {
+			echo '$e->getMessage()=' . $e->getMessage() . '*<br/>';
 			return $e->getMessage();
 		}
-
 		return self::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records, $separatorCharacter);
 	}
 
-	protected static function processRecordRecords(CT &$ct, $layoutcode, ?string $rowValue, &$records, string $separatorCharacter = ','): string
+	protected static function processRecordRecords(CT $ct, $layoutcode, ?string $rowValue, $records, string $separatorCharacter = ','): string
 	{
+		$htmlresult = '';
+
 		$valueArray = explode(',', $rowValue);
 
 		$number = 1;
@@ -132,9 +141,6 @@ class Value_tablejoinlist extends BaseValue
 			if (in_array($row[$ct->Table->realidfieldname], $valueArray))
 				$CleanSearchResult[] = $row;
 		}
-
-		$htmlresult = '';
-
 		foreach ($CleanSearchResult as $row) {
 			$row['_number'] = $number;
 			$row['_islast'] = $number == count($CleanSearchResult);
@@ -144,7 +150,11 @@ class Value_tablejoinlist extends BaseValue
 			if ($htmlresult != '')
 				$htmlresult .= $separatorCharacter;
 
-			$htmlresult .= $twig->process($row);
+			try {
+				$htmlresult .= $twig->process($row);
+			} catch (Exception $e) {
+				echo $e->getMessage();
+			}
 
 			if ($twig->errorMessage !== null)
 				$ct->errors[] = $twig->errorMessage;
@@ -152,6 +162,6 @@ class Value_tablejoinlist extends BaseValue
 			$number++;
 		}
 
-		return $htmlresult;
+		return str_replace('{', '*', $htmlresult);
 	}
 }

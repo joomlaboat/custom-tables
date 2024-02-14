@@ -76,7 +76,7 @@ class InputBox_usergroup extends BaseInputBox
 		if ($showUserWithRecords)
 			$from .= ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
 
-		$availableUserGroupsList = ($this->field->params[0] == '' ? [] : $this->field->params);
+		$availableUserGroupsList = (($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params : []);
 
 		if (count($availableUserGroupsList) == 0) {
 			$whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');

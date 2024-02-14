@@ -100,7 +100,7 @@ class CustomtablesViewAPI extends HtmlView
 		} else
 			echo 'error:unknown format';
 
-		die;
+		die;//Admin API clean output
 	}
 
 

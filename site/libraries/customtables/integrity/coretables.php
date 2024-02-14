@@ -115,7 +115,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
 	public static function checkCoreTable(CT &$ct, $realtablename, $projected_fields)
 	{
-		$ExistingFields = Fields::getExistingFields($realtablename, false);
+		$ExistingFields = database::getExistingFields($realtablename, false);
 
 		foreach ($projected_fields as $projected_field) {
 
@@ -125,7 +125,7 @@ class IntegrityCoreTables extends IntegrityChecks
 				$typeParams = '';
 
 				if (IntegrityFields::addFieldIfNotExists($ct, $realtablename, $ExistingFields, $projected_realfieldname, $fieldType, $typeParams))
-					$ExistingFields = Fields::getExistingFields($realtablename, false);//reload list of existing fields if one field has been added.
+					$ExistingFields = database::getExistingFields($realtablename, false);//reload list of existing fields if one field has been added.
 
 				if (isset($projected_field['ct_fieldtype']) and $projected_field['ct_fieldtype'] != '') {
 					$ct_fieldtype = $projected_field['ct_fieldtype'];

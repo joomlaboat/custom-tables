@@ -84,7 +84,7 @@ function processFieldParams($fieldList, array $fields): array
 
 				if (!is_object($tableRow)) {
 					echo common::ctJsonEncode(['error' => 'sqljoin field(' . $fields[$f_index]->fieldtitle . ') table not found']);
-					die;
+					die;//Import CSV field error
 				}
 
 				$SQJJoinField = Fields::getFieldRowByName($fieldName, $tableRow->id);

@@ -225,7 +225,7 @@ class RecordToolbar
 			$titleField .= $this->ct->Languages->Postfix;
 
 		$fieldTitleValue = $this->row[$titleField];
-		$deleteLabel = common::ctStripTags($fieldTitleValue);
+		$deleteLabel = common::ctStripTags($fieldTitleValue ?? '');
 
 		$deleteLabel = trim(preg_replace("/[^a-zA-Z\d ,.]/", "", $deleteLabel));
 		return preg_replace('/\s{3,}/', ' ', $deleteLabel);

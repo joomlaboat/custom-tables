@@ -311,13 +311,7 @@ class Fields
 
 	protected static function getFieldRowSelectArray(): array
 	{
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql')
-			$realfieldname_query = 'CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
-		else
-			$realfieldname_query = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
-
-		return ['*', $realfieldname_query];
+		return ['*', 'REAL_FIELD_NAME'];
 	}
 
 	/**
@@ -336,63 +330,13 @@ class Fields
 	 */
 	public static function getListOfExistingFields($tablename, $add_table_prefix = true): array
 	{
-		$realFieldNames = Fields::getExistingFields($tablename, $add_table_prefix);
+		$realFieldNames = database::getExistingFields($tablename, $add_table_prefix);
 		$list = [];
 
 		foreach ($realFieldNames as $rec)
 			$list[] = $rec['column_name'];
 
 		return $list;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function getExistingFields($tablename, $add_table_prefix = true): array
-	{
-		if ($add_table_prefix)
-			$realtablename = '#__customtables_table_' . $tablename;
-		else
-			$realtablename = $tablename;
-
-		$realtablename = database::realTableName($realtablename);
-		$serverType = database::getServerType();
-
-		$whereClause = new MySQLWhereClause();
-
-		if ($serverType == 'postgresql') {
-			//,generation_expression
-			$whereClause->addCondition('table_name', $realtablename);
-			return database::loadAssocList('information_schema.columns', ['column_name', 'data_type', 'is_nullable', 'column_default'], $whereClause, null, null, 1);
-		} else {
-
-			$database = database::getDataBaseName();
-
-			$selects = [
-				'COLUMN_NAME AS column_name',
-				'DATA_TYPE AS data_type',
-				'COLUMN_TYPE AS column_type',
-				'IF(COLUMN_TYPE LIKE "%unsigned", "YES", "NO") AS is_unsigned',
-				'IS_NULLABLE AS is_nullable',
-				'COLUMN_DEFAULT AS column_default',
-				'EXTRA AS extra'];
-
-			/*
-			//Check MySQL Version:
-			$mySQLVersion = database::getVersion();
-			if ($mySQLVersion < 5.7) {
-				//. '"" AS generation_expression'
-			} else {
-				//. 'GENERATION_EXPRESSION AS generation_expression'
-			}
-			*/
-
-			$whereClause->addCondition('TABLE_SCHEMA', $database);
-			$whereClause->addCondition('TABLE_NAME', $realtablename);
-
-			return database::loadAssocList('information_schema.COLUMNS', $selects, $whereClause);
-		}
 	}
 
 	/**
@@ -946,7 +890,7 @@ class Fields
 	 */
 	public static function addLanguageField($tablename, $original_fieldname, $new_fieldname, ?string $AdditionOptions = ''): bool
 	{
-		$fields = Fields::getExistingFields($tablename, false);
+		$fields = database::getExistingFields($tablename, false);
 		foreach ($fields as $field) {
 			if ($field['column_name'] == $original_fieldname) {
 				$AdditionOptions = '';
@@ -959,10 +903,10 @@ class Fields
 		}
 
 		//TODO: check it
-		if ($original_fieldname == $new_fieldname) {
-			Fields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field['column_type'], $AdditionOptions);
-			return true;
-		}
+		//if ($original_fieldname == $new_fieldname) {
+		//	Fields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field['column_type'], $AdditionOptions);
+		//	return true;
+		//}
 
 		return false;
 	}
@@ -1408,7 +1352,7 @@ class Fields
 		if (count($PureFieldType) == 0)
 			return;
 
-		if (!str_contains($PureFieldType['data_type'], 'multilang')) {
+		if (!str_contains($PureFieldType['data_type'] ?? '', 'multilang')) {
 			$AdditionOptions = '';
 			$serverType = database::getServerType();
 			if ($serverType != 'postgresql')

@@ -35,7 +35,7 @@ class JFormFieldAnyTableFields extends JFormFieldList
 		if ($tableid != 0) {
 			$table_row = TableHelper::getTableRowByID($tableid);
 			if ($table_row->customtablename != '') {
-				$fields = Fields::getExistingFields($table_row->customtablename, false);
+				$fields = database::getExistingFields($table_row->customtablename, false);
 
 				foreach ($fields as $field)
 					$options[] = HTMLHelper::_('select.option', $field['column_name'], $field['column_name'] . ' (' . $field['data_type'] . ')');

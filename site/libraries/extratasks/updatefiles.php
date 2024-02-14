@@ -78,8 +78,8 @@ class updateFiles
 		$whereClause->addCondition($realfieldname, null, 'NOT NULL');
 		$whereClause->addCondition($realfieldname, '', '!=');
 
-		$rows = database::loadAssocList($realtablename, ['count(' . $realidfieldname . ') AS c'], $whereClause, null, null);
-		return (int)$rows[0]['c'];
+		$rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause, null, null);
+		return (int)$rows[0]['record_count'];
 	}
 
 	/**

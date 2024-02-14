@@ -87,7 +87,7 @@ class Search_range extends BaseSearch
 		$result .= '<table class="es_class_min_range_table" style="border: none;" class="' . $this->attributes['class'] . '" ><tbody><tr><td style="vertical-align: middle;">';
 
 		//From
-		if ($this->field->params[0] ?? '' == 'date') {
+		if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] ?? '' == 'date') {
 			$result .= HTMLHelper::calendar($value_min, $this->objectName . '_min', $this->objectName . '_min', '%Y-%m-%d', $attribs);
 		} else {
 			$result .= '<input type="text"'
@@ -102,7 +102,7 @@ class Search_range extends BaseSearch
 		$result .= '</td><td style="text-align:center;">-</td><td style="text-align:left;vertical-align: middle;width: 140px;">';
 
 		//TODO: check if this is correct
-		if ($this->field->params[0] ?? '' == 'date') {
+		if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] ?? '' == 'date') {
 			$result .= HTMLHelper::calendar($value_max, $this->objectName . '_max', $this->objectName . '_max', '%Y-%m-%d', $attribs);
 		} else {
 			$result .= '<input type="text"'

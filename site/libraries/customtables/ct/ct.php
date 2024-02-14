@@ -56,6 +56,7 @@ class CT
 		}
 
 		$this->Languages = new Languages;
+
 		$this->Env = new Environment($enablePlugin);
 		$this->Params = new Params($menuParams, $blockExternalVars, $ModuleId);
 
@@ -239,7 +240,7 @@ class CT
 			return null;
 
 		try {
-			$rows = database::loadObjectList($this->Table->realtablename, ['COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count'], $whereClause);
+			$rows = database::loadObjectList($this->Table->realtablename, ['COUNT_ROWS'], $whereClause);
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
 			return null;
@@ -248,7 +249,7 @@ class CT
 		if (count($rows) == 0)
 			$this->Table->recordcount = null;
 		else
-			$this->Table->recordcount = intval($rows[0]->count);
+			$this->Table->recordcount = intval($rows[0]->record_count);
 
 		return $this->Table->recordcount;
 	}
@@ -603,9 +604,7 @@ class CT
 	public function checkIfItemBelongsToUser(string $listing_id, string $userIdField): bool
 	{
 		$whereClause = $this->UserIDField_BuildWheres($userIdField, $listing_id);
-		//$query = 'SELECT COUNT(c.' . $this->Table->realidfieldname . ') AS record_count FROM ' . $this->Table->realtablename . ' AS c WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
-
-		$rows = database::loadObjectList($this->Table->realtablename . ' AS c', ['COUNT(c.' . $this->Table->realidfieldname . ') AS record_count'], $whereClause, null, null, 1);
+		$rows = database::loadObjectList($this->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
 
 		if (count($rows) !== 1)
 			return false;
@@ -706,16 +705,11 @@ class CT
 //					$parent_wheres[] = 'p.' . $parent_join_field_row['realfieldname'] . '=c.listing_id';
 				}
 
-				if ($fieldType == 'records') {
+				if ($fieldType == 'records')
 					$whereClauseParent->addCondition('p.' . $parent_user_field_row['realfieldname'], 'CONCAT(",",c.' . $this->Table->realidfieldname . ',",")', 'INSTR', true);
-					//$parent_wheres[] = 'INSTR(p.' . $parent_join_field_row['realfieldname'] . ',CONCAT(",",c.' . $this->Table->realidfieldname . ',","))';
-				}
-
-				//$q = '(SELECT p.' . $parent_table_row->realidfieldname . ' FROM ' . $parent_table_row->realtablename . ' AS p WHERE ' . implode(' AND ', $parent_wheres) . ' LIMIT 1) IS NOT NULL';
 
 				$parent_wheres_string = (string)$whereClauseParent;
 				$whereClauseOwner->addCondition('(SELECT p.' . $parent_table_row->realidfieldname . ' FROM ' . $parent_table_row->realtablename . ' AS p WHERE ' . $parent_wheres_string . ' LIMIT 1)', null, 'NOT NULL');
-				//$wheres_owner[] = [$item[0], $q];
 			}
 		}
 

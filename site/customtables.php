@@ -51,7 +51,7 @@ if ($view == 'xml') {
 			. 'media' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . $file . '.xml');
 
 	echo $xml;
-	die;
+	die;//XML output
 }
 
 $controller->redirect();

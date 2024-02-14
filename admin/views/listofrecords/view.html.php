@@ -69,7 +69,11 @@ class CustomtablesViewListofrecords extends HtmlView
 		$this->canState = $this->canDo->get('tables.edit');
 		$this->canCreate = $this->canDo->get('tables.edit');
 		$this->canDelete = $this->canDo->get('tables.edit');
-		$this->isEmptyState = count($this->items ?? 0) == 0;
+
+		if (is_bool($this->items))
+			$this->isEmptyState = true;
+		else
+			$this->isEmptyState = count($this->items ?? 0) == 0;
 
 		if ($this->getLayout() !== 'modal') {
 			if ($this->ct->Env->version < 4) {

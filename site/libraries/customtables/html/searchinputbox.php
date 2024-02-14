@@ -48,7 +48,7 @@ class SearchInputBox
 		$attributes['data-type'] = $this->field->type;
 
 		if (in_array($this->field->type, ['phponchange', 'phponadd', 'multilangstring', 'text', 'multilangtext', 'string'])) {
-			$length = count($this->field->params) > 0 ? (int)($this->field->params[0] ?? 255) : 255;
+			$length = (($this->field->params !== null and count($this->field->params) > 0) ? (int)($this->field->params[0] ?? 255) : 255);
 			if ($length == 0)
 				$length = 1024;
 			$attributes['maxlength'] = $length;
@@ -127,7 +127,7 @@ abstract class BaseSearch
 
 	function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
 	{
-		if (trim($attributes['onchange']) == '')
+		if (trim($attributes['onchange'] ?? '') == '')
 			$attributes['onchange'] = null;
 
 		$this->ct = $ct;

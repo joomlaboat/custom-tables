@@ -33,7 +33,7 @@ class InputBox_float extends BaseInputBox
 
 		$this->attributes['type'] = 'text';
 
-		$decimals = intval($this->field->params[0]);
+		$decimals = (($this->field->params !== null and count($this->field->params) > 0) ? intval($this->field->params[0]) : 0);
 		if ($decimals < 0)
 			$decimals = 0;
 

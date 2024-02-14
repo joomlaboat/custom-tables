@@ -220,7 +220,11 @@ class database
 		return str_replace('#__', $db->getPrefix(), $tableName);
 	}
 
-	public static function getDB(): DatabaseInterface
+	/**
+	 * @return type depends on the version of Joomla
+	 * @since 3.2.4
+	 */
+	public static function getDB()
 	{
 		$version_object = new Version;
 		$version = (int)$version_object->getShortVersion();
@@ -324,11 +328,12 @@ class database
 	{
 		$db = self::getDB();
 
-		$selects = $selectsRaw;
-
 		$query = $db->getQuery(true);
 
-		$query->select(implode(',', $selects));
+		//Select columns sanitation
+		$selects_sanitized = self::sanitizeSelects($selectsRaw, $table);
+
+		$query->select($selects_sanitized);
 		$query->from($table);
 
 		if ($whereClause->hasConditions())
@@ -350,7 +355,11 @@ class database
 		if ($limitStart === null and $limit !== null)
 			$query->setLimit($limit);
 
-		$db->setQuery($query);
+		try {
+			$db->setQuery($query);
+		} catch (Exception $e) {
+			echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+		}
 
 		if ($output_type == 'OBJECT')
 			return $db->loadObjectList();
@@ -360,6 +369,129 @@ class database
 			return $db->loadColumn();
 		else
 			return $db->loadAssocList();
+	}
+
+	public static function sanitizeSelects(array $selectsRaw, string $realTableName): string
+	{
+		$serverType = database::getServerType();
+		$selects = [];
+
+		foreach ($selectsRaw as $select) {
+
+			if (is_array($select) and count($select) >= 3) {
+				$selectTable_safe = preg_replace('/[^a-zA-Z0-9_#]/', '', $select[1]);//Joomla way
+				$selectField = preg_replace('/[^a-zA-Z0-9_]/', '', $select[2]);
+				$asValue = preg_replace('/[^a-zA-Z0-9_]/', '', $select[3] ?? 'vlu');
+
+				if ($select[0] == 'COUNT')
+					$selects[] = 'COUNT(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
+				elseif ($select[0] == 'SUM')
+					$selects[] = 'SUM(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
+				elseif ($select[0] == 'AVG')
+					$selects[] = 'AVG(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
+				elseif ($select[0] == 'MIN')
+					$selects[] = 'MIN(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
+				elseif ($select[0] == 'MAX')
+					$selects[] = 'MAX(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
+				elseif ($select[0] == 'VALUE')
+					$selects[] = '`' . $selectTable_safe . '`.`' . $selectField . '` AS ' . $asValue;
+				elseif ($select[0] == 'OCTET_LENGTH')
+					$selects[] = 'OCTET_LENGTH(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
+				elseif ($select[0] == 'SUBSTRING_255')
+					$selects[] = 'SUBSTRING(`' . $selectTable_safe . '`.`' . $selectField . '`,1,255) AS ' . $asValue;
+
+			} elseif ($select == '*') {
+				$selects[] = '*';
+			} elseif ($select == 'LISTING_PUBLISHED') {
+				$selects[] = '`' . $realTableName . '`.`published` AS listing_published';
+			} elseif ($select == 'LISTING_PUBLISHED_1') {
+				$selects[] = '1 AS listing_published';
+			} elseif ($select == 'COUNT_ROWS') {
+				$selects[] = 'COUNT(*) AS record_count';
+			} elseif ($select == 'MODIFIED_BY') {
+				$selects[] = '(SELECT name FROM #__users AS u WHERE u.id=a.modified_by LIMIT 1) AS modifiedby';
+			} elseif ($select == 'LAYOUT_SIZE') {
+				$selects[] = 'LENGTH(layoutcode) AS layout_size';
+			} elseif ($select == 'GROUP_TITLE') {
+				$selects[] = '(SELECT `title` FROM `#__usergroups` AS g WHERE g.id = m.group_id LIMIT 1) AS group_title';
+			} elseif ($select == 'TABLE_TITLE') {
+				$selects[] = '(SELECT tabletitle FROM `#__customtables_tables` AS tables WHERE tables.id=a.tableid) AS tabletitle';
+			} elseif ($select == 'TABLE_NAME') {
+				$selects[] = '(SELECT tablename FROM `#__customtables_tables` AS tables WHERE tables.id=a.tableid) AS TABLE_NAME';
+			} elseif ($select == 'FIELD_NAME') {
+				$selects[] = '(SELECT fieldname FROM #__customtables_fields AS fields WHERE fields.published=1 AND fields.tableid=a.tableid LIMIT 1) AS FIELD_NAME';
+			} elseif ($select == 'USER_NAME') {
+				$selects[] = '(SELECT name FROM #__users AS users WHERE users.id=a.userid) AS USER_NAME';
+			} elseif ($select == 'CATEGORY_NAME') {
+				$selects[] = '(SELECT `categoryname` FROM `#__customtables_categories` AS categories WHERE categories.id=tablecategory LIMIT 1) AS categoryname';
+			} elseif ($select == 'FIELD_COUNT') {
+				$selects[] = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1) AS fieldcount';
+			} elseif ($select == 'MODIFIED_TIMESTAMP') {
+				if ($serverType == 'postgresql')
+					$selects [] = 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) ELSE extract(epoch FROM modified) AS modified_timestamp';
+				else
+					$selects [] = 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS modified_timestamp';
+			} elseif ($select == 'REAL_FIELD_NAME') {
+				if ($serverType == 'postgresql')
+					$selects[] = 'CASE WHEN customfieldname!="" THEN customfieldname ELSE CONCAT("es_",fieldname) END AS realfieldname';
+				else
+					$selects[] = 'IF(customfieldname!="", customfieldname, CONCAT("es_",fieldname)) AS realfieldname';
+			} elseif ($select == 'REAL_TABLE_NAME') {
+				if ($serverType == 'postgresql') {
+					$selects[] = 'CASE WHEN customtablename!="" THEN customtablename ELSE CONCAT("#__customtables_table_", tablename) END AS realtablename';
+				} else {
+					$selects[] = 'IF((customtablename IS NOT NULL AND customtablename!=""), customtablename, CONCAT("#__customtables_table_", tablename)) AS realtablename';
+				}
+			} elseif ($select == 'REAL_ID_FIELD_NAME') {
+				if ($serverType == 'postgresql') {
+					$selects[] = 'CASE WHEN customidfield!="" THEN customidfield ELSE "id" END AS realidfieldname';
+				} else {
+					$selects[] = 'IF(customidfield!="", customidfield, "id") AS realidfieldname';
+				}
+			} elseif ($select == 'PUBLISHED_FIELD_FOUND') {
+				$selects[] = '1 AS published_field_found';
+
+			} else {
+
+
+				$parts = explode('.', $select);
+				if (count($parts) == 2) {
+					$selectTable_safe = preg_replace('/[^a-zA-Z0-9_#]/', '', $parts[0]);
+
+					if ($parts[1] == '*')
+						$selects[] = "`" . $selectTable_safe . "`.*";
+					else {
+
+						$partsAs = explode(' AS ', $parts[1]);
+						if (count($partsAs) == 2) {
+							$column_name_safe = preg_replace('/[^a-zA-Z0-9_]/', '', $partsAs[0]);
+							$as_name = preg_replace('/[^a-zA-Z0-9_]/', '', $partsAs[1]);
+							$selects[] = "`" . $selectTable_safe . "`.`" . $column_name_safe . "` AS " . $as_name;
+						} else {
+							$column_name_safe = preg_replace('/[^a-zA-Z0-9_]/', '', $parts[1]);
+							$selects[] = "`" . $selectTable_safe . "`.`" . $column_name_safe . "`";
+						}
+					}
+				} else {
+					$partsAs = explode(' AS ', $select);
+					if (count($partsAs) == 2) {
+						$column_name_safe = preg_replace('/[^a-zA-Z0-9_]/', '', $partsAs[0]);
+						$as_name = preg_replace('/[^a-zA-Z0-9_]/', '', $partsAs[1]);
+						$selects[] = "" . $column_name_safe . " AS " . $as_name;
+					} else {
+						$column_name_safe = preg_replace('/[^a-zA-Z0-9_]/', '', $select);
+						$selects[] = "`" . $column_name_safe . "`";
+					}
+				}
+			}
+		}
+		return implode(',', $selects);
+	}
+
+	public static function getServerType(): ?string
+	{
+		$db = self::getDB();
+		return $db->serverType;
 	}
 
 	public static function loadRowList(string  $table, array $selects, MySQLWhereClause $whereClause,
@@ -530,12 +662,6 @@ class database
 			$db->setQuery($query);
 			$db->execute();
 		}
-	}
-
-	public static function getServerType(): ?string
-	{
-		$db = self::getDB();
-		return $db->serverType;
 	}
 
 	public static function dropColumn(string $realTableName, string $columnName): void
@@ -720,7 +846,7 @@ class database
 
 			$type = $PureFieldType['data_type'];
 			if (($PureFieldType['length'] ?? '') != '') {
-				if (str_contains($PureFieldType['length'], ',')) {
+				if (str_contains($PureFieldType['length'] ?? '', ',')) {
 					$parts = explode(',', $PureFieldType['length']);
 					$partsInt = [];
 					foreach ($parts as $part)
@@ -775,5 +901,41 @@ class database
 	{
 		$conf = Factory::getConfig();
 		return $conf->get('dbprefix');
+	}
+
+	public static function getExistingFields(string $tablename, $add_table_prefix = true): array
+	{
+		$db = self::getDB();
+		$dbName = self::getDataBaseName();
+		$tablename = preg_replace('/[^a-zA-Z0-9_#]/', '', $tablename);
+
+		if ($add_table_prefix)
+			$realtablename = $db->getPrefix() . 'customtables_table_' . $tablename;
+		else
+			$realtablename = str_replace('#__', $db->getPrefix(), $tablename);
+
+		$serverType = database::getServerType();
+
+		if ($serverType == 'postgresql') {
+			$db->setQuery('SELECT `column_name`,`data_type`,`is_nullable`,`column_default` FROM'
+				. ' `information_schema.columns` WHERE `table_name`=', $db->quote($realtablename));
+
+			$results = $db->loadAssocList();
+
+		} else {
+			$query = 'SELECT
+				COLUMN_NAME AS column_name,
+				DATA_TYPE AS data_type,
+				COLUMN_TYPE AS column_type,
+				IF(`COLUMN_TYPE` LIKE "%unsigned", "YES", "NO") AS is_unsigned,
+				IS_NULLABLE AS is_nullable,
+				COLUMN_DEFAULT AS column_default,
+				EXTRA AS extra FROM information_schema.COLUMNS WHERE TABLE_SCHEMA="' . $dbName . '" AND TABLE_NAME=' . $db->quote($realtablename);
+
+			$db->setQuery($query);
+
+			$results = $db->loadAssocList();
+		}
+		return $results;
 	}
 }

@@ -42,7 +42,7 @@ class InputBox_date extends BaseInputBox
 		else
 			$format = null;
 
-		if ($this->field->params !== null and $this->field->params[0] == 'datetime') {
+		if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] == 'datetime') {
 			$this->attributes['showTime'] = true;
 			if ($format === null)
 				$format = '%Y-%m-%d %H:%M:%S';

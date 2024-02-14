@@ -927,14 +927,12 @@ class Filtering
 		$fieldrow2 = Fields::FieldRowByName($value, $this->ct->Table->fields);
 		if ($fieldrow2 !== null) {
 			//$answer = $this->processDateSearchTags($value, $fieldrow2, $this->ct->Table->realtablename);
-			$value2 = $value;//$answer['query'];
-			echo '$value2=' . $value2 . '<br>';
+			$value2 = $value;
 			$title2 = $fieldrow2['fieldtitle' . $this->ct->Languages->Postfix];//$answer['caption'];$answer['caption'];
 		} else {
 			$value2 = $value;
 			$title2 = $value;
 		}
-
 
 		//Breadcrumbs
 		$this->PathValue[] = $title1 . ' ' . $comparison_operator . ' ' . $title2;
@@ -1090,16 +1088,14 @@ class LinkJoinFilters
 
 		//$where = '';
 		if ($tableRow['published_field_found']) {
-			$selects[] = $tableRow['realtablename'] . '.published AS listing_published';
+			$selects[] = 'LISTING_PUBLISHED';
 			$whereClause->addCondition($tableRow['realtablename'] . '.published', 1);
-			//$where = 'WHERE ' . $tableRow['realtablename'] . '.published=1';
 		} else {
-			$selects[] = '1 AS listing_published';
+			$selects[] = 'LISTING_PUBLISHED_1';
 		}
 
 		$selects[] = $tableRow['realtablename'] . '.' . $fieldrow->realfieldname;
 
-		//$query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $tableRow['realtablename'] . ' ' . $where . ' ORDER BY ' . $fieldrow->realfieldname;
 		$rows = database::loadAssocList($tableRow['realtablename'], $selects, $whereClause, $fieldrow->realfieldname);
 
 		$result .= '

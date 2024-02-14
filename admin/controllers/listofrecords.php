@@ -217,7 +217,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 			header("Pragma: no-cache");
 			header("Expires: 0");
 			echo $catalogCSV->render(null);
-			die;
+			die;//CSV output
 		} else {
 			$ct->errors[] = $catalogCSV->error;
 		}

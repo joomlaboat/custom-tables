@@ -157,8 +157,8 @@ class Details
 		$whereClause->addCondition('es_' . $recordsUserIdField, $this->ct->Env->user->id);
 		$whereClause->addCondition('es_' . $recordsField, ',' . $listing_id . ',', 'INSTR');
 
-		$rows = database::loadAssocList('#__customtables_table_' . $recordsTable, ['COUNT(*)'], $whereClause, null, null, 1);
-		$num_rows = $rows[0]['count'];
+		$rows = database::loadAssocList('#__customtables_table_' . $recordsTable, ['COUNT_ROWS'], $whereClause, null, null, 1);
+		$num_rows = $rows[0]['record_count'];
 
 		if ($num_rows == 0)
 			return false;

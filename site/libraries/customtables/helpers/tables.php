@@ -79,14 +79,14 @@ class TableHelper
 
 		if (database::getServerType() == 'postgresql') {
 			$whereClause->addCondition('table_name', $realtablename);
-			$rows = database::loadObjectList('information_schema.columns', ['COUNT(*) AS c'], $whereClause, null, null, 1);
+			$rows = database::loadObjectList('information_schema.columns', ['COUNT_ROWS'], $whereClause, null, null, 1);
 		} else {
 			$whereClause->addCondition('table_schema', $database);
 			$whereClause->addCondition('table_name', $realtablename);
-			$rows = database::loadObjectList('information_schema.tables', ['COUNT(*) AS c'], $whereClause, null, null, 1);
+			$rows = database::loadObjectList('information_schema.tables', ['COUNT_ROWS'], $whereClause, null, null, 1);
 		}
 
-		$c = (int)$rows[0]->c;
+		$c = (int)$rows[0]->record_count;
 		if ($c > 0)
 			return true;
 
@@ -129,8 +129,6 @@ class TableHelper
 	{
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addConditionsFromArray($where);
-
-		//$query = 'SELECT ' . self::getTableRowSelects() . ' FROM #__customtables_tables AS s WHERE ' . $where . ' LIMIT 1';
 		$rows = database::loadAssocList('#__customtables_tables AS s', self::getTableRowSelectArray(), $whereClause, null, null, 1);
 
 		if (count($rows) != 1)
@@ -152,16 +150,7 @@ class TableHelper
 
 	public static function getTableRowSelectArray(): array
 	{
-		$serverType = database::getServerType();
-		if ($serverType == 'postgresql') {
-			$realtablename_query = 'CASE WHEN customtablename!=\'\' THEN customtablename ELSE CONCAT(\'#__customtables_table_\', tablename) END AS realtablename';
-			$realidfieldname_query = 'CASE WHEN customidfield!=\'\' THEN customidfield ELSE \'id\' END AS realidfieldname';
-		} else {
-			$realtablename_query = 'IF((customtablename IS NOT NULL AND customtablename!=\'\'	), customtablename, CONCAT(\'#__customtables_table_\', tablename)) AS realtablename';
-			$realidfieldname_query = 'IF(customidfield!=\'\', customidfield, \'id\') AS realidfieldname';
-		}
-
-		return ['*', $realtablename_query, $realidfieldname_query, '1 AS published_field_found'];
+		return ['*', 'REAL_TABLE_NAME', 'REAL_ID_FIELD_NAME', 'PUBLISHED_FIELD_FOUND'];
 	}
 
 	/**

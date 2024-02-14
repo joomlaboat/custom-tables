@@ -10,15 +10,15 @@
 
 namespace CustomTables;
 
-use Exception;
-use LayoutProcessor;
-use tagProcessor_Catalog;
-use tagProcessor_CatalogTableView;
-
 // no direct access
 if (!defined('_JEXEC') and !defined('ABSPATH')) {
 	die('Restricted access');
 }
+
+use Exception;
+use LayoutProcessor;
+use tagProcessor_Catalog;
+use tagProcessor_CatalogTableView;
 
 class Catalog
 {
@@ -29,28 +29,29 @@ class Catalog
 		$this->ct = &$ct;
 	}
 
-//TODO
-
 	/**
 	 * @throws Exception
 	 * @since 3.2.3
 	 */
-	function render(string|int|null $layoutName = null, $limit = 0): string
+	function render($layoutName = null, $limit = 0): string
 	{
 		if ($this->ct->Env->frmt == 'html')
 			common::loadJSAndCSS($this->ct->Params, $this->ct->Env);
 
 		if ($this->ct->Env->legacySupport) {
+			try {
+				$site_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
 
-			$site_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-
-			require_once($site_path . 'layout.php');
-			require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
-			require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtableviewtag.php');
-			require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'generaltags.php');
-			require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'pagetags.php');
-			require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'itemtags.php');
-			require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'fieldtags.php');
+				require_once($site_path . 'layout.php');
+				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
+				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtableviewtag.php');
+				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'generaltags.php');
+				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'pagetags.php');
+				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'itemtags.php');
+				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'fieldtags.php');
+			} catch (Exception $e) {
+				return 'Catalog Renderer. Legacy Support processing error: ' . $e->getMessage();
+			}
 		}
 
 // -------------------- Table
@@ -225,7 +226,7 @@ class Catalog
 
 		if ($twig->errorMessage !== null) {
 			$this->ct->errors[] = $twig->errorMessage;
-			return '';
+			return 'There is an error in rendering the catalog page.';
 		}
 
 		if ($this->ct->Params->allowContentPlugins)
