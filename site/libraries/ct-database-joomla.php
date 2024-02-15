@@ -221,7 +221,7 @@ class database
 	}
 
 	/**
-	 * @return type depends on the version of Joomla
+	 * @return_type depends on the version of Joomla
 	 * @since 3.2.4
 	 */
 	public static function getDB()

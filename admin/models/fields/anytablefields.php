@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('ABSPATH')) {
 }
 
 use CustomTables\common;
+use CustomTables\database;
 use CustomTables\TableHelper;
 use CustomTables\Fields;
 use Joomla\CMS\HTML\HTMLHelper;

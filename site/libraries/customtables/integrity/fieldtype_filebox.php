@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('ABSPATH')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
