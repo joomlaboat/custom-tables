@@ -180,8 +180,8 @@ function _getTablesThisTableDependOn($table_id)
 	$whereClause->addCondition($select_tableNameCheck, null, 'NOT NULL');
 
 	$db = database::getDB();
-
-	$query = 'SELECT id, tableid, fieldtitle, typeparams, TABLE_TITLE FROM #__customtables_fields AS a WHERE ' . $whereClause . ' ORDER BY tabletitle';
+	$selects = database::sanitizeSelects(['id', 'tableid', 'fieldtitle', 'typeparams', 'TABLE_TITLE'], '#__customtables_fields');
+	$query = 'SELECT ' . $selects . ' FROM #__customtables_fields AS a WHERE ' . $whereClause . ' ORDER BY tabletitle';
 
 	try {
 		$db->setQuery($query);
@@ -221,15 +221,14 @@ function _getTablesThatDependOnThisTable($tablename)
 	}
 
 	$db = database::getDB();
-
-	$query = 'SELECT id, tableid, fieldtitle, typeparams, TABLE_TITLE, published FROM #__customtables_fields AS f WHERE ' . $whereClause . ' ORDER BY tabletitle';
+	$selects = database::sanitizeSelects(['id', 'tableid', 'fieldtitle', 'typeparams', 'TABLE_TITLE', 'published'], '#__customtables_fields');
+	$query = 'SELECT ' . $selects . ' FROM #__customtables_fields AS a WHERE ' . $whereClause . ' ORDER BY tabletitle';
 
 	try {
 		$db->setQuery($query);
 	} catch (Exception $e) {
 		echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
 	}
-
 	return $db->loadAssocList();
 }
 
