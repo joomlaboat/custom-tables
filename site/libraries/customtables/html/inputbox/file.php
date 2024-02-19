@@ -87,7 +87,10 @@ class InputBox_file extends BaseInputBox
 		else
 			$FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1]);
 
-		$link = $FileFolder . '/' . $file;
+		if ($FileFolder !== '' and $FileFolder[0] == '/')
+			$FileFolder = substr($FileFolder, 1);
+
+		$link = Uri::root() . $FileFolder . '/' . $file;
 
 		$parts = explode('.', $file);
 		$file_extension = end($parts);

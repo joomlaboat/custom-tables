@@ -20,6 +20,7 @@ use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\MySQLWhereClause;
+use Joomla\CMS\Uri\Uri;
 
 if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php'))
 	require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
@@ -404,6 +405,11 @@ class CT_FieldTypeTag_file
 		$output_format = '';
 		if (isset($option_list[1]))
 			$output_format = $option_list[1];
+
+		if ($filepath !== '' and $filepath[0] == '/')
+			$filepath = substr($filepath, 1);
+
+		$filepath = Uri::root() . $filepath;
 
 		switch ($output_format) {
 
