@@ -221,7 +221,7 @@ class TableHelper
 
 		if ($old_tablename != $tablename) {
 			//rename table
-			$tableStatus = database::getTableStatus($old_tablename);
+			$tableStatus = database::getTableStatus($old_tablename, 'table');
 
 			if (count($tableStatus) > 0)
 				database::renameTable($old_tablename, $tablename);

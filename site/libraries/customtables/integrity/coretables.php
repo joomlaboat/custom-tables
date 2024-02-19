@@ -22,6 +22,7 @@ use CustomTables\database;
 use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
+use Exception;
 
 class IntegrityCoreTables extends IntegrityChecks
 {
@@ -37,8 +38,16 @@ class IntegrityCoreTables extends IntegrityChecks
 		IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Log());
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.6
+	 */
 	protected static function createCoreTableIfNotExists(CT &$ct, object $table)
 	{
+		if ($table->realtablename === null or $table->realtablename === '') {
+			throw new Exception('createCoreTableIfNotExists: Table real name cannot be NULL');
+		}
+
 		if (!TableHelper::checkIfTableExists($table->realtablename))
 			IntegrityCoreTables::createCoreTable($ct, $table);
 		else
@@ -64,7 +73,7 @@ class IntegrityCoreTables extends IntegrityChecks
 				$tableExists = true;
 		} else {
 			//Mysql;
-			$rows = database::getTableStatus($table->tablename);
+			$rows = database::getTableStatus($table->tablename, 'coretable');
 
 			if (count($rows) > 0)
 				$tableExists = true;
@@ -200,6 +209,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$tables_projected_indexes[] = ['name' => 'idx_tablename', 'field' => 'tablename'];
 
 		return (object)['realtablename' => $dbPrefix . 'customtables_tables',
+			'tablename' => 'tables',
 			'fields' => $tables_projected_fields,
 			'indexes' => $tables_projected_indexes,
 			'comment' => 'List of Custom Tables tables'];
@@ -246,6 +256,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$tables_projected_indexes[] = ['name' => 'idx_fieldname', 'field' => 'fieldname'];
 
 		return (object)['realtablename' => $dbPrefix . 'customtables_fields',
+			'tablename' => 'fields',
 			'fields' => $tables_projected_fields,
 			'indexes' => $tables_projected_indexes,
 			'comment' => 'Custom Tables Fields'];
@@ -283,6 +294,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$tables_projected_indexes[] = ['name' => 'idx_layoutname', 'field' => 'layoutname'];
 
 		return (object)['realtablename' => $dbPrefix . 'customtables_layouts',
+			'tablename' => 'layouts',
 			'fields' => $tables_projected_fields,
 			'indexes' => $tables_projected_indexes,
 			'comment' => 'Custom Tables Layouts'];
@@ -310,6 +322,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$tables_projected_indexes[] = ['name' => 'idx_categoryname', 'field' => 'categoryname'];
 
 		return (object)['realtablename' => $dbPrefix . 'customtables_categories',
+			'tablename' => 'categories',
 			'fields' => $tables_projected_fields,
 			'indexes' => $tables_projected_indexes,
 			'comment' => 'Custom Tables Categories'];
@@ -333,6 +346,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$tables_projected_indexes[] = ['name' => 'idx_action', 'field' => 'action'];
 
 		return (object)['realtablename' => $dbPrefix . 'customtables_log',
+			'tablename' => 'log',
 			'fields' => $tables_projected_fields,
 			'indexes' => $tables_projected_indexes,
 			'comment' => 'Custom Tables Action Log'];

@@ -524,6 +524,8 @@ class database
 			$realTableName = $dbPrefix . 'customtables_filebox_' . $tablename;
 		elseif ($type == 'native')
 			$realTableName = $tablename;
+		elseif ($type == 'table')
+			$realTableName = $dbPrefix . 'customtables_table_' . $tablename;
 		else
 			$realTableName = $dbPrefix . 'customtables_' . $tablename;
 
