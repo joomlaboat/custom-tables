@@ -592,8 +592,6 @@ class ImportTables
 	 */
 	public static function menuGetMaxRgt()
 	{
-		//$query = 'SELECT rgt FROM #__menu ORDER BY rgt DESC LIMIT 1';
-
 		$whereClause = new MySQLWhereClause();
 		$rows = database::loadAssocList('#__menu', ['rgt'], $whereClause, 'rgt', null, 1);
 

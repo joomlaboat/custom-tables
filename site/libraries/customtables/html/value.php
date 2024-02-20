@@ -113,9 +113,9 @@ class Value
 				return $rowValue;
 			case 'googlemapcoordinates':
 
-				if ($option_list[0] == 'map') {
+				if (count($option_list) == 0 or $option_list[0] == 'map') {
 
-					$parts = explode(',', $rowValue);
+					$parts = explode(',', $rowValue ?? '');
 					$lat = $parts[0];
 					$lng = $parts[1] ?? '';
 					if ($lat == '' or $lng == '')
@@ -129,7 +129,7 @@ class Value
 					if (!str_contains($height, '%') and !str_contains($height, 'px'))
 						$height .= 'px';
 
-					$zoom = (int)$option_list[3] ?? '10';
+					$zoom = (count($option_list) > 3 ? (int)$option_list[3] ?? '10' : '10');
 					if ($zoom == 0)
 						$zoom = 10;
 
