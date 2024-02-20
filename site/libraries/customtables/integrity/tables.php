@@ -64,7 +64,6 @@ class IntegrityTables extends IntegrityChecks
 				}
 			}
 		}
-
 		return $result;
 	}
 
@@ -127,7 +126,7 @@ class IntegrityTables extends IntegrityChecks
 
 				if ($row['customtablename'] === null or $row['customtablename'] == '') {
 					if (TableHelper::createTableIfNotExists($database, $dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'])) {
-						common::enqueueMessage('Table "' . $row['tabletitle'] . '" created.');
+						common::enqueueMessage('Table "' . $row['tabletitle'] . '" created.', 'notice');
 					}
 				}
 			}

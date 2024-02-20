@@ -22,7 +22,7 @@ use RecursiveIteratorIterator;
 
 class common
 {
-	public static function enqueueMessage($text, $type = 'error'): void
+	public static function enqueueMessage($text, string $type = 'error'): void
 	{
 		//Types: error, success-message, notice
 

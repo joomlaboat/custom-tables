@@ -78,7 +78,6 @@ class ImportTables
 				if ($importfields)
 					ImportTables::processFields($tableid, $table['table']['tablename'], $table['fields'], $msg);
 
-
 				if ($importlayouts)
 					ImportTables::processLayouts($ct, $tableid, $table['layouts'], $msg);
 
@@ -125,11 +124,8 @@ class ImportTables
 		//Create mysql table
 		$tableTitle = $table_new['tabletitle'] ?? $table_new['tabletitle_1'];
 
-		$columns = [
-			'id int(10) NOT NULL auto_increment',
-			'published tinyint(1) DEFAULT "1"',
-			'PRIMARY KEY  (id)',
-		];
+		$columns = ['published tinyint(1) DEFAULT "1"'];
+
 		database::createTable('#__customtables_table_' . $tablename, 'id', $columns, $tableTitle);
 		ImportTables::updateTableCategory($tableid, $table_new, $categoryname);
 		return $tableid;
