@@ -50,7 +50,6 @@ class Inputbox
 	{
 		$this->ct = &$ct;
 		$this->isTwig = $isTwig;
-
 		$this->cssclass = $option_list[0] ?? '';
 		$this->attributes = str_replace('****quote****', '"', $option_list[1] ?? '');//Optional Parameter
 
