@@ -222,6 +222,9 @@ class Twig_Html_Tags
 			$returnto = common::getReturnToURL() ?? '';
 
 		if ($returnto == '')
+			$returnto = $this->ct->Params->returnTo;
+
+		if ($returnto == '')
 			return '';
 
 		if ($attribute == '' and $image_icon == '') {
