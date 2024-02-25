@@ -250,10 +250,10 @@ function prepareSQLQuery($fieldList, $fields, $line): object
 					}
 
 					if ((int)$vlu > 0) {
-						$whereClause->addCondition($fields[$f_index]->realfieldnam, (int)$vlu);
+						$whereClause->addCondition($fields[$f_index]->realfieldname, (int)$vlu);
 						$data[$fields[$f_index]->realfieldname] = (int)$vlu;
 					} else {
-						$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
+						$whereClause->addCondition($fields[$f_index]->realfieldname, null);
 						$data[$fields[$f_index]->realfieldname] = null;
 					}
 				}
@@ -281,35 +281,35 @@ function prepareSQLQuery($fieldList, $fields, $line): object
 					}
 
 					if (!is_null($vlu) and $vlu != '') {
-						$whereClause->addCondition($fields[$f_index]->realfieldnam, '%,' . implode(',', $vlu) . ',%', 'LIKE');
+						$whereClause->addCondition($fields[$f_index]->realfieldname, '%,' . implode(',', $vlu) . ',%', 'LIKE');
 						$data[$fields[$f_index]->realfieldname] = ',' . implode(',', $vlu) . ',';
 					} else {
-						$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
+						$whereClause->addCondition($fields[$f_index]->realfieldname, null);
 						$data[$fields[$f_index]->realfieldname] = null;
 					}
 				}
 			} elseif ($fieldType == 'date' or $fieldType == 'creationtime' or $fieldType == 'changetime') {
 				if (isset($line[$i]) and $line[$i] != '') {
-					$whereClause->addCondition($fields[$f_index]->realfieldnam, $line[$i]);
+					$whereClause->addCondition($fields[$f_index]->realfieldname, $line[$i]);
 					$data[$fields[$f_index]->realfieldname] = $line[$i];
 				} else {
-					$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
+					$whereClause->addCondition($fields[$f_index]->realfieldname, null);
 					$data[$fields[$f_index]->realfieldname] = null;
 				}
 			} elseif ($fieldType == 'int' or $fieldType == 'user' or $fieldType == 'userid') {
 				if (isset($line[$i]) and $line[$i] != '') {
-					$whereClause->addCondition($fields[$f_index]->realfieldnam, (int)$line[$i]);
+					$whereClause->addCondition($fields[$f_index]->realfieldname, (int)$line[$i]);
 					$data[$fields[$f_index]->realfieldname] = (int)$line[$i];
 				} else {
-					$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
+					$whereClause->addCondition($fields[$f_index]->realfieldname, null);
 					$data[$fields[$f_index]->realfieldname] = null;
 				}
 			} elseif ($fieldType == 'float') {
 				if (isset($line[$i]) and $line[$i] != '') {
-					$whereClause->addCondition($fields[$f_index]->realfieldnam, (float)$line[$i]);
+					$whereClause->addCondition($fields[$f_index]->realfieldname, (float)$line[$i]);
 					$data[$fields[$f_index]->realfieldname] = (float)$line[$i];
 				} else {
-					$whereClause->addCondition($fields[$f_index]->realfieldnam, null);
+					$whereClause->addCondition($fields[$f_index]->realfieldname, null);
 					$data[$fields[$f_index]->realfieldname] = null;
 				}
 			} elseif ($fieldType == 'checkbox') {
@@ -319,7 +319,7 @@ function prepareSQLQuery($fieldList, $fields, $line): object
 					else
 						$vlu = 0;
 
-					$whereClause->addCondition($fields[$f_index]->realfieldnam, $vlu);
+					$whereClause->addCondition($fields[$f_index]->realfieldname, $vlu);
 					$data[$fields[$f_index]->realfieldname] = $vlu;
 				}
 			} elseif ($fieldType == 'time') {
@@ -329,13 +329,13 @@ function prepareSQLQuery($fieldList, $fields, $line): object
 				$seconds = InputBox_Time::formattedTime2Seconds($line[$i]);
 				$ticks = InputBox_Time::seconds2Ticks($seconds, $fieldParams);
 
-				$whereClause->addCondition($fields[$f_index]->realfieldnam, $ticks);
+				$whereClause->addCondition($fields[$f_index]->realfieldname, $ticks);
 				$data[$fields[$f_index]->realfieldname] = $ticks;
 
 			} else {
 				if (isset($line[$i])) {
 					$vlu = $line[$i];
-					$whereClause->addCondition($fields[$f_index]->realfieldnam, $vlu);
+					$whereClause->addCondition($fields[$f_index]->realfieldname, $vlu);
 					$data[$fields[$f_index]->realfieldname] = $vlu;
 				}
 			}

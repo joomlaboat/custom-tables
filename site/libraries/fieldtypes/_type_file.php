@@ -385,31 +385,34 @@ class CT_FieldTypeTag_file
 			} elseif ($field->type == 'blob') {
 				$how_to_process = 'blob';//Not secure but BLOB
 				$filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+			} else {
+
+				//Add host name and path to the link
+				if ($filepath !== '' and $filepath[0] == '/')
+					$filepath = substr($filepath, 1);
+
+				$filepath = Uri::root() . $filepath;
+			}
+
+			if (isset($option_list[3])) {
+				if ($option_list[3] == 'savefile') {
+					if (!str_contains($filepath, '?'))
+						$filepath .= '?';
+					else
+						$filepath .= '&';
+
+					$filepath .= 'savefile=1'; //Will add HTTP Header: @header("Content-Disposition: attachment; filename=\"".$filename."\"");
+				}
 			}
 		}
 
 		$target = '';
-		if (isset($option_list[3])) {
-			if ($option_list[3] == '_blank')
-				$target = ' target="_blank"';
-			if ($option_list[3] == 'savefile') {
-				if (!str_contains($filepath, '?'))
-					$filepath .= '?';
-				else
-					$filepath .= '&';
-
-				$filepath .= 'savefile=1'; //Will add HTTP Header: @header("Content-Disposition: attachment; filename=\"".$filename."\"");
-			}
-		}
+		if (isset($option_list[3]) and $option_list[3] == '_blank')
+			$target = ' target="_blank"';
 
 		$output_format = '';
 		if (isset($option_list[1]))
 			$output_format = $option_list[1];
-
-		if ($filepath !== '' and $filepath[0] == '/')
-			$filepath = substr($filepath, 1);
-
-		$filepath = Uri::root() . $filepath;
 
 		switch ($output_format) {
 
