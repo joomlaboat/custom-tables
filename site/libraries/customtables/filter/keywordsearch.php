@@ -14,9 +14,7 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\MySQLWhereClause;
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ordering.php');
 

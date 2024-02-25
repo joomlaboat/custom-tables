@@ -10,9 +10,7 @@
 
 namespace CustomTables;
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 class Categories
 {

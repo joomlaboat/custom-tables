@@ -11,9 +11,7 @@
 namespace CustomTables;
 
 // no direct access
-if (!defined('_JEXEC')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 use Exception;
 use Joomla\CMS\Factory;

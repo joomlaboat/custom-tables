@@ -11,9 +11,7 @@
 namespace CustomTables;
 
 // No direct access to this file
-if (!defined('_JEXEC')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;

@@ -12,9 +12,7 @@ use CustomTables\database;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\HTML\HTMLHelper;
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 class JHTMLCTFields
 {

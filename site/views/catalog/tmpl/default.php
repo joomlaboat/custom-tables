@@ -15,9 +15,7 @@ use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 if ($this->ct->Env->frmt == 'html') {
 	if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.

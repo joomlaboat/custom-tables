@@ -12,9 +12,7 @@
 use CustomTables\common;
 use Joomla\CMS\Uri\Uri;
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 ?>
 <?php if (isset($this->icons['main']) && is_array($this->icons['main'])) : ?>

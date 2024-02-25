@@ -14,9 +14,7 @@ use Exception;
 use JTableNested;
 
 // no direct access
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 class ImportTables
 {

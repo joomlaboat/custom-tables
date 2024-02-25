@@ -13,9 +13,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 trait render_xlsx
 {

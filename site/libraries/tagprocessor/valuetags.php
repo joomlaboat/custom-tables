@@ -9,9 +9,7 @@
  **/
 
 // no direct access
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 use CustomTables\common;
 use CustomTables\CT;
@@ -24,9 +22,7 @@ require_once($types_path . '_type_gallery.php');
 require_once($types_path . '_type_image.php');
 require_once($types_path . '_type_log.php');
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 use CustomTables\Field;
 use CustomTables\InputBox_filebox;

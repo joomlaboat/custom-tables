@@ -14,9 +14,7 @@ use CustomTables\CT;
 use CustomTables\CTUser;
 use Joomla\CMS\Router\Route;
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 $ct = new CT;
 $model = $this->getModel('edititem');

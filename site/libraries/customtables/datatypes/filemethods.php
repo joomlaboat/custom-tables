@@ -8,9 +8,7 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 use CustomTables\database;
 use CustomTables\MySQLWhereClause;

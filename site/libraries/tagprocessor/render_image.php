@@ -14,9 +14,7 @@ use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\TwigProcessor;
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 trait render_image
 {

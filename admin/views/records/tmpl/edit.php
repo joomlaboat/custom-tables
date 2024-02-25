@@ -10,9 +10,7 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 use CustomTables\Edit;
 use Joomla\CMS\Factory;

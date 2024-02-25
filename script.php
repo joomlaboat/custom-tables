@@ -10,9 +10,7 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 jimport('joomla.installer.installer');
 jimport('joomla.installer.helper');

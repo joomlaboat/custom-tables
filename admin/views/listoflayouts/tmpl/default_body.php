@@ -13,9 +13,7 @@ use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\HTML\HTMLHelper;
 
-if (!defined('_JEXEC') and !defined('ABSPATH')) {
-	die('Restricted access');
-}
+if (!defined('_JEXEC')) die('Restricted access');
 
 $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit";
 
