@@ -11,7 +11,7 @@
 
 namespace CustomTables;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 use CustomTables\Integrity\IntegrityCoreTables;
 use CustomTables\Integrity\IntegrityTables;

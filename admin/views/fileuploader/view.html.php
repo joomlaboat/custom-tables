@@ -12,7 +12,7 @@
 use CustomTables\common;
 use Joomla\CMS\MVC\View\HtmlView;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 // Import Joomla! libraries
 jimport('joomla.application.component.view');

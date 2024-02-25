@@ -9,7 +9,7 @@
  **/
 
 // no direct access
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 use Joomla\CMS\Component\Router\RouterInterface;
 

@@ -15,7 +15,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 // load tooltip behavior
 if ($this->version < 4) {

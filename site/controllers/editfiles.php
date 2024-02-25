@@ -15,7 +15,7 @@ use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 $ct = new CT;
 

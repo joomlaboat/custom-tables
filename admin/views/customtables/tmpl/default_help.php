@@ -11,7 +11,7 @@
 // No direct access to this file
 use CustomTables\common;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 echo '<div class="ct_howitworks">' . common::translate('COM_CUSTOMTABLES_HOW_IT_WORKS_DESC') . '</div>';
 

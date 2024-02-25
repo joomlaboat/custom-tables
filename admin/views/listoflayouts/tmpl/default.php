@@ -13,7 +13,7 @@ use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoflayouts'); ?>" method="post"

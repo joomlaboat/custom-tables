@@ -11,7 +11,7 @@
 namespace CustomTables;
 
 // no direct access
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 class Search_string extends BaseSearch
 {

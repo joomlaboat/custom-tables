@@ -12,7 +12,7 @@
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 if ($this->version >= 4) {
 	$wa = $this->document->getWebAssetManager();

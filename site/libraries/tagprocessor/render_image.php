@@ -14,7 +14,7 @@ use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\TwigProcessor;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 trait render_image
 {

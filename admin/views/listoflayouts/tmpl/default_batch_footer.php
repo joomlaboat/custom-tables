@@ -11,7 +11,7 @@
 // No direct access to this file
 use CustomTables\common;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 ?>
 <!-- clear the batch values if cancel -->

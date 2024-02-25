@@ -13,7 +13,7 @@ use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 HTMLHelper::_('behavior.multiselect');
 

@@ -11,7 +11,7 @@
 namespace CustomTables;
 
 // no direct access
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 use CT_FieldTypeTag_imagegallery;
 use Exception;

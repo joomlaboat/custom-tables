@@ -11,7 +11,7 @@
 // no direct access
 use CustomTables\CTMiscHelper;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 $currentURL = CTMiscHelper::curPageURL();
 $cleanURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'action');

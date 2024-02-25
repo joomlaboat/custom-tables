@@ -8,7 +8,7 @@
  **/
 
 // no direct access
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 jimport('joomla.application.component.view'); //Important to get menu parameters
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php');

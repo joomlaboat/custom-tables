@@ -9,7 +9,7 @@
  **/
 
 // no direct access
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 use CustomTables\common;
 use Joomla\CMS\MVC\Controller\BaseController;

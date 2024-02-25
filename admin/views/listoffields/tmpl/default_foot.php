@@ -9,7 +9,7 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 
 $colspan = 9 + count($this->languages);

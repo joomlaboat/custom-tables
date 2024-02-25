@@ -12,7 +12,7 @@
 use CustomTables\common;
 use CustomTables\CTMiscHelper;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 common::loadJSAndCSS($this->ct->Params, $this->ct->Env);
 $results = $this->details->render();

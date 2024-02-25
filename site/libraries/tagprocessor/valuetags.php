@@ -9,7 +9,7 @@
  **/
 
 // no direct access
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
@@ -22,7 +22,7 @@ require_once($types_path . '_type_gallery.php');
 require_once($types_path . '_type_image.php');
 require_once($types_path . '_type_log.php');
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 use CustomTables\Field;
 use CustomTables\InputBox_filebox;

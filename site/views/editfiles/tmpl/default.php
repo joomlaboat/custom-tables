@@ -12,7 +12,7 @@
 use CustomTables\common;
 use CustomTables\CTMiscHelper;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 ?>
 <script>

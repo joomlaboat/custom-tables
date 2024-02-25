@@ -8,7 +8,7 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 $colspan = 9 + count($this->ct->Languages->LanguageList);
 

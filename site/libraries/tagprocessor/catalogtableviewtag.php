@@ -12,7 +12,7 @@
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 require_once('render_html.php');
 require_once('render_xlsx.php');

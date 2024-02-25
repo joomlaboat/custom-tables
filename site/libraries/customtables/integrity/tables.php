@@ -11,7 +11,7 @@
 
 namespace CustomTables\Integrity;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\database;

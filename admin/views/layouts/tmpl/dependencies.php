@@ -13,7 +13,7 @@ use CustomTables\common;
 use CustomTables\database;
 use CustomTables\MySQLWhereClause;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 /**
  * @throws Exception

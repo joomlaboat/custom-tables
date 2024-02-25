@@ -13,7 +13,7 @@ namespace CustomTables;
 // no direct access
 use Exception;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 class Diagram
 {

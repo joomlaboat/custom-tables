@@ -9,7 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 use Joomla\CMS\MVC\Controller\AdminController;
 

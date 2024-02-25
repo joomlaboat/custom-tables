@@ -12,7 +12,7 @@
 use CustomTables\common;
 use Joomla\CMS\Uri\Uri;
 
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 ?>
 <img alt="<?php echo common::translate('COM_CUSTOMTABLES'); ?>"

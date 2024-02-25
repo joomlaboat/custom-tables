@@ -10,7 +10,7 @@
  **/
 
 // No direct access to this file
-if (!defined('_JEXEC')) die('Restricted access');
+defined('_JEXEC') or die();
 
 // import Joomla view library
 use CustomTables\common;
