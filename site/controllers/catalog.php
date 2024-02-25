@@ -85,8 +85,13 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 {
 	if ($ct->Params->returnTo != '') {
 		$link = $ct->Params->returnTo;
-		if (!str_contains($link, 'http:') and !str_contains($link, 'https:'))
-			$link .= $ct->Env->WebsiteRoot . $link;
+		if (!str_contains($link, 'http:') and !str_contains($link, 'https:')) {
+			if ($link !== '' and $link[0] == '/')
+				$link = substr($link, 1);
+
+			$link = $ct->Env->WebsiteRoot . $link;
+		}
+
 	} else {
 		$link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $ct->Params->ItemId;
 		$link .= (is_null($ct->Params->ModuleId) ? '' : '&ModuleId=' . $ct->Params->ModuleId);
