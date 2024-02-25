@@ -58,6 +58,9 @@ try {
 	echo 'Error during the Catalog rendering: ' . $e->getMessage();
 }
 
+if (common::inputGetInt('clean', 0) == 1 and common::inputGetCmd('listing_id') !== null)
+	die;//Clean exit, single record loaded.
+
 if (count($this->catalog->ct->errors)) {
 	Factory::getApplication()->enqueueMessage(implode(',', $this->catalog->ct->errors), 'error');
 }

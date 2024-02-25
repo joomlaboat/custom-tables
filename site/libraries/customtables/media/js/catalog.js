@@ -480,7 +480,7 @@ function ctCatalogUpdate(tableid, recordsId, row_index) {
 
     let element_tableid = "ctTable_" + tableid;
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
-    let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], ['listing_id=' + recordsId, 'number=' + row_index], link);
+    let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], ['listing_id=' + recordsId, 'number=' + row_index, 'clean=1'], link);
     let params = "";
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
@@ -491,7 +491,6 @@ function ctCatalogUpdate(tableid, recordsId, row_index) {
 
             if (http.readyState === 4) {
                 let res = http.response;
-
                 let rows = document.getElementById(element_tableid).rows;
                 rows[row_index].innerHTML = res;
             }
