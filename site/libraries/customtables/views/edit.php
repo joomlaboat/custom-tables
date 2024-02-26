@@ -114,8 +114,13 @@ class Edit
 		}
 
 		if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
-			$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
-				. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
+
+			if (defined('_JEXEC'))
+				$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
+					. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
+			else
+				$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
+					. $this->ct->Params->pageTitle . '</h2></div>';
 		}
 
 		$listing_id = $this->row[$this->ct->Table->realidfieldname] ?? 0;

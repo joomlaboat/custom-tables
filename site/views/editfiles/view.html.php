@@ -55,7 +55,7 @@ class CustomTablesViewEditFiles extends HtmlView
 	{
 		$HTMLOut = '
 		
-		<h2>' . common::translate("COM_CUSTOMTABLES_FILE_LIST_OF_FILES") . '</h2>
+		<h2>' . common::translate('COM_CUSTOMTABLES_FILE_LIST_OF_FILES') . '</h2>
 		<table style="width:100%;border:none;">
 			<thead>
 				<tr>

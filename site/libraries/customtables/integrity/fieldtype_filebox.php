@@ -19,6 +19,7 @@ use CustomTables\database;
 use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
+use Joomla\CMS\Language\Text;
 
 class IntegrityFieldType_FileBox extends IntegrityChecks
 {
@@ -28,7 +29,7 @@ class IntegrityFieldType_FileBox extends IntegrityChecks
 
 		if (!TableHelper::checkIfTableExists($filebox_table_name)) {
 			Fields::CreateFileBoxTable($ct->Table->tablename, $fieldname);
-			common::enqueueMessage(common::translate('File Box Table "' . $filebox_table_name . '" created.'), 'notice');
+			common::enqueueMessage(Text::sprintf("File Box Table '%s' created.", $filebox_table_name), 'notice');
 		}
 
 		$g_ExistingFields = database::getExistingFields($filebox_table_name, false);
@@ -51,7 +52,7 @@ class IntegrityFieldType_FileBox extends IntegrityChecks
 
 			if (!$g_found) {
 				Fields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) null', '');
-				common::enqueueMessage(common::translate('File Box Field "' . $g_fieldname . '" added.'));
+				common::enqueueMessage(Text::sprintf("File Box Field '%s' added.", $g_fieldname));
 			}
 			$moreThanOneLanguage = true;
 		}

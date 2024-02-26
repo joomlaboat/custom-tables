@@ -20,6 +20,7 @@ use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
 use Exception;
+use Joomla\CMS\Language\Text;
 
 class IntegrityFields extends IntegrityChecks
 {
@@ -108,7 +109,6 @@ class IntegrityFields extends IntegrityChecks
 				} elseif ($projected_field['type'] == 'imagegallery') {
 					if ($existingFieldName == $projected_field['realfieldname']) {
 						IntegrityFieldType_Gallery::checkGallery($ct, $projected_field['fieldname']);
-
 						$projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
 						$found_field = $projected_field['realfieldname'];
 						$found = true;
@@ -117,7 +117,6 @@ class IntegrityFields extends IntegrityChecks
 				} elseif ($projected_field['type'] == 'filebox') {
 					if ($existingFieldName == $projected_field['realfieldname']) {
 						IntegrityFieldType_FileBox::checkFileBox($ct, $projected_field['fieldname']);
-
 						$projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
 						$found_field = $projected_field['realfieldname'];
 						$found = true;
@@ -311,6 +310,6 @@ class IntegrityFields extends IntegrityChecks
 		$PureFieldType = Fields::getPureFieldType($fieldType, $typeParams);
 		$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
 		Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldTypeString, '');
-		common::enqueueMessage(common::translate('Field "' . $realfieldname . '" added.'), 'notice');
+		common::enqueueMessage(Text::sprintf("Field `%s` has been added.", $realfieldname), 'notice');
 	}
 }

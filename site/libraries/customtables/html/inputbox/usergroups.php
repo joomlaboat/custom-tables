@@ -36,12 +36,12 @@ class InputBox_usergroups extends BaseInputBox
 			if ($value === null)
 				$value = $defaultValue;
 
-			$value = preg_replace('/[^\0-9]/u', '', $value);
+			$value = preg_replace('/[^\0-9]/u', '', $value ?? '');
 			if ($value == '')
 				$value = null;
 		}
 
-		$valueArray = explode(',', $value);
+		$valueArray = explode(',', $value ?? '');
 
 		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 

@@ -73,8 +73,7 @@ class ESFileUploader
 					$newFileName = $output_dir . 'ct_' . $t . '_' . $fileId . '_' . $fileName;
 
 					if (common::inputGetCmd('task') == 'importcsv') {
-						require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
-							. DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'importcsv.php');
+						require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'importcsv.php');
 
 						move_uploaded_file($file["tmp_name"], $newFileName);
 
@@ -311,8 +310,7 @@ class ESFileUploader
 			//If not then regular Joomla input method will be used
 
 			if (!isset($_FILES[$fileId])) {
-				require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
-					. DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'importcsv.php');
+				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'importcsv.php');
 
 				if ($ct->Env->clean)
 					die(common::ctJsonEncode(['error' => 'Failed to open file.']));

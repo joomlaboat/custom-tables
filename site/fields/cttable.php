@@ -25,8 +25,7 @@ trait JFormFieldCTTableCommon
 {
 	protected static function getOptionList(): array
 	{
-		//$query = 'SELECT id,tablename FROM #__customtables_tables WHERE published=1 ORDER BY tablename';
-		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
 

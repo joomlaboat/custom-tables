@@ -392,7 +392,10 @@ class Twig_Document_Tags
 
 	function setpagetitle($pageTitle): void
 	{
-		$this->ct->document->setTitle(common::translate($pageTitle));
+		if (defined('_JEXEC'))
+			$this->ct->document->setTitle(common::translate($pageTitle));
+		else
+			$this->ct->document->setTitle($pageTitle);
 	}
 
 	function setheadtag($tag): void

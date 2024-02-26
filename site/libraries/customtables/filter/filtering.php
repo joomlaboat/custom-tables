@@ -14,6 +14,7 @@ defined('_JEXEC') or die();
 
 use DateTime;
 use Exception;
+use Joomla\CMS\Language\Text;
 use LayoutProcessor;
 
 class Filtering
@@ -164,8 +165,7 @@ class Filtering
 
 						if ($this->ct->Env->legacySupport) {
 
-							require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
-								. DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+							require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 							$LayoutProc = new LayoutProcessor($this->ct);
 							$LayoutProc->layout = $value;
 							$value = $LayoutProc->fillLayout();
@@ -228,9 +228,8 @@ class Filtering
 			}
 		}
 
-		if ($logic_operator == '') {
-			$this->ct->errors[] = common::translate('Search parameter "' . $param . '" is incorrect');
-		}
+		if ($logic_operator == '')
+			$this->ct->errors[] = Text::sprintf("Search parameter '%s' is incorrect", $param);
 	}
 
 	/**

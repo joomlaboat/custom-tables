@@ -1405,6 +1405,7 @@ class Fields
 			'photo_ext varchar(10) not null',
 			'title varchar(100) null'
 		];
+
 		database::createTable('#__customtables_gallery_' . $tablename . '_' . $fieldname, 'photoid',
 			$columns, 'Image Gallery', null, 'BIGINT UNSIGNED');
 

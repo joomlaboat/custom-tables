@@ -205,7 +205,10 @@ class Twig_Html_Tags
 		if ($defaultLabel === null)
 			$defaultLabel = 'COM_CUSTOMTABLES_GO_BACK';
 
-		$label = common::translate($defaultLabel);
+		if (defined('_JEXEC'))
+			$label = common::translate($defaultLabel);
+		else
+			$label = $defaultLabel;
 
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';

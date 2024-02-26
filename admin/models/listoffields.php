@@ -135,7 +135,8 @@ class CustomtablesModelListoffields extends ListModel
 		$orderCol = $this->state->get('list.ordering', 'a.id');
 		$orderDirection = $this->state->get('list.direction', 'asc');
 		$tableId = common::inputGetInt('tableid');
-		return $this->helperListOfFields->getListQuery($tableId, $published, $search, $type, $orderCol, $orderDirection, null, null, true);
+		$query = $this->helperListOfFields->getListQuery($tableId, $published, $search, $type, $orderCol, $orderDirection, null, null, true);
+		return $query;
 	}
 
 	/**

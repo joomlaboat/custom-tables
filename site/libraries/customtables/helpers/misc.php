@@ -509,7 +509,11 @@ class CTMiscHelper
 		$parts = explode('.', $filename);
 		$filename_array = array();
 
-		$filename_array[] = common::translate($parts[0]);
+		if (defined('_JEXEC'))
+			$filename_array[] = common::translate($parts[0]);
+		else
+			$filename_array[] = $parts[0];
+
 		if (count($parts) > 1) {
 			for ($i = 1; $i < count($parts); $i++)
 				$filename_array[] = $parts[$i];
@@ -692,7 +696,9 @@ class CTMiscHelper
 				$htmlresult = $o->text;
 			}
 
-			$myDoc->setTitle(common::translate($pageTitle)); //because content plugins may overwrite the title
+			if (defined('_JEXEC'))
+				$myDoc->setTitle(common::translate($pageTitle)); //because content plugins may overwrite the title
+			
 		}
 		return $htmlresult;
 	}

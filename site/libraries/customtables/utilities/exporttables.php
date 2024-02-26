@@ -36,7 +36,10 @@ class ExportTables
 			$whereClause->addCondition('published', 1);
 			$whereClause->addCondition('id', (int)$table_id);
 
-			$table_rows = database::loadAssocList('#__customtables_tables', ['*', 'CATEGORY_NAME'], $whereClause, null, null, 1);
+			if (defined('_JEXEC'))
+				$table_rows = database::loadAssocList('#__customtables_tables', ['*', 'CATEGORY_NAME'], $whereClause, null, null, 1);
+			else
+				$table_rows = database::loadAssocList('#__customtables_tables', ['*'], $whereClause, null, null, 1);
 
 			//Add the table with dependencies to export array
 			if (count($table_rows) == 1) {

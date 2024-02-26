@@ -52,8 +52,6 @@ class ListOfFields
 	function getListQuery(int $tableId, $published = null, $search = null, $type = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0, bool $returnQueryString = false)
 	{
 		$this->tableid = common::inputGetInt('tableid', 0);
-		$serverType = database::getServerType();
-
 		$selects = [
 			'a.*',
 			'TABLE_TITLE',
@@ -61,9 +59,8 @@ class ListOfFields
 		];
 
 		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('tableid', $tableId);
-
 		$whereClausePublished = new MySQLWhereClause();
+
 		// Filter by published state
 		if (is_numeric($published))
 			$whereClausePublished->addCondition('a.published', (int)$published);
@@ -194,10 +191,18 @@ class ListOfFields
                     </div>
                 </td>';
 
-		$result .= '<td>' . common::translate($item->typeLabel) . '</td>';
-		$result .= '<td>' . common::escape($item->typeparams) . $this->checkTypeParams($item->type, $item->typeparams ?? '') . '</td>';
-		$result .= '<td>' . common::translate($item->isrequired) . '</td>';
-		$result .= '<td>' . common::escape($this->ct->Table->tabletitle) . '</td>';
+		if (defined('_JEXEC')) {
+			$result .= '<td>' . common::translate($item->typeLabel) . '</td>';
+			$result .= '<td>' . common::escape($item->typeparams) . $this->checkTypeParams($item->type, $item->typeparams ?? '') . '</td>';
+			$result .= '<td>' . common::translate($item->isrequired) . '</td>';
+			$result .= '<td>' . common::escape($this->ct->Table->tabletitle) . '</td>';
+		} else {
+			$result .= '<td>' . $item->typeLabel . '</td>';
+			$result .= '<td>' . esc_html($item->typeparams) . $this->checkTypeParams($item->type, $item->typeparams ?? '') . '</td>';
+			$result .= '<td>' . $item->isrequired . '</td>';
+			$result .= '<td>' . esc_html($this->ct->Table->tabletitle) . '</td>';
+		}
+
 		$result .= '<td class="text-center btns d-none d-md-table-cell">';
 		if ($this->canState) {
 			if ($item->checked_out) {

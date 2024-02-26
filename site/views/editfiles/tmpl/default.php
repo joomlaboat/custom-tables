@@ -29,13 +29,13 @@ defined('_JEXEC') or die();
             }
         }
         if (count == 0) {
-            alert("<?php echo common::translate("COM_CUSTOMTABLES_JS_SELECT_FILES"); ?>");
+            alert("<?php echo common::translate('COM_CUSTOMTABLES_JS_SELECT_FILES'); ?>");
             return false;
         }
 
-        if (confirm("<?php echo common::translate("COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE"); ?> " + count + " <?php
+        if (confirm("<?php echo common::translate('COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE'); ?> " + count + " <?php
 
-			echo common::translate("COM_CUSTOMTABLES_FILE_S");
+			echo common::translate('COM_CUSTOMTABLES_FILE_S');
 
 			?>?")) {
 
@@ -95,24 +95,24 @@ defined('_JEXEC') or die();
 	?>
 
     <fieldset class="adminform">
-        <legend><?php echo common::translate("COM_CUSTOMTABLES_FILE_MANAGER"); ?></legend>
+        <legend><?php echo common::translate('COM_CUSTOMTABLES_FILE_MANAGER'); ?></legend>
 
         <div name="addfileblock" id="addfileblock" style="display:block;">
-            <h2><?php echo common::translate("COM_CUSTOMTABLES_ADD_NEW_FILE"); ?></h2>
+            <h2><?php echo common::translate('COM_CUSTOMTABLES_ADD_NEW_FILE'); ?></h2>
             <table class="bigtext">
                 <tr>
-                    <td><?php echo common::translate("COM_CUSTOMTABLES_ADD_NEW_FILE"); ?>:<br/></td>
+                    <td><?php echo common::translate('COM_CUSTOMTABLES_ADD_NEW_FILE'); ?>:<br/></td>
                     <td>
                         <input name="uploadedfile" type="file"/><input type="button" class="button"
-                                                                       value="<?php echo common::translate("COM_CUSTOMTABLES_UPLOAD_FILE"); ?>"
+                                                                       value="<?php echo common::translate('COM_CUSTOMTABLES_UPLOAD_FILE'); ?>"
                                                                        onClick='this.form.task.value="add";this.form.submit()'>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
-						<?php echo common::translate("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . CTMiscHelper::formatSizeUnits($this->max_file_size); ?>
+						<?php echo common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($this->max_file_size); ?>
                         <br/>
-						<?php echo common::translate("COM_CUSTOMTABLES_FORMATS"); ?>:
+						<?php echo common::translate('COM_CUSTOMTABLES_FORMATS'); ?>:
                         <b><?php echo str_replace(' ', ', ', $this->allowedExtensions); ?></b>
                     </td>
                 </tr>

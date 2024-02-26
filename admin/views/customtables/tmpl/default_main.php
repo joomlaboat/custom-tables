@@ -30,7 +30,7 @@ defined('_JEXEC') or die();
     <div class="clearfix"></div>
 <?php else: ?>
     <div class="alert alert-error"><h4
-                class="alert-heading"><?php echo common::translate("Permission denied, or not correctly set"); ?></h4>
-        <div class="alert-message"><?php echo common::translate("Please notify your System Administrator if result is unexpected."); ?></div>
+                class="alert-heading"><?php echo common::translate('Permission denied, or not correctly set'); ?></h4>
+        <div class="alert-message"><?php echo common::translate('Please notify your System Administrator if result is unexpected.'); ?></div>
     </div>
 <?php endif; ?>

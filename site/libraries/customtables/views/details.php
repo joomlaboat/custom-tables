@@ -118,8 +118,7 @@ class Details
 				//Parse using layout
 				if ($this->ct->Env->legacySupport) {
 
-					require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
-						. DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+					require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 					$LayoutProc = new LayoutProcessor($this->ct);
 					$LayoutProc->layout = $filter;
 					$filter = $LayoutProc->fillLayout(null, null, '[]', true);
@@ -296,8 +295,7 @@ class Details
 
 		if ($this->ct->Env->legacySupport) {
 
-			require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
-				. 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 
 			$LayoutProc = new LayoutProcessor($this->ct);
 			$LayoutProc->layout = $layoutDetailsContent;

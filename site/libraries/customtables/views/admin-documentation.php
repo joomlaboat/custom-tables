@@ -938,7 +938,11 @@ if ($this->onlyWordpress) {
 
 				$result .= '<div class="' . $class . '">';
 
-				$result .= '<h3>' . common::translate($fieldSetAtt->label);
+				if (defined('_JEXEC'))
+					$result .= '<h3>' . common::translate($fieldSetAtt->label);
+				else
+					$result .= '<h3>' . $fieldSetAtt->label;
+
 				if ($is4Pro)
 					$result .= '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
 
@@ -1053,7 +1057,11 @@ if ($this->onlyWordpress) {
 
 			if ((int)$fieldSetAtt->deprecated == 0) {
 
-				$result .= '## ' . common::translate($fieldSetAtt->label) . '<br/>' . $fieldSetAtt->description . '<br/><br/>';
+				if (defined('_JEXEC'))
+					$result .= '## ' . common::translate($fieldSetAtt->label) . '<br/>' . $fieldSetAtt->description . '<br/><br/>';
+				else
+					$result .= '## ' . $fieldSetAtt->label . '<br/>' . $fieldSetAtt->description . '<br/><br/>';
+					
 				$count = 1;
 
 				foreach ($fieldSet->field as $field) {
