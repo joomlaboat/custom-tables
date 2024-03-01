@@ -119,7 +119,6 @@ class Value_tablejoinlist extends BaseValue
 		try {
 			$ct->getRecords();
 		} catch (Exception $e) {
-			echo '$e->getMessage()=' . $e->getMessage() . '*<br/>';
 			return $e->getMessage();
 		}
 		return self::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records, $separatorCharacter);

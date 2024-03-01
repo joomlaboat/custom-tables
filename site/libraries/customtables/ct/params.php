@@ -80,6 +80,7 @@ class Params
 	var ?string $recordsTable;
 	var ?string $recordsUserIdField;
 	var ?string $recordsField;
+	var float $version;
 
 	var bool $blockExternalVars;
 

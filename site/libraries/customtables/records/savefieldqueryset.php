@@ -63,7 +63,11 @@ class SaveFieldQuerySet
 	 */
 	protected function getSaveFieldSetType(): void
 	{
-		$listing_id = $this->row_old[$this->ct->Table->realidfieldname];
+		if ($this->row_old !== null and key_exists($this->ct->Table->realidfieldname, $this->row_old))
+			$listing_id = $this->row_old[$this->ct->Table->realidfieldname];
+		else
+			$listing_id = null;
+
 		switch ($this->field->type) {
 			case 'records':
 				$value = self::get_record_type_value($this->field);

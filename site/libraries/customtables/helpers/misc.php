@@ -661,28 +661,7 @@ class CTMiscHelper
 			$content_params = $mainframe->getParams('com_content');
 
 			if ($version >= 4) {
-
-				/*$article = new \stdClass();
-				$article->text = $htmlresult;
-
-				$dispatcher = Factory::getContainer()->get(DispatcherInterface::class);
-
-				PluginHelper::importPlugin('content', null, true, $dispatcher);
-
-				$params = new Registry();
-				$context = 'text';
-
-				$dispatcher->dispatch('onContentPrepare', new ContentPrepareEvent('onContentPrepare', [
-					'context' => $context,
-					'subject' => $article,
-					'params' => $params,
-					'page' => 0,
-				]));
-
-				$htmlresult = $article->text;*/
-
 				$htmlresult = \Joomla\CMS\HTML\Helpers\Content::prepare($htmlresult, $content_params);
-
 			} else {
 				$o = new stdClass();
 				$o->text = $htmlresult;
@@ -698,7 +677,7 @@ class CTMiscHelper
 
 			if (defined('_JEXEC'))
 				$myDoc->setTitle(common::translate($pageTitle)); //because content plugins may overwrite the title
-			
+
 		}
 		return $htmlresult;
 	}

@@ -23,6 +23,7 @@ use CustomTables\record;
 use CustomTables\TwigProcessor;
 use CustomTables\SaveFieldQuerySet;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 $siteLibPath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
@@ -156,7 +157,8 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 					$link = $return2Link_Updated;
 			}
 
-			common::inputSet("listing_id", $this->listing_id);
+			if ($this->listing_id !== null)
+				common::inputSet("listing_id", $this->listing_id);
 		}
 		return true;
 	}
@@ -183,7 +185,12 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		$this->listing_id = $this->ct->Params->listing_id;
 
 		//Load the record
-		$this->listing_id = $this->processCustomListingID();
+		$app = Factory::getApplication();
+		$menu = $app->getMenu();
+		$currentMenuItem = $menu->getActive();
+
+		if ($currentMenuItem and $currentMenuItem->query['view'] == 'edititem')
+			$this->listing_id = $this->processCustomListingID();
 
 		if (($this->listing_id === null or $this->listing_id == '' or $this->listing_id == 0) and $this->userIdField_UniqueUsers and $this->ct->Params->userIdField != '') {
 			//try to find record by userid and load it

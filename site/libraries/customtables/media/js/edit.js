@@ -28,7 +28,6 @@ class CustomTablesEdit {
             body: postData,
         })
             .then(response => {
-
                 if (response.redirected) {
                     if (errorCallback && typeof errorCallback === 'function') {
                         errorCallback('Login required or not authorized.');
@@ -49,7 +48,6 @@ class CustomTablesEdit {
                 if (data === null)
                     return;
 
-                console.log("data.status");
                 if (data.status === 'saved') {
                     if (successCallback && typeof successCallback === 'function') {
                         successCallback(data);
@@ -72,6 +70,7 @@ class CustomTablesEdit {
                     });
                 } else {
                     console.error('Error', error);
+                    console.log(completeURL);
                 }
             });
     }

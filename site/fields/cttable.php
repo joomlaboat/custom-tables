@@ -21,6 +21,9 @@ use Joomla\CMS\Version;
 $versionObject = new Version;
 $version = (int)$versionObject->getShortVersion();
 
+if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
+	define('CUSTOMTABLES_LIBRARIES_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries');
+
 trait JFormFieldCTTableCommon
 {
 	protected static function getOptionList(): array

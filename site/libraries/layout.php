@@ -27,9 +27,8 @@ class LayoutProcessor
 {
 	var string $layout;
 	var int $layoutType;//item layout type
-	var bool $advancedtagprocessor;
+	var bool $advancedTagProcessor;
 	var float $version = 0;
-
 	var CustomTables\CT $ct;
 
 	function __construct(CT &$ct, $layout = '')
