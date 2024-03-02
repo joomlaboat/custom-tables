@@ -103,7 +103,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'radio':
-				$value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
 					$this->setNewValue($value);
