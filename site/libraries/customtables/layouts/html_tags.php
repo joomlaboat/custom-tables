@@ -284,7 +284,23 @@ class Twig_Html_Tags
 			} else {
 				if (in_array($mode, $available_modes)) {
 					$rid = 'esToolBar_' . $mode . '_box_' . $this->ct->Table->tableid;
-					$alt = common::translate('COM_CUSTOMTABLES_' . strtoupper($mode) . '_SELECTED');
+
+					switch ($mode) {
+						case 'publish':
+							$alt = common::translate('COM_CUSTOMTABLES_PUBLISH_SELECTED');
+							break;
+						case 'unpublish':
+							$alt = common::translate('COM_CUSTOMTABLES_UNPUBLISH_SELECTED');
+							break;
+						case 'refresh':
+							$alt = common::translate('COM_CUSTOMTABLES_REFRESH_SELECTED');
+							break;
+						case 'delete':
+							$alt = common::translate('COM_CUSTOMTABLES_DELETE_SELECTED');
+							break;
+						default:
+							return 'unsupported batch toolbar icon.';
+					}
 
 					if ($this->ct->Env->toolbarIcons != '') {
 						$icons = ['publish' => 'fa-check-circle', 'unpublish' => 'fa-ban', 'refresh' => 'fa-sync', 'delete' => 'fa-trash'];
