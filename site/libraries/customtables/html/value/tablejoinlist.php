@@ -150,7 +150,7 @@ class Value_tablejoinlist extends BaseValue
 			try {
 				$htmlresult .= $twig->process($row);
 			} catch (Exception $e) {
-				echo $e->getMessage();
+				return 'processRecordRecords: ' . $e->getMessage();
 			}
 
 			if ($twig->errorMessage !== null)

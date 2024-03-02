@@ -580,10 +580,9 @@ class Twig_Record_Tags
 			return null;
 		else {
 
-			if (!key_exists('vlu', $rows[0])) {
-				echo '*************';
-				print_r($rows);
-			}
+			if (!key_exists('vlu', $rows[0]))
+				throw new Exception('countOrSumRecords: vlu key not found.');
+
 			return $rows[0]['vlu'];
 		}
 	}
