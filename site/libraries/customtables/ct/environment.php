@@ -142,6 +142,15 @@ class Environment
 
 			if (file_exists($path . 'servertags.php'))
 				require_once($path . 'servertags.php');
+		} elseif (defined('WPINC') and defined('CustomTablesWPPro\CTWPPRO')) {
+			$path = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'customtablespro' . DIRECTORY_SEPARATOR . 'helpers.php';
+			$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
+			$path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
+
+			if (file_exists($path)) {
+				$this->advancedTagProcessor = true;
+				require_once($path);
+			}
 		}
 
 		$this->isMobile = self::check_user_agent('mobile');
