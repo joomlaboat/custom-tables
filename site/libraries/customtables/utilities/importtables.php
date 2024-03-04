@@ -423,8 +423,7 @@ class ImportTables
 
 		$field_new['tableid'] = $tableid;//replace tableid
 		$fieldName = $field_new['fieldname'];
-
-		$field_old = Fields::getFieldRowByName($fieldName, $tableid);
+		$field_old = Fields::getFieldRowByName($fieldName, $tableid, '', true);
 
 		if (is_array($field_old) and count($field_old) > 0) {
 			$fieldid = $field_old['id'];
@@ -473,6 +472,13 @@ class ImportTables
 
 		$layout_old = ImportTables::getRecordByField('layouts', 'layoutname', $layoutname);
 		$Layouts = new Layouts($ct);
+
+		//Convert all Layout Types
+		if ($layout_new['layouttype'] == 5)
+			$layout_new['layouttype'] = 1;
+
+		if ($layout_new['layouttype'] == 3 or $layout_new['layouttype'] == 6)
+			$layout_new['layouttype'] = 4;
 
 		if (is_array($layout_old) and count($layout_old) > 0) {
 			$layoutId = $layout_old['id'];

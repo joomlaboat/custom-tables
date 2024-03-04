@@ -459,10 +459,10 @@ class Layouts
 			2 => 'Edit Form',
 			4 => 'Details',
 			//3 => 'COM_CUSTOMTABLES_LAYOUTS_DETAILS',
-			//7 => 'Email Message',
-			//8 => 'XML File',
-			//9 => 'CSV File',
-			//10 => 'JSON File'
+			7 => 'Email Message',
+			8 => 'XML File',
+			9 => 'CSV File',
+			10 => 'JSON File'
 		);
 	}
 

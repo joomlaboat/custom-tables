@@ -129,13 +129,17 @@ class ESFileUploader
 		return implode(' ', $file_formats);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.7
+	 */
 	protected static function getAcceptableMimeTypes($filetypes_str = ""): array
 	{
 		if ($filetypes_str == '') {
 			$fieldname = common::inputGetCmd('fieldname', '');
 			$tableRow = ESFileUploader::getTableRawByItemid();
 			$tableId = $tableRow['id'];
-			$fieldRow = Fields::getFieldRowByName($fieldname, $tableId);
+			$fieldRow = Fields::getFieldRowByName($fieldname, $tableId, '', true);
 			if ($fieldRow === null)
 				return [];
 

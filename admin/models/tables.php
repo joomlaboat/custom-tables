@@ -367,7 +367,7 @@ class CustomtablesModelTables extends AdminModel
 
 			if (parent::save($data)) {
 
-				TableHelper::createTableIfNotExists($dbPrefix, $tablename, $tabletitle, $data['customtablename']);
+				TableHelper::createTableIfNotExists($dbPrefix, $tablename, $tabletitle, $data['customtablename'] ?? '');
 				return true;
 			}
 		} else {
@@ -377,7 +377,7 @@ class CustomtablesModelTables extends AdminModel
 				if ($originalTableId != 0 and $old_tablename != '')
 					TableHelper::copyTable($this->ct, $originalTableId, $tablename, $old_tablename, $data['customtablename']);
 
-				TableHelper::createTableIfNotExists($dbPrefix, $tablename, $tabletitle, $data['customtablename']);
+				TableHelper::createTableIfNotExists($dbPrefix, $tablename, $tabletitle, $data['customtablename'] ?? '');
 
 				//Add fields if it's a third-party table and no fields added yet.
 				if ($data['customtablename'] !== null and $data['customtablename'] != '')
