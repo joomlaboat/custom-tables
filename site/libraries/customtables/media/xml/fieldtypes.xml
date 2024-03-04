@@ -50,7 +50,7 @@
     </type>
 
     <type ct_name="blob" label="Blob (Save file into the database)"
-          description="A BLOB is a binary large object that can hold an entire file." priority="2">
+          description="A BLOB is a binary large object that can hold an entire file." priority="2" proversion="1">
         <params>
             <param name="type" label="Maximum length" example="medium" description="Maximum length of value to be held"
                    default="" type="list">
@@ -296,7 +296,7 @@
     </type>
 
     <type ct_name="file" label="File" description="Provides File Upload functionality." priority="2"
-          helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types">
+          helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types" proversion="1">
         <params>
             <param name="size" label="Max File Size" example="8"
                    description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything."
@@ -595,7 +595,8 @@
         </valueparams>
     </type>
 
-    <type ct_name="image" label="Image File" description="Provides Image Upload functionality." priority="2">
+    <type ct_name="image" label="Image File" description="Provides Image Upload functionality." priority="2"
+          proversion="1">
         <params>
             <param name="sizes" label="Image Size Options" example="id,100,100,,jpg"
                    description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided."
