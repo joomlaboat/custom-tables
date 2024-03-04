@@ -579,7 +579,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	 */
 	function Refresh($save_log = 1): int
 	{
-		$listing_ids_str = common::inputPostString('ids', '');
+		$listing_ids_str = common::inputPostString('ids', '', 'create-edit-record');
 
 		if ($listing_ids_str != '') {
 			$listing_ids_ = explode(',', $listing_ids_str);
@@ -607,7 +607,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	 */
 	function setPublishStatus($status): int
 	{
-		$listing_ids_str = common::inputPostString('ids', '');
+		$listing_ids_str = common::inputPostString('ids', '', 'create-edit-record');
 		if ($listing_ids_str != '') {
 			$listing_ids_ = explode(',', $listing_ids_str);
 			foreach ($listing_ids_ as $listing_id) {
@@ -633,7 +633,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	 */
 	function delete(): int
 	{
-		$listing_ids_str = common::inputPostString('ids', '');
+		$listing_ids_str = common::inputPostString('ids', '', 'create-edit-record');
 		if ($listing_ids_str != '') {
 
 			$listing_ids_ = explode(',', $listing_ids_str);

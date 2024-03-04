@@ -98,7 +98,7 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 	 */
 	function delete(): bool
 	{
-		$fileIds = common::inputPostString('fileids', '');
+		$fileIds = common::inputPostString('fileids', '', 'create-edit-record');
 		$file_arr = explode('*', $fileIds);
 
 		foreach ($file_arr as $fileid) {

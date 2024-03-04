@@ -27,7 +27,6 @@ class ListOfFields
 	var ?bool $canEdit;
 	var ?bool $saveOrder;
 	var string $dbPrefix;
-	var int $tableid;
 
 	function __construct(CT $ct, ?array $items = null, ?bool $canState = null, ?bool $canDelete = null, ?bool $canEdit = null, ?bool $saveOrder = null)
 	{
@@ -51,7 +50,6 @@ class ListOfFields
 	 */
 	function getListQuery(int $tableId, $published = null, $search = null, $type = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0, bool $returnQueryString = false)
 	{
-		$this->tableid = common::inputGetInt('tableid', 0);
 		$selects = [
 			'a.*',
 			'TABLE_TITLE',
@@ -90,8 +88,8 @@ class ListOfFields
 			$whereClause->addCondition('a.type', (int)$type);
 
 		// Filter by Type
-		if ($this->tableid != 0)
-			$whereClause->addCondition('a.tableid', (int)$this->tableid);
+		if ($tableId != 0)
+			$whereClause->addCondition('a.tableid', (int)$tableId);
 
 		return database::loadAssocList('#__customtables_fields AS a', $selects, $whereClause, $orderCol, $orderDirection, $limit, $start, null, $returnQueryString);
 	}

@@ -246,7 +246,7 @@ class ListOfTables
 		if ($customTableName == '-new-') {
 			// Case: Creating a new third-party table
 			$customTableName = $newTableName;
-			TableHelper::createTableIfNotExists($database, $dbPrefix, $newTableName, $tableTitle, $customTableName);
+			TableHelper::createTableIfNotExists($dbPrefix, $newTableName, $tableTitle, $customTableName);
 			//$messages[] = ['New third-party table created.'];
 
 			//Add fields if it's a third-party table and no fields added yet.
@@ -262,7 +262,7 @@ class ListOfTables
 				//$messages[] = __('Table copied.', 'customtables');
 			} else {
 				// Creating a new custom table (without copying)
-				TableHelper::createTableIfNotExists($database, $dbPrefix, $newTableName, $tableTitle, $customTableName);
+				TableHelper::createTableIfNotExists($dbPrefix, $newTableName, $tableTitle, $customTableName);
 				//$messages[] = __('Table created.', 'customtables');
 			}
 		}

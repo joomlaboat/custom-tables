@@ -125,10 +125,11 @@ class IntegrityTables extends IntegrityChecks
 
 		foreach ($tables_rows as $row) {
 			if (!TableHelper::checkIfTableExists($dbPrefix . 'customtables_table_' . $row['tablename'])) {
-				$database = database::getDataBaseName();
+				if ($row['tablename'] === null)
+					throw new Exception('checkIfTablesExists: tablename value cannot be null');
 
 				if ($row['customtablename'] === null or $row['customtablename'] == '') {
-					if (TableHelper::createTableIfNotExists($database, $dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'])) {
+					if (TableHelper::createTableIfNotExists($dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'] ?? '')) {
 						common::enqueueMessage('Table "' . $row['tabletitle'] . '" created.', 'notice');
 					}
 				}

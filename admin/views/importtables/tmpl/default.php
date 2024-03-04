@@ -40,7 +40,7 @@ $max_file_size = CTMiscHelper::file_upload_max_size();
 
 echo '<form method="post" action="" id="esFileUploaderForm_Tables">';
 echo '<h2>Import Tables</h2>';
-echo '<p>This may import Table Structure from .txt (json encoded) file.</p>';
+echo '<p>This function allows for the importation of table structures from .txt files encoded in JSON format.</p>';
 
 $urlString = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileId;
 echo '
@@ -68,4 +68,4 @@ echo '
 ' . common::translate('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '
     ' . HTMLHelper::_('form.token') . '
 	</form>
-	';
+';

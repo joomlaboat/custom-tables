@@ -104,7 +104,7 @@ class CT_FieldTypeTag_image
 	{
 		$imageMethods = new CustomTablesImageMethods;
 		$ImageFolder = CustomTablesImageMethods::getImageFolder($field->params);
-		$fileId = common::inputPostString($field->comesfieldname);
+		$fileId = common::inputPostString($field->comesfieldname, null, 'create-edit-record');
 
 		if ($listing_id == null or $listing_id == '' or (is_numeric($listing_id) and intval($listing_id) < 0)) {
 			$value = $imageMethods->UploadSingleImage('', $fileId, $field->realfieldname, JPATH_SITE . DIRECTORY_SEPARATOR

@@ -286,7 +286,11 @@ class CustomtablesModelTables extends AdminModel
 		die;//Batch table move not implemented
 	}
 
-	public function save($data)
+	/**
+	 * @throws Exception
+	 * @since 3.2.8
+	 */
+	public function save($data): bool
 	{
 		$database = database::getDataBaseName();
 		$dbPrefix = database::getDBPrefix();
@@ -363,7 +367,7 @@ class CustomtablesModelTables extends AdminModel
 
 			if (parent::save($data)) {
 
-				TableHelper::createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $data['customtablename']);
+				TableHelper::createTableIfNotExists($dbPrefix, $tablename, $tabletitle, $data['customtablename']);
 				return true;
 			}
 		} else {
@@ -373,7 +377,7 @@ class CustomtablesModelTables extends AdminModel
 				if ($originalTableId != 0 and $old_tablename != '')
 					TableHelper::copyTable($this->ct, $originalTableId, $tablename, $old_tablename, $data['customtablename']);
 
-				TableHelper::createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $data['customtablename']);
+				TableHelper::createTableIfNotExists($dbPrefix, $tablename, $tabletitle, $data['customtablename']);
 
 				//Add fields if it's a third-party table and no fields added yet.
 				if ($data['customtablename'] !== null and $data['customtablename'] != '')

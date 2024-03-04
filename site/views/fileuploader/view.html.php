@@ -31,7 +31,7 @@ class CustomTablesViewFileUploader extends HtmlView
 		$task = common::inputGetCmd('op', '');
 
 		if ($task == 'delete') {
-			$file = str_replace('/', '', common::inputPostString('name', ''));
+			$file = str_replace('/', '', common::inputPostString('name', '', 'create-edit-record'));
 			$file = str_replace('..', '', $file);
 			$file = str_replace('index.', '', $file);
 

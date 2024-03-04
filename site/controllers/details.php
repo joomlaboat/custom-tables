@@ -122,8 +122,8 @@ switch ($task) {
 			}
 
 			if ($result) {
-				if (common::inputPostString('msg'))
-					$msg = common::inputPostString('msg');
+				if (common::inputPostString('msg', null, 'create-edit-record'))
+					$msg = common::inputPostString('msg', null, 'create-edit-record');
 				elseif ($param_msg != '')
 					$msg = $param_msg;
 				else

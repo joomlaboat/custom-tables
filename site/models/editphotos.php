@@ -181,7 +181,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		asort($images);
 		$i = 0;
 		foreach ($images as $image) {
-			$safeTitle = common::inputPostString('esphototitle' . $image->photoid);
+			$safeTitle = common::inputPostString('esphototitle' . $image->photoid, null, 'create-edit-record');
 			$safeTitle = str_replace('"', "", $safeTitle);
 
 			$data = [
@@ -218,7 +218,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 
 	function delete(): bool
 	{
-		$photoIDs = common::inputPostString('photoids', '');
+		$photoIDs = common::inputPostString('photoids', '', 'create-edit-record');
 		$photo_arr = explode('*', $photoIDs);
 
 		foreach ($photo_arr as $photoId) {
@@ -358,7 +358,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		asort($images);
 		$i = 0;
 		foreach ($images as $image) {
-			$safeTitle = common::inputPostString('esphototitle' . $image->photoid);
+			$safeTitle = common::inputPostString('esphototitle' . $image->photoid, null, 'create-edit-record');
 			$safeTitle = str_replace('"', "", $safeTitle);
 
 

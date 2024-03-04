@@ -496,7 +496,7 @@ class SaveFieldQuerySet
 				return;
 
 			case 'time':
-				$value = common::inputPostString($this->field->comesfieldname);
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 				if (isset($value)) {
 					if ($value == '') {
 						$this->setNewValue(null);

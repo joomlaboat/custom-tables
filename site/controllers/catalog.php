@@ -397,7 +397,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 				}
 
 				if ($result != "") {
-					$msg = common::inputPostString('msg');
+					$msg = common::inputPostString('msg', null, 'create-edit-record');
 
 					if ($msg === null)
 						return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);

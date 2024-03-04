@@ -39,13 +39,14 @@ class ImportTables
 			$msg = 'Uploaded file "' . $filename . '" not found.';
 			return false;
 		}
+		return true;
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function processContent(CT &$ct, $data, $menutype, &$msg, $category = '', $importFields = true, $importLayouts = true, $importMenu = true): bool
+	public static function processContent(CT &$ct, string $data, string $menuType, string &$msg, string $category = '', bool $importFields = true, bool $importLayouts = true, bool $importMenu = true): bool
 	{
 		$keyword = '<customtablestableexport>';
 		if (!str_contains($data, $keyword)) {
@@ -57,16 +58,16 @@ class ImportTables
 		}
 
 		$JSON_data = json_decode(str_replace($keyword, '', $data), true);
-		return ImportTables::processData($ct, $JSON_data, $menutype, $msg, $category, $importFields, $importLayouts, $importMenu);
+		return ImportTables::processData($ct, $JSON_data, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu);
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected static function processData(CT &$ct, $jsondata, $menutype, &$msg, $category, $importfields, $importlayouts, $importmenu): bool
+	protected static function processData(CT &$ct, array $JSON_data, string $menuType, string &$msg, string $category = '', bool $importfields = true, bool $importlayouts = true, bool $importmenu = true): bool
 	{
-		foreach ($jsondata as $table) {
+		foreach ($JSON_data as $table) {
 			$tableid = ImportTables::processTable($table['table'], $category);
 
 			if ($tableid != 0) {
@@ -80,7 +81,7 @@ class ImportTables
 					ImportTables::processLayouts($ct, $tableid, $table['layouts'], $msg);
 
 				if ($importmenu)
-					ImportTables::processMenu($table['menu'], $menutype, $msg);
+					ImportTables::processMenu($table['menu'], $menuType, $msg);
 
 				IntegrityChecks::check($ct, false);
 
@@ -122,10 +123,13 @@ class ImportTables
 		//Create mysql table
 		$tableTitle = $table_new['tabletitle'] ?? $table_new['tabletitle_1'];
 
-		$columns = ['published tinyint(1) DEFAULT "1"'];
+		$columns = ['published tinyint(1) NOT NULL DEFAULT "1"'];
 
 		database::createTable('#__customtables_table_' . $tablename, 'id', $columns, $tableTitle);
-		ImportTables::updateTableCategory($tableid, $table_new, $categoryname);
+
+		if (defined('_JEXEC'))
+			ImportTables::updateTableCategory($tableid, $table_new, $categoryname);
+
 		return $tableid;
 	}
 
@@ -218,6 +222,7 @@ class ImportTables
 			$mysqlTableName = $table;
 
 		$data = [];
+
 		$keys = array_keys($rows);
 		$ignore_fields = ['asset_id', 'created_by', 'modified_by', 'version', 'hits', 'publish_up', 'publish_down', 'checked_out_time'];
 
@@ -225,7 +230,12 @@ class ImportTables
 			$ignore_fields[] = 'checked_out';
 			$ignore_fields[] = 'checked_out_time';
 		}
+
+		if (!defined('_JEXEC'))
+			$ignore_fields[] = 'tablecategory';
+
 		$core_fields = ['id', 'published'];
+		$tablesToIgnore = ['tables', 'fields', 'layouts', '#__menu', "#__usergourps", "#__viewlevels"];
 
 		foreach ($keys as $key) {
 			$isOk = false;
@@ -251,30 +261,36 @@ class ImportTables
 				}
 			}
 
-			if ($isOk and !in_array($fieldname, $ignore_fields)) {
+			if ($fieldname != null and !in_array($fieldname, $ignore_fields) and $isOk) {
+
 				if (!Fields::checkIfFieldExists($mysqlTableName, $fieldname)) {
 					//Add field
-					$isLanguageFieldName = Fields::isLanguageFieldName($fieldname);
+					if ($addPrefix and in_array($table, $tablesToIgnore)) {
+						//$data[$fieldname] = $rows[$key];
+					} else {
+						$data[$fieldname] = $rows[$key];
+						$isLanguageFieldName = Fields::isLanguageFieldName($fieldname);
 
-					if ($isLanguageFieldName) {
-						//Add language field
-						//Get non language field type
-						$nonLanguageFieldName = Fields::getLanguageLessFieldName($key);
+						if ($isLanguageFieldName) {
+							//Add language field
+							//Get non language field type
+							$nonLanguageFieldName = Fields::getLanguageLessFieldName($key);
 
-						//TODO: check how it works
-						$whereClause = new MySQLWhereClause();
-						$whereClause->addCondition('tableid', '(SELECT id A FROM #__customtables_tables WHERE tablename=' . database::quote($table) . ')', '=', true);
-						$whereClause->addCondition('fieldname', str_replace('es_', '', $nonLanguageFieldName));
-						$col = database::loadColumn('#__customtables_fields', ['type'], $whereClause, null, null, 1);
+							//TODO: check how it works
+							$whereClause = new MySQLWhereClause();
+							$whereClause->addCondition('tableid', '(SELECT id A FROM #__customtables_tables WHERE tablename=' . database::quote($table) . ')', '=', true);
+							$whereClause->addCondition('fieldname', str_replace('es_', '', $nonLanguageFieldName));
+							$col = database::loadColumn('#__customtables_fields', ['type'], $whereClause, null, null, 1);
 
-						$fieldType = '';
-						if (count($col) == 1) {
-							$fieldType = $col[0];
-						}
+							$fieldType = '';
+							if (count($col) == 1) {
+								$fieldType = $col[0];
+							}
 
-						if ($fieldType != '') {
-							Fields::AddMySQLFieldNotExist($mysqlTableName, $key, $fieldType, '');
-							$data[$fieldname] = $rows[$key];
+							if ($fieldType != '') {
+								Fields::AddMySQLFieldNotExist($mysqlTableName, $key, $fieldType, '');
+								$data[$fieldname] = $rows[$key];
+							}
 						}
 					}
 				} else {
@@ -473,10 +489,10 @@ class ImportTables
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected static function processMenu($menu, $menuType, &$msg): bool
+	protected static function processMenu(array $listOfMenus, string $menuType, &$msg): bool
 	{
 		$menus = array();
-		foreach ($menu as $menuitem) {
+		foreach ($listOfMenus as $menuitem) {
 			$menuId = ImportTables::processMenuItem($menuitem, $menuType, $menus);
 			if ($menuId != 0) {
 				//All Good
@@ -492,7 +508,7 @@ class ImportTables
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected static function processMenuItem(&$menuitem_new, $menutype, &$menus)
+	protected static function processMenuItem(array &$menuitem_new, string $menuType, array &$menus)
 	{
 		//This function creates menuitem and returns its id.
 		//If menuitem with same alias already exists then existing menuitem will be updated, and it's ID will be returned.
@@ -507,8 +523,8 @@ class ImportTables
 		$component_id = (int)$component['extension_id'];
 		$menuitem_new['component_id'] = $component_id;
 
-		if ($menutype != '' and $menutype != $menuitem_new['menutype'])
-			$new_menuType = $menutype;
+		if ($menuType != '' and $menuType != $menuitem_new['menutype'])
+			$new_menuType = $menuType;
 		else
 			$new_menuType = $menuitem_new['menutype'];
 
