@@ -21,7 +21,6 @@ use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
-use Joomla\Registry\Registry;
 
 /**
  * Records View class
@@ -53,10 +52,8 @@ class CustomtablesViewRecords extends HtmlView
 		$paramsArray['listingid'] = $listing_id;
 
 		// Assuming $paramsArray is your array of parameters
-		$params = new Registry($paramsArray);
-
 		$this->ct = new CT;
-		$this->ct->setParams($params);
+		$this->ct->setParams($paramsArray);
 		$this->ct->getTable($this->tableId);
 		$this->row = $this->ct->Table->loadRecord($listing_id);
 

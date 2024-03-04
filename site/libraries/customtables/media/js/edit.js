@@ -524,7 +524,17 @@ function TranslateText() {
     if (arguments.length == 0)
         return 'Nothing to translate';
 
-    let str = Joomla.JText._(arguments[0]);
+    let str;
+
+    if (typeof Joomla !== 'undefined' && Joomla.JText && typeof Joomla.JText._ === 'function') {
+        // Joomla JText class exists
+        str = Joomla.JText._(arguments[0]);
+        // Use the JText class as needed
+    } else {
+        // Joomla JText class does not exist or is not properly loaded
+        // Handle the situation accordingly
+        str = arguments[0];
+    }
 
     if (arguments.length == 1)
         return str;

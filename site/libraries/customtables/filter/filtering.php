@@ -247,7 +247,6 @@ class Filtering
 		$fieldNameParts = explode('_r_', $fieldname_);
 		$isRange = count($fieldNameParts) == 2;
 		$fieldname = $fieldNameParts[0];
-
 		$whereClause = new MySQLWhereClause();
 
 		switch ($fieldrow['type']) {
@@ -456,7 +455,11 @@ class Filtering
 					foreach ($vList as $vL) {
 						$valueNew = $vL;
 
-						$filterTitle .= Value_tablejoin::renderTableJoinValue($field, '{{ ' . $esr_field_name . ' }}', $valueNew);
+						$esr_field_name_parts = explode(':', $esr_field_name);
+						if (count($esr_field_name_parts) == 2 and ($esr_field_name_parts[0] == 'tablelesslayout' or $esr_field_name_parts[0] == 'layout'))
+							$filterTitle .= Value_tablejoin::renderTableJoinValue($field, '{{ document.layout("' . $esr_field_name_parts[1] . '") }}', $valueNew);
+						else
+							$filterTitle .= Value_tablejoin::renderTableJoinValue($field, '{{ ' . $esr_field_name . ' }}', $valueNew);
 
 						if ($valueNew != '') {
 							if ($comparison_operator == '!=') {

@@ -748,7 +748,7 @@ class fieldObject
 			$showPublishedString = '';
 
 		if ($this->field->type != 'sqljoin' and $this->field->type != 'records') {
-			$this->ct->errors[] = '{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.';
+			$this->ct->errors[] = '{{ ' . $this->field->fieldname . '.layout() }}. Wrong field type "' . $this->field->type . '". ".layout()" method is only available for Table Join and Records filed types.';
 			return '';
 		}
 

@@ -111,6 +111,9 @@ class Value
 				return $rowValue;
 			case 'googlemapcoordinates':
 
+				if (defined('WPINC'))
+					return 'CustomTables for WordPress: "googlemapcoordinates" field type is not available yet.';
+
 				if (count($option_list) == 0 or $option_list[0] == 'map') {
 
 					$parts = explode(',', $rowValue ?? '');
@@ -153,6 +156,10 @@ class Value
 				return $this->TextFunctions($rowValue, $option_list);
 
 			case 'blob':
+
+				if (defined('WPINC'))
+					return 'CustomTables for WordPress: "blob" field type is not available yet.';
+
 				return $this->blobProcess($rowValue, $option_list);
 
 			case 'color':
@@ -160,17 +167,26 @@ class Value
 
 			case 'file':
 
+				if (defined('WPINC'))
+					return 'CustomTables for WordPress: "file" field type is not available yet.';
+
 				return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname], false);
 
 			case 'image':
 				$imageSRC = '';
 				$imagetag = '';
 
+				if (defined('WPINC'))
+					return 'CustomTables for WordPress: "image" field type is not available yet.';
+
 				CT_FieldTypeTag_image::getImageSRCLayoutView($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
 
 				return $imagetag;
 
 			case 'signature':
+
+				if (defined('WPINC'))
+					return 'CustomTables for WordPress: "signature" field type is not available yet.';
 
 				$imageSRC = '';
 				$imagetag = '';
@@ -209,10 +225,16 @@ class Value
 				return null;
 
 			case 'article':
-				//case 'multilangarticle':
+
+				if (defined('WPINC'))
+					return 'CustomTables for WordPress: "article" field type is not available.';
+
 				return $this->articleProcess($rowValue, $option_list);
 
 			case 'imagegallery':
+
+				if (defined('WPINC'))
+					return 'CustomTables for WordPress: "imagegallery" field type is not available yet.';
 
 				$getGalleryRows = CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $this->row[$this->ct->Table->realidfieldname]);
 
@@ -224,6 +246,9 @@ class Value
 				return implode('', $imageTagList);
 
 			case 'filebox':
+
+				if (defined('WPINC'))
+					return 'CustomTables for WordPress: "filebox" field type is not available yet.';
 
 				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
 					. 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'filebox.php');

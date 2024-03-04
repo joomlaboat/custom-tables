@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 class Ordering
@@ -119,8 +118,7 @@ class Ordering
 		if ($fieldRow === null)
 			return null;
 
-		$params = new Registry;
-		$temp_ct = new CT($params, true);
+		$temp_ct = new CT();
 		$temp_ct->Table = $Table;
 		$field = new Field($temp_ct, $fieldRow);
 
@@ -134,8 +132,7 @@ class Ordering
 			case 'sqljoin':
 
 				$join_table = $field->params[0];
-				$params = new Registry;
-				$sqljoin_temp_ct = new CT($params, true);
+				$sqljoin_temp_ct = new CT();
 				$sqljoin_temp_ct->getTable($join_table);
 
 				if ($this->index == count($this->fieldList) - 1) {

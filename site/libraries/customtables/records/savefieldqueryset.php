@@ -187,11 +187,10 @@ class SaveFieldQuerySet
 				return;
 
 			case 'text':
-
-				$value = common::inputPost($this->field->comesfieldname, null, 'raw');
+				$value = common::inputPostRaw($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
-					$this->setNewValue(ComponentHelper::filterText($value));
+					$this->setNewValue(common::filterText($value));
 					return;
 				}
 				break;
@@ -206,7 +205,7 @@ class SaveFieldQuerySet
 					} else
 						$postfix = '_' . $lang->sef;
 
-					$value = ComponentHelper::filterText(common::inputPost($this->field->comesfieldname . $postfix, null, 'raw'));
+					$value = common::filterText(common::inputPostRaw($this->field->comesfieldname . $postfix, null, 'create-edit-record'));
 
 					if (isset($value)) {
 						$this->row_old[$this->field->realfieldname . $postfix] = $value;
@@ -236,7 +235,7 @@ class SaveFieldQuerySet
 				break;
 
 			case 'user':
-				$value = common::inputPost($this->field->comesfieldname, null, 'create-edit-record');
+				$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
 					$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
@@ -252,7 +251,7 @@ class SaveFieldQuerySet
 
 				if ($this->ct->isRecordNull($this->row_old) or $this->isCopy) {
 
-					$value = common::inputPost($this->field->comesfieldname, null, 'create-edit-record');
+					$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
 
 					if ((!isset($value) or $value == 0)) {
 

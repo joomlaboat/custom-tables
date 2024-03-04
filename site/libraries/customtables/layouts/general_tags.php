@@ -424,34 +424,29 @@ class Twig_Document_Tags
 		}
 
 		$twig = new TwigProcessor($this->ct, $layout, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
-
 		$number = 1;
 		$html_result = '';
 
-		if ($layouts->layoutType == 6) {
-			if (!is_null($this->ct->Records)) {
+		if ($layouts->layoutType == 6 and !is_null($this->ct->Records)) {
+			foreach ($this->ct->Records as $row) {
+				$row['_number'] = $number;
+				$row['_islast'] = $number == count($this->ct->Records);
 
-				foreach ($this->ct->Records as $row) {
-					$row['_number'] = $number;
-					$row['_islast'] = $number == count($this->ct->Records);
+				$html_result_layout = $twig->process($row);
+				if ($twig->errorMessage !== null)
+					$this->ct->errors[] = $twig->errorMessage;
 
-					$html_result_layout = $twig->process($row);
-					if ($twig->errorMessage !== null)
-						$this->ct->errors[] = $twig->errorMessage;
-
-					if ($this->ct->Env->legacySupport) {
-						$LayoutProc = new LayoutProcessor($this->ct);
-						$LayoutProc->layout = $html_result_layout;
-						$html_result_layout = $LayoutProc->fillLayout($row);
-					}
-
-					$html_result .= $html_result_layout;
-
-					$number++;
+				if ($this->ct->Env->legacySupport) {
+					$LayoutProc = new LayoutProcessor($this->ct);
+					$LayoutProc->layout = $html_result_layout;
+					$html_result_layout = $LayoutProc->fillLayout($row);
 				}
+
+				$html_result .= $html_result_layout;
+
+				$number++;
 			}
 		} else {
-			///if (!is_null($this->ct->Table->record))
 			$html_result = $twig->process($this->ct->Table->record);
 			if ($twig->errorMessage !== null)
 				$this->ct->errors[] = $twig->errorMessage;
@@ -462,7 +457,6 @@ class Twig_Document_Tags
 				$html_result = $LayoutProc->fillLayout($this->ct->Table->record);
 			}
 		}
-
 		return $html_result;
 	}
 

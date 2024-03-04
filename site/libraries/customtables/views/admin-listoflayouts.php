@@ -148,10 +148,10 @@ class ListOfLayouts
 		$data['modified'] = current_time('mysql', 1); // This will use the current date and time in MySQL format;//$sets[] = 'modified=NOW()';
 		$data['layouttype'] = common::inputPostString('layouttype', null, 'create-edit-layout');//$sets[] = 'layouttype=' . database::quote(common::inputPostString('layouttype'));
 		$data['tableid'] = common::inputPostInt('table', null, 'create-edit-layout');//$sets[] = 'tableid=' . common::inputGetInt('table');
-		$data['layoutcode'] = common::inputPostRow('layoutcode', null, 'create-edit-layout');//$sets[] = 'layoutcode=' . database::quote(common::inputGetRow('layoutcode'), true);
-		$data['layoutmobile'] = common::inputPostRow('layoutmobile', null, 'create-edit-layout');//$sets[] = 'layoutmobile=' . database::quote(common::inputGetRow('layoutmobile'), true);
-		$data['layoutcss'] = common::inputPostRow('layoutcss', null, 'create-edit-layout');//$sets[] = 'layoutcss=' . database::quote(common::inputGetRow('layoutcss'), true);
-		$data['layoutjs'] = common::inputPostRow('layoutjs', null, 'create-edit-layout');//$sets[] = 'layoutjs=' . database::quote(common::inputGetRow('layoutjs'), true);
+		$data['layoutcode'] = common::inputPostRaw('layoutcode', null, 'create-edit-layout');//$sets[] = 'layoutcode=' . database::quote(common::inputGetRow('layoutcode'), true);
+		$data['layoutmobile'] = common::inputPostRaw('layoutmobile', null, 'create-edit-layout');//$sets[] = 'layoutmobile=' . database::quote(common::inputGetRow('layoutmobile'), true);
+		$data['layoutcss'] = common::inputPostRaw('layoutcss', null, 'create-edit-layout');//$sets[] = 'layoutcss=' . database::quote(common::inputGetRow('layoutcss'), true);
+		$data['layoutjs'] = common::inputPostRaw('layoutjs', null, 'create-edit-layout');//$sets[] = 'layoutjs=' . database::quote(common::inputGetRow('layoutjs'), true);
 
 		try {
 			if ($layoutId !== null) {

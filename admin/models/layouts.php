@@ -518,14 +518,7 @@ class CustomtablesModelLayouts extends AdminModel
 		$layoutName = str_replace(" ", "_", $layoutName);
 		$layoutName = trim(preg_replace("/[^a-z A-Z_\d]/", "", $layoutName));
 		$data['layoutname'] = $layoutName;
-		/*
-				// set the metadata to the Item Data
-				if (isset($data['metadata']) && isset($data['metadata']['author'])) {
-					$data['metadata']['author'] = $filter->clean($data['metadata']['author'], 'TRIM');
-					$metadata = new Registry($data['metadata']);
-					$data['metadata'] = (string)$metadata;
-				}
-		*/
+
 		// Set the Params Items to data
 		if (isset($data['params']) && is_array($data['params'])) {
 			$params = new Registry($data['params']);

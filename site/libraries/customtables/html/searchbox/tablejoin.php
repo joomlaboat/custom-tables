@@ -86,9 +86,7 @@ class Search_tablejoin extends BaseSearch
 			$order_by_field = $value_field;
 
 		//Get Database records
-		$_params = new Registry;
-
-		$ct = new CT($_params, true);
+		$ct = new CT();
 
 		$this->getSearchResult($ct, $filter, $tableName, $order_by_field, $allowUnpublished);
 
@@ -124,9 +122,7 @@ class Search_tablejoin extends BaseSearch
 		else
 			$paramsArray['filter'] = ''; //!IMPORTANT - NO FILTER
 
-		$_params = new Registry($paramsArray);
-
-		$ct->setParams($_params);
+		$ct->setParams($paramsArray);
 
 		// -------------------- Table
 
@@ -156,6 +152,9 @@ class Search_tablejoin extends BaseSearch
 	 */
 	static protected function get_List_Values(CT &$ct, $field, $dynamic_filter): array
 	{
+		if ($ct->Records === null)
+			return [];
+
 		$layout_mode = false;
 		$layoutcode = '';
 		$pair = explode(':', $field);
@@ -175,7 +174,7 @@ class Search_tablejoin extends BaseSearch
 			}
 		}
 
-		$list_values = array();
+		$list_values = [];
 
 		foreach ($ct->Records as $row) {
 			if ($layout_mode) {

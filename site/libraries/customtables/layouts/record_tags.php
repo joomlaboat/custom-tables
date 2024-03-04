@@ -955,22 +955,28 @@ class Twig_Tables_Tags
 			return '';
 		}
 
-		if ($tables->loadRecords($layouts->tableId, $filter, $orderby, $limit)) {
+		try {
 
-			if ($join_ct->Env->legacySupport) {
-				$LayoutProc = new LayoutProcessor($join_ct);
-				$LayoutProc->layout = $pageLayout;
-				$pageLayout = $LayoutProc->fillLayout();
+
+			if ($tables->loadRecords($layouts->tableId, $filter, $orderby, $limit)) {
+
+				if ($join_ct->Env->legacySupport) {
+					$LayoutProc = new LayoutProcessor($join_ct);
+					$LayoutProc->layout = $pageLayout;
+					$pageLayout = $LayoutProc->fillLayout();
+				}
+
+				$twig = new TwigProcessor($join_ct, $pageLayout);
+
+				$value = $twig->process();
+
+				if ($twig->errorMessage !== null)
+					$join_ct->errors[] = $twig->errorMessage;
+
+				return $value;
 			}
-
-			$twig = new TwigProcessor($join_ct, $pageLayout);
-
-			$value = $twig->process();
-
-			if ($twig->errorMessage !== null)
-				$join_ct->errors[] = $twig->errorMessage;
-
-			return $value;
+		} catch (Exception $e) {
+			return 'Error: ' . $e->getMessage();
 		}
 
 		$this->ct->errors[] = '{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.';

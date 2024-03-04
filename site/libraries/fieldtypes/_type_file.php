@@ -65,7 +65,7 @@ class CT_FieldTypeTag_file
 
 	static public function get_blob_value(CustomTables\Field $field): ?string
 	{
-		$file_id = common::inputPost($field->comesfieldname, '', 'STRING');
+		$file_id = common::inputPostString($field->comesfieldname, '');
 
 		if ($file_id == '')
 			return null;
@@ -216,7 +216,7 @@ class CT_FieldTypeTag_file
 			if ($is_base64encoded == "true") {
 				$src = $uploadedFile;
 
-				$file = common::inputPost($field->comesfieldname, '', 'STRING');
+				$file = common::inputPostString($field->comesfieldname, '');
 				$dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
 				common::base64file_decode($src, $dst);
 				$uploadedFile = $dst;

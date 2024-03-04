@@ -24,15 +24,7 @@ class common
 {
 	public static function enqueueMessage($text, string $type = 'error'): void
 	{
-		//Types: error, success-message, notice
-
-		if (defined('_JEXEC'))
-			Factory::getApplication()->enqueueMessage($text, $type);
-		elseif (defined('WPINC')) {
-			if ($type == 'notice')
-				$type = 'success-message';
-			echo '<div class="' . esc_attr($type) . '"><p>' . esc_html($text) . '</p></div>';
-		}
+		Factory::getApplication()->enqueueMessage($text, $type);
 	}
 
 	public static function translate(string $text, int|float $value = null): string
@@ -109,7 +101,7 @@ class common
 		return Factory::getApplication()->input->getCmd($parameter, $default);
 	}
 
-	public static function inputPostRow(string $parameter, $default = null)
+	public static function inputPostRaw(string $parameter, $default = null)
 	{
 		return Factory::getApplication()->input->get($parameter, $default, "RAW");
 	}
@@ -537,58 +529,71 @@ class common
 			}
 		}
 
-		if (defined('_JEXEC')) {
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/jquery.uploadfile.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/jquery.form.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/uploader.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base64.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/catalog.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/edit.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/esmulti.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/modal.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/jquery.uploadfile.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/jquery.form.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/uploader.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base64.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/catalog.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/edit.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/esmulti.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/modal.js"></script>');
 
-			$document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.js"></script>');
-			$document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.css" />');
-		}
+		$document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.js"></script>');
+		$document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.css" />');
 
-		if (defined('_JEXEC')) {
-			$joomla_params = ComponentHelper::getParams('com_customtables');
-			$googleMapAPIKey = $joomla_params->get('googlemapapikey');
 
-			if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
-				$document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
+		$joomla_params = ComponentHelper::getParams('com_customtables');
+		$googleMapAPIKey = $joomla_params->get('googlemapapikey');
 
-			$document->addCustomTag('<script>let ctWebsiteRoot = "' . $env->WebsiteRoot . '";</script>');
+		if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
+			$document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
 
-			if ($params->ModuleId == null)
-				$document->addCustomTag('<script>ctItemId = "' . $params->ItemId . '";</script>');
+		$document->addCustomTag('<script>let ctWebsiteRoot = "' . $env->WebsiteRoot . '";</script>');
 
-			//Styles
-			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" type="text/css" rel="stylesheet" >');
-			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/modal.css" type="text/css" rel="stylesheet" >');
-			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/uploadfile.css" rel="stylesheet">');
+		if ($params->ModuleId == null)
+			$document->addCustomTag('<script>ctItemId = "' . $params->ItemId . '";</script>');
 
-			$document->addCustomTag('<link href="' . URI::root(true) . '/media/system/css/fields/calendar.min.css" rel="stylesheet" />');
-			$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar-locales/date/gregorian/date-helper.min.js" defer></script>');
-			$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar.min.js" defer></script>');
+		//Styles
+		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" type="text/css" rel="stylesheet" >');
+		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/modal.css" type="text/css" rel="stylesheet" >');
+		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/uploadfile.css" rel="stylesheet">');
 
-			Text::script('COM_CUSTOMTABLES_JS_SELECT_RECORDS');
-			Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1');
-			Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
-			Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
-			Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
-			Text::script('COM_CUSTOMTABLES_SELECT');
-			Text::script('COM_CUSTOMTABLES_SELECT_NOTHING');
-			Text::script('COM_CUSTOMTABLES_ADD');
-			Text::script('COM_CUSTOMTABLES_REQUIRED');
-			Text::script('COM_CUSTOMTABLES_NOT_SELECTED');
-			Text::script('COM_CUSTOMTABLES_JS_EMAIL_INVALID');
-			Text::script('COM_CUSTOMTABLES_JS_URL_INVALID');
-			Text::script('COM_CUSTOMTABLES_JS_SECURE_URL_INVALID');
-			Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
-			Text::script('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID');
-			Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
-		}
+		$document->addCustomTag('<link href="' . URI::root(true) . '/media/system/css/fields/calendar.min.css" rel="stylesheet" />');
+		$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar-locales/date/gregorian/date-helper.min.js" defer></script>');
+		$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar.min.js" defer></script>');
+
+		Text::script('COM_CUSTOMTABLES_JS_SELECT_RECORDS');
+		Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1');
+		Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
+		Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
+		Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
+		Text::script('COM_CUSTOMTABLES_SELECT');
+		Text::script('COM_CUSTOMTABLES_SELECT_NOTHING');
+		Text::script('COM_CUSTOMTABLES_ADD');
+		Text::script('COM_CUSTOMTABLES_REQUIRED');
+		Text::script('COM_CUSTOMTABLES_NOT_SELECTED');
+		Text::script('COM_CUSTOMTABLES_JS_EMAIL_INVALID');
+		Text::script('COM_CUSTOMTABLES_JS_URL_INVALID');
+		Text::script('COM_CUSTOMTABLES_JS_SECURE_URL_INVALID');
+		Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
+		Text::script('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID');
+		Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
+	}
+
+	public static function filterText(?string $text): string
+	{
+		if ($text === null)
+			return '';
+
+		return ComponentHelper::filterText($text);
+	}
+
+	public static function redirect(string $link, ?string $msg = null): void
+	{
+		if ($msg === null)
+			$msg = '';
+
+		Factory::getApplication()->setRedirect($link, $msg);
 	}
 }

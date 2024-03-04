@@ -19,7 +19,6 @@ use CustomTables\CTMiscHelper;
 use CustomTables\TableHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
-use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Controller\AdminController;
 
 class CustomtablesControllerListOfRecords extends AdminController
@@ -52,9 +51,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$cid = common::inputPost('cid', array(), 'array');
 		$paramsArray = $this->getRecordParams($tableid, $tablename, 0);
 
-		$_params = new Registry($paramsArray);
-
-		$ct = new CT($_params, false);
+		$ct = new CT($paramsArray, false);
 		$ct->setTable($tableRow);
 
 		foreach ($cid as $id) {
@@ -82,7 +79,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 		);
 	}
 
-	protected function getRecordParams($tableid, $tablename, $recordid)
+	protected function getRecordParams(int $tableid, string $tablename, $recordid): array
 	{
 		$paramsArray = array();
 
@@ -113,9 +110,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$cid = common::inputPost('cid', array(), 'array');
 		$paramsArray = $this->getRecordParams($tableid, $tablename, 0);
 
-		$_params = new Registry($paramsArray);
-
-		$ct = new CT($_params, false);
+		$ct = new CT($paramsArray, false);
 		$ct->setTable($tableRow);
 
 		foreach ($cid as $id) {
