@@ -468,9 +468,17 @@ class ImportTables
 		//If layout with same name already exists then existing layout will be updated, and it's ID will be returned.
 
 		$layout_new['tableid'] = $tableid;//replace tableid
-		$layoutname = $layout_new['layoutname'];
+		$newLayoutName = $layout_new['layoutname'];
 
-		$layout_old = ImportTables::getRecordByField('layouts', 'layoutname', $layoutname);
+		// Process layout name
+		if (function_exists("transliterator_transliterate"))
+			$newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII;", $newLayoutName);
+
+		$newLayoutName = str_replace(" ", "_", $newLayoutName);
+		$newLayoutName = trim(preg_replace("/[^a-z A-Z_\d]/", "", $newLayoutName));
+		$layout_new['layoutname'] = $newLayoutName;
+
+		$layout_old = ImportTables::getRecordByField('layouts', 'layoutname', $newLayoutName);
 		$Layouts = new Layouts($ct);
 
 		//Convert all Layout Types

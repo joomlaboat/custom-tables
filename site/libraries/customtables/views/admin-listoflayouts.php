@@ -137,7 +137,7 @@ class ListOfLayouts
 
 		// Process layout name
 		if (function_exists("transliterator_transliterate"))
-			$newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPostString('layoutname', null, 'create-edit-layout'));
+			$newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII;", common::inputPostString('layoutname', null, 'create-edit-layout'));
 		else
 			$newLayoutName = common::inputPostString('layoutname', null, 'create-edit-layout');
 
