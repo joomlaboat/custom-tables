@@ -426,10 +426,26 @@ class Layouts
 
 
 		$task = common::inputPostCmd('task', null, 'create-edit-record');
+		if ($task === null)
+			$task = common::inputGetCmd('task');
 
-		if ($this->layoutType == 1 or $this->layoutType == 5)
+		if ($this->layoutType == 1 or $this->layoutType == 5) {
+
+			if ($task == 'delete') {
+
+				$listing_id = common::inputGetCmd('listing_id', 0);
+				if (!empty($listing_id)) {
+					if ($this->ct->deleteSingleRecord($listing_id) === 1) {
+						common::enqueueMessage(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED_1'), 'notice');
+					} else {
+						common::enqueueMessage(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED_1'));
+					}
+				}
+			}
+
 			return $this->renderCatalog();
-		if ($this->layoutType == 2) {
+
+		} elseif ($this->layoutType == 2) {
 
 			if ($task == 'saveandcontinue' or $task == 'save') {
 				$record = new record($this->ct);
