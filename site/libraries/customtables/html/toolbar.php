@@ -93,9 +93,6 @@ class RecordToolbar
 
 	protected function renderEditIcon($isModal = false): string
 	{
-		if (defined('WPINC'))
-			return 'CustomTables: Edit Icons not supported in WP yet.';
-
 		$alt = common::translate('COM_CUSTOMTABLES_EDIT');
 
 		if ($this->ct->Env->toolbarIcons != '')
@@ -103,30 +100,38 @@ class RecordToolbar
 		else
 			$img = '<img src="' . $this->iconPath . 'edit.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-		$editLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem'
-			. '&amp;listing_id=' . $this->listing_id;
+		if (defined('_JEXEC')) {
+			$editLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem'
+				. '&amp;listing_id=' . $this->listing_id;
 
-		if (common::inputGetCmd('tmpl'))
-			$editLink .= '&tmpl=' . common::inputGetCmd('tmpl', '');
+			if (common::inputGetCmd('tmpl'))
+				$editLink .= '&tmpl=' . common::inputGetCmd('tmpl', '');
 
-		if ($this->ct->Params->ItemId > 0)
-			$editLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
+			if ($this->ct->Params->ItemId > 0)
+				$editLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
 
-		if (!is_null($this->ct->Params->ModuleId))
-			$editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+			if (!is_null($this->ct->Params->ModuleId))
+				$editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
-		if ($isModal) {
-			$tmp_current_url = common::makeReturnToURL($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
-			$editLink .= '&amp;returnto=' . $tmp_current_url;
-			$link = 'javascript:ctEditModal(\'' . $editLink . '\',null)';
-		} else {
-			$returnToEncoded = common::getReturnToURL(false);
+			if ($isModal) {
+				$tmp_current_url = common::makeReturnToURL($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
+				$editLink .= '&amp;returnto=' . $tmp_current_url;
+				$link = 'javascript:ctEditModal(\'' . $editLink . '\',null)';
+			} else {
+				$returnToEncoded = common::getReturnToURL(false);
 
-			if (!empty($returnToEncoded))
-				$link = $editLink . '&amp;returnto=' . $returnToEncoded;
-			else
-				$link = $editLink;
+				if (!empty($returnToEncoded))
+					$link = $editLink . '&amp;returnto=' . $returnToEncoded;
+				else
+					$link = $editLink;
+			}
+		} elseif (defined('WPINC')) {
+			$link = common::curPageURL();
+			$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
+			$link .= (str_contains($link, '?') ? '&amp;' : '?') . 'view' . $this->ct->Table->tableid . '=edititem';
+			$link .= '&amp;listing_id=' . $this->listing_id;
 		}
+
 		$a = '<a href="' . $link . '">' . $img . '</a>';
 
 		return '<div id="esEditIcon' . $this->rid . '" class="toolbarIcons">' . $a . '</div>';

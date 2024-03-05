@@ -500,7 +500,7 @@ class CT_FieldTypeTag_file
 		//make the key
 		$key = CT_FieldTypeTag_file::makeTheKey($filepath, $security, $recId, $fieldid, $tableid);
 
-		$currentURL = CTMiscHelper::curPageURL();
+		$currentURL = common::curPageURL();
 		$currentURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'returnto');
 
 		//prepare new file name that includes the key

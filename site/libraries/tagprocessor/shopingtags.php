@@ -27,7 +27,7 @@ class tagProcessor_Shopping
 
 		$opt_i = 0;
 		foreach ($fList as $fItem) {
-			$theLink = CTMiscHelper::curPageURL();
+			$theLink = common::curPageURL();
 
 			$option_pair = explode(',', $options[$opt_i]);
 

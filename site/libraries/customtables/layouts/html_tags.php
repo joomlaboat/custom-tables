@@ -70,7 +70,6 @@ class Twig_Html_Tags
 			return ''; //Not permitted
 
 		if (defined('_JEXEC')) {
-
 			$link = CUSTOMTABLES_MEDIA_HOME_URL;
 
 			if ($Alias_or_ItemId != '' and is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)

@@ -875,7 +875,7 @@ class Layouts
 		$recordRow = null;
 
 		if ($this->ct->Table->tablename !== null) {
-			$listing_id = common::inputGetCmd('id');
+			$listing_id = common::inputGetCmd('listing_id');
 
 			if ($listing_id !== null) {
 				$recordRow = $this->ct->Table->loadRecord($listing_id);

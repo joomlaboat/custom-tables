@@ -319,7 +319,7 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
 			}
 		}
 
-		$query_paramsPlusPrefix = CTMiscHelper::curPageURL();
+		$query_paramsPlusPrefix = common::curPageURL();
 		$query_paramsPlusPrefix = CTMiscHelper::deleteURLQueryOption($query_paramsPlusPrefix, 'start');
 
 		if ($query_params != '')

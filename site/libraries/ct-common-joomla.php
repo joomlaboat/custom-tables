@@ -375,7 +375,7 @@ class common
 	public static function makeReturnToURL(string $currentURL = null): ?string
 	{
 		if ($currentURL === null)
-			$currentURL = CTMiscHelper::curPageURL();
+			$currentURL = common::curPageURL();
 
 		return base64_encode($currentURL);
 	}

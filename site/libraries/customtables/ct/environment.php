@@ -73,7 +73,7 @@ class Environment
 		} else
 			$this->version = 6;
 
-		$this->current_url = CTMiscHelper::curPageURL();
+		$this->current_url = common::curPageURL();
 
 		if (!str_contains($this->current_url, 'option=com_customtables')) {
 			$pair = explode('?', $this->current_url);

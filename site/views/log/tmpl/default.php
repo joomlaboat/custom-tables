@@ -13,7 +13,7 @@ use CustomTables\CTMiscHelper;
 
 defined('_JEXEC') or die();
 
-$currentURL = CTMiscHelper::curPageURL();
+$currentURL = common::curPageURL();
 $cleanURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'action');
 $cleanURL = CTMiscHelper::deleteURLQueryOption($cleanURL, 'user');
 

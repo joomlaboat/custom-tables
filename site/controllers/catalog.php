@@ -355,7 +355,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 				if ($ct->Params->cartReturnTo) {
 					$link = $ct->Params->cartReturnTo;
 				} else {
-					$theLink = CTMiscHelper::curPageURL();
+					$theLink = common::curPageURL();
 					$pair = explode('?', $theLink);
 					if (isset($pair[1])) {
 						$pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'task');

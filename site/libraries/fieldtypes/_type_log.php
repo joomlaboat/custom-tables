@@ -27,7 +27,7 @@ class CT_FieldTypeTag_log
 	{
 		$current_json_data_size = CT_FieldTypeTag_log::getVersionDataSize($ct, $row);
 
-		$url = CTMiscHelper::curPageURL();
+		$url = common::curPageURL();
 		$new_url = CTMiscHelper::deleteURLQueryOption($url, 'version');
 
 		$result = '';

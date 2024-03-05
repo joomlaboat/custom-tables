@@ -39,7 +39,7 @@ switch ($task) {
 
 			$model->load($ct);
 			$count = $model->setPublishStatus(1);
-			$link = CTMiscHelper::curPageURL();
+			$link = common::curPageURL();
 			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
 			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED');
@@ -62,7 +62,7 @@ switch ($task) {
 		} else {
 			$model->load($ct);
 			$count = $model->setPublishStatus(0);
-			$link = CTMiscHelper::curPageURL();
+			$link = common::curPageURL();
 			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
 			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED');
@@ -82,7 +82,7 @@ switch ($task) {
 			if ($ct->Params->cartReturnTo) {
 				$link = $ct->Params->cartReturnTo;
 			} else {
-				$theLink = CTMiscHelper::curPageURL();
+				$theLink = common::curPageURL();
 				$pair = explode('?', $theLink);
 				if (isset($pair[1])) {
 					$pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'task');
