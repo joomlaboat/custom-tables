@@ -255,6 +255,16 @@ class ListOfFields
 
 	function getFieldTypesFromXML(bool $onlyWordpress = false): ?array
 	{
+		/* file example:
+
+		<type ct_name="alias" name="alias" label="Alias (For SEO Links)"
+          description="Alias field that can be used instead of listing_id for SEO purpose." ct_alias="alias"
+          disabled="false" ct_special="false" priority="1" wordpress="true">
+        <params>
+        </params>
+    </type>
+		*/
+
 		$xml = CTMiscHelper::getXMLData('fieldtypes.xml');
 		if (count($xml) == 0 or !isset($xml->type))
 			return null;
@@ -280,9 +290,24 @@ class ListOfFields
 				$option['label'] = (string)$type_att->label;
 				$option['description'] = (string)$type_att->description;
 				$option['proversion'] = $is4Pro;
+				$option['order'] = (int)$type_att->order; // Store priority attribute
 				$options[] = $option;
 			}
 		}
+
+
+		//Sort array
+		// Define an array to hold the 'priority' values
+		$orders = [];
+
+		// Extract the 'priority' values and store them in the $priorities array
+		foreach ($options as $key => $option) {
+			$orders[$key] = $option['order'];
+		}
+
+		// Sort the $options array based on the 'priority' values
+		array_multisort($orders, SORT_ASC, $options);
+
 		return $options;
 	}
 }

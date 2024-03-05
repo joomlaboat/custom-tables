@@ -637,6 +637,7 @@ function FillLayout() {
     editor.getDoc().setValue(layout_obj.value);
 }
 
+//Only for Joomla
 function getLayout_Page() {
 
     let result = "";
@@ -676,6 +677,7 @@ function getLayout_Page() {
     return result;
 }
 
+//Only for Joomla
 function getLayout_Item() {
     let result = "";
     let l = wizardFields.length;
@@ -738,7 +740,10 @@ function getLayout_SimpleCatalog() {
     result += '<div style="float:right;">{{ html.recordcount }}</div>\r\n';
     result += '<div style="float:left;">{{ html.add }}</div>\r\n';
     result += '\r\n';
-    result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
+
+    if (window.Joomla instanceof Object)
+        result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
+    
     result += '<div class="datagrid">\r\n';
     result += '<div>{{ html.batch(\'edit\',\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
     result += '\r\n';

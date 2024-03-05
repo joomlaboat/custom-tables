@@ -26,16 +26,16 @@
     <tagset name="html" label="HTML" description="HTML Tags to render HTML code." priority="2">
 
         <tag name="add" label="Add New" startchar="{" endchar="}"
-             description="Renders 'Add New Record' button" twigclass="html">
+             description="Renders 'Add New Record' button" twigclass="html" wordpress="true">
 
             <params>
-                <param type="string" name="alias" label="Menu Itemid or Alias (Optional)"
+                <param type="string" name="alias" label="Menu Alias or Itemid in Joomla (Optional)"
                        description="To redirect to a specific Menu Item."/>
             </params>
         </tag>
 
         <tag name="recordcount" label="Record Count (as text)" startchar="{" endchar="}"
-             description="Example: Found 23 record(s)" twigclass="html">
+             description="Example: Found 23 record(s)" twigclass="html" wordpress="true">
         </tag>
 
         <tag name="checkboxcount" label="Record Selected (as HTML SPAN tag)" startchar="{" endchar="}"
@@ -98,7 +98,7 @@
 
         <tag name="search" label="Search Box" startchar="{" endchar="}"
              description="An input or select box to enter the search parameter." twigclass="html"
-             image="https://joomlaboat.com/images/components/ct/tags/search-box.png">
+             image="https://joomlaboat.com/images/components/ct/tags/search-box.png" wordpress="true">
             <params>
                 <param type="field" name="field" label="Field(s)"
                        description="Select Table Field to search in. To search in multiple fields type the field names separated by comma. Example: {{ html.search('firstname,lastname') }} In case of the Table Join and Records Join field types a rendering layout ca be used. Example {{ html.search('fieldname:layoutname') }}"
@@ -120,7 +120,8 @@
         </tag>
 
         <tag name="searchbutton" label="Search Button" startchar="{" endchar="}" description="Renders a Search Button"
-             twigclass="html" image="https://joomlaboat.com/images/components/ct/tags/search-button.png">
+             twigclass="html" image="https://joomlaboat.com/images/components/ct/tags/search-button.png"
+             wordpress="true">
             <params>
                 <param name="label" label="Button Label" type="string" example="Search"
                        description="The label of the button. Leaving the label parameter empty will produce an icon only (a magnifying glass). You can also pass HTML code as the label argument to control the button look completely. "/>
@@ -141,15 +142,15 @@
         </tag>
 
         <tag name="toolbar" label="Toolbar" startchar="{" endchar="}" description="Renders the toolbar"
-             hidedefaultexample="1" repetitive="1" twigclass="html">
+             hidedefaultexample="1" repetitive="1" twigclass="html" wordpress="true">
             <params>
                 <param name="button" label="Button" type="list" example="edit">
                     <option value="" label="- None"/>
                     <option value="checkbox" label="Checkbox"/>
-                    <option value="edit" label="Edit"/>
+                    <option value="edit" label="Edit" wordpress="true"/>
                     <option value="editmodal" label="Edit Modal Form"/>
                     <option value="refresh" label="Refresh"/>
-                    <option value="delete" label="Delete"/>
+                    <option value="delete" label="Delete" wordpress="true"/>
                     <option value="publish" label="Publish/Unpublish"/>
                     <option value="gallery" label="Image Gallery"/>
                     <option value="filebox" label="File Box"/>
@@ -188,14 +189,14 @@
         </tag>
 
         <tag name="button" label="Button" startchar="{" endchar="}" added="2019-05-28" hidedefaultexample="1"
-             description="Renders form submit button. " twigclass="html">
+             description="Renders form submit button. " twigclass="html" wordpress="true">
             <params>
                 <param name="type" label="Type" type="list" example="save">
 
                     <option value="save" label="Save" description=""/>
-                    <option value="saveandclose" label="Save &#38; Close" description=""/>
+                    <option value="saveandclose" label="Save &#38; Close" description="" wordpress="true"/>
                     <option value="saveascopy" label="Save as Copy"/>
-                    <option value="cancel" label="Cancel"/>
+                    <option value="cancel" label="Cancel" wordpress="true"/>
                     <option value="delete" label="Delete"/>
                 </param>
                 <param name="label" label="Button Label" type="string" example="Click here to save the form"
@@ -290,10 +291,12 @@
     <!-- Record Tags -->
     <tagset name="record" label="Record" description="Tags related to a single record." priority="1">
 
-        <tag name="id" label="record ID" startchar="{" endchar="}" description="Returns record ID" twigclass="record"/>
+        <tag name="id" label="record ID" startchar="{" endchar="}" description="Returns record ID" twigclass="record"
+             wordpress="true"/>
 
         <tag name="number" label="Record Number" startchar="{" endchar="}"
-             description="Returns record number (in current order), not record id." twigclass="record"/>
+             description="Returns record number (in current order), not record id." twigclass="record"
+             wordpress="true"/>
 
         <tag name="published" label="Published" startchar="{" endchar="}"
              description="Returns the «Yes» word (language depended) if the record is published and «No» if not."
@@ -575,7 +578,8 @@
     <tagset name="table" label="Table" description="Tags related current to current table." priority="1">
 
         <tag name="records" label="Record Count (filtered)" startchar="{" endchar="}"
-             description="Returns the number of records in the table that met filter criteria" twigclass="table"/>
+             description="Returns the number of records in the table that met filter criteria" twigclass="table"
+             wordpress="true"/>
 
         <tag name="recordstotal" label="Total Number of Records" startchar="{" endchar="}"
              description="Returns the total number of records in the table" hidedefaultexample="1" twigclass="table"/>
@@ -590,19 +594,20 @@
         />
 
         <tag name="title" label="Table Title" startchar="{" endchar="}"
-             description="Returns the current table title." hidedefaultexample="1" twigclass="table"/>
+             description="Returns the current table title." hidedefaultexample="1" twigclass="table" wordpress="true"/>
 
         <tag name="description" label="Description" startchar="{" endchar="}"
              description="Returns current table description." hidedefaultexample="1" twigclass="table"/>
 
         <tag name="name" label="Table Name" startchar="{" endchar="}" proversion="1"
-             description="Returns the current table name." hidedefaultexample="1" twigclass="table"/>
+             description="Returns the current table name." hidedefaultexample="1" twigclass="table" wordpress="true"/>
 
         <tag name="id" label="Table ID" startchar="{" endchar="}" proversion="1"
-             description="Returns current table ID." hidedefaultexample="1" twigclass="table"/>
+             description="Returns current table ID." hidedefaultexample="1" twigclass="table" wordpress="true"/>
 
         <tag name="fields" label="Fields" startchar="{" endchar="}"
-             description="Return the number of fields in the table" hidedefaultexample="1" twigclass="table"/>
+             description="Return the number of fields in the table" hidedefaultexample="1" twigclass="table"
+             wordpress="true"/>
 
         <!-- Deprecated -->
 
@@ -686,7 +691,7 @@
     <tagset name="fields" label="Fields" description="Tags related to current table fields." priority="1">
 
         <tag name="count" label="Field Count (number)" startchar="{" endchar="}"
-             description="Return the number of fields in the table" twigclass="fields"/>
+             description="Return the number of fields in the table" twigclass="fields" wordpress="true"/>
 
         <tag name="list" label="List of field parameters" startchar="{" endchar="}" proversion="1"
              description="Returns the list of fields. Example: country,city,phone" twigclass="fields">

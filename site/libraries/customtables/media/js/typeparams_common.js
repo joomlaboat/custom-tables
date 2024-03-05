@@ -681,10 +681,12 @@ function renderInput_List(id, param, value, onchange) {
     for (let o = 0; o < options.length; o++) {
         const opt = options[o]["@attributes"];
 
-        if (opt.value === value)
-            result += '<option value="' + opt.value + '" selected="selected">' + opt.label + '</option>';
-        else
-            result += '<option value="' + opt.value + '" >' + opt.label + '</option>';
+        if (window.Joomla instanceof Object || (typeof (opt.wordpress) !== "undefined" & opt.wordpress === "true")) {
+            if (opt.value === value)
+                result += '<option value="' + opt.value + '" selected="selected">' + opt.label + '</option>';
+            else
+                result += '<option value="' + opt.value + '" >' + opt.label + '</option>';
+        }
     }
 
     result += '</select>';

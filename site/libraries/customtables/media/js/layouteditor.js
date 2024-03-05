@@ -914,21 +914,28 @@ function renderTags(index, tagSet) {
             else
                 t = '{{ ' + fullTagName + '(<span>Params</span>)' + ' }}';
 
-            result += '<div style="vertical-align:top;display:inline-block;">';
 
-            if (proversion || typeof (tag.proversion) === "undefined" || parseInt(tag.proversion) !== 1) {
-                result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(fullTagName) + '",' + params.length + ');\' class="' + buttonClass + '" title="' + tag.description + '">' + t + '</a> ';
-            } else {
-                result += '<div style="display:inline-block;"><div class="' + buttonClassPro + '" title="' + tag.description + '">' + t + ' *</div></div> ';
+            if (window.Joomla instanceof Object || (typeof (tag.wordpress) !== "undefined" & tag.wordpress === "true")) {
+                result += '<div style="vertical-align:top;display:inline-block;">';
+
+                if (proversion || typeof (tag.proversion) === "undefined" || parseInt(tag.proversion) !== 1) {
+                    result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(fullTagName) + '",' + params.length + ');\' class="' + buttonClass + '" title="' + tag.description + '">' + t + '</a> ';
+                } else {
+                    result += '<div style="display:inline-block;"><div class="' + buttonClassPro + '" title="' + tag.description + '">' + t + ' *</div></div> ';
+                }
+                result += '</div>';
             }
-            result += '</div>';
         }
     }
 
     result += '</div>';
 
-    if (!proversion)
-        result += '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">* Get Custom Tables PRO Version</a></div>';
+    if (!proversion) {
+        if (window.Joomla instanceof Object)
+            result += '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">* Get Custom Tables PRO Version</a></div>';
+        else
+            result += '<div class="ct_doc_pro_label"><a href="https://ct4.us" target="_blank">* Get Custom Tables PRO Version</a></div>';
+    }
 
     return result;
 }

@@ -3,7 +3,7 @@
 
     <type ct_name="alias" name="alias" label="Alias (For SEO Links)"
           description="Alias field that can be used instead of listing_id for SEO purpose." ct_alias="alias"
-          disabled="false" ct_special="false" priority="1" wordpress="true">
+          disabled="false" ct_special="false" priority="1" wordpress="true" order="7">
         <params>
         </params>
     </type>
@@ -165,7 +165,7 @@
 
     <type ct_name="checkbox" label="Checkbox (YES/NO)"
           description="Provides a single checkbox to be checked or unchecked" priority="1"
-          image="https://joomlaboat.com/images/components/ct/field-types/checkbox.png" wordpress="true">
+          image="https://joomlaboat.com/images/components/ct/field-types/checkbox.png" wordpress="true" order="4">
         <editparams name="checkbox" label="Input Element Parameters" description=""
         >
             <params>
@@ -184,7 +184,7 @@
 
     <type ct_name="color" name="color" label="Color"
           description="Provides Color Picker functionality in the Edit Form or hexadecimal value as an output."
-          ct_alias="color" disabled="false" ct_special="false" priority="2" wordpress="true"
+          ct_alias="color" disabled="false" ct_special="false" priority="2" wordpress="false"
           image="https://joomlaboat.com/images/components/ct/field-types/color.png">
         <editparams name="color" label="Format" description="Color Picker format."
         >
@@ -253,7 +253,7 @@
         </params>
     </type>
 
-    <type ct_name="date" label="Date" description="Date ot Date/Time Picker" priority="1" wordpress="false">
+    <type ct_name="date" label="Date" description="Date ot Date/Time Picker" priority="1" wordpress="false" order="8">
         <params>
             <param name="type" example="date" label="Type" description="Date or Date / Time"
                    default="date" type="list">
@@ -284,8 +284,8 @@
         </editparams>
     </type>
 
-    <type ct_name="email" label="Email" description="Provides an email field." priority="1">
-        <editparams name="email" label="Input Element Parameters" description="" wordpress="true">
+    <type ct_name="email" label="Email" description="Provides an email field." priority="1" order="5" wordpress="true">
+        <editparams name="email" label="Input Element Parameters" description="">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
                 <param name="attributes" label="Attributes"
@@ -504,7 +504,7 @@
     </type>
 
     <type ct_name="float" name="float" label="Float (Decimal) Number" description="Provides a decimal number inputbox."
-          ct_alias="float" disabled="false" ct_special="false" priority="1" wordpress="true">
+          ct_alias="float" disabled="false" ct_special="false" priority="1" wordpress="true" order="3">
         <params>
             <param name="decimals" label="Decimals" example="2"
                    description="Number of digits to the right of the decimal point (the scale). Must be no larger than Precision Number of digits."
@@ -736,7 +736,7 @@
     </type>
 
     <type ct_name="int" name="int" label="Integer Number" description="Provides an integer number inputbox."
-          ct_alias="int" disabled="false" ct_special="false" priority="1" wordpress="true">
+          ct_alias="int" disabled="false" ct_special="false" priority="1" wordpress="true" order="2">
         <editparams name="int" label="Input Element Parameters" description="">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
@@ -919,7 +919,7 @@
     </type>-->
 
     <type ct_name="radio" label="Radio" description="Radio Buttons" depricated="1" priority="3" proversion="1"
-          repetitive="1" wordpress="true"><!-- pro -->
+          repetitive="1" wordpress="true" order="8"><!-- pro -->
         <params>
             <param name="params" label="Parameters" description="" default="" type="string"/>
         </params>
@@ -1029,7 +1029,7 @@
 
     <type ct_name="signature" name="signature" label="Signature"
           description="A signature pad that allows users to draw smooth signatures on canvas element and export the signatures to PNG/JPG/SVG/WebP images."
-          ct_alias="signature" disabled="false" ct_special="false" priority="1" proversion="1">
+          ct_alias="signature" disabled="false" ct_special="false" priority="2" proversion="1">
         <params>
             <param name="width" label="Width" description="Width in pixels" default="300" type="text" options=""/>
             <param name="height" label="Height" description="Height in pixels" default="150" type="text" options=""/>
@@ -1280,7 +1280,7 @@
 
     <type ct_name="text" name="text" label="Text Area (Multiple Lines)"
           description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false"
-          priority="1" wordpress="false">
+          priority="1" wordpress="false" order="4">
         <params>
             <param name="texteditor" label="Text Editor" description="" hidden="false" default="" type="list">
                 <option value="" label="No Editor"/>
@@ -1346,7 +1346,7 @@
 
     <type ct_name="string" name="string" label="Text String (Single Line)"
           description="Provides a text box for data entry." ct_alias="string"
-          disabled="false" ct_special="false" priority="1" wordpress="true">
+          disabled="false" ct_special="false" priority="1" wordpress="true" order="1">
         <params>
             <param name="length" label="Length" description="Number of characters. Number of characters not bytes."
                    hidden="false" default="255" type="number" min="1" max="1024"
@@ -1390,7 +1390,7 @@
 
     <type ct_name="time" label="Time"
           description="Time Selection. Saves value in ticks with defined offset. It will save time as number of seconds from the midnight by default."
-          priority="1" wordpress="true">
+          priority="2" wordpress="false" order="9">
         <params>
             <param type="string" name="min" default="0h" label="Min (From) Time"
                    description="Minimum (From) Time that can be selected." example="10h5m"/>
@@ -1430,7 +1430,8 @@
           priority="3"/>
 
     <type ct_name="url" label="URL / Link"
-          description="URL / Link to some website. Must start with http:// or https:// " priority="1" wordpress="true">
+          description="URL / Link to some website. Must start with http:// or https:// " priority="1" wordpress="true"
+          order="6">
         <params>
             <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
             <param type="radio" name="httpsonly" label="HTTPS Only" description="Allow only secure URL links" default=""
@@ -1530,10 +1531,9 @@
         </editparams>
     </type>
 
-
     <type ct_name="virtual" name="virtual" label="Virtual Field"
           description="Virtual field is the field the value of which is computed - processed by Twig. Similar to Layout processing."
-          ct_alias="virtual" disabled="false" ct_special="false" priority="1">
+          ct_alias="virtual" disabled="false" ct_special="false" priority="2">
         <params>
             <param name="layout" label="Layout" description="Value Layout" default="" type="fieldlayout"/>
 
