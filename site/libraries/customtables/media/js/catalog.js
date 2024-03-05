@@ -239,8 +239,22 @@ function ctSearchBoxDo() {
         }
     }
 
-    let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
-    link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], ["where=" + encodeURIComponent(w.join(" and "))], link);//Base64.encode
+    // Check if a Joomla class is defined
+    let link = ctWebsiteRoot;
+
+    if (typeof Joomla !== 'undefined') {
+        link += 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+    } else if (typeof wp !== 'undefined') {
+        console.log("ctWebsiteRoot:" + ctWebsiteRoot);
+    }
+
+    let whereList = [];
+
+    if (w.length > 0)
+        whereList.push("where=" + encodeURIComponent(w.join(" and ")));
+
+    link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], whereList, link);
+    console.log("link:" + link);
     window.location.href = link;
 }
 

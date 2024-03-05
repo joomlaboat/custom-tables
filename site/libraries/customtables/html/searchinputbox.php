@@ -155,6 +155,7 @@ abstract class BaseSearch
 		if (isset($this->attributes['onchange']) or $this->attributes['onchange'] !== null)
 			return;
 
+		/*
 		$this->attributes['onchange'] = $this->moduleName . '_onChange('
 			. $this->index . ','
 			. 'this.value,'
@@ -163,5 +164,6 @@ abstract class BaseSearch
 			. '\'' . urlencode($this->whereList) . '\','
 			. '\'' . $this->ct->Languages->Postfix . '\''
 			. ')';
+		*/
 	}
 }
