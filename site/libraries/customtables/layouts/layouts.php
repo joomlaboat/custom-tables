@@ -480,6 +480,8 @@ class Layouts
 			}
 
 			return $this->renderEditForm();
+		} elseif ($this->layoutType == 4) {
+			return $this->renderDetails();
 		}
 
 		return 'CustomTable: Unknown Layout Type';
@@ -903,6 +905,31 @@ class Layouts
 		$editForm = new Edit($this->ct);
 		$editForm->layoutContent = $this->layoutCode;
 		return $editForm->render($recordRow, $formLink, 'ctEditForm');
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.8
+	 */
+	protected function renderDetails(): string
+	{
+		if ($this->ct->Table->record === null) {
+			return 'Record not loaded';
+		}
+
+		$details = new Details($this->ct);
+
+		if ($details->load()) {
+
+			if ($details->layoutType == 8)
+				$this->ct->Env->frmt = 'xml';
+			elseif ($details->layoutType == 9)
+				$this->ct->Env->frmt = 'csv';
+			elseif ($details->layoutType == 10)
+				$this->ct->Env->frmt = 'json';
+		}
+
+		return $details->render();
 	}
 
 	/**

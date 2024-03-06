@@ -28,6 +28,10 @@ class Search_range extends BaseSearch
 
 	function render($value): string
 	{
+		if (defined('WPINC')) {
+			return 'The tag Date field type not yet supported by WordPress version of the Custom Tables.';
+		}
+
 		$result = '';
 
 		if ($this->ct->Env->version < 4)

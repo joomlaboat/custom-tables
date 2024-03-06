@@ -107,6 +107,10 @@ class Twig_Html_Tags
 
 	function importcsv(): string
 	{
+		if (defined('WPINC')) {
+			return 'The tag "{{ html.importcsv() }}" not yet supported by WordPress version of the Custom Tables.';
+		}
+
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
@@ -727,6 +731,10 @@ class Twig_Html_Tags
 
 	function captcha()
 	{
+		if (defined('WPINC')) {
+			return 'captcha not supported yet by WordPress version of the Custom Tables.';
+		}
+
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
@@ -744,6 +752,8 @@ class Twig_Html_Tags
 				HTMLHelper::_('behavior.formvalidation');
 				HTMLHelper::_('behavior.keepalive');
 			}
+		} elseif (defined('WPINC')) {
+			return 'The tag "{{ html.captcha() }}" not yet supported by WordPress version of the Custom Tables.';
 		}
 
 		$p = $this->getReCaptchaParams();
@@ -785,14 +795,18 @@ class Twig_Html_Tags
 
 	protected function getReCaptchaParams()
 	{
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('name', 'plg_captcha_recaptcha');
+		if (defined('_JEXEC')) {
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('name', 'plg_captcha_recaptcha');
 
-		$rows = database::loadObjectList('#__extensions', ['params'], $whereClause, null, null, 1);
-		if (count($rows) == 0)
-			return null;
-
-		return $rows[0];
+			$rows = database::loadObjectList('#__extensions', ['params'], $whereClause, null, null, 1);
+			if (count($rows) == 0)
+				return null;
+			return $rows[0];
+		} elseif (defined('WPINC')) {
+			return null; //TODO: getReCaptchaParams not yet supported in WP
+		}
+		return null;
 	}
 
 	/* --------------------------- PROTECTED FUNCTIONS ------------------- */

@@ -232,6 +232,10 @@ class Search_tablejoin extends BaseSearch
 
 	protected function renderDropdownSelector_Box_improved($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue = false): string
 	{
+		if (defined('WPINC')) {
+			return 'renderDropdownSelector_Box_improved not yet supported by WordPress version of the Custom Tables.';
+		}
+
 		HTMLHelper::_('formbehavior.chosen', '.ct_improved_selectbox');
 		return $this->renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue);
 	}

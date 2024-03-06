@@ -214,16 +214,22 @@ class CTUser
 
 	static public function GetUserGroups(int $userid): string
 	{
-		$groups = Access::getGroupsByUser($userid);
+		if (defined('_JEXEC')) {
+			$groups = Access::getGroupsByUser($userid);
 
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('id', '(' . implode(',', $groups) . ')', 'IN', true);
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('id', '(' . implode(',', $groups) . ')', 'IN', true);
 
-		$rows = database::loadRowList('#__usergroups', ['title'], $whereClause);
+			$rows = database::loadRowList('#__usergroups', ['title'], $whereClause);
 
-		$groupList = array();
-		foreach ($rows as $group)
-			$groupList[] = $group[0];
+			$groupList = array();
+			foreach ($rows as $group)
+				$groupList[] = $group[0];
+		} elseif (defined('WPINC')) {
+			return 'GetUserGroups not yet supported in WP.';
+		} else {
+			return 'GetUserGroups not supported.';
+		}
 
 		return implode(',', $groupList);
 	}

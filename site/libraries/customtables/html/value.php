@@ -317,6 +317,10 @@ class Value
 
 	protected function orderingProcess($value): string
 	{
+		if (defined('WPINC')) {
+			return 'orderingProcess not yet supported by WordPress version of the Custom Tables.';
+		}
+
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return $value;
 
@@ -501,8 +505,14 @@ class Value
 				return $PHPDate;
 
 			return gmdate($option_list[0], $PHPDate);
-		} else
+		} else {
+
+			if (defined('WPINC')) {
+				return 'dataProcess not yet supported by WordPress version of the Custom Tables.';
+			}
+
 			return HTMLHelper::date($PHPDate);
+		}
 	}
 
 	protected function timeProcess(?string $value, array $option_list): string
@@ -519,6 +529,10 @@ class Value
 		} else {
 			if ($value == '0000-00-00 00:00:00')
 				return '';
+
+			if (defined('WPINC')) {
+				return 'timeProcess not yet supported by WordPress version of the Custom Tables.';
+			}
 
 			return HTMLHelper::date($PHPDate);
 		}
