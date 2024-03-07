@@ -27,6 +27,8 @@ class Layouts
 	var ?string $pageLayoutNameString;
 	var ?string $pageLayoutLink;
 	var ?string $layoutCode;
+	var ?string $layoutCodeCSS;
+	var ?string $layoutCodeJS;
 
 	function __construct(&$ct)
 	{
@@ -36,6 +38,8 @@ class Layouts
 		$this->pageLayoutNameString = null;
 		$this->pageLayoutLink = null;
 		$this->layoutCode = null;
+		$this->layoutCodeCSS = null;
+		$this->layoutCodeJS = null;
 	}
 
 	/**
@@ -117,16 +121,13 @@ class Layouts
 		$this->layoutType = (int)$row['layouttype'];
 
 		if ($this->ct->Env->isMobile and trim($row['layoutmobile']) != '') {
-
 			$layoutCode = $row['layoutmobile'];
 			if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
 				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['modified_timestamp'], $layoutNameOrId . '_mobile.html', 'layoutmobile');
 				if ($content != null)
 					$layoutCode = $content;
 			}
-
 		} else {
-
 			$layoutCode = $row['layoutcode'];
 			if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
 				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['modified_timestamp'], $layoutNameOrId . '.html', 'layoutcode');
@@ -142,7 +143,7 @@ class Layouts
 		if ($processLayoutTag)
 			$this->processLayoutTag($layoutCode);
 
-		if ($addHeaderCode)
+		if ($addHeaderCode and $this->ct->Env->advancedTagProcessor)
 			$this->addCSSandJSIfNeeded($row, $checkLayoutFile);
 
 		$this->pageLayoutNameString = $row['layoutname'];
@@ -269,13 +270,13 @@ class Layouts
 
 		if ($layoutContent != '') {
 			$twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
-			$layoutContent = '<style>' . $twig->process($this->ct->Table->record ?? null) . '</style>';
+			$this->layoutCodeCSS = $twig->process($this->ct->Table->record ?? null);
 
 			if (defined('_JEXEC')) {
 				if ($twig->errorMessage !== null)
 					$this->ct->errors[] = $twig->errorMessage;
 
-				$this->ct->document->addCustomTag($layoutContent);
+				$this->ct->document->addCustomTag('<style>' . $this->layoutCodeCSS . '</style>');
 			}
 		}
 
@@ -288,13 +289,13 @@ class Layouts
 
 		if ($layoutContent != '') {
 			$twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
-			$layoutContent = $twig->process($this->ct->Table->record);
+			$this->layoutCodeJS = $twig->process($this->ct->Table->record ?? null);
 
 			if (defined('_JEXEC')) {
 				if ($twig->errorMessage !== null)
 					$this->ct->errors[] = $twig->errorMessage;
 
-				$this->ct->document->addCustomTag('<script>' . $layoutContent . '</script>');
+				$this->ct->document->addCustomTag('<script>' . $this->layoutCodeJS . '</script>');
 			}
 		}
 	}
@@ -390,12 +391,14 @@ class Layouts
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function renderMixedLayout(int $layoutId, int $layoutType = null): string
+	function renderMixedLayout(int $layoutId, int $layoutType = null): array
 	{
 		if ($layoutId !== 0) {
 			$this->getLayout($layoutId);
 			if ($this->layoutType === null)
-				return 'CustomTable: Layout "' . $layoutId . '" not found';
+				return ['html' => 'CustomTable: Layout "' . $layoutId . '" not found'];
+
+
 		} else {
 			if ($layoutType == 1 or $layoutType == 5)
 				$this->layoutCode = $this->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
@@ -443,7 +446,7 @@ class Layouts
 				}
 			}
 
-			return $this->renderCatalog();
+			return ['html' => $this->renderCatalog(), 'style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
 
 		} elseif ($this->layoutType == 2) {
 
@@ -479,12 +482,12 @@ class Layouts
 				common::redirect($link, common::translate('COM_CUSTOMTABLES_EDIT_CANCELED'));
 			}
 
-			return $this->renderEditForm();
+			return ['html' => $this->renderEditForm(), 'style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
 		} elseif ($this->layoutType == 4) {
-			return $this->renderDetails();
+			return ['html' => $this->renderDetails(), 'style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
 		}
 
-		return 'CustomTable: Unknown Layout Type';
+		return ['html' => 'CustomTable: Unknown Layout Type'];
 	}
 
 	function createDefaultLayout_SimpleCatalog(array $fields, bool $addToolbar = true): string
