@@ -211,7 +211,16 @@
         </tag>
 
         <tag name="captcha" label="Captcha" startchar="{" endchar="}" twigclass="html"
-             description="Provides the use of a captcha plugin (if enabled)." proversion="1"/>
+             description="Provides the use of a captcha plugin (if enabled)." proversion="1" wordpress="true">
+            <params>
+
+                <param name="public_key" label="Site Key" type="string" required="true"
+                       example="6Ld3l34UABCDEF6t1cEdbdNSKKyNbegQXm72_mDU" joomla="false"/>
+
+                <param name="private_key" label="Secret Key" type="string" required="true"
+                       example="6Ld3l34UAAAAAA0yMlsl7G9MyVRdx6OhKtYvV1AM" joomla="false"/>
+            </params>
+        </tag>
 
         <tag name="message" label="Alert Message" startchar="{" endchar="}"
              description="Renders an alert message above the main content." twigclass="html" proversion="1">

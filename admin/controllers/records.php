@@ -78,6 +78,9 @@ class CustomtablesControllerRecords extends FormController
 
 		$listing_id = common::inputGetCmd('id');
 		$saved = $record->save($listing_id, false);
+		if (!$saved)
+			return false;
+
 		$listing_id = $record->listing_id;
 
 		$redirect = 'index.php?option=' . $this->option;

@@ -68,7 +68,7 @@ class record
 
 		if (($this->ct->LayoutVariables['captcha'] ?? null)) {
 			if (!$this->check_captcha()) {
-				$this->ct->Params->msgItemIsSaved = 'COM_CUSTOMTABLES_INCORRECT_CAPTCHA';
+				common::enqueueMessage(common::translate('COM_CUSTOMTABLES_INCORRECT_CAPTCHA'));
 				return false;
 			}
 		}
@@ -231,21 +231,37 @@ class record
 
 	function check_captcha(): bool
 	{
-		if (defined('_JEXEC')) {
-			$config = Factory::getConfig()->get('captcha');
-			$captcha = JCaptcha::getInstance($config);
-			try {
-				$completed = $captcha->CheckAnswer(null);//null because nothing should be provided
+		$response = common::inputPostString('g-recaptcha-response', 'create-edit-record');
+		$secret_key = $this->ct->LayoutVariables['captcha_secret_key'];
 
-				if ($completed === false)
-					return false;
+		// The IP address of the user
+		$remote_ip = $_SERVER['REMOTE_ADDR'];
 
-			} catch (Exception $e) {
-				$this->ct->errors[] = $e->getMessage();
-				return false;
-			}
-			return true;
-		} elseif (defined('WPINC')) {
+		// Build the request data
+		$data = [
+			'secret' => $secret_key,
+			'response' => $response,
+			'remoteip' => $remote_ip,
+		];
+
+		// Build the request options
+		$options = [
+			'http' => [
+				'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+				'method' => 'POST',
+				'content' => http_build_query($data),
+			],
+		];
+
+		// Make the request to the Google reCAPTCHA verification API
+		$context = stream_context_create($options);
+		$result = file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
+
+		// Decode the JSON response
+		$response = json_decode($result, true);
+
+		// Check if the reCAPTCHA is valid
+		if ($response['success']) {
 			return true;
 		}
 		return false;

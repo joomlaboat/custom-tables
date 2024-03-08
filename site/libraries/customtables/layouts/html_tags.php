@@ -13,6 +13,8 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use Exception;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use JESPagination;
 use JPluginHelper;
@@ -731,9 +733,8 @@ class Twig_Html_Tags
 
 	function captcha()
 	{
-		if (defined('WPINC')) {
-			return 'captcha not supported yet by WordPress version of the Custom Tables.';
-		}
+		if (!$this->ct->Env->advancedTagProcessor)
+			return '{{ html.captcha }} - Captcha Available in PRO Version only.';
 
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
@@ -744,72 +745,40 @@ class Twig_Html_Tags
 		if (!is_null($this->ct->Params->ModuleId))
 			return '';
 
+		$site_key = null;
+		$secret_key = null;
+
+		$functionParams = func_get_args();
+		if (isset($functionParams[0]))
+			$site_key = $functionParams[0];
+
+		if (isset($functionParams[1]))
+			$secret_key = $functionParams[1];
+
 		if (defined('_JEXEC')) {
-			if ($this->ct->Env->version >= 4) {
-				$wa = $this->ct->document->getWebAssetManager();
-				$wa->useScript('keepalive')->useScript('form.validate');
-			} else {
-				HTMLHelper::_('behavior.formvalidation');
-				HTMLHelper::_('behavior.keepalive');
-			}
-		} elseif (defined('WPINC')) {
-			return 'The tag "{{ html.captcha() }}" not yet supported by WordPress version of the Custom Tables.';
+			$app = Factory::getApplication();
+			$document = $app->getDocument();
+			$document->addCustomTag('<script src="https://www.google.com/recaptcha/api.js"></script>');
 		}
 
-		$p = $this->getReCaptchaParams();
-		if ($p === null) {
-			$this->ct->errors[] = '{{ html.captcha }} - Captcha plugin not enabled.';
-			return '';
-		}
+		$this->ct->LayoutVariables['captcha'] = true;
+		$this->ct->LayoutVariables['captcha_secret_key'] = $secret_key;
 
-		$reCaptchaParams = json_decode($p->params);
+		if ($site_key === null)
+			return 'The tag "{{ html.captcha(SITE_KEY) }}" please provide the reCaptcha Site Key';
 
-		if ($reCaptchaParams === null or $reCaptchaParams->public_key == "" or !isset($reCaptchaParams->size)) {
-			$this->ct->errors[] = '{{ html.captcha }} - Captcha Public Key or size not set.';
-			return '';
-		}
-
-		JPluginHelper::importPlugin('captcha');
-
-		if ($this->ct->Env->version < 4) {
-
-			$dispatcher = \JDispatcher::getInstance();
-			//$dispatcher = JEventDispatcher::getInstance();
-			$dispatcher->trigger('onInit', 'my_captcha_div');
-		} else {
-			$this->ct->app->triggerEvent('onInit', array(null, 'my_captcha_div', 'class=""'));
-		}
+		if ($secret_key === null)
+			return 'The tag "{{ html.captcha(SITE_KEY, SECRET_KEY) }}" please provide the reCaptcha Secret Key';
 
 		$vlu = '
     <div id="my_captcha_div"
 		class="g-recaptcha"
-		data-sitekey="' . $reCaptchaParams->public_key . '"
-		data-theme="' . $reCaptchaParams->theme . '"
-		data-size="' . $reCaptchaParams->size . '"
+		data-sitekey="' . $site_key . '"
 		data-callback="recaptchaCallback">
 	</div>';
 
-		$this->ct->LayoutVariables['captcha'] = true;
 		return $vlu;
 	}
-
-	protected function getReCaptchaParams()
-	{
-		if (defined('_JEXEC')) {
-			$whereClause = new MySQLWhereClause();
-			$whereClause->addCondition('name', 'plg_captcha_recaptcha');
-
-			$rows = database::loadObjectList('#__extensions', ['params'], $whereClause, null, null, 1);
-			if (count($rows) == 0)
-				return null;
-			return $rows[0];
-		} elseif (defined('WPINC')) {
-			return null; //TODO: getReCaptchaParams not yet supported in WP
-		}
-		return null;
-	}
-
-	/* --------------------------- PROTECTED FUNCTIONS ------------------- */
 
 	function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')
 	{
@@ -892,7 +861,7 @@ class Twig_Html_Tags
 	}
 
 	protected function renderButtonHTML($optional_class, string $title, $formName, string $buttonId,
-	                                    string $redirect, bool $checkCaptcha, string $task): string
+										string $redirect, bool $checkCaptcha, string $task): string
 	{
 		if ($this->ct->Env->frmt == 'json')
 			return $title;

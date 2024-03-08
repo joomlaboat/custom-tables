@@ -432,6 +432,8 @@ class Layouts
 		if ($task === null)
 			$task = common::inputGetCmd('task');
 
+		$output = ['html' => null, 'style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
+
 		if ($this->layoutType == 1 or $this->layoutType == 5) {
 
 			if ($task == 'delete') {
@@ -446,7 +448,7 @@ class Layouts
 				}
 			}
 
-			return ['html' => $this->renderCatalog(), 'style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
+			$output['html'] = $this->renderCatalog();
 
 		} elseif ($this->layoutType == 2) {
 
@@ -458,6 +460,7 @@ class Layouts
 					common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'notice');
 				} else {
 					common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'));
+					common::enqueueMessage($record->ct->Params->msgItemIsSaved);
 				}
 
 				if ($task == 'save') {
@@ -482,12 +485,17 @@ class Layouts
 				common::redirect($link, common::translate('COM_CUSTOMTABLES_EDIT_CANCELED'));
 			}
 
-			return ['html' => $this->renderEditForm(), 'style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
-		} elseif ($this->layoutType == 4) {
-			return ['html' => $this->renderDetails(), 'style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
-		}
+			$output['html'] = $this->renderEditForm();
 
-		return ['html' => 'CustomTable: Unknown Layout Type'];
+			if ($this->ct->LayoutVariables['captcha'])
+				$output['captcha'] = true;
+
+		} elseif ($this->layoutType == 4) {
+			$output['html'] = $this->renderDetails();
+		} else
+			$output['html'] = 'CustomTable: Unknown Layout Type';
+
+		return $output;
 	}
 
 	function createDefaultLayout_SimpleCatalog(array $fields, bool $addToolbar = true): string

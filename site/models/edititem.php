@@ -136,10 +136,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			//Prepare "Accept Return To" Link
 			$return2Link = common::getReturnToURL();
 
-			//if ($return2Link != '')
-			//$link = $this->PrepareAcceptReturnToLink($return2Link);
-			//$link = str_replace('*new*', $row[$this->ct->Table->realidfieldname], $link);
-
 			//Refresh menu if needed
 			if ($this->ct->Params->msgItemIsSaved !== null and $this->ct->Params->msgItemIsSaved != "") {
 				$this->ct->messages[] = $this->ct->Params->msgItemIsSaved;
@@ -159,8 +155,11 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 			if ($this->listing_id !== null)
 				common::inputSet("listing_id", $this->listing_id);
+
+			return true;
+		} else {
+			return false;
 		}
-		return true;
 	}
 
 	/**
