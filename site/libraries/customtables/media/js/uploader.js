@@ -25,6 +25,7 @@ function checkIfLoggedIn(data) {
 
 //Used in PHP files
 function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, SubmitForm, FileUploaderBox, EventMessageBox, tempFileName, fieldValueInputBox, uploadedFileBox) {
+
     uploaderParams[index] = {
         files_uploaded: 0,
         ct_uploader_url: urlstr,

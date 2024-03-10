@@ -434,6 +434,12 @@ class database
 					$selects[] = 'CASE WHEN customfieldname!="" THEN customfieldname ELSE CONCAT("es_",fieldname) END AS realfieldname';
 				else
 					$selects[] = 'IF(customfieldname!="", customfieldname, CONCAT("es_",fieldname)) AS realfieldname';
+			} elseif ($select == 'REAL_TABLE_NAME') {
+				if ($serverType == 'postgresql') {
+					$selects[] = 'CASE WHEN customtablename!="" THEN customtablename ELSE CONCAT("#__customtables_table_", tablename) END AS realtablename';
+				} else {
+					$selects[] = 'IF((customtablename IS NOT NULL AND customtablename!=""), customtablename, CONCAT("#__customtables_table_", tablename)) AS realtablename';
+				}
 			} elseif ($select == 'COLUMN_IS_UNSIGNED') {
 				$selects[] = 'IF(COLUMN_TYPE LIKE "%unsigned", "YES", "NO") AS COLUMN_IS_UNSIGNED';
 			} elseif ($select == 'REAL_ID_FIELD_NAME') {
@@ -919,17 +925,20 @@ class database
 			$results = $db->loadAssocList();
 
 		} else {
-			$query = 'SELECT
-				COLUMN_NAME AS column_name,
-				DATA_TYPE AS data_type,
-				COLUMN_TYPE AS column_type,
-				COLUMN_IS_UNSIGNED,
-				IS_NULLABLE AS is_nullable,
-				COLUMN_DEFAULT AS column_default,
-				EXTRA AS extra FROM information_schema.COLUMNS WHERE TABLE_SCHEMA="' . $dbName . '" AND TABLE_NAME=' . $db->quote($realtablename);
+
+			$selects = [
+				'COLUMN_NAME AS column_name',
+				'DATA_TYPE AS data_type',
+				'COLUMN_TYPE AS column_type',
+				'COLUMN_IS_UNSIGNED',
+				'IS_NULLABLE AS is_nullable',
+				'COLUMN_DEFAULT AS column_default',
+				'EXTRA AS extra'];
+
+			$selectsSafe = database::sanitizeSelects($selects, 'information_schema.COLUMNS');
+			$query = 'SELECT ' . $selectsSafe . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA="' . $dbName . '" AND TABLE_NAME=' . $db->quote($realtablename);
 
 			$db->setQuery($query);
-
 			$results = $db->loadAssocList();
 		}
 		return $results;

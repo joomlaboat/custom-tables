@@ -17,6 +17,7 @@ use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use JESPagination;
+use Joomla\CMS\Router\Route;
 
 class Twig_Html_Tags
 {
@@ -135,13 +136,13 @@ class Twig_Html_Tags
 
 		HTMLHelper::_('behavior.formvalidator');
 
-		$urlstr = '/index.php?option=com_customtables&amp;view=fileuploader&amp;tmpl=component&'
-			. 'tableid=' . $this->ct->Table->tableid . '&'
-			. 'task=importcsv&'
-			. $objectname . '_fileid=' . $fileid
-			. '&Itemid=' . $this->ct->Params->ItemId
-			. (is_null($this->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->ct->Params->ModuleId)
-			. '&fieldname=' . $objectname;
+		$urlstr = Route::_('index.php?option=com_customtables&amp;view=fileuploader&amp;tmpl=component'
+			. '&amp;tableid=' . $this->ct->Table->tableid
+			. '&amp;task=importcsv'
+			. '&amp;' . $objectname . '_fileid=' . $fileid
+			. '&amp;Itemid=' . $this->ct->Params->ItemId
+			. (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId)
+			. '&amp;fieldname=' . $objectname);
 
 		return '<div>
                     <div id="ct_fileuploader_' . $objectname . '"></div>
