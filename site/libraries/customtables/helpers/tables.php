@@ -271,7 +271,7 @@ class TableHelper
 				'COLUMN_NAME AS column_name',
 				'DATA_TYPE AS data_type',
 				'COLUMN_TYPE AS column_type',
-				'IF(COLUMN_TYPE LIKE "%unsigned", "YES", "NO") AS is_unsigned',
+				'COLUMN_IS_UNSIGNED',
 				'IS_NULLABLE AS is_nullable',
 				'COLUMN_DEFAULT AS column_default',
 				'COLUMN_COMMENT AS column_comment',

@@ -530,11 +530,12 @@ class Value
 			if ($value == '0000-00-00 00:00:00')
 				return '';
 
-			if (defined('WPINC')) {
-				return 'timeProcess not yet supported by WordPress version of the Custom Tables.';
-			}
-
-			return HTMLHelper::date($PHPDate);
+			if (defined('_JEXEC'))
+				return HTMLHelper::date($PHPDate);
+			elseif (defined('WPINC'))
+				return date_i18n('Y-m-d H:i:s', $PHPDate->getTimestamp());
+			else
+				return 'timeProcess not supported.';
 		}
 	}
 

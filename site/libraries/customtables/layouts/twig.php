@@ -561,8 +561,12 @@ class fieldObject
 			$Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
 			$value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
 
+			$this->ct->editFields[] = $this->field->fieldname;
+
+			if (!in_array($this->field->type, $this->ct->editFieldTypes))
+				$this->ct->editFieldTypes[] = $this->field->type;
+
 			if ($this->getEditFieldNamesOnly) {
-				$this->ct->editFields[] = $this->field->fieldname;
 				return '';
 			} else
 				return $Inputbox->render($value, $this->ct->Table->record);

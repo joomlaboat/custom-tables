@@ -49,10 +49,13 @@ class InputBox_date extends BaseInputBox
 				$format = '%Y-%m-%d';
 		}
 
-		if (defined('WPINC')) {
-			return 'The date field type is not yet supported by the WordPress version of the Custom Tables.';
-		} else {
+		if (defined('_JEXEC')) {
 			return HTMLHelper::calendar($value, $this->attributes['name'], $this->attributes['id'], $format, $this->attributes);
+		} elseif (defined('WPINC')) {
+			return '<input type="text" id="' . sanitize_title($this->attributes['id']) . '" name="' . sanitize_title($this->attributes['id']) . '">'
+				. '<script>jQuery(function($){ $("#' . sanitize_title($this->attributes['id']) . '").datepicker(); });</script>';
+		} else {
+			return 'Date Field Types is not supported.';
 		}
 	}
 

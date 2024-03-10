@@ -311,18 +311,18 @@ class database
 	 * @since 3.1.8
 	 */
 	public static function loadAssocList(string  $table, array $selects, MySQLWhereClause $whereClause,
-	                                     ?string $order = null, ?string $orderBy = null,
-	                                     ?int    $limit = null, ?int $limitStart = null,
-	                                     string  $groupBy = null, bool $returnQueryString = false)
+										 ?string $order = null, ?string $orderBy = null,
+										 ?int    $limit = null, ?int $limitStart = null,
+										 string  $groupBy = null, bool $returnQueryString = false)
 	{
 		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'ARRAY_A', $groupBy, $returnQueryString);
 	}
 
 	public static function loadObjectList(string  $table, array $selectsRaw, MySQLWhereClause $whereClause,
-	                                      ?string $order = null, ?string $orderBy = null,
-	                                      ?int    $limit = null, ?int $limitStart = null,
-	                                      string  $output_type = 'OBJECT', string $groupBy = null,
-	                                      bool    $returnQueryString = false)
+										  ?string $order = null, ?string $orderBy = null,
+										  ?int    $limit = null, ?int $limitStart = null,
+										  string  $output_type = 'OBJECT', string $groupBy = null,
+										  bool    $returnQueryString = false)
 	{
 		$db = self::getDB();
 
@@ -434,12 +434,8 @@ class database
 					$selects[] = 'CASE WHEN customfieldname!="" THEN customfieldname ELSE CONCAT("es_",fieldname) END AS realfieldname';
 				else
 					$selects[] = 'IF(customfieldname!="", customfieldname, CONCAT("es_",fieldname)) AS realfieldname';
-			} elseif ($select == 'REAL_TABLE_NAME') {
-				if ($serverType == 'postgresql') {
-					$selects[] = 'CASE WHEN customtablename!="" THEN customtablename ELSE CONCAT("#__customtables_table_", tablename) END AS realtablename';
-				} else {
-					$selects[] = 'IF((customtablename IS NOT NULL AND customtablename!=""), customtablename, CONCAT("#__customtables_table_", tablename)) AS realtablename';
-				}
+			} elseif ($select == 'COLUMN_IS_UNSIGNED') {
+				$selects[] = 'IF(COLUMN_TYPE LIKE "%unsigned", "YES", "NO") AS COLUMN_IS_UNSIGNED';
 			} elseif ($select == 'REAL_ID_FIELD_NAME') {
 				if ($serverType == 'postgresql') {
 					$selects[] = 'CASE WHEN customidfield!="" THEN customidfield ELSE "id" END AS realidfieldname';
@@ -493,17 +489,17 @@ class database
 	}
 
 	public static function loadRowList(string  $table, array $selects, MySQLWhereClause $whereClause,
-	                                   ?string $order = null, ?string $orderBy = null,
-	                                   ?int    $limit = null, ?int $limitStart = null,
-	                                   string  $groupBy = null, bool $returnQueryString = false)
+									   ?string $order = null, ?string $orderBy = null,
+									   ?int    $limit = null, ?int $limitStart = null,
+									   string  $groupBy = null, bool $returnQueryString = false)
 	{
 		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'ROW_LIST', $groupBy, $returnQueryString);
 	}
 
 	public static function loadColumn(string  $table, array $selects, MySQLWhereClause $whereClause,
-	                                  ?string $order = null, ?string $orderBy = null,
-	                                  ?int    $limit = null, ?int $limitStart = null,
-	                                  string  $groupBy = null, bool $returnQueryString = false)
+									  ?string $order = null, ?string $orderBy = null,
+									  ?int    $limit = null, ?int $limitStart = null,
+									  string  $groupBy = null, bool $returnQueryString = false)
 	{
 		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'COLUMN', $groupBy, $returnQueryString);
 	}
@@ -927,7 +923,7 @@ class database
 				COLUMN_NAME AS column_name,
 				DATA_TYPE AS data_type,
 				COLUMN_TYPE AS column_type,
-				IF(`COLUMN_TYPE` LIKE "%unsigned", "YES", "NO") AS is_unsigned,
+				COLUMN_IS_UNSIGNED,
 				IS_NULLABLE AS is_nullable,
 				COLUMN_DEFAULT AS column_default,
 				EXTRA AS extra FROM information_schema.COLUMNS WHERE TABLE_SCHEMA="' . $dbName . '" AND TABLE_NAME=' . $db->quote($realtablename);

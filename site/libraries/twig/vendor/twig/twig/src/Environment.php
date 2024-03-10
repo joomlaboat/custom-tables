@@ -22,6 +22,7 @@ use Twig\Extension\CoreExtension;
 use Twig\Extension\EscaperExtension;
 use Twig\Extension\ExtensionInterface;
 use Twig\Extension\OptimizerExtension;
+use Twig\Extension\YieldNotReadyExtension;
 use Twig\Loader\ArrayLoader;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\LoaderInterface;
@@ -40,11 +41,11 @@ use Twig\TokenParser\TokenParserInterface;
  */
 class Environment
 {
-    public const VERSION = '3.7.2-DEV';
-    public const VERSION_ID = 30702;
+    public const VERSION = '3.9.0-DEV';
+    public const VERSION_ID = 30900;
     public const MAJOR_VERSION = 3;
-    public const MINOR_VERSION = 7;
-    public const RELEASE_VERSION = 2;
+    public const MINOR_VERSION = 9;
+    public const RELEASE_VERSION = 0;
     public const EXTRA_VERSION = 'DEV';
 
     private $charset;
@@ -66,6 +67,8 @@ class Environment
     private $runtimeLoaders = [];
     private $runtimes = [];
     private $optionsHash;
+    /** @var bool */
+    private $useYield;
 
     /**
      * Constructor.
@@ -97,6 +100,10 @@ class Environment
      *  * optimizations: A flag that indicates which optimizations to apply
      *                   (default to -1 which means that all optimizations are enabled;
      *                   set it to 0 to disable).
+     *
+     *  * use_yield: Enable templates to exclusively use "yield" instead of "echo"
+     *               (default to "false", but switch it to "true" when possible
+     *               as this will be the only supported mode in Twig 4.0)
      */
     public function __construct(LoaderInterface $loader, $options = [])
     {
@@ -110,8 +117,10 @@ class Environment
             'cache' => false,
             'auto_reload' => null,
             'optimizations' => -1,
+            'use_yield' => false,
         ], $options);
 
+        $this->useYield = (bool) $options['use_yield'];
         $this->debug = (bool) $options['debug'];
         $this->setCharset($options['charset'] ?? 'UTF-8');
         $this->autoReload = null === $options['auto_reload'] ? $this->debug : (bool) $options['auto_reload'];
@@ -121,7 +130,18 @@ class Environment
 
         $this->addExtension(new CoreExtension());
         $this->addExtension(new EscaperExtension($options['autoescape']));
+        if (\PHP_VERSION_ID >= 80000) {
+            $this->addExtension(new YieldNotReadyExtension($this->useYield));
+        }
         $this->addExtension(new OptimizerExtension($options['optimizations']));
+    }
+
+    /**
+     * @internal
+     */
+    public function useYield(): bool
+    {
+        return $this->useYield;
     }
 
     /**
@@ -249,7 +269,6 @@ class Environment
      *
      *  * The cache key for the given template;
      *  * The currently enabled extensions;
-     *  * Whether the Twig C extension is available or not;
      *  * PHP version;
      *  * Twig version;
      *  * Options with what environment was created.
@@ -259,7 +278,7 @@ class Environment
      *
      * @internal
      */
-    public function getTemplateClass(string $name, int $index = null): string
+    public function getTemplateClass(string $name, ?int $index = null): string
     {
         $key = $this->getLoader()->getCacheKey($name).$this->optionsHash;
 
@@ -327,7 +346,7 @@ class Environment
      *
      * @internal
      */
-    public function loadTemplate(string $cls, string $name, int $index = null): Template
+    public function loadTemplate(string $cls, string $name, ?int $index = null): Template
     {
         $mainCls = $cls;
         if (null !== $index) {
@@ -382,7 +401,7 @@ class Environment
      * @throws LoaderError When the template cannot be found
      * @throws SyntaxError When an error occurred during compilation
      */
-    public function createTemplate(string $template, string $name = null): TemplateWrapper
+    public function createTemplate(string $template, ?string $name = null): TemplateWrapper
     {
         $hash = hash(\PHP_VERSION_ID < 80100 ? 'sha256' : 'xxh128', $template, false);
         if (null !== $name) {
@@ -438,7 +457,7 @@ class Environment
         $count = \count($names);
         foreach ($names as $name) {
             if ($name instanceof Template) {
-                return $name;
+                return new TemplateWrapper($this, $name);
             }
             if ($name instanceof TemplateWrapper) {
                 return $name;
@@ -536,7 +555,7 @@ class Environment
 
     public function setCharset(string $charset)
     {
-        if ('UTF8' === $charset = null === $charset ? null : strtoupper($charset)) {
+        if ('UTF8' === $charset = strtoupper($charset ?: '')) {
             // iconv on Windows requires "UTF-8" instead of "UTF8"
             $charset = 'UTF-8';
         }
@@ -835,6 +854,7 @@ class Environment
             self::VERSION,
             (int) $this->debug,
             (int) $this->strictVariables,
+            $this->useYield ? '1' : '0',
         ]);
     }
 }

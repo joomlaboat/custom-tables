@@ -29,239 +29,239 @@ use Twig\TwigTest;
  */
 abstract class IntegrationTestCase extends TestCase
 {
-	/**
-	 * @dataProvider getTests
-	 */
-	public function testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
-	{
-		$this->doIntegrationTest($file, $message, $condition, $templates, $exception, $outputs, $deprecation);
-	}
+    /**
+     * @return string
+     */
+    abstract protected function getFixturesDir();
 
-	protected function doIntegrationTest($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
-	{
-		if (!$outputs) {
-			$this->markTestSkipped('no tests to run');
-		}
+    /**
+     * @return RuntimeLoaderInterface[]
+     */
+    protected function getRuntimeLoaders()
+    {
+        return [];
+    }
 
-		if ($condition) {
-			$ret = null;
-			eval('$ret = ' . $condition . ';');
-			if (!$ret) {
-				$this->markTestSkipped($condition);
-			}
-		}
+    /**
+     * @return ExtensionInterface[]
+     */
+    protected function getExtensions()
+    {
+        return [];
+    }
 
-		$loader = new ArrayLoader($templates);
+    /**
+     * @return TwigFilter[]
+     */
+    protected function getTwigFilters()
+    {
+        return [];
+    }
 
-		foreach ($outputs as $i => $match) {
-			$config = array_merge([
-				'cache' => false,
-				'strict_variables' => true,
-			], $match[2] ? eval($match[2] . ';') : []);
-			$twig = new Environment($loader, $config);
-			$twig->addGlobal('global', 'global');
-			foreach ($this->getRuntimeLoaders() as $runtimeLoader) {
-				$twig->addRuntimeLoader($runtimeLoader);
-			}
+    /**
+     * @return TwigFunction[]
+     */
+    protected function getTwigFunctions()
+    {
+        return [];
+    }
 
-			foreach ($this->getExtensions() as $extension) {
-				$twig->addExtension($extension);
-			}
+    /**
+     * @return TwigTest[]
+     */
+    protected function getTwigTests()
+    {
+        return [];
+    }
 
-			foreach ($this->getTwigFilters() as $filter) {
-				$twig->addFilter($filter);
-			}
+    /**
+     * @dataProvider getTests
+     */
+    public function testIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
+    {
+        $this->doIntegrationTest($file, $message, $condition, $templates, $exception, $outputs, $deprecation);
+    }
 
-			foreach ($this->getTwigTests() as $test) {
-				$twig->addTest($test);
-			}
+    /**
+     * @dataProvider getLegacyTests
+     *
+     * @group legacy
+     */
+    public function testLegacyIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
+    {
+        $this->doIntegrationTest($file, $message, $condition, $templates, $exception, $outputs, $deprecation);
+    }
 
-			foreach ($this->getTwigFunctions() as $function) {
-				$twig->addFunction($function);
-			}
+    public function getTests($name, $legacyTests = false)
+    {
+        $fixturesDir = realpath($this->getFixturesDir());
+        $tests = [];
 
-			// avoid using the same PHP class name for different cases
-			$p = new \ReflectionProperty($twig, 'templateClassPrefix');
-			$p->setAccessible(true);
-			$p->setValue($twig, '__TwigTemplate_' . hash(\PHP_VERSION_ID < 80100 ? 'sha256' : 'xxh128', uniqid(mt_rand(), true), false) . '_');
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($fixturesDir), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
+            if (!preg_match('/\.test$/', $file)) {
+                continue;
+            }
 
-			$deprecations = [];
-			try {
-				$prevHandler = set_error_handler(function ($type, $msg, $file, $line, $context = []) use (&$deprecations, &$prevHandler) {
-					if (\E_USER_DEPRECATED === $type) {
-						$deprecations[] = $msg;
+            if ($legacyTests xor str_contains($file->getRealpath(), '.legacy.test')) {
+                continue;
+            }
 
-						return true;
-					}
+            $test = file_get_contents($file->getRealpath());
 
-					return $prevHandler ? $prevHandler($type, $msg, $file, $line, $context) : false;
-				});
+            if (preg_match('/--TEST--\s*(.*?)\s*(?:--CONDITION--\s*(.*))?\s*(?:--DEPRECATION--\s*(.*?))?\s*((?:--TEMPLATE(?:\(.*?\))?--(?:.*?))+)\s*(?:--DATA--\s*(.*))?\s*--EXCEPTION--\s*(.*)/sx', $test, $match)) {
+                $message = $match[1];
+                $condition = $match[2];
+                $deprecation = $match[3];
+                $templates = self::parseTemplates($match[4]);
+                $exception = $match[6];
+                $outputs = [[null, $match[5], null, '']];
+            } elseif (preg_match('/--TEST--\s*(.*?)\s*(?:--CONDITION--\s*(.*))?\s*(?:--DEPRECATION--\s*(.*?))?\s*((?:--TEMPLATE(?:\(.*?\))?--(?:.*?))+)--DATA--.*?--EXPECT--.*/s', $test, $match)) {
+                $message = $match[1];
+                $condition = $match[2];
+                $deprecation = $match[3];
+                $templates = self::parseTemplates($match[4]);
+                $exception = false;
+                preg_match_all('/--DATA--(.*?)(?:--CONFIG--(.*?))?--EXPECT--(.*?)(?=\-\-DATA\-\-|$)/s', $test, $outputs, \PREG_SET_ORDER);
+            } else {
+                throw new \InvalidArgumentException(sprintf('Test "%s" is not valid.', str_replace($fixturesDir.'/', '', $file)));
+            }
 
-				$template = $twig->load('index.twig');
-			} catch (\Exception $e) {
-				if (false !== $exception) {
-					$message = $e->getMessage();
-					$this->assertSame(trim($exception), trim(sprintf('%s: %s', \get_class($e), $message)));
-					$last = substr($message, \strlen($message) - 1);
-					$this->assertTrue('.' === $last || '?' === $last, 'Exception message must end with a dot or a question mark.');
+            $tests[] = [str_replace($fixturesDir.'/', '', $file), $message, $condition, $templates, $exception, $outputs, $deprecation];
+        }
 
-					return;
-				}
+        if ($legacyTests && empty($tests)) {
+            // add a dummy test to avoid a PHPUnit message
+            return [['not', '-', '', [], '', []]];
+        }
 
-				throw new Error(sprintf('%s: %s', \get_class($e), $e->getMessage()), -1, null, $e);
-			} finally {
-				restore_error_handler();
-			}
+        return $tests;
+    }
 
-			$this->assertSame($deprecation, implode("\n", $deprecations));
+    public function getLegacyTests()
+    {
+        return $this->getTests('testLegacyIntegration', true);
+    }
 
-			try {
-				$output = trim($template->render(eval($match[1] . ';')), "\n ");
-			} catch (\Exception $e) {
-				if (false !== $exception) {
-					$this->assertSame(trim($exception), trim(sprintf('%s: %s', \get_class($e), $e->getMessage())));
+    protected function doIntegrationTest($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
+    {
+        if (!$outputs) {
+            $this->markTestSkipped('no tests to run');
+        }
 
-					return;
-				}
+        if ($condition) {
+            $ret = '';
+            eval('$ret = '.$condition.';');
+            if (!$ret) {
+                $this->markTestSkipped($condition);
+            }
+        }
 
-				$e = new Error(sprintf('%s: %s', \get_class($e), $e->getMessage()), -1, null, $e);
+        $loader = new ArrayLoader($templates);
 
-				$output = trim(sprintf('%s: %s', \get_class($e), $e->getMessage()));
-			}
+        foreach ($outputs as $i => $match) {
+            $config = array_merge([
+                'cache' => false,
+                'strict_variables' => true,
+            ], $match[2] ? eval($match[2].';') : []);
+            $twig = new Environment($loader, $config);
+            $twig->addGlobal('global', 'global');
+            foreach ($this->getRuntimeLoaders() as $runtimeLoader) {
+                $twig->addRuntimeLoader($runtimeLoader);
+            }
 
-			if (false !== $exception) {
-				list($class) = explode(':', $exception);
-				$constraintClass = class_exists('PHPUnit\Framework\Constraint\Exception') ? 'PHPUnit\Framework\Constraint\Exception' : 'PHPUnit_Framework_Constraint_Exception';
-				$this->assertThat(null, new $constraintClass($class));
-			}
+            foreach ($this->getExtensions() as $extension) {
+                $twig->addExtension($extension);
+            }
 
-			$expected = trim($match[3], "\n ");
+            foreach ($this->getTwigFilters() as $filter) {
+                $twig->addFilter($filter);
+            }
 
-			if ($expected !== $output) {
-				printf("Compiled templates that failed on case %d:\n", $i + 1);
+            foreach ($this->getTwigTests() as $test) {
+                $twig->addTest($test);
+            }
 
-				foreach (array_keys($templates) as $name) {
-					echo "Template: $name\n";
-					echo $twig->compile($twig->parse($twig->tokenize($twig->getLoader()->getSourceContext($name))));
-				}
-			}
-			$this->assertEquals($expected, $output, $message . ' (in ' . $file . ')');
-		}
-	}
+            foreach ($this->getTwigFunctions() as $function) {
+                $twig->addFunction($function);
+            }
 
-	/**
-	 * @return RuntimeLoaderInterface[]
-	 */
-	protected function getRuntimeLoaders()
-	{
-		return [];
-	}
+            // avoid using the same PHP class name for different cases
+            $p = new \ReflectionProperty($twig, 'templateClassPrefix');
+            $p->setAccessible(true);
+            $p->setValue($twig, '__TwigTemplate_'.hash(\PHP_VERSION_ID < 80100 ? 'sha256' : 'xxh128', uniqid(mt_rand(), true), false).'_');
 
-	/**
-	 * @return ExtensionInterface[]
-	 */
-	protected function getExtensions()
-	{
-		return [];
-	}
+            $deprecations = [];
+            try {
+                $prevHandler = set_error_handler(function ($type, $msg, $file, $line, $context = []) use (&$deprecations, &$prevHandler) {
+                    if (\E_USER_DEPRECATED === $type) {
+                        $deprecations[] = $msg;
 
-	/**
-	 * @return TwigFilter[]
-	 */
-	protected function getTwigFilters()
-	{
-		return [];
-	}
+                        return true;
+                    }
 
-	/**
-	 * @return TwigTest[]
-	 */
-	protected function getTwigTests()
-	{
-		return [];
-	}
+                    return $prevHandler ? $prevHandler($type, $msg, $file, $line, $context) : false;
+                });
 
-	/**
-	 * @return TwigFunction[]
-	 */
-	protected function getTwigFunctions()
-	{
-		return [];
-	}
+                $template = $twig->load('index.twig');
+            } catch (\Exception $e) {
+                if (false !== $exception) {
+                    $message = $e->getMessage();
+                    $this->assertSame(trim($exception), trim(sprintf('%s: %s', \get_class($e), $message)));
+                    $last = substr($message, \strlen($message) - 1);
+                    $this->assertTrue('.' === $last || '?' === $last, 'Exception message must end with a dot or a question mark.');
 
-	/**
-	 * @dataProvider getLegacyTests
-	 *
-	 * @group legacy
-	 */
-	public function testLegacyIntegration($file, $message, $condition, $templates, $exception, $outputs, $deprecation = '')
-	{
-		$this->doIntegrationTest($file, $message, $condition, $templates, $exception, $outputs, $deprecation);
-	}
+                    return;
+                }
 
-	public function getLegacyTests()
-	{
-		return $this->getTests('testLegacyIntegration', true);
-	}
+                throw new Error(sprintf('%s: %s', \get_class($e), $e->getMessage()), -1, null, $e);
+            } finally {
+                restore_error_handler();
+            }
 
-	public function getTests($name, $legacyTests = false)
-	{
-		$fixturesDir = realpath($this->getFixturesDir());
-		$tests = [];
+            $this->assertSame($deprecation, implode("\n", $deprecations));
 
-		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($fixturesDir), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-			if (!preg_match('/\.test$/', $file)) {
-				continue;
-			}
+            try {
+                $output = trim($template->render(eval($match[1].';')), "\n ");
+            } catch (\Exception $e) {
+                if (false !== $exception) {
+                    $this->assertSame(trim($exception), trim(sprintf('%s: %s', \get_class($e), $e->getMessage())));
 
-			if ($legacyTests xor str_contains($file->getRealpath(), '.legacy.test')) {
-				continue;
-			}
+                    return;
+                }
 
-			$test = file_get_contents($file->getRealpath());
+                $e = new Error(sprintf('%s: %s', \get_class($e), $e->getMessage()), -1, null, $e);
 
-			if (preg_match('/--TEST--\s*(.*?)\s*(?:--CONDITION--\s*(.*))?\s*(?:--DEPRECATION--\s*(.*?))?\s*((?:--TEMPLATE(?:\(.*?\))?--(?:.*?))+)\s*(?:--DATA--\s*(.*))?\s*--EXCEPTION--\s*(.*)/sx', $test, $match)) {
-				$message = $match[1];
-				$condition = $match[2];
-				$deprecation = $match[3];
-				$templates = self::parseTemplates($match[4]);
-				$exception = $match[6];
-				$outputs = [[null, $match[5], null, '']];
-			} elseif (preg_match('/--TEST--\s*(.*?)\s*(?:--CONDITION--\s*(.*))?\s*(?:--DEPRECATION--\s*(.*?))?\s*((?:--TEMPLATE(?:\(.*?\))?--(?:.*?))+)--DATA--.*?--EXPECT--.*/s', $test, $match)) {
-				$message = $match[1];
-				$condition = $match[2];
-				$deprecation = $match[3];
-				$templates = self::parseTemplates($match[4]);
-				$exception = false;
-				preg_match_all('/--DATA--(.*?)(?:--CONFIG--(.*?))?--EXPECT--(.*?)(?=\-\-DATA\-\-|$)/s', $test, $outputs, \PREG_SET_ORDER);
-			} else {
-				throw new \InvalidArgumentException(sprintf('Test "%s" is not valid.', str_replace($fixturesDir . '/', '', $file)));
-			}
+                $output = trim(sprintf('%s: %s', \get_class($e), $e->getMessage()));
+            }
 
-			$tests[] = [str_replace($fixturesDir . '/', '', $file), $message, $condition, $templates, $exception, $outputs, $deprecation];
-		}
+            if (false !== $exception) {
+                [$class] = explode(':', $exception);
+                $constraintClass = class_exists('PHPUnit\Framework\Constraint\Exception') ? 'PHPUnit\Framework\Constraint\Exception' : 'PHPUnit_Framework_Constraint_Exception';
+                $this->assertThat(null, new $constraintClass($class));
+            }
 
-		if ($legacyTests && empty($tests)) {
-			// add a dummy test to avoid a PHPUnit message
-			return [['not', '-', '', [], '', []]];
-		}
+            $expected = trim($match[3], "\n ");
 
-		return $tests;
-	}
+            if ($expected !== $output) {
+                printf("Compiled templates that failed on case %d:\n", $i + 1);
 
-	/**
-	 * @return string
-	 */
-	abstract protected function getFixturesDir();
+                foreach (array_keys($templates) as $name) {
+                    echo "Template: $name\n";
+                    echo $twig->compile($twig->parse($twig->tokenize($twig->getLoader()->getSourceContext($name))));
+                }
+            }
+            $this->assertEquals($expected, $output, $message.' (in '.$file.')');
+        }
+    }
 
-	protected static function parseTemplates($test)
-	{
-		$templates = [];
-		preg_match_all('/--TEMPLATE(?:\((.*?)\))?--(.*?)(?=\-\-TEMPLATE|$)/s', $test, $matches, \PREG_SET_ORDER);
-		foreach ($matches as $match) {
-			$templates[$match[1] ?: 'index.twig'] = $match[2];
-		}
+    protected static function parseTemplates($test)
+    {
+        $templates = [];
+        preg_match_all('/--TEMPLATE(?:\((.*?)\))?--(.*?)(?=\-\-TEMPLATE|$)/s', $test, $matches, \PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            $templates[$match[1] ?: 'index.twig'] = $match[2];
+        }
 
-		return $templates;
-	}
+        return $templates;
+    }
 }

@@ -23,9 +23,7 @@ class tagProcessor_Edit
 		$ct_html = new Twig_Html_Tags($ct, false);
 
 		tagProcessor_Edit::process_captcha($ct_html, $pageLayout); //Converted to Twig. Original replaced.
-
 		$buttons = tagProcessor_Edit::process_button($ct_html, $pageLayout);
-
 		$fields = tagProcessor_Edit::process_fields($ct, $pageLayout, $row, $getEditFieldNamesOnly); //Converted to Twig. Original replaced.
 		return ['fields' => $fields, 'buttons' => $buttons];
 	}
@@ -108,8 +106,13 @@ class tagProcessor_Edit
 			if (count($entries) > 0) {
 				for ($i = 0; $i < count($entries); $i++) {
 
+					$ct->editFields[] = $fieldrow['fieldname'];
+
+					if (!in_array($fieldrow['type'], $ct->editFieldTypes))
+						$ct->editFieldTypes[] = $fieldrow['type'];
+
 					if ($getEditFieldNamesOnly) {
-						$ct->editFields[] = $fieldrow['fieldname'];
+
 						$newReplaceItCode = '';
 					} else {
 						$option_list = CTMiscHelper::csv_explode(',', $options[$i]);

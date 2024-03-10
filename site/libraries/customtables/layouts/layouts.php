@@ -490,6 +490,8 @@ class Layouts
 			if ($this->ct->LayoutVariables['captcha'])
 				$output['captcha'] = true;
 
+			$output['fieldtypes'] = $this->ct->editFieldTypes;
+
 		} elseif ($this->layoutType == 4) {
 			$output['html'] = $this->renderDetails();
 		} else

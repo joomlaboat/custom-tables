@@ -181,7 +181,7 @@ class Fields
 			$selects = [
 				'COLUMN_NAME AS column_name',
 				'COLUMN_TYPE AS column_type',
-				'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned',
+				'COLUMN_IS_UNSIGNED',
 				'IS_NULLABLE AS is_nullable',
 				'COLUMN_DEFAULT AS column_default',
 				'EXTRA AS extra'
@@ -1659,7 +1659,7 @@ class Fields
 		}
 
 		$newData['is_nullable'] = $rawDataType['is_nullable'] == 'YES';
-		$newData['is_unsigned'] = $rawDataType['is_unsigned'] == 'YES';
+		$newData['is_unsigned'] = $rawDataType['COLUMN_IS_UNSIGNED'] == 'YES';
 		$newData['default'] = $rawDataType['column_default'] ?? null;
 		$newData['autoincrement'] = ($rawDataType['extra'] ?? '') == 'auto_increment';
 

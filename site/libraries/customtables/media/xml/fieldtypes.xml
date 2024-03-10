@@ -253,14 +253,15 @@
         </params>
     </type>
 
-    <type ct_name="date" label="Date" description="Date ot Date/Time Picker" priority="1" wordpress="false" order="8">
+    <type ct_name="date" label="Date" description="Date ot Date/Time Picker" priority="1" wordpress="true" order="8">
         <params>
             <param name="type" example="date" label="Type" description="Date or Date / Time"
                    default="date" type="list">
                 <option value="date" label="Date Only"
-                        description="A date, supported range is 1000-01-01 to 9999-12-31"/>
+                        description="A date, supported range is 1000-01-01 to 9999-12-31" wordpress="true"/>
                 <option value="datetime" label="Date and Time"
-                        description="A date and time combination, supported range is 1000-01-01 00:00:00 to 9999-12-31 23:59:59"/>
+                        description="A date and time combination, supported range is 1000-01-01 00:00:00 to 9999-12-31 23:59:59"
+                        wordpress="true"/>
             </param>
         </params>
 

@@ -35,6 +35,7 @@ class CT
 	var int $LimitStart;
 	var bool $isEditForm;
 	var array $editFields;
+	var array $editFieldTypes;
 	var array $LayoutVariables;
 	var array $errors;
 	var array $messages;
@@ -62,6 +63,7 @@ class CT
 		$this->isEditForm = false;
 		$this->LayoutVariables = [];
 		$this->editFields = [];
+		$this->editFieldTypes = [];
 
 		$this->Limit = 0;
 		$this->LimitStart = 0;
@@ -409,11 +411,15 @@ class CT
 
 		database::deleteRecord($this->Table->realtablename, $this->Table->realidfieldname, $listing_id);
 
-		$this->Table->saveLog($listing_id, 5);
+		if ($this->Env->advancedTagProcessor)
+			$this->Table->saveLog($listing_id, 5);
+		
 		$new_row = array();
 
-		if ($this->Env->advancedTagProcessor)
-			CleanExecute::executeCustomPHPfile($this->Table->tablerow['customphp'], $new_row, $row);
+		if (defined('_JEXEC')) {
+			if ($this->Env->advancedTagProcessor)
+				CleanExecute::executeCustomPHPfile($this->Table->tablerow['customphp'], $new_row, $row);
+		}
 
 		return 1;
 	}
