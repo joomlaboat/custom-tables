@@ -732,7 +732,9 @@ class Fields
 			}
 
 			$data['type'] = common::inputPostCmd('type', null, 'create-edit-field');
-			$data['typeparams'] = common::inputPostString('typeparams', null, 'create-edit-field');
+
+			$typeParams = common::inputPostString('typeparams', null, 'create-edit-field');
+			$data['typeparams'] = $typeParams !== null ? str_replace('\"', '"', $typeParams) : null;
 			$data['isrequired'] = common::inputPostInt('isrequired', 0, 'create-edit-field');
 			$data['defaultvalue'] = common::inputPostString('defaultvalue', null, 'create-edit-field');
 			$data['allowordering'] = common::inputPostInt('allowordering', 1, 'create-edit-field');
