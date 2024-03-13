@@ -50,41 +50,66 @@ class MySQLWhereClause
 		}
 	}
 
-	public function addCondition($fieldName, $fieldValue, $operator = '=', $sanitized = false): void
+	/**
+	 * @throws Exception
+	 * @since 3.2.8
+	 */
+	public function addCondition($fieldName, $fieldValue, string $operator = '=', bool $sanitized = false, ?string $join_realtablename = null, ?string $join_real_id_field_name = null, ?string $join_real_field_name = null): void
 	{
 		$operator = strtoupper($operator);
 
-		$possibleOperators = ['=', '>', '<', '!=', '>=', '<=', 'LIKE', 'NULL', 'NOT NULL', 'INSTR', 'NOT INSTR', 'IN'];
+		$possibleOperators = ['=', '>', '<', '!=', '>=', '<=', 'LIKE', 'NULL', 'NOT NULL', 'INSTR', 'NOT INSTR',
+			'IN',
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_EQUAL',
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_EQUAL',
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_CONTAIN',
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_CONTAIN'
+		];
 
 		if (!in_array($operator, $possibleOperators)) {
-			throw new \mysql_xdevapi\Exception('SQL Where Clause operator "' . common::ctStripTags($operator) . '" not recognized.');
+			throw new Exception('SQL Where Clause operator "' . common::ctStripTags($operator) . '" not recognized.');
 		}
 
 		$this->conditions[] = [
 			'field' => $fieldName,
 			'value' => $fieldValue,
 			'operator' => $operator,
-			'sanitized' => $sanitized
+			'sanitized' => $sanitized,
+			'join_realtablename' => $join_realtablename,
+			'join_real_id_field_name' => $join_real_id_field_name,
+			'join_real_field_name' => $join_real_field_name
 		];
 	}
 
-	public function addOrCondition($fieldName, $fieldValue, $operator = '=', $sanitized = false): void
+	/**
+	 * @throws Exception
+	 * @since 3.2.8
+	 */
+	public function addOrCondition($fieldName, $fieldValue, string $operator = '=', bool $sanitized = false, ?string $join_realtablename = null, ?string $join_real_id_field_name = null, ?string $join_real_field_name = null): void
 	{
 		$operator = strtoupper($operator);
 
-		$possibleOperators = ['=', '>', '<', '!=', '>=', '<=', 'LIKE', 'NULL', 'NOT NULL', 'INSTR', 'NOT INSTR', 'IN'];
+		$possibleOperators = ['=', '>', '<', '!=', '>=', '<=', 'LIKE', 'NULL', 'NOT NULL', 'INSTR', 'NOT INSTR',
+			'IN',
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_EQUAL',
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_EQUAL',
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_CONTAIN',
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_CONTAIN'
+		];
 
 		if (!in_array($operator, $possibleOperators)) {
-			throw new \mysql_xdevapi\Exception('SQL Where Clause operator "' . common::ctStripTags($operator) . '" not recognized.');
+			throw new Exception('SQL Where Clause operator "' . common::ctStripTags($operator) . '" not recognized.');
 		}
 
 		$this->orConditions[] = [
 			'field' => $fieldName,
 			'value' => $fieldValue,
 			'operator' => $operator,
-			'sanitized' => $sanitized
+			'sanitized' => $sanitized,
+			'join_realtablename' => $join_realtablename,
+			'join_real_id_field_name' => $join_real_id_field_name,
+			'join_real_field_name' => $join_real_field_name
 		];
-
 	}
 
 	public function addNestedCondition(MySQLWhereClause $condition): void
@@ -148,7 +173,6 @@ class MySQLWhereClause
 		$where = [];
 
 		foreach ($conditions as $condition) {
-
 			if ($condition['value'] === null) {
 				$where [] = $condition['field'];
 			} elseif ($condition['operator'] == 'NULL') {
@@ -181,6 +205,25 @@ class MySQLWhereClause
 				} else {
 					$where [] = $db->quote($condition['field']) . ' IN ' . $condition['value'];
 				}
+
+			} elseif ($condition['operator'] == 'MULTI_FIELD_SEARCH_TABLEJOINLIST_EQUAL') {
+				$where [] = '(SELECT join_table.' . $condition['join_real_id_field_name']
+					. ' FROM ' . $condition['join_realtablename'] . ' AS join_table WHERE'
+					. ' INSTR(' . $condition['field'] . ',CONCAT(",",join_table.' . $condition['join_real_id_field_name'] . ',",")) AND ' . $condition['join_real_field_name'] . '=' . $db->quote($condition['value']) . ' LIMIT 1) IS NOT NULL';
+
+			} elseif ($condition['operator'] == 'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_EQUAL') {
+				$where [] = '(SELECT join_table.' . $condition['join_real_id_field_name']
+					. ' FROM ' . $condition['join_realtablename'] . ' AS join_table WHERE'
+					. ' INSTR(' . $condition['field'] . ',CONCAT(",",join_table.' . $condition['join_real_id_field_name'] . ',",")) AND ' . $condition['join_real_field_name'] . '!=' . $db->quote(['value']) . ' LIMIT 1) IS NOT NULL';
+
+			} elseif ($condition['operator'] == 'MULTI_FIELD_SEARCH_TABLEJOINLIST_CONTAIN') {
+				$where [] = '(SELECT join_table.' . $condition['join_real_id_field_name']
+					. ' FROM ' . $condition['join_realtablename'] . ' AS join_table WHERE'
+					. ' INSTR(' . $condition['field'] . ',CONCAT(",",join_table.' . $condition['join_real_id_field_name'] . ',",")) AND INSTR(' . $condition['join_real_field_name'] . ',' . $db->quote($condition['value']) . ') LIMIT 1) IS NOT NULL';
+			} elseif ($condition['operator'] == 'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_CONTAIN') {
+				$where [] = '(SELECT join_table.' . $condition['join_real_id_field_name']
+					. ' FROM ' . $condition['join_realtablename'] . ' AS join_table WHERE'
+					. ' INSTR(' . $condition['field'] . ',CONCAT(",",join_table.' . $condition['join_real_id_field_name'] . ',",")) AND !INSTR(' . $condition['join_real_field_name'] . ',' . $db->quote($condition['value']) . ') LIMIT 1) IS NOT NULL';
 			} else {
 				if ($condition['sanitized']) {
 					$where [] = $condition['field'] . ' ' . $condition['operator'] . ' ' . $condition['value'];

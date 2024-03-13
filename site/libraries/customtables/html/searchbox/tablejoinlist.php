@@ -32,13 +32,13 @@ class Search_tablejoinlist extends BaseSearch
 		$result = '';
 
 		if ($this->field->params === null or count($this->field->params) < 1)
-			$result .= 'table not specified';
+			return 'Table Join List search: Table not specified.';
 
 		if (count($this->field->params) < 2)
-			$result .= 'field or layout not specified';
+			return 'Field or layout not specified';
 
 		if (count($this->field->params) < 3)
-			$result .= 'selector not specified';
+			return 'Selector not specified';
 
 		$esr_table = $this->field->params[0];
 		$esr_field = $this->field->params[1];

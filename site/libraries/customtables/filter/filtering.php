@@ -209,11 +209,11 @@ class Filtering
 							}
 
 							if (!is_null($fieldrow) and array_key_exists('type', $fieldrow)) {
-								$w = $this->processSingleFieldWhereSyntax($fieldrow, $comparison_operator, $fieldname, $value, $field_extra_param);
 
-								if ($w->hasConditions()) {
+								$w = $this->processSingleFieldWhereSyntax($fieldrow, $comparison_operator, $fieldname, $value, $field_extra_param, count($fieldNames) > 1);
+
+								if ($w->hasConditions())
 									$whereClauseTemp->addNestedOrCondition($w);
-								}
 							}
 						}
 					}
@@ -236,7 +236,7 @@ class Filtering
 	 * @throws Exception
 	 * @since 3.1.9
 	 */
-	function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname_, string $value, string $field_extra_param = ''): MySQLWhereClause
+	function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname_, string $value, string $field_extra_param = '', bool $asString = false): MySQLWhereClause
 	{
 		if (!array_key_exists('type', $fieldrow)) {
 			throw new Exception('processSingleFieldWhereSyntax: Field not set');
@@ -366,18 +366,8 @@ class Filtering
 					if (count($typeParamsArray) < 3)
 						$filterTitle .= 'selector not specified';
 
-					//$esr_table = $typeParamsArray[0];
 					$esr_table_full = $this->ct->Table->realtablename;
-					//$esr_field = $typeParamsArray[1];
 					$esr_selector = $typeParamsArray[2];
-
-					/*
-					if (count($typeParamsArray) > 3)
-						$esr_filter = $typeParamsArray[3];
-					else
-						$esr_filter = '';
-					*/
-
 					$filterTitle .= Value_tablejoinlist::renderTableJoinListValue($field, $vL);
 
 					$opt_title = '';
@@ -399,21 +389,74 @@ class Filtering
 					$valueNew = $this->getInt_vL($vL);
 
 					if ($valueNew !== '') {
+						if ($asString) {
+							$tempCT = new CT();
+							if ($typeParamsArray[0] != '') {
+								$tempTableRow = TableHelper::getTableRowByNameAssoc($typeParamsArray[0]);// getTableRowByIDAssoc($this->tableid);
+								if (!is_array($tempTableRow)) {
+									throw new Exception('processSingleFieldWhereSyntax: Table not found.');
+								} else {
+									$tempCT->setTable($tempTableRow, null, false);
+								}
+							} else {
+								throw new Exception('processSingleFieldWhereSyntax: Table not set.');
+							}
 
-						if ($comparison_operator == '!=') {
-							$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
-							$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'NOT INSTR');
-						} elseif ($comparison_operator == '!==') {
-							$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
-							$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', '!=');//exact not value
-						} elseif ($comparison_operator == '=') {
-							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
-							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'INSTR');
-						} elseif ($comparison_operator == '==') {
-							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
-							$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',');//exact value
-						} else
-							$opt_title = common::translate('COM_CUSTOMTABLES_UNKNOWN_OPERATION');
+							$joinRealFieldName = null;
+							foreach ($tempCT->Table->fields as $field) {
+								if ($field['fieldname'] == $typeParamsArray[1]) {
+									$joinRealFieldName = $field['realfieldname'];
+									break;
+								}
+							}
+
+							if ($joinRealFieldName === null)
+								throw new Exception('processSingleFieldWhereSyntax: field not found.');
+
+							$operator = null;
+
+							if ($comparison_operator == '!=')
+								$operator = 'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_CONTAIN';
+							elseif ($comparison_operator == '!==')
+								$operator = 'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_EQUAL';
+							elseif ($comparison_operator == '=')
+								$operator = 'MULTI_FIELD_SEARCH_TABLEJOINLIST_CONTAIN';
+							elseif ($comparison_operator == '==')
+								$operator = 'MULTI_FIELD_SEARCH_TABLEJOINLIST_EQUAL';
+							else
+								$opt_title = common::translate('COM_CUSTOMTABLES_UNKNOWN_OPERATION');
+
+							if ($operator !== null) {
+								$whereClause->addOrCondition(
+									$esr_table_full . '.' . $fieldrow['realfieldname'],
+									$valueNew,
+									$operator,
+									false,
+									$tempCT->Table->realtablename,
+									$tempCT->Table->realidfieldname,
+									$joinRealFieldName
+								);
+							}
+						} else {
+							if ($comparison_operator == '!=') {
+								//Does not contain
+								$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
+								$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'NOT INSTR');
+							} elseif ($comparison_operator == '!==') {
+								//Not equal
+								$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
+								$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', '!=');//exact not value
+							} elseif ($comparison_operator == '=') {
+								//Contain
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'INSTR');
+							} elseif ($comparison_operator == '==') {
+								//Equal
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',');//exact value
+							} else
+								$opt_title = common::translate('COM_CUSTOMTABLES_UNKNOWN_OPERATION');
+						}
 
 						if ($comparison_operator == '!=' or $comparison_operator == '=') {
 							$this->PathValue[] = $fieldrow['fieldtitle'

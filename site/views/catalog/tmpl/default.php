@@ -56,7 +56,7 @@ try {
 	echo 'Error during the Catalog rendering: ' . $e->getMessage();
 }
 
-if (common::inputGetInt('clean', 0) == 1 and common::inputGetCmd('listing_id') !== null)
+if (common::inputGetInt('clean', 0) == 1 or common::inputGetCmd('listing_id') !== null)
 	die;//Clean exit, single record loaded.
 
 if (count($this->catalog->ct->errors)) {

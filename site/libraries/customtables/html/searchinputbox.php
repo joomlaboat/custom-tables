@@ -32,7 +32,7 @@ class SearchInputBox
 	 * @since 3.2.1
 	 */
 	function renderFieldBox(string  $prefix, string $objName, array $fieldrow, string $cssclass, $index, string $where, string $whereList,
-	                        ?string $onchange, ?string $field_title = null): string
+							?string $onchange, ?string $field_title = null): string
 	{
 		$this->field = new Field($this->ct, $fieldrow);
 		$place_holder = $this->field->title;
@@ -92,7 +92,11 @@ class SearchInputBox
 			'email' => 'string'
 		];
 
-		$fieldTypeShort = str_replace('_', '', $this->field->type);
+		if (isset($this->field->fieldrow['fields']) and is_array($this->field->fieldrow['fields']) and count($this->field->fieldrow['fields']) > 1)
+			$fieldTypeShort = 'string';
+		else
+			$fieldTypeShort = str_replace('_', '', $this->field->type);
+
 		if (key_exists($fieldTypeShort, $aliasMap))
 			$fieldTypeShort = $aliasMap[$fieldTypeShort];
 
