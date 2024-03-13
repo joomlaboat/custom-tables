@@ -42,7 +42,7 @@ class InputBox_imagegallery extends BaseInputBox
 
 			if (count($imageSRCList) > 0) {
 
-				$result .= '<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\'' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/bg.png\');">
+				$result .= '<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/bg.png);">
 
 		<table><tbody><tr>';
 

@@ -17,9 +17,12 @@ use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Details;
 use CustomTables\MySQLWhereClause;
+use CustomTables\Params;
+use CustomTables\TableHelper;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Router\Route;
 
 class CustomTablesViewLog extends HtmlView
 {
@@ -42,11 +45,8 @@ class CustomTablesViewLog extends HtmlView
 		$this->ct = new CT;
 		$user = new CTUser();
 
-		$this->action = common::inputPostString('action', '');
-		if ($this->action == '')
-			$this->action = -1;
-
-		$this->userid = common::inputGetInt('user', $user->id);
+		$this->action = common::inputGetInt('action', 0);
+		$this->userid = common::inputGetInt('user', 0);//$user->id
 		$this->tableId = common::inputGetInt('table', 0);
 
 		//Is user super Admin?
@@ -109,8 +109,8 @@ class CustomTablesViewLog extends HtmlView
 	function ActionFilter($action): string
 	{
 		$actions = ['New', 'Edit', 'Publish', 'Unpublish', 'Delete', 'Image Uploaded', 'Image Deleted', 'File Uploaded', 'File Deleted', 'Refreshed'];
-		$result = '<select onchange="ActionFilterChanged(this)">';
-		$result .= '<option value="-1" ' . ($action == -1 ? 'selected="SELECTED"' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
+		$result = '<select class="form-select" onchange="ActionFilterChanged(this)">';
+		$result .= '<option value="0" ' . ($action == -1 ? 'selected="SELECTED"' : '') . '>' . common::translate('COM_CUSTOMTABLES_SELECT_ACTION') . '</option>';
 
 		$v = 1;
 		foreach ($actions as $a) {
@@ -129,13 +129,11 @@ class CustomTablesViewLog extends HtmlView
 	{
 		$from = '#__customtables_log';
 		$from .= ' INNER JOIN #__users ON #__users.id=#__customtables_log.userid';
-
 		$whereClause = new MySQLWhereClause();
-
 		$rows = database::loadAssocList($from, ['#__users.id AS id', '#__users.name AS name'], $whereClause, 'name', null, null, null, '#__users.id');
 
-		$result = '<select onchange="UserFilterChanged(this)">';
-		$result .= '<option value="0" ' . ($userid === null ? 'selected="SELECTED"' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
+		$result = '<select class="form-select" onchange="UserFilterChanged(this)">';
+		$result .= '<option value="0" ' . ($userid === null ? 'selected="SELECTED"' : '') . '>' . common::translate('COM_CUSTOMTABLES_SELECT_USER') . '</option>';
 
 		foreach ($rows as $row)
 			$result .= '<option value="' . $row['id'] . '" ' . ($userid == $row['id'] ? 'selected="SELECTED"' : '') . '>' . $row['name'] . '</option>';
@@ -151,11 +149,10 @@ class CustomTablesViewLog extends HtmlView
 	function getTables($tableId): string
 	{
 		$whereClause = new MySQLWhereClause();
-
 		$rows = database::loadAssocList('#__customtables_tables', ['id', 'tablename'], $whereClause, 'tablename');
 
-		$result = '<select onchange="TableFilterChanged(this)">';
-		$result .= '<option value="0" ' . ($tableId == 0 ? 'selected="SELECTED"' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
+		$result = '<select class="form-select" onchange="TableFilterChanged(this)">';
+		$result .= '<option value="0" ' . ($tableId == 0 ? 'selected="SELECTED"' : '') . '>' . common::translate('COM_CUSTOMTABLES_SELECT_TABLE') . '</option>';
 
 		foreach ($rows as $row) {
 			$result .= '<option value="' . $row['id'] . '" ' . ($tableId == $row['id'] ? 'selected="SELECTED"' : '') . '>' . $row['tablename'] . '</option>';
@@ -182,21 +179,21 @@ class CustomTablesViewLog extends HtmlView
 			. '<td>';
 
 		if ($a == 1 or $a == 2) {
-			$link = '/index.php?option=com_customtables&view=edititem&listing_id=' . $rec['listingid'] . '&Itemid=' . $rec['Itemid'];
-			$result .= '<a href="' . $link . '" target="_blank"><img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' style="width:16px;height:16px;" /></a>';
+			//$link = 'index.php?option=com_customtables&view=edititem&listing_id=' . $rec['listingid'];// . '&Itemid=' . $rec['Itemid'];
+			//<a href="' . $link . '" target="_blank"></a>
+			$result .= '<img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' style="width:16px;height:16px;" />';
 		} else
 			$result .= '<img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' style="width:16px;height:16px;" />';
 
 		$result .= '</td>'
 			. '<td>' . $rec['USER_NAME'] . '</td>';
 
-		$link = '/index.php?option=com_customtables&view=details&listing_id=' . $rec['listingid'] . '&Itemid=' . $rec['Itemid'];
-
-		$result .= '<td><a href="' . $link . '" target="_blank">' . $rec['datetime'] . '</a></td>'
+		//$link = Route::_('index.php?option=com_customtables&view=details&listing_id=' . $rec['listingid'] . '&Itemid=' . $rec['Itemid']);
+		//<a href="' . $link . '" target="_blank"></a>
+		$result .= '<td>' . $rec['datetime'] . '</td>'
 			. '<td style="vertical-align:top;">' . $rec['tabletitle'] . '</td>';
 
-
-		$recordValue = $this->getRecordValue($rec['listingid'], $rec['Itemid'], $rec['FIELD_NAME']);
+		$recordValue = $this->getRecordValue($rec['tableid'], $rec['listingid'], $rec['Itemid'], $rec['FIELD_NAME']);
 		if ($recordValue != '')
 			$recordValue .= '<br/>';
 
@@ -211,7 +208,7 @@ class CustomTablesViewLog extends HtmlView
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function getRecordValue($listing_id, $Itemid, $FieldName): string
+	function getRecordValue($tableId, $listing_id, $Itemid, $FieldName): string
 	{
 		if (!isset($FieldName) or $FieldName == '')
 			return "Table/Field not found.";
@@ -222,11 +219,21 @@ class CustomTablesViewLog extends HtmlView
 
 		$menu = $app->getMenu();
 		$menuParams = $menu->getParams($Itemid);
+		$menuParamsArray = Params::menuParamsRegistry2Array($menuParams);
 
-		$ct = new CT($menuParams, false);
+		$ct = new CT($menuParamsArray, false);
 
-		$this->details = new Details($ct);
-		$this->details->load();
+		if ($tableId != 0) {
+			$tableRow = TableHelper::getTableRowByIDAssoc($tableId);
+
+			if (!is_array($tableRow) and $tableRow == 0) {
+				Factory::getApplication()->enqueueMessage('Table not found', 'error');
+			} else {
+				$ct->setTable($tableRow, null, false);
+			}
+		} else {
+			return "Table '" . $tableId . "' not found.";
+		}
 
 		if ($ct->Table === null or $ct->Table->tablename === null)
 			return "Table not found.";

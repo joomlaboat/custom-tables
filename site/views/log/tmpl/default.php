@@ -9,58 +9,85 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use CustomTables\CTMiscHelper;
+use Joomla\CMS\Factory;
 
 defined('_JEXEC') or die();
 
 $currentURL = common::curPageURL();
 $cleanURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'action');
 $cleanURL = CTMiscHelper::deleteURLQueryOption($cleanURL, 'user');
+$cleanURL = CTMiscHelper::deleteURLQueryOption($cleanURL, 'table');
 
-if (!str_contains($cleanURL, "?"))
-	$cleanURL .= '?';
-else
-	$cleanURL .= '&';
+$document = Factory::getDocument();
+$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" rel="stylesheet">');
 
-echo '
+?>
+
 <script>
-function ActionFilterChanged(o){
-	location.href="' . $cleanURL . 'user=' . $this->userid . '&table=' . $this->tableId . '&action="+o.value;
-}
 
-function UserFilterChanged(o){
-	location.href="' . $cleanURL . 'action=' . $this->action . '&table=' . $this->tableId . '&user="+o.value;
-}
+    function ctLogAddParams(action, user, table) {
+        let params = [];
+        let paramsString = "<?php echo $cleanURL; ?>";
 
-function TableFilterChanged(o){
-	location.href="' . $cleanURL . 'action=' . $this->action . '&user=' . $this->userid . '&table="+o.value;
-}
-</script>';
+        if (action !== 0)
+            params.push("action=" + action);
 
+        if (user !== 0)
+            params.push("user=" + user);
 
+        if (table !== 0)
+            params.push("table=" + table);
+
+        for (let i = 0; i < params.length; i++) {
+            if (paramsString.indexOf("?") === -1)
+                paramsString += "?";
+            else
+                paramsString += "&";
+
+            paramsString += params[i];
+        }
+        return paramsString;
+    }
+
+    function ActionFilterChanged(o) {
+        location.href = ctLogAddParams(parseInt(o.value), <?php echo (int)$this->userid;?>, <?php echo (int)$this->tableId;?>);
+    }
+
+    function UserFilterChanged(o) {
+        location.href = ctLogAddParams(<?php echo (int)$this->action;?>, parseInt(o.value), <?php echo (int)$this->tableId;?>);
+    }
+
+    function TableFilterChanged(o) {
+        location.href = ctLogAddParams(<?php echo (int)$this->action;?>, <?php echo (int)$this->userid;?>, parseInt(o.value));
+    }
+</script>
+
+<?php
 echo $this->actionSelector;
 echo $this->userSelector;
 echo $this->tableSelector;
-
-echo '<div class="datagrid">'
-	. '<table>'
-	. '<thead>'
-	. '<tr>'
-	. '<th>A</th>'
-	. '<th style="text-align:left;">User</th>'
-	. '<th style="text-align:left;">Time</th>'
-	. '<th style="text-align:left;">Table</th>'
-	. '<th style="text-align:left;">Record</th>'
-	. '<th style="text-align:left;">Action</th>'
-	. '</tr>'
-	. '</thead>'
-	. '<tbody>';
-//Content
-foreach ($this->records as $rec) {
-	echo $this->renderLogLine($rec);
-}
-echo '</tbody></table>'
-	. '</div>';
-
-
-
+?>
+<div class="datagrid">
+    <table>
+        <thead>
+        <tr>
+            <th>A</th>
+            <th style="text-align:left;">User</th>
+            <th style="text-align:left;">Time</th>
+            <th style="text-align:left;">Table</th>
+            <th style="text-align:left;">Record</th>
+            <th style="text-align:left;">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+		<?php
+		//Content
+		foreach ($this->records as $rec) {
+			echo $this->renderLogLine($rec);
+		}
+		?>
+        </tbody>
+    </table>
+</div>
