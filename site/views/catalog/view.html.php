@@ -17,7 +17,7 @@ use CustomTables\CT;
 use CustomTables\Catalog;
 use CustomTables\CTMiscHelper;
 use CustomTables\database;
-use CustomTables\Inputbox;
+use CustomTables\ProInputBoxTableJoin;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\MVC\View\HtmlView;
 
@@ -33,9 +33,16 @@ class CustomTablesViewCatalog extends HtmlView
 		$this->ct = new CT(null, false);
 		$key = common::inputGetCmd('key');
 
-		if ($key != '')
-			Inputbox::renderTableJoinSelectorJSON($this->ct, $key);
-		else
+		if (defined('_JEXEC') and $key != '') {
+			$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
+
+			if (file_exists($path . 'tablejoin.php') and file_exists($path . 'tablejoinlist.php')) {
+				require_once($path . 'tablejoin.php');
+				require_once($path . 'tablejoinlist.php');
+
+				ProInputBoxTableJoin::renderTableJoinSelectorJSON($this->ct, $key);//Inputbox
+			}
+		} else
 			$this->renderCatalog($tpl);
 	}
 

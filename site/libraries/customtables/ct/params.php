@@ -96,11 +96,11 @@ class Params
 			$this->constructWPParams();
 	}
 
-	protected function constructJoomlaParams(?array $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
+	protected function constructJoomlaParams(?array $menu_paramsArray = null, $blockExternalVars = true, ?string $ModuleId = null): void
 	{
 		$this->app = Factory::getApplication();
 
-		if (is_null($menu_params)) {
+		if (is_null($menu_paramsArray)) {
 
 			if (is_null($ModuleId)) {
 				$ModuleIdInt = common::inputGetInt('ModuleId');
@@ -115,21 +115,22 @@ class Params
 				$module = ModuleHelper::getModuleById($ModuleId);
 				$menu_params = new Registry;//Joomla Specific
 				$menu_params->loadString($module->params);
+				$menu_paramsArray = self::menuParamsRegistry2Array($menu_params);
 				$blockExternalVars = false;
 				//Do not block external var parameters because this is the edit form or a task
 			} elseif (method_exists($this->app, 'getParams')) {
 				try {
 					if ($this->app->getLanguage() !== null) {
 						$menu_params_registry = @$this->app->getParams();//Joomla specific
-						$menu_params = self::menuParamsRegistry2Array($menu_params_registry);
+						$menu_paramsArray = self::menuParamsRegistry2Array($menu_params_registry);
 					} else
-						$menu_params = null;
+						$menu_paramsArray = null;
 				} catch (Exception $e) {
-					$menu_params = null;
+					$menu_paramsArray = null;
 				}
 			}
 		}
-		$this->setParams($menu_params, $blockExternalVars, $ModuleId);
+		$this->setParams($menu_paramsArray, $blockExternalVars, $ModuleId);
 	}
 
 	public static function menuParamsRegistry2Array(Registry $menu_params_registry): array
