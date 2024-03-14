@@ -174,7 +174,7 @@ class tagProcessor_General
 							break;
 
 						case 'usergroups':
-							$vlu = CTUser::GetUserGroups($userid);
+							$vlu = implode(',', CTUser::GetUserGroups($userid));
 							break;
 
 						default:

@@ -14,7 +14,9 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
+use DateTime;
 use Exception;
+use InvalidArgumentException;
 use Joomla\CMS\HTML\HTMLHelper;
 
 use CT_FieldTypeTag_file;
@@ -515,28 +517,61 @@ class Value
 		}
 	}
 
-	protected function timeProcess(?string $value, array $option_list): string
+	/**
+	 * Formats a date/time string or returns a Unix timestamp based on the provided options.
+	 *
+	 * @param string|null $value The date/time string to be formatted. If null, an empty string is returned.
+	 * @param array $option_list An array of options for formatting the date/time.
+	 *                        If the first element is 'timestamp', the Unix timestamp will be returned.
+	 *                        Otherwise, it should be a valid date/time format string.
+	 *
+	 * @return string The formatted date/time string or Unix timestamp.
+	 *
+	 * @throws InvalidArgumentException If the options are invalid.
+	 *
+	 * @since 3.2.9
+	 */
+	protected function timeProcess(?string $value, array $option_list = []): string
 	{
-		if ($value === null)
+		if ($value === null) {
 			return '';
-
-		$PHPDate = strtotime($value);
-		if (isset($option_list[0]) and $option_list[0] != '') {
-			if ($option_list[0] == 'timestamp')
-				return $PHPDate;
-
-			return gmdate($option_list[0], $PHPDate);
-		} else {
-			if ($value == '0000-00-00 00:00:00')
-				return '';
-
-			if (defined('_JEXEC'))
-				return HTMLHelper::date($PHPDate);
-			elseif (defined('WPINC'))
-				return date_i18n('Y-m-d H:i:s', $PHPDate->getTimestamp());
-			else
-				return 'timeProcess not supported.';
 		}
+
+		// Check if the first element of options is 'timestamp' or a valid date/time format
+		$format = $option_list[0] ?? 'Y-m-d H:i:s';
+
+		// Handle 'timestamp' format separately
+		if ($format === 'timestamp')
+			return (string)strtotime($value);
+
+		//if (!DateTime::createFromFormat($format, $value))
+		//throw new \InvalidArgumentException('Invalid date/time format "' . $format . '" provided.');
+
+		$timestamp = strtotime($value);
+
+		if ($value === '0000-00-00 00:00:00') {
+			return '';
+		}
+
+		// Check if the environment is recognized
+		$isJoomla = defined('_JEXEC');
+		$isWordPress = defined('WPINC');
+
+		if (!$isJoomla && !$isWordPress) {
+			// Handle unsupported environment
+			return 'timeProcess not supported.';
+		}
+
+		if ($isJoomla) {
+			return HTMLHelper::date($timestamp, $format);
+		}
+
+		if ($isWordPress) {
+			return date_i18n($format, $timestamp);
+		}
+
+		// This should not be reached, but add a fallback just in case
+		return gmdate($format, $timestamp);
 	}
 
 	protected function virtualProcess(): string

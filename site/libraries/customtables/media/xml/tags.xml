@@ -762,6 +762,9 @@
                 <param name="userid" label="User ID"
                        description="To get the Last Visit Date of the specific user, leave it blank to get the Current User's Last Visit Date"
                        hidden="false" default="" type="string"/>
+
+                <param name="format" example="Y-m-d" label="Format" type="string"
+                       description="PHP date format i.e. 'Y-m-d H:i:s' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
             </params>
         </tag>
 
@@ -771,6 +774,9 @@
                 <param name="userid" label="User ID"
                        description="To get the Register Date of the specific user, leave it blank to get the Current User's Register Date"
                        hidden="false" default="" type="string"/>
+
+                <param name="format" example="Y-m-d" label="Format" type="string"
+                       description="PHP date format i.e. 'Y-m-d H:i:s' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
             </params>
         </tag>
 
