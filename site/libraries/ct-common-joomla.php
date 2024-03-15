@@ -22,6 +22,10 @@ use RecursiveIteratorIterator;
 
 class common
 {
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function enqueueMessage($text, string $type = 'error'): void
 	{
 		Factory::getApplication()->enqueueMessage($text, $type);
@@ -56,158 +60,193 @@ class common
 			return $new_text;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputPostString($parameter, $default = null): ?string
 	{
 		return Factory::getApplication()->input->post->getString($parameter, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputPostFloat($parameter, $default = null): ?float
 	{
 		return Factory::getApplication()->input->getFloat($parameter, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputGetFloat($parameter, $default = null): ?float
 	{
 		return Factory::getApplication()->input->getFloat($parameter, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputPostInt(string $parameter, ?int $default = null): ?int
 	{
 		return Factory::getApplication()->input->getInt($parameter, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputGetInt(string $parameter, ?int $default = null): ?int
 	{
 		return Factory::getApplication()->input->getInt($parameter, $default);
 	}
 
-	public static function inputPostUInt($parameter, $default = null)
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
+	public static function inputPostUInt($parameter, $default = null): ?int
 	{
 		return Factory::getApplication()->input->getInt($parameter, $default);
 	}
 
-	public static function inputGetUInt($parameter, $default = null)
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
+	public static function inputGetUInt($parameter, $default = null): ?int
 	{
 		return Factory::getApplication()->input->getInt($parameter, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputPostCmd(string $parameter, $default = null): ?string
 	{
 		return Factory::getApplication()->input->getCmd($parameter, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputGetCmd(string $parameter, $default = null): ?string
 	{
 		return Factory::getApplication()->input->getCmd($parameter, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputPostRaw(string $parameter, $default = null)
 	{
 		return Factory::getApplication()->input->get($parameter, $default, "RAW");
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputGetRow(string $parameter, $default = null)
 	{
 		return Factory::getApplication()->input->get($parameter, $default, "RAW");
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputPostBase64(string $parameter, $default = null)
 	{
 		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputGetWord(string $parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
-
-			// Only allow characters a-z, and underscores
-			return (string)preg_replace('/[^A-Z_]/i', '', $_REQUEST[$parameter]);
-		}
+		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputPostAlnum(string $parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->get($parameter, $default, 'ALNUM');
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
-
-			// Allow a-z and 0-9 only
-			return (string)preg_replace('/[^A-Z\d]/i', '', $_REQUEST[$parameter]);
-		}
+		return Factory::getApplication()->input->get($parameter, $default, 'ALNUM');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputGetAlnum(string $parameter, $default = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->get($parameter, $default, 'ALNUM');
-		} else {
-			// Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-			if (!isset($_REQUEST[$parameter]))
-				return $default;
-
-			// Allow a-z and 0-9 only
-			return (string)preg_replace('/[^A-Z\d]/i', '', $_REQUEST[$parameter]);
-		}
+		return Factory::getApplication()->input->get($parameter, $default, 'ALNUM');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputPost($parameter, $default = null, $filter = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->post->get($parameter, $default, $filter);
-		} else {
-			echo 'common::inputPost not supported in WordPress';
-		}
-		return null;
+		return Factory::getApplication()->input->post->get($parameter, $default, $filter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputSet(string $parameter, string $value): void
 	{
 		Factory::getApplication()->input->set($parameter, $value);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputFiles(string $fileId)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->files->get($fileId);
-		} else {
-			echo 'common::inputFiles not supported in WordPress';
-		}
-		return null;
+		return Factory::getApplication()->input->files->get($fileId);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputCookieSet(string $parameter, $value, $time, $path, $domain): void
 	{
-		if (defined('_JEXEC')) {
-			Factory::getApplication()->input->cookie->set($parameter, $value, $time, $path, $domain);
-		} else {
-			die('common::inputCookieSet not supported in WordPress');
-		}
+		Factory::getApplication()->input->cookie->set($parameter, $value, $time, $path, $domain);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputCookieGet($parameter)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->cookie->get($parameter);
-		} else {
-			die('common::inputCookieGet not supported in WordPress');
-		}
+		return Factory::getApplication()->cookie->get($parameter);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputServer($parameter, $default = null, $filter = null)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->server->get($parameter, $default, $filter);
-		} else {
-			die('common::inputServer not supported in WordPress');
-		}
+		return Factory::getApplication()->input->server->get($parameter, $default, $filter);
 	}
 
 	public static function ExplodeSmartParams(string $param): array
@@ -321,7 +360,7 @@ class common
 			$final = strlen($newString);
 			if ($initial != $final && $addTip) {
 				$title = self::shorten($string, 400, false);
-				return '<span class="hasTip" title="' . $title . '" style="cursor:help">' . trim($newString) . '...</span>';
+				return '<span class="hasTip" title="' . $title . '" style="cursor:help;">' . trim($newString) . '...</span>';
 			} elseif ($initial != $final && !$addTip) {
 				return trim($newString) . '...';
 			}
@@ -334,6 +373,10 @@ class common
 		return json_encode($argument);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function getReturnToURL(bool $decode = true): ?string
 	{
 		$returnto = common::inputGet('returnto', null, 'BASE64');
@@ -356,18 +399,16 @@ class common
 			return $returnto;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputGet(string $parameter, $default, string $filter)
 	{
-		if (defined('_JEXEC')) {
-			return Factory::getApplication()->input->get($parameter, $default, $filter);
-		} else {
-			echo 'common::inputGet not supported in WordPress';
-		}
-		return null;
+		return Factory::getApplication()->input->get($parameter, $default, $filter);
 	}
 
 	//Returns base64 encoded/decoded url in Joomla and Sessions ReturnTo variable reference in WP or reference converted to URL
-
 	public static function makeReturnToURL(string $currentURL = null): ?string
 	{
 		if ($currentURL === null)
@@ -437,7 +478,6 @@ class common
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
-		return null;
 	}
 
 	static public function base64file_decode($inputFile, $outputFile)
@@ -459,6 +499,10 @@ class common
 		date_default_timezone_set('UTC');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function getWhereParameter($field): string
 	{
 		$list = self::getWhereParameters();
@@ -477,6 +521,10 @@ class common
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	protected static function getWhereParameters(): ?array
 	{
 		$value = common::inputGetString('where');
@@ -490,11 +538,19 @@ class common
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputGetString($parameter, $default = null): ?string
 	{
 		return Factory::getApplication()->input->get->getString($parameter, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function inputGetBase64(string $parameter, $default = null)
 	{
 		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
@@ -507,6 +563,10 @@ class common
 		HTMLHelper::_('stylesheet', 'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function loadJSAndCSS(Params $params, Environment $env): void
 	{
 		$app = Factory::getApplication();
@@ -518,10 +578,8 @@ class common
 				$document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/jquery.min.js"></script>');
 				$document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/bootstrap.min.js"></script>');
 			} else {
-				if (defined('_JEXEC')) {
-					HTMLHelper::_('jquery.framework');
-					$document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/media/system/css/fields/switcher.css">');
-				}
+				HTMLHelper::_('jquery.framework');
+				$document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/media/system/css/fields/switcher.css">');
 			}
 		}
 
@@ -585,6 +643,10 @@ class common
 		return ComponentHelper::filterText($text);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	public static function redirect(string $link, ?string $msg = null): void
 	{
 		if ($msg === null)
