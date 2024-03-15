@@ -170,11 +170,7 @@ class common
 
 	public static function inputSet(string $parameter, string $value): void
 	{
-		if (defined('_JEXEC')) {
-			Factory::getApplication()->input->set($parameter, $value);
-		} else {
-			echo 'common::inputSet not supported in WordPress';
-		}
+		Factory::getApplication()->input->set($parameter, $value);
 	}
 
 	public static function inputFiles(string $fileId)

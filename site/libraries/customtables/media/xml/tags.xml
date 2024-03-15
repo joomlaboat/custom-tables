@@ -298,7 +298,7 @@
     </tagset>
 
     <!-- Record Tags -->
-    <tagset name="record" label="Record" description="Tags related to a single record." priority="1">
+    <tagset name="record" label="Record" description="Tags associated with a single record." priority="1">
 
         <tag name="id" label="record ID" startchar="{" endchar="}" description="Returns record ID" twigclass="record"
              wordpress="true"/>
@@ -584,29 +584,31 @@
     </tagset>
 
     <!-- Table Tags -->
-    <tagset name="table" label="Table" description="Tags related current to current table." priority="1">
+    <tagset name="table" label="Table" description="Tags associated with the current table." priority="1">
 
         <tag name="records" label="Record Count (filtered)" startchar="{" endchar="}"
              description="Returns the number of records in the table that met filter criteria" twigclass="table"
              wordpress="true"/>
 
         <tag name="recordstotal" label="Total Number of Records" startchar="{" endchar="}"
-             description="Returns the total number of records in the table" hidedefaultexample="1" twigclass="table"/>
+             description="Returns the total number of records in the table" hidedefaultexample="1" twigclass="table"
+             wordpress="true"/>
 
         <tag name="recordpagestart" label="Page Start Record number" startchar="{" endchar="}"
              description="Returns the pagination start from record number" hidedefaultexample="1" twigclass="table"
-             example="{{ table.recordpagestart + table.recordsperpage }}"/>
+             example="{{ table.recordpagestart + table.recordsperpage }}" wordpress="true"/>
 
         <tag name="recordsperpage" label="Number of records per page" startchar="{" endchar="}"
              description="Returns number of records per page" hidedefaultexample="1" twigclass="table"
-             example="{{ table.recordpagestart + table.recordsperpage }}"
+             example="{{ table.recordpagestart + table.recordsperpage }}" wordpress="true"
         />
 
         <tag name="title" label="Table Title" startchar="{" endchar="}"
              description="Returns the current table title." hidedefaultexample="1" twigclass="table" wordpress="true"/>
 
         <tag name="description" label="Description" startchar="{" endchar="}"
-             description="Returns current table description." hidedefaultexample="1" twigclass="table"/>
+             description="Returns current table description." hidedefaultexample="1" twigclass="table"
+             wordpress="false"/>
 
         <tag name="name" label="Table Name" startchar="{" endchar="}" proversion="1"
              description="Returns the current table name." hidedefaultexample="1" twigclass="table" wordpress="true"/>
@@ -650,7 +652,7 @@
 
         <tag name="getvalue" label="Get Value" startchar="{" endchar="}"
              description="Read a record field value from selected table."
-             twigclass="tables" proversion="1">
+             twigclass="tables" proversion="1" wordpress="false">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -667,7 +669,7 @@
 
         <tag name="getrecord" label="Get Record" startchar="{" endchar="}"
              description="Renders another table single record using selected layout."
-             twigclass="tables" proversion="1">
+             twigclass="tables" proversion="1" wordpress="false">
             <params>
                 <param type="layout" name="layout" label="Catalog Layout" table=""
                        layouttype="catalogpage,simplecatalog"
@@ -681,7 +683,7 @@
 
         <tag name="getrecords" label="Get Records" startchar="{" endchar="}"
              description="Renders another table records using selected layout."
-             twigclass="tables" proversion="1">
+             twigclass="tables" proversion="1" wordpress="false">
             <params>
                 <param type="layout" name="layout" label="Catalog Layout" table=""
                        layouttype="catalogpage,simplecatalog"
@@ -703,7 +705,7 @@
              description="Return the number of fields in the table" twigclass="fields" wordpress="true"/>
 
         <tag name="list" label="List of field parameters" startchar="{" endchar="}" proversion="1"
-             description="Returns the list of fields. Example: country,city,phone" twigclass="fields">
+             description="Returns the list of fields. Example: country,city,phone" twigclass="fields" wordpress="false">
             <params>
                 <param name="option" label="Field attribute" type="list" description="Select one attribute.">
                     <option value="fieldname" label="Field Name"/>
@@ -721,16 +723,16 @@
         </tag>
 
         <tag name="json" label="Field Json Array" startchar="{" endchar="}" proversion="1"
-             description="Returns the array of fields in JSON format" twigclass="fields"/>
+             description="Returns the array of fields in JSON format" twigclass="fields" wordpress="false"/>
     </tagset>
 
     <!-- User Tags -->
     <tagset name="user" label="User" description="Tags related Joomla user accounts." priority="2">
         <tag name="id" label="Current User ID" startchar="{" endchar="}"
-             description="Returns Current User ID" proversion="1" twigclass="user"/>
+             description="Returns Current User ID" proversion="1" twigclass="user" wordpress="true"/>
 
         <tag name="name" label="User Full Name" startchar="{" endchar="}"
-             description="Returns User full name." proversion="1" twigclass="user">
+             description="Returns User full name." proversion="1" twigclass="user" wordpress="true">
             <params>
                 <param name="userid" label="User ID"
                        description="To get the Full Name of the specific user, leave it blank to get the Current User's Full Name"
@@ -739,7 +741,7 @@
         </tag>
 
         <tag name="username" label="Username" startchar="{" endchar="}"
-             description="Returns Username." proversion="1" twigclass="user">
+             description="Returns Username." proversion="1" twigclass="user" wordpress="true">
             <params>
                 <param name="userid" label="User ID"
                        description="To get the Username of the specific user, leave it blank to get the Current User's Username"
@@ -748,7 +750,7 @@
         </tag>
 
         <tag name="email" label="Email" startchar="{" endchar="}"
-             description="Returns User email address." proversion="1" twigclass="user">
+             description="Returns User email address." proversion="1" twigclass="user" wordpress="true">
             <params>
                 <param name="userid" label="User ID"
                        description="To get the Email of the specific user, leave it blank to get the Current User's Email"
@@ -757,7 +759,7 @@
         </tag>
 
         <tag name="lastvisitdate" label="Last Visit Date" startchar="{" endchar="}"
-             description="Returns User Last Visit Date." proversion="1" twigclass="user">
+             description="Returns User Last Visit Date." proversion="1" twigclass="user" wordpress="true">
             <params>
                 <param name="userid" label="User ID"
                        description="To get the Last Visit Date of the specific user, leave it blank to get the Current User's Last Visit Date"
@@ -769,7 +771,7 @@
         </tag>
 
         <tag name="registerdate" label="Register Date" startchar="{" endchar="}"
-             description="Returns User Registration Date." proversion="1" twigclass="user">
+             description="Returns User Registration Date." proversion="1" twigclass="user" wordpress="true">
             <params>
                 <param name="userid" label="User ID"
                        description="To get the Register Date of the specific user, leave it blank to get the Current User's Register Date"
@@ -782,7 +784,7 @@
 
         <tag name="usergroups" label="User Groups" startchar="{" endchar="}"
              description="Returns an array of User Group names. Use |join(',') filter to return a string" proversion="1"
-             twigclass="user">
+             twigclass="user" wordpress="true">
             <params>
                 <param name="userid" label="User ID"
                        description="To get the User Group Names of the specific user, leave it blank to get the Current User's User Groups Names."
@@ -811,11 +813,12 @@
     <!-- Url Tags -->
     <tagset name="url" label="URL" description="Tags related current URL and links." priority="2">
 
-        <tag name="link" label="Link" startchar="{" endchar="}" description="Current URL" twigclass="url"/>
+        <tag name="link" label="Link" startchar="{" endchar="}" description="Current URL" twigclass="url"
+             wordpress="true"/>
 
         <tag name="format" label="Output Format" startchar="{" endchar="}" proversion="1"
              description="A link to download current page records in a specific format." hidedefaultexample="1"
-             twigclass="url">
+             twigclass="url" wordpress="false">
             <params>
                 <param name="format" label="Format" type="list" description="Select the output format.">
                     <option value="csv" label="CSV" description="Generates CSV file"/>
@@ -851,67 +854,77 @@
         </tag>
 
         <tag name="itemid" label="Menu Itemid" startchar="{" endchar="}" description="Joomla menu item Itemid"
-             twigclass="url" proversion="1"/>
+             twigclass="url" proversion="1" wordpress="false"/>
 
         <tag name="getint" label="Integer" startchar="{" endchar="}"
-             description="Returns the first integer found in the parameter value." twigclass="url">
+             description="Returns the first integer found in the parameter value." twigclass="url" wordpress="true">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
             </params>
         </tag>
+
         <tag name="getstring" label="String" startchar="{" endchar="}"
-             description="Converts the input to a plain text string; strips all tags / attributes." twigclass="url">
+             description="Converts the input to a plain text string; strips all tags / attributes." twigclass="url"
+             wordpress="true">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
             </params>
         </tag>
+
         <tag name="getuint" label="Unsigned Integer" startchar="{" endchar="}" description="Returns an unsigned int."
-             twigclass="url" proversion="1">
+             twigclass="url" proversion="1" wordpress="true">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
             </params>
         </tag>
+
         <tag name="getfloat" label="Float/Decimal" startchar="{" endchar="}"
-             description="Only use the first floating-point value if the list is provided." twigclass="url">
+             description="Only use the first floating-point value if the list is provided." twigclass="url"
+             wordpress="true">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
             </params>
         </tag>
+
         <tag name="getword" label="Word" startchar="{" endchar="}"
-             description="Only allow characters a-z, and underscores." twigclass="url">
+             description="Only allow characters a-z, and underscores." twigclass="url" wordpress="true">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
             </params>
         </tag>
+
         <tag name="getalnum" label="Alphanumeric" startchar="{" endchar="}" description="Allow a-z and 0-9 only."
-             twigclass="url">
+             twigclass="url" wordpress="true">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
             </params>
         </tag>
+
         <tag name="getcmd" label="Command" startchar="{" endchar="}"
              description="Allow a-z, 0-9, underscore, dot, dash. Also, removes leading dots from the result."
-             twigclass="url">
+             twigclass="url" wordpress="true">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
             </params>
         </tag>
+
         <tag name="getstringandencode" label="Base64 Encode" startchar="{" endchar="}"
-             description="Returns encoded value of query parameter." twigclass="url" proversion="1">
+             description="Returns encoded value of query parameter." twigclass="url" proversion="1" wordpress="true">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
             </params>
         </tag>
+
         <tag name="getstringanddecode" label="Base64 Decode" startchar="{" endchar="}"
-             description="Returns decoded value of query parameter." twigclass="url" proversion="1">
+             description="Returns decoded value of query parameter." twigclass="url" proversion="1" wordpress="true">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
@@ -919,11 +932,11 @@
         </tag>
 
         <tag name="base64" label="Base64 Encode URL" startchar="{" endchar="}"
-             description="Returns base64 encoded current URL." twigclass="url" proversion="1"/>
+             description="Returns base64 encoded current URL." twigclass="url" proversion="1" wordpress="false"/>
 
         <tag name="root" label="Website Root URI" startchar="{" endchar="}"
              description="Returns the root URI for the request." twigclass="url"
-             proversion="1">
+             proversion="1" wordpress="true">
 
             <params>
                 <param name="include_host" label="Include Host" description="Include Website protocol, host, port, etc."
@@ -938,7 +951,7 @@
 
         <tag name="set" label="Set query parameter" startchar="{" endchar="}"
              description="Sets a URI query parameter value." twigclass="url"
-             proversion="1">
+             proversion="1" wordpress="false">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
@@ -948,7 +961,7 @@
 
         <tag name="server" label="Server" startchar="{" endchar="}"
              description="Server and execution environment information" twigclass="url"
-             proversion="1">
+             proversion="1" wordpress="false">
             <params>
                 <param name="option" label="Option" type="list" description="Select what information to return.">
                     <option value="REMOTE_ADDR" label="REMOTE_ADDR"
