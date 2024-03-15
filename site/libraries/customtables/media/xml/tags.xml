@@ -309,7 +309,7 @@
 
         <tag name="published" label="Published" startchar="{" endchar="}"
              description="Returns the «Yes» word (language depended) if the record is published and «No» if not."
-             twigclass="record">
+             twigclass="record" wordpress="true">
             <params>
                 <param name="format" label="Format" description="What type of value to return." type="list">
                     <option value="" label="Text (Yes/No)"
@@ -330,7 +330,7 @@
         <tag name="link" label="Link to detailed page" startchar="{" endchar="}"
              description="Link to record details page (Details Layout will be used, the one selected in the current menu item.)"
              twigclass="record"
-             twigreplacement="record.link" twigreplacementparams="true">
+             twigreplacement="record.link" twigreplacementparams="true" wordpress="true">
             <params>
                 <param name="add_returnto" label="Add '&#38;returnto=' parameter" description="
 				To add '&#38;returnto=' query parameter to the link to allow 'Go Back' button on detailed or edit web page."
@@ -344,7 +344,8 @@
         </tag>
         --------------------
         <tag name="count" label="Count" startchar="{" endchar="}" proversion="1"
-             description="Returns the number of records in selected table that match the filter." twigclass="record">
+             description="Returns the number of records in selected table that match the filter." twigclass="record"
+             wordpress="true">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table to count records from." example="products"/>
@@ -354,7 +355,8 @@
         </tag>
 
         <tag name="avg" label="Average" startchar="{" endchar="}" proversion="1"
-             description="Calculates the average value of all the records that match the filter." twigclass="record">
+             description="Calculates the average value of all the records that match the filter." twigclass="record"
+             wordpress="true">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table to count records from." example="products"
@@ -367,7 +369,8 @@
         </tag>
 
         <tag name="min" label="Minimum" startchar="{" endchar="}" proversion="1"
-             description="Returns the minimum of all the records that match the filter." twigclass="record">
+             description="Returns the minimum of all the records that match the filter." twigclass="record"
+             wordpress="true">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table to count records from." example="products"
@@ -380,7 +383,8 @@
         </tag>
 
         <tag name="max" label="Maximum" startchar="{" endchar="}" proversion="1"
-             description="Returns the maximum of all the records that match the filter." twigclass="record">
+             description="Returns the maximum of all the records that match the filter." twigclass="record"
+             wordpress="true">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table to count records from." example="products"
@@ -394,7 +398,7 @@
 
         <tag name="sum" label="Sum" startchar="{" endchar="}" proversion="1"
              description="Summarizes values of a selected field of all the records that match the filter."
-             twigclass="record">
+             twigclass="record" wordpress="true">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table to count records from." example="products"
@@ -408,7 +412,7 @@
 
         <tag name="joincount" label="Table Join - Count" startchar="{" endchar="}" proversion="1"
              description="Counts records from a joined table (Table Join)."
-             twigclass="record">
+             twigclass="record" wordpress="false">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"/>
@@ -418,7 +422,8 @@
         </tag>
 
         <tag name="joinavg" label="Table Join - Average" startchar="{" endchar="}" proversion="1"
-             description="Calculates the average value of all the records that match the filter." twigclass="record">
+             description="Calculates the average value of all the records that match the filter." twigclass="record"
+             wordpress="false">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -431,7 +436,8 @@
         </tag>
 
         <tag name="joinmin" label="Table Join - Minimum" startchar="{" endchar="}" proversion="1"
-             description="Finds the minimum value of all the records that match the filter." twigclass="record">
+             description="Finds the minimum value of all the records that match the filter." twigclass="record"
+             wordpress="false">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -444,7 +450,8 @@
         </tag>
 
         <tag name="joinmax" label="Table Join - Maximum" startchar="{" endchar="}" proversion="1"
-             description="Finds the maximum value of all the records that match the filter." twigclass="record">
+             description="Finds the maximum value of all the records that match the filter." twigclass="record"
+             wordpress="false">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -458,7 +465,7 @@
 
         <tag name="joinsum" label="Table Join - Sum" startchar="{" endchar="}" proversion="1"
              description="Summarizes values of a selected field of all the records that match the filter."
-             twigclass="record">
+             twigclass="record" wordpress="false">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -471,7 +478,8 @@
         </tag>
 
         <tag name="joinvalue" label="Table Join - Value" startchar="{" endchar="}" proversion="1"
-             description="Returns the value of selected field of all the records that match." twigclass="record">
+             description="Returns the value of selected field of all the records that match." twigclass="record"
+             wordpress="false">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -485,7 +493,7 @@
 
         <tag name="jointable" label="Join Table - Table" startchar="{" endchar="}" proversion="1"
              description="Returns the records from another table these that connected to current record and match the filter. Records will be formatted by selected layout."
-             twigclass="record">
+             twigclass="record" wordpress="false">
             <params>
                 <param type="layout" name="layout" label="Catalog Layout" table=""
                        layouttype="catalogpage,simplecatalog"/>
@@ -500,7 +508,8 @@
         <!--    description="Code to Textual Representation." proversion="1" /> -->
 
         <tag name="advancedjoin" label="Table Join" startchar="{" endchar="}" proversion="1"
-             description="Returns value of joined table field." hidedefaultexample="1" twigclass="record">
+             description="Returns value of joined table field." hidedefaultexample="1" twigclass="record"
+             wordpress="false">
             <params>
                 <param name="function" label="Function" type="list" description="What to do with returned value(s)"
                        example="count">
@@ -532,15 +541,15 @@
         </tag>
 
         <tag name="missingfields" label="Returns a List of required fields that are missing." startchar="{" endchar="}"
-             proversion="1" twigclass="record"
+             proversion="1" twigclass="record" wordpress="true"
              description="Returns a string List, separated by a Separator, of required fields (field names) that are missing or NULL."/>
 
         <tag name="missingfieldslist" label="Returns an Array of required fields that are missing." startchar="{"
-             endchar="}" proversion="1" twigclass="record"
+             endchar="}" proversion="1" twigclass="record" wordpress="true"
              description="Returns an Array of required fields (field names) that are missing or NULL."/>
 
         <tag name="islast"
-             label="Check if Record is Last in List"
+             label="Check if Record is Last in List" wordpress="true"
              startchar="{"
              endchar="}" proversion="1" twigclass="record"
              description="Evaluates whether the current record is the last in the sequence being rendered. This is particularly useful for formatting output lists where a trailing character, such as a comma, is not required after the last item."

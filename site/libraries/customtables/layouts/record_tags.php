@@ -189,7 +189,7 @@ class Twig_Record_Tags
 	 * @since 3.2.2
 	 */
 	function advancedJoin($sj_function, $sj_tablename, $field1_findWhat, $field2_lookWhere, $field3_readValue = '_id', $filter = '',
-	                      $order_by_option = '', $value_option_list = [])
+						  $order_by_option = '', $value_option_list = [])
 	{
 		if ($sj_tablename === null or $sj_tablename == '') return '';
 
@@ -286,7 +286,7 @@ class Twig_Record_Tags
 	 * @since 3.2.2
 	 */
 	protected function join_buildQuery($sj_function, $tableRow, $field1_findWhat, $field1_type, $field2_lookWhere,
-	                                   $field2_type, $field3_readValue, MySQLWhereClause $whereClauseAdditional, $order_by_option): array
+									   $field2_type, $field3_readValue, MySQLWhereClause $whereClauseAdditional, $order_by_option): array
 	{
 		$whereClause = new MySQLWhereClause();
 		$selects = [];
@@ -506,6 +506,11 @@ class Twig_Record_Tags
 	 */
 	function min(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
+		if ($value_field == '') {
+			$this->ct->errors[] = '{{ record.min(table_name,value_field) }} - Value Field not specified.';
+			return null;
+		}
+
 		return $this->countOrSumRecords('min', $tableName, $value_field, $filter);
 	}
 
@@ -513,10 +518,10 @@ class Twig_Record_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function countOrSumRecords(string $function = 'count', string $tableName = '', string $fieldName = '', string $filter = ''): ?int
+	protected function countOrSumRecords(string $function, string $tableName, string $fieldName, string $filter = ''): ?int
 	{
 		if ($tableName == '') {
-			$this->ct->errors[] = '{{ record.count("' . $tableName . '") }} - Table not specified.';
+			$this->ct->errors[] = 'countOrSumRecords - Table not specified.';
 			return null;
 		}
 
@@ -527,7 +532,7 @@ class Twig_Record_Tags
 		}
 
 		if ($fieldName == '') {
-			$this->ct->errors[] = '{{ record.count("' . $fieldName . '") }} - Field not specified.';
+			$this->ct->errors[] = 'countOrSumRecords - Field not specified.';
 			return null;
 		}
 
@@ -618,6 +623,11 @@ class Twig_Record_Tags
 	 */
 	function max(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
+		if ($value_field == '') {
+			$this->ct->errors[] = '{{ record.max(table_name,value_field) }} - Value Field not specified.';
+			return null;
+		}
+
 		return $this->countOrSumRecords('max', $tableName, $value_field, $filter);
 	}
 
@@ -627,6 +637,11 @@ class Twig_Record_Tags
 	 */
 	function avg(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
+		if ($value_field == '') {
+			$this->ct->errors[] = '{{ record.avg(table_name,value_field) }} - Value Field not specified.';
+			return null;
+		}
+
 		return $this->countOrSumRecords('avg', $tableName, $value_field, $filter);
 	}
 
@@ -636,6 +651,11 @@ class Twig_Record_Tags
 	 */
 	function sum(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
+		if ($value_field == '') {
+			$this->ct->errors[] = '{{ record.sum(table_name,value_field) }} - Value Field not specified.';
+			return null;
+		}
+
 		return $this->countOrSumRecords('sum', $tableName, $value_field, $filter);
 	}
 
@@ -645,6 +665,11 @@ class Twig_Record_Tags
 	 */
 	function count(string $tableName = '', string $filter = ''): ?int
 	{
+		if ($tableName == '') {
+			$this->ct->errors[] = '{{ record.min(table_name) }} - Table Name not specified.';
+			return null;
+		}
+
 		return $this->countOrSumRecords('count', $tableName, '_id', $filter);
 	}
 
