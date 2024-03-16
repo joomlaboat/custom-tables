@@ -1197,5 +1197,8 @@ function adjustEditorHeight() {
             editorHeight += 20;
 
         editor.style.height = editorHeight + 'px';
+        let cm = codemirror_editors[i];
+        if (cm && cm.codemirror)
+            cm.codemirror.refresh();
     }
 }
