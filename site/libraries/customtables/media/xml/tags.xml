@@ -1258,15 +1258,16 @@
     <tagset name="filters" label="Filters" description="Extended Twig Filters. {{ value | filter }}" priority="3"
             proversion="1">
         <tag name="base64encode" description="Encodes the given string with base64." examplevalue="'hello world'"
-             proversion="1"/>
+             proversion="1" wordpress="true"/>
         <tag name="base64decode" description="Decodes a base64 encoded string." examplevalue="'aGVsbG8gd29ybGQ='"
-             proversion="1"/>
-        <tag name="md5" description="Calculates the MD5 hash of string." examplevalue="'hello world'" proversion="1"/>
+             proversion="1" wordpress="true"/>
+        <tag name="md5" description="Calculates the MD5 hash of string." examplevalue="'hello world'" proversion="1"
+             wordpress="true"/>
         <tag name="ucwords" description="Uppercase the first character of each word in a string."
-             examplevalue="'hello world'" proversion="1"/>
+             examplevalue="'hello world'" proversion="1" wordpress="true"/>
         <tag name="json_encode" description="Returns the JSON representation of a value." examplevalue="{a:1,b:2}"
-             proversion="1"/>
+             proversion="1" wordpress="true"/>
         <tag name="json_decode" description="Decodes a JSON string."
-             examplevalue="'{&quot;a&quot;:1,&quot;b&quot;:2}'" proversion="1"/>
+             examplevalue="'{&quot;a&quot;:1,&quot;b&quot;:2}'" proversion="1" wordpress="true"/>
     </tagset>
 </layouts>
