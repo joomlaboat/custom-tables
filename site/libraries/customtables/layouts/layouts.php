@@ -685,7 +685,7 @@ class Layouts
 		return $result;
 	}
 
-	function createDefaultLayout_Edit_WP($fields, $addToolbar = true): string
+	function createDefaultLayout_Edit_WP(array $fields, bool $addToolbar = true): string
 	{
 		$this->layoutType = 2;
 		$result = '<table class="form-table" role="presentation">';

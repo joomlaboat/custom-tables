@@ -45,7 +45,7 @@ class TwigProcessor
 
 	public function __construct(CT $ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
 	{
-		$this->debug = false;
+		$this->debug = true;
 
 		$this->parseParams = $parseParams;
 		$this->errorMessage = null;

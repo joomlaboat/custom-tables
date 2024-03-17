@@ -26,19 +26,23 @@ class Value_user extends BaseValue
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function render(): string
+	function render(): ?string
 	{
-		return self::renderUserValue((int)$this->rowValue, $this->option_list[0] ?? '');
+		return self::renderUserValue($this->rowValue, $this->option_list[0] ?? '', $this->option_list[1] ?? null);
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function renderUserValue(int $value, string $field = ''): string
+	public static function renderUserValue(?int $value, string $field = '', ?string $format = null): ?string
 	{
+		if ($value === null)
+			return null;
+
 		if ($field == 'online') {
-			//$query = 'SELECT userid FROM #__session WHERE userid=' . $value . ' LIMIT 1';
+			if (empty($value))
+				return null;
 
 			$whereClause = new MySQLWhereClause();
 			$whereClause->addCondition('userid', $value);
@@ -66,9 +70,7 @@ class Value_user extends BaseValue
 			if ($field == '')
 				$field = 'name';
 			elseif (!in_array($field, $allowedFields))
-				return 'wrong field "' . $field . '" !';
-
-			//$query = 'SELECT id, name, username, email, registerDate,lastvisitDate FROM #__users WHERE id=' . $value . ' LIMIT 1';
+				return 'Wrong user field "' . $field . '". Available fields: id, name, email, username, registerdate, lastvisitdate, online.';
 
 			$whereClause = new MySQLWhereClause();
 			$whereClause->addCondition('id', $value);
@@ -77,13 +79,11 @@ class Value_user extends BaseValue
 
 			if (count($rows) != 0) {
 				$row = $rows[0];
-				if (($field == 'registerDate' or $field == 'lastvisitDate') and $row[$field] == '0000-00-00 00:00:00')
-					return 'Never';
 
-				if ($field == 'registerdate')
-					return $row['registerDate'];
-				elseif ($field == 'lastvisitdate')
-					return $row['lastvisitDate'];
+				if ($field == 'registerdate') {
+					return common::formatDate($row['registerDate'], $format, 'Never');
+				} elseif ($field == 'lastvisitdate')
+					return common::formatDate($row['lastvisitDate'], $format, 'Never');
 				else
 					return $row[$field];
 			} else {
