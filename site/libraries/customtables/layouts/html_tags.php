@@ -175,7 +175,13 @@ class Twig_Html_Tags
 		if (!is_null($this->ct->Params->ModuleId))
 			return '';
 
-		$pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '', $this->ct->Env->version, $show_arrow_icons);
+		if (defined('_JEXEC')) {
+			$pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '', $this->ct->Env->version, $show_arrow_icons);
+		} elseif (defined('WPINC')) {
+			return '{{ html.pagination }} not supported in WordPress version';
+		} else {
+			return '{{ html.pagination }} not supported in this type of CMS';
+		}
 
 		if ($this->ct->Env->version < 4)
 			return '<div class="pagination">' . $pagination->getPagesLinks() . '</div>';

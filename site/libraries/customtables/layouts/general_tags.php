@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use DateTime;
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
@@ -314,16 +313,24 @@ class Twig_Url_Tags
 		return $this->ct->Env->current_url;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function base64(): ?string
 	{
 		if (defined('_JEXEC')) {
 			return $this->ct->Env->encoded_current_url;
 		} else {
-			common::enqueueMessage('Warning: The {{ url.base() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
+			common::enqueueMessage('Warning: The {{ url.base64() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
 			return null;
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function root(): ?string
 	{
 		if (!$this->ct->Env->advancedTagProcessor) {
@@ -351,9 +358,12 @@ class Twig_Url_Tags
 				$add_trailing_slash = false;
 		}
 
-		if ($include_host)
-			$WebsiteRoot = Uri::root();
-		else
+		if ($include_host) {
+			if (defined('_JEXEC'))
+				$WebsiteRoot = Uri::root();
+			else
+				$WebsiteRoot = home_url();
+		} else
 			$WebsiteRoot = CUSTOMTABLES_MEDIA_HOME_URL;
 
 		if ($add_trailing_slash) {
@@ -368,31 +378,55 @@ class Twig_Url_Tags
 		return $WebsiteRoot;
 	}
 
-	function getuint($param, $default = 0)
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
+	function getuint($param, $default = 0): ?int
 	{
 		return common::inputGetUInt($param, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function getfloat($param, $default = 0): float
 	{
 		return common::inputGetFloat($param, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function getword($param, $default = ''): string
 	{
 		return common::inputGetWord($param, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function getalnum($param, $default = ''): string
 	{
 		return common::inputGetCmd($param, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function getcmd($param, $default = ''): string
 	{
 		return common::inputGetCmd($param, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function getstringandencode($param, $default = ''): ?string
 	{
 		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers')) {
@@ -403,11 +437,19 @@ class Twig_Url_Tags
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function getstring($param, $default = ''): string
 	{
 		return common::inputGetString($param, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function getstringanddecode($param, $default = ''): ?string
 	{
 		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers')) {
@@ -418,6 +460,10 @@ class Twig_Url_Tags
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function itemid(): ?int
 	{
 		if (defined('_JEXEC'))
@@ -428,11 +474,19 @@ class Twig_Url_Tags
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function getint($param, $default = 0): ?int
 	{
 		return common::inputGetInt($param, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function set($option, $param = ''): void
 	{
 		if (defined('_JEXEC'))
@@ -441,16 +495,23 @@ class Twig_Url_Tags
 			common::enqueueMessage('Warning: The {{ url.set() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function server($param): ?string
 	{
-		if (defined('_JEXEC'))
-			return common::getServerParam($param);
-		else
-			common::enqueueMessage('Warning: The {{ url.server() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
-
-		return null;
+		if (!$this->ct->Env->advancedTagProcessor) {
+			common::enqueueMessage('Warning: The {{ url.server }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
+			return null;
+		}
+		return common::getServerParam($param);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $layoutname = '', $csv_column_separator = ','): ?string
 	{
 		if (defined('_JEXEC')) {
@@ -531,12 +592,18 @@ class Twig_Document_Tags
 		$this->ct->document->setMetaData('description', $metadescription);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function setpagetitle($pageTitle): void
 	{
-		if (defined('_JEXEC'))
+		if (defined('_JEXEC')) {
 			$this->ct->document->setTitle(common::translate($pageTitle));
-		else
-			$this->ct->document->setTitle($pageTitle);
+		} elseif (defined('WPINC')) {
+			common::enqueueMessage('Warning: The {{ document.setpagetitle }} tag is not supported in the current version of the Custom Tables for WordPress.');
+		} else
+			common::enqueueMessage('Warning: The {{ document.setpagetitle }} tag is not supported in the current version of the Custom Tables.');
 	}
 
 	function setheadtag($tag): void
@@ -544,8 +611,17 @@ class Twig_Document_Tags
 		$this->ct->document->addCustomTag($tag);
 	}
 
-	function layout($layoutName): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
+	function layout(string $layoutName = ''): ?string
 	{
+		if ($layoutName == '') {
+			common::enqueueMessage('Warning: The {{ document.layout("layout_name") }} layout name is required.');
+			return null;
+		}
+
 		if (!isset($this->ct->Table)) {
 			$this->ct->errors[] = '{{ document.layout }} - Table not loaded.';
 			return '';
@@ -601,9 +677,16 @@ class Twig_Document_Tags
 		return $html_result;
 	}
 
-	function sitename(): string
+	function sitename(): ?string
 	{
-		return $this->ct->app->get('sitename');
+		if (defined('_JEXEC'))
+			return $this->ct->app->get('sitename');
+		elseif (defined('WPINC'))
+			return get_bloginfo('name');
+		else
+			common::enqueueMessage('Warning: The {{ document.sitename }} tag is not supported in the current version of the Custom Tables.');
+
+		return null;
 	}
 
 	function languagepostfix(): string

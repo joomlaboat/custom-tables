@@ -1009,9 +1009,18 @@ function renderInput_Layout_checktype(layouttype_str, t) {
 
 function renderInput_Layout(id, param, value, onchange) {
     let param_att = param["@attributes"];
+    let currentLayout;
+    let currentTable;
 
-    let currentLayout = document.getElementById('jform_layoutname').value;
-    let currentTable = parseInt(document.getElementById('jform_tableid').value);
+    if (window.Joomla instanceof Object) {
+        currentLayout = document.getElementById('jform_layoutname').value;
+        currentTable = parseInt(document.getElementById('jform_tableid').value);
+    } else if (typeof wp !== 'undefined') {
+        currentLayout = document.getElementById('layoutname').value;
+        currentTable = parseInt(document.getElementById('table').value);
+    } else {
+        return 'renderInput_Layout not supported in this type of CMS';
+    }
 
     let layout_table = "";
     if (param_att.table != null)

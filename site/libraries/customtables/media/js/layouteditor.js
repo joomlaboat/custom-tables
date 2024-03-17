@@ -909,21 +909,30 @@ function renderTags(index, tagSet) {
             if (tagSetAttributes.name === 'filters')
                 fullTagName = tag.examplevalue + ' | ' + fullTagName;
 
-            if (params.length === 0)
-                t = '{{ ' + fullTagName + ' }}';
-            else
-                t = '{{ ' + fullTagName + '(<span>Params</span>)' + ' }}';
 
+            let isOk = true;
 
-            if (window.Joomla instanceof Object || (typeof (tag.wordpress) !== "undefined" & tag.wordpress === "true")) {
-                result += '<div style="vertical-align:top;display:inline-block;">';
+            if (typeof (tag.layouttypes) != "undefined" && tag.deprecated !== "") {
+                let layoutTypes = tag.layouttypes.split(",");
+                isOk = layoutTypes.includes(current_layout_type + "");
+            }
 
-                if (proversion || typeof (tag.proversion) === "undefined" || parseInt(tag.proversion) !== 1) {
-                    result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(fullTagName) + '",' + params.length + ');\' class="' + buttonClass + '" title="' + tag.description + '">' + t + '</a> ';
-                } else {
-                    result += '<div style="display:inline-block;"><div class="' + buttonClassPro + '" title="' + tag.description + '">' + t + ' *</div></div> ';
+            if (isOk) {
+                if (params.length === 0)
+                    t = '{{ ' + fullTagName + ' }}';
+                else
+                    t = '{{ ' + fullTagName + '(<span>Params</span>)' + ' }}';
+
+                if (window.Joomla instanceof Object || (typeof (tag.wordpress) !== "undefined" & tag.wordpress === "true")) {
+                    result += '<div style="vertical-align:top;display:inline-block;">';
+
+                    if (proversion || typeof (tag.proversion) === "undefined" || parseInt(tag.proversion) !== 1) {
+                        result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(fullTagName) + '",' + params.length + ');\' class="' + buttonClass + '" title="' + tag.description + '">' + t + '</a> ';
+                    } else {
+                        result += '<div style="display:inline-block;"><div class="' + buttonClassPro + '" title="' + tag.description + '">' + t + ' *</div></div> ';
+                    }
+                    result += '</div>';
                 }
-                result += '</div>';
             }
         }
     }

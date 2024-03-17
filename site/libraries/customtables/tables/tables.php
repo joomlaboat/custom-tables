@@ -41,6 +41,10 @@ class Tables
 		return $allTables;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function loadRecords($tablename_or_id, string $filter = '', ?string $orderby = null, int $limit = 0): ?bool
 	{
 		if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
@@ -66,7 +70,6 @@ class Tables
 		$this->ct->LimitStart = 0;
 
 		$this->ct->getRecords(false, $limit);
-
 		return true;
 	}
 

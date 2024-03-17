@@ -661,7 +661,7 @@
 
         <tag name="getvalue" label="Get Value" startchar="{" endchar="}"
              description="Read a record field value from selected table."
-             twigclass="tables" proversion="1" wordpress="false">
+             twigclass="tables" proversion="1" wordpress="true">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -678,7 +678,7 @@
 
         <tag name="getrecord" label="Get Record" startchar="{" endchar="}"
              description="Renders another table single record using selected layout."
-             twigclass="tables" proversion="1" wordpress="false">
+             twigclass="tables" proversion="1" wordpress="true">
             <params>
                 <param type="layout" name="layout" label="Catalog Layout" table=""
                        layouttype="catalogpage,simplecatalog"
@@ -692,7 +692,7 @@
 
         <tag name="getrecords" label="Get Records" startchar="{" endchar="}"
              description="Renders another table records using selected layout."
-             twigclass="tables" proversion="1" wordpress="false">
+             twigclass="tables" proversion="1" wordpress="true">
             <params>
                 <param type="layout" name="layout" label="Catalog Layout" table=""
                        layouttype="catalogpage,simplecatalog"
@@ -960,7 +960,7 @@
 
         <tag name="set" label="Set query parameter" startchar="{" endchar="}"
              description="Sets a URI query parameter value." twigclass="url"
-             proversion="1" wordpress="false">
+             proversion="1" wordpress="false" layouttypes="1,2,4,5,6">
             <params>
                 <param name="parameter" label="Parameter" type="string" description="Url query parameter"
                        example="firstname"/>
@@ -1113,7 +1113,7 @@
             priority="3">
 
         <tag name="setpagetitle" label="Set Page Title" startchar="{" endchar="}" twigclass="document"
-             description="A command to set the Page Title." proversion="1">
+             description="A command to set the Page Title." proversion="1" layouttypes="1,2,4,5,6" wordpress="false">
             <params>
                 <param name="title" label="Title" type="string" description="Type the Page Title here."
                        example="JoomlaBoat - Custom Tables"/>
@@ -1121,7 +1121,8 @@
         </tag>
 
         <tag name="setheadtag" label="HTML Document Head Tag" startchar="{" endchar="}" hidedefaultexample="1"
-             description="Places whatever provided to HTML document head tag." proversion="1" twigclass="document">
+             description="Places whatever provided to HTML document head tag." proversion="1" twigclass="document"
+             layouttypes="1,2,4,5,6" wordpress="false">
             <params>
                 <param name="content" label="Content" type="string"
                        example="&lt;script src='/components/com_oxfordsms/js/ajax.js' type='text/javascript'&gt;&lt;/script&gt;"
@@ -1130,7 +1131,8 @@
         </tag>
 
         <tag name="setmetakeywords" label="Set Meta Keywords" startchar="{" endchar="}" twigclass="document"
-             description="A command to place a meta keywords into the head of the page." proversion="1">
+             description="A command to place a meta keywords into the head of the page." proversion="1"
+             layouttypes="1,2,4,5,6" wordpress="false">
             <params>
                 <param name="keywords" label="Keywords" type="string"
                        description="List of keywords. You may include [fieldname] to get keywords from. "/>
@@ -1138,7 +1140,8 @@
         </tag>
 
         <tag name="setmetadescription" label="Set Meta Description" startchar="{" endchar="}" twigclass="document"
-             description="A command to place a meta description into the head of the page." proversion="1">
+             description="A command to place a meta description into the head of the page." proversion="1"
+             layouttypes="1,2,4,5,6" wordpress="false">
             <params>
                 <param name="description" label="Description" type="string"
                        example="custom tables, the best joomla extension, [producttitle], database"
@@ -1148,7 +1151,7 @@
 
         <tag name="layout" label="Extend Layout" startchar="{" endchar="}"
              description="Includes the content of selected layout." hidedefaultexample="0" proversion="1"
-             twigclass="document">
+             twigclass="document" wordpress="true">
             <params>
                 <param name="layoutname" label="Layout Name" type="layout" description="Layout Name."
                        examplenoquotes="0" table="current" example="my_script_layout"/>
@@ -1157,26 +1160,27 @@
         </tag>
 
         <tag name="languagepostfix" label="Language Postfix" startchar="{" endchar="}"
-             description="Current page Language Postfix." proversion="1" twigclass="document"/>
+             description="Current page Language Postfix." proversion="1" twigclass="document" wordpress="false"/>
 
         <tag name="attachment" label="Email file attachment" startchar="{" endchar="}" layouttypes="7"
              description="The link to a file that will be attached to an email. Works in Email Layout Type."
-             proversion="1" twigclass="document">
+             proversion="1" twigclass="document" wordpress="false">
         </tag>
 
-        <tag name="sitename" label="Site Name" startchar="{" endchar="}"
-             description="Return the Site Name set in configuration.php file" proversion="1" twigclass="document"/>
+        <tag name="sitename" label="Site Name" startchar="{" endchar="}" layouttypes="1,2,4,5,6"
+             description="Return the Site Name set in configuration.php file" proversion="1" twigclass="document"
+             wordpress="true"/>
 
         <!-- Deprecated -->
 
         <tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" deprecated="1"
-             twigreplacement="document.setpagetitle"/>
+             twigreplacement="document.setpagetitle" layouttypes="1,2,4,5,6"/>
         <tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" deprecated="1"
-             twigreplacement="document.setheadtag"/>
+             twigreplacement="document.setheadtag" layouttypes="1,2,4,5,6"/>
         <tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" deprecated="1"
-             twigreplacement="document.setnetakeywords"/>
+             twigreplacement="document.setmetakeywords" layouttypes="1,2,4,5,6"/>
         <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" deprecated="1"
-             twigreplacement="document.setmetadescription"/>
+             twigreplacement="document.setmetadescription" layouttypes="1,2,4,5,6"/>
 
     </tagset>
 

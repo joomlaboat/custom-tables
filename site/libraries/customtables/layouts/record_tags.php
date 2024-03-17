@@ -981,8 +981,6 @@ class Twig_Tables_Tags
 		}
 
 		try {
-
-
 			if ($tables->loadRecords($layouts->tableId, $filter, $orderby, $limit)) {
 
 				if ($join_ct->Env->legacySupport) {
