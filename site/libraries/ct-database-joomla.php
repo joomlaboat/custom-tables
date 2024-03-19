@@ -63,7 +63,11 @@ class MySQLWhereClause
 			'MULTI_FIELD_SEARCH_TABLEJOINLIST_EQUAL',
 			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_EQUAL',
 			'MULTI_FIELD_SEARCH_TABLEJOINLIST_CONTAIN',
-			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_CONTAIN'
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_CONTAIN',
+			'MULTI_FIELD_SEARCH_TABLEJOIN_EQUAL',
+			'MULTI_FIELD_SEARCH_TABLEJOIN_NOT_EQUAL',
+			'MULTI_FIELD_SEARCH_TABLEJOIN_CONTAIN',
+			'MULTI_FIELD_SEARCH_TABLEJOIN_NOT_CONTAIN'
 		];
 
 		if (!in_array($operator, $possibleOperators)) {
@@ -94,7 +98,11 @@ class MySQLWhereClause
 			'MULTI_FIELD_SEARCH_TABLEJOINLIST_EQUAL',
 			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_EQUAL',
 			'MULTI_FIELD_SEARCH_TABLEJOINLIST_CONTAIN',
-			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_CONTAIN'
+			'MULTI_FIELD_SEARCH_TABLEJOINLIST_NOT_CONTAIN',
+			'MULTI_FIELD_SEARCH_TABLEJOIN_EQUAL',
+			'MULTI_FIELD_SEARCH_TABLEJOIN_NOT_EQUAL',
+			'MULTI_FIELD_SEARCH_TABLEJOIN_CONTAIN',
+			'MULTI_FIELD_SEARCH_TABLEJOIN_NOT_CONTAIN'
 		];
 
 		if (!in_array($operator, $possibleOperators)) {
@@ -205,6 +213,29 @@ class MySQLWhereClause
 				} else {
 					$where [] = $db->quote($condition['field']) . ' IN ' . $condition['value'];
 				}
+
+			} elseif ($condition['operator'] == 'MULTI_FIELD_SEARCH_TABLEJOIN_EQUAL') {
+				$where [] = '(SELECT join_table.' . $condition['join_real_id_field_name']
+					. ' FROM ' . $condition['join_realtablename'] . ' AS join_table WHERE'
+					. ' ' . $condition['field'] . '=' . $condition['join_real_id_field_name']
+					. ' AND ' . $condition['join_real_field_name'] . '=' . $db->quote($condition['value']) . ' LIMIT 1) IS NOT NULL';
+
+			} elseif ($condition['operator'] == 'MULTI_FIELD_SEARCH_TABLEJOIN_NOT_EQUAL') {
+				$where [] = '(SELECT join_table.' . $condition['join_real_id_field_name']
+					. ' FROM ' . $condition['join_realtablename'] . ' AS join_table WHERE'
+					. ' ' . $condition['field'] . '=' . $condition['join_real_id_field_name']
+					. ' AND ' . $condition['join_real_field_name'] . '!=' . $db->quote(['value']) . ' LIMIT 1) IS NOT NULL';
+
+			} elseif ($condition['operator'] == 'MULTI_FIELD_SEARCH_TABLEJOIN_CONTAIN') {
+				$where [] = '(SELECT join_table.' . $condition['join_real_id_field_name']
+					. ' FROM ' . $condition['join_realtablename'] . ' AS join_table WHERE'
+					. ' ' . $condition['field'] . '=' . $condition['join_real_id_field_name']
+					. ' AND INSTR(' . $condition['join_real_field_name'] . ',' . $db->quote($condition['value']) . ') LIMIT 1) IS NOT NULL';
+			} elseif ($condition['operator'] == 'MULTI_FIELD_SEARCH_TABLEJOIN_NOT_CONTAIN') {
+				$where [] = '(SELECT join_table.' . $condition['join_real_id_field_name']
+					. ' FROM ' . $condition['join_realtablename'] . ' AS join_table WHERE'
+					. ' ' . $condition['field'] . '=' . $condition['join_real_id_field_name']
+					. ' AND !INSTR(' . $condition['join_real_field_name'] . ',' . $db->quote($condition['value']) . ') LIMIT 1) IS NOT NULL';
 
 			} elseif ($condition['operator'] == 'MULTI_FIELD_SEARCH_TABLEJOINLIST_EQUAL') {
 				$where [] = '(SELECT join_table.' . $condition['join_real_id_field_name']

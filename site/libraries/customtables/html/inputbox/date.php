@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
 
 class InputBox_date extends BaseInputBox
@@ -22,6 +23,10 @@ class InputBox_date extends BaseInputBox
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($value === null) {
@@ -45,6 +50,7 @@ class InputBox_date extends BaseInputBox
 			if ($format === null)
 				$format = '%Y-%m-%d %H:%M:%S';
 		} else {
+			$this->attributes['showTime'] = false;
 			if ($format === null)
 				$format = '%Y-%m-%d';
 		}
@@ -52,8 +58,21 @@ class InputBox_date extends BaseInputBox
 		if (defined('_JEXEC')) {
 			return HTMLHelper::calendar($value, $this->attributes['name'], $this->attributes['id'], $format, $this->attributes);
 		} elseif (defined('WPINC')) {
-			return '<input type="text" id="' . sanitize_title($this->attributes['id']) . '" name="' . sanitize_title($this->attributes['id']) . '">'
-				. '<script>jQuery(function($){ $("#' . sanitize_title($this->attributes['id']) . '").datepicker(); });</script>';
+
+			$datePickerParams = [
+				'defaultDate: "' . $value . '"'
+			];
+
+			if ($this->attributes['showTime']) {
+				$datePickerParams[] = 'format: "Y-m-d H:i:s"';
+				$datePickerParams[] = 'timeFormat: "H:mm"';
+			} else {
+				$datePickerParams[] = 'format: "Y-m-d"';
+				$datePickerParams[] = 'timepicker: false';
+
+			}
+			return '<input type="text" id="' . sanitize_title($this->attributes['id']) . '" name="' . sanitize_title($this->attributes['id']) . '" value="' . $value . '">'
+				. '<script>jQuery(function($){ $("#' . sanitize_title($this->attributes['id']) . '").datetimepicker({ ' . implode(',', $datePickerParams) . ' }); });</script>';
 		} else {
 			return 'Date Field Types is not supported.';
 		}

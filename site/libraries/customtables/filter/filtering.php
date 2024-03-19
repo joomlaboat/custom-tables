@@ -278,7 +278,7 @@ class Filtering
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				return $this->Search_User($value, $fieldrow, $comparison_operator, $field_extra_param);
+				return $this->Search_User($value, $fieldrow, $comparison_operator, $field_extra_param, $asString);
 
 			case 'usergroup':
 				if ($comparison_operator == '==')
@@ -563,7 +563,7 @@ class Filtering
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function Search_User($value, $fieldrow, $comparison_operator, $field_extra_param = ''): MySQLWhereClause
+	function Search_User($value, $fieldrow, $comparison_operator, $field_extra_param = '', bool $asString = false): MySQLWhereClause
 	{
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
 			. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
@@ -572,7 +572,6 @@ class Filtering
 
 		$vList = explode(',', $v);
 		$whereClause = new MySQLWhereClause();
-		//$cArr = array();
 
 		if ($field_extra_param == 'usergroups') {
 			foreach ($vList as $vL) {
@@ -591,15 +590,78 @@ class Filtering
 		} else {
 			foreach ($vList as $vL) {
 				if ($vL != '') {
-					if ((int)$vL == 0 and $comparison_operator == '=') {
-						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], 0);
-						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], null, 'NULL');
-					} else {
-						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], (int)$vL, $comparison_operator);
-					}
 
-					$filterTitle = Value_user::renderUserValue($vL);
-					$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
+					if ($asString) {
+
+						$operator = null;
+
+						if ($comparison_operator == '!=') {
+							$operator = 'MULTI_FIELD_SEARCH_TABLEJOIN_NOT_CONTAIN';
+							$opt_title = common::translate('COM_CUSTOMTABLES_NOT_CONTAINS');
+						} elseif ($comparison_operator == '!==') {
+							$operator = 'MULTI_FIELD_SEARCH_TABLEJOIN_NOT_EQUAL';
+							$opt_title = common::translate('COM_CUSTOMTABLES_ISNOT');
+						} elseif ($comparison_operator == '=') {
+							$operator = 'MULTI_FIELD_SEARCH_TABLEJOIN_CONTAIN';
+							$opt_title = common::translate('COM_CUSTOMTABLES_CONTAINS');
+						} elseif ($comparison_operator == '==') {
+							$operator = 'MULTI_FIELD_SEARCH_TABLEJOIN_EQUAL';
+							$opt_title = common::translate('COM_CUSTOMTABLES_IS');
+						} else
+							$opt_title = common::translate('COM_CUSTOMTABLES_UNKNOWN_OPERATION');
+
+						$esr_table_full = $this->ct->Table->realtablename;
+
+						if ($operator !== null) {
+							$whereClause->addOrCondition(
+								$esr_table_full . '.' . $fieldrow['realfieldname'],
+								$vL,
+								$operator,
+								false,
+								'#__users',
+								'id',
+								'name'
+							);
+
+							$whereClause->addOrCondition(
+								$esr_table_full . '.' . $fieldrow['realfieldname'],
+								$vL,
+								$operator,
+								false,
+								'#__users',
+								'id',
+								'username'
+							);
+
+							$whereClause->addOrCondition(
+								$esr_table_full . '.' . $fieldrow['realfieldname'],
+								$vL,
+								$operator,
+								false,
+								'#__users',
+								'id',
+								'email'
+							);
+						}
+
+						$this->PathValue[] = $fieldrow['fieldtitle'
+							. $this->ct->Languages->Postfix]
+							. ' '
+							. $opt_title
+							. ' '
+							. $vL;
+
+					} else {
+						if ((int)$vL == 0 and $comparison_operator == '=') {
+							$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], 0);
+							$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], null, 'NULL');
+						} else {
+							$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], (int)$vL, $comparison_operator);
+						}
+
+						$filterTitle = Value_user::renderUserValue($vL);
+						$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
+					}
 				}
 			}
 		}

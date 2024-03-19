@@ -480,6 +480,7 @@ class SaveFieldQuerySet
 
 			case 'date':
 				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+
 				if (isset($value)) {
 					if ($value == '' or $value == '0000-00-00') {
 
