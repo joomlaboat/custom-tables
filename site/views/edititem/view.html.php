@@ -24,6 +24,9 @@ jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditItem extends HtmlView
 {
 	var CT $ct;
+	var ?array $row;
+	var string $formLink;
+	var Edit $editForm;
 
 	function display($tpl = null): bool
 	{
@@ -40,42 +43,27 @@ class CustomTablesViewEditItem extends HtmlView
 		if (!isset($this->ct->Table->fields) or !is_array($this->ct->Table->fields))
 			return false;
 
-		$formLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem' . ($this->ct->Params->ItemId != 0 ? '&amp;Itemid=' . $this->ct->Params->ItemId : '');
-		if (!is_null($this->ct->Params->ModuleId))
-			$formLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
-
 		if ($this->ct->Env->frmt == 'json')
 			require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
 		else {
 
-			$editForm = new Edit($this->ct);
-			$editForm->load();
+			$this->formLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem' . ($this->ct->Params->ItemId != 0 ? '&amp;Itemid=' . $this->ct->Params->ItemId : '');
+			if (!is_null($this->ct->Params->ModuleId))
+				$this->formLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+
+			$this->editForm = new Edit($this->ct);
+			$this->editForm->load();
 
 			if (!empty($this->ct->Params->listing_id))
-				$row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
+				$this->row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
 			else
-				$row = null;
+				$this->row = null;
 
 			if (isset($row)) {
 				if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-					$row = ctProHelpers::getSpecificVersionIfSet($this->ct, $row);
+					$this->row = ctProHelpers::getSpecificVersionIfSet($this->ct, $row);
 			}
-
-			if ($this->ct->Env->isModal) {
-				echo $editForm->render($row, $formLink, 'ctEditModalForm');
-				die;//Modal Edit Form
-			} else
-				echo $editForm->render($row, $formLink, 'ctEditForm');
-
-			echo '
-            <!-- Modal content -->
-<div id="ctModal" class="ctModal">
-    <div id="ctModal_box" class="ctModal_content">
-        <span id="ctModal_close" class="ctModal_close">&times;</span>
-        <div id="ctModal_content"></div>
-    </div>
-</div><!-- end of the modal -->';
-
+			parent::display($tpl);
 		}
 		return true;
 	}

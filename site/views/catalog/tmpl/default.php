@@ -10,12 +10,12 @@
 
 
 // no direct access
+defined('_JEXEC') or die();
+
 use CustomTables\common;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-
-defined('_JEXEC') or die();
 
 if ($this->ct->Env->frmt == 'html') {
 	if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
