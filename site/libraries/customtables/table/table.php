@@ -189,6 +189,9 @@ class Table
 	 */
 	function loadRecord(?string $listing_id)
 	{
+		if ($this->selects === null)
+			throw new Exception('Table::loadRecord - Table not set.');
+
 		$whereClause = new MySQLWhereClause();
 		if (empty($listing_id)) {
 			$this->record = null;

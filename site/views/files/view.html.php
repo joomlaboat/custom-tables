@@ -155,6 +155,10 @@ class CustomTablesViewFiles extends HtmlView
 		die;//clean exit
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function ProcessContentWithCustomPHP($content, $row)
 	{
 		$serverTagProcessorFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR
@@ -178,21 +182,32 @@ class CustomTablesViewFiles extends HtmlView
 				require_once($file);
 				$function_name = 'CTProcessFile_' . str_replace('.php', '', $customPHPFile);
 
-				if (function_exists($function_name))
+				if (function_exists($function_name)) {
 					return call_user_func($function_name, $content, $row, $this->ct->Table->tableid, $this->fieldid);
+				} else {
+					echo 'Function "' . $function_name . '" not found.<br/>';
+					die;
+				}
+			} else {
+				common::enqueueMessage('Custom PHP file "' . $file . '" not found.');
 			}
 		}
 		return $content;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function render_file_output($filepath): bool
 	{
 		if (strlen($filepath) > 8 and str_starts_with($filepath, '/images/'))
 			$file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
 		else
-			$file = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+			$file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, '/images' . $filepath);
 
 		if (!file_exists($file)) {
+			echo 'not found';
 			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND');
 			return false;
 		}

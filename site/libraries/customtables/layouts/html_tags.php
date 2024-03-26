@@ -1046,4 +1046,60 @@ class Twig_Html_Tags
 	{
 		return '<span id="ctTable' . $this->ct->Table->tableid . 'CheckboxCount">0</span>';
 	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
+	function paypal(): ?string
+	{
+		//string $business_email, string $item_name, float $price, bool $isProduction = true
+		$functionParams = func_get_args();
+
+		if (!isset($functionParams[0]) or $functionParams[0] == '') {
+			$this->ct->errors[] = '{{ html.paypal(email) }} business email address is required.';
+			return null;
+		} else
+			$business_email = $functionParams[0];
+
+		if (!isset($functionParams[1]) or $functionParams[1] == '') {
+			$this->ct->errors[] = '{{ html.paypal(email,item_name) }} item name is required.';
+			return null;
+		} else
+			$item_name = $functionParams[1];
+
+		if (!isset($functionParams[2]) or $functionParams[2] == '') {
+			$this->ct->errors[] = '{{ html.paypal(email,item_name,price) }} price must be more than zero.';
+			return null;
+		} else
+			$price = (float)$functionParams[2];
+
+		if (isset($functionParams[3]) and $functionParams[3]) {
+			//Sandbox
+			$PayPalURL = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+		} else {
+			//Production
+			$PayPalURL = 'https://www.paypal.com/cgi-bin/webscr';
+		}
+
+		return '<form action="' . $PayPalURL . '" method="post">
+    <!-- Identify your business so that you can collect the payments. -->
+    <input type="hidden" name="business" value="' . $business_email . '" />
+
+    <!-- Specify a Buy Now button. -->
+    <input type="hidden" name="cmd" value="_xclick" />
+
+    <!-- Specify details about the item that buyers will purchase. -->
+    <input type="hidden" name="item_name" value="' . $item_name . '" />
+    <input type="hidden" name="amount" value="' . $price . '" />
+    <input type="hidden" name="currency_code" value="USD" />
+
+    <!-- Display the payment button. -->
+    <input type="image" name="submit" style="border:none;display:inline-block;" src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/paypal-checkout-button.png"
+           alt="Buy Now">
+    <div style="position:absolute;"><img style="border:none;width:1px;height:1px;display:inline-block;margin:0;"
+                                         alt="PayPal Buy Now" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif"
+                                         class="button"></div>
+</form>';
+	}
 }

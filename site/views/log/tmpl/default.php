@@ -9,11 +9,11 @@
  **/
 
 // no direct access
+defined('_JEXEC') or die();
+
 use CustomTables\common;
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
-
-defined('_JEXEC') or die();
 
 $currentURL = common::curPageURL();
 $cleanURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'action');

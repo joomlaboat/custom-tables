@@ -214,7 +214,7 @@ class ImportTables
 	 * @since 3.2.2
 	 */
 	public static function insertRecords(string $table, array $rows, bool $addPrefix = true, array $exceptions = array(), bool $force_id = false,
-	                                     string $add_field_prefix = '', array $field_conversion_map = array(), bool $save_checked_out = false): ?int
+										 string $add_field_prefix = '', array $field_conversion_map = array(), bool $save_checked_out = false): ?int
 	{
 		if ($addPrefix)
 			$mysqlTableName = '#__customtables_' . $table;
@@ -601,7 +601,7 @@ class ImportTables
 			$menuitem_new['id'] = null;
 			$menuitem_new['component_id'] = $component_id;
 			$menuitem_new['alias'] = $menuitem_alias;
-			$menuitem_new['menytype'] = $new_menutype_alias;
+			$menuitem_new['menutype'] = $new_menutype_alias;
 
 			//Create layout record
 			//TODO: Add Menu First
