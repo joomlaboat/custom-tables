@@ -114,8 +114,13 @@ class CT
 	function getTable($tableNameOrID, $userIdFieldName = null): void
 	{
 		$this->Table = new Table($this->Languages, $this->Env, $tableNameOrID, $userIdFieldName);
-		$this->Ordering = new Ordering($this->Table, $this->Params);
-		$this->prepareSEFLinkBase();
+
+		if ($this->Table !== null) {
+			$this->Ordering = new Ordering($this->Table, $this->Params);
+			$this->prepareSEFLinkBase();
+		} else {
+			$this->Ordering = null;
+		}
 	}
 
 	/**
@@ -128,7 +133,6 @@ class CT
 		$this->Table->setTable($tableRow, $userIdFieldName);
 
 		$this->Ordering = new Ordering($this->Table, $this->Params);
-
 		$this->prepareSEFLinkBase();
 	}
 
@@ -413,7 +417,7 @@ class CT
 
 		if ($this->Env->advancedTagProcessor)
 			$this->Table->saveLog($listing_id, 5);
-		
+
 		$new_row = array();
 
 		if (defined('_JEXEC')) {

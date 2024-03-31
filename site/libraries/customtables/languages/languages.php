@@ -110,6 +110,19 @@ class Languages
 		return '';
 	}
 
+	function getDefaultLanguage()
+	{
+		$db = Factory::getDBO();
+		$query = 'SELECT params FROM #__extensions WHERE ' . $db->quoteName('name') . '="com_languages" LIMIT 1';
+		$db->setQuery($query);
+		$rows = $db->loadObjectList();
+
+		if (count($rows) == 0)
+			return '';
+
+		return json_decode($rows[0]->params);
+	}
+
 	function getLanguageTagByID($language_id): string
 	{
 		foreach ($this->LanguageList as $lang) {
