@@ -17,6 +17,7 @@ use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
+use CustomTables\FileUtils;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Uri\Uri;
 
@@ -310,7 +311,6 @@ class CT_FieldTypeTag_file
 		return $filename_new;
 	}
 
-
 	public static function getBlobFileName(Field $field, int $valueSize, array $row, array $fields)
 	{
 		$filename = '';
@@ -345,6 +345,7 @@ class CT_FieldTypeTag_file
 
 		if ($field->type == 'filelink') {
 			$FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0] ?? '');
+
 			$filepath = $FileFolder . '/' . $filename;
 		} elseif ($field->type == 'blob')
 			$filepath = $filename;
@@ -457,11 +458,17 @@ class CT_FieldTypeTag_file
 		}
 	}
 
+	//getOrCreateDirectoryPath
 	public static function getFileFolder(string $folder): string
 	{
+		return FileUtils::getOrCreateDirectoryPath($folder);
+		/*
 		if ($folder == '')
 			$folder = '/images';    //default folder
 		elseif ($folder[0] == '/') {
+
+			if (strlen($folder) > 6 and substr($folder, 0, 6) != '/images')
+				$folder = '/images' . $folder;
 
 			//delete trailing slash if found
 			$p = substr($folder, strlen($folder) - 1, 1);
@@ -491,6 +498,7 @@ class CT_FieldTypeTag_file
 			mkdir($folderPath, 0755, true);
 
 		return $folder;
+		*/
 	}
 
 	static protected function get_private_file_path(string $rowValue, string $how_to_process, string $filepath, string $recId, int $fieldid, int $tableid, bool $filename_only = false): string

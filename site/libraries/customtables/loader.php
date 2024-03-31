@@ -77,6 +77,7 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	require_once($path_helpers . 'email.php');
 	require_once($path_helpers . 'user.php');
 	require_once($path_helpers . 'misc.php');
+	require_once($path_helpers . 'fileutils.php');
 
 
 	if (defined('_JEXEC')) {
