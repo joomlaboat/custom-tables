@@ -22,19 +22,6 @@
         </editparams>
     </type>
 
-    <!--
-    <type ct_name="multilangarticle" label="Article (Multilingual)"
-          description="Select Article box per each language installed." priority="3">
-        <editparams name="multilangarticle" label="Input Element Parameters" description="">
-            <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
-                <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
-                       type="string"/>
-            </params>
-        </editparams>
-    </type>-->
-
     <type ct_name="userid" label="Author User" description="Stores the ID of the user who created the record."
           priority="2">
         <editparams name="userid" label="Input Element Parameters" description="">

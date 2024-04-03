@@ -55,9 +55,10 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 		define('CUSTOMTABLES_MEDIA_HOME_URL', home_url());
 	}
 
-	if (!defined('_JEXEC') or ($loadTwig === null or $loadTwig or Factory::getApplication()->getName() == 'administrator') and !class_exists('Twig')) {
+	//or Factory::getApplication()->getName() == 'administrator'
+	if (!defined('_JEXEC') or ($loadTwig === null or $loadTwig) and !class_exists('Twig')) {
 
-		if ($componentName == 'com_customtables') {
+		if ($componentName == 'com_customtables' or $componentName == 'com_extensiontranslator') {
 			$twig_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 			require_once($twig_file);
 		}
