@@ -573,14 +573,33 @@ function addFieldTag(tagStartChar, postfix, tagEndChar, tag, param_count) {
 
 function FillLayout() {
     let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
-    let t = parseInt(document.getElementById("jform_layouttype").value);
-    if (isNaN(t) || t === 0) {
+
+    let layoutType;
+    let tableId;
+
+    if (window.Joomla instanceof Object) {
+        layoutType = parseInt(document.getElementById("jform_layouttype").value);
+        tableId = parseInt(document.getElementById("jform_tableid").value);
+    } else if (typeof wp !== 'undefined') {
+        layoutType = parseInt(document.getElementById('layouttype').value);
+        tableId = parseInt(document.getElementById('table').value);
+
+        if (codemirror_active_index == 1)
+            codemirror_active_areatext_id = 'layoutmobile';
+        else if (codemirror_active_index == 2)
+            codemirror_active_areatext_id = 'layoutcss';
+        else if (codemirror_active_index == 3)
+            codemirror_active_areatext_id = 'layoutjs';
+        else
+            codemirror_active_areatext_id = 'layoutcode';
+    }
+
+    if (isNaN(layoutType) || layoutType === 0) {
         alert("Type not selected.");
         return;
     }
 
-    let tableid = parseInt(document.getElementById("jform_tableid").value);
-    if (isNaN(tableid) || tableid === 0) {
+    if (isNaN(tableId) || tableId === 0) {
         alert("Table not selected.");
         return;
     }
@@ -589,12 +608,13 @@ function FillLayout() {
     layout_obj.value = editor.getValue();
 
     let v = layout_obj.value;
+
     if (v !== '') {
         alert("Layout Content is not empty, delete it first.");
         return;
     }
 
-    switch (t) {
+    switch (layoutType) {
         case 1:
             layout_obj.value = getLayout_SimpleCatalog();
             break;
