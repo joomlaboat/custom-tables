@@ -65,25 +65,25 @@ function findTagSets(layouttypeid, priority) {
     return tagsets_;
 }
 
-function loadTagParams(type_id, tags_box, CMSType) {
+function loadTagParams(type_id, tags_box) {
 
     type_obj = document.getElementById(type_id);
 
     if (!layout_tags_loaded) {
-        loadTags(type_id, tags_box, CMSType);
+        loadTags(type_id, tags_box);
     } else {
         updateTagsParameters();
     }
 }
 
-function loadTags(type_id, tags_box, CMSType) {
+function loadTags(type_id, tags_box) {
     type_obj = document.getElementById(type_id);
 
     let url = '';
-    if (CMSType == 'Joomla') {
+    if (window.Joomla instanceof Object) {
         let parts = location.href.split("/administrator/");
         url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=tags&Itemid=-1';
-    } else if (CMSType == 'WordPress') {
+    } else if (typeof wp !== 'undefined') {
         let parts = location.href.split("wp-admin/admin.php?");
         url = parts[0] + 'wp-admin/admin.php?page=customtables-api-xml&xmlfile=tags';
     } else {
@@ -116,7 +116,7 @@ function loadTags(type_id, tags_box, CMSType) {
                 layout_tags = s.layouts.tagset;
 
                 layout_tags_loaded = true;
-                loadTagParams(type_id, tags_box, CMSType);
+                loadTagParams(type_id, tags_box);
 
             }
         };

@@ -31,31 +31,32 @@ function openLayoutWizard() {
 }
 
 //Used in layouteditor.php
-function loadFields(tableselector_id_, field_box_id_, CMSType) {
+function loadFields(tableselector_id_, field_box_id_) {
     tableselector_id = tableselector_id_;
     field_box_id = field_box_id_;
     tableselector_obj = document.getElementById(tableselector_id);
-    loadFieldsUpdate(CMSType);
+    loadFieldsUpdate();
 }
 
-function loadFieldsUpdate(CMSType) {
+function loadFieldsUpdate() {
     let tableid = tableselector_obj.value;
     if (tableid !== current_table_id)
-        loadFieldsData(tableid, CMSType);
+        loadFieldsData(tableid);
 }
 
-function loadFieldsData(tableid, CMSType) {
+function loadFieldsData(tableid) {
     current_table_id = 0;
     tableid = parseInt(tableid);
     if (isNaN(tableid) || tableid === 0)
         return;//table not selected
 
     let url = '';
-    if (CMSType === 'Joomla') {
+
+    if (window.Joomla instanceof Object) {
         const parts = location.href.split("/administrator/");
         const websiteRoot = parts[0] + "/administrator/";
         url = websiteRoot + "index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid=" + tableid;
-    } else if (CMSType === 'WordPress') {
+    } else if (typeof wp !== 'undefined') {
         let parts = location.href.split("wp-admin/admin.php?");
         url = parts[0] + 'wp-admin/admin.php?page=customtables-api-fields&table=' + tableid;
     } else {
@@ -743,7 +744,7 @@ function getLayout_SimpleCatalog() {
 
     if (window.Joomla instanceof Object)
         result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
-    
+
     result += '<div class="datagrid">\r\n';
     result += '<div>{{ html.batch(\'edit\',\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
     result += '\r\n';
