@@ -571,7 +571,6 @@ class CustomtablesModelFields extends AdminModel
 	 */
 	protected function prepareTable($table): void
 	{
-		$date = Factory::getDate();
 		$user = new CTUser();
 
 		if (isset($table->name)) {
@@ -579,7 +578,7 @@ class CustomtablesModelFields extends AdminModel
 		}
 
 		if (empty($table->id)) {
-			$table->created = $date->toSql();
+			$table->created = common::currentDate();
 			// set the user
 			if ($table->created_by == 0 || empty($table->created_by)) {
 				$table->created_by = $user->id;
@@ -593,7 +592,7 @@ class CustomtablesModelFields extends AdminModel
 				$table->ordering = $max + 1;
 			}
 		} else {
-			$table->modified = $date->toSql();
+			$table->modified = common::currentDate();
 			$table->modified_by = $user->id;
 		}
 	}

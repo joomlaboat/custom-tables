@@ -100,7 +100,7 @@ class tagProcessor_General
 			if ($options[$i] != '')
 				$vlu = common::currentDate($options[$i]);
 			else
-				$vlu = HTMLHelper::date();
+				$vlu = common::currentDate();
 
 			$pageLayout = str_replace($fItem, $vlu, $pageLayout);
 			$i++;
