@@ -261,7 +261,7 @@ class Details
 
 		foreach ($this->ct->Table->fields as $field) {
 			if ($field['type'] == 'lastviewtime')
-				$updateFields[$field['realfieldname']] = gmdate('Y-m-d H:i:s');
+				$updateFields[$field['realfieldname']] = common::currentDate();
 			elseif ($field['type'] == 'viewcount')
 				$updateFields[$field['realfieldname']] = ((int)($rec[$field['realfieldname']]) + 1);
 		}

@@ -14,7 +14,6 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
-use DateTime;
 use Exception;
 use InvalidArgumentException;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -500,20 +499,14 @@ class Value
 		if ($rowValue == '' or $rowValue == '0000-00-00' or $rowValue == '0000-00-00 00:00:00')
 			return '';
 
-		$PHPDate = strtotime($rowValue);
-
 		if (($option_list[0] ?? '') != '') {
-			if ($option_list[0] == 'timestamp')
-				return $PHPDate;
-
-			return gmdate($option_list[0], $PHPDate);
+			return common::formatDate($rowValue, $option_list[0]);
 		} else {
 
-			if (defined('WPINC')) {
-				return 'dataProcess not yet supported by WordPress version of the Custom Tables.';
-			}
-
-			return HTMLHelper::date($PHPDate);
+			if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] == 'datetime')
+				return common::formatDate($rowValue);
+			else
+				return common::formatDate($rowValue, 'Y-m-d');
 		}
 	}
 
@@ -537,41 +530,13 @@ class Value
 			return '';
 		}
 
-		// Check if the first element of options is 'timestamp' or a valid date/time format
 		$format = $option_list[0] ?? 'Y-m-d H:i:s';
-
-		// Handle 'timestamp' format separately
-		if ($format === 'timestamp')
-			return (string)strtotime($value);
-
-		//if (!DateTime::createFromFormat($format, $value))
-		//throw new \InvalidArgumentException('Invalid date/time format "' . $format . '" provided.');
-
-		$timestamp = strtotime($value);
 
 		if ($value === '0000-00-00 00:00:00') {
 			return '';
 		}
 
-		// Check if the environment is recognized
-		$isJoomla = defined('_JEXEC');
-		$isWordPress = defined('WPINC');
-
-		if (!$isJoomla && !$isWordPress) {
-			// Handle unsupported environment
-			return 'timeProcess not supported.';
-		}
-
-		if ($isJoomla) {
-			return HTMLHelper::date($timestamp, $format);
-		}
-
-		if ($isWordPress) {
-			return date_i18n($format, $timestamp);
-		}
-
-		// This should not be reached, but add a fallback just in case
-		return gmdate($format, $timestamp);
+		return common::formatDate($value, $format);
 	}
 
 	protected function virtualProcess(): string

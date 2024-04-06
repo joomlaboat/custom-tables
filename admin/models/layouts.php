@@ -92,7 +92,7 @@ class CustomtablesModelLayouts extends AdminModel
 			// Set the created_by to this user
 			$form->setValue('created_by', null, $user->id);
 		}
-		// Modify the form based on Edit Creaded By access controls.
+		// Modify the form based on Edit Created By access controls.
 		if (!$user->authorise('core.edit.created_by', 'com_customtables')) {
 			// Disable fields for display.
 			$form->setFieldAttribute('created_by', 'disabled', 'true');
@@ -101,7 +101,7 @@ class CustomtablesModelLayouts extends AdminModel
 			// Disable fields while saving.
 			$form->setFieldAttribute('created_by', 'filter', 'unset');
 		}
-		// Modify the form based on Edit Creaded Date access controls.
+		// Modify the form based on Edit Created Date access controls.
 		if (!$user->authorise('core.edit.created', 'com_customtables')) {
 			// Disable fields for display.
 			$form->setFieldAttribute('created', 'disabled', 'true');
@@ -506,9 +506,10 @@ class CustomtablesModelLayouts extends AdminModel
 	 *
 	 * @return  boolean  True on success.
 	 *
+	 * @throws Exception
 	 * @since   1.6
 	 */
-	public function save($data)
+	public function save($data): bool
 	{
 		if (function_exists("transliterator_transliterate"))
 			$layoutName = transliterator_transliterate("Any-Latin; Latin-ASCII;", $data['layoutname']);
@@ -520,11 +521,12 @@ class CustomtablesModelLayouts extends AdminModel
 		$data['layoutname'] = $layoutName;
 
 		// Set the Params Items to data
+		/*
 		if (isset($data['params']) && is_array($data['params'])) {
 			$params = new Registry($data['params']);
-			//$params->loadArray($data['params']);
 			$data['params'] = (string)$params;
 		}
+		*/
 
 		// Alter the unique field for save as copy
 		if (common::inputGetCmd('task') === 'save2copy') {
@@ -553,6 +555,7 @@ class CustomtablesModelLayouts extends AdminModel
 	 *
 	 * @return  boolean  True if allowed to delete the record. Defaults to the permission set in the component.
 	 *
+	 * @throws Exception
 	 * @since   1.6
 	 */
 	protected function canDelete($record)

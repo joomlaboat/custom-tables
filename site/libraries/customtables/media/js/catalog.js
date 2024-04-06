@@ -192,7 +192,7 @@ function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
         // Check if a Joomla class is defined
         if (window.Joomla instanceof Object) {
             link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
-        } else if (typeof wp !== 'undefined') {
+        } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
             link = window.location.href;
         } else {
             return;
@@ -258,7 +258,7 @@ function ctSearchBoxDo() {
 
     if (typeof Joomla !== 'undefined') {
         link += 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
-    } else if (typeof wp !== 'undefined') {
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
         console.log("ctWebsiteRoot:" + ctWebsiteRoot);
     }
 

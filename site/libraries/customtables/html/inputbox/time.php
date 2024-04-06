@@ -201,13 +201,8 @@ class InputBox_time extends BaseInputBox
 		return $this->renderSelect(strval($value ?? ''), $options);
 	}
 
-	public static function seconds2FormattedTime($seconds, $format = ''): string
+	public static function seconds2FormattedTime(int $seconds, string $format = ''): string
 	{
-		common::default_timezone_set();
-
-		if ($format != '')
-			return gmdate($format, $seconds);
-		else
-			return gmdate('H:i:s', $seconds);
+		return common::formatDate((string)$seconds, $format);
 	}
 }

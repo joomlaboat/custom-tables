@@ -83,7 +83,7 @@ function loadTags(type_id, tags_box) {
     if (window.Joomla instanceof Object) {
         let parts = location.href.split("/administrator/");
         url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=tags&Itemid=-1';
-    } else if (typeof wp !== 'undefined') {
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
         let parts = location.href.split("wp-admin/admin.php?");
         url = parts[0] + 'wp-admin/admin.php?page=customtables-api-xml&xmlfile=tags';
     } else {
@@ -884,12 +884,13 @@ function renderTags(index, tagSet) {
     let buttonClass = "";
     let buttonClassPro = "";
 
-    if (typeof wp !== 'undefined') {
-        buttonClass = "button button-primary";
-        buttonClassPro = "button";
-    } else if (typeof Joomla !== 'undefined') {
+
+    if (typeof Joomla !== 'undefined') {
         buttonClass = "btn-primary";
         buttonClassPro = "btn-default";
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+        buttonClass = "button button-primary";
+        buttonClassPro = "button";
     }
 
     for (let i = 0; i < tags.length; i++) {

@@ -23,7 +23,7 @@ class CT_FieldTypeTag_log
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function getLogVersionLinks(CT &$ct, $rowValue, &$row): string
+	public static function getLogVersionLinks(CT $ct, $rowValue, $row): string
 	{
 		$current_json_data_size = CT_FieldTypeTag_log::getVersionDataSize($ct, $row);
 
@@ -34,14 +34,14 @@ class CT_FieldTypeTag_log
 		$versions = explode(';', $rowValue);
 		$version = common::inputGetInt('version', 0);
 
-		$version_date = '';
+		$version_date_string = null;
 		$version_author = '';
 		$version_size = 0;
 
 		//get creation date
 		foreach ($ct->Table->fields as $fieldRow) {
 			if ($fieldRow['type'] == 'creationtime') {
-				$version_date = strtotime($row[$ct->Env->field_prefix . $fieldRow['fieldname']]);
+				$version_date_string = $row[$ct->Env->field_prefix . $fieldRow['fieldname']];
 				break;
 			}
 		}
@@ -65,12 +65,10 @@ class CT_FieldTypeTag_log
 				$i++;
 				$data = explode(',', $v);
 
-
 				$result .= '<li>';
 
-				if ($version_date != '') {
-					$str = gmdate('Y-m-d H:m:s', $version_date) . ' - ' . $version_author;
-
+				if ($version_date_string !== null) {
+					$str = common::formatDate($version_date_string, 'Y-m-d H:m:s') . ' - ' . $version_author;
 
 					if (isset($data[3])) {
 						$decoded_data_rows = json_decode(base64_decode($data[3]), true);
@@ -88,9 +86,9 @@ class CT_FieldTypeTag_log
 						$current_version_size = $current_json_data_size;
 
 					if ($current_version_size > $version_size)
-						$str .= ' <span style="color:#00aa00">+' . ($current_version_size - $version_size) . '</span>';
+						$str .= ' <span style="color:#00aa00;">+' . ($current_version_size - $version_size) . '</span>';
 					elseif ($current_version_size < $version_size)
-						$str .= ' <span style="color:#aa0000">-' . ($version_size - $current_version_size) . '</span>';
+						$str .= ' <span style="color:#aa0000;">-' . ($version_size - $current_version_size) . '</span>';
 				} else
 					$str = $version_author;
 
@@ -115,13 +113,11 @@ class CT_FieldTypeTag_log
 							$result .= '<a href="' . $link . '" target="_blank">' . $str . '</a>';
 					} else
 						$result .= $str;
-
-
 				}
 
 				$result .= '</li>';
 
-				$version_date = $data[0];
+				$version_date_string = $data[0];
 
 				if (isset($data[1])) //last comma is empty so no element number 1
 				{
@@ -152,11 +148,10 @@ class CT_FieldTypeTag_log
 		}
 
 		return $result;
-
 	}
 
 
-	public static function getVersionDataSize(CT &$ct, $decoded_data_row)
+	public static function getVersionDataSize(CT $ct, $decoded_data_row): int
 	{
 		$version_size = 0;
 

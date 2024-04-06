@@ -14,6 +14,8 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CTUser;
 
+use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 
@@ -71,14 +73,14 @@ class CustomtablesControllerLayouts extends FormController
 	public function cancel($key = null)
 	{
 		// get the referal details
-		$this->ref = common::inputGet('ref', 0, 'word');
-		$this->refid = common::inputGet('refid', 0, 'int');
+		$ref = common::inputGet('ref', 0, 'word');
+		$refid = common::inputGet('refid', 0, 'int');
 
 		$cancel = parent::cancel($key);
 
 		if ($cancel) {
-			if ($this->refid) {
-				$redirect = '&view=' . (string)$this->ref . '&layout=edit&id=' . (int)$this->refid;
+			if ($refid) {
+				$redirect = '&view=' . $ref . '&layout=edit&id=' . (int)$refid;
 
 				// Redirect to the item screen.
 				$this->setRedirect(
@@ -86,8 +88,8 @@ class CustomtablesControllerLayouts extends FormController
 						'index.php?option=' . $this->option . $redirect, false
 					)
 				);
-			} elseif ($this->ref) {
-				$redirect = '&view=' . (string)$this->ref;
+			} elseif ($ref) {
+				$redirect = '&view=' . $ref;
 
 				// Redirect to the list screen.
 				$this->setRedirect(
@@ -115,23 +117,24 @@ class CustomtablesControllerLayouts extends FormController
 	 *
 	 * @return  boolean  True if successful, false otherwise.
 	 *
+	 * @throws Exception
 	 * @since   12.2
 	 */
 	public function save($key = null, $urlVar = null)
 	{
-		// get the referal details
-		$this->ref = common::inputGet('ref', 0, 'word');
-		$this->refid = common::inputGet('refid', 0, 'int');
+		// get the referral details
+		$ref = common::inputGet('ref', 0, 'word');
+		$refid = common::inputGet('refid', 0, 'int');
 
-		if ($this->ref || $this->refid) {
+		if ($ref || $refid) {
 			// to make sure the item is checkedin on redirect
 			$this->task = 'save';
 		}
 
 		$saved = parent::save($key, $urlVar);
 
-		if ($this->refid && $saved) {
-			$redirect = '&view=' . (string)$this->ref . '&layout=edit&id=' . (int)$this->refid;
+		if ($refid && $saved) {
+			$redirect = '&view=' . $ref . '&layout=edit&id=' . (int)$refid;
 
 			// Redirect to the item screen.
 			$this->setRedirect(
@@ -139,9 +142,8 @@ class CustomtablesControllerLayouts extends FormController
 					'index.php?option=' . $this->option . $redirect, false
 				)
 			);
-		} elseif ($this->ref && $saved) {
-			$redirect = '&view=' . (string)$this->ref;
-
+		} elseif ($ref && $saved) {
+			$redirect = '&view=' . $ref;
 			// Redirect to the list screen.
 			$this->setRedirect(
 				Route::_(
@@ -149,6 +151,18 @@ class CustomtablesControllerLayouts extends FormController
 				)
 			);
 		}
+
+		$id = common::inputGetInt('id');
+		if ($id !== null) {
+			$data = [
+				'modified' => common::currentDate()
+			];
+
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition('id', $id);
+			database::update('#__customtables_layouts', $data, $whereClauseUpdate);
+		}
+
 		return $saved;
 	}
 

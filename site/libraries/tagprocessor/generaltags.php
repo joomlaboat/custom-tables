@@ -27,7 +27,7 @@ class tagProcessor_General
 	public static function process(CT &$ct, string &$pageLayout, ?array &$row): void
 	{
 		tagProcessor_General::TableInfo($ct, $pageLayout);
-		$pageLayout = str_replace('{today}', gmdate('Y-m-d', time()), $pageLayout);
+		$pageLayout = str_replace('{today}', common::currentDate(), $pageLayout);
 
 		tagProcessor_General::getDate($pageLayout);
 		tagProcessor_General::getUser($ct, $pageLayout, $row);
@@ -98,7 +98,7 @@ class tagProcessor_General
 
 		foreach ($fList as $fItem) {
 			if ($options[$i] != '')
-				$vlu = gmdate($options[$i]);//,$phpdate );
+				$vlu = common::currentDate($options[$i]);
 			else
 				$vlu = HTMLHelper::date();
 

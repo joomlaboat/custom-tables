@@ -132,18 +132,14 @@ class CustomTablesViewCatalog extends HtmlView
 		foreach ($this->ct->Table->fields as $mFld) {
 			if (in_array($mFld['fieldname'], $allowedFields)) {
 				if ($mFld['type'] == 'lastviewtime')
-					$data[$mFld['realfieldname']] = gmdate('Y-m-d H:i:s');
-				//$update_fields[] = $mFld['realfieldname'] . '="' . gmdate('Y-m-d H:i:s') . '"';
+					$data[$mFld['realfieldname']] = common::currentDate();
 
 				if ($mFld['type'] == 'viewcount')
 					$data[$mFld['realfieldname']] = ((int)($rec[$this->ct->Env->field_prefix . $mFld['fieldname']]) + 1);
-				//$update_fields[] = $mFld['realfieldname'] . '="' . ((int)($rec[$this->ct->Env->field_prefix . $mFld['fieldname']]) + 1) . '"';
 			}
 		}
 
-		if (count($data) > 0) {
+		if (count($data) > 0)
 			database::update($this->ct->Table->realtablename, $data, $whereClauseUpdate);
-			//$query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $update_fields) . ' WHERE id=' . $rec[$this->ct->Table->realidfieldname];
-		}
 	}
 }

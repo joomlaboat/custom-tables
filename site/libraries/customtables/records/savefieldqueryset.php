@@ -15,8 +15,6 @@ defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
 use Exception;
-use Joomla\CMS\Component\ComponentHelper;
-
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
 use CustomTables\ctProHelpers;
@@ -507,15 +505,12 @@ class SaveFieldQuerySet
 				return;
 
 			case 'creationtime':
-				if ($this->row_old[$this->ct->Table->realidfieldname] == 0 or $this->row_old[$this->ct->Table->realidfieldname] == '' or $this->isCopy) {
-					$value = gmdate('Y-m-d H:i:s');
-					$this->setNewValue($value);
-				}
+				if ($this->row_old[$this->ct->Table->realidfieldname] == 0 or $this->row_old[$this->ct->Table->realidfieldname] == '' or $this->isCopy)
+					$this->setNewValue(common::currentDate());
 				return;
 
 			case 'changetime':
-				$value = gmdate('Y-m-d H:i:s');
-				$this->setNewValue($value);
+				$this->setNewValue(common::currentDate());
 				return;
 
 			case 'server':

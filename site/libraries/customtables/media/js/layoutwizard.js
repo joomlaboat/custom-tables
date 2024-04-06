@@ -56,7 +56,7 @@ function loadFieldsData(tableid) {
         const parts = location.href.split("/administrator/");
         const websiteRoot = parts[0] + "/administrator/";
         url = websiteRoot + "index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid=" + tableid;
-    } else if (typeof wp !== 'undefined') {
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
         let parts = location.href.split("wp-admin/admin.php?");
         url = parts[0] + 'wp-admin/admin.php?page=customtables-api-fields&table=' + tableid;
     } else {
@@ -112,10 +112,10 @@ function updateFieldsBox() {
 
 function renderTabs(tabSetId, tabs) {
 
-    if (typeof wp !== 'undefined') {
-        return renderTabsWordPress(tabSetId, tabs);
-    } else if (typeof Joomla !== 'undefined') {
+    if (typeof Joomla !== 'undefined') {
         return renderTabsJoomla(tabSetId, tabs);
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+        return renderTabsWordPress(tabSetId, tabs);
     } else {
         console.log('CMS not supported.');
         return 'CMS not supported.';
@@ -580,7 +580,7 @@ function FillLayout() {
     if (window.Joomla instanceof Object) {
         layoutType = parseInt(document.getElementById("jform_layouttype").value);
         tableId = parseInt(document.getElementById("jform_tableid").value);
-    } else if (typeof wp !== 'undefined') {
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
         layoutType = parseInt(document.getElementById('layouttype').value);
         tableId = parseInt(document.getElementById('table').value);
 
@@ -1079,7 +1079,7 @@ function getLayout_Record() {
 
 function getActiveEditor() {
     let cm;
-    if (typeof wp !== 'undefined')
+    if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar'))
         cm = codemirror_editors[codemirror_active_index].codemirror;
     else if (typeof Joomla !== 'undefined')
         cm = codemirror_editors[codemirror_active_index];

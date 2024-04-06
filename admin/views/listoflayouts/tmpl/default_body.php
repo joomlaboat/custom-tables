@@ -79,8 +79,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 
         <td class="nowrap center hidden-phone">
 			<?php
-			$layoutsize = strlen($item->layoutcode);
-			echo number_format($layoutsize);
+			echo number_format(strlen($item->layoutcode));
 			?>
         </td>
 
@@ -90,11 +89,8 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
         <td class="nowrap center hidden-phone">
 			<?php
 
-			if ($item->modified !== null and $item->modified != '0000-00-00 00:00:00') {
-				$d = strtotime($item->modified);
-				$mysqldate = gmdate('Y-m-d H:i:s', $d);
-				echo $mysqldate;
-			}
+			if ($item->modified !== null and $item->modified != '0000-00-00 00:00:00')
+				echo common::formatDate($item->modified);
 			?>
         </td>
 

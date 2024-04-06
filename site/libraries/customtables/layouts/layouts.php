@@ -170,12 +170,8 @@ class Layouts
 			$file_ts = filemtime($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
 
 			if ($db_layout_ts == 0) {
-
-				//$query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id=' . $layout_id . ' LIMIT 1';
-
 				$whereClause = new MySQLWhereClause();
 				$whereClause->addCondition('id', $layout_id);
-
 				$rows = database::loadAssocList('#__customtables_layouts', ['MODIFIED_TIMESTAMP'], $whereClause, null, null, 1);
 
 				if (count($rows) != 0) {
@@ -189,8 +185,9 @@ class Layouts
 
 				$data = [
 					$fieldName => addslashes($content),
-					'modified' => ['FROM_UNIXTIME(' . $file_ts . ')', 'sanitized']
+					'modified' => common::formatDateFromTimeStamp($file_ts)
 				];
+
 				$whereClauseUpdate = new MySQLWhereClause();
 				$whereClauseUpdate->addCondition('id', $layout_id);
 				database::update('#__customtables_layouts', $data, $whereClauseUpdate);
@@ -241,7 +238,7 @@ class Layouts
 			return false;
 		} else {
 
-			$data = ['modified' => ['FROM_UNIXTIME(' . $file_ts . ')', 'sanitized']];
+			$data = ['modified' => common::formatDateFromTimeStamp($file_ts)];
 			$whereClauseUpdate = new MySQLWhereClause();
 
 			if ($layout_id == 0) {
@@ -388,6 +385,7 @@ class Layouts
 	}
 
 	/**
+	 * Used in WordPress version
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
@@ -427,12 +425,11 @@ class Layouts
 				<option value="10">JSON File</option>
 		 */
 
-
 		$task = common::inputPostCmd('task', null, 'create-edit-record');
 		if ($task === null)
 			$task = common::inputGetCmd('task');
 
-		$output = ['html' => null, 'style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
+		$output = ['style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
 
 		if ($this->layoutType == 1 or $this->layoutType == 5) {
 
@@ -460,7 +457,9 @@ class Layouts
 					common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'notice');
 				} else {
 					common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'));
-					common::enqueueMessage($record->ct->Params->msgItemIsSaved);
+
+					if ($record->ct->Params !== null and $record->ct->Params->msgItemIsSaved !== null)
+						common::enqueueMessage($record->ct->Params->msgItemIsSaved);
 				}
 
 				if ($task == 'save') {
@@ -471,7 +470,7 @@ class Layouts
 
 					$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
 
-					common::redirect($link, null);
+					common::redirect($link);
 				}
 
 			} elseif ($task == 'cancel') {

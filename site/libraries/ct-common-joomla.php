@@ -10,6 +10,7 @@
 
 namespace CustomTables;
 
+use DateTimeZone;
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
@@ -496,7 +497,7 @@ class common
 
 	public static function default_timezone_set(): void
 	{
-		date_default_timezone_set('UTC');
+		//date_default_timezone_set('UTC');
 	}
 
 	/**
@@ -655,19 +656,47 @@ class common
 		Factory::getApplication()->setRedirect($link, $msg);
 	}
 
-	public static function formatDate(?string $date = null, ?string $format = 'Y-m-d H:i:s', ?string $emptyValue = 'Never'): ?string
+	public static function formatDateFromTimeStamp($timeStamp = null, ?string $format = 'Y-m-d H:i:s'): ?string
+	{
+		$config = Factory::getConfig();
+		$timezone = new DateTimeZone($config->get('offset'));
+
+		$date = Factory::getDate($timeStamp, $timezone);
+
+		$date->setTimezone($timezone);
+
+		return $date->format($format, true);
+	}
+
+	public static function formatDate(?string $dateString = null, ?string $format = 'Y-m-d H:i:s', ?string $emptyValue = 'Never'): ?string
 	{
 		if ($format === null)
 			$format = 'Y-m-d H:i:s';
 
-		if ($date === null or $date == '0000-00-00 00:00:00')
+		if ($dateString === null or $dateString == '0000-00-00 00:00:00')
 			return $emptyValue;
 
-		$timestamp = strtotime($date);
+		$config = Factory::getConfig();
+		$timezone = new DateTimeZone($config->get('offset'));
+
+		$date = Factory::getDate($dateString, $timezone);
 
 		if ($format === 'timestamp')
-			return (string)$timestamp;
+			return (string)$date->getTimestamp();
 
-		return HTMLHelper::date($timestamp, $format);
+		$date->setTimezone($timezone);
+
+		return $date->format($format, true);
+	}
+
+	public static function currentDate(string $format = 'Y-m-d H:i:s'): string
+	{
+		$date = Factory::getDate();
+		$config = Factory::getConfig();
+		$timezone = new DateTimeZone($config->get('offset'));
+		$date->setTimezone($timezone);
+
+		// Format the date and time as a string in the desired format
+		return $date->format($format, true);
 	}
 }

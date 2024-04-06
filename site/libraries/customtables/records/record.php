@@ -13,10 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-//use CustomTablesImageMethods;
 use Exception;
-use JCaptcha;
-use Joomla\CMS\Factory;
 use CustomTables\CustomPHP\CleanExecute;
 use CustomTables\ctProHelpers;
 
@@ -229,9 +226,13 @@ class record
 		return $fieldsToEdit;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
 	function check_captcha(): bool
 	{
-		$response = common::inputPostString('g-recaptcha-response', 'create-edit-record');
+		$response = common::inputPostString('g-recaptcha-response', null, 'create-edit-record');
 		$secret_key = $this->ct->LayoutVariables['captcha_secret_key'];
 
 		// The IP address of the user
