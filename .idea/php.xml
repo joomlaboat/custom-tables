@@ -12,8 +12,13 @@
   </component>
   <component name="PhpIncludePathManager">
     <include_path>
+      <path value="/var/www/html/j" />
       <path value="F:/joomla" />
       <path value="F:/wp" />
+      <path value="$PROJECT_DIR$/site/libraries/twig/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/site/libraries/twig/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/site/libraries/twig/vendor/composer" />
+      <path value="$PROJECT_DIR$/site/libraries/twig/vendor/twig/twig" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
