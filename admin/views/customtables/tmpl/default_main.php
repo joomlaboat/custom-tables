@@ -16,7 +16,7 @@ defined('_JEXEC') or die();
 
 ?>
 <?php if (isset($this->icons['main']) && is_array($this->icons['main'])) : ?>
-	<?php foreach ($this->icons['main'] as $icon): ?>
+    <?php foreach ($this->icons['main'] as $icon): ?>
         <div class="dashboard-wraper">
             <div class="dashboard-content">
                 <a class="icon" href="<?php echo $icon->url; ?>">
@@ -26,7 +26,7 @@ defined('_JEXEC') or die();
                 </a>
             </div>
         </div>
-	<?php endforeach; ?>
+    <?php endforeach; ?>
     <div class="clearfix"></div>
 <?php else: ?>
     <div class="alert alert-error"><h4

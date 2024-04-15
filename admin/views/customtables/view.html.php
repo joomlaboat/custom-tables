@@ -24,69 +24,72 @@ use Joomla\CMS\Version;
  */
 class CustomtablesViewCustomtables extends HtmlView//JViewLegacy
 {
-	/**
-	 * View display method
-	 * @return void
-	 */
-	function display($tpl = null)
-	{
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
+    /**
+     * View display method
+     * @return void
+     * @throws Exception
+     * @since 3.2.9
+     */
+    function display($tpl = null)
+    {
+        $version = new Version;
+        $this->version = (int)$version->getShortVersion();
 
-		// Assign data to the view
-		$this->icons = $this->get('Icons');
-		$this->contributors = CustomtablesHelper::getContributors();
+        // Assign data to the view
+        $this->icons = $this->get('Icons');
+        $this->contributors = CustomtablesHelper::getContributors();
 
-		// get the manifest details of the component
-		$this->manifest = CustomtablesHelper::manifest();
+        // get the manifest details of the component
+        $this->manifest = CustomtablesHelper::manifest();
 
-		// Set the toolbar
-		$this->addToolBar();
+        // Set the toolbar
+        $this->addToolBar();
 
-		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
-			throw new Exception(implode("\n", $errors), 500);
-		}
+        // Check for errors.
+        if (count($errors = $this->get('Errors'))) {
+            throw new Exception(implode("\n", $errors), 500);
+        }
 
-		// Display the template
-		if ($this->version < 4)
-			parent::display($tpl);
-		else
-			parent::display('quatro');
+        // Display the template
+        if ($this->version < 4)
+            parent::display($tpl);
+        else
+            parent::display('quatro');
 
-		// Set the document
-		$document = Factory::getDocument();
-		$this->setDocument($document);
-	}
+        // Set the document
+        $document = Factory::getDocument();
+        $this->setDocument($document);
+    }
 
-	/**
-	 * Setting the toolbar
-	 */
-	protected function addToolBar()
-	{
-		$canDo = ContentHelper::getActions('com_customtables', '');
-		//$canDo = CustomtablesHelper::getActions('customtables');
-		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');//ToolbarHelper::title
+    /**
+     * Setting the toolbar
+     * @since 3.2.9
+     */
+    protected function addToolBar()
+    {
+        $canDo = ContentHelper::getActions('com_customtables', '');
+        //$canDo = CustomtablesHelper::getActions('customtables');
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');//ToolbarHelper::title
 
-		if ($canDo->get('core.admin') || $canDo->get('core.options')) {
-			ToolbarHelper::preferences('com_customtables');//ToolbarHelper
-		}
-	}
+        if ($canDo->get('core.admin') || $canDo->get('core.options')) {
+            ToolbarHelper::preferences('com_customtables');//ToolbarHelper
+        }
+    }
 
-	/**
-	 * Method to set up the document properties
-	 *
-	 * @return void
-	 */
-	public function setDocument(Joomla\CMS\Document\Document $document): void
-	{
-		// add dashboard style sheets
-		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
+    /**
+     * Method to set up the document properties
+     *
+     * @return void
+     */
+    public function setDocument(Joomla\CMS\Document\Document $document): void
+    {
+        // add dashboard style sheets
+        $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
 
-		// set page title
-		$document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
+        // set page title
+        $document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
 
-		// add manifest to page JavaScript
-		//$document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . common::ctJsonEncode($this->manifest) . '");</script>');
-	}
+        // add manifest to page JavaScript
+        //$document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . common::ctJsonEncode($this->manifest) . '");</script>');
+    }
 }
