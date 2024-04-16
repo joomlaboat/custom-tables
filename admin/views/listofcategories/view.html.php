@@ -26,153 +26,157 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
  */
 class CustomtablesViewListofcategories extends HtmlView
 {
-	/**
-	 * Listofcategories view display method
-	 * @return void
-	 */
-	var CT $ct;
-	var $isEmptyState = false;
+    /**
+     * Listofcategories view display method
+     * @return void
+     */
+    var CT $ct;
+    var $isEmptyState = false;
 
-	function display($tpl = null)
-	{
-		$this->ct = new CT;
+    function display($tpl = null)
+    {
+        $this->ct = new CT;
 
-		if ($this->getLayout() !== 'modal') {
-			// Include helper submenu
-			CustomtablesHelper::addSubmenu('listofcategories');
-		}
+        if ($this->getLayout() !== 'modal') {
+            // Include helper submenu
+            CustomtablesHelper::addSubmenu('listofcategories');
+        }
 
-		// Assign data to the view
-		$this->items = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->state = $this->get('State');
-		$this->filterForm = $this->get('FilterForm');
-		$this->activeFilters = $this->get('ActiveFilters');
-		$this->listOrder = common::escape($this->state->get('list.ordering'));
-		$this->listDirn = common::escape($this->state->get('list.direction'));
-		$this->saveOrder = $this->listOrder == 'ordering';
+        // Assign data to the view
+        $this->items = $this->get('Items');
+        $this->pagination = $this->get('Pagination');
+        $this->state = $this->get('State');
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->listOrder = common::escape($this->state->get('list.ordering'));
+        $this->listDirn = common::escape($this->state->get('list.direction'));
+        $this->saveOrder = $this->listOrder == 'ordering';
 
-		// get global action permissions
-		$this->canDo = ContentHelper::getActions('com_customtables', 'categories');
-		$this->canCreate = $this->canDo->get('categories.create');
-		$this->canEdit = $this->canDo->get('categories.edit');
-		$this->canState = $this->canDo->get('categories.edit.state');
-		$this->canDelete = $this->canDo->get('categories.delete');
+        // get global action permissions
+        $this->canDo = ContentHelper::getActions('com_customtables', 'categories');
+        $this->canCreate = $this->canDo->get('categories.create');
+        $this->canEdit = $this->canDo->get('categories.edit');
+        $this->canState = $this->canDo->get('categories.edit.state');
+        $this->canDelete = $this->canDo->get('categories.delete');
 
-		$this->isEmptyState = count($this->items ?? 0) == 0;
-		//$this->canBatch = $this->canDo->get('core.batch');
+        if (is_array($this->items))
+            $this->isEmptyState = count($this->items) == 0;
+        else
+            $this->isEmptyState = true;
 
-		// We don't need toolbar in the modal window.
-		if ($this->getLayout() !== 'modal') {
-			if ($this->ct->Env->version < 4) {
-				$this->addToolbar_3();
-				$this->sidebar = JHtmlSidebar::render();
-			} else
-				$this->addToolbar_4();
-		}
+        //$this->canBatch = $this->canDo->get('core.batch');
 
-		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
-			throw new Exception(implode("\n", $errors), 500);
-		}
+        // We don't need toolbar in the modal window.
+        if ($this->getLayout() !== 'modal') {
+            if ($this->ct->Env->version < 4) {
+                $this->addToolbar_3();
+                $this->sidebar = JHtmlSidebar::render();
+            } else
+                $this->addToolbar_4();
+        }
 
-		// Display the template
-		if ($this->ct->Env->version < 4)
-			parent::display($tpl);
-		else
-			parent::display('quatro');
-	}
+        // Check for errors.
+        if (count($errors = $this->get('Errors'))) {
+            throw new Exception(implode("\n", $errors), 500);
+        }
 
-	protected function addToolBar_3()
-	{
-		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
-		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
-		//JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+        // Display the template
+        if ($this->ct->Env->version < 4)
+            parent::display($tpl);
+        else
+            parent::display('quatro');
+    }
 
-		if ($this->canCreate)
-			ToolbarHelper::addNew('categories.add');
+    protected function addToolBar_3()
+    {
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
+        //JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
-		// Only load if there are items
-		if (CustomtablesHelper::checkArray($this->items)) {
-			if ($this->canEdit) {
-				ToolbarHelper::editList('categories.edit');
-			}
+        if ($this->canCreate)
+            ToolbarHelper::addNew('categories.add');
 
-			if ($this->canState) {
-				ToolbarHelper::publishList('listofcategories.publish');
-				ToolbarHelper::unpublishList('listofcategories.unpublish');
-			}
+        // Only load if there are items
+        if (CustomtablesHelper::checkArray($this->items)) {
+            if ($this->canEdit) {
+                ToolbarHelper::editList('categories.edit');
+            }
 
-			if ($this->canDo->get('core.admin')) {
-				ToolbarHelper::checkin('listofcategories.checkin');
-			}
+            if ($this->canState) {
+                ToolbarHelper::publishList('listofcategories.publish');
+                ToolbarHelper::unpublishList('listofcategories.unpublish');
+            }
 
-			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
-				ToolbarHelper::deleteList('', 'listofcategories.delete', 'JTOOLBAR_EMPTY_TRASH');
-			} elseif ($this->canState && $this->canDelete) {
-				ToolbarHelper::trash('listofcategories.trash');
-			}
-		}
+            if ($this->canDo->get('core.admin')) {
+                ToolbarHelper::checkin('listofcategories.checkin');
+            }
 
-		if ($this->canState) {
+            if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
+                ToolbarHelper::deleteList('', 'listofcategories.delete', 'JTOOLBAR_EMPTY_TRASH');
+            } elseif ($this->canState && $this->canDelete) {
+                ToolbarHelper::trash('listofcategories.trash');
+            }
+        }
 
-			$options = HtmlHelper::_('jgrid.publishedOptions');
-			$newOptions = [];
-			foreach ($options as $option) {
+        if ($this->canState) {
 
-				if ($option->value != 2)
-					$newOptions[] = $option;
-			}
+            $options = HtmlHelper::_('jgrid.publishedOptions');
+            $newOptions = [];
+            foreach ($options as $option) {
 
-			/*
-			JHtmlSidebar::addFilter(
-				common::translate('JOPTION_SELECT_PUBLISHED'),
-				'filter_published',
-				HTMLHelper::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
-			);
-			*/
-		}
-	}
+                if ($option->value != 2)
+                    $newOptions[] = $option;
+            }
 
-	protected function addToolbar_4()
-	{
-		// Get the toolbar object instance
-		$toolbar = Toolbar::getInstance('toolbar');
+            /*
+            JHtmlSidebar::addFilter(
+                common::translate('JOPTION_SELECT_PUBLISHED'),
+                'filter_published',
+                HTMLHelper::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
+            );
+            */
+        }
+    }
 
-		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
+    protected function addToolbar_4()
+    {
+        // Get the toolbar object instance
+        $toolbar = Toolbar::getInstance('toolbar');
 
-		if ($this->canCreate and $this->ct->Env->advancedTagProcessor)
-			$toolbar->addNew('categories.add');
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
 
-		$dropdown = $toolbar->dropdownButton('status-group')
-			->text('JTOOLBAR_CHANGE_STATUS')
-			->toggleSplit(false)
-			->icon('icon-ellipsis-h')
-			->buttonClass('btn btn-action')
-			->listCheck(true);
+        if ($this->canCreate and $this->ct->Env->advancedTagProcessor)
+            $toolbar->addNew('categories.add');
 
-		$childBar = $dropdown->getChildToolbar();
+        $dropdown = $toolbar->dropdownButton('status-group')
+            ->text('JTOOLBAR_CHANGE_STATUS')
+            ->toggleSplit(false)
+            ->icon('icon-ellipsis-h')
+            ->buttonClass('btn btn-action')
+            ->listCheck(true);
 
-		if ($this->canState) {
-			$childBar->publish('listofcategories.publish')->listCheck(true);
-			$childBar->unpublish('listofcategories.unpublish')->listCheck(true);
-		}
+        $childBar = $dropdown->getChildToolbar();
 
-		if ($this->canDo->get('core.admin')) {
-			$childBar->checkin('listoflayouts.checkin');
-		}
+        if ($this->canState) {
+            $childBar->publish('listofcategories.publish')->listCheck(true);
+            $childBar->unpublish('listofcategories.unpublish')->listCheck(true);
+        }
 
-		if (($this->canState && $this->canDelete)) {
-			if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED) {
-				$childBar->trash('listofcategories.trash')->listCheck(true);
-			}
+        if ($this->canDo->get('core.admin')) {
+            $childBar->checkin('listoflayouts.checkin');
+        }
 
-			if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete) {
-				$toolbar->delete('listofcategories.delete')
-					->text('JTOOLBAR_EMPTY_TRASH')
-					->message('JGLOBAL_CONFIRM_DELETE')
-					->listCheck(true);
-			}
-		}
-	}
+        if (($this->canState && $this->canDelete)) {
+            if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED) {
+                $childBar->trash('listofcategories.trash')->listCheck(true);
+            }
+
+            if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete) {
+                $toolbar->delete('listofcategories.delete')
+                    ->text('JTOOLBAR_EMPTY_TRASH')
+                    ->message('JGLOBAL_CONFIRM_DELETE')
+                    ->listCheck(true);
+            }
+        }
+    }
 }

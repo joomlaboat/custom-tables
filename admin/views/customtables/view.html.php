@@ -13,6 +13,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 
+use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -20,17 +21,19 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Version;
 
 /**
- * Customtables View class
+ * CustomTables View class
+ * @since 1.0.0
  */
-class CustomtablesViewCustomtables extends HtmlView//JViewLegacy
+class CustomTablesViewCustomTables extends HtmlView
 {
     /**
      * View display method
+     * @param null $tpl
      * @return void
      * @throws Exception
      * @since 3.2.9
      */
-    function display($tpl = null)
+    function display($tpl = null): void
     {
         $version = new Version;
         $this->version = (int)$version->getShortVersion();
@@ -68,18 +71,19 @@ class CustomtablesViewCustomtables extends HtmlView//JViewLegacy
     protected function addToolBar()
     {
         $canDo = ContentHelper::getActions('com_customtables', '');
-        //$canDo = CustomtablesHelper::getActions('customtables');
-        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');//ToolbarHelper::title
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');
 
         if ($canDo->get('core.admin') || $canDo->get('core.options')) {
-            ToolbarHelper::preferences('com_customtables');//ToolbarHelper
+            ToolbarHelper::preferences('com_customtables');
         }
     }
 
     /**
      * Method to set up the document properties
      *
+     * @param Document $document
      * @return void
+     * @since 3.2.9
      */
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
@@ -88,8 +92,5 @@ class CustomtablesViewCustomtables extends HtmlView//JViewLegacy
 
         // set page title
         $document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
-
-        // add manifest to page JavaScript
-        //$document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . common::ctJsonEncode($this->manifest) . '");</script>');
     }
 }
