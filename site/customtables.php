@@ -12,15 +12,20 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
+use Joomla\CMS\Component\ComponentHelper;
 
 $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
-	. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
+    . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
 
 if (!file_exists($path))
-	die('CT Loader not found.');
+    die('CT Loader not found.');
 
 require_once($path);
-CustomTablesLoader(false, $include_html = true);
+
+$params = ComponentHelper::getParams('com_customtables');
+$loadTwig = $params->get('loadTwig');
+
+CustomTablesLoader(false, $include_html = true, null, 'com_customtables', $loadTwig);
 
 // Require the base controller
 require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'controller.php';
@@ -28,7 +33,7 @@ require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 // Initialize the controller
 $controller = new CustomTablesController();
 try {
-	$controller->execute(null);
+    $controller->execute(null);
 } catch (Exception $e) {
 }
 
@@ -36,20 +41,20 @@ try {
 
 $view = common::inputGetCmd('view');
 if ($view == 'xml') {
-	$file = common::inputGetCmd('xmlfile');
+    $file = common::inputGetCmd('xmlfile');
 
-	$xml = 'unknown file';
-	if ($file == 'tags')
+    $xml = 'unknown file';
+    if ($file == 'tags')
 
-		$xml = common::getStringFromFile(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
-			. 'media' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . $file . '.xml');
+        $xml = common::getStringFromFile(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+            . 'media' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . $file . '.xml');
 
-	elseif ($file == 'fieldtypes')
-		$xml = common::getStringFromFile(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
-			. 'media' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . $file . '.xml');
+    elseif ($file == 'fieldtypes')
+        $xml = common::getStringFromFile(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+            . 'media' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . $file . '.xml');
 
-	echo $xml;
-	die;//XML output
+    echo $xml;
+    die;//XML output
 }
 
 $controller->redirect();

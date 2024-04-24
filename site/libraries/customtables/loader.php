@@ -11,19 +11,12 @@
 // If this file is called directly, abort.
 defined('_JEXEC') or die();
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Component\ComponentHelper;
 
-function CustomTablesLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', ?bool $loadTwig = null): void
+function CustomTablesLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', bool $loadTwig = true): void
 {
     if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
         return;
-
-    if ($loadTwig === null and defined('_JEXEC')) {
-        $params = ComponentHelper::getParams($componentName);
-        $loadTwig = $params->get('loadTwig');
-    }
 
     if (defined('_JEXEC')) {
 
