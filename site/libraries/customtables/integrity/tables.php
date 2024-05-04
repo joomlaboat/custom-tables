@@ -23,132 +23,132 @@ use Joomla\CMS\Uri\Uri;
 
 class IntegrityTables extends IntegrityChecks
 {
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function checkTables(&$ct)
-	{
-		$tables = IntegrityTables::getTables();
-		if ($tables === null)
-			return [];
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    public static function checkTables(&$ct)
+    {
+        $tables = IntegrityTables::getTables();
+        if ($tables === null)
+            return [];
 
-		IntegrityTables::checkIfTablesExists($tables);
-		$result = [];
+        IntegrityTables::checkIfTablesExists($tables);
+        $result = [];
 
-		foreach ($tables as $table) {
+        foreach ($tables as $table) {
 
-			//Check if table exists
-			$rows = database::getTableStatus($table['tablename'], 'table');
+            //Check if table exists
+            $rows = database::getTableStatus($table['tablename'], 'table');
 
-			$tableExists = !(count($rows) == 0);
+            $tableExists = !(count($rows) == 0);
 
-			if ($tableExists) {
+            if ($tableExists) {
 
-				$ct->setTable($table, null, false);
-				$link = Uri::root() . 'administrator/index.php?option=com_customtables&view=databasecheck&tableid=' . $table['id'];
-				$content = IntegrityFields::checkFields($ct, $link);
+                $ct->setTable($table, null, false);
+                $link = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=databasecheck&tableid=' . $table['id'];
+                $content = IntegrityFields::checkFields($ct, $link);
 
-				$zeroId = IntegrityTables::getZeroRecordID($table['realtablename'], $table['realidfieldname']);
+                $zeroId = IntegrityTables::getZeroRecordID($table['realtablename'], $table['realidfieldname']);
 
-				if ($content != '' or $zeroId > 0) {
-					if (!str_contains($link, '?'))
-						$link .= '?';
-					else
-						$link .= '&';
+                if ($content != '' or $zeroId > 0) {
+                    if (!str_contains($link, '?'))
+                        $link .= '?';
+                    else
+                        $link .= '&';
 
-					$result[] = '<p><span style="font-size:1.3em;">' . $table['tabletitle'] . '</span><br/><span style="color:gray;">' . $table['realtablename'] . '</span>'
-						. ' <a href="' . $link . 'task=fixfieldtype&fieldname=all_fields">Fix all fields</a>'
-						. '</p>'
-						. $content
-						. ($zeroId > 0 ? '<p style="font-size:1.3em;color:red;">Records with ID = 0 found. Please fix it manually.</p>' : '');
-				}
-			}
-		}
-		return $result;
-	}
+                    $result[] = '<p><span style="font-size:1.3em;">' . $table['tabletitle'] . '</span><br/><span style="color:gray;">' . $table['realtablename'] . '</span>'
+                        . ' <a href="' . $link . 'task=fixfieldtype&fieldname=all_fields">Fix all fields</a>'
+                        . '</p>'
+                        . $content
+                        . ($zeroId > 0 ? '<p style="font-size:1.3em;color:red;">Records with ID = 0 found. Please fix it manually.</p>' : '');
+                }
+            }
+        }
+        return $result;
+    }
 
-	protected static function getTables(): ?array
-	{
-		// Create a new query object.
-		try {
-			return self::getTablesQuery();
-		} catch (Exception $e) {
-			common::enqueueMessage($e->getMessage());
-		}
+    protected static function getTables(): ?array
+    {
+        // Create a new query object.
+        try {
+            return self::getTablesQuery();
+        } catch (Exception $e) {
+            common::enqueueMessage($e->getMessage());
+        }
 
-		try {
-			self::getTablesQuery(true);
-		} catch (Exception $e) {
-			common::enqueueMessage($e->getMessage());
-		}
-		return null;
-	}
+        try {
+            self::getTablesQuery(true);
+        } catch (Exception $e) {
+            common::enqueueMessage($e->getMessage());
+        }
+        return null;
+    }
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	protected static function getTablesQuery(bool $simple = false): array
-	{
-		$whereClause = new MySQLWhereClause();
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    protected static function getTablesQuery(bool $simple = false): array
+    {
+        $whereClause = new MySQLWhereClause();
 
-		if ($simple) {
-			$selects = [];
-			$selects[] = 'id';
-			$selects[] = 'tablename';
-		} else {
-			$selects = TableHelper::getTableRowSelectArray();
+        if ($simple) {
+            $selects = [];
+            $selects[] = 'id';
+            $selects[] = 'tablename';
+        } else {
+            $selects = TableHelper::getTableRowSelectArray();
 
-			if (defined('_JEXEC'))
-				$selects[] = 'CATEGORY_NAME';
+            if (defined('_JEXEC'))
+                $selects[] = 'CATEGORY_NAME';
 
-			$selects[] = 'FIELD_COUNT';
-		}
+            $selects[] = 'FIELD_COUNT';
+        }
 
-		// Add the list ordering clause.
-		$orderCol = 'tablename';
-		$orderDirection = 'asc';
+        // Add the list ordering clause.
+        $orderCol = 'tablename';
+        $orderDirection = 'asc';
 
-		$whereClause->addCondition('a.published', 1);
+        $whereClause->addCondition('a.published', 1);
 
-		return database::loadAssocList('#__customtables_tables AS a', $selects, $whereClause, $orderCol, $orderDirection);
-	}
+        return database::loadAssocList('#__customtables_tables AS a', $selects, $whereClause, $orderCol, $orderDirection);
+    }
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	protected static function checkIfTablesExists(array $tables_rows)
-	{
-		$dbPrefix = database::getDBPrefix();
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    protected static function checkIfTablesExists(array $tables_rows)
+    {
+        $dbPrefix = database::getDBPrefix();
 
-		foreach ($tables_rows as $row) {
-			if (!TableHelper::checkIfTableExists($dbPrefix . 'customtables_table_' . $row['tablename'])) {
-				if ($row['tablename'] === null)
-					throw new Exception('checkIfTablesExists: tablename value cannot be null');
+        foreach ($tables_rows as $row) {
+            if (!TableHelper::checkIfTableExists($dbPrefix . 'customtables_table_' . $row['tablename'])) {
+                if ($row['tablename'] === null)
+                    throw new Exception('checkIfTablesExists: tablename value cannot be null');
 
-				if ($row['customtablename'] === null or $row['customtablename'] == '') {
-					if (TableHelper::createTableIfNotExists($dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'] ?? '')) {
-						common::enqueueMessage('Table "' . $row['tabletitle'] . '" created.', 'notice');
-					}
-				}
-			}
-		}
-	}
+                if ($row['customtablename'] === null or $row['customtablename'] == '') {
+                    if (TableHelper::createTableIfNotExists($dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'] ?? '')) {
+                        common::enqueueMessage('Table "' . $row['tabletitle'] . '" created.', 'notice');
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	protected static function getZeroRecordID($realtablename, $realidfieldname)
-	{
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition($realidfieldname, 0);
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    protected static function getZeroRecordID($realtablename, $realidfieldname)
+    {
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition($realidfieldname, 0);
 
-		$rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
-		$row = $rows[0];
+        $rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
+        $row = $rows[0];
 
-		return $row['record_count'];
-	}
+        return $row['record_count'];
+    }
 }

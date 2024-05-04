@@ -15,6 +15,7 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
 use LayoutProcessor;
 use tagProcessor_Edit;
 
@@ -50,7 +51,7 @@ class Edit
                 return false;
             }
 
-            $this->pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+            $this->pageLayoutLink = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
             if ($Layouts->layoutType === null) {
                 $this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found or the type is not set.';

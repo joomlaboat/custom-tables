@@ -28,7 +28,8 @@ $loadTwig = $params->get('loadTwig');
 CustomTablesLoader(false, $include_html = true, null, 'com_customtables', $loadTwig);
 
 // Require the base controller
-require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'controller.php';
+require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
+    . DIRECTORY_SEPARATOR . 'controller.php';
 
 // Initialize the controller
 $controller = new CustomTablesController();

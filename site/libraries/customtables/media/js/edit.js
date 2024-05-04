@@ -291,7 +291,6 @@ function doValueRules(obj, label, valueRules, caption) {
         let rules = new Function(rules_str); // this |x| refers global |x|
         result = rules(value_rules_and_arguments.new_args);
     } catch (error) {
-        //alert('Validation rule "' + valuerules + '" has an error: ' + error);
         return true;//TODO replace it with JS Twig
     }
 
@@ -302,7 +301,6 @@ function doValueRules(obj, label, valueRules, caption) {
         caption = 'Invalid value for "' + label + '"';
 
     alert(caption);
-
     return false;
 }
 
@@ -383,7 +381,6 @@ function doFilters(obj, label, filters_string) {
             }
 
             if (!found) {
-
                 alert(TranslateText('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID', value, label, filter_parts[1]));
                 return false;
             }
@@ -457,7 +454,17 @@ function checkRequiredFields(formObject) {
                 else
                     label = "Unlabeled field";
 
-                if (requiredFields[i].type === "text") {
+                if (d.type === 'sqljoin') {
+                    if (requiredFields[i].type === "hidden") {
+                        let obj = document.getElementById(objName);
+
+                        if (obj.value === '') {
+                            alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
+                            return false;
+                        }
+                    }
+
+                } else if (requiredFields[i].type === "text") {
                     let obj = document.getElementById(objName);
                     if (obj.value === '') {
                         alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
@@ -718,7 +725,8 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     }
 
     //Add content to the element
-    document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
+    if (document.getElementById(control_name + "Selector" + index + '_' + (sub_index + 1)))
+        document.getElementById(control_name + "Selector" + index + '_' + (sub_index + 1)).innerHTML = result;
 
     if (forceValue !== null) {
         let obj = document.getElementById(current_object_id);
@@ -735,7 +743,8 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 function ctTableJoinAddRecordModalForm(control_name, sub_index) {
 
     let wrapper = document.getElementById(control_name + "Wrapper");
-    let query = '/index.php/' + wrapper.dataset.addrecordmenualias;
+
+    let query = ctWebsiteRoot + 'index.php/' + wrapper.dataset.addrecordmenualias;
     if (wrapper.dataset.addrecordmenualias.indexOf('?') === -1)
         query += '?';
     else
@@ -836,7 +845,6 @@ function ctRenderTableJoinSelectBoxLoadRecords(url, control_name, index, execute
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
     if (http) {
-
         http.open("GET", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {

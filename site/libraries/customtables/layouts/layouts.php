@@ -16,6 +16,7 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Exception;
+use Joomla\CMS\Uri\Uri;
 use LayoutProcessor;
 
 class Layouts
@@ -147,7 +148,7 @@ class Layouts
             $this->addCSSandJSIfNeeded($row, $checkLayoutFile);
 
         $this->pageLayoutNameString = $row['layoutname'];
-        $this->pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
+        $this->pageLayoutLink = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
         $this->layoutCode = $layoutCode;
         return $layoutCode;
     }
