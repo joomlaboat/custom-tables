@@ -62,25 +62,23 @@ class Twig_Html_Tags
         if ($this->ct->Env->isPlugin)
             return '';
 
-        $usergroups = $this->ct->Env->user->groups;
+        $userGroups = $this->ct->Env->user->groups;
 
         $add_userGroup = (int)$this->ct->Params->addUserGroups;
 
-        if (!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup, $usergroups))
+        if (!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup, $userGroups))
             return ''; //Not permitted
 
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return ''; //Not permitted
 
         if (defined('_JEXEC')) {
-            $link = CUSTOMTABLES_MEDIA_HOME_URL;
-
             if ($Alias_or_ItemId != '' and is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)
-                $link .= Uri::root(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url . '&amp;Itemid=' . $Alias_or_ItemId;
+                $link = Uri::root(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url . '&amp;Itemid=' . $Alias_or_ItemId;
             elseif ($Alias_or_ItemId != '')
-                $link .= Uri::root(true) . '/index.php/' . $Alias_or_ItemId . '?returnto=' . $this->ct->Env->encoded_current_url;
+                $link = Uri::root(true) . '/index.php/' . $Alias_or_ItemId . '?returnto=' . $this->ct->Env->encoded_current_url;
             else
-                $link .= Uri::root(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url
+                $link = Uri::root(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url
                     . '&amp;Itemid=' . $this->ct->Params->ItemId;
 
             if (!is_null($this->ct->Params->ModuleId))

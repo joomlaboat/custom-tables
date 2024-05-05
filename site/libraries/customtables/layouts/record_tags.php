@@ -859,9 +859,9 @@ class Twig_Tables_Tags
         } else {
             try {
                 if ($tables->loadRecords($table, $record_id_or_filter, $orderby, 1)) {
-                    if (count($join_ct->Records) > 0)
+                    if (count($join_ct->Records) > 0) {
                         $row = $join_ct->Records[0];
-                    else
+                    } else
                         return '';
                 } else
                     return '';
