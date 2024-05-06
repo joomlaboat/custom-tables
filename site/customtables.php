@@ -23,7 +23,7 @@ if (!file_exists($path))
 require_once($path);
 
 $params = ComponentHelper::getParams('com_customtables');
-$loadTwig = $params->get('loadTwig');
+$loadTwig = $params->get('loadTwig') ?? true;
 
 CustomTablesLoader(false, $include_html = true, null, 'com_customtables', $loadTwig);
 
