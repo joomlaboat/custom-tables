@@ -17,7 +17,6 @@ use CustomTablesImageMethods;
 use Exception;
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
-use CustomTables\ctProHelpers;
 use LayoutProcessor;
 use tagProcessor_General;
 use tagProcessor_Item;
@@ -309,10 +308,32 @@ class SaveFieldQuerySet
 
             case 'image':
 
+                //A checkbox value 1 delete existing image 0 - not
                 $to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
 
-                if ($to_delete == 'true') {
+
+                //Get new image
+                $tempValue = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+
+                //Set the variable to false to do not delete existing image
+                $deleteExistingImage = false;
+
+                if ($tempValue !== null and $tempValue != '') {
+                    //Upload new image
+                    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php');
+
+                    $value = CT_FieldTypeTag_image::get_image_type_value($this->field, $this->ct->Table->realidfieldname, $listing_id);
+
+                    //Set new image value
+                    $this->setNewValue($value);
+                    $deleteExistingImage = true;
+                } elseif ($to_delete == 'true') {
                     $this->setNewValue(null);
+                    $deleteExistingImage = true;
+                }
+
+                if ($deleteExistingImage) {
+                    //Get existing image
                     $whereClause = new MySQLWhereClause();
                     $whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
 
@@ -326,7 +347,6 @@ class SaveFieldQuerySet
                     }
 
                     if ($ExistingImage !== null and ($ExistingImage != '' or (is_numeric($ExistingImage) and $ExistingImage > 0))) {
-
                         $imageMethods = new CustomTablesImageMethods;
                         $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
 
@@ -338,15 +358,6 @@ class SaveFieldQuerySet
                             $this->field->realfieldname,
                             $this->field->ct->Table->realidfieldname);
                     }
-                }
-
-                $tempValue = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
-                if ($tempValue !== null and $tempValue != '') {
-
-                    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php');
-
-                    $value = CT_FieldTypeTag_image::get_image_type_value($this->field, $this->ct->Table->realidfieldname, $listing_id);
-                    $this->setNewValue($value);
                 }
                 return;
 
