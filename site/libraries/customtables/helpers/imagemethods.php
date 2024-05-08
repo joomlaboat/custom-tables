@@ -292,7 +292,7 @@ class CustomTablesImageMethods
                 $original_fileName = $ImageFolder . DIRECTORY_SEPARATOR . '_original_' . $ExistingImage . '.' . $photo_ext;
             else
                 $original_fileName = $ImageFolder . DIRECTORY_SEPARATOR . $ExistingImage . '.' . $photo_ext;
-            
+
             if (file_exists($original_fileName))
                 unlink($original_fileName);
 
@@ -394,9 +394,6 @@ class CustomTablesImageMethods
                     //there is possible error, check all possible ext
                     $thumbnail_image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $ImageID . '.jpg';
                     $original_image_file = $ImageFolder . DIRECTORY_SEPARATOR . $ImageID . '.' . $new_photo_ext;
-                    //echo '$thumbnail_image_file=' . $thumbnail_image_file . '<br/>';
-                    //echo '$original_image_file=' . $original_image_file . '<br/>';
-
                 }
 
                 $i++;
@@ -440,9 +437,6 @@ class CustomTablesImageMethods
                         $isOk = false;
                 }
             }
-
-            echo '$isOk=' . $isOk . '<br/>';
-            echo '$original_image_file=' . $original_image_file . '<br/>';
 
             if ($isOk) {
                 copy($uploadedFile, $original_image_file);
