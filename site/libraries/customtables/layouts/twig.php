@@ -15,15 +15,8 @@ defined('_JEXEC') or die();
 
 use CT_FieldTypeTag_imagegallery;
 use Exception;
-use CustomTables\ctProHelpers;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;
-use CT_FieldTypeTag_image;
-
-$types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
-
-if (file_exists($types_path))
-    require_once($types_path . '_type_image.php');
 
 class TwigProcessor
 {
@@ -450,7 +443,13 @@ class fieldObject
             $imageSRC = '';
             $imagetag = '';
 
-            CT_FieldTypeTag_image::getImageSRCLayoutView($options, $this->ct->Table->record[$rfn], $this->field->params, $imageSRC, $imagetag);
+            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+                . DIRECTORY_SEPARATOR . 'value.php');
+
+            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+                . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'image.php');
+
+            Value_image::getImageSRCLayoutView($options, $this->ct->Table->record[$rfn], $this->field->params, $imageSRC, $imagetag);
 
             return $imageSRC;
         } elseif ($this->field->type == 'records') {

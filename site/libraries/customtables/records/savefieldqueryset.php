@@ -99,20 +99,10 @@ class SaveFieldQuerySet
                 }
                 break;
 
-            case 'radio':
-                $value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
-
-                if (isset($value)) {
-                    $this->setNewValue($value);
-                    return;
-                }
-                break;
-
-            case 'string':
-
-            case 'filelink':
-
             case 'googlemapcoordinates':
+            case 'filelink':
+            case 'string':
+            case 'radio':
                 $value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
                 if (isset($value)) {
@@ -202,9 +192,10 @@ class SaveFieldQuerySet
                     } else
                         $postfix = '_' . $lang->sef;
 
-                    $value = common::filterText(common::inputPostRaw($this->field->comesfieldname . $postfix, null, 'create-edit-record'));
+                    $value = common::inputPostRaw($this->field->comesfieldname . $postfix, null, 'create-edit-record');
 
-                    if (isset($value)) {
+                    if ($value !== null) {
+                        $value = common::filterText($value);
                         $this->row_old[$this->field->realfieldname . $postfix] = $value;
                         $this->row_new[$this->field->realfieldname . $postfix] = $value;
                     }
@@ -315,14 +306,18 @@ class SaveFieldQuerySet
                 //Get new image
                 $tempValue = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
-                //Set the variable to false to do not delete existing image
+                //Set the variable to "false" to do not delete existing image
                 $deleteExistingImage = false;
 
                 if ($tempValue !== null and $tempValue != '') {
                     //Upload new image
-                    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php');
+                    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+                        . DIRECTORY_SEPARATOR . 'value.php');
 
-                    $value = CT_FieldTypeTag_image::get_image_type_value($this->field, $this->ct->Table->realidfieldname, $listing_id);
+                    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+                        . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'image.php');
+                    
+                    $value = Value_image::get_image_type_value($this->field, $this->ct->Table->realidfieldname, $listing_id);
 
                     //Set new image value
                     $this->setNewValue($value);
@@ -349,14 +344,15 @@ class SaveFieldQuerySet
                     if ($ExistingImage !== null and ($ExistingImage != '' or (is_numeric($ExistingImage) and $ExistingImage > 0))) {
                         $imageMethods = new CustomTablesImageMethods;
                         $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
-
+                        $fileNameType = $this->field->params[3] ?? '';
                         $imageMethods->DeleteExistingSingleImage(
                             $ExistingImage,
                             JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder,
                             $this->field->params[0] ?? '',
                             $this->field->ct->Table->realtablename,
                             $this->field->realfieldname,
-                            $this->field->ct->Table->realidfieldname);
+                            $this->field->ct->Table->realidfieldname,
+                            $fileNameType);
                     }
                 }
                 return;
@@ -450,8 +446,8 @@ class SaveFieldQuerySet
             case 'email':
                 $value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
-                if (isset($value)) {
-                    $value = trim($value ?? '');
+                if ($value !== null) {
+                    $value = trim($value);
                     if (Email::checkEmail($value))
                         $this->setNewValue($value);
                     else
@@ -461,8 +457,8 @@ class SaveFieldQuerySet
 
             case 'url':
                 $value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
-                if (isset($value)) {
-                    $value = trim($value ?? '');
+                if ($value !== null) {
+                    $value = trim($value);
                     if (filter_var($value, FILTER_VALIDATE_URL))
                         $this->setNewValue($value);
                     else
@@ -577,6 +573,10 @@ class SaveFieldQuerySet
         }
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     public static function get_record_type_value(Field $field): ?string
     {
         if (count($field->params) > 2) {
@@ -655,6 +655,10 @@ class SaveFieldQuerySet
             . substr("0123456789ABCDEF", $index2, 1);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     public function get_alias_type_value($listing_id)
     {
         $value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
@@ -668,6 +672,10 @@ class SaveFieldQuerySet
         return $value;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     public function prepare_alias_type_value(?string $listing_id, string $value)
     {
         $value = CTMiscHelper::slugify($value);
@@ -694,6 +702,10 @@ class SaveFieldQuerySet
         return $value_new;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function checkIfAliasExists(?string $exclude_id, string $value, string $realfieldname): bool
     {
         $whereClause = new MySQLWhereClause();
@@ -734,6 +746,10 @@ class SaveFieldQuerySet
         return $val;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function get_usergroups_type_value(): ?string
     {
         switch (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] : '') {
@@ -757,6 +773,10 @@ class SaveFieldQuerySet
         return null;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function get_customtables_type_language(): ?string
     {
         $value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');

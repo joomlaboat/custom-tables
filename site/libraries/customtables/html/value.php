@@ -19,7 +19,6 @@ use InvalidArgumentException;
 use Joomla\CMS\HTML\HTMLHelper;
 
 use CT_FieldTypeTag_file;
-use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_imagegallery;
 use CT_FieldTypeTag_log;
 
@@ -31,7 +30,6 @@ $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' .
 if (file_exists($types_path . '_type_file.php')) {
     require_once($types_path . '_type_file.php');
     require_once($types_path . '_type_gallery.php');
-    require_once($types_path . '_type_image.php');
     require_once($types_path . '_type_log.php');
 }
 
@@ -84,7 +82,7 @@ class Value
                 return number_format((int)$rowValue, 0, '', $thousand_sep);
 
             case 'float':
-                
+
                 $params_value = (($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] != '') ? (int)$this->field->params[0] : 2);
                 $decimals = $params_value;
                 $decimals_sep = '.';
@@ -174,15 +172,7 @@ class Value
                 return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname], false);
 
             case 'image':
-                $imageSRC = '';
-                $imagetag = '';
-
-                if (defined('WPINC'))
-                    return 'CustomTables for WordPress: "image" field type is not available yet.';
-
-                CT_FieldTypeTag_image::getImageSRCLayoutView($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
-
-                return $imagetag;
+                return $ValueRenderer->render();
 
             case 'signature':
 
@@ -191,7 +181,7 @@ class Value
 
                 $imageSRC = '';
                 $imagetag = '';
-                CT_FieldTypeTag_image::getImageSRCLayoutView($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
+                Value_image::getImageSRCLayoutView($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
 
                 $conf = Factory::getConfig();
                 $sitename = $conf->get('config.sitename');
