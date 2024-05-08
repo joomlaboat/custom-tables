@@ -179,9 +179,7 @@ class Value
                 if (defined('WPINC'))
                     return 'CustomTables for WordPress: "signature" field type is not available yet.';
 
-                $imageSRC = '';
-                $imagetag = '';
-                Value_image::getImageSRCLayoutView($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
+                //$image = (object)Value_image::getImageSRCLayoutView($option_list, $rowValue, $this->field->params);
 
                 $conf = Factory::getConfig();
                 $sitename = $conf->get('config.sitename');
@@ -190,9 +188,6 @@ class Value
 
                 $ImageFolderWeb = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder_);
                 $ImageFolder = str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder_);
-
-                $imageSRC = '';
-                $imagetag = '';
 
                 $format = $this->field->params[3] ?? 'png';
 

@@ -26,14 +26,12 @@ class InputBox_image extends BaseInputBox
 
     function render(): string
     {
-        $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
-        $imageFile = '';
-        $isShortcut = false;
-        $imageSRC = Value_image::getImageSRC($this->row, $this->field->realfieldname, $ImageFolder, $imageFile, $isShortcut);
         $result = '<div class="esUploadFileBox" style="vertical-align:top;">';
-
-        if ($imageFile != '')
-            $result .= $this->renderImageAndDeleteOption($this->field, $imageSRC, $isShortcut);
+        $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
+        $image = (object)Value_image::getImageSRC($this->row, $this->field->realfieldname, $ImageFolder);
+        
+        if ($image !== null)
+            $result .= $this->renderImageAndDeleteOption($this->field, Uri::root() . $image->src, $image->shortcut);
 
         $result .= $this->renderUploader();
         $result .= '</div>';

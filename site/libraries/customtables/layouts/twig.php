@@ -14,6 +14,7 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use CT_FieldTypeTag_imagegallery;
+use CustomTablesImageMethods;
 use Exception;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;
@@ -36,6 +37,10 @@ class TwigProcessor
     var bool $parseParams;
     var bool $debug;
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     public function __construct(CT $ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
     {
         $this->debug = true;
@@ -440,8 +445,6 @@ class fieldObject
         $rfn = $this->field->realfieldname;
 
         if ($this->field->type == 'image') {
-            $imageSRC = '';
-            $imagetag = '';
 
             require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
                 . DIRECTORY_SEPARATOR . 'value.php');
@@ -449,9 +452,13 @@ class fieldObject
             require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
                 . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'image.php');
 
-            Value_image::getImageSRCLayoutView($options, $this->ct->Table->record[$rfn], $this->field->params, $imageSRC, $imagetag);
+            $image = Value_image::getImageSRCLayoutView($options, $this->ct->Table->record[$rfn], $this->field->params);
 
-            return $imageSRC;
+            if ($image === null)
+                return null;
+
+            return $image['src'];
+
         } elseif ($this->field->type == 'records') {
             $a = explode(",", $this->ct->Table->record[$rfn]);
             $b = array();

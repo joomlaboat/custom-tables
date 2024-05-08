@@ -61,19 +61,29 @@ class Value_image extends BaseValue
         return $value;
     }
 
-    public static function getImageSRC(?array $row, string $realFieldName, string $ImageFolder, string &$imageFile, bool &$isShortcut): string
+    public static function getImageSRC(?array $row, string $realFieldName, string $ImageFolder, bool $addPath = true): ?array
     {
         $isShortcut = false;
         if (isset($row[$realFieldName]) and $row[$realFieldName] !== false and $row[$realFieldName] !== '' and $row[$realFieldName] !== '0') {
             $img = $row[$realFieldName];
 
-            if (is_numeric($img) and intval($img) < 0) {
-                $isShortcut = true;
-                $img = intval($img);
-            }
+            if (is_numeric($img)) {
 
-            $imageFile_ = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $img;
-            $imageSrc_ = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder) . '/_esthumb_' . $img;
+                $img = intval($img);
+                $isShortcut = $img < 0;
+
+                $imageFile_ = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $img;
+                if ($addPath)
+                    $imageSrc_ = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder) . '/_esthumb_' . $img;
+                else
+                    $imageSrc_ = '_esthumb_' . $img;
+            } else {
+                $imageFile_ = $ImageFolder . DIRECTORY_SEPARATOR . $img;
+                if ($addPath)
+                    $imageSrc_ = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder) . '/' . $img;
+                else
+                    $imageSrc_ = $img;
+            }
         } else {
             $imageFile_ = '';
             $imageSrc_ = '';
@@ -93,7 +103,7 @@ class Value_image extends BaseValue
             $imageSrc = '';
         }
 
-        return Uri::root() . $imageSrc;
+        return ['src' => $imageSrc, 'shortcut' => $isShortcut];
     }
 
     /*
@@ -117,18 +127,17 @@ class Value_image extends BaseValue
      */
     function render(): ?string
     {
-        $imageSRC = '';
-        $imageTag = '';
-
         if (defined('WPINC'))
             return 'CustomTables for WordPress: "image" field type is not available yet.';
 
-        self::getImageSRCLayoutView($this->option_list, $this->rowValue, $this->field->params, $imageSRC, $imageTag);
+        $image = self::getImageSRCLayoutView($this->option_list, $this->rowValue, $this->field->params);
+        if ($image === null)
+            return null;
 
-        return $imageTag;
+        return $image['tag'];
     }
 
-    static public function getImageSRCLayoutView(array $option_list, ?string $rowValue, array $params, string &$imageSrc, string &$imageTag): bool
+    static public function getImageSRCLayoutView(array $option_list, ?string $rowValue, array $params): ?array
     {
         if ($rowValue !== null and $rowValue !== '' and is_numeric($rowValue) and intval($rowValue) < 0)
             $rowValue = -intval($rowValue);
@@ -140,21 +149,19 @@ class Value_image extends BaseValue
         $ImageFolder_ = CustomTablesImageMethods::getImageFolder($params);
         $ImageFolderWeb = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder_);
         $ImageFolder = str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder_);
-        $imageSrc = '';
-        $imageTag = '';
 
         if ($option == '' or $option == '_esthumb' or $option == '_thumb') {
-            $prefix = '_esthumb';
+            $prefix = '_esthumb_';
 
             $imageFileExtension = 'jpg';
-            $imageFileWeb = Uri::root() . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
-            $imageFile = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
+
+            $imageFile = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . $rowValue . '.' . $imageFileExtension;
             if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile)) {
-                $imageTag = '<img src="' . $imageFileWeb . '" style="width:150px;height:150px;" alt="' . $siteName . '" title="' . $siteName . '" />';
-                $imageSrc = $imageFileWeb;
-                return true;
+                $imageSrc = $ImageFolderWeb . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
+                $imageTag = '<img src="' . Uri::root() . $imageSrc . '" style="width:150px;height:150px;" alt="' . $siteName . '" title="' . $siteName . '" />';
+                return ['src' => $imageSrc, 'tag' => $imageTag];
             }
-            return false;
+            return null;
         } elseif ($option == '_original') {
 
             $fileNameType = $params[3] ?? '';
@@ -170,27 +177,30 @@ class Value_image extends BaseValue
             $imageFileExtension = $imgMethods->getImageExtension(JPATH_SITE . DIRECTORY_SEPARATOR . $imageName);
 
             if ($imageFileExtension != '') {
-                $imageFileWeb = Uri::root() . $ImageFolderWeb . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
-                $imageTag = '<img src="' . $imageFileWeb . '" alt="' . $siteName . '" title="' . $siteName . '" />';
-
-                $imageSrc = $imageFileWeb;
-                return true;
+                $imageSrc = $ImageFolderWeb . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
+                $imageTag = '<img src="' . Uri::root() . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '" />';
+                return ['src' => $imageSrc, 'tag' => $imageTag];
             }
-            return false;
+            return null;
         }
 
-        $prefix = $option;
-        $imgMethods = new CustomTablesImageMethods;
-        $imageName = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue;
 
-        $imageFileExtension = $imgMethods->getImageExtension(JPATH_SITE . DIRECTORY_SEPARATOR . $imageName);
+        $imgMethods = new CustomTablesImageMethods;
+
         //--- WARNING - ERROR -- REAL EXT NEEDED - IT COMES FROM OPTIONS
-        $imageFile = Uri::root() . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
+
         $imageSizes = $imgMethods->getCustomImageOptions($params[0]);
 
         foreach ($imageSizes as $img) {
             if ($img[0] == $option) {
-                if ($imageFile != '') {
+
+                $prefix = $option;
+                $imageName = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue;
+                $imageFileExtension = $imgMethods->getImageExtension(JPATH_SITE . DIRECTORY_SEPARATOR . $imageName);
+                $imageFile = $imageName . '.' . $imageFileExtension;
+                $imageSrc = $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
+
+                if (file_exists($imageFile)) {
                     $styles = [];
                     if ($img[1] > 0)
                         $styles[] = 'width:' . $img[1] . 'px;';
@@ -198,15 +208,15 @@ class Value_image extends BaseValue
                     if ($img[2] > 0)
                         $styles[] = 'height:' . $img[2] . 'px;';
 
-                    $imageTag = '<img src="' . $imageFile . '" alt="' . $siteName . '" title="' . $siteName . '"'
+                    $imageTag = '<img src="' . Uri::root() . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '"'
                         . (count($styles) > 0 ? ' style="' . implode(";", $styles) . '"' : '') . ' />';
 
                     $imageSrc = $imageFile;
-                    return true;
+                    return ['src' => $imageSrc, 'tag' => $imageTag];
                 }
             }
         }
-        return false;
+        return null;
     }
 
     //Drupal has this implemented fairly elegantly:
