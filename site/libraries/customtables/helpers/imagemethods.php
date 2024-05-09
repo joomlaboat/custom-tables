@@ -142,11 +142,11 @@ class CustomTablesImageMethods
         }
     }
 
-    function getCustomImageOptions(string $imageparams): array
+    function getCustomImageOptions(string $imageParams): array
     {
         $cleanOptions = array();
         //custom images
-        $imageSizes = explode(';', $imageparams);
+        $imageSizes = explode(';', $imageParams);
 
         foreach ($imageSizes as $imagesize) {
             $imageOptions = explode(',', $imagesize);
@@ -401,12 +401,10 @@ class CustomTablesImageMethods
 
             $isOk = true;
 
-            //es Thumb
             $r = $this->ProportionalResize($uploadedFile, $thumbnail_image_file, 150, 150, 1, -1, '');
-            //die;
+
             if ($r != 1)
                 $isOk = false;
-
 
             //--------- compare thumbnails
             $duplicateImageID = $this->compareThumbs($additional_params, $realtablename, $realfieldname, $ImageFolder, $uploadedFile, $thumbnail_image_file);

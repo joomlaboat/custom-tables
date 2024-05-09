@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use CT_FieldTypeTag_image;
 use CustomTablesImageMethods;
 use Joomla\CMS\Uri\Uri;
 
@@ -29,7 +28,7 @@ class InputBox_image extends BaseInputBox
         $result = '<div class="esUploadFileBox" style="vertical-align:top;">';
         $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
         $image = (object)Value_image::getImageSRC($this->row, $this->field->realfieldname, $ImageFolder);
-        
+
         if ($image !== null)
             $result .= $this->renderImageAndDeleteOption($this->field, Uri::root() . $image->src, $image->shortcut);
 

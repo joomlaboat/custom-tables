@@ -11,11 +11,6 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
-use CustomTables\CT;
-use CustomTables\CTMiscHelper;
-use CustomTables\CTUser;
-
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
 require_once($types_path . '_type_file.php');
 require_once($types_path . '_type_gallery.php');
@@ -32,11 +27,19 @@ defined('_JEXEC') or die();
 
 use CustomTables\Field;
 use CustomTables\InputBox_filebox;
-use CustomTables\Value_color;
+use CustomTables\common;
+use CustomTables\CT;
+use CustomTables\CTMiscHelper;
+use CustomTables\CTUser;
+use CustomTables\Value_image;
 
 class tagProcessor_Value
 {
-    public static function processValues(CT &$ct, string &$pageLayout, ?array &$row, string $tag_chars = '[]'): void
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
+    public static function processValues(CT &$ct, string &$pageLayout, ?array $row, string $tag_chars = '[]'): void
     {
         $items_to_replace = array();
         $isGalleryLoaded = array();
@@ -105,7 +108,7 @@ class tagProcessor_Value
                 } else {
                     $i = 0;
                     foreach ($ValueOptions as $ValueOption) {
-                        $value_option_list = CTMiscHelper::csv_explode(',', $ValueOption, '"', false);
+                        $value_option_list = CTMiscHelper::csv_explode(',', $ValueOption);
 
                         $vlu = tagProcessor_Value::getValueByType($ct, $fieldRow, $row, $value_option_list);
 
@@ -129,8 +132,12 @@ class tagProcessor_Value
 
     }
 
-    public static function processPureValues(CT &$ct, string &$htmlresult, ?array &$row, array &$isGalleryLoaded, array &$getGalleryRows
-        , array                                 &$isFileBoxLoaded, array &$getFileBoxRows, string $tag_chars = '[]')
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
+    public static function processPureValues(CT &$ct, string &$htmlresult, ?array $row, array &$isGalleryLoaded, array &$getGalleryRows
+        , array                                 &$isFileBoxLoaded, array &$getFileBoxRows, string $tag_chars = '[]'): array
     {
         $listing_id = ($row[$ct->Table->realidfieldname] ?? 0);
 
@@ -157,7 +164,7 @@ class tagProcessor_Value
 
                     if ($fieldType == 'imagegallery') {
                         if (count($isGalleryLoaded) > 0) {
-                            if (!isset($isGalleryLoaded[$fieldname]) or $isGalleryLoaded[$fieldname] == false) {
+                            if (!isset($isGalleryLoaded[$fieldname]) or !$isGalleryLoaded[$fieldname]) {
                                 //load if not loaded
                                 $isGalleryLoaded[$fieldname] = true;
                                 $getGalleryRows[$fieldname] = CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
@@ -220,7 +227,7 @@ class tagProcessor_Value
                                 }
                             }
 
-                        } while (1 == 1);//$textlengthnew!=$textlength);
+                        } while (true);
 
                         $htmlresult = str_replace($pureValueList[$p], '', $htmlresult);
                     } else {
@@ -240,9 +247,10 @@ class tagProcessor_Value
                                     $new_array[] = $pureValueOptionArr[$i];
                             }
 
-                            Value_image::getImageSRCLayoutView($new_array, $row[$field->realfieldname], $field->params, $imagesrc, $imagetag);
+                            $image = Value_image::getImageSRCLayoutView($new_array, $row[$field->realfieldname], $field->params);
+                            if ($image !== null)
+                                $vlu = $image['src'];
 
-                            $vlu = $imagesrc;
                         } elseif ($fieldType == 'imagegallery') {
 
                             $new_array = array();
@@ -309,7 +317,7 @@ class tagProcessor_Value
 
     }//function
 
-    public static function isEmpty(&$rowValue, Field $field): bool
+    public static function isEmpty($rowValue, Field $field): bool
     {
         $fieldType = $field->type;
 
@@ -382,7 +390,7 @@ class tagProcessor_Value
         }
     }
 
-    public static function processEditValues(CT &$ct, string &$htmlresult, ?array &$row, string $tag_chars = '[]')
+    public static function processEditValues(CT &$ct, string &$htmlresult, ?array $row, string $tag_chars = '[]'): array
     {
         $items_to_replace = array();
         $pureValueOptions = array();
@@ -433,7 +441,7 @@ class tagProcessor_Value
 
                         $value_option_list = array();
                         if (isset($pureValueOptionArr[1]))
-                            $value_option_list = CTMiscHelper::csv_explode(',', $pureValueOptionArr[1], '"', false);
+                            $value_option_list = CTMiscHelper::csv_explode(',', $pureValueOptionArr[1]);
 
                         if ($fieldRow['type'] == 'multilangstring') {
                             if (isset($value_option_list[4])) {
@@ -483,6 +491,10 @@ class tagProcessor_Value
         return $items_to_replace;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     static public function getValueByType(CT &$ct, array $fieldRow, ?array $row, array $option_list)
     {
         $valueProcessor = new CustomTables\Value($ct);

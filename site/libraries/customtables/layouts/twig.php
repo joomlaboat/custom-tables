@@ -14,7 +14,6 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use CT_FieldTypeTag_imagegallery;
-use CustomTablesImageMethods;
 use Exception;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;

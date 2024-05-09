@@ -218,6 +218,9 @@ class Catalog
 
         try {
             $twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
+            if (count($this->ct->errors) > 0)
+                return 'There is an error in rendering the catalog page.';
+
             $pageLayout = $twig->process();
         } catch (Exception $e) {
             $this->ct->errors[] = $e->getMessage();
