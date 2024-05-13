@@ -25,19 +25,19 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 class CustomTablesModelEditPhotos extends BaseDatabaseModel
 {
     var CT $ct;
-    var $imagemethods;
-    var $listing_id;
-    var $Listing_Title;
-    var $galleryname;
-    var $GalleryTitle;
-    var $imagefolderword;
-    var $imagefolder;
-    var $imagefolderweb;
-    var $imagemainprefix;
-    var $maxfilesize;
-    var $useridfield;
-    var $phototablename;
-    var $row;
+    var CustomTablesImageMethods $imagemethods;
+    var ?string $listing_id;
+    var string $Listing_Title;
+    var string $galleryname;
+    var string $GalleryTitle;
+    var string $imagefolderword;
+    var string $imagefolder;
+    var string $imagefolderweb;
+    var string $imagemainprefix;
+    var int $maxfilesize;
+    var string $useridfield;
+    var string $phototablename;
+    var ?array $row;
     var Field $field;
 
     function __construct()
@@ -216,6 +216,10 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
             $whereClause, 'ordering, photoid');
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     function delete(): bool
     {
         $photoIDs = common::inputPostString('photoids', '', 'create-edit-record');
@@ -227,7 +231,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
                     $photoId, (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : ''), true);
 
                 database::deleteRecord($this->phototablename, 'photoid', $photoId);
-                //$query = 'DELETEFROM ' . $this->phototablename . ' WHERE listingid=' . $this->listing_id . ' AND photoid=' . $photoId;
             }
         }
 
@@ -243,27 +246,27 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
     {
         $file = common::inputFiles('uploadedfile');
 
-        $uploadedfile = "tmp/" . basename($file['name']);
-        if (!move_uploaded_file($file['tmp_name'], $uploadedfile))
+        $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . basename($file['name']);
+        if (!move_uploaded_file($file['tmp_name'], $uploadedFile))
             return false;
 
         if (common::inputGetCmd('base64ecnoded', '') == "true") {
-            $src = $uploadedfile;
+            $src = $uploadedFile;
             $dst = "tmp/decoded_" . basename($file['name']);
             common::base64file_decode($src, $dst);
-            $uploadedfile = $dst;
+            $uploadedFile = $dst;
         }
 
         //Check file
-        if (!CustomTablesImageMethods::CheckImage($uploadedfile, CTMiscHelper::file_upload_max_size())) {
+        if (!CustomTablesImageMethods::CheckImage($uploadedFile, CTMiscHelper::file_upload_max_size())) {
             Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'), 'error');
-            unlink($uploadedfile);
+            unlink($uploadedFile);
             return false;
         }
 
         //Save to DB
-        $photo_ext = $this->imagemethods->FileExtension($uploadedfile);
-        $filenameParts = explode('/', $uploadedfile);
+        $photo_ext = $this->imagemethods->FileExtension($uploadedFile);
+        $filenameParts = explode('/', $uploadedFile);
         $filename = end($filenameParts);
         $title = str_replace('.' . $photo_ext, '', $filename);
 
@@ -273,27 +276,27 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 
         //es Thumb
         $newFileName = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__esthumb_' . $photoId . ".jpg";
-        $r = $this->imagemethods->ProportionalResize($uploadedfile, $newFileName, 150, 150, 1, -1, '');
+        $r = $this->imagemethods->ProportionalResize($uploadedFile, $newFileName, 150, 150, 1, -1, '');
 
         if ($r != 1)
             $isOk = false;
 
         $customSizes = $this->imagemethods->getCustomImageOptions(($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : '');
 
-        foreach ($customSizes as $imagesize) {
-            $prefix = $imagesize[0];
-            $width = (int)$imagesize[1];
-            $height = (int)$imagesize[2];
-            $color = (int)$imagesize[3];
+        foreach ($customSizes as $imageSize) {
+            $prefix = $imageSize[0];
+            $width = (int)$imageSize[1];
+            $height = (int)$imageSize[2];
+            $color = (int)$imageSize[3];
 
             //save as an extension
-            if ($imagesize[4] != '')
-                $ext = $imagesize[4];
+            if ($imageSize[4] != '')
+                $ext = $imageSize[4];
             else
                 $ext = $photo_ext;
 
             $newFileName = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '_' . $prefix . '_' . $photoId . "." . $ext;
-            $r = $this->imagemethods->ProportionalResize($uploadedfile, $newFileName, $width, $height, 1, $color, '');
+            $r = $this->imagemethods->ProportionalResize($uploadedFile, $newFileName, $width, $height, 1, $color, '');
 
             if ($r != 1)
                 $isOk = false;
@@ -302,16 +305,16 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
         if ($isOk) {
             $originalName = $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__original_' . $photoId . "." . $photo_ext;
 
-            if (!copy($uploadedfile, $this->imagefolder . DIRECTORY_SEPARATOR . $originalName)) {
-                unlink($uploadedfile);
+            if (!copy($uploadedFile, $this->imagefolder . DIRECTORY_SEPARATOR . $originalName)) {
+                unlink($uploadedFile);
                 return false;
             }
         } else {
-            unlink($uploadedfile);
+            unlink($uploadedFile);
             return false;
         }
 
-        unlink($uploadedfile);
+        unlink($uploadedFile);
         $this->ct->Table->saveLog($this->listing_id, 6);
 
         return true;

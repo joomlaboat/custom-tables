@@ -66,12 +66,12 @@ class CustomTablesImageMethods
             return false;
 
         $wh = getimagesize($src);
-
         $ms = $wh[0] * $wh[1] * 4;
 
-        if ($ms > $memoryLimit)
+        if ($ms == 0)
             return false;
-
+        //if ($ms > $memoryLimit)
+        //return false;
         return true;
     }
 

@@ -47,6 +47,7 @@
                     <option value="lastvisitdate" label="Last Visit Date"/>
                     <option value="online" label="Is Online Now"
                             description="The function returns 1 if the provided value indicates that the user is online, 0 if the value indicates that the user is offline, and NULL if the provided value is empty or invalid."/>
+                    <option value="usergroups" label="User Groups"/>
                 </param>
                 <param name="format" example="Y-m-d" label="Format" type="string"
                        description="PHP date format i.e. 'h:i:s'"/>
@@ -1491,6 +1492,7 @@
                     <option value="lastvisitdate" label="Last Visit Date"/>
                     <option value="online" label="Is Online Now"
                             description="The function returns 1 if the provided value indicates that the user is online, 0 if the value indicates that the user is offline, and NULL if the provided value is empty or invalid."/>
+                    <option value="usergroups" label="User Groups"/>
                 </param>
                 <param name="format" example="Y-m-d" label="Format" type="string"
                        description="PHP date format i.e. 'h:i:s'"/>

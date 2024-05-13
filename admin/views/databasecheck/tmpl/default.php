@@ -20,7 +20,7 @@ use Joomla\CMS\Router\Route;
 $document = Factory::getDocument();
 
 //https://github.com/DmitryBaranovskiy/raphael/releases
-$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/raphael.min.js"></script>');
+$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/raphael.min.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagram.js"></script>');
 
 ?>
@@ -35,41 +35,41 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
     </style>
 
     <div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
+        <?php echo $this->sidebar; ?>
 
     </div>
     <div id="j-main-container" class="ct_doc">
 
-		<?php echo HTMLHelper::_('bootstrap.startTabSet', 'schemaTab', array('active' => 'diagram'));
+        <?php echo HTMLHelper::_('bootstrap.startTabSet', 'schemaTab', array('active' => 'diagram'));
 
-		echo HTMLHelper::_('bootstrap.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM'));
-		echo '<div id="canvas_container"></div>';
+        echo HTMLHelper::_('bootstrap.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM'));
+        echo '<div id="canvas_container"></div>';
 
-		echo HTMLHelper::_('bootstrap.endTab');
+        echo HTMLHelper::_('bootstrap.endTab');
 
-		echo HTMLHelper::_('bootstrap.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS'));
+        echo HTMLHelper::_('bootstrap.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS'));
 
-		$result = IntegrityChecks::check($this->ct);
+        $result = IntegrityChecks::check($this->ct);
 
-		if (count($result) > 0)
-			echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
-		else
-			echo '<p>Database table structure is up-to-date.</p>';
+        if (count($result) > 0)
+            echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
+        else
+            echo '<p>Database table structure is up-to-date.</p>';
 
-		echo HTMLHelper::_('bootstrap.endTab');
+        echo HTMLHelper::_('bootstrap.endTab');
 
-		echo HTMLHelper::_('bootstrap.endTabSet');
+        echo HTMLHelper::_('bootstrap.endTabSet');
 
 
-		echo '<script>
+        echo '<script>
 	
 	TableCategoryID = ' . (int)$this->state->get('filter.tablecategory') . ';
 	AllTables = ' . common::ctJsonEncode($this->diagram->tables) . ';
 	
 	</script>';
 
-		?></div>
+        ?></div>
 
     <input type="hidden" name="task" value=""/>
-	<?php echo HTMLHelper::_('form.token'); ?>
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>

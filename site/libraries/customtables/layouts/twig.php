@@ -15,6 +15,9 @@ defined('_JEXEC') or die();
 
 use CT_FieldTypeTag_imagegallery;
 use Exception;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;
 
@@ -260,6 +263,12 @@ class TwigProcessor
         }
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @since 3.2.2
+     */
     public function process(?array $row = null): string
     {
         if (!class_exists('Twig\Loader\ArrayLoader'))
@@ -427,11 +436,19 @@ class fieldObject
         return 'unknown';
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public function v()
     {
         return $this->value();
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public function value()
     {
         if (!isset($this->field))
@@ -502,11 +519,19 @@ class fieldObject
         return $vlu;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public function int(): int
     {
         return intval($this->value());
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public function float(): float
     {
         return floatval($this->value());
@@ -552,6 +577,10 @@ class fieldObject
         return $this->field->params;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public function edit()
     {
         if (!isset($this->field->fieldrow))
@@ -644,6 +673,10 @@ class fieldObject
         }
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public function get(): string
     {
         if ($this->ct->isRecordNull($this->ct->Table->record) or count($this->ct->Table->record) < 2)
@@ -710,6 +743,10 @@ class fieldObject
         return implode(',', $new_options);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public function getvalue(): string
     {
         if ($this->ct->isRecordNull($this->ct->Table->record) or count($this->ct->Table->record) < 2)
@@ -751,6 +788,10 @@ class fieldObject
         }
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public function layout(string $layoutName, ?string $showPublishedString = '', string $separatorCharacter = ','): string
     {
         if ($showPublishedString === null)
