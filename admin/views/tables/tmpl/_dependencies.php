@@ -80,8 +80,8 @@ function _renderTableList($rows): string
 
     foreach ($rows as $row) {
         $result .= '<tr>
-        <td><a href="' . Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tabletitle'] . '</a></td>
-        <td><a href="' . Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=' . $row['tableid'] . '&id=' . $row['id'] . '" target="_blank">' . $row['fieldtitle'] . '</a></td>
+        <td><a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tabletitle'] . '</a></td>
+        <td><a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=' . $row['tableid'] . '&id=' . $row['id'] . '" target="_blank">' . $row['fieldtitle'] . '</a></td>
         <td>' . $row['typeparams'] . '</td>
         </tr>';
 
@@ -236,7 +236,7 @@ function _renderMenuList($menus): string
     $result = '<ul style="list-style-type:none;margin:0;">';
 
     foreach ($menus as $menu) {
-        $link = Uri::root(true) . '/administrator/index.php?option=com_menus&view=item&client_id=0&layout=edit&id=' . $menu['id'];
+        $link = common::UriRoot(true) . '/administrator/index.php?option=com_menus&view=item&client_id=0&layout=edit&id=' . $menu['id'];
         $result .= '<li><a href="' . $link . '" target="_blank">' . $menu['title'] . '</a></li>';
     }
 
@@ -249,7 +249,7 @@ function _renderLayoutList($layouts): string
     $result = '<ul style="list-style-type:none;margin:0;">';
 
     foreach ($layouts as $layout) {
-        $link = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $layout['id'];
+        $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $layout['id'];
         $result .= '<li><a href="' . $link . '" target="_blank">' . $layout['layoutname'] . '</a></li>';
     }
 

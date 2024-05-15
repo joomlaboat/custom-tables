@@ -55,7 +55,7 @@ if (common::inputGetCmd('extratask', '') == 'updateimages') {
 
                 <?php
                 if ($this->tableid != 0) {
-                    $link = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid;
+                    $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid;
                     echo IntegrityFields::checkFields($this->ct, $link);
                 }
                 //table-bordered

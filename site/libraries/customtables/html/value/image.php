@@ -36,7 +36,7 @@ class Value_image extends BaseValue
         $fileId = common::inputPostString($field->comesfieldname, null, 'create-edit-record');
 
         if ($listing_id == null or $listing_id == '' or (is_numeric($listing_id) and intval($listing_id) < 0)) {
-            $value = $imageMethods->UploadSingleImage('', $fileId, $field->realfieldname, JPATH_SITE . DIRECTORY_SEPARATOR
+            $value = $imageMethods->UploadSingleImage('', $fileId, $field->realfieldname, CUSTOMTABLES_ABSPATH
                 . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
         } else {
             $whereClause = new MySQLWhereClause();
@@ -49,7 +49,7 @@ class Value_image extends BaseValue
                 $ExistingImage = $ExistingImageRows[$field->realfieldname] ?? null;
 
             $value = $imageMethods->UploadSingleImage($ExistingImage, $fileId, $field->realfieldname,
-                JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
+                CUSTOMTABLES_ABSPATH . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
         }
 
         if ($value == "-1" or $value == "2") {
@@ -89,13 +89,13 @@ class Value_image extends BaseValue
             $imageSrc_ = '';
         }
 
-        if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile_ . '.jpg')) {
+        if (file_exists(CUSTOMTABLES_ABSPATH . $imageFile_ . '.jpg')) {
             $imageFile = $imageFile_ . '.jpg';
             $imageSrc = $imageSrc_ . '.jpg';
-        } elseif (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile_ . '.png')) {
+        } elseif (file_exists(CUSTOMTABLES_ABSPATH . $imageFile_ . '.png')) {
             $imageFile = $imageFile_ . '.png';
             $imageSrc = $imageSrc_ . '.png';
-        } elseif (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile_ . '.webp')) {
+        } elseif (file_exists(CUSTOMTABLES_ABSPATH . $imageFile_ . '.webp')) {
             $imageFile = $imageFile_ . '.webp';
             $imageSrc = $imageSrc_ . '.webp';
         } else {
@@ -156,9 +156,9 @@ class Value_image extends BaseValue
             $imageFileExtension = 'jpg';
 
             $imageFile = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . $rowValue . '.' . $imageFileExtension;
-            if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile)) {
+            if (file_exists(CUSTOMTABLES_ABSPATH . $imageFile)) {
                 $imageSrc = $ImageFolderWeb . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
-                $imageTag = '<img src="' . Uri::root() . $imageSrc . '" style="width:150px;height:150px;" alt="' . $siteName . '" title="' . $siteName . '" />';
+                $imageTag = '<img src="' . common::UriRoot() . $imageSrc . '" style="width:150px;height:150px;" alt="' . $siteName . '" title="' . $siteName . '" />';
                 return ['src' => $imageSrc, 'tag' => $imageTag];
             }
             return null;
@@ -174,11 +174,11 @@ class Value_image extends BaseValue
             }
 
             $imgMethods = new CustomTablesImageMethods;
-            $imageFileExtension = $imgMethods->getImageExtension(JPATH_SITE . DIRECTORY_SEPARATOR . $imageName);
+            $imageFileExtension = $imgMethods->getImageExtension(CUSTOMTABLES_ABSPATH . $imageName);
 
             if ($imageFileExtension != '') {
                 $imageSrc = $ImageFolderWeb . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
-                $imageTag = '<img src="' . Uri::root() . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '" />';
+                $imageTag = '<img src="' . common::UriRoot() . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '" />';
                 return ['src' => $imageSrc, 'tag' => $imageTag];
             }
             return null;
@@ -196,7 +196,7 @@ class Value_image extends BaseValue
 
                 $prefix = $option;
                 $imageName = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue;
-                $imageFileExtension = $imgMethods->getImageExtension(JPATH_SITE . DIRECTORY_SEPARATOR . $imageName);
+                $imageFileExtension = $imgMethods->getImageExtension(CUSTOMTABLES_ABSPATH . $imageName);
                 $imageFile = $imageName . '.' . $imageFileExtension;
                 $imageSrc = $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
 
@@ -208,7 +208,7 @@ class Value_image extends BaseValue
                     if ($img[2] > 0)
                         $styles[] = 'height:' . $img[2] . 'px;';
 
-                    $imageTag = '<img src="' . Uri::root() . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '"'
+                    $imageTag = '<img src="' . common::UriRoot() . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '"'
                         . (count($styles) > 0 ? ' style="' . implode(";", $styles) . '"' : '') . ' />';
 
                     $imageSrc = $imageFile;

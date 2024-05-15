@@ -29,59 +29,59 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' 
  */
 class CustomtablesViewDocumentation extends HtmlView
 {
-	/**
-	 * display method of View
-	 * @return void
-	 */
-	var float $version;
-	var ?\CustomTables\Documentation $documentation;
+    /**
+     * display method of View
+     * @return void
+     */
+    var float $version;
+    var ?\CustomTables\Documentation $documentation;
 
-	public function display($tpl = null)
-	{
-		$version = new Version;
-		$this->version = (float)$version->getShortVersion();
-		$this->documentation = new Documentation();
-		$this->documentation->internal_use = true;
+    public function display($tpl = null)
+    {
+        $version = new Version;
+        $this->version = (float)$version->getShortVersion();
+        $this->documentation = new Documentation();
+        $this->documentation->internal_use = true;
 
-		if (common::inputGetCmd('tmpl', '') == 'component')
-			$this->documentation->internal_use = false;
+        if (common::inputGetCmd('tmpl', '') == 'component')
+            $this->documentation->internal_use = false;
 
-		if ($this->getLayout() !== 'modal') {
-			// Include helper submenu
-			CustomtablesHelper::addSubmenu('documentation');
+        if ($this->getLayout() !== 'modal') {
+            // Include helper submenu
+            CustomtablesHelper::addSubmenu('documentation');
 
-			if ($this->version < 4) {
-				$this->addToolbar_3();
-				$this->sidebar = JHtmlSidebar::render();
-			} else
-				$this->addToolbar_4();
-		}
+            if ($this->version < 4) {
+                $this->addToolbar_3();
+                $this->sidebar = JHtmlSidebar::render();
+            } else
+                $this->addToolbar_4();
+        }
 
-		parent::display($tpl);
+        parent::display($tpl);
 
-		// Set the document
-		$document = Factory::getDocument();
-		$this->setDocument($document);
-	}
+        // Set the document
+        $document = Factory::getDocument();
+        $this->setDocument($document);
+    }
 
-	protected function addToolBar_3()
-	{
-		ToolbarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
-		JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
-	}
+    protected function addToolBar_3()
+    {
+        ToolbarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
+    }
 
-	protected function addToolBar_4()
-	{
-		ToolbarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
-		//JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
-	}
+    protected function addToolBar_4()
+    {
+        ToolbarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
+        //JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
+    }
 
-	public function setDocument(Joomla\CMS\Document\Document $document): void
-	{
-		$document->setTitle(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'));
-		$document->addStyleSheet(Uri::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
+    public function setDocument(Joomla\CMS\Document\Document $document): void
+    {
+        $document->setTitle(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'));
+        $document->addStyleSheet(common::UriRoot(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 
-		$script = '
+        $script = '
 		<script>
 			function readmoreOpenClose(itemid)
 			{
@@ -99,6 +99,6 @@ class CustomtablesViewDocumentation extends HtmlView
 		</script>
 		';
 
-		$document->addCustomTag($script);
-	}
+        $document->addCustomTag($script);
+    }
 }

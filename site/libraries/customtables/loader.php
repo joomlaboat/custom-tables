@@ -25,10 +25,27 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
         else
             $libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'libraries';
 
+        if (!defined('CUSTOMTABLES_ABSPATH'))
+            define('CUSTOMTABLES_ABSPATH', JPATH_SITE . DIRECTORY_SEPARATOR);
+
         if (!defined('CUSTOMTABLES_IMAGES_PATH'))
             define('CUSTOMTABLES_IMAGES_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'images');
-    } else
+
+        if (!defined('CUSTOMTABLES_PRO_PATH'))
+            define('CUSTOMTABLES_PRO_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR);
+
+    } elseif (defined('WPINC')) {
         $libraryPath = $PLUGIN_NAME_DIR . 'libraries';
+
+        if (!defined('CUSTOMTABLES_ABSPATH'))
+            define('CUSTOMTABLES_ABSPATH', ABSPATH);
+
+        if (!defined('CUSTOMTABLES_IMAGES_PATH'))
+            define('CUSTOMTABLES_IMAGES_PATH', ABSPATH . 'wp-content' . DIRECTORY_SEPARATOR . 'uploads');
+
+        if (!defined('CUSTOMTABLES_PRO_PATH'))
+            define('CUSTOMTABLES_PRO_PATH', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'customtablespro' . DIRECTORY_SEPARATOR);
+    }
 
     if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
         define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);

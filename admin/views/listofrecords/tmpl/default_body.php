@@ -53,7 +53,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 
         <?php
 
-        $link = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item_array[$this->ct->Table->realidfieldname];
+        $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item_array[$this->ct->Table->realidfieldname];
 
         $result = $twig->process($item_array);
         if ($twig->errorMessage !== null)

@@ -96,7 +96,7 @@ class CustomtablesViewRecords extends HtmlView
         }
 
         // Display the template
-        $this->formLink = Uri::root(true) . '/administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableId . '&id=' . $this->ct->Params->listing_id;
+        $this->formLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableId . '&id=' . $this->ct->Params->listing_id;
 
         // Set the document
         $this->document = Factory::getDocument();

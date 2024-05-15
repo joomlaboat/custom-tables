@@ -185,7 +185,7 @@ class TwigProcessor
         //{{ record.published }}	-	wizard ok
 
         if (defined('_JEXEC')) {
-            $CustomTablesWordPluginPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtablesword' . DIRECTORY_SEPARATOR . 'customtablesword.php';
+            $CustomTablesWordPluginPath = CUSTOMTABLES_PRO_PATH . 'customtablesword.php';
             if (file_exists($CustomTablesWordPluginPath)) {
                 require_once($CustomTablesWordPluginPath);
                 $this->twig->addGlobal('phpword', new Twig_PHPWord_Tags());

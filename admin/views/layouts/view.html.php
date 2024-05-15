@@ -220,7 +220,7 @@ class CustomtablesViewLayouts extends HtmlView
         if ($this->item !== null) {
             $isNew = ($this->item->id < 1);
             $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
         }
     }
 
@@ -308,7 +308,7 @@ class CustomtablesViewLayouts extends HtmlView
             if (count($rows) > 0) {
                 $result = '<hr/><p>List of Menu Items that use this layout:</p><ul>';
                 foreach ($rows as $r) {
-                    $link = Uri::root(true) . '/administrator/index.php?option=com_menus&view=item&layout=edit&id=' . $r['id'];
+                    $link = common::UriRoot(true) . '/administrator/index.php?option=com_menus&view=item&layout=edit&id=' . $r['id'];
                     $result .= '<li><a href="' . $link . '" target="_blank">' . $r['title'] . '</a></li>';
                 }
                 $result .= '</ul>';

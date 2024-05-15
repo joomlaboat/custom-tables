@@ -28,145 +28,145 @@ use Joomla\CMS\Version;
  */
 class CustomtablesViewFields extends HtmlView
 {
-	/**
-	 * display method of View
-	 * @return void
-	 */
-	var CT $ct;
-	var $tableid;
-	var $table_row;
-	var $allTables;
-	var $docuemnt;
-	var $item;
+    /**
+     * display method of View
+     * @return void
+     */
+    var CT $ct;
+    var $tableid;
+    var $table_row;
+    var $allTables;
+    var $docuemnt;
+    var $item;
 
-	public function display($tpl = null)
-	{
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
+    public function display($tpl = null)
+    {
+        $version = new Version;
+        $this->version = (int)$version->getShortVersion();
 
-		$model = $this->getModel();
-		$this->ct = $model->ct;
+        $model = $this->getModel();
+        $this->ct = $model->ct;
 
-		// Assign the variables
-		$this->form = $this->get('Form');
-		$this->item = $this->get('Item');
+        // Assign the variables
+        $this->form = $this->get('Form');
+        $this->item = $this->get('Item');
 
-		if ((int)$this->item->id == 0)
-			$this->tableid = common::inputGetInt('tableid', 0);
-		else
-			$this->tableid = $this->item->tableid;
+        if ((int)$this->item->id == 0)
+            $this->tableid = common::inputGetInt('tableid', 0);
+        else
+            $this->tableid = $this->item->tableid;
 
-		$this->table_row = TableHelper::getTableRowByID($this->tableid);
+        $this->table_row = TableHelper::getTableRowByID($this->tableid);
 
-		$this->script = $this->get('Script');
-		$this->state = $this->get('State');
+        $this->script = $this->get('Script');
+        $this->state = $this->get('State');
 
-		// get action permissions
-		$this->canDo = ContentHelper::getActions('com_customtables', 'tables', $this->item->id);
+        // get action permissions
+        $this->canDo = ContentHelper::getActions('com_customtables', 'tables', $this->item->id);
 
-		$this->canCreate = $this->canDo->get('tables.edit');
-		$this->canEdit = $this->canDo->get('tables.edit');
+        $this->canCreate = $this->canDo->get('tables.edit');
+        $this->canEdit = $this->canDo->get('tables.edit');
 
-		// get input
-		$this->ref = common::inputGet('ref', 0, 'word');
-		$this->refid = common::inputGet('refid', 0, 'int');
-		$this->referral = '';
-		if ($this->refid) {
-			// return to the item that referred to this item
-			$this->referral = '&ref=' . $this->ref . '&refid=' . (int)$this->refid;
-		} elseif ($this->ref) {
-			// return to the list view that referred to this item
-			$this->referral = '&ref=' . $this->ref;
-		}
+        // get input
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refid = common::inputGet('refid', 0, 'int');
+        $this->referral = '';
+        if ($this->refid) {
+            // return to the item that referred to this item
+            $this->referral = '&ref=' . $this->ref . '&refid=' . (int)$this->refid;
+        } elseif ($this->ref) {
+            // return to the list view that referred to this item
+            $this->referral = '&ref=' . $this->ref;
+        }
 
-		// Set the toolbar
-		$this->addToolBar();
+        // Set the toolbar
+        $this->addToolBar();
 
-		$this->extrataskOptions = ['updateimages', 'updatefiles', 'updateimagegallery', 'updatefilebox'];
+        $this->extrataskOptions = ['updateimages', 'updatefiles', 'updateimagegallery', 'updatefilebox'];
 
-		// Check for errors.
-		if (count($errors = $this->get('Errors'))) {
-			throw new Exception(implode("\n", $errors), 500);
-		}
+        // Check for errors.
+        if (count($errors = $this->get('Errors'))) {
+            throw new Exception(implode("\n", $errors), 500);
+        }
 
-		$this->allTables = Tables::getAllTables();
+        $this->allTables = Tables::getAllTables();
 
-		// Set the document
-		$this->document = Factory::getDocument();
-		$this->setDocument($this->document);
+        // Set the document
+        $this->document = Factory::getDocument();
+        $this->setDocument($this->document);
 
-		// Display the template
-		if ($this->version < 4)
-			parent::display($tpl);
-		else
-			parent::display('quatro');
-	}
+        // Display the template
+        if ($this->version < 4)
+            parent::display($tpl);
+        else
+            parent::display('quatro');
+    }
 
-	/**
-	 * Setting the toolbar
-	 */
-	protected function addToolBar()
-	{
-		common::inputSet('hidemainmenu', true);
-		$isNew = $this->item->id == 0;
+    /**
+     * Setting the toolbar
+     */
+    protected function addToolBar()
+    {
+        common::inputSet('hidemainmenu', true);
+        $isNew = $this->item->id == 0;
 
-		ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'), 'pencil-2 article-add');
-		// Built the actions for new and existing records.
-		if ($this->refid || $this->ref) {
-			if ($this->canCreate && $isNew) {
-				// We can create the record.
-				ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
-			} elseif ($this->canEdit) {
-				// We can save the record.
-				ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
-			}
-			if ($isNew) {
-				// Do not creat but cancel.
-				ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CANCEL');
-			} else {
-				// We can close it.
-				ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CLOSE');
-			}
-		} else {
-			if ($isNew) {
-				// For new records, check the create permission.
-				if ($this->canCreate) {
-					ToolbarHelper::apply('fields.apply', 'JTOOLBAR_APPLY');
-					ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
-					ToolbarHelper::custom('fields.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-				};
-				ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CANCEL');
-			} else {
-				if ($this->canEdit) {
-					// We can save the new record
-					ToolbarHelper::apply('fields.apply', 'JTOOLBAR_APPLY');
-					ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
-					// We can save this record, but check the create permission to see
-					// if we can return to make a new one.
-					if ($this->canCreate) {
-						ToolbarHelper::custom('fields.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-					}
-				}
-				if ($this->canCreate) {
-					ToolbarHelper::custom('fields.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
-				}
-				ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CLOSE');
-			}
-		}
-		ToolbarHelper::divider();
-	}
+        ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'), 'pencil-2 article-add');
+        // Built the actions for new and existing records.
+        if ($this->refid || $this->ref) {
+            if ($this->canCreate && $isNew) {
+                // We can create the record.
+                ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
+            } elseif ($this->canEdit) {
+                // We can save the record.
+                ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
+            }
+            if ($isNew) {
+                // Do not creat but cancel.
+                ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CANCEL');
+            } else {
+                // We can close it.
+                ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CLOSE');
+            }
+        } else {
+            if ($isNew) {
+                // For new records, check the create permission.
+                if ($this->canCreate) {
+                    ToolbarHelper::apply('fields.apply', 'JTOOLBAR_APPLY');
+                    ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
+                    ToolbarHelper::custom('fields.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+                };
+                ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CANCEL');
+            } else {
+                if ($this->canEdit) {
+                    // We can save the new record
+                    ToolbarHelper::apply('fields.apply', 'JTOOLBAR_APPLY');
+                    ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
+                    // We can save this record, but check the create permission to see
+                    // if we can return to make a new one.
+                    if ($this->canCreate) {
+                        ToolbarHelper::custom('fields.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+                    }
+                }
+                if ($this->canCreate) {
+                    ToolbarHelper::custom('fields.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+                }
+                ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CLOSE');
+            }
+        }
+        ToolbarHelper::divider();
+    }
 
-	/**
-	 * Method to set up the document properties
-	 *
-	 * @return void
-	 */
-	public function setDocument(Joomla\CMS\Document\Document $document): void
-	{
-		if ($this->item !== null) {
-			$isNew = ($this->item->id < 1);
-			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/administrator/components/com_customtables/views/fields/submitbutton.js"></script>');
-		}
-	}
+    /**
+     * Method to set up the document properties
+     *
+     * @return void
+     */
+    public function setDocument(Joomla\CMS\Document\Document $document): void
+    {
+        if ($this->item !== null) {
+            $isNew = ($this->item->id < 1);
+            $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/fields/submitbutton.js"></script>');
+        }
+    }
 }

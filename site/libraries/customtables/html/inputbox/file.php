@@ -95,7 +95,7 @@ class InputBox_file extends BaseInputBox
         if ($FileFolder !== '' and $FileFolder[0] == '/')
             $FileFolder = substr($FileFolder, 1);
 
-        $link = Uri::root() . $FileFolder . '/' . $file;
+        $link = common::UriRoot() . $FileFolder . '/' . $file;
 
         $parts = explode('.', $file);
         $file_extension = end($parts);
@@ -148,13 +148,13 @@ class InputBox_file extends BaseInputBox
         $max_file_size = CTMiscHelper::file_upload_max_size($custom_max_size);
 
         $file_id = common::generateRandomString();
-        $urlstr = Uri::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
+        $urlstr = common::UriRoot(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
             . '_fileid=' . $file_id
             . '&Itemid=' . $field->ct->Params->ItemId
             . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
             . '&fieldname=' . $field->fieldname;
 
-        if ($ct->app->getName() == 'administrator')   //since   3.2
+        if (common::clientAdministrator())   //since   3.2
             $formName = 'adminForm';
         else {
             if ($ct->Env->isModal)

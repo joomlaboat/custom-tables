@@ -200,7 +200,7 @@ class Value
                 $imageFileWeb = URI::root() . $ImageFolderWeb . '/' . $rowValue . '.' . $format;
                 $imageFile = $ImageFolder . DIRECTORY_SEPARATOR . $rowValue . '.' . $format;
 
-                if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile)) {
+                if (file_exists(CUSTOMTABLES_ABSPATH . $imageFile)) {
                     $width = (($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params[0] ?? '300px' : '300px');
                     if (((string)intval($width)) == $width)
                         $width .= 'px';

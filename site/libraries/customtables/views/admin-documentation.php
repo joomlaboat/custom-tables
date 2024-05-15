@@ -924,7 +924,7 @@ if ($this->onlyWordpress) {
     function getMenuItems(): string
     {
         $componentName = 'com_customtables';
-        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'views'
+        $path = CUSTOMTABLES_ABSPATH . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'views'
             . DIRECTORY_SEPARATOR . 'catalog' . DIRECTORY_SEPARATOR . 'tmpl';
 
         $xml = CTMiscHelper::getXMLData('default.xml', $path);

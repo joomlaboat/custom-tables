@@ -21,7 +21,7 @@ defined('_JEXEC') or die();
             <div class="dashboard-content">
                 <a class="icon" href="<?php echo $icon->url; ?>">
                     <img alt="<?php echo $icon->alt; ?>"
-                         src="<?php echo Uri::root(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/icons/<?php echo $icon->image; ?>">
+                         src="<?php echo common::UriRoot(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/icons/<?php echo $icon->image; ?>">
                     <span class="dashboard-title"><?php echo common::translate($icon->name); ?></span>
                 </a>
             </div>

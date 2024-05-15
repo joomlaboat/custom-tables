@@ -316,7 +316,7 @@ class SaveFieldQuerySet
 
                     require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
                         . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'image.php');
-                    
+
                     $value = Value_image::get_image_type_value($this->field, $this->ct->Table->realidfieldname, $listing_id);
 
                     //Set new image value
@@ -347,7 +347,7 @@ class SaveFieldQuerySet
                         $fileNameType = $this->field->params[3] ?? '';
                         $imageMethods->DeleteExistingSingleImage(
                             $ExistingImage,
-                            JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder,
+                            CUSTOMTABLES_ABSPATH . $ImageFolder,
                             $this->field->params[0] ?? '',
                             $this->field->ct->Table->realtablename,
                             $this->field->realfieldname,
@@ -407,12 +407,14 @@ class SaveFieldQuerySet
 
                 $filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
                 if (substr($filepath, 0, 1) == DIRECTORY_SEPARATOR)
-                    $filepath = JPATH_SITE . $filepath;
+                    $filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $filepath);
                 else
-                    $filepath = JPATH_SITE . DIRECTORY_SEPARATOR . $filepath;
+                    $filepath = CUSTOMTABLES_ABSPATH . $filepath;
 
                 if ($listing_id == 0) {
-                    $value = CT_FieldTypeTag_file::UploadSingleFile('', $file_id, $this->field, JPATH_SITE . $FileFolder);
+
+                    $fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
+                    $value = CT_FieldTypeTag_file::UploadSingleFile('', $file_id, $this->field, $fileSystemFileFolder);
                     $this->setNewValue($value);
                 } else {
                     $ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
@@ -428,7 +430,9 @@ class SaveFieldQuerySet
                                 unlink($filename_full);
                         }
                     }
-                    $value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile, $file_id, $this->field, JPATH_SITE . $FileFolder);
+
+                    $fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
+                    $value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile, $file_id, $this->field, $fileSystemFileFolder);
 
                     if ($value)
                         $this->setNewValue($value);

@@ -148,7 +148,7 @@ class Layouts
             $this->addCSSandJSIfNeeded($row, $checkLayoutFile);
 
         $this->pageLayoutNameString = $row['layoutname'];
-        $this->pageLayoutLink = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
+        $this->pageLayoutLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
         $this->layoutCode = $layoutCode;
         return $layoutCode;
     }

@@ -25,34 +25,43 @@ class CustomTablesImageMethods
 
     public static function getImageFolder(array $params)
     {
-        $ImageFolder = 'images' . DIRECTORY_SEPARATOR . 'ct_images';
+        if (defined('_JEXEC')) {
 
-        if (isset($params[2])) {
-            $ImageFolder = $params[2];
+            if (isset($params[2]) and !empty($params[2])) {
+                $ImageFolder = $params[2];
 
-            if ($ImageFolder != '') {
                 if ($ImageFolder[0] != '/')
-                    $ImageFolder = '/' . $ImageFolder;
-            } else
-                $ImageFolder = '/';
+                    $ImageFolder = 'images/' . $ImageFolder;
 
-            if (strlen($ImageFolder) > 8) {
-                $p1 = substr($ImageFolder, 0, 7);
-                $p2 = substr($ImageFolder, 0, 8);
+                if (strlen($ImageFolder) > 8) {
+                    $p1 = substr($ImageFolder, 0, 7);
+                    $p2 = substr($ImageFolder, 0, 8);
 
-                if ($p1 != 'images/' and $p2 != '/images/')
+                    if ($p1 != 'images/' and $p2 != '/images/')
+                        $ImageFolder = 'images' . $ImageFolder;
+
+                    if ($p2 == '/images/')
+                        $ImageFolder = substr($ImageFolder, 1);
+                } else
                     $ImageFolder = 'images' . $ImageFolder;
-
-                if ($p2 == '/images/')
-                    $ImageFolder = substr($ImageFolder, 1);
             } else
-                $ImageFolder = 'images' . $ImageFolder;
+                $ImageFolder = 'images';
+
+            $ImageFolderPath = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder);
+
+        } elseif (defined('WPINC')) {
+
+            if (isset($params[2]) and !empty($params[2])) {
+                $ImageFolder = $params[2];
+
+                if ($ImageFolder[0] != '/')
+                    $ImageFolder = 'wp-content/uploads/' . $ImageFolder;
+
+            } else
+                $ImageFolder = 'wp-content/uploads';
+
+            $ImageFolderPath = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder);
         }
-
-        if (strlen($ImageFolder) == 0)
-            $ImageFolder = 'images' . DIRECTORY_SEPARATOR . 'ct_images';
-
-        $ImageFolderPath = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder);
 
         if (!file_exists($ImageFolderPath))
             mkdir($ImageFolderPath, 0755, true);
@@ -87,7 +96,7 @@ class CustomTablesImageMethods
         if (isset($image_parameters[1]))
             $imageFolderWord = $image_parameters[1];
 
-        $imageFolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . str_replace('/', DIRECTORY_SEPARATOR, $imageFolderWord);
+        $imageFolder = CUSTOMTABLES_IMAGES_PATH . str_replace('/', DIRECTORY_SEPARATOR, $imageFolderWord);
         $imageGalleryPrefix = 'g';
 
         //delete gallery images if exist
@@ -336,7 +345,7 @@ class CustomTablesImageMethods
                 $additional_params = $params[1];
 
             if (!str_contains($image_file_id, DIRECTORY_SEPARATOR))//in case when other applications pass full path to the file
-                $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $image_file_id;
+                $uploadedFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $image_file_id;
             else
                 $uploadedFile = $image_file_id;
 
@@ -347,7 +356,7 @@ class CustomTablesImageMethods
 
             if ($is_base64encoded == "true") {
                 $src = $uploadedFile;
-                $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($image_file_id);//TODO: Check this functionality
+                $dst = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($image_file_id);//TODO: Check this functionality
                 common::base64file_decode($src, $dst);
             }
 
@@ -615,7 +624,7 @@ class CustomTablesImageMethods
         if ($watermark != '') {
             $watermark_Extension = $this->FileExtension($watermark);
             if ($watermark_Extension == 'png') {
-                $watermark_file = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $watermark);
+                $watermark_file = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $watermark);
 
                 if (file_exists($watermark_file)) {
                     $watermark_from = imageCreateFromPNG($watermark_file);

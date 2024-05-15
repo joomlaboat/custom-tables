@@ -16,7 +16,7 @@ defined('_JEXEC') or die();
 
 ?>
 <img alt="<?php echo common::translate('COM_CUSTOMTABLES'); ?>"
-     src="<?php echo Uri::root(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"
+     src="<?php echo common::UriRoot(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"
      style="text-align:center;">
 <ul class="list-striped">
     <li><b><?php echo common::translate('COM_CUSTOMTABLES_VERSION'); ?>:</b> <?php echo $this->manifest->version; ?>
@@ -36,15 +36,15 @@ defined('_JEXEC') or die();
 </ul>
 <div class="clearfix"></div>
 <?php if (CustomtablesHelper::checkArray($this->contributors)): ?>
-	<?php if (count($this->contributors) > 1): ?>
+    <?php if (count($this->contributors) > 1): ?>
         <h3><?php echo common::translate('COM_CUSTOMTABLES_CONTRIBUTORS'); ?></h3>
-	<?php else: ?>
+    <?php else: ?>
         <h3><?php echo common::translate('COM_CUSTOMTABLES_CONTRIBUTOR'); ?></h3>
-	<?php endif; ?>
+    <?php endif; ?>
     <ul class="list-striped">
-		<?php foreach ($this->contributors as $contributor): ?>
+        <?php foreach ($this->contributors as $contributor): ?>
             <li><b><?php echo $contributor['title']; ?>:</b> <?php echo $contributor['name']; ?></li>
-		<?php endforeach; ?>
+        <?php endforeach; ?>
     </ul>
     <div class="clearfix"></div>
 <?php endif; ?>

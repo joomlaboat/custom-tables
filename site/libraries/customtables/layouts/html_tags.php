@@ -74,11 +74,11 @@ class Twig_Html_Tags
 
         if (defined('_JEXEC')) {
             if ($Alias_or_ItemId != '' and is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)
-                $link = Uri::root(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url . '&amp;Itemid=' . $Alias_or_ItemId;
+                $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url . '&amp;Itemid=' . $Alias_or_ItemId;
             elseif ($Alias_or_ItemId != '')
-                $link = Uri::root(true) . '/index.php/' . $Alias_or_ItemId . '?returnto=' . $this->ct->Env->encoded_current_url;
+                $link = common::UriRoot(true) . '/index.php/' . $Alias_or_ItemId . '?returnto=' . $this->ct->Env->encoded_current_url;
             else
-                $link = Uri::root(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url
+                $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url
                     . '&amp;Itemid=' . $this->ct->Params->ItemId;
 
             if (!is_null($this->ct->Params->ModuleId))
@@ -785,7 +785,7 @@ class Twig_Html_Tags
     function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')
     {
         if (defined('_JEXEC')) {
-            if ($this->ct->app->getName() == 'administrator')   //since   3.2
+            if (common::clientAdministrator())   //since   3.2
                 $formName = 'adminForm';
             else {
                 if ($this->ct->Env->isModal)

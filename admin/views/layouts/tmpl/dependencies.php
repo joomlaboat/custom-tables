@@ -103,7 +103,7 @@ function _renderLayoutList($layouts): string
     $result = '<ul style="list-style-type:none;margin:0;">';
 
     foreach ($layouts as $layout) {
-        $link = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $layout['id'];
+        $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $layout['id'];
         $result .= '<li><a href="' . $link . '" target="_blank">' . $layout['layoutname'] . '</a></li>';
     }
 
@@ -116,7 +116,7 @@ function _renderMenuList($menus): string
     $result = '<ul style="list-style-type:none;margin:0;">';
 
     foreach ($menus as $menu) {
-        $link = Uri::root(true) . '/administrator/index.php?option=com_menus&view=item&client_id=0&layout=edit&id=' . $menu['id'];
+        $link = common::UriRoot(true) . '/administrator/index.php?option=com_menus&view=item&client_id=0&layout=edit&id=' . $menu['id'];
         $result .= '<li><a href="' . $link . '" target="_blank">' . $menu['title'] . '</a></li>';
     }
 
@@ -129,7 +129,7 @@ function _renderModuleList($modules): string
     $result = '<ul style="list-style-type:none;margin:0;">';
 
     foreach ($modules as $module) {
-        $link = Uri::root(true) . '/administrator/index.php?option=com_modules&task=module.edit&id=' . $module['id'];
+        $link = common::UriRoot(true) . '/administrator/index.php?option=com_modules&task=module.edit&id=' . $module['id'];
         $result .= '<li><a href="' . $link . '" target="_blank">' . $module['title'] . '</a></li>';
     }
 
@@ -152,8 +152,8 @@ function _renderTableList($rows): string
     foreach ($rows as $row) {
 
         $result .= '<tr>
-        <td><a href="' . Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tablename'] . '</a></td>
-		<td><a href="' . Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tabletitle'] . '</a></td>
+        <td><a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tablename'] . '</a></td>
+		<td><a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tabletitle'] . '</a></td>
         <td><ul style="list-style-type:none;margin:0;">';
 
         $fields = explode(';', $row['fields']);
@@ -161,7 +161,7 @@ function _renderTableList($rows): string
         foreach ($fields as $field) {
             if ($field != "") {
                 $pair = explode(',', $field);
-                $result .= '<li><a href="' . Uri::root(true) . '/administrator/index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=' . $row['tableid'] . '&id=' . $pair[0] . '" target="_blank">' . $pair[1] . '</a></li>';
+                $result .= '<li><a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=' . $row['tableid'] . '&id=' . $pair[0] . '" target="_blank">' . $pair[1] . '</a></li>';
             }
         }
         $result .= '</ul></td></tr>';

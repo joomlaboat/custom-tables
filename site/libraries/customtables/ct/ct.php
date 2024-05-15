@@ -390,7 +390,7 @@ class CT
 
                     $imageMethods->DeleteExistingSingleImage(
                         $row[$field->realfieldname],
-                        JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder,
+                        CUSTOMTABLES_ABSPATH . $ImageFolder,
                         $field->params[0],
                         $this->Table->realtablename,
                         $field->realfieldname,
@@ -413,7 +413,7 @@ class CT
 
                 foreach ($photoRows as $photoRow) {
                     $imageMethods->DeleteExistingGalleryImage(
-                        JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder,
+                        CUSTOMTABLES_ABSPATH . $ImageFolder,
                         $imageGalleryPrefix,
                         $this->Table->tableid,
                         $galleryName,

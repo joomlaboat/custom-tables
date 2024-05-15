@@ -44,23 +44,23 @@ class LayoutEditor
             $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/layouteditor.js"></script>');
             $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/layouteditor.css" rel="stylesheet">');
 
-            $document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
-            $document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');
+            $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
+            $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');
 
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.js"></script>');
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/mode/overlay.js"></script>');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.js"></script>');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/addon/mode/overlay.js"></script>');
 
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.js"></script>');
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/xml-hint.js"></script>');
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/html-hint.js"></script>');
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/xml/xml.js"></script>');
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
-            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
-            $document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/theme/' . $this->theme . '.css">');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.js"></script>');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/addon/hint/xml-hint.js"></script>');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/addon/hint/html-hint.js"></script>');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/xml/xml.js"></script>');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
+            $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
+            $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/theme/' . $this->theme . '.css">');
 
             if ($version >= 4)
-                $document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/media/system/css/fields/switcher.css">');
+                $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/media/system/css/fields/switcher.css">');
         }
     }
 

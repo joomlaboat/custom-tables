@@ -110,6 +110,6 @@ class CustomtablesViewDataBaseCheck extends HtmlView
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
         $document->setTitle(common::translate('COM_CUSTOMTABLES_DATABASECHECK'));
-        $document->addStyleSheet(Uri::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
+        $document->addStyleSheet(common::UriRoot(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
     }
 }

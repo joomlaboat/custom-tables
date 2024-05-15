@@ -207,10 +207,7 @@ class Fields
             die('deleteField_byID: Table not selected.');
         }
 
-        if (defined('_JEXEC'))
-            $ImageFolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'esimages';
-        else
-            $ImageFolder = false;
+        $ImageFolder = CUSTOMTABLES_IMAGES_PATH;
 
         $fieldrow = Fields::getFieldRow($fieldid, true);
 

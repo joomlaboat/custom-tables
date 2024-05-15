@@ -14,13 +14,15 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
-use Joomla\CMS\Uri\Uri;
 
 class InputBox_image extends BaseInputBox
 {
     function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
     {
         parent::__construct($ct, $field, $row, $option_list, $attributes);
+
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+            . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'image.php');
     }
 
     function render(): string
@@ -30,7 +32,7 @@ class InputBox_image extends BaseInputBox
         $image = (object)Value_image::getImageSRC($this->row, $this->field->realfieldname, $ImageFolder);
 
         if ($image !== null)
-            $result .= $this->renderImageAndDeleteOption($this->field, Uri::root() . $image->src, $image->shortcut);
+            $result .= $this->renderImageAndDeleteOption($this->field, common::UriRoot() . $image->src, $image->shortcut);
 
         $result .= $this->renderUploader();
         $result .= '</div>';
@@ -60,12 +62,12 @@ class InputBox_image extends BaseInputBox
         $style = 'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
         $element_id = 'ct_uploadfile_box_' . $this->field->fieldname;
 
-        $urlString = Uri::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname . '_fileid=' . $fileId
+        $urlString = common::UriRoot(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname . '_fileid=' . $fileId
             . '&Itemid=' . $this->field->ct->Params->ItemId
             . (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
             . '&fieldname=' . $this->field->fieldname;
 
-        if ($this->ct->app->getName() == 'administrator')   //since   3.2
+        if (common::clientAdministrator())   //since   3.2
             $formName = 'adminForm';
         else {
             if ($this->ct->Env->isModal)
@@ -89,8 +91,8 @@ class InputBox_image extends BaseInputBox
         return '<div style="' . $style . '"' . ($this->field->isrequired == 1 ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
             . 'data-type="' . $this->field->type . '" '
             . 'data-label="' . $this->field->title . '" '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" >'
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule ?? '') . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption ?? '') . '" >'
             . $ct_fileuploader . $ct_eventsMessage
             . '<script>
                 ' . $ct_getUploader . '

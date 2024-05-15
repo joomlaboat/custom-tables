@@ -18,15 +18,15 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 if ($this->ct->Env->version >= 4) {
-	$wa = $this->document->getWebAssetManager();
-	$wa->useScript('keepalive')->useScript('form.validate');
+    $wa = $this->document->getWebAssetManager();
+    $wa->useScript('keepalive')->useScript('form.validate');
 } else {
-	HTMLHelper::_('behavior.formvalidation');
-	HTMLHelper::_('behavior.keepalive');
+    HTMLHelper::_('behavior.formvalidation');
+    HTMLHelper::_('behavior.keepalive');
 }
 
 $document = Factory::getDocument();
-$document->addStyleSheet(Uri::root(true) . "/components/com_customtables/libraries/customtables/media/css/style.css");
+$document->addStyleSheet(common::UriRoot(true) . "/components/com_customtables/libraries/customtables/media/css/style.css");
 
 $editForm = new Edit($this->ct);
 $editForm->layoutContent = $this->pageLayout;

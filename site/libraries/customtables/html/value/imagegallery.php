@@ -79,19 +79,20 @@ class Value_imagegallery extends BaseValue
 
         if ($imageFolder == '') {
             $imageFolder = 'ct_images';
-            $imageFolderServer = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
+            $imageFolderServer = CUSTOMTABLES_IMAGES_PATH . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
             $imageFolderWeb = 'images/' . $imageFolder;
         } else {
             $f = str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
             if (strlen($f) > 0) {
-                if ($f[0] == DIRECTORY_SEPARATOR)
-                    $imageFolderServer = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
-                else
-                    $imageFolderServer = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
+                if ($f[0] == DIRECTORY_SEPARATOR) {
+                    $imageFolderServer = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
+                    $imageFolderServer = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $imageFolderServer);
+                } else
+                    $imageFolderServer = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
 
                 $imageFolderWeb = $imageFolder;
             } else {
-                $imageFolderServer = JPATH_SITE . DIRECTORY_SEPARATOR;
+                $imageFolderServer = CUSTOMTABLES_ABSPATH;
                 $imageFolderWeb = '';
             }
         }

@@ -53,7 +53,7 @@ class ExportTables
             //Prepare output string with data
             $output_str = '<customtablestableexport>' . common::ctJsonEncode($output);
 
-            $tmp_path = JPATH_SITE . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR;
+            $tmp_path = CUSTOMTABLES_ABSPATH . $path . DIRECTORY_SEPARATOR;
             $filename = substr(implode('_', $tables), 0, 128);
 
             $a = '';
@@ -68,7 +68,7 @@ class ExportTables
             }
 
             //Save file
-            $link = str_replace(DIRECTORY_SEPARATOR, '/', Uri::root());
+            $link = str_replace(DIRECTORY_SEPARATOR, '/', common::UriRoot());
 
             if ($link[strlen($link) - 1] != '/' and $path[0] != '/')
                 $link .= '/';

@@ -420,7 +420,10 @@ class common
 
     public static function curPageURL(): string
     {
+        //Uri::root() returns the string http://www.mydomain.org/mysite/ (or https if you're using SSL, etc).
+        //common::UriRoot(true) returns the string /mysite.
         $WebsiteRoot = str_replace(Uri::root(true), '', Uri::root());
+        //Uri$WebsiteRoot = http://www.mydomain.org/
         $RequestURL = common::getServerParam("REQUEST_URI");
 
         if ($WebsiteRoot != '' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/') {
@@ -437,6 +440,14 @@ class common
     {
         return $_SERVER[$param];
     }
+
+    public static function UriRoot(bool $pathOnly = false): string
+    {
+        //Uri::root() returns the string http://www.mydomain.org/mysite/ (or https if you're using SSL, etc).
+        //common::UriRoot(true) returns the string /mysite.
+        return Uri::root($pathOnly);
+    }
+
 
     public static function ctParseUrl($argument)
     {
@@ -698,5 +709,12 @@ class common
 
         // Format the date and time as a string in the desired format
         return $date->format($format, true);
+    }
+
+    public static function clientAdministrator(): bool
+    {
+        //returns true when called from the back-end / administrator
+        $app = Factory::getApplication();
+        return $app->isClient('administrator');
     }
 }

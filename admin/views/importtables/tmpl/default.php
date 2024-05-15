@@ -26,7 +26,7 @@ HTMLHelper::_('behavior.formvalidator');
 $document = Factory::getDocument();
 
 if ($this->version >= 4) {
-    $document->addCustomTag('<script src="' . Uri::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
+    $document->addCustomTag('<script src="' . common::UriRoot(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
 }
 
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/uploadfile.css" rel="stylesheet">');
@@ -42,7 +42,7 @@ echo '<form method="post" action="" id="esFileUploaderForm_Tables">';
 echo '<h2>Import Tables</h2>';
 echo '<p>This function allows for the importation of table structures from .txt files encoded in JSON format.</p>';
 
-$urlString = Uri::root(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileId;
+$urlString = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileId;
 echo '
 
     

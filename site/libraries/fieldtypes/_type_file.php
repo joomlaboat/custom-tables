@@ -395,7 +395,7 @@ class CT_FieldTypeTag_file
                 if ($filepath !== '' and $filepath[0] == '/')
                     $filepath = substr($filepath, 1);
 
-                $filepath = Uri::root() . $filepath;
+                $filepath = common::UriRoot() . $filepath;
             }
 
             if (isset($option_list[3])) {
