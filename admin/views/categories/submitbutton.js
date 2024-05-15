@@ -3,7 +3,7 @@
  * @package Custom Tables
  * @subpackage views/fields/view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
+ * @link https://joomlaboat.com
  * @copyright (C) 2018-2024. Ivan Komlev
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
