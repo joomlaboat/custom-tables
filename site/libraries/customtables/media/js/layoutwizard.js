@@ -517,7 +517,8 @@ function showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left
         return;
     }
 
-    let fieldTypeParametersList = parseQuote(field.typeparams, ",", true);
+    let fieldTypeParamsClean = field.typeparams.replaceAll('"', '').replaceAll('****quote****', '"');
+    let fieldTypeParametersList = parseQuote(fieldTypeParamsClean, ",", true);
 
     const param_array = getParamOptions(group_params_object.params, 'param');
     const countParams = param_array.length;

@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use CT_FieldTypeTag_imagegallery;
 use Exception;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -485,8 +484,8 @@ class fieldObject
             $vlu = implode(',', $b);
         } elseif ($this->field->type == 'imagegallery') {
             $id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
-            $rows = CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $id);
-            $imageSRCList = CT_FieldTypeTag_imagegallery::getImageGallerySRC($rows, $options[0] ?? '', $this->field->fieldname, $this->field->params, $this->ct->Table->tableid);
+            $rows = Value_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $id);
+            $imageSRCList = Value_imagegallery::getImageGallerySRC($rows, $options[0] ?? '', $this->field->fieldname, $this->field->params, $this->ct->Table->tableid);
 
             $vlu = implode(($options[1] ?? ';'), $imageSRCList);
 

@@ -13,13 +13,15 @@ defined('_JEXEC') or die();
 
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
 require_once($types_path . '_type_file.php');
-require_once($types_path . '_type_gallery.php');
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
     . DIRECTORY_SEPARATOR . 'value.php');
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
     . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'image.php');
+
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+    . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'imagegallery.php');
 
 require_once($types_path . '_type_log.php');
 
@@ -32,6 +34,7 @@ use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\CTUser;
 use CustomTables\Value_image;
+use CustomTables\Value_imagegallery;
 
 class tagProcessor_Value
 {
@@ -70,7 +73,7 @@ class tagProcessor_Value
                 if ($fieldType == 'imagegallery') {
                     if (!isset($isGalleryLoaded[$fieldname]) or !$isGalleryLoaded[$fieldname]) {
                         $isGalleryLoaded[$fieldname] = true;
-                        $r = CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+                        $r = Value_imagegallery::getGalleryRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
                         $getGalleryRows[$fieldname] = $r;
                     }
 
@@ -167,12 +170,12 @@ class tagProcessor_Value
                             if (!isset($isGalleryLoaded[$fieldname]) or !$isGalleryLoaded[$fieldname]) {
                                 //load if not loaded
                                 $isGalleryLoaded[$fieldname] = true;
-                                $getGalleryRows[$fieldname] = CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+                                $getGalleryRows[$fieldname] = Value_imagegallery::getGalleryRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
                             }
                         } else {
                             //load if not loaded
                             $isGalleryLoaded[$fieldname] = true;
-                            $getGalleryRows[$fieldname] = CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+                            $getGalleryRows[$fieldname] = Value_imagegallery::getGalleryRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
                         }
 
                         if (count($getGalleryRows[$fieldname]) == 0)
@@ -262,7 +265,7 @@ class tagProcessor_Value
 
                             if (count($new_array) > 0) {
                                 $option = $new_array[0];
-                                $imageSRCList = CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows[$fieldname],
+                                $imageSRCList = Value_imagegallery::getImageGallerySRC($getGalleryRows[$fieldname],
                                     $option, $fieldname, $field->params, $ct->Table->tableid);
 
                                 $vlu = implode(',', $imageSRCList);

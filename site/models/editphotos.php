@@ -35,7 +35,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
     var string $imagefolderweb;
     var string $imagemainprefix;
     var int $maxfilesize;
-    var string $useridfield;
+    var ?string $userIdField;
     var string $phototablename;
     var ?array $row;
     var Field $field;
@@ -65,9 +65,9 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
         $this->imagemainprefix = 'g';
         $this->imagemethods = new CustomTablesImageMethods;
 
-        $this->useridfield = $params->get('useridfield');
+        $this->userIdField = $params->get('useridfield');
 
-        $this->ct->getTable($params->get('establename'), $this->useridfield);
+        $this->ct->getTable($params->get('establename'), $this->userIdField);
 
         if ($this->ct->Table->tablename === null) {
             Factory::getApplication()->enqueueMessage('Table not selected (62).', 'error');

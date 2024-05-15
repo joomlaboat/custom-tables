@@ -23,38 +23,38 @@ use Joomla\CMS\Language\Text;
 
 class IntegrityFieldType_Gallery extends IntegrityChecks
 {
-	public static function checkGallery(CT &$ct, $fieldname)
-	{
-		$gallery_table_name = '#__customtables_gallery_' . $ct->Table->tablename . '_' . $fieldname;
+    public static function checkGallery(CT &$ct, $fieldname)
+    {
+        $gallery_table_name = '#__customtables_gallery_' . $ct->Table->tablename . '_' . $fieldname;
 
-		if (!TableHelper::checkIfTableExists($gallery_table_name)) {
-			Fields::CreateImageGalleryTable($ct->Table->tablename, $fieldname);
-			common::enqueueMessage(Text::sprintf("Gallery Table '%s' created.", $gallery_table_name), 'notice');
-		}
+        if (!TableHelper::checkIfTableExists($gallery_table_name)) {
+            Fields::CreateImageGalleryTable($ct->Table->tablename, $fieldname);
+            common::enqueueMessage(sprintf("Gallery Table '%s' created.", $gallery_table_name), 'notice');
+        }
 
-		$g_ExistingFields = database::getExistingFields($gallery_table_name, false);
+        $g_ExistingFields = database::getExistingFields($gallery_table_name, false);
 
-		$moreThanOneLanguage = false;
-		foreach ($ct->Languages->LanguageList as $lang) {
-			$g_fieldname = 'title';
-			if ($moreThanOneLanguage)
-				$g_fieldname .= '_' . $lang->sef;
+        $moreThanOneLanguage = false;
+        foreach ($ct->Languages->LanguageList as $lang) {
+            $g_fieldname = 'title';
+            if ($moreThanOneLanguage)
+                $g_fieldname .= '_' . $lang->sef;
 
-			$g_found = false;
+            $g_found = false;
 
-			foreach ($g_ExistingFields as $g_existing_field) {
-				$g_exst_field = $g_existing_field['column_name'];
-				if ($g_exst_field == $g_fieldname) {
-					$g_found = true;
-					break;
-				}
-			}
+            foreach ($g_ExistingFields as $g_existing_field) {
+                $g_exst_field = $g_existing_field['column_name'];
+                if ($g_exst_field == $g_fieldname) {
+                    $g_found = true;
+                    break;
+                }
+            }
 
-			if (!$g_found) {
-				Fields::AddMySQLFieldNotExist($gallery_table_name, $g_fieldname, 'varchar(100) null', '');
-				common::enqueueMessage("Gallery Field '" . $g_fieldname . "' added.");
-			}
-			$moreThanOneLanguage = true;
-		}
-	}
+            if (!$g_found) {
+                Fields::AddMySQLFieldNotExist($gallery_table_name, $g_fieldname, 'varchar(100) null', '');
+                common::enqueueMessage("Gallery Field '" . $g_fieldname . "' added.");
+            }
+            $moreThanOneLanguage = true;
+        }
+    }
 }

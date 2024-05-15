@@ -28,6 +28,51 @@ let all_tables = [];
 let proversion = false;
 let SQLJoinTableID = null;
 
+let CustomTablesCSSClasses = [];
+let CustomTablesCMS = null;
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    if (window.Joomla instanceof Object) {
+        CustomTablesCMS = 'Joomla';
+        CustomTablesCSSClasses.push({'btn': 'btn'})
+        CustomTablesCSSClasses.push({'btn-small': 'btn-small'})
+        CustomTablesCSSClasses.push({'btn-success': 'btn-success'})
+        CustomTablesCSSClasses.push({'icon-delete': 'icon-delete'})
+
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+        CustomTablesCMS = 'WordPress';
+        CustomTablesCSSClasses.push({'btn': 'button'})
+        CustomTablesCSSClasses.push({'btn-small': null})
+        CustomTablesCSSClasses.push({'btn-success': 'button-primary'})
+        CustomTablesCSSClasses.push({'icon-delete': 'dashicons dashicons-dismiss'})
+
+    }
+    //console.log(JSON.stringify(CustomTablesCSSClasses));
+
+    //const newClassString = convertClassString('icon-delete');
+    //console.log('btn btn-small btn-success:', newClassString);
+});
+
+function getCSSClassValueByKey(key) {
+    const foundObject = CustomTablesCSSClasses.find(obj => Object.keys(obj).includes(key));
+    return foundObject ? Object.values(foundObject)[0] : null;
+}
+
+function convertClassString(classString) {
+    const classes = classString.split(' ');
+    const newClasses = [];
+
+    for (const cls of classes) {
+        const value = getCSSClassValueByKey(cls);
+        if (value !== null) {
+            newClasses.push(value);
+        }
+    }
+
+    return newClasses.join(' ');
+}
+
 function typeChanged() {
     if (typeparams_obj != null)
         typeparams_obj.value = "";
@@ -135,7 +180,7 @@ function renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) {
         } else if (param_att.type === "radio") {
             return renderInput_Radio(id, param, vlu, attributes);
         } else if (param_att.type === "array") {
-            if (vlu == '')
+            if (vlu === '')
                 vlu = '[]';
         } else if (param_att.type === "fieldlayout") {
             if (vlu === '') {
@@ -520,23 +565,29 @@ function renderInput_ImageSizeSelector(id, param, value, attributes, fieldTypePa
 
     let result = '<select id="' + id + '" data-type="imagesizeselector" ' + attributes + '>';
 
-    if (value === "" || value === "_thumb" || value === "_thumbnail")
-        result += '<option value="" selected="selected">- Thumbnail (100x100)</option>';
-    else
-        result += '<option value="" >- Thumbnail (100x100)</option>';
+    if ("_thumb" || value === "_thumbnail")
+        value = '';
 
-    if (value === "_original")
-        result += '<option value="_original" selected="selected">- Original Image</option>';
-    else
-        result += '<option value="_original" >- Original Image</option>';
+    let pairs = [
+        ['link:', '- Link to Thumbnail (100x100)'],
+        ['', '- IMG Tag: Thumbnail (100x100)'],
+        ['link:_original', '- Link to Original Image'],
+        ['_original', '- IMG Tag: Original Image'],
+    ];
 
     for (let i = 0; i < imageSizes.length; i++) {
         let pair = parseQuote(imageSizes[i], ',', true);
+        pairs.push(['link:' + pair[0], 'Link to image size: ' + pair[0]]);
+        pairs.push([pair[0], 'IMG tag: ' + pair[0]]);
+    }
 
-        if (pair[0] === value)
-            result += '<option value="' + pair[0] + '" selected="selected">' + pair[0] + '</option>';
+    pairs.push(['_count', '- Count (Number of images)']);
+
+    for (let i = 0; i < pairs.length; i++) {
+        if (pairs[i][0] === value)
+            result += '<option value="' + pairs[i][0] + '" selected="selected">' + pairs[i][1] + '</option>';
         else
-            result += '<option value="' + pair[0] + '">' + pair[0] + '</option>';
+            result += '<option value="' + pairs[i][0] + '">' + pairs[i][1] + '</option>';
     }
 
     result += '</select>';
@@ -604,14 +655,14 @@ function BuildImageSizeTable() {
                 result += '<td style="padding-right:5px;">' + renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) + '</td>';
 
             }
-            result += '<td><div class="btn-wrapper" id="toolbar-delete"><button onclick="deleteImageSize(' + r + ');" type="button" class="btn btn-small"><span class="icon-delete"></span></button></div></td>';
+            result += '<td><div class="btn-wrapper" id="toolbar-delete"><button onclick="deleteImageSize(' + r + ');" type="button" class="' + convertClassString('btn btn-small') + '"><span class="' + convertClassString('icon-delete') + '"></span></button></div></td>';
             result += '</tr>';
         }
         result += '</tbody>';
         result += '</table>';
     }
 
-    result += '<button onclick=\'addImageSize("' + blank_value.join(",") + '")\' class="btn btn-small btn-success" type="button" style="margin-top:5px;">';
+    result += '<button onclick=\'addImageSize("' + blank_value.join(",") + '")\' class="' + convertClassString('btn btn-small btn-success') + '" type="button" style="margin-top:5px;">';
     result += '<span class="icon-new icon-white"></span><span style="margin-left:10px;">Add Image Size</span></button>';//<hr/>
 
     return result;

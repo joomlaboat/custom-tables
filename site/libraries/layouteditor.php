@@ -19,59 +19,59 @@ use Joomla\CMS\Version;
 
 class LayoutEditor
 {
-	var string $theme;
+    var string $theme;
 
-	function __construct()
-	{
-		$this->theme = 'eclipse';
+    function __construct()
+    {
+        $this->theme = 'eclipse';
 
-		if (defined('_JEXEC')) {
-			$document = Factory::getDocument();
+        if (defined('_JEXEC')) {
+            $document = Factory::getDocument();
 
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
+            $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
 
-			$version_object = new Version;
-			$version = (int)$version_object->getShortVersion();
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
 
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
+            $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 
-			if ($version < 4)
-				$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
-			else
-				$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_j4.js"></script>');
+            if ($version < 4)
+                $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
+            else
+                $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_j4.js"></script>');
 
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/layoutwizard.js"></script>');
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/layouteditor.js"></script>');
-			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/layouteditor.css" rel="stylesheet">');
+            $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/layoutwizard.js"></script>');
+            $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/layouteditor.js"></script>');
+            $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/layouteditor.css" rel="stylesheet">');
 
-			$document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
-			$document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');
+            $document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
+            $document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');
 
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.js"></script>');
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/mode/overlay.js"></script>');
+            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.js"></script>');
+            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/mode/overlay.js"></script>');
 
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.js"></script>');
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/xml-hint.js"></script>');
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/html-hint.js"></script>');
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/xml/xml.js"></script>');
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
-			$document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
-			$document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/theme/' . $this->theme . '.css">');
+            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.js"></script>');
+            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/xml-hint.js"></script>');
+            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/html-hint.js"></script>');
+            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/xml/xml.js"></script>');
+            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
+            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
+            $document->addCustomTag('<script src="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
+            $document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/components/com_customtables/libraries/codemirror/theme/' . $this->theme . '.css">');
 
-			if ($version >= 4)
-				$document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/media/system/css/fields/switcher.css">');
-		}
-	}
+            if ($version >= 4)
+                $document->addCustomTag('<link rel="stylesheet" href="' . Uri::root(true) . '/media/system/css/fields/switcher.css">');
+        }
+    }
 
-	public function renderEditor(string $textAreaCode, string $textAreaId, string $typeBoxId, string $textAreaTabId, array &$onPageLoads): string
-	{
-		$ct = new CT;
+    public function renderEditor(string $textAreaCode, string $textAreaId, string $typeBoxId, string $textAreaTabId, array &$onPageLoads): string
+    {
+        $ct = new CT;
 
-		$index = count($onPageLoads);
-		$result = '<div class="customlayoutform layouteditorbox">' . $textAreaCode . '</div><div id="' . $textAreaTabId . '"></div>';
+        $index = count($onPageLoads);
+        $result = '<div class="customlayoutform layouteditorbox">' . $textAreaCode . '</div><div id="' . $textAreaTabId . '"></div>';
 
-		$code = '
+        $code = '
 		joomlaVersion =' . $ct->Env->version . ';
 		
 		text_areas.push(["' . $textAreaId . '",' . $index . ']);
@@ -92,51 +92,42 @@ class LayoutEditor
 
 		loadTagParams("' . $typeBoxId . '","' . $textAreaTabId . '","Joomla");
 ';
-		if (count($onPageLoads) == 0) {
-			$languages = $this->getKnownLanguages();
+        if (count($onPageLoads) == 0) {
+            $languages = $this->getKnownLanguages();
+            $code .= PHP_EOL . 'languages=[' . $languages . '];' . PHP_EOL;
 
-			$code .= '
-			languages=[' . $languages . '];
-			';
+            if ($ct->Env->advancedTagProcessor)
+                $code .= PHP_EOL . 'proversion=true;' . PHP_EOL;
 
-			if ($ct->Env->advancedTagProcessor) {
-				$code .= '
-			proversion=true;
-';
-			}
+            $code .= PHP_EOL . 'loadFields("jform_tableid","fieldWizardBox","Joomla");'
+                . PHP_EOL . 'loadLayout(' . $ct->Env->version . ');'
+                . PHP_EOL . 'addExtraEvents();' . PHP_EOL;
+        }
+        $onPageLoads[] = $code;
+        return $result;
+    }
 
-			$code .= '
-				loadFields("jform_tableid","fieldWizardBox","Joomla");
-				loadLayout(' . $ct->Env->version . ');
-				
-				addExtraEvents();
-';
-		}
-		$onPageLoads[] = $code;
-		return $result;
-	}
+    protected function getKnownLanguages(): string
+    {
+        $list = array();
 
-	protected function getKnownLanguages(): string
-	{
-		$list = array();
+        if (defined('_JEXEC')) {
 
-		if (defined('_JEXEC')) {
+            $whereClause = new MySQLWhereClause();
+            $rows = database::loadObjectList('#__languages', ['sef', 'title_native'], $whereClause, 'sef');
 
-			$whereClause = new MySQLWhereClause();
-			$rows = database::loadObjectList('#__languages', ['sef', 'title_native'], $whereClause, 'sef');
+            foreach ($rows as $row)
+                $list[] = '["' . $row->sef . '","' . $row->title_native . '"]';
+        } elseif (defined('_JEXEC')) {
+            $list[] = '[en,"English"]';
+        }
 
-			foreach ($rows as $row)
-				$list[] = '["' . $row->sef . '","' . $row->title_native . '"]';
-		} elseif (defined('_JEXEC')) {
-			$list[] = '[en,"English"]';
-		}
+        return implode(',', $list);
+    }
 
-		return implode(',', $list);
-	}
-
-	public function render_onPageLoads($onPageLoads, $version): string
-	{
-		$result = '
+    public function render_onPageLoads($onPageLoads, $version): string
+    {
+        $result = '
 <div id="layouteditor_Modal" class="layouteditor_modal">
 
   <!-- Modal content -->
@@ -149,7 +140,7 @@ class LayoutEditor
 </div>
 		';
 
-		$result_js = '
+        $result_js = '
 	
 
 	joomlaVersion =' . $version . ';
@@ -170,9 +161,9 @@ class LayoutEditor
 
     ';
 
-		$document = Factory::getDocument();
-		$document->addCustomTag('<script>' . $result_js . '</script>');
+        $document = Factory::getDocument();
+        $document->addCustomTag('<script>' . $result_js . '</script>');
 
-		return $result;
-	}
+        return $result;
+    }
 }

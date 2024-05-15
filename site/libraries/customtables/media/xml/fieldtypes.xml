@@ -603,7 +603,7 @@
     </type>
 
     <type ct_name="image" label="Image File" description="Provides Image Upload functionality." priority="2"
-          proversion="1">
+          proversion="1" wordpress="true">
         <params>
             <param name="sizes" label="Image Size Options" example="id,100,100,,jpg"
                    description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided."
@@ -656,10 +656,10 @@
             <param name="filename" label="Save As File Name"
                    description=""
                    default="" type="list">
-                <option value="" label="Date Time (YmdHis)"/>
-                <option value="transliterated" label="Filename (Transliterated)"
+                <option value="" label="Date Time (YmdHis)" wordpress="true"/>
+                <option value="transliterated" label="Filename (Transliterated)" wordpress="true"
                         description="Alphanumeric and transliterated also the whitespace is replaced with the underscore character. Extra Number can be added if the file name is not unique."/>
-                <option value="original" label="Filename As It Is"
+                <option value="original" label="Filename As It Is" wordpress="true"
                         description="File name as it is, no changes. Extra Number can be added if the file name is not unique."/>
             </param>
         </params>
@@ -674,7 +674,8 @@
     </type>
 
     <type ct_name="imagegallery" label="Image Gallery" description="Provides Multiple Image Upload functionality."
-          priority="3" proversion="1"><!-- pro -->
+          priority="3" proversion="1" link="https://joomlaboat.com/image-gallery"
+          link_title="Interactive Image Gallery examples"><!-- pro -->
         <params>
             <param name="sizes" example="id,100,100,,jpg" label="Image Size Options"
                    description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided."
@@ -734,10 +735,11 @@
         <valueparams name="imagegallery" label="Image Gallery"
                      description="How to show the images, what size and how to separate them.">
             <params>
-                <param type="imagesizeselector" name="size" label="Size" description="Select the image size variant."
+                <param type="imagesizeselector" name="size" label="Size"
+                       description="Select the image size variant. Options: _thumbnail, _original, _count, CUSTOM_NAME"
                        example="preview"/>
                 <param name="separator" label="List Separator" example=";"
-                       description="Separate images with a character. i.e. ',' or ';'" default=";" type="string"/>
+                       description="Separate images with a character. i.e. `,` or `;`" default=";" type="string"/>
             </params>
         </valueparams>
     </type>
