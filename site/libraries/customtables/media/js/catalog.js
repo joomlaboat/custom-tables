@@ -13,12 +13,12 @@ function ctCreateUser(msg, listing_id, toolbarBoxId, ModuleId) {
     if (confirm(msg)) {
         document.getElementById(toolbarBoxId).innerHTML = '';
 
-        let returnto = btoa(window.location.href);
+        let returnTo = btoa(window.location.href);
 
         //ctWebsiteRoot is the global variable same like ctItemId
         let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
 
-        if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=createuser', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnto], link);
+        if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=createuser', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnTo, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnTo], link);
 
         window.location.href = link;
     }

@@ -6,7 +6,6 @@
  * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-
 function ctResizeModalBox() {
     setTimeout(
         function () {

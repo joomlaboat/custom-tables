@@ -103,6 +103,9 @@ class Value_image extends BaseValue
             $imageSrc = '';
         }
 
+        if ($imageSrc == '')
+            return null;
+
         return ['src' => $imageSrc, 'shortcut' => $isShortcut];
     }
 

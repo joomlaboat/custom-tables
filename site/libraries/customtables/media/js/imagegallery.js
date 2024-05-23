@@ -27,7 +27,7 @@ function DeletePhotos(photoid) {
             photoids += "*" + idList[i];
         }
     }
-    if (count == 0) {
+    if (count === 0) {
         alert("Select photo(s) first.");
         return false;
     }

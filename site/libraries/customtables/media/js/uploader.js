@@ -1,3 +1,12 @@
+/**
+ * CustomTables Joomla! 3.x/4.x/5.x Component
+ * @package Custom Tables
+ * @author Ivan Komlev <support@joomlaboat.com>
+ * @link https://joomlaboat.com
+ * @copyright Copyright (C) 2018-2024. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+
 const uploaderParams = [];
 
 function updateUploadedFileBox(index) {
@@ -24,11 +33,11 @@ function checkIfLoggedIn(data) {
 }
 
 //Used in PHP files
-function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, SubmitForm, FileUploaderBox, EventMessageBox, tempFileName, fieldValueInputBox, uploadedFileBox) {
+function ct_getUploader(index, URL_String, maxFileSize, allowedTypes, UploaderForm, SubmitForm, FileUploaderBox, EventMessageBox, tempFileName, fieldValueInputBox, uploadedFileBox) {
 
     uploaderParams[index] = {
         files_uploaded: 0,
-        ct_uploader_url: urlstr,
+        ct_uploader_url: URL_String,
         esUploaderFormID: UploaderForm,
         AutoSubmitForm: SubmitForm,
         UploadFileCount: 1,
@@ -50,7 +59,7 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
     jQuery(function ($) {
 
         $("#" + FileUploaderBox).uploadFile({
-            url: urlstr,
+            url: URL_String,
             multiple: multiple_,
             maxFileSize: maxFileSize,
             dragDrop: false,
@@ -137,6 +146,5 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
                 checkRequiredFields(formObject);
             }
         });
-
     });
 }

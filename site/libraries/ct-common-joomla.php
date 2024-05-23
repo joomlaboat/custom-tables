@@ -448,7 +448,6 @@ class common
         return Uri::root($pathOnly);
     }
 
-
     public static function ctParseUrl($argument)
     {
         return parse_url($argument);

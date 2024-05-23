@@ -42,12 +42,18 @@ class Edit
     {
         if ($this->ct->Params->editLayout != '') {
             $Layouts = new Layouts($this->ct);
-            $this->layoutContent = $Layouts->getLayout($this->ct->Params->editLayout);
-            $this->layoutType = $Layouts->layoutType;
-            $this->pageLayoutNameString = $this->ct->Params->editLayout;
 
-            if (!isset($Layouts->layoutId)) {
-                $this->ct->errors[] = $this->ct->Params->editLayout . '" not found.';
+            if (empty($this->ct->Params->editLayout)) {
+                $this->ct->errors[] = 'Edit Layout not selected.';
+                return false;
+            }
+
+            $this->layoutContent = $Layouts->getLayout($this->ct->Params->editLayout);
+            if (isset($Layout->layoutId)) {
+                $this->layoutType = $Layouts->layoutType;
+                $this->pageLayoutNameString = $this->ct->Params->editLayout;
+            } else {
+                $this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found.';
                 return false;
             }
 

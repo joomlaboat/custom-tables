@@ -1,7 +1,7 @@
-function ESShowHide(objname) {
-    const obj = document.getElementById(objname);
+function ESShowHide(objName) {
+    const obj = document.getElementById(objName);
 
-    if (obj.style.display == "block")
+    if (obj.style.display === "block")
         obj.style.display = "none";
     else
         obj.style.display = "block";
@@ -9,12 +9,12 @@ function ESShowHide(objname) {
 
 function CustomTablesChildClick(BoxName, DivName) {
     const obj = document.getElementById(BoxName);
-    const divobj = document.getElementById(DivName);
+    const divObject = document.getElementById(DivName);
 
     if (obj.checked)
-        divobj.style.display = "block";
+        divObject.style.display = "block";
     else
-        divobj.style.display = "none";
+        divObject.style.display = "none";
 
     return 0;
 }
@@ -38,27 +38,27 @@ function ESsmart_float(el, evt, decimals) {
     if (decimals < 1)
         return true;
 
-    const charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
+    const charCode = parseInt((evt.which) ? evt.which : evt.keyCode);
+    if (charCode !== 46 && charCode > 31 && (charCode < 48 || charCode > 57))
         return true;
 
-    if (charCode == 8 || charCode == 13)
+    if (charCode === 8 || charCode === 13)
         return true;
 
-    let v = el.value;
+    let vString = el.value;
 
     if (el.selectionEnd - el.selectionStart > 0)
         return true;
 
-    if (el.selectionStart < v.length)
+    if (el.selectionStart < vString.length)
         return true;
 
-    if (el.maxLength == v.length)
+    if (el.maxLength === vString.length)
         return true;
 
-    if (charCode == 46) {
-        v = v.replace(".", "");
-        p = parseFloat(v);
+    if (charCode === 46) {
+        vString = vString.replace(".", "");
+        p = parseFloat(vString);
         if (isNaN(p))
             p = 0;
 
@@ -67,24 +67,24 @@ function ESsmart_float(el, evt, decimals) {
     }
 
     //check selection
-    let d = (v.split('.')[1] || []).length;
+    let d = (vString.split('.')[1] || []).length;
     if (d > decimals)
         d = decimals;
 
-    p = parseFloat(v);
+    p = parseFloat(vString);
     if (isNaN(p))
         p = 0;
 
-    if (d == 0) {
+    if (d === 0) {
         const g = "" + p;
 
-        if (v == '0') {
+        if (vString === '0') {
             el.value = p + '.';
             return true;
         }
 
-        if (g.length != 0) {
-            if (g.length == 1 && p != 0)
+        if (g.length !== 0) {
+            if (g.length === 1 && p !== 0)
                 el.value = p + '.';
 
             return true;
@@ -100,7 +100,7 @@ function ESsmart_float(el, evt, decimals) {
         return true;
     }
 
-    if (d == decimals) {
+    if (d === decimals) {
         p = p * 10;
         el.value = p.toFixed(decimals - 1);
         return true;

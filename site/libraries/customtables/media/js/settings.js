@@ -1,3 +1,11 @@
+/**
+ * CustomTables Joomla! 3.x/4.x/5.x Component
+ * @package Custom Tables
+ * @author Ivan Komlev <support@joomlaboat.com>
+ * @link https://joomlaboat.com
+ * @copyright Copyright (C) 2018-2024. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
 function updateScreenshots() {
     const obj = document.getElementById("imageLoadProgress");
     const url = "/administrator/index.php?option=com_customtables&view=settings";

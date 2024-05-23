@@ -12,10 +12,10 @@
 // No direct access to this file
 defined('_JEXEC') or die();
 
+use CustomTables\common;
 use CustomTables\Edit;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Uri\Uri;
 
 if ($this->ct->Env->version >= 4) {
     $wa = $this->document->getWebAssetManager();

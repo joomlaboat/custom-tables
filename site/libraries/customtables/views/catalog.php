@@ -140,9 +140,20 @@ class Catalog
             } else {
 
                 if (!is_null($this->ct->Params->pageLayout) and $this->ct->Params->pageLayout != '') {
-                    $pageLayout = $Layouts->getLayout($this->ct->Params->pageLayout);
-                    $pageLayoutNameString = $this->ct->Params->pageLayout;
-                    $pageLayoutLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+
+                    if (empty($this->ct->Params->pageLayout)) {
+                        $this->ct->errors[] = 'Catalog Layout not selected.';
+                        return '';
+                    }
+
+                    $pageLayout = $Layouts->getLayout($this->ct->Params->pageLayout);//Get Layout by name
+                    if (isset($Layouts->layoutId)) {
+                        $pageLayoutNameString = $this->ct->Params->pageLayout;
+                        $pageLayoutLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+                    } else {
+                        $this->ct->errors[] = 'Layout "' . $this->ct->Params->pageLayout . '" not found.';
+                        return '';
+                    }
 
                 } elseif (!is_null($this->ct->Params->itemLayout) and $this->ct->Params->itemLayout != '') {
                     $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
