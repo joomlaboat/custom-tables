@@ -15,9 +15,11 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Uri\Uri;
 use LayoutProcessor;
 use tagProcessor_Edit;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class Edit
 {
@@ -38,6 +40,10 @@ class Edit
         $this->pageLayoutLink = null;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     function load(): bool
     {
         if ($this->ct->Params->editLayout != '') {
@@ -49,7 +55,7 @@ class Edit
             }
 
             $this->layoutContent = $Layouts->getLayout($this->ct->Params->editLayout);
-            if (isset($Layout->layoutId)) {
+            if (isset($Layouts->layoutId)) {
                 $this->layoutType = $Layouts->layoutType;
                 $this->pageLayoutNameString = $this->ct->Params->editLayout;
             } else {
@@ -66,7 +72,7 @@ class Edit
 
         } else {
             $Layouts = new Layouts($this->ct);
-            $this->layoutContent = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, true);
+            $this->layoutContent = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields);
             $this->pageLayoutNameString = 'Default Edit Layout';
             $this->pageLayoutLink = null;
         }
@@ -74,6 +80,13 @@ class Edit
         return true;
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws Exception
+     * @since 3.2.2
+     */
     public function processLayout(?array $row = null): string
     {
         if ($row !== null)
@@ -98,6 +111,10 @@ class Edit
         return $result;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     function render(?array $row, string $formLink, string $formName, bool $addFormTag = true): string
     {
         $result = '';
@@ -202,7 +219,7 @@ class Edit
             $result .= HTMLHelper::_('form.token');
 
         } elseif (defined('WPINC')) {
-            //$result .= wp_nonce_field('create-record', '_wpnonce_create-record'); Plugin calls it
+            $result .= '<!-- token -->';
         }
 
         if (defined('_JEXEC'))

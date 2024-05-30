@@ -392,11 +392,13 @@ class Layouts
      */
     function renderMixedLayout(int $layoutId, int $layoutType = null): array
     {
+        if ($this->ct->Table->fields === null)
+            return ['html' => 'CustomTable: Table not selected'];
+
         if ($layoutId !== 0) {
             $this->getLayout($layoutId);
             if ($this->layoutType === null)
                 return ['html' => 'CustomTable: Layout "' . $layoutId . '" not found'];
-
 
         } else {
             if ($layoutType == 1 or $layoutType == 5)

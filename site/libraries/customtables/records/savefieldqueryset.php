@@ -13,9 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTablesImageMethods;
 use Exception;
-use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
 use LayoutProcessor;
 use tagProcessor_General;
@@ -299,62 +297,14 @@ class SaveFieldQuerySet
 
             case 'image':
 
-                //A checkbox value 1 delete existing image 0 - not
-                $to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
+                require_once 'image.php';
+                $image = new Save_image($this->ct, $this->field);
+                $value = $image->saveFieldSet($listing_id);
 
+                //This way it will be clear if the value changed or not. If $this->newValue = null means that value not changed.
+                if ($value !== null and is_array($value))
+                    $this->setNewValue($value['value']);
 
-                //Get new image
-                $tempValue = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
-
-                //Set the variable to "false" to do not delete existing image
-                $deleteExistingImage = false;
-
-                if ($tempValue !== null and $tempValue != '') {
-                    //Upload new image
-                    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
-                        . DIRECTORY_SEPARATOR . 'value.php');
-
-                    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
-                        . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'image.php');
-
-                    $value = Value_image::get_image_type_value($this->field, $this->ct->Table->realidfieldname, $listing_id);
-
-                    //Set new image value
-                    $this->setNewValue($value);
-                    $deleteExistingImage = true;
-                } elseif ($to_delete == 'true') {
-                    $this->setNewValue(null);
-                    $deleteExistingImage = true;
-                }
-
-                if ($deleteExistingImage) {
-                    //Get existing image
-                    $whereClause = new MySQLWhereClause();
-                    $whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
-
-                    $ExistingImageRows = database::loadAssocList($this->field->ct->Table->realtablename, [$this->field->realfieldname],
-                        $whereClause, null, null, 1);
-
-                    if (count($ExistingImageRows) == 0) {
-                        $ExistingImage = null;
-                    } else {
-                        $ExistingImage = $ExistingImageRows[0][$this->field->realfieldname];
-                    }
-
-                    if ($ExistingImage !== null and ($ExistingImage != '' or (is_numeric($ExistingImage) and $ExistingImage > 0))) {
-                        $imageMethods = new CustomTablesImageMethods;
-                        $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
-                        $fileNameType = $this->field->params[3] ?? '';
-                        $imageMethods->DeleteExistingSingleImage(
-                            $ExistingImage,
-                            CUSTOMTABLES_ABSPATH . $ImageFolder,
-                            $this->field->params[0] ?? '',
-                            $this->field->ct->Table->realtablename,
-                            $this->field->realfieldname,
-                            $this->field->ct->Table->realidfieldname,
-                            $fileNameType);
-                    }
-                }
                 return;
 
             case 'blob':

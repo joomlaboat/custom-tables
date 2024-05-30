@@ -335,139 +335,145 @@ class CustomTablesImageMethods
      * @throws Exception
      * @since 3.2.2
      */
-    function UploadSingleImage(?string $ExistingImage, string $image_file_id, string $realfieldname, string $ImageFolder, array $params, string $realtablename, string $realidfieldname): ?string
+    function UploadSingleImage(?string $ExistingImage, string $pathToImageFile, string $fileName, string $realFieldName, string $ImageFolder, array $params, string $realtablename, string $realidfieldname): ?string
     {
         $fileNameType = $params[3] ?? '';
 
-        if ($image_file_id != '') {
-            $additional_params = '';
-            if (isset($params[1]))
-                $additional_params = $params[1];
+        if ($pathToImageFile == '')
+            return null;
 
-            if (!str_contains($image_file_id, DIRECTORY_SEPARATOR))//in case when other applications pass full path to the file
-                $uploadedFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $image_file_id;
-            else
-                $uploadedFile = $image_file_id;
+        $additional_params = '';
+        if (isset($params[1]))
+            $additional_params = $params[1];
 
-            if (is_object('Factory::getApplication()'))
+        if (!str_contains($pathToImageFile, DIRECTORY_SEPARATOR))//in case when other applications pass full path to the file
+            $uploadedFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $pathToImageFile;
+        else
+            $uploadedFile = $pathToImageFile;
+
+        $new_photo_ext = $this->FileExtension($fileName);
+
+        if (defined('_JEXEC')) {
+            if (is_object('Factory::getApplication()')) {
                 $is_base64encoded = common::inputGetCmd('base64encoded', '');
-            else
-                $is_base64encoded = '';
-
-            if ($is_base64encoded == "true") {
-                $src = $uploadedFile;
-                $dst = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($image_file_id);//TODO: Check this functionality
-                common::base64file_decode($src, $dst);
-            }
-
-            //Delete
-            if ($ExistingImage !== null) {
-                $fileNameType = $params[3] ?? '';
-                $this->DeleteExistingSingleImage($ExistingImage, $ImageFolder, $params[0] ?? '',
-                    $realtablename, $realfieldname, $realidfieldname, $fileNameType);
-            }
-
-            $new_photo_ext = $this->FileExtension($uploadedFile);
-
-            //Get new file name and avoid possible duplicate
-            $i = 0;
-
-            do {
-                if ($fileNameType == '') {
-                    $ImageID = common::currentDate("YmdHis") . ($i > 0 ? $i : '');
-                    $ImageID .= ($i > 0 ? $i : '');
-
-                    //there is possible error, check all possible ext
-                    $thumbnail_image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $ImageID . '.jpg';
-                    $original_image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_original_' . $ImageID . '.' . $new_photo_ext;
-                } else {
-                    $ImageID = common::inputPostString('com' . $realfieldname . '_filename', '', 'create-edit-record');
-
-                    if ($fileNameType == 'transliterated') {
-
-                        if (function_exists("transliterator_transliterate"))
-                            $ImageID = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $ImageID);
-
-                        $ImageID = trim(str_replace(' ', '_', $ImageID));
-                        $ImageID = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $ImageID);
-                    }
-
-                    $parts = explode('.', $ImageID);
-                    if (count($parts) < 1)
-                        return null;
-
-                    unset($parts[count($parts) - 1]);
-                    $parts[count($parts) - 1] .= ($i > 0 ? '_' . $i : '');
-                    $ImageID = implode('.', $parts);
-
-                    //there is possible error, check all possible ext
-                    $thumbnail_image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $ImageID . '.jpg';
-                    $original_image_file = $ImageFolder . DIRECTORY_SEPARATOR . $ImageID . '.' . $new_photo_ext;
-                }
-
-                $i++;
-            } while (file_exists($original_image_file));
-
-            $isOk = true;
-
-            $r = $this->ProportionalResize($uploadedFile, $thumbnail_image_file, 150, 150, 1, -1, '');
-
-            if ($r != 1)
-                $isOk = false;
-
-            //--------- compare thumbnails
-            $duplicateImageID = $this->compareThumbs($additional_params, $realtablename, $realfieldname, $ImageFolder, $uploadedFile, $thumbnail_image_file);
-
-            if ($duplicateImageID != 0)
-                return $duplicateImageID;
-            //--------- end of compare thumbnails
-
-            //custom images
-            if ($isOk) {
-                $customSizes = $this->getCustomImageOptions($params[0] ?? '');
-
-                foreach ($customSizes as $imageSize) {
-                    $prefix = $imageSize[0];
-                    $width = (int)$imageSize[1];
-                    $height = (int)$imageSize[2];
-                    $color = (int)$imageSize[3];
-                    $watermark = $imageSize[5];
-
-                    //save as extension
-                    if ($imageSize[4] != '')
-                        $ext = $imageSize[4];
-                    else
-                        $ext = $new_photo_ext;
-
-                    $r = $this->ProportionalResize($uploadedFile, $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $ImageID . '.' . $ext, $width, $height, 1, $color, $watermark);
-                    if ($r != 1)
-                        $isOk = false;
-                }
-            }
-
-            if ($isOk) {
-                copy($uploadedFile, $original_image_file);
-                unlink($uploadedFile);
-                return $ImageID;
-            } else {
-                if (file_exists($original_image_file))
-                    unlink($original_image_file);
-
-                if (file_exists($uploadedFile))
-                    unlink($uploadedFile);
-
-                if ($fileNameType == '') {
-                    return '-1';
-                } else {
-                    return '';
+                if ($is_base64encoded == "true") {
+                    $src = $uploadedFile;
+                    $dst = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($pathToImageFile);//TODO: Check this functionality
+                    common::base64file_decode($src, $dst);
                 }
             }
         }
 
-        if ($fileNameType == '')
-            return '0';
-        else
-            return null;
+        //Delete
+        if ($ExistingImage !== null) {
+            $fileNameType = $params[3] ?? '';
+            $this->DeleteExistingSingleImage($ExistingImage, $ImageFolder, $params[0] ?? '',
+                $realtablename, $realFieldName, $realidfieldname, $fileNameType);
+        }
+
+        //Get new file name and avoid possible duplicate
+        $i = 0;
+
+        do {
+            if ($fileNameType == '') {
+                $ImageID = common::currentDate("YmdHis") . ($i > 0 ? $i : '');
+                $ImageID .= ($i > 0 ? $i : '');
+
+                //there is possible error, check all possible ext
+                $thumbnail_image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $ImageID . '.jpg';
+                $original_image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_original_' . $ImageID . '.' . $new_photo_ext;
+            } else {
+                $ImageID = $fileName;
+
+                if ($fileNameType == 'transliterated') {
+
+                    if (function_exists("transliterator_transliterate"))
+                        $ImageID = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $ImageID);
+
+                    $ImageID = trim(str_replace(' ', '_', $ImageID));
+                    $ImageID = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $ImageID);
+                }
+
+                $parts = explode('.', $ImageID);
+                if (count($parts) < 1)
+                    return null;
+
+                unset($parts[count($parts) - 1]);
+                $parts[count($parts) - 1] .= ($i > 0 ? '_' . $i : '');
+                $ImageID = implode('.', $parts);
+
+                //there is possible error, check all possible ext
+                $thumbnail_image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $ImageID . '.jpg';
+                $original_image_file = $ImageFolder . DIRECTORY_SEPARATOR . $ImageID . '.' . $new_photo_ext;
+            }
+
+            $i++;
+        } while (file_exists($original_image_file));
+
+        $isOk = true;
+        $r = $this->ProportionalResize($uploadedFile, $thumbnail_image_file, 150, 150, 1, -1, '', $new_photo_ext);
+
+        if ($r != 1)
+            $isOk = false;
+
+        //--------- compare thumbnails
+        $duplicateImageID = $this->compareThumbs($additional_params, $realtablename, $realFieldName, $ImageFolder, $uploadedFile, $thumbnail_image_file);
+
+        if ($duplicateImageID != 0)
+            return $duplicateImageID;
+        //--------- end of compare thumbnails
+
+        //custom images
+        if ($isOk) {
+            $customSizes = $this->getCustomImageOptions($params[0] ?? '');
+
+            foreach ($customSizes as $imageSize) {
+                $prefix = $imageSize[0];
+                $width = (int)$imageSize[1];
+                $height = (int)$imageSize[2];
+                $color = (int)$imageSize[3];
+                $watermark = $imageSize[5];
+
+                //save as extension
+                if ($imageSize[4] != '')
+                    $ext = $imageSize[4];
+                else
+                    $ext = $new_photo_ext;
+
+                $r = $this->ProportionalResize($uploadedFile, $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $ImageID . '.' . $ext, $width, $height, 1, $color, $watermark);
+                if ($r != 1)
+                    $isOk = false;
+            }
+        }
+
+        if ($isOk) {
+            copy($uploadedFile, $original_image_file);
+            unlink($uploadedFile);
+            return $ImageID;
+        } else {
+            if (file_exists($original_image_file))
+                unlink($original_image_file);
+
+            if (file_exists($uploadedFile))
+                unlink($uploadedFile);
+
+            if ($fileNameType == '') {
+                return '-1';
+            } else {
+                return '';
+            }
+        }
+    }
+
+    function FileExtension($src): string
+    {
+        $ext_list = explode('.', strtolower($src));
+        $ext = end($ext_list);
+
+        if (in_array($ext, CustomTablesImageMethods::allowedExtensions))
+            return $ext;
+
+        return '';
     }
 
     /**
@@ -483,18 +489,7 @@ class CustomTablesImageMethods
             CustomTablesImageMethods::DeleteCustomImage($ExistingImage, $ImageFolder, $customSize[0]);
     }
 
-    function FileExtension($src): string
-    {
-        $ext_list = explode('.', strtolower($src));
-        $ext = end($ext_list);
-
-        if (in_array($ext, CustomTablesImageMethods::allowedExtensions))
-            return $ext;
-
-        return '';
-    }
-
-    function ProportionalResize(string $src, string $dst, int $dst_width, int $dst_height, int $LevelMax, int $backgroundColor, string $watermark): int
+    function ProportionalResize(string $src, string $dst, int $dst_width, int $dst_height, int $LevelMax, int $backgroundColor, string $watermark, string $fileExtension = null): int
     {
         //Returns:
         // 1 if everything is ok
@@ -504,7 +499,9 @@ class CustomTablesImageMethods
         if (!file_exists($src))
             return -1;
 
-        $fileExtension = $this->FileExtension($src);
+        if ($fileExtension === null)
+            $fileExtension = $this->FileExtension($src);
+
         $fileExtension_dst = $this->FileExtension($dst);
 
         if ($fileExtension == '') {

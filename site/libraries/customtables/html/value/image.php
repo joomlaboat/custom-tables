@@ -25,41 +25,6 @@ class Value_image extends BaseValue
         parent::__construct($ct, $field, $rowValue, $option_list);
     }
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    static public function get_image_type_value(Field $field, string $realidfieldname, ?string $listing_id): ?string
-    {
-        $imageMethods = new CustomTablesImageMethods;
-        $ImageFolder = CustomTablesImageMethods::getImageFolder($field->params);
-        $fileId = common::inputPostString($field->comesfieldname, null, 'create-edit-record');
-
-        if ($listing_id == null or $listing_id == '' or (is_numeric($listing_id) and intval($listing_id) < 0)) {
-            $value = $imageMethods->UploadSingleImage('', $fileId, $field->realfieldname, CUSTOMTABLES_ABSPATH
-                . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
-        } else {
-            $whereClause = new MySQLWhereClause();
-            $whereClause->addCondition($realidfieldname, $listing_id);
-
-            $ExistingImageRows = database::loadObjectList($field->ct->Table->realtablename, [$field->realfieldname], $whereClause, null, null, 1);
-            if (count($ExistingImageRows) == 0)
-                $ExistingImage = null;
-            else
-                $ExistingImage = $ExistingImageRows[$field->realfieldname] ?? null;
-
-            $value = $imageMethods->UploadSingleImage($ExistingImage, $fileId, $field->realfieldname,
-                CUSTOMTABLES_ABSPATH . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
-        }
-
-        if ($value == "-1" or $value == "2") {
-            // -1 if file extension not supported
-            // 2 if file already exists
-            common::enqueueMessage('Could not upload image file.');
-            $value = null;
-        }
-        return $value;
-    }
 
     public static function getImageSRC(?array $row, string $realFieldName, string $ImageFolder, bool $addPath = true): ?array
     {

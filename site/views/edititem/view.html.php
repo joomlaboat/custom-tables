@@ -36,12 +36,16 @@ class CustomTablesViewEditItem extends HtmlView
 
         if (!$this->ct->CheckAuthorization(1)) {
             //not authorized
-            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+            common::enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+            echo common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED');
             return false;
         }
 
-        if (!isset($this->ct->Table->fields) or !is_array($this->ct->Table->fields))
+        if (!isset($this->ct->Table->fields) or !is_array($this->ct->Table->fields)) {
+            common::enqueueMessage('Fields not set');
+            echo common::translate('Fields not set');
             return false;
+        }
 
         if ($this->ct->Env->frmt == 'json')
             require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
@@ -54,8 +58,9 @@ class CustomTablesViewEditItem extends HtmlView
             $this->editForm = new Edit($this->ct);
             if (!$this->editForm->load()) {
                 if (count($this->ct->errors) > 0)
-                    common::enqueueMessage(implode(',', $this->ct->errors));
+                    common::enqueueMessage('Errors: ' . implode(',', $this->ct->errors));
 
+                echo common::translate('Errors:' . implode(',', $this->ct->errors));
                 return false;
             }
 

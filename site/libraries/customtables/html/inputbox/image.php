@@ -103,7 +103,7 @@ class InputBox_image extends BaseInputBox
 
         } elseif (defined('WPINC')) {
             //$formName = 'createrecord';
-            $result .= '<input type="file" name="filetosubmit" accept=".txt" max-size="' . $max_file_size . '" />';
+            $result .= '<input type="file" name="' . $this->attributes['id'] . '" accept=".jpg,.jpeg,.png,.gif,.svg,.webp" max-size="' . $max_file_size . '" />';
         }
 
         return '<div style="' . $style . '"' . ($this->field->isrequired == 1 ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
