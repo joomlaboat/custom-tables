@@ -981,4 +981,17 @@ class CTMiscHelper
         unset($val, $x, $var);
         return $arr;
     }
+
+    public static function parseHTMLAttributes($str): array
+    {
+        $pattern = '/(\w+)=["\'](.*?)["\']/';
+        preg_match_all($pattern, $str, $matches, PREG_SET_ORDER);
+
+        $attributes = [];
+        foreach ($matches as $match) {
+            $attributes[strtolower($match[1])] = $match[2];
+        }
+
+        return $attributes;
+    }
 }

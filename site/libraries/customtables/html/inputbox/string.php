@@ -17,43 +17,42 @@ use Exception;
 
 class InputBox_string extends BaseInputBox
 {
-	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
-	{
-		parent::__construct($ct, $field, $row, $option_list, $attributes);
-		self::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-	}
+    function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
+    {
+        parent::__construct($ct, $field, $row, $option_list, $attributes);
+        self::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+    }
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	function render(?string $value, ?string $defaultValue): string
-	{
-		if ($value === null) {
-			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
-				$value = $defaultValue;
-		}
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    function render(?string $value, ?string $defaultValue): string
+    {
+        if ($value === null) {
+            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            if ($value == '')
+                $value = $defaultValue;
+        }
 
-		$dataset = '';
-		if (isset($this->option_list[2]) and $this->option_list[2] == 'autocomplete') {
-			$this->attributes['list'] = $this->attributes['id'] . '_datalist';
+        $dataset = '';
+        if (isset($this->option_list[2]) and $this->option_list[2] == 'autocomplete') {
+            $this->attributes['list'] = $this->attributes['id'] . '_datalist';
 
-			$whereClause = new MySQLWhereClause();
-			$records = database::loadObjectList($this->ct->Table->realtablename, [$this->field->realfieldname], $whereClause,
-				$this->field->realfieldname, null, null, null, 'OBJECT', $this->field->realfieldname);
+            $whereClause = new MySQLWhereClause();
+            $records = database::loadObjectList($this->ct->Table->realtablename, [$this->field->realfieldname], $whereClause,
+                $this->field->realfieldname, null, null, null, 'OBJECT', $this->field->realfieldname);
 
-			$dataset = '<datalist id="' . $this->attributes['id'] . '_datalist">'
-				. (count($records) > 0 ? '<option value="' . implode('"><option value="', $records) . '">' : '')
-				. '</datalist>';
-		}
+            $dataset = '<datalist id="' . $this->attributes['id'] . '_datalist">'
+                . (count($records) > 0 ? '<option value="' . implode('"><option value="', $records) . '">' : '')
+                . '</datalist>';
+        }
+        $this->attributes['type'] = 'text';
+        $this->attributes['value'] = htmlspecialchars($value ?? '');
+        $this->attributes['maxlength'] = (($this->field->params !== null and count($this->field->params) > 0 and (int)$this->field->params[0] > 0) ? (int)$this->field->params[0] : 255);
 
-		$this->attributes['type'] = 'text';
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
-		$this->attributes['maxlength'] = (($this->field->params !== null and count($this->field->params) > 0 and (int)$this->field->params[0] > 0) ? (int)$this->field->params[0] : 255);
+        $input = '<input ' . self::attributes2String($this->attributes) . ' />';
 
-		$input = '<input ' . self::attributes2String($this->attributes) . ' />';
-
-		return $input . $dataset;
-	}
+        return $input . $dataset;
+    }
 }
