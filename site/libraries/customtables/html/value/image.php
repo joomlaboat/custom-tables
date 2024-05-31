@@ -95,8 +95,8 @@ class Value_image extends BaseValue
      */
     function render(): ?string
     {
-        if (defined('WPINC'))
-            return 'CustomTables for WordPress: "image" field type is not available yet.';
+        //if (defined('WPINC'))
+        //return 'CustomTables for WordPress: "image" field type is not available yet.';
 
         $image = self::getImageSRCLayoutView($this->option_list, $this->rowValue, $this->field->params);
         if ($image === null)
@@ -110,8 +110,13 @@ class Value_image extends BaseValue
         if ($rowValue !== null and $rowValue !== '' and is_numeric($rowValue) and intval($rowValue) < 0)
             $rowValue = -intval($rowValue);
 
-        $conf = Factory::getConfig();
-        $siteName = $conf->get('config.sitename');
+        $siteName = '';
+        if (defined('_JEXEC')) {
+            $conf = Factory::getConfig();
+            $siteName = $conf->get('config.sitename');
+        } elseif (defined('WPINC')) {
+            $siteName = '';
+        }
 
         $option = $option_list[0] ?? '';
         $ImageFolder_ = CustomTablesImageMethods::getImageFolder($params);

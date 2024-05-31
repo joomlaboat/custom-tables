@@ -32,7 +32,7 @@ class common
         Factory::getApplication()->enqueueMessage($text, $type);
     }
 
-    public static function translate(string $text, int|float $value = null): string
+    public static function translate(string $text, $value = null): string
     {
         if (is_null($value))
             $new_text = Text::_($text);

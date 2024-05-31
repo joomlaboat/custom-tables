@@ -80,7 +80,7 @@ class Layouts
      * @throws Exception
      * @since 3.2.2
      */
-    function getLayout(string|int $layoutNameOrId, bool $processLayoutTag = true, bool $checkLayoutFile = true, bool $addHeaderCode = true): string
+    function getLayout($layoutNameOrId, bool $processLayoutTag = true, bool $checkLayoutFile = true, bool $addHeaderCode = true): string
     {
         $whereClause = new MySQLWhereClause();
 
@@ -521,13 +521,13 @@ class Layouts
 
         $result .= PHP_EOL;
 
-        $fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+        $fieldTypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
         $fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox', 'radio'];
-        $fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'userid', 'user', 'virtual'];
+        $fieldTypes_allowed_to_orderBy = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'userid', 'user', 'virtual'];
 
         $result .= PHP_EOL . '<table>' . PHP_EOL;
 
-        $result .= self::renderTableHead($fields, $addToolbar, $fieldtypes_to_skip, $fieldTypesWithSearch, $fieldtypes_allowed_to_orderby);
+        $result .= self::renderTableHead($fields, $addToolbar, $fieldTypes_to_skip, $fieldTypesWithSearch, $fieldTypes_allowed_to_orderBy);
 
         $result .= PHP_EOL . '<tbody>';
         $result .= PHP_EOL . '{% block record %}';
@@ -547,16 +547,16 @@ class Layouts
 
         $result .= '<td style="text-align:center;"><a href="{{ record.link(true) }}">{{ record.id }}</a></td>' . PHP_EOL;
 
-        $imagegalleryFound = false;
-        $fileboxFound = false;
+        $imageGalleryFound = false;
+        $fileBoxFound = false;
 
         foreach ($fields as $field) {
 
             if ($field['type'] == 'imagegallery') {
-                $imagegalleryFound = true;
+                $imageGalleryFound = true;
             } elseif ($field['type'] == 'filebox') {
-                $fileboxFound = true;
-            } elseif ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip)) {
+                $fileBoxFound = true;
+            } elseif ($field['type'] != 'ordering' && !in_array($field['type'], $fieldTypes_to_skip)) {
 
                 if ($field['type'] == 'url')
                     $fieldValue = '<a href="{{ ' . $field['fieldname'] . ' }}" target="_blank">{{ ' . $field['fieldname'] . ' }}</a>';
@@ -571,10 +571,10 @@ class Layouts
 
             $toolbarButtons = ['edit', 'publish', 'refresh', 'delete'];
 
-            if ($imagegalleryFound)
+            if ($imageGalleryFound)
                 $toolbarButtons [] = 'gallery';
 
-            if ($fileboxFound)
+            if ($fileBoxFound)
                 $toolbarButtons [] = 'filebox';
 
             $result .= '<td>{{ html.toolbar("' . implode('","', $toolbarButtons) . '") }}</td>' . PHP_EOL;

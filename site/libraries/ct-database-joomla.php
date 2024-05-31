@@ -315,7 +315,7 @@ class database
      * @param string $tableName The name of the table to insert data into.
      * @param array $data An associative array of data to insert. Keys represent column names, values represent values to be inserted.
      *
-     * @return int|null The ID of the last inserted record, or null if the insert operation failed.
+     * @return int or null The ID of the last inserted record, or null if the insert operation failed.
      * @throws Exception If an error occurs during the insert operation.
      *
      * @since 3.1.8
