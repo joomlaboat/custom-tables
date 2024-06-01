@@ -941,6 +941,7 @@ class database
                 . (($PureFieldType['default'] ?? '') != "" ? ' DEFAULT ' . (is_numeric($PureFieldType['default']) ? $PureFieldType['default'] : $db->quote($PureFieldType['default'])) : '')
                 . (($PureFieldType['autoincrement'] ?? false) ? ' AUTO_INCREMENT' : '')
                 . ' COMMENT ' . $db->quote($comment));
+
             $db->execute();
         }
     }

@@ -81,7 +81,7 @@
                 description="The layout source code can be save as files if the path is specified."
         />
 
-        <field name="autorName"
+        <field name="authorName"
                type="text"
                label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"
                description="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_DESC"
@@ -91,7 +91,7 @@
                class="readonly"
         />
 
-        <field name="autorEmail"
+        <field name="authorEmail"
                type="email"
                label="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_LABEL"
                description="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_DESC"

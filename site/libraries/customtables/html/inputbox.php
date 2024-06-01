@@ -25,8 +25,7 @@ class Inputbox
     var CT $ct;
     var Field $field;
     var ?array $row;
-    var string $attributes;
-    var array $attributesArray;
+    var array $attributes;
     var array $option_list;
     var string $place_holder;
     var string $prefix;
@@ -43,39 +42,39 @@ class Inputbox
         $this->isTwig = $isTwig;
 
         $optional_attributes = str_replace('****quote****', '"', $option_list[1] ?? '');//Optional Parameter
-        $this->attributesArray = CTMiscHelper::parseHTMLAttributes($optional_attributes);
+        $this->attributes = CTMiscHelper::parseHTMLAttributes($optional_attributes);
 
-        BaseInputBox::addOnChange($this->attributesArray, $onchange);
+        BaseInputBox::addOnChange($this->attributes, $onchange);
 
         $CSSClassOrStyle = $option_list[0] ?? '';
         if (str_contains($CSSClassOrStyle, ':'))//it's a style, change it to attribute
-            BaseInputBox::addCSSStyle($this->attributesArray, $CSSClassOrStyle);
+            BaseInputBox::addCSSStyle($this->attributes, $CSSClassOrStyle);
         else
-            BaseInputBox::addCSSClass($this->attributesArray, $CSSClassOrStyle);
+            BaseInputBox::addCSSClass($this->attributes, $CSSClassOrStyle);
 
         $this->field = new Field($this->ct, $fieldRow);
 
         //Set CSS classes
         if ($this->field->type != "records")
-            BaseInputBox::addCSSClass($this->attributesArray, ($this->ct->Env->version < 4 ? 'inputbox' : 'form-control'));
+            BaseInputBox::addCSSClass($this->attributes, ($this->ct->Env->version < 4 ? 'inputbox' : 'form-control'));
 
         //Add attributes
         $this->option_list = $option_list;
         $this->place_holder = $this->field->title;
 
         //$this->attributesArray['class'] = $CSSClass;
-        $this->attributesArray['data-type'] = $this->field->type;
+        $this->attributes['data-type'] = $this->field->type;
 
-        if (!isset($this->attributesArray['title']))
-            $this->attributesArray['title'] = $this->field->title;
+        if (!isset($this->attributes['title']))
+            $this->attributes['title'] = $this->field->title;
 
-        $this->attributesArray['data-label'] = $this->field->title;
+        $this->attributes['data-label'] = $this->field->title;
 
-        if (!isset($this->attributesArray['placeholder']))
-            $this->attributesArray['placeholder'] = $this->field->title;
+        if (!isset($this->attributes['placeholder']))
+            $this->attributes['placeholder'] = $this->field->title;
 
-        $this->attributesArray['data-valuerule'] = str_replace('"', '&quot;', $this->field->valuerule ?? '');
-        $this->attributesArray['data-valuerulecaption'] = str_replace('"', '&quot;', $this->field->valuerulecaption ?? '');
+        $this->attributes['data-valuerule'] = str_replace('"', '&quot;', $this->field->valuerule ?? '');
+        $this->attributes['data-valuerulecaption'] = str_replace('"', '&quot;', $this->field->valuerulecaption ?? '');
     }
 
     /**
@@ -87,11 +86,11 @@ class Inputbox
         $this->row = $row;
         $this->field = new Field($this->ct, $this->field->fieldrow, $this->row);
         $this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm ? $this->row[$this->ct->Table->realidfieldname] . '_' : '');
-        $this->attributesArray['name'] = $this->prefix . $this->field->fieldname;
-        $this->attributesArray['id'] = $this->prefix . $this->field->fieldname;
+        $this->attributes['name'] = $this->prefix . $this->field->fieldname;
+        $this->attributes['id'] = $this->prefix . $this->field->fieldname;
 
-        if ($this->row === null and !isset($this->attributesArray['placeholder']))
-            $this->attributesArray['placeholder'] = $this->place_holder;
+        if ($this->row === null and !isset($this->attributes['placeholder']))
+            $this->attributes['placeholder'] = $this->place_holder;
 
         if ($this->field->defaultvalue !== '' and $value === null) {
             $twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
@@ -122,7 +121,7 @@ class Inputbox
         if (file_exists($additionalFile)) {
             require_once($additionalFile);
             $className = '\CustomTables\InputBox_' . $fieldTypeShort;
-            $inputBoxRenderer = new $className($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+            $inputBoxRenderer = new $className($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
         }
 
         switch ($this->field->type) {
@@ -168,7 +167,7 @@ class Inputbox
                     if (file_exists($path . 'tablejoin.php')) {
                         require_once($path . 'tablejoin.php');
 
-                        $inputBoxRenderer = new ProInputBoxTableJoin($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+                        $inputBoxRenderer = new ProInputBoxTableJoin($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
                         return $inputBoxRenderer->render($value, $this->defaultValue);
                     } else {
                         return common::translate('COM_CUSTOMTABLES_AVAILABLE');
@@ -186,7 +185,7 @@ class Inputbox
                         require_once($path . 'tablejoin.php');
                         require_once($path . 'tablejoinlist.php');
 
-                        $inputBoxRenderer = new ProInputBoxTableJoinList($this->ct, $this->field, $this->row, $this->option_list, $this->attributesArray);
+                        $inputBoxRenderer = new ProInputBoxTableJoinList($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
                         return $inputBoxRenderer->render($value, $this->defaultValue);
                     } else {
                         return common::translate('COM_CUSTOMTABLES_AVAILABLE');
@@ -288,6 +287,38 @@ abstract class BaseInputBox
             }
         } else {
             $attributes['class'] = $className;
+        }
+    }
+
+    /**
+     * Removes a CSS class from the 'class' attribute in the provided attributes array.
+     *
+     * This method will remove the specified CSS class from the 'class' attribute
+     * if it exists. If the 'class' attribute becomes empty after removal, it will
+     * be unset from the attributes array.
+     *
+     * @param array $attributes The attributes array, passed by reference.
+     * @param string $className The CSS class name to remove.
+     *
+     * @return void
+     *
+     * @since 3.3.3
+     */
+    public static function removeCSSClass(array &$attributes, string $className): void
+    {
+        if (empty($className) || !isset($attributes['class'])) {
+            return;
+        }
+
+        $classes = explode(' ', $attributes['class']);
+        $filteredClasses = array_filter($classes, function ($class) use ($className) {
+            return $class !== $className;
+        });
+
+        if (empty($filteredClasses)) {
+            unset($attributes['class']);
+        } else {
+            $attributes['class'] = implode(' ', $filteredClasses);
         }
     }
 

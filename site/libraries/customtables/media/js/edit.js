@@ -629,7 +629,17 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         filters = JSON.parse(decodedFilterString);
     }
 
-    let onchange = Base64.decode(wrapper.dataset.onchange).replace(/[^ -~]+/g, "");
+    let attributesStringDataSet = Base64.decode(wrapper.dataset.data - attributes);
+
+    //The code searches the string for any characters that are not in the printable ASCII range (from space to tilde).
+    //It replaces any such characters with an empty string, effectively removing them from the string.
+    let attributesStringClean = attributesStringDataSet.replace(/[^ -~]+/g, "");
+    let attributes = JSON.parse(attributesStringClean);
+    alert(JSON.stringify(attributes));
+        
+    //let onchange = Base64.decode(wrapper.dataset.onchange).replace(/[^ -~]+/g, "");
+
+
     let next_index = index;
     let next_sub_index = sub_index;
     let val;

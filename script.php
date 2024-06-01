@@ -25,6 +25,8 @@ use Joomla\CMS\Version;
 
 /**
  * Script File of Customtables Component
+ *
+ * @since 1.0.0
  */
 class com_customtablesInstallerScript
 {
@@ -32,6 +34,8 @@ class com_customtablesInstallerScript
      * method to uninstall the component
      *
      * @return void
+     *
+     * @since 1.0.0
      */
     function uninstall($parent)
     {
@@ -44,9 +48,12 @@ class com_customtablesInstallerScript
     }
 
     /**
-     * method to run before an install/update/uninstall method
+     * method to run before an installation/update/uninstall method
      *
      * @return void
+     *
+     * @throws Exception
+     * @since 1.0.0
      */
     function preflight($type, $parent)
     {
@@ -54,19 +61,12 @@ class com_customtablesInstallerScript
         $app = Factory::getApplication();
         // is redundant ...mmm
         if ($type == 'uninstall') {
-            return true;
+            return;
         }
         // the default for both install and update
         $VersionObject = new Version();
         if (!$VersionObject->isCompatible('3.6.0')) {
             $app->enqueueMessage('Please upgrade to at least Joomla! 3.6.0 before continuing!', 'error');
-            return false;
-        }
-        // do any updates needed
-        if ($type == 'update') {
-        }
-        // do any install needed
-        if ($type == 'install') {
         }
     }
 
@@ -79,8 +79,9 @@ class com_customtablesInstallerScript
      */
     function postflight($type, $parent)
     {
+
         if ($type == 'uninstall') {
-            return true; //No need to do anything
+            return; //No need to do anything
         }
 
         if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images'))
@@ -92,16 +93,17 @@ class com_customtablesInstallerScript
         if (file_exists($loader_file)) {
             //Do not run on uninstall
             require_once($loader_file);
-            CustomTablesLoader(true, false, null, 'com_customtables', true);
+            CustomTablesLoader(true);
             $ct = new CT;
 
             $result = IntegrityChecks::check($ct, true, false);
             if (count($result) > 0)
                 echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
+
         } else {
             echo '<h3>CT Loader not installed!</h3>';
             echo '<p>Path: ' . $loader_file . '</p>';
-            return false;
+            return;
         }
 
         // set the default component settings
@@ -116,20 +118,21 @@ class com_customtablesInstallerScript
             database::update('#__assets', $data, $whereClauseUpdate);
 
             $data = [
-                'params' => '{"autorName":"Ivan Komlev","autorEmail":"support@joomlaboat.com"}'
+                'params' => '{"authorName":"Ivan Komlev","authorEmail":"support@joomlaboat.com"}'
             ];
             $whereClauseUpdate = new MySQLWhereClause();
             $whereClauseUpdate->addCondition('element', 'com_customtables');
             database::update('#__extensions', $data, $whereClauseUpdate);
 
             echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">'
-                . '<img src="' . Uri::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>'
+                . '<img src="' . Uri::root() . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg" alt="Custom Tables"/>'
                 . '</a>';
         }
+
         // do any updates needed
         if ($type == 'update') {
             echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">'
-                . '<img src="' . Uri::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>'
+                . '<img src="' . Uri::root() . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg" alt="Custom Tables" />'
                 . '</a>'
                 . '<h3>Upgrade was Successful!</h3>';
         }
@@ -139,9 +142,11 @@ class com_customtablesInstallerScript
      * method to update the component
      *
      * @return void
+     *
+     * @since 1.0.0
      */
     function update($parent)
     {
-
+        // Update logic here if needed
     }
 }

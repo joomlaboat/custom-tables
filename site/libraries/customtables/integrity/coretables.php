@@ -30,14 +30,23 @@ class IntegrityCoreTables extends IntegrityChecks
      */
     public static function checkCoreTables($ct): void
     {
-        IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Tables());
-        IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Fields());
-        IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Layouts());
+        $fieldTypes['tables_id'] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_tables_seq\')'];
+        $fieldTypes['id'] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT 1'];
+        $fieldTypes['published'] = ['name' => 'published', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
+        $fieldTypes['created_by'] = ['name' => 'created_by', 'ct_fieldtype' => 'userid', 'mysql_type' => 'INT UNSIGNED NULL DEFAULT NULL', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
+        $fieldTypes['modified_by'] = ['name' => 'modified_by', 'ct_fieldtype' => 'userid', 'mysql_type' => 'INT UNSIGNED NULL DEFAULT NULL', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
+        $fieldTypes['created'] = ['name' => 'created', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
+        $fieldTypes['modified'] = ['name' => 'modified', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
+        $fieldTypes['checked_out'] = ['name' => 'checked_out', 'ct_fieldtype' => 'userid', 'mysql_type' => 'INT UNSIGNED NULL DEFAULT NULL', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
+        $fieldTypes['checked_out_time'] = ['name' => 'checked_out_time', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
+
+        IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Tables($fieldTypes));
+        IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Fields($fieldTypes));
+        IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Layouts($fieldTypes));
+        IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Log($fieldTypes));
 
         if (defined('_JEXEC'))
-            IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Categories());
-
-        IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Log());
+            IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Categories($fieldTypes));
     }
 
     /**
@@ -187,32 +196,32 @@ class IntegrityCoreTables extends IntegrityChecks
         return true;
     }
 
-    protected static function getCoreTableFields_Tables(): object
+    protected static function getCoreTableFields_Tables(array $fieldTypes): object
     {
         $dbPrefix = database::getDBPrefix();
 
+        //_published
         $tables_projected_fields = [];
-        $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_tables_seq\')'];
-        $tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
-        $tables_projected_fields[] = ['name' => 'tablename', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL DEFAULT "tablename"', 'postgresql_type' => 'VARCHAR(100) NOT NULL DEFAULT \'\''];
-        $tables_projected_fields[] = ['name' => 'tabletitle', 'ct_fieldtype' => 'string', 'mysql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'multilang' => true];
+        $tables_projected_fields[] = $fieldTypes['tables_id'];
+        $tables_projected_fields[] = $fieldTypes['published'];
+        $tables_projected_fields[] = ['name' => 'tablename', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL DEFAULT "tablename"', 'postgresql_type' => 'VARCHAR(100) NOT NULL DEFAULT \'tablename\''];
+        $tables_projected_fields[] = ['name' => 'tabletitle', 'ct_fieldtype' => 'string', 'ct_typeparams' => 255, 'mysql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'multilang' => true];
         $tables_projected_fields[] = ['name' => 'description', 'ct_fieldtype' => 'text', 'mysql_type' => 'TEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL', 'multilang' => true];
 
         //Not used inside Custom Tables
-
         $tables_projected_fields[] = ['name' => 'tablecategory', 'ct_fieldtype' => 'sqljoin', 'mysql_type' => 'INT NULL DEFAULT NULL', 'postgresql_type' => 'INT NULL DEFAULT NULL'];
 
         $tables_projected_fields[] = ['name' => 'customphp', 'ct_fieldtype' => 'link', 'mysql_type' => 'VARCHAR(1024) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(1024) NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'customtablename', 'ct_fieldtype' => 'string', 'mysql_type' => 'VARCHAR(100) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(100) NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'customidfield', 'ct_fieldtype' => 'string', 'mysql_type' => 'VARCHAR(100) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(100) NULL DEFAULT NULL'];
+        $tables_projected_fields[] = ['name' => 'customtablename', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(100) NULL DEFAULT NULL'];
+        $tables_projected_fields[] = ['name' => 'customidfield', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(100) NULL DEFAULT NULL'];
         $tables_projected_fields[] = ['name' => 'allowimportcontent', 'ct_fieldtype' => 'checkbox', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 0', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 0'];
 
-        $tables_projected_fields[] = ['name' => 'created_by', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'modified_by', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'created', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'modified', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'checked_out', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'int UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'checked_out_time', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
+        $tables_projected_fields[] = $fieldTypes['created_by'];
+        $tables_projected_fields[] = $fieldTypes['modified_by'];
+        $tables_projected_fields[] = $fieldTypes['created'];
+        $tables_projected_fields[] = $fieldTypes['modified'];
+        $tables_projected_fields[] = $fieldTypes['checked_out'];
+        $tables_projected_fields[] = $fieldTypes['checked_out_time'];
 
         $tables_projected_indexes = [];
         $tables_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
@@ -225,140 +234,136 @@ class IntegrityCoreTables extends IntegrityChecks
             'comment' => 'List of Custom Tables tables'];
     }
 
-    protected static function getCoreTableFields_Fields(): object
+    protected static function getCoreTableFields_Fields($fieldTypes): object
     {
         $dbPrefix = database::getDBPrefix();
-        $tables_projected_fields = array();
+        $fields_projected_fields = array();
 
-        $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT 1'];
-        $tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
-        $tables_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL', 'postgresql_type' => 'INT NOT NULL'];
+        $fields_projected_fields[] = $fieldTypes['id'];
+        $fields_projected_fields[] = $fieldTypes['published'];
+        $fields_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
 
-        $tables_projected_fields[] = ['name' => 'fieldname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL', 'postgresql_type' => 'VARCHAR(100) NOT NULL'];
-        $tables_projected_fields[] = ['name' => 'fieldtitle', 'ct_fieldtype' => 'string', 'mysql_type' => 'VARCHAR(255) NULL', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'multilang' => true];
-        $tables_projected_fields[] = ['name' => 'description', 'ct_fieldtype' => 'text', 'mysql_type' => 'TEXT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL', 'multilang' => true];
+        $fields_projected_fields[] = ['name' => 'fieldname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL', 'postgresql_type' => 'VARCHAR(100) NOT NULL'];
+        $fields_projected_fields[] = ['name' => 'fieldtitle', 'ct_fieldtype' => 'string', 'ct_typeparams' => 255, 'mysql_type' => 'VARCHAR(255) NULL', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'multilang' => true];
+        $fields_projected_fields[] = ['name' => 'description', 'ct_fieldtype' => 'text', 'mysql_type' => 'TEXT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL', 'multilang' => true];
 
-        $tables_projected_fields[] = ['name' => 'allowordering', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
-        $tables_projected_fields[] = ['name' => 'isrequired', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
-        $tables_projected_fields[] = ['name' => 'isdisabled', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 0', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'alwaysupdatevalue', 'ct_fieldtype' => 'checkbox', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 0', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 0', 'comment' => 'Update default value every time record is edited.'];
+        $fields_projected_fields[] = ['name' => 'allowordering', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
+        $fields_projected_fields[] = ['name' => 'isrequired', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
+        $fields_projected_fields[] = ['name' => 'isdisabled', 'ct_fieldtype' => 'checkbox', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 0', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 0'];
+        $fields_projected_fields[] = ['name' => 'alwaysupdatevalue', 'ct_fieldtype' => 'checkbox', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 0', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 0', 'comment' => 'Update default value every time record is edited.'];
 
-        $tables_projected_fields[] = ['name' => 'parentid', 'ct_fieldtype' => 'sqljoin', 'mysql_type' => 'INT NULL', 'postgresql_type' => 'INT NULL'];
-        $tables_projected_fields[] = ['name' => 'ordering', 'ct_fieldtype' => 'int', 'mysql_type' => 'INT NOT NULL', 'postgresql_type' => 'INT NOT NULL'];
+        $fields_projected_fields[] = ['name' => 'parentid', 'ct_fieldtype' => 'sqljoin', 'mysql_type' => 'INT NULL', 'postgresql_type' => 'INT NULL'];
+        $fields_projected_fields[] = ['name' => 'ordering', 'ct_fieldtype' => 'int', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
 
-        $tables_projected_fields[] = ['name' => 'defaultvalue', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
-        $tables_projected_fields[] = ['name' => 'customfieldname', 'ct_fieldtype' => 'string', 'mysql_type' => 'VARCHAR(100) NULL', 'postgresql_type' => 'VARCHAR(100) NULL'];
-        $tables_projected_fields[] = ['name' => 'type', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(50) NULL', 'postgresql_type' => 'VARCHAR(50) NULL'];
-        $tables_projected_fields[] = ['name' => 'typeparams', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
-        $tables_projected_fields[] = ['name' => 'valuerule', 'ct_fieldtype' => '', 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
-        $tables_projected_fields[] = ['name' => 'valuerulecaption', 'ct_fieldtype' => 'string', 'ct_typeparams' => '1024', 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
+        $fields_projected_fields[] = ['name' => 'defaultvalue', 'ct_fieldtype' => 'string', 'ct_typeparams' => 1024, 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
+        $fields_projected_fields[] = ['name' => 'customfieldname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NULL', 'postgresql_type' => 'VARCHAR(100) NULL'];
+        $fields_projected_fields[] = ['name' => 'type', 'ct_fieldtype' => 'string', 'ct_typeparams' => 50, 'mysql_type' => 'VARCHAR(50) NULL', 'postgresql_type' => 'VARCHAR(50) NULL'];
+        $fields_projected_fields[] = ['name' => 'typeparams', 'ct_fieldtype' => 'string', 'ct_typeparams' => 1024, 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
+        $fields_projected_fields[] = ['name' => 'valuerule', 'ct_fieldtype' => 'string', 'ct_typeparams' => 1024, 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
+        $fields_projected_fields[] = ['name' => 'valuerulecaption', 'ct_fieldtype' => 'string', 'ct_typeparams' => 1024, 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
 
-        $tables_projected_fields[] = ['name' => 'created_by', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'modified_by', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'created', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL'];
-        $tables_projected_fields[] = ['name' => 'modified', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL'];
-        $tables_projected_fields[] = ['name' => 'checked_out', 'ct_fieldtype' => '', 'mysql_type' => 'int UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'checked_out_time', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
+        $fields_projected_fields[] = $fieldTypes['created_by'];
+        $fields_projected_fields[] = $fieldTypes['modified_by'];
+        $fields_projected_fields[] = $fieldTypes['created'];
+        $fields_projected_fields[] = $fieldTypes['modified'];
+        $fields_projected_fields[] = $fieldTypes['checked_out'];
+        $fields_projected_fields[] = $fieldTypes['checked_out_time'];
 
-        $tables_projected_indexes = [];
-        $tables_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
-        $tables_projected_indexes[] = ['name' => 'idx_tableid', 'field' => 'tableid'];
-        $tables_projected_indexes[] = ['name' => 'idx_fieldname', 'field' => 'fieldname'];
+        $fields_projected_indexes = [];
+        $fields_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
+        $fields_projected_indexes[] = ['name' => 'idx_tableid', 'field' => 'tableid'];
+        $fields_projected_indexes[] = ['name' => 'idx_fieldname', 'field' => 'fieldname'];
 
         return (object)['realtablename' => $dbPrefix . 'customtables_fields',
             'tablename' => 'fields',
-            'fields' => $tables_projected_fields,
-            'indexes' => $tables_projected_indexes,
+            'fields' => $fields_projected_fields,
+            'indexes' => $fields_projected_indexes,
             'comment' => 'Custom Tables Fields'];
     }
 
-    protected static function getCoreTableFields_Layouts(): object
+    protected static function getCoreTableFields_Layouts(array $fieldTypes): object
     {
         $dbPrefix = database::getDBPrefix();
-        $tables_projected_fields = array();
+        $layouts_projected_fields = array();
 
-        $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT 1'];
-        $tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
-        $tables_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL', 'postgresql_type' => 'INT NOT NULL'];
+        $layouts_projected_fields[] = $fieldTypes['id'];
+        $layouts_projected_fields[] = $fieldTypes['published'];
+        $layouts_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
+        $layouts_projected_fields[] = ['name' => 'layoutname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL DEFAULT "tablename"', 'postgresql_type' => 'VARCHAR(100) NOT NULL DEFAULT \'\''];
+        $layouts_projected_fields[] = ['name' => 'layouttype', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
+        $layouts_projected_fields[] = ['name' => 'layoutcode', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
+        $layouts_projected_fields[] = ['name' => 'layoutmobile', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
+        $layouts_projected_fields[] = ['name' => 'layoutcss', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
+        $layouts_projected_fields[] = ['name' => 'layoutjs', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
+        $layouts_projected_fields[] = ['name' => 'changetimestamp', 'ct_fieldtype' => '', 'mysql_type' => 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
 
-        $tables_projected_fields[] = ['name' => 'layoutname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL DEFAULT "tablename"', 'postgresql_type' => 'VARCHAR(100) NOT NULL DEFAULT \'\''];
-        $tables_projected_fields[] = ['name' => 'layouttype', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
+        $layouts_projected_fields[] = $fieldTypes['created_by'];
+        $layouts_projected_fields[] = $fieldTypes['modified_by'];
+        $layouts_projected_fields[] = $fieldTypes['created'];
+        $layouts_projected_fields[] = $fieldTypes['modified'];
+        $layouts_projected_fields[] = $fieldTypes['checked_out'];
+        $layouts_projected_fields[] = $fieldTypes['checked_out_time'];
 
-        $tables_projected_fields[] = ['name' => 'layoutcode', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'layoutmobile', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'layoutcss', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'layoutjs', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
-
-        $tables_projected_fields[] = ['name' => 'changetimestamp', 'ct_fieldtype' => '', 'mysql_type' => 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-
-        $tables_projected_fields[] = ['name' => 'created_by', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'modified_by', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'created', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'modified', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'checked_out', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'int UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'checked_out_time', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-
-        $tables_projected_indexes = [];
-        $tables_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
-        $tables_projected_indexes[] = ['name' => 'idx_tableid', 'field' => 'tableid'];
-        $tables_projected_indexes[] = ['name' => 'idx_layoutname', 'field' => 'layoutname'];
+        $layouts_projected_indexes = [];
+        $layouts_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
+        $layouts_projected_indexes[] = ['name' => 'idx_tableid', 'field' => 'tableid'];
+        $layouts_projected_indexes[] = ['name' => 'idx_layoutname', 'field' => 'layoutname'];
 
         return (object)['realtablename' => $dbPrefix . 'customtables_layouts',
             'tablename' => 'layouts',
-            'fields' => $tables_projected_fields,
-            'indexes' => $tables_projected_indexes,
+            'fields' => $layouts_projected_fields,
+            'indexes' => $layouts_projected_indexes,
             'comment' => 'Custom Tables Layouts'];
     }
 
-    protected static function getCoreTableFields_Categories(): object
+    protected static function getCoreTableFields_Log(array $fieldTypes): object
     {
         $dbPrefix = database::getDBPrefix();
-        $tables_projected_fields = array();
+        $log_projected_fields = array();
 
-        $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT 1'];
-        $tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
+        $log_projected_fields[] = $fieldTypes['id'];
+        $log_projected_fields[] = ['name' => 'userid', 'ct_fieldtype' => 'userid', 'mysql_type' => 'INT UNSIGNED NULL DEFAULT NULL', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
+        $log_projected_fields[] = ['name' => 'datetime', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
+        $log_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
+        $log_projected_fields[] = ['name' => 'action', 'ct_fieldtype' => 'int', 'mysql_type' => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 0'];
+        $log_projected_fields[] = ['name' => 'listingid', 'ct_fieldtype' => 'sqljoin', 'mysql_type' => 'INT UNSIGNED NULL DEFAULT NULL', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
+        $log_projected_fields[] = ['name' => 'Itemid', 'ct_fieldtype' => 'sqljoin', 'mysql_type' => 'INT UNSIGNED NULL DEFAULT NULL', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
 
-        $tables_projected_fields[] = ['name' => 'categoryname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL DEFAULT "tablename"', 'postgresql_type' => 'VARCHAR(100) NOT NULL DEFAULT \'\''];
-
-        $tables_projected_fields[] = ['name' => 'created_by', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'modified_by', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'created', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'modified', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'checked_out', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'int UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'checked_out_time', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-
-        $tables_projected_indexes = [];
-        $tables_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
-        $tables_projected_indexes[] = ['name' => 'idx_categoryname', 'field' => 'categoryname'];
-
-        return (object)['realtablename' => $dbPrefix . 'customtables_categories',
-            'tablename' => 'categories',
-            'fields' => $tables_projected_fields,
-            'indexes' => $tables_projected_indexes,
-            'comment' => 'Custom Tables Categories'];
-    }
-
-    protected static function getCoreTableFields_Log(): object
-    {
-        $dbPrefix = database::getDBPrefix();
-        $tables_projected_fields = array();
-
-        $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT 1'];
-        $tables_projected_fields[] = ['name' => 'userid', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'datetime', 'ct_fieldtype' => 'changetime', 'mysql_type' => 'DATETIME NULL DEFAULT NULL', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
-        $tables_projected_fields[] = ['name' => 'tableid', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'action', 'ct_fieldtype' => 'int', 'mysql_type' => 'SMALLINT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'MALLINT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'listingid', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-        $tables_projected_fields[] = ['name' => 'Itemid', 'ct_fieldtype' => 'ordering', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
-
-        $tables_projected_indexes = [];
-        $tables_projected_indexes[] = ['name' => 'idx_userid', 'field' => 'userid'];
-        $tables_projected_indexes[] = ['name' => 'idx_action', 'field' => 'action'];
+        $log_projected_indexes = [];
+        $log_projected_indexes[] = ['name' => 'idx_userid', 'field' => 'userid'];
+        $log_projected_indexes[] = ['name' => 'idx_action', 'field' => 'action'];
 
         return (object)['realtablename' => $dbPrefix . 'customtables_log',
             'tablename' => 'log',
-            'fields' => $tables_projected_fields,
-            'indexes' => $tables_projected_indexes,
+            'fields' => $log_projected_fields,
+            'indexes' => $log_projected_indexes,
             'comment' => 'Custom Tables Action Log'];
+    }
+
+    protected static function getCoreTableFields_Categories(array $fieldTypes): object
+    {
+        $dbPrefix = database::getDBPrefix();
+        $categories_projected_fields = array();
+
+        $categories_projected_fields[] = $fieldTypes['id'];
+        $categories_projected_fields[] = $fieldTypes['published'];
+        $categories_projected_fields[] = ['name' => 'categoryname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL DEFAULT "tablename"', 'postgresql_type' => 'VARCHAR(100) NOT NULL DEFAULT \'\''];
+
+        $categories_projected_fields[] = $fieldTypes['created_by'];
+        $categories_projected_fields[] = $fieldTypes['modified_by'];
+        $categories_projected_fields[] = $fieldTypes['created'];
+        $categories_projected_fields[] = $fieldTypes['modified'];
+        $categories_projected_fields[] = $fieldTypes['checked_out'];
+        $categories_projected_fields[] = $fieldTypes['checked_out_time'];
+
+        $categories_projected_indexes = [];
+        $categories_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
+        $categories_projected_indexes[] = ['name' => 'idx_categoryname', 'field' => 'categoryname'];
+
+        return (object)['realtablename' => $dbPrefix . 'customtables_categories',
+            'tablename' => 'categories',
+            'fields' => $categories_projected_fields,
+            'indexes' => $categories_projected_indexes,
+            'comment' => 'Custom Tables Categories'];
     }
 }

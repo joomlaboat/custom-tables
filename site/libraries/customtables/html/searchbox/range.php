@@ -19,51 +19,51 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 class Search_range extends BaseSearch
 {
-	function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
-	{
-		parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
-		BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-		BaseInputBox::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-	}
+    function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
+    {
+        parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
+        BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        BaseInputBox::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+    }
 
-	function render($value): string
-	{
-		if (defined('WPINC')) {
-			return 'The tag Date field type not yet supported by WordPress version of the Custom Tables.';
-		}
+    function render($value): string
+    {
+        if (defined('WPINC')) {
+            return 'The tag Date field type not yet supported by WordPress version of the Custom Tables.';
+        }
 
-		$result = '';
+        $result = '';
 
-		if ($this->ct->Env->version < 4)
-			$default_class = 'inputbox';
-		else
-			$default_class = 'form-control';
+        if ($this->ct->Env->version < 4)
+            $default_class = 'inputbox';
+        else
+            $default_class = 'form-control';
 
-		//$value_min = ''; //TODO: Check this
-		$value_max = '';
+        //$value_min = ''; //TODO: Check this
+        $value_max = '';
 
-		if ($this->field->type == 'date' or $this->field->type == 'range')
-			$d = '-to-';
-		elseif ($this->field->type == 'int' or $this->field->type == 'float')
-			$d = '-';
-		else
-			return 'Cannot search by "' . $this->field->type . '"';
+        if ($this->field->type == 'date' or $this->field->type == 'range')
+            $d = '-to-';
+        elseif ($this->field->type == 'int' or $this->field->type == 'float')
+            $d = '-';
+        else
+            return 'Cannot search by "' . $this->field->type . '"';
 
-		$values = explode($d, $value);
-		$value_min = $values[0];
+        $values = explode($d, $value);
+        $value_min = $values[0];
 
-		if (isset($values[1]))
-			$value_max = $values[1];
+        if (isset($values[1]))
+            $value_max = $values[1];
 
-		if ($value_min == '')
-			$value_min = common::inputPostString($this->objectName . '_min', null, 'create-edit-record');
+        if ($value_min == '')
+            $value_min = common::inputPostString($this->objectName . '_min', null, 'create-edit-record');
 
-		if ($value_max == '')
-			$value_max = common::inputPostString($this->objectName . '_max', null, 'create-edit-record');
+        if ($value_max == '')
+            $value_max = common::inputPostString($this->objectName . '_max', null, 'create-edit-record');
 
-		//header function
+        //header function
 
-		$js = '
+        $js = '
 	function Update' . $this->objectName . 'Values()
 	{
 		var o=document.getElementById("' . $this->objectName . '");
@@ -74,47 +74,47 @@ class Search_range extends BaseSearch
 		//' . $this->moduleName . '_onChange(' . $this->index . ',v_min+"' . $d . '"+v_max,"' . $this->field->fieldname . '","' . urlencode($this->where) . '","' . urlencode($this->whereList) . '");
 	}
 ';
-		$this->ct->document->addCustomTag('<script>' . $js . '</script>');
-		//end of header function
+        $this->ct->document->addCustomTag('<script>' . $js . '</script>');
+        //end of header function
 
-		$attribs = 'onChange="Update' . $this->objectName . 'Values()" class="' . $default_class . '" ';
+        $attribs = 'onChange="Update' . $this->objectName . 'Values()" class="' . $default_class . '" ';
 
-		$result .= '<input type="hidden"'
-			. ' id="' . $this->objectName . '" '
-			. ' name="' . $this->objectName . '" '
-			. ' value="' . $value_min . $d . $value_max . '" '
-			. ' onkeypress="es_SearchBoxKeyPress(event)"'
-			. ' data-type="range" />';
+        $result .= '<input type="hidden"'
+            . ' id="' . $this->objectName . '" '
+            . ' name="' . $this->objectName . '" '
+            . ' value="' . $value_min . $d . $value_max . '" '
+            . ' onkeypress="es_SearchBoxKeyPress(event)"'
+            . ' data-type="range" />';
 
-		$result .= '<table class="es_class_min_range_table" style="border: none;" class="' . $this->attributes['class'] . '" ><tbody><tr><td style="vertical-align: middle;">';
+        $result .= '<table class="es_class_min_range_table" style="border: none;" class="' . ($this->attributes['class'] ?? '') . '" ><tbody><tr><td style="vertical-align: middle;">';
 
-		//From
-		if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] ?? '' == 'date') {
-			$result .= HTMLHelper::calendar($value_min, $this->objectName . '_min', $this->objectName . '_min', '%Y-%m-%d', $attribs);
-		} else {
-			$result .= '<input type="text"'
-				. ' id="' . $this->objectName . '_min" '
-				. ' name="' . $this->objectName . '_min" '
-				. 'value="' . $value_min . '" '
-				. ' onkeypress="es_SearchBoxKeyPress(event)" '
-				. ' ' . str_replace('class="', 'class="es_class_min_range ', $attribs)
-				. ' data-type="range" />';
-		}
+        //From
+        if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] ?? '' == 'date') {
+            $result .= HTMLHelper::calendar($value_min, $this->objectName . '_min', $this->objectName . '_min', '%Y-%m-%d', $attribs);
+        } else {
+            $result .= '<input type="text"'
+                . ' id="' . $this->objectName . '_min" '
+                . ' name="' . $this->objectName . '_min" '
+                . 'value="' . $value_min . '" '
+                . ' onkeypress="es_SearchBoxKeyPress(event)" '
+                . ' ' . str_replace('class="', 'class="es_class_min_range ', $attribs)
+                . ' data-type="range" />';
+        }
 
-		$result .= '</td><td style="text-align:center;">-</td><td style="text-align:left;vertical-align: middle;width: 140px;">';
+        $result .= '</td><td style="text-align:center;">-</td><td style="text-align:left;vertical-align: middle;width: 140px;">';
 
-		//TODO: check if this is correct
-		if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] ?? '' == 'date') {
-			$result .= HTMLHelper::calendar($value_max, $this->objectName . '_max', $this->objectName . '_max', '%Y-%m-%d', $attribs);
-		} else {
-			$result .= '<input type="text"'
-				. ' id="' . $this->objectName . '_max"'
-				. ' name="' . $this->objectName . '_max"'
-				. ' value="' . $value_max . '"'
-				. ' onkeypress="es_SearchBoxKeyPress(event)"'
-				. ' ' . str_replace('class="', 'class="es_class_min_range ', $attribs)
-				. ' data-type="range" />';
-		}
-		return $result . '</td></tr></tbody></table>';
-	}
+        //TODO: check if this is correct
+        if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] ?? '' == 'date') {
+            $result .= HTMLHelper::calendar($value_max, $this->objectName . '_max', $this->objectName . '_max', '%Y-%m-%d', $attribs);
+        } else {
+            $result .= '<input type="text"'
+                . ' id="' . $this->objectName . '_max"'
+                . ' name="' . $this->objectName . '_max"'
+                . ' value="' . $value_max . '"'
+                . ' onkeypress="es_SearchBoxKeyPress(event)"'
+                . ' ' . str_replace('class="', 'class="es_class_min_range ', $attribs)
+                . ' data-type="range" />';
+        }
+        return $result . '</td></tr></tbody></table>';
+    }
 }

@@ -235,7 +235,15 @@ class IntegrityFields extends IntegrityChecks
                 $value = '';
 
             if (isset($projected[$key])) {
-                if (($projected[$key] ?? '') != ($value ?? '')) {
+                if ($projected[$key] != ($value ?? '')) {
+
+                    if ($key == 'is_nullable') {
+                        if ($projected[$key] === false and $value == 'NO')
+                            return true;
+                        elseif ($projected[$key] === true and $value == 'YES')
+                            return true;
+
+                    }
                     return false;
                 }
             }

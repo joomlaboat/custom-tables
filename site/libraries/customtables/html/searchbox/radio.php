@@ -15,25 +15,25 @@ defined('_JEXEC') or die();
 
 class Search_radio extends BaseSearch
 {
-	function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
-	{
-		parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
-		BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-	}
+    function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
+    {
+        parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
+        BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+    }
 
-	function render($value): string
-	{
-		$this->getOnChangeAttributeString();
+    function render($value): string
+    {
+        //$this->getOnChangeAttributeString();
 
-		$options = [];
-		$options[] = '<option value="" ' . ($value == '' ? 'SELECTED' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . ' ' . $this->field->title . '</option>';
+        $options = [];
+        $options[] = '<option value="" ' . ($value == '' ? 'SELECTED' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . ' ' . $this->field->title . '</option>';
 
-		foreach ($this->field->params as $param)
-			$options[] = '<option value="' . $param . '" ' . ($value == $param ? 'SELECTED' : '') . '>' . $param . '</option>';
+        foreach ($this->field->params as $param)
+            $options[] = '<option value="' . $param . '" ' . ($value == $param ? 'SELECTED' : '') . '>' . $param . '</option>';
 
-		return '<select'
-			. ' id="' . $this->objectName . '"'
-			. ' name="' . $this->objectName . '"'
-			. BaseInputBox::attributes2String($this->attributes) . '>' . implode('', $options) . '</select>';
-	}
+        return '<select'
+            . ' id="' . $this->objectName . '"'
+            . ' name="' . $this->objectName . '"'
+            . BaseInputBox::attributes2String($this->attributes) . '>' . implode('', $options) . '</select>';
+    }
 }

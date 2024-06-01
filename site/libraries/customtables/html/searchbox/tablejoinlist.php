@@ -11,10 +11,9 @@
 namespace CustomTables;
 
 // no direct access
-defined('_JEXEC') or die();
+use Exception;
 
-use CustomTables\ProInputBoxTableJoin;
-use CustomTables\ProInputBoxTableJoinList;
+defined('_JEXEC') or die();
 
 class Search_tablejoinlist extends BaseSearch
 {
@@ -24,10 +23,14 @@ class Search_tablejoinlist extends BaseSearch
         BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     function render($value): string
     {
-        if (str_contains($this->attributes['onchange'] ?? '', 'onkeypress='))
-            $this->attributes['onchange'] .= ' onkeypress="es_SearchBoxKeyPress(event)"';
+        //if (str_contains($this->attributes['onchange'] ?? '', 'onkeypress='))
+        $this->attributes['onkeypress'] = 'es_SearchBoxKeyPress(event)';
 
         $result = '';
 

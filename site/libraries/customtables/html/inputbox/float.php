@@ -15,31 +15,31 @@ defined('_JEXEC') or die();
 
 class InputBox_float extends BaseInputBox
 {
-	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
-	{
-		parent::__construct($ct, $field, $row, $option_list, $attributes);
-		self::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-	}
+    function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
+    {
+        parent::__construct($ct, $field, $row, $option_list, $attributes);
+        self::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+    }
 
-	function render(?string $value, ?string $defaultValue): string
-	{
-		if ($value === null) {
-			$value = common::inputGetFloat($this->ct->Env->field_prefix . $this->field->fieldname);
-			if ($value === null)
-				$value = (float)$defaultValue;
-		}
+    function render(?string $value, ?string $defaultValue): string
+    {
+        if ($value === null) {
+            $value = common::inputGetFloat($this->ct->Env->field_prefix . $this->field->fieldname);
+            if ($value === null)
+                $value = (float)$defaultValue;
+        }
 
-		$this->attributes['type'] = 'text';
+        $this->attributes['type'] = 'text';
 
-		$decimals = (($this->field->params !== null and count($this->field->params) > 0) ? intval($this->field->params[0]) : 0);
-		if ($decimals < 0)
-			$decimals = 0;
+        $decimals = (($this->field->params !== null and count($this->field->params) > 0) ? intval($this->field->params[0]) : 0);
+        if ($decimals < 0)
+            $decimals = 0;
 
-		if (isset($this->field->params[2]) and $this->field->params[2] == 'smart')
-			$this->attributes['onchange'] = (($this->attributes['onchange'] ?? '') == '' ? '' : $this->attributes['onchange'] . ' ') . 'onkeypress="ESsmart_float(this,event,' . $decimals . ')';
+        if (isset($this->field->params[2]) and $this->field->params[2] == 'smart')
+            $this->attributes['onkeypress'] = 'ESsmart_float(this,event,' . $decimals . ')';
 
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
+        $this->attributes['value'] = htmlspecialchars($value ?? '');
 
-		return '<input ' . self::attributes2String($this->attributes) . ' />';
-	}
+        return '<input ' . self::attributes2String($this->attributes) . ' />';
+    }
 }

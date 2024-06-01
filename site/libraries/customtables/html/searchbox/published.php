@@ -15,31 +15,31 @@ defined('_JEXEC') or die();
 
 class Search_published extends BaseSearch
 {
-	function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
-	{
-		parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
-		BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-	}
+    function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
+    {
+        parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
+        BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+    }
 
-	function render($value): string
-	{
-		$result = '';
+    function render($value): string
+    {
+        $result = '';
 
-		$published = common::translate('COM_CUSTOMTABLES_PUBLISHED');
-		$unpublished = common::translate('COM_CUSTOMTABLES_UNPUBLISHED');
-		$any = $published . ' ' . common::translate('COM_CUSTOMTABLES_AND') . ' ' . $unpublished;
-		$translations = array($any, $published, common::translate('COM_CUSTOMTABLES_UNPUBLISHED'));
-		$this->getOnChangeAttributeString();
+        $published = common::translate('COM_CUSTOMTABLES_PUBLISHED');
+        $unpublished = common::translate('COM_CUSTOMTABLES_UNPUBLISHED');
+        $any = $published . ' ' . common::translate('COM_CUSTOMTABLES_AND') . ' ' . $unpublished;
+        $translations = array($any, $published, common::translate('COM_CUSTOMTABLES_UNPUBLISHED'));
+        //$this->getOnChangeAttributeString();
 
-		$result .= '<select'
-			. ' id="' . $this->objectName . '"'
-			. ' name="' . $this->objectName . '"'
-			. BaseInputBox::attributes2String($this->attributes) . '>'
-			. '<option value="" ' . ($value == '' ? 'SELECTED' : '') . '>' . $translations[0] . '</option>'
-			. '<option value="1" ' . ($value == '1' ? 'SELECTED' : '') . '>' . $translations[1] . '</option>'
-			. '<option value="0" ' . ($value == '0' ? 'SELECTED' : '') . '>' . $translations[2] . '</option>'
-			. '</select>';
+        $result .= '<select'
+            . ' id="' . $this->objectName . '"'
+            . ' name="' . $this->objectName . '"'
+            . BaseInputBox::attributes2String($this->attributes) . '>'
+            . '<option value="" ' . ($value == '' ? 'SELECTED' : '') . '>' . $translations[0] . '</option>'
+            . '<option value="1" ' . ($value == '1' ? 'SELECTED' : '') . '>' . $translations[1] . '</option>'
+            . '<option value="0" ' . ($value == '0' ? 'SELECTED' : '') . '>' . $translations[2] . '</option>'
+            . '</select>';
 
-		return $result;
-	}
+        return $result;
+    }
 }
