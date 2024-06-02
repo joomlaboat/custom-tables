@@ -49,13 +49,13 @@ class Save_image
             if (isset($_FILES[$this->field->comesfieldname]))
                 $fileId = $_FILES[$this->field->comesfieldname]['tmp_name'];
         }
-
         //Set the variable to "false" to do not delete existing image
         $deleteExistingImage = false;
 
         if ($fileId !== null and $fileId != '') {
             //Upload new image
             $value = $this->get_image_type_value($listing_id);
+
             //Set new image value
             $newValue = ['value' => $value];
             $deleteExistingImage = true;
@@ -92,6 +92,7 @@ class Save_image
                     $fileNameType);
             }
         }
+
         return $newValue;
     }
 

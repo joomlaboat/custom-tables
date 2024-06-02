@@ -152,9 +152,15 @@ class Edit
         $listing_id = $this->row[$this->ct->Table->realidfieldname] ?? 0;
 
         if ($addFormTag) {
+
+            if (defined('_JEXEC'))
+                $additionalParameter = '';
+            else
+                $additionalParameter = ' enctype="multipart/form-data"';
+
             $result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
                 . 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
-                . 'data-version=' . $this->ct->Env->version . '>';
+                . 'data-version=' . $this->ct->Env->version . $additionalParameter . '>';
         }
 
         if (defined('_JEXEC'))

@@ -7,7 +7,6 @@
     <name>Add/Edit Record</name>
     <description>CustomTables - Add/Edit Record</description>
 
-
     <fields
             name="params"
             addfieldpath="/components/com_customtables/fields"
@@ -17,8 +16,6 @@
                    description="Select Table"/>
             <field type="CTEditLayout" name="eseditlayout" default="" label="Edit Layout"
                    description="Select Edit Layout"/>
-
-
         </fieldset>
 
         <fieldset name="FILTERS">
@@ -67,7 +64,6 @@ In this case, there will be two checks: the first one will check if the record b
                 <option value="0">Only registered can add new records</option>
                 <option value="-1">Disable Add New records</option>
             </field>
-
 
             <field name="addusergroups" type="CTUserGroup" default="8" label="Who may add content"
                    description="Select a user group that may add the records."/>
