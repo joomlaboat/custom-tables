@@ -26,13 +26,6 @@ use CustomTables\SaveFieldQuerySet;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-$siteLibPath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-require_once($siteLibPath . 'layout.php');
-
-$libPath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR;
-require_once($libPath . 'valuetags.php');
-
-
 class CustomTablesModelEditItem extends BaseDatabaseModel
 {
     var CT $ct;
@@ -169,6 +162,10 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
     function load(CT $ct): bool
     {
         $this->ct = $ct;
+
+        if ($this->ct->Env->legacySupport)
+            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
+
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
 
         if ($this->ct->Table->tablename === null) {

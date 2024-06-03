@@ -11,8 +11,8 @@
 // no direct access
 defined('_JEXEC') or die();
 
-$types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
-require_once($types_path . '_type_file.php');
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+    . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php');
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
     . DIRECTORY_SEPARATOR . 'value.php');
@@ -23,7 +23,8 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
     . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'imagegallery.php');
 
-require_once($types_path . '_type_log.php');
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes'
+    . DIRECTORY_SEPARATOR . '_type_log2.php');
 
 defined('_JEXEC') or die();
 
@@ -33,6 +34,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\CTUser;
+use CustomTables\Value_file;
 use CustomTables\Value_image;
 use CustomTables\Value_imagegallery;
 
@@ -287,7 +289,9 @@ class tagProcessor_Value
                             $vlu = implode(',', $b);
                         } elseif ($fieldType == 'file') {
                             if (isset($pureValueOptionArr[1]) and $pureValueOptionArr[1] != '') {
-                                $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
+
+                                $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+                                    . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
                                 require_once($processor_file);
 
                                 $new_array = array();
@@ -297,7 +301,7 @@ class tagProcessor_Value
                                         $new_array[] = $pureValueOptionArr[$i];
                                 }
 
-                                $vlu = CT_FieldTypeTag_file::process($row[$field->realfieldname], $field, $new_array, $row[$ct->Table->realidfieldname], 0);
+                                $vlu = Value_file::process($row[$field->realfieldname], $field, $new_array, $row[$ct->Table->realidfieldname], 0);
                             } else
                                 $vlu = $row[$field->realfieldname];
                         } else {
@@ -475,11 +479,6 @@ class tagProcessor_Value
                             . $esinputbox->renderFieldBox($fieldRow, $row, $value_option_list, $onchange);
                         $vlu .= '</div>';
                     } else {
-                        //$fieldType = $fieldRow['type'];
-                        //$fieldname = $fieldRow['fieldname'];
-
-                        //$rowValue='';
-                        //tagProcessor_Value::doMultiValues($ct,$fieldRow,$row,$fieldType,$rowValue,$fieldname);
                         $vlu = $row[$fieldRow['realfieldname']];
                     }
 

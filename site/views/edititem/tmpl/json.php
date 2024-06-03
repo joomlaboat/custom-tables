@@ -19,23 +19,26 @@ use CustomTables\CTMiscHelper;
 use Joomla\CMS\Session\Session;
 
 if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading)
-	$response_object['page_title'] = common::translate($this->ct->Params->pageTitle);
+    $response_object['page_title'] = common::translate($this->ct->Params->pageTitle);
 
 if (ob_get_contents())
-	ob_end_clean();
+    ob_end_clean();
 
 //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 
 if (isset($this->row[$this->ct->Table->realidfieldname]))
-	$listing_id = (int)$this->row[$this->ct->Table->realidfieldname];
+    $listing_id = (int)$this->row[$this->ct->Table->realidfieldname];
 else
-	$listing_id = 0;
+    $listing_id = 0;
 
-require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
-$LayoutProc = new LayoutProcessor($this->ct, $this->pageLayout);
+if ($this->ct->Env->legacySupport) {
+    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
+    $LayoutProc = new LayoutProcessor($this->ct, $this->pageLayout);
 
-//Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
-$this->pageLayout = $LayoutProc->fillLayout($this->row, null, '||', false, true);
+    //Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
+    $this->pageLayout = $LayoutProc->fillLayout($this->row, null, '||', false, true);
+}
+
 
 $form_items = tagProcessor_Edit::process($this->ct, $this->pageLayout, $this->row, 'comes_');
 
@@ -44,8 +47,8 @@ $response_object = [];
 $encoded_returnto = common::makeReturnToURL($this->ct->Params->returnTo);
 
 if ($listing_id == 0) {
-	$publishstatus = $this->params->get('publishstatus');
-	$response_object['published'] = (int)$publishstatus;
+    $publishstatus = $this->params->get('publishstatus');
+    $response_object['published'] = (int)$publishstatus;
 }
 
 $response_object['form'] = $form_items;

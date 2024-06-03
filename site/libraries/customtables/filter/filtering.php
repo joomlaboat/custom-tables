@@ -86,7 +86,6 @@ class Filtering
         if ($parse) {
             //Parse using layout, has no effect to layout itself
             if ($this->ct->Env->legacySupport) {
-
                 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 
                 $LayoutProc = new LayoutProcessor($this->ct);
@@ -164,7 +163,6 @@ class Filtering
                         $value = trim($whr[1]);
 
                         if ($this->ct->Env->legacySupport) {
-
                             require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
                             $LayoutProc = new LayoutProcessor($this->ct);
                             $LayoutProc->layout = $value;

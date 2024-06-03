@@ -13,9 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use CT_FieldTypeTag_file;
 use ESFileUploader;
-use Joomla\CMS\Uri\Uri;
 
 class InputBox_file extends BaseInputBox
 {
@@ -26,9 +24,6 @@ class InputBox_file extends BaseInputBox
 
     function render(): string
     {
-        $file_type_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
-        require_once($file_type_file);
-
         if (!$this->ct->isRecordNull($this->row)) {
             $file = strval($this->row[$this->field->realfieldname]);
         } else
@@ -56,12 +51,20 @@ class InputBox_file extends BaseInputBox
         if ($fileSize == '')
             return '';
 
+        $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+            . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
+        require_once($processor_file);
+
+        $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+            . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'blob.php';
+        require_once($processor_file);
+
         $result = '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
 
-        $filename = CT_FieldTypeTag_file::getBlobFileName($field, $fileSize, $row, $fields);
+        $filename = Value_blob::getBlobFileName($field, $fileSize, $row, $fields);
 
-        $filename_Icon = CT_FieldTypeTag_file::process($filename, $field, ['', 'icon-filename-link', 48], $listing_id, false, $fileSize);
+        $filename_Icon = Value_file::process($filename, $field, ['', 'icon-filename-link', 48], $listing_id, false, $fileSize);
 
         $result .= $filename_Icon . '<br/><br/>';
 
@@ -126,6 +129,9 @@ class InputBox_file extends BaseInputBox
         else
             return false;
 
+        if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php'))
+            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
+
         $accepted_file_types = ESFileUploader::getAcceptedFileTypes($fileExtensions);
 
         if ($field->type == 'blob') {
@@ -148,7 +154,7 @@ class InputBox_file extends BaseInputBox
         $max_file_size = CTMiscHelper::file_upload_max_size($custom_max_size);
 
         $file_id = common::generateRandomString();
-        $urlstr = common::UriRoot(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
+        $URLString = common::UriRoot(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
             . '_fileid=' . $file_id
             . '&Itemid=' . $field->ct->Params->ItemId
             . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
@@ -167,7 +173,7 @@ class InputBox_file extends BaseInputBox
 
         $scriptParams = [
             $field->id,
-            '"' . $urlstr . '"',
+            '"' . $URLString . '"',
             $max_file_size,
             '"' . $accepted_file_types . '"',
             '"' . $formName . '"',

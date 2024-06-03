@@ -15,11 +15,9 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 use JPluginHelper;
 use stdClass;
-use tagProcessor_Value;
 
 class CTMiscHelper
 {
@@ -443,48 +441,6 @@ class CTMiscHelper
         return json_decode($rawParams);
     }
 
-    public static function processValue($field, &$ct, $row)
-    {
-        $p = strpos($field, '->');
-        if (!($p === false)) {
-            $field = substr($field, 0, $p);
-        }
-
-        //get options
-        $options = '';
-        $p = strpos($field, '(');
-
-        if ($p !== false) {
-            $e = strpos($field, '(', $p);
-            if ($e === false)
-                return 'syntax error';
-
-            $options = substr($field, $p + 1, $e - $p - 1);
-            $field = substr($field, 0, $p);
-        }
-
-        //getting filed row (we need field typeparams, to render formatted value)
-        if ($field == '_id' or $field == '_published') {
-            $htmlresult = $row[str_replace('_', '', $field)];
-        } else {
-            $fieldrow = Fields::FieldRowByName($field, $ct->Table->fields);
-            if (!is_null($fieldrow)) {
-
-                $options_list = explode(',', $options);
-
-                $v = tagProcessor_Value::getValueByType($ct,
-                    $fieldrow,
-                    $row,
-                    $options_list,
-                );
-
-                $htmlresult = $v;
-            } else {
-                $htmlresult = 'Field "' . $field . '" not found.';
-            }
-        }
-        return $htmlresult;
-    }
 
     /**
      * @throws Exception

@@ -16,9 +16,6 @@ use CustomTables\CT;
 
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
-$siteLib = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-require_once($siteLib . 'layout.php');
-
 class CustomTablesModelCatalog extends BaseDatabaseModel
 {
     var CT $ct;

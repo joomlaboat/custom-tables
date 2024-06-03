@@ -118,7 +118,6 @@ class Details
             if ($this->ct->Params->alias == '') {
                 //Parse using layout
                 if ($this->ct->Env->legacySupport) {
-
                     require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
                     $LayoutProc = new LayoutProcessor($this->ct);
                     $LayoutProc->layout = $filter;
@@ -295,7 +294,6 @@ class Details
         $layoutDetailsContent = $this->layoutDetailsContent;
 
         if ($this->ct->Env->legacySupport) {
-
             require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 
             $LayoutProc = new LayoutProcessor($this->ct);

@@ -37,11 +37,6 @@ class Save_file
     {
         $newValue = null;
 
-
-        //Under question
-        $file_type_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
-        require_once($file_type_file);
-
         $to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
 
         //Get new file
@@ -96,7 +91,6 @@ class Save_file
             $newValue = ['value' => null];//This way it will be clear if the value changed or not. If $this->newValue = null means that value not changed.
         }
 
-
         return $newValue;
     }
 
@@ -121,6 +115,8 @@ class Save_file
      */
     private function UploadSingleFile(?string $ExistingFile, string $file_id, string $FileFolder): ?string
     {
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
+
         if ($this->field->type == 'file')
             $fileExtensions = $this->field->params[2] ?? '';
         elseif ($this->field->type == 'blob')

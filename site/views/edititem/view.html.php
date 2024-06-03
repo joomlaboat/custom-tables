@@ -48,6 +48,8 @@ class CustomTablesViewEditItem extends HtmlView
         }
 
         if ($this->ct->Env->frmt == 'json')
+
+
             require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
         else {
 

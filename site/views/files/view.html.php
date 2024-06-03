@@ -11,7 +11,10 @@
 defined('_JEXEC') or die();
 
 jimport('joomla.application.component.view'); //Important to get menu parameters
-require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php');
+
+$processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+    . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
+require_once($processor_file);
 
 use CustomTables\common;
 use CustomTables\CT;
@@ -21,6 +24,7 @@ use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\FileUtils;
 use CustomTables\MySQLWhereClause;
+use CustomTables\Value_file;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
@@ -53,21 +57,21 @@ class CustomTablesViewFiles extends HtmlView
             return;
         }
 
-        $fieldrow = null;
+        $fieldRow = null;
         foreach ($this->ct->Table->fields as $f) {
             if ($f['id'] == $this->fieldid) {
-                $fieldrow = $f;
+                $fieldRow = $f;
                 break;
             }
         }
 
-        if (is_null($fieldrow)) {
+        if (is_null($fieldRow)) {
             $this->ct->errors[] = 'File View: Field not found.';
             return;
         }
 
         $this->row = $this->ct->Table->loadRecord($this->listing_id);
-        $this->field = new Field($this->ct, $fieldrow, $this->row);
+        $this->field = new Field($this->ct, $fieldRow, $this->row);
 
         if ($this->field->type == 'blob') {
 
@@ -87,7 +91,7 @@ class CustomTablesViewFiles extends HtmlView
         }
 
         $key = $this->key;
-        $test_key = CT_FieldTypeTag_file::makeTheKey($filepath, $this->security, $this->listing_id, $this->fieldid, $this->tableid);
+        $test_key = Value_file::makeTheKey($filepath, $this->security, $this->listing_id, $this->fieldid, $this->tableid);
 
         if ($key == $test_key) {
             if ($this->field->type == 'blob') {

@@ -17,6 +17,7 @@ use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
 use LayoutProcessor;
+use tagProcessor_Value;
 
 //use CustomTables\ProInputBoxTableJoin;
 
@@ -27,6 +28,51 @@ class Search_tablejoin extends BaseSearch
         parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
         BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
     }
+
+    /*
+    protected static function processValue($field, &$ct, $row)
+    {
+        $p = strpos($field, '->');
+        if (!($p === false)) {
+            $field = substr($field, 0, $p);
+        }
+
+        //get options
+        $options = '';
+        $p = strpos($field, '(');
+
+        if ($p !== false) {
+            $e = strpos($field, '(', $p);
+            if ($e === false)
+                return 'syntax error';
+
+            $options = substr($field, $p + 1, $e - $p - 1);
+            $field = substr($field, 0, $p);
+        }
+
+        //getting filed row (we need field typeparams, to render formatted value)
+        if ($field == '_id' or $field == '_published') {
+            $htmlresult = $row[str_replace('_', '', $field)];
+        } else {
+            $fieldrow = Fields::FieldRowByName($field, $ct->Table->fields);
+            if (!is_null($fieldrow)) {
+
+                $options_list = explode(',', $options);
+
+                $v = tagProcessor_Value::getValueByType($ct,
+                    $fieldrow,
+                    $row,
+                    $options_list,
+                );
+
+                $htmlresult = $v;
+            } else {
+                $htmlresult = 'Field "' . $field . '" not found.';
+            }
+        }
+        return $htmlresult;
+    }
+    */
 
     /**
      * @throws Exception
@@ -191,8 +237,10 @@ class Search_tablejoin extends BaseSearch
                 if ($twig->errorMessage !== null)
                     $ct->errors[] = $twig->errorMessage;
 
-            } else
-                $v = CTMiscHelper::processValue($field, $ct, $row);//TODO try to replace processValue function
+            } else {
+                $twig = new TwigProcessor($ct, '{{ ' . $field . ' }}');
+                $v = $twig->process($row);
+            }
 
             if ($dynamic_filter != '')
                 $d = $row[$ct->Env->field_prefix . $dynamic_filter];

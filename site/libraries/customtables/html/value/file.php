@@ -8,53 +8,19 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+namespace CustomTables;
+
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
-use CustomTables\CTMiscHelper;
-use CustomTables\CTUser;
-use CustomTables\Field;
-use CustomTables\Fields;
-use CustomTables\FileUtils;
+use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 
-if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php'))
-    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
-
-class CT_FieldTypeTag_file
+class Value_file extends BaseValue
 {
-
-    /**
-     * @throws Exception
-     * @since 3.3.4
-     */
-    static public function get_blob_value(CustomTables\Field $field): ?string
+    function __construct(CT &$ct, Field $field, $rowValue, array $option_list = [])
     {
-        $file_id = common::inputPostString($field->comesfieldname, '');
-
-        if ($file_id == '')
-            return null;
-
-        $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
-
-        if (!file_exists($uploadedFile))
-            return null;
-
-        $mime = mime_content_type($uploadedFile);
-
-        $parts = explode('.', $uploadedFile);
-        $fileExtension = end($parts);
-
-        if ($mime == 'application/zip' and $fileExtension != 'zip') {
-            //could be docx, xlsx, pptx
-            ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
-        }
-
-        $fileData = addslashes(common::getStringFromFile($uploadedFile));
-
-        unlink($uploadedFile);
-        return $fileData;
+        parent::__construct($ct, $field, $rowValue, $option_list);
     }
 
     /**
@@ -69,7 +35,7 @@ class CT_FieldTypeTag_file
         $params = ComponentHelper::getParams('com_customtables');
         $loadTwig = $params->get('loadTwig');
 
-        CustomTablesLoader(false, $include_html = true, null, 'com_customtables', $loadTwig);
+        CustomTablesLoader(false, true, null, 'com_customtables', $loadTwig);
 
         if (str_contains(end($segments), '.')) {
 
@@ -84,10 +50,7 @@ class CT_FieldTypeTag_file
                     $vars['view'] = 'files';
                     $vars['key'] = $segments[0];
 
-                    $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
-                    require_once($processor_file);
-
-                    CT_FieldTypeTag_file::process_file_link(end($segments));
+                    self::process_file_link(end($segments));
                     $vars["listing_id"] = common::inputGetInt("listing_id", 0);
                     $vars['fieldid'] = common::inputGetInt('fieldid', 0);
                     $vars['security'] = common::inputGetCmd('security', 0);//security level letter (d,e,f,g,h,i)
@@ -108,7 +71,7 @@ class CT_FieldTypeTag_file
         $parts = explode('.', $filename);
 
         if (count($parts) == 1)
-            CT_FieldTypeTag_file::wrong();
+            self::wrong();
 
         array_splice($parts, count($parts) - 1);
         $filename_without_ext = implode('.', $parts);
@@ -119,14 +82,14 @@ class CT_FieldTypeTag_file
         $key_parts = explode('c', $key);
 
         if (count($key_parts) == 1)
-            CT_FieldTypeTag_file::wrong();
+            self::wrong();
 
         common::inputSet('key', $key);
 
         $key_params = $key_parts[count($key_parts) - 1];
 
-        //TODO: improve it. Get $security from layout, somehow
-        //security letters tells what method used
+//TODO: improve it. Get $security from layout, somehow
+//security letters tells what method used
         $security = 'd';//Time Limited (8-24 minutes)
 
         if (str_contains($key_params, 'b')) $security = 'b';//Blob - Not limited
@@ -140,7 +103,7 @@ class CT_FieldTypeTag_file
 
         $key_params_a = explode($security, $key_params);
         if (count($key_params_a) != 2)
-            CT_FieldTypeTag_file::wrong();
+            self::wrong();
 
         $listing_id = $key_params_a[0];
         common::inputSet("listing_id", $listing_id);
@@ -166,35 +129,21 @@ class CT_FieldTypeTag_file
         return false;
     }
 
-
-    public static function getBlobFileName(Field $field, int $valueSize, array $row, array $fields)
+    /**
+     * @throws Exception
+     * @since 3.3.1
+     */
+    function render(): ?string
     {
-        $filename = '';
-        if (isset($field->params[2]) and $field->params[2] != '') {
-            $fileNameField_String = $field->params[2];
-            $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $fields);
-            $fileNameField = $fileNameField_Row['realfieldname'];
-            $filename = $row[$fileNameField];
-        }
+        if (defined('WPINC'))
+            return 'CustomTables for WordPress: "file" field type is not available yet.';
 
-        if ($filename == '') {
+        $listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname] ?? null;
 
-            $file_extension = 'bin';
-            $content = stripslashes($row[$field->realfieldname . '_sample']);
-            $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
-            $mime_file_extension = CTMiscHelper::mime2ext($mime);
-            if ($mime_file_extension !== null)
-                $file_extension = $mime_file_extension;
-
-            if ($valueSize == 0)
-                $filename = '';
-            else
-                $filename = 'blob-' . strtolower(str_replace(' ', '', CTMiscHelper::formatSizeUnits($valueSize))) . '.' . $file_extension;
-        }
-        return $filename;
+        return self::process($this->rowValue, $this->field, $this->option_list, $listing_id);
     }
 
-    public static function process($filename, CustomTables\Field $field, $option_list, $record_id, $filename_only = false, int $file_size = 0)
+    public static function process($filename, Field $field, $option_list, $record_id, $filename_only = false, int $file_size = 0)
     {
         if ($filename == '')
             return '';
@@ -236,10 +185,10 @@ class CT_FieldTypeTag_file
             $filepath = null;
         } else {
             if ($how_to_process != '') {
-                $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+                $filepath = self::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
             } elseif ($field->type == 'blob') {
                 $how_to_process = 'blob';//Not secure but BLOB
-                $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+                $filepath = self::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
             } else {
 
                 //Add host name and path to the link
@@ -314,12 +263,12 @@ class CT_FieldTypeTag_file
         }
     }
 
-    static protected function get_private_file_path(string $rowValue, string $how_to_process, string $filepath, string $recId, int $fieldid, int $tableid, bool $filename_only = false): string
+    protected static function get_private_file_path(string $rowValue, string $how_to_process, string $filepath, string $recId, int $fieldid, int $tableid, bool $filename_only = false): string
     {
-        $security = CT_FieldTypeTag_file::get_security_letter($how_to_process);
+        $security = self::get_security_letter($how_to_process);
 
         //make the key
-        $key = CT_FieldTypeTag_file::makeTheKey($filepath, $security, $recId, $fieldid, $tableid);
+        $key = self::makeTheKey($filepath, $security, $recId, $fieldid, $tableid);
 
         $currentURL = common::curPageURL();
         $currentURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'returnto');
@@ -408,6 +357,6 @@ class CT_FieldTypeTag_file
         $m3 = substr($m, 0, strlen($m) - strlen($m2));
         return $m3 . $m2;
     }
-
-
 }
+
+
