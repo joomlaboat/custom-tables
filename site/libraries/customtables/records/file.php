@@ -55,9 +55,25 @@ class Save_file
                 $fileId = $_FILES[$this->field->comesfieldname]['tmp_name'];
         }
         //Set the variable to "false" to do not delete existing file
-        $deleteExistingFile = false;
-
         $FileFolder = FileUtils::getOrCreateDirectoryPath($this->field->params[1]);
+
+        if (($fileId !== null and $fileId != '') or $to_delete == 'true') {
+
+            $ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
+
+            $filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
+            if (substr($filepath, 0, 1) == DIRECTORY_SEPARATOR)
+                $filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $filepath);
+            else
+                $filepath = CUSTOMTABLES_ABSPATH . $filepath;
+
+            if ($ExistingFile != '' and !self::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $this->field)) {
+                $filename_full = $filepath . DIRECTORY_SEPARATOR . $ExistingFile;
+
+                if (file_exists($filename_full))
+                    unlink($filename_full);
+            }
+        }
 
         if ($fileId !== null and $fileId != '') {
             //Upload new file
@@ -76,30 +92,27 @@ class Save_file
             if ($value)
                 $newValue = ['value' => $value];
 
-            $deleteExistingFile = true;
         } elseif ($to_delete == 'true') {
             $newValue = ['value' => null];//This way it will be clear if the value changed or not. If $this->newValue = null means that value not changed.
-            $deleteExistingFile = true;
         }
 
-        if ($deleteExistingFile) {
 
-            $ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
-
-            $filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
-            if (substr($filepath, 0, 1) == DIRECTORY_SEPARATOR)
-                $filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $filepath);
-            else
-                $filepath = CUSTOMTABLES_ABSPATH . $filepath;
-
-            if ($ExistingFile != '' and !self::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $this->field)) {
-                $filename_full = $filepath . DIRECTORY_SEPARATOR . $ExistingFile;
-
-                if (file_exists($filename_full))
-                    unlink($filename_full);
-            }
-        }
         return $newValue;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    private function checkIfTheFileBelongsToAnotherRecord(string $filename): bool
+    {
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition($this->field->realfieldname, $filename);
+        $col = database::loadColumn($this->field->ct->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, 2);
+        if (count($col) == 0)
+            return false;
+
+        return $col[0] > 1;
     }
 
     /**
@@ -116,10 +129,22 @@ class Save_file
             return null;
 
         if ($file_id != '') {
-            if (empty($this->field->params[3]))
-                $new_filename_temp = $file_id;
-            else
-                $new_filename_temp = $this->field->params[3];
+            if (empty($this->field->params[3])) {
+
+                //Joomla version the File Uploader adds random value to the filename to make sure it's a unique file name in tmp folder.
+                $parts = explode('_', $file_id);
+                if (count($parts) > 3 and $parts[0] == 'ct') {
+                    //Example:
+                    //ct_1717446480_j586scaH994mTWz58cbFMX6RWUu25aJn0tbBI_doc1.pdf
+                    //Here we remove the temporary random values
+                    unset($parts[2]);
+                    unset($parts[1]);
+                    unset($parts[0]);
+                    $desiredFileName = implode('_', $parts);
+                } else
+                    $desiredFileName = $file_id;
+            } else
+                $desiredFileName = $this->field->params[3];
 
             $accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileExtensions));
             $accepted_filetypes = array();
@@ -152,6 +177,7 @@ class Save_file
                 //Delete Old File
                 $filename_full = $FileFolder . DIRECTORY_SEPARATOR . $ExistingFile;
 
+
                 if (file_exists($filename_full))
                     unlink($filename_full);
             }
@@ -169,12 +195,13 @@ class Save_file
             }
 
             if (in_array($mime, $accepted_filetypes)) {
-                $new_filename = self::getCleanAndAvailableFileName($new_filename_temp, $FileFolder);
+                $new_filename = self::getCleanAndAvailableFileName($desiredFileName, $FileFolder);
                 $new_filename_path = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder . DIRECTORY_SEPARATOR . $new_filename);
 
                 if (@copy($uploadedFile, $new_filename_path)) {
                     unlink($uploadedFile);
                     //Copied
+
                     return $new_filename;
                 } else {
                     unlink($uploadedFile);
@@ -187,21 +214,6 @@ class Save_file
             }
         }
         return null;
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.3.4
-     */
-    private function checkIfTheFileBelongsToAnotherRecord(string $filename): bool
-    {
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition($this->field->realfieldname, $filename);
-        $col = database::loadColumn($this->field->ct->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, 2);
-        if (count($col) == 0)
-            return false;
-
-        return $col[0] > 1;
     }
 
     protected static function getCleanAndAvailableFileName(string $desiredFileName, string $FileFolder): string
