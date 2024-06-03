@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fieldtypes>
 
+    <!-- WordPress Ready -->
     <type ct_name="alias" name="alias" label="Alias (For SEO Links)"
           description="Alias field that can be used instead of listing_id for SEO purpose." ct_alias="alias"
           disabled="false" ct_special="false" priority="1" wordpress="true" order="7">
     </type>
 
+    <!-- Not used in WordPress version -->
     <type ct_name="article" label="Article" description="Select Article box." priority="3">
         <params>
             <param type="int" name="categoryid" label="Category ID"
@@ -169,6 +171,7 @@
         </editparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="checkbox" label="Checkbox (YES/NO)"
           description="Provides a single checkbox to be checked or unchecked" priority="1"
           image="https://joomlaboat.com/images/components/ct/field-types/checkbox.png" wordpress="true" order="4">
@@ -259,6 +262,7 @@
         </params>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="date" label="Date" description="Date ot Date/Time Picker" priority="1" wordpress="true" order="8">
         <params>
             <param name="type" example="date" label="Type" description="Date or Date / Time"
@@ -291,6 +295,7 @@
         </editparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="email" label="Email" description="Provides an email field." priority="1" order="5" wordpress="true">
         <editparams name="email" label="Input Element Parameters" description="">
             <params>
@@ -302,8 +307,10 @@
         </editparams>
     </type>
 
+    <!-- WordPress In Progress -->
     <type ct_name="file" label="File" description="Provides File Upload functionality." priority="2"
-          helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types" proversion="1">
+          helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types" proversion="1" wordpress="true"
+          order="11">
         <params>
             <param name="size" label="Max File Size" example="8"
                    description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything."
@@ -510,6 +517,7 @@
         </valueparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="float" name="float" label="Float (Decimal) Number" description="Provides a decimal number inputbox."
           ct_alias="float" disabled="false" ct_special="false" priority="1" wordpress="true" order="3">
         <params>
@@ -602,8 +610,9 @@
         </valueparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="image" label="Image File" description="Provides Image Upload functionality." priority="2"
-          proversion="1" wordpress="true">
+          proversion="1" wordpress="true" order="10">
         <params>
             <param name="sizes" label="Image Size Options" example="id,100,100,,jpg"
                    description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided."
@@ -744,6 +753,7 @@
         </valueparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="int" name="int" label="Integer Number" description="Provides an integer number inputbox."
           ct_alias="int" disabled="false" ct_special="false" priority="1" wordpress="true" order="2">
         <editparams name="int" label="Input Element Parameters" description="">
@@ -927,8 +937,9 @@
         </params>
     </type>-->
 
+    <!-- WordPress Ready -->
     <type ct_name="radio" label="Radio" description="Radio Buttons" depricated="1" priority="3" proversion="1"
-          repetitive="1" wordpress="true" order="8"><!-- pro -->
+          repetitive="1" wordpress="true" order="9"><!-- pro -->
         <params>
             <param name="params" label="Parameters" description="" default="" type="string"/>
         </params>
@@ -1353,6 +1364,7 @@
         </editparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="string" name="string" label="Text String (Single Line)"
           description="Provides a text box for data entry." ct_alias="string"
           disabled="false" ct_special="false" priority="1" wordpress="true" order="1">
@@ -1434,10 +1446,12 @@
         </editparams>
     </type>
 
+    <!-- Not used in WordPress version -->
     <type ct_name="dummy" label="Translation"
           description="Use field name to add translations of some terms in your layout. This doesn't store anything in the Data Base."
           priority="3"/>
 
+    <!-- WordPress Ready -->
     <type ct_name="url" label="URL / Link"
           description="URL / Link to some website. Must start with http:// or https:// " priority="1" wordpress="true"
           order="6">

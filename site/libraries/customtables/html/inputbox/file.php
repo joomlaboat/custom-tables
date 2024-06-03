@@ -84,12 +84,12 @@ class InputBox_file extends BaseInputBox
             return '<p style="background-color:red;color:white;">Folder not selected</p>';
 
         if ($field->type == 'filelink') {
-            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
+            $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0]);
         } else {
             if (count($field->params) < 2)
                 return '<p style="background-color:red;color:white;">Folder not selected</p>';
 
-            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1]);
+            $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[1]);
         }
 
         if ($FileFolder !== '' and $FileFolder[0] == '/')
