@@ -135,9 +135,6 @@ class Value_file extends BaseValue
      */
     function render(): ?string
     {
-        if (defined('WPINC'))
-            return 'CustomTables for WordPress: "file" field type is not available yet.';
-
         $listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname] ?? null;
 
         return self::process($this->rowValue, $this->field, $this->option_list, $listing_id);
