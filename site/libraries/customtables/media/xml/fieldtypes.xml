@@ -57,20 +57,26 @@
         </valueparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="blob" label="Blob (Save file into the database)"
-          description="A BLOB is a binary large object that can hold an entire file." priority="2" proversion="1">
+          description="A BLOB is a binary large object that can hold an entire file." priority="2" proversion="1"
+          wordpress="true" order="12">
         <params>
             <param name="type" label="Maximum length" example="medium" description="Maximum length of value to be held"
                    default="" type="list">
                 <option value="tiny"
                         label="255 Bytes (TINYBLOB)"
-                        description="A binary large object column with a maximum length of 255 (2^8 - 1) bytes. Each TINYBLOB value is stored using a one-byte length prefix that indicates the number of bytes in the value."/>
+                        description="A binary large object column with a maximum length of 255 (2^8 - 1) bytes. Each TINYBLOB value is stored using a one-byte length prefix that indicates the number of bytes in the value."
+                        wordpress="true"/>
                 <option value="" label="64KB (BLOB)"
-                        description="A binary large object column with a maximum length of 65535 (2^16 - 1) bytes, or 64KB in storage. Each BLOB value is stored using a two-byte length prefix that indicates the number of bytes in the value."/>
+                        description="A binary large object column with a maximum length of 65535 (2^16 - 1) bytes, or 64KB in storage. Each BLOB value is stored using a two-byte length prefix that indicates the number of bytes in the value."
+                        wordpress="true"/>
                 <option value="medium" label="16MB (MEDIUMBLOB)"
-                        description="A binary large object column with a maximum length of 16777215 (2^24 - 1) bytes, or 16MB in storage. Each MEDIUMBLOB value is stored using a three-byte length prefix that indicates the number of bytes in the value."/>
+                        description="A binary large object column with a maximum length of 16777215 (2^24 - 1) bytes, or 16MB in storage. Each MEDIUMBLOB value is stored using a three-byte length prefix that indicates the number of bytes in the value."
+                        wordpress="true"/>
                 <option value="long" label="4GB (LONGBLOB)"
-                        description="A binary large object column with a maximum length of 4294967295 (2^32 - 1) bytes, or 4GB in storage. Each LONGBLOB value is stored using a four-byte length prefix that indicates the number of bytes in the value."/>
+                        description="A binary large object column with a maximum length of 4294967295 (2^32 - 1) bytes, or 4GB in storage. Each LONGBLOB value is stored using a four-byte length prefix that indicates the number of bytes in the value."
+                        wordpress="true"/>
             </param>
 
             <param name="filetypes" label="File Types" example="doc docx"
@@ -81,7 +87,7 @@
                    type="field"/>
             <param type="string" name="customphp" label="Custom PHP"
                    description="PHP file/function that will process file content before being downloaded by the user. File must be located at /components/com_customtables/customphp."
-                   proversion="1"/>
+                   proversion="1" wordpress="false"/>
         </params>
 
         <editparams name="file" label="Input Element Parameters" description="">
@@ -97,41 +103,44 @@
             <params>
                 <param name="private" label="Security" example="timelimited"
                        description="Encrypts the link to the file and limits access time to it." default="" type="list">
-                    <option value="" label="Public. Direct link to the file."/>
-                    <option value="timelimited" label="Time Limited (8-24 minutes)" code="d"/>
-                    <option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e"/>
-                    <option value="hostlimited" label="Time/Host Limited (8-24 minutes)" code="f"/>
-                    <option value="hostlimited_longterm" label="Time/Host Limited (1.5 - 4 hours)" code="g"/>
-                    <option value="private" label="Time/Host/User Limited (8-24 minutes)" code="h"/>
-                    <option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i"/>
+                    <option value="" label="Public. Direct link to the file." wordpress="true"/>
+                    <option value="timelimited" label="Time Limited (8-24 minutes)" code="d" wordpress="true"/>
+                    <option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e"
+                            wordpress="true"/>
+                    <option value="hostlimited" label="Time/Host Limited (8-24 minutes)" code="f" wordpress="true"/>
+                    <option value="hostlimited_longterm" label="Time/Host Limited (1.5 - 4 hours)" code="g"
+                            wordpress="true"/>
+                    <option value="private" label="Time/Host/User Limited (8-24 minutes)" code="h" wordpress="true"/>
+                    <option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i"
+                            wordpress="true"/>
                 </param>
 
                 <param name="format" label="Link" example="filename-link" description="How to render the link"
                        default="icon-filename-link" type="list">
-                    <option value="icon-filename-link" label="Clickable Icon and File Name"/>
-                    <option value="icon-link" label="Clickable Icon"/>
-                    <option value="filename-link" label="Clickable File Name"/>
-                    <option value="link-anchor" label="Clickable Link"/>
-                    <option value="icon" label="Icon (IMG tag)"/>
-                    <option value="" label="Link Only"/>
-                    <option value="filename" label="File Name"/>
-                    <option value="link-to-icon" label="Link to Icon file"/>
-                    <option value="extension" label="Extension"/>
-                    <option value="file-size" label="File Size"/>
+                    <option value="icon-filename-link" label="Clickable Icon and File Name" wordpress="true"/>
+                    <option value="icon-link" label="Clickable Icon" wordpress="true"/>
+                    <option value="filename-link" label="Clickable File Name" wordpress="true"/>
+                    <option value="link-anchor" label="Clickable Link" wordpress="true"/>
+                    <option value="icon" label="Icon (IMG tag)" wordpress="true"/>
+                    <option value="" label="Link Only" wordpress="true"/>
+                    <option value="filename" label="File Name" wordpress="true"/>
+                    <option value="link-to-icon" label="Link to Icon file" wordpress="true"/>
+                    <option value="extension" label="Extension" wordpress="true"/>
+                    <option value="file-size" label="File Size" wordpress="true"/>
                 </param>
 
                 <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"
                        type="list">
-                    <option value="16" label="16px X 16px Icon"/>
-                    <option value="32" label="32px X 32px Icon"/>
-                    <option value="48" label="48px X 48px Icon"/>
+                    <option value="16" label="16px X 16px Icon" wordpress="true"/>
+                    <option value="32" label="32px X 32px Icon" wordpress="true"/>
+                    <option value="48" label="48px X 48px Icon" wordpress="true"/>
                 </param>
 
                 <param name="target" label="Target Window" example="parent"
                        description="Target browser window when opening the link" default="" type="list">
-                    <option value="" label="Parent"/>
-                    <option value="_blank" label="New Window With Navigation"/>
-                    <option value="savefile" label="Open Save File As Dialog Window"/>
+                    <option value="" label="Parent" wordpress="true"/>
+                    <option value="_blank" label="New Window With Navigation" wordpress="true"/>
+                    <option value="savefile" label="Open Save File As Dialog Window" wordpress="true"/>
                 </param>
 
             </params>
@@ -307,7 +316,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress In Progress -->
+    <!-- WordPress Ready -->
     <type ct_name="file" label="File" description="Provides File Upload functionality." priority="2"
           helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types" proversion="1" wordpress="true"
           order="11">

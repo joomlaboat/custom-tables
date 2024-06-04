@@ -44,7 +44,9 @@ class CustomTablesRouter implements RouterInterface
             . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
         require_once($processor_file);
 
-        if (Value_file::CheckIfFile2download($segments, $vars)) {
+        $fileOutput = new Value_file();
+        
+        if ($fileOutput->CheckIfFile2download($segments, $vars)) {
             //rerouted
             $vars['option'] = 'com_customtables';
             $segments[0] = null;

@@ -24,7 +24,7 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' 
     . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'imagegallery.php');
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes'
-    . DIRECTORY_SEPARATOR . '_type_log2.php');
+    . DIRECTORY_SEPARATOR . '_type_log.php');
 
 defined('_JEXEC') or die();
 

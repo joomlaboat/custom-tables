@@ -14,20 +14,35 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Exception;
+use finfo;
 use Joomla\CMS\Component\ComponentHelper;
+
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+    . DIRECTORY_SEPARATOR . 'value.php');
 
 class Value_file extends BaseValue
 {
-    function __construct(CT &$ct, Field $field, $rowValue, array $option_list = [])
+    var CT $ct;
+
+    var ?array $row;
+    var string $key;
+    var string $security;
+    var string $listing_id;
+    var int $tableid;
+    var int $fieldid;
+    var Field $field;
+
+    function __construct(?CT &$ct = null, ?Field $field = null, $rowValue = null, array $option_list = [])
     {
-        parent::__construct($ct, $field, $rowValue, $option_list);
+        if ($ct !== null and $field !== null)
+            parent::__construct($ct, $field, $rowValue, $option_list);
     }
 
     /**
      * @throws Exception
      * @since 3.3.4
      */
-    public static function CheckIfFile2download(&$segments, &$vars): bool
+    public function CheckIfFile2download(&$segments, &$vars): bool
     {
         $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
         require_once($path . 'loader.php');
@@ -50,7 +65,7 @@ class Value_file extends BaseValue
                     $vars['view'] = 'files';
                     $vars['key'] = $segments[0];
 
-                    self::process_file_link(end($segments));
+                    $this->process_file_link(end($segments));
                     $vars["listing_id"] = common::inputGetInt("listing_id", 0);
                     $vars['fieldid'] = common::inputGetInt('fieldid', 0);
                     $vars['security'] = common::inputGetCmd('security', 0);//security level letter (d,e,f,g,h,i)
@@ -66,25 +81,27 @@ class Value_file extends BaseValue
      * @throws Exception
      * @since 3.3.4
      */
-    public static function process_file_link($filename): void
+    public function process_file_link(string $filename): void
     {
         $parts = explode('.', $filename);
 
-        if (count($parts) == 1)
+        if (count($parts) < 2) {
             self::wrong();
+            return;
+        }
 
         array_splice($parts, count($parts) - 1);
         $filename_without_ext = implode('.', $parts);
 
         $parts2 = explode('_', $filename_without_ext);
-        $key = $parts2[count($parts2) - 1];
+        $this->key = $parts2[count($parts2) - 1];
 
-        $key_parts = explode('c', $key);
+        $key_parts = explode('c', $this->key);
 
-        if (count($key_parts) == 1)
+        if (count($key_parts) == 1) {
             self::wrong();
-
-        common::inputSet('key', $key);
+            return;
+        }
 
         $key_params = $key_parts[count($key_parts) - 1];
 
@@ -99,24 +116,21 @@ class Value_file extends BaseValue
         elseif (str_contains($key_params, 'h')) $security = 'h';//Time/Host/User Limited (8-24 minutes)
         elseif (str_contains($key_params, 'i')) $security = 'i';//Time/Host/User Limited (1.5 - 4 hours)
 
-        common::inputSet('security', $security);
+        $this->security = $security;
 
         $key_params_a = explode($security, $key_params);
-        if (count($key_params_a) != 2)
+        if (count($key_params_a) != 3) {
             self::wrong();
-
-        $listing_id = $key_params_a[0];
-        common::inputSet("listing_id", $listing_id);
-
-        if (isset($key_params_a[1])) {
-            $fieldid = $key_params_a[1];
-            common::inputSet('fieldid', $fieldid);
+            return;
         }
 
-        if (isset($key_params_a[2])) {
-            $tableid = $key_params_a[2];
-            common::inputSet('tableid', $tableid);
-        }
+        $this->listing_id = $key_params_a[0];
+
+        if (isset($key_params_a[1]))
+            $this->fieldid = $key_params_a[1];
+
+        if (isset($key_params_a[2]))
+            $this->tableid = $key_params_a[2];
     }
 
     /**
@@ -155,10 +169,9 @@ class Value_file extends BaseValue
 
             $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[1] ?? '');
             $filepath = $FileFolder . DIRECTORY_SEPARATOR . $filename;
-            if ($filepath[0] == DIRECTORY_SEPARATOR)
-                $filepath = substr($filepath, 1, strlen($filepath) - 1);
+            $filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $filepath);
 
-            $full_filepath = CUSTOMTABLES_ABSPATH . $filepath;
+            $full_filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $filepath);
             if (file_exists($full_filepath))
                 $file_size = filesize($full_filepath);
         }
@@ -189,34 +202,36 @@ class Value_file extends BaseValue
         $how_to_process = $option_list[0] ?? '';
 
         if ($record_id === null) {
-            $filepath = null;
+            $fileWebPath = null;
         } else {
             if ($how_to_process != '') {
-                $filepath = self::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+                $fileWebPath = self::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
             } elseif ($field->type == 'blob') {
                 $how_to_process = 'blob';//Not secure but BLOB
-                $filepath = self::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+                $fileWebPath = self::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
             } else {
 
                 //Add host name and path to the link
                 if ($filepath !== '' and $filepath[0] == '/')
-                    $filepath = substr($filepath, 1);
+                    $fileWebPath = substr($filepath, 1);
+                else
+                    $fileWebPath = $filepath;
 
                 $Uri_root = common::UriRoot();
-                if ($Uri_root != '' and $Uri_root != '/')
-                    $filepath = $Uri_root . '/' . $filepath;
+                if ($Uri_root != '' and $Uri_root[strlen($Uri_root) - 1] != '/' and $fileWebPath[0] != '/')
+                    $fileWebPath = $Uri_root . '/' . $fileWebPath;
                 else
-                    $filepath = $Uri_root . $filepath;
+                    $fileWebPath = $Uri_root . $fileWebPath;
             }
 
             if (isset($option_list[3])) {
                 if ($option_list[3] == 'savefile') {
-                    if (!str_contains($filepath, '?'))
-                        $filepath .= '?';
+                    if (!str_contains($fileWebPath, '?'))
+                        $fileWebPath .= '?';
                     else
-                        $filepath .= '&';
+                        $fileWebPath .= '&';
 
-                    $filepath .= 'savefile=1'; //Will add HTTP Header: @header("Content-Disposition: attachment; filename=\"".$filename."\"");
+                    $fileWebPath .= 'savefile=1'; //Will add HTTP Header: @header("Content-Disposition: attachment; filename=\"".$filename."\"");
                 }
             }
         }
@@ -234,25 +249,25 @@ class Value_file extends BaseValue
             case '':
             case 'link':
                 //Link Only
-                return $filepath;
+                return $fileWebPath;
 
             case 'icon-filename-link':
                 //Clickable Icon and File Name
-                return '<a href="' . $filepath . '"' . $target . '>'
+                return '<a href="' . $fileWebPath . '"' . $target . '>'
                     . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '')
                     . '<span>' . $filename . '</span></a>';
 
             case 'icon-link':
                 //Clickable Icon
-                return '<a href="' . $filepath . '"' . $target . '>' . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : $filename) . '</a>';//show file name if icon not available
+                return '<a href="' . $fileWebPath . '"' . $target . '>' . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : $filename) . '</a>';//show file name if icon not available
 
             case 'filename-link':
                 //Clickable File Name
-                return '<a href="' . $filepath . '"' . $target . '>' . $filename . '</a>';
+                return '<a href="' . $fileWebPath . '"' . $target . '>' . $filename . '</a>';
 
             case 'link-anchor':
                 //Clickable Link
-                return '<a href="' . $filepath . '"' . $target . '>' . $filepath . '</a>';
+                return '<a href="' . $fileWebPath . '"' . $target . '>' . $fileWebPath . '</a>';
 
             case 'icon':
                 return ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '');//show nothing is icon not available
@@ -270,21 +285,16 @@ class Value_file extends BaseValue
                 return CTMiscHelper::formatSizeUnits($file_size);
 
             default:
-                return $filepath;
+                return $fileWebPath;
         }
     }
 
-    protected static function get_private_file_path(string $rowValue, string $how_to_process, string $filepath, string $recId, int $fieldid, int $tableid, bool $filename_only = false): string
+    protected static function get_private_file_path(string $rowValue, string $how_to_process, string $filepath, string $listing_id, int $fieldid, int $tableid, bool $filename_only = false): ?string
     {
         $security = self::get_security_letter($how_to_process);
 
         //make the key
-        $key = self::makeTheKey($filepath, $security, $recId, $fieldid, $tableid);
-
-        $currentURL = CUSTOMTABLES_MEDIA_HOME_URL . 'index.php?option=com_customtables';
-
-        //$currentURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'returnto');
-        //$currentURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'file');
+        $key = self::makeTheKey($filepath, $security, $listing_id, $fieldid, $tableid);
 
         //prepare new file name that includes the key
         $fna = explode('.', $rowValue);
@@ -294,21 +304,12 @@ class Value_file extends BaseValue
         $filepath = $filename . '_' . $key . '.' . $filetype;
 
         if (!$filename_only) {
-
-            $filepath = CUSTOMTABLES_MEDIA_HOME_URL . '/index.php?option=com_customtables&file=' . $filepath;
-            /*
-            if (str_contains($currentURL, '?')) {
-                $filepath = $currentURL . '&file=' . $filepath;
-            } else {
-                if ($currentURL[strlen($currentURL) - 1] != '/')
-                    $filepath = $currentURL . '/' . $filepath;
-                else
-                    $filepath = $currentURL . $filepath;
-            }
-            */
+            if (defined('_JEXEC'))
+                return CUSTOMTABLES_MEDIA_HOME_URL . '/index.php?option=com_customtables&file=' . $filepath;
+            elseif (defined('WPINC'))
+                return CUSTOMTABLES_MEDIA_HOME_URL . '/index.php?customtables=1&file=' . $filepath;
         }
-
-        return $filepath;
+        return null;
     }
 
     static protected function get_security_letter(string $how_to_process): string
@@ -341,7 +342,7 @@ class Value_file extends BaseValue
         }
     }
 
-    public static function makeTheKey(string $filepath, string $security, string $recId, string $fieldid, string $tableid): string
+    protected static function makeTheKey(string $filepath, string $security, string $recId, string $fieldid, string $tableid): string
     {
         $user = new CTUser();
         $username = $user->username;
@@ -374,6 +375,229 @@ class Value_file extends BaseValue
         $m3 = substr($m, 0, strlen($m) - strlen($m2));
         return $m3 . $m2;
     }
+
+    //Display the file
+
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    public function display()
+    {
+        $this->ct = new CT;
+
+        $this->ct->getTable($this->tableid);
+        if ($this->ct->Table->tablename === null) {
+            $this->ct->errors[] = 'Table not selected (79).';
+            return;
+        }
+
+        $fieldRow = null;
+        foreach ($this->ct->Table->fields as $f) {
+            if ($f['id'] == $this->fieldid) {
+                $fieldRow = $f;
+                break;
+            }
+        }
+
+        if (is_null($fieldRow)) {
+            $this->ct->errors[] = 'File View: Field not found.';
+            return;
+        }
+
+        $this->row = $this->ct->Table->loadRecord($this->listing_id);
+        $this->field = new Field($this->ct, $fieldRow, $this->row);
+
+        if ($this->field->type == 'blob') {
+
+            if (isset($this->field->params[2])) {
+                $fileNameField_String = $this->field->params[2];
+                $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $this->ct->Table->fields);
+                $fileNameField = $fileNameField_Row['realfieldname'];
+                $filepath = $this->row[$fileNameField];
+            } else {
+                $filepath = 'blob-' . strtolower(str_replace(' ', '', CTMiscHelper::formatSizeUnits((int)$this->row[$this->field->realfieldname]))) . '.bin';
+            }
+
+        } else {
+            $filepath = $this->getFilePath();
+
+            if ($filepath == '') {
+                $this->ct->errors[] = 'File path not set.';
+                return;
+            }
+        }
+
+        $test_key = self::makeTheKey($filepath, $this->security, $this->listing_id, $this->fieldid, $this->tableid);
+
+        if ($this->key == $test_key) {
+            if ($this->field->type == 'blob') {
+                if (isset($this->field->params[2]))
+                    $this->render_blob_output($filepath);
+                else
+                    $this->render_blob_output('');
+            } else
+                $this->render_file_output($filepath);
+        } else {
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED');
+        }
+
+    }
+
+    protected function getFilePath(): string
+    {
+        if (!isset($this->row[$this->field->realfieldname]))
+            $this->ct->errors[] = 'Real field name not set';
+
+        $rowValue = $this->row[$this->field->realfieldname];
+
+        if ($this->field->type == 'filelink')
+            return FileUtils::getOrCreateDirectoryPath($this->field->params[0]) . '/' . $rowValue;
+        else
+            return FileUtils::getOrCreateDirectoryPath($this->field->params[1]) . '/' . $rowValue;
+
+
+        /*
+                $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[1] ?? '');
+                $filepath = $FileFolder . DIRECTORY_SEPARATOR . $filename;
+                if ($filepath[0] == DIRECTORY_SEPARATOR)
+                    $filepath = substr($filepath, 1, strlen($filepath) - 1);
+
+                $full_filepath = CUSTOMTABLES_ABSPATH . $filepath;
+                if (file_exists($full_filepath))
+                    $file_size = filesize($full_filepath);
+                */
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    function render_blob_output($filename)
+    {
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
+
+        $rows = database::loadAssocList($this->ct->Table->realtablename, [$this->field->realfieldname], $whereClause, null, null, 1);
+
+        if (count($rows) < 1) {
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND');
+            return;
+        }
+
+        $content = stripslashes($rows[0][$this->field->realfieldname]);
+        $content = $this->ProcessContentWithCustomPHP($content, $this->row);
+
+        if (ob_get_contents()) ob_end_clean();
+
+        $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
+
+        if ($filename == '') {
+            $file_extension = CTMiscHelper::mime2ext($mime);
+            $filename = 'blob.' . $file_extension;
+        }
+
+        @header('Content-Type: ' . $mime);
+        @header("Pragma: public");
+        @header("Expires: 0");
+        @header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        @header("Cache-Control: public");
+        @header("Content-Description: File Transfer");
+        @header("Content-Transfer-Encoding: binary");
+        @header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
+
+        echo $content;
+
+        die;//clean exit
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.9
+     */
+    function ProcessContentWithCustomPHP($content, $row)
+    {
+        if (!empty($this->field->params[4] != '')) {
+
+            $customPHPFile = $this->field->params[4];
+
+            if (defined('_JEXEC')) {
+
+                $serverTagProcessorFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR
+                    . 'customtables' . DIRECTORY_SEPARATOR . 'protagprocessor' . DIRECTORY_SEPARATOR . 'servertags.php';
+
+                if (!file_exists($serverTagProcessorFile))
+                    return $content;
+
+                $parts = explode('/', $customPHPFile); //just a security check
+                if (count($parts) > 1)
+                    return $content;
+
+                $file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'customphp' . DIRECTORY_SEPARATOR . $customPHPFile;
+                if (file_exists($file)) {
+                    require_once($file);
+                    $function_name = 'CTProcessFile_' . str_replace('.php', '', $customPHPFile);
+
+                    if (function_exists($function_name)) {
+                        return call_user_func($function_name, $content, $row, $this->ct->Table->tableid, $this->fieldid);
+                    } else {
+                        echo 'Function "' . $function_name . '" not found.<br/>';
+                        die;
+                    }
+                } else {
+                    common::enqueueMessage('Custom PHP file "' . $file . '" not found.');
+                }
+            } elseif (defined('WPINC')) {
+                common::enqueueMessage('Custom PHP file "' . $customPHPFile . '" Execution of a custom PHP in WordPress version of the CustomTables is not implemented.');
+            }
+        }
+        return $content;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.9
+     */
+    function render_file_output($filepath): bool
+    {
+        if (strlen($filepath) > 8 and str_starts_with($filepath, '/images/'))
+            $file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+        else
+            $file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, '/images' . $filepath);
+
+        if (!file_exists($file)) {
+            echo 'not found';
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND');
+            return false;
+        }
+
+        $content = common::getStringFromFile($file);
+
+        $parts = explode('/', $file);
+        $filename = end($parts);
+
+        try {
+            $content = $this->ProcessContentWithCustomPHP($content, $this->row);
+        } catch (Exception $e) {
+            common::enqueueMessage($e->getMessage());
+            return false;
+        }
+
+        if (ob_get_contents()) ob_end_clean();
+
+        $mt = mime_content_type($file);
+
+        @header('Content-Type: ' . $mt);
+        @header("Pragma: public");
+        @header("Expires: 0");
+        @header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        @header("Cache-Control: public");
+        @header("Content-Description: File Transfer");
+        @header("Content-Transfer-Encoding: binary");
+        @header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
+
+        echo $content;
+
+        die;//clean exit
+    }
 }
-
-

@@ -25,40 +25,6 @@ class Value_blob extends BaseValue
 
     /**
      * @throws Exception
-     * @since 3.3.4
-     */
-    static public function get_blob_value(Field $field): ?string
-    {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
-
-        $file_id = common::inputPostString($field->comesfieldname, '');
-
-        if ($file_id == '')
-            return null;
-
-        $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
-
-        if (!file_exists($uploadedFile))
-            return null;
-
-        $mime = mime_content_type($uploadedFile);
-
-        $parts = explode('.', $uploadedFile);
-        $fileExtension = end($parts);
-
-        if ($mime == 'application/zip' and $fileExtension != 'zip') {
-            //could be docx, xlsx, pptx
-            FileUploader::checkZIP_File_X($uploadedFile, $fileExtension);
-        }
-
-        $fileData = addslashes(common::getStringFromFile($uploadedFile));
-
-        unlink($uploadedFile);
-        return $fileData;
-    }
-
-    /**
-     * @throws Exception
      * @since 3.3.1
      */
     function render(): ?string

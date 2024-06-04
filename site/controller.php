@@ -17,21 +17,22 @@ use Joomla\CMS\MVC\Controller\BaseController;
 
 class CustomTablesController extends BaseController
 {
-    function display($cachable = false, $urlparams = array())
+    function display($cacheable = false, $urlparams = array())
     {
         $file = common::inputGetString('file');
         if ($file != '') {
             //Load file instead
 
-            $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
-                . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
-            require_once($processor_file);
+            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+                . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php');
 
-            Value_file::process_file_link($file);
+            $fileOutput = new Value_file();
+            $fileOutput->process_file_link($file);
+            $fileOutput->display();
 
-            common::inputSet('view', 'files');
-            parent::display();
-            return;
+            if (count($fileOutput->ct->errors) > 0) {
+                echo '<p>Error: ' . implode(', ', $fileOutput->ct->errors) . '</p>';
+            }
         }
 
         // Make sure we have the default view

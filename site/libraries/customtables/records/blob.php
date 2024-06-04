@@ -41,7 +41,42 @@ class Save_blob
         require_once($processor_file);
 
         $to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
-        $value = Value_blob::get_blob_value($this->field);
+
+
+        //Get File Data
+        //Get new file
+        $CompletePathToFile = null;
+        $fileName = null;
+
+        if (defined('_JEXEC')) {
+            $temporaryFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+            $CompletePathToFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $temporaryFile;
+            $fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
+        } elseif (defined('WPINC')) {
+            //Get new image
+            if (isset($_FILES[$this->field->comesfieldname])) {
+                $CompletePathToFile = $_FILES[$this->field->comesfieldname]['tmp_name'];
+                $fileName = $_FILES[$this->field->comesfieldname]['name'];
+            }
+        } else
+            return null;
+
+        if (!file_exists($CompletePathToFile))
+            return null;
+
+        $mime = mime_content_type($CompletePathToFile);
+
+        $parts = explode('.', $fileName);
+        $fileExtension = end($parts);
+
+        if ($mime == 'application/zip' and $fileExtension != 'zip') {
+            //could be docx, xlsx, pptx
+            FileUploader::checkZIP_File_X($CompletePathToFile, $fileExtension);
+        }
+
+        $fileData = addslashes(common::getStringFromFile($CompletePathToFile));
+
+        unlink($CompletePathToFile);
 
         $fileNameField = '';
         if (isset($this->field->params[2])) {
@@ -50,30 +85,62 @@ class Save_blob
             $fileNameField = $fileNameField_Row['realfieldname'];
         }
 
-        if ($to_delete == 'true' and $value === null) {
+        if ($fileData !== '') {
+            $newValue = ['value' => $fileData];
+
+            if ($fileNameField != '')
+                $this->row_new[$fileNameField] = $fileName;
+        } elseif ($to_delete == 'true') {
             $newValue = ['value' => null];
 
             if ($fileNameField != '' and !isset($this->row_new[$fileNameField]))
                 $this->row_new[$fileNameField] = null;
-
-        } elseif ($value !== null) {
-            $newValue = ['value' => $value];
-
-            if ($fileNameField != '') {
-                $file_id = common::inputPostString($this->field->comesfieldname, '', 'create-edit-record');
-
-                //Delete temporary file name parts
-                //Example: ct_1702267688_PseAH3r3Cy91VhQbh6hzw7bchYW5rK51sD_001_Li-R6ong7bo_LOI_PE1214762_26032019_c1b1121b122.doc
-                //Cleaned: 001_Li-Ron7gbo_LOI_PE1214762_26032019_c1b1121b122.doc
-                $file_name_parts = explode('_', $file_id);
-                if (count($file_name_parts) > 3 and $file_name_parts[0] == 'ct')
-                    $file_name = implode('_', array_slice($file_name_parts, 3));
-                else
-                    $file_name = $file_id;
-
-                $this->row_new[$fileNameField] = $file_name;
-            }
         }
+
         return $newValue;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    protected function get_blob_value(): ?string
+    {
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
+
+        //Get new file
+        $CompletePathToFile = null;
+        $fileName = null;
+
+        if (defined('_JEXEC')) {
+            $temporaryFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+            $CompletePathToFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $temporaryFile;
+            $fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
+        } elseif (defined('WPINC')) {
+            //Get new image
+            if (isset($_FILES[$this->field->comesfieldname])) {
+                $CompletePathToFile = $_FILES[$this->field->comesfieldname]['tmp_name'];
+                $fileName = $_FILES[$this->field->comesfieldname]['name'];
+            }
+        } else
+            return null;
+
+        if (!file_exists($CompletePathToFile))
+            return null;
+
+        $mime = mime_content_type($CompletePathToFile);
+
+        $parts = explode('.', $fileName);
+        $fileExtension = end($parts);
+
+        if ($mime == 'application/zip' and $fileExtension != 'zip') {
+            //could be docx, xlsx, pptx
+            FileUploader::checkZIP_File_X($CompletePathToFile, $fileExtension);
+        }
+
+        $fileData = addslashes(common::getStringFromFile($CompletePathToFile));
+
+        unlink($CompletePathToFile);
+        return $fileData;
     }
 }
