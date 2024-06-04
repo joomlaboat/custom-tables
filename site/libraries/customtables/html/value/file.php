@@ -150,8 +150,8 @@ class Value_file extends BaseValue
 
         if ($field->type == 'filelink') {
             $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0] ?? '');
-
             $filepath = $FileFolder . '/' . $filename;
+
         } elseif ($field->type == 'blob')
             $filepath = $filename;
         else {
@@ -174,10 +174,18 @@ class Value_file extends BaseValue
 
         $parts = explode('.', $filename);
         $fileExtension = end($parts);
-        $icon = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $icon_size . 'px/' . $fileExtension . '.png';
-        $icon_File_Path = JPATH_SITE . $icon;
-        if (!file_exists($icon_File_Path))
+
+        $icon_Name = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables'
+            . DIRECTORY_SEPARATOR . 'media'
+            . DIRECTORY_SEPARATOR . 'images'
+            . DIRECTORY_SEPARATOR . 'fileformats'
+            . DIRECTORY_SEPARATOR . $icon_size . 'px'
+            . DIRECTORY_SEPARATOR . $fileExtension . '.png';
+
+        if (!file_exists($icon_Name))
             $icon = '';
+        else
+            $icon = CUSTOMTABLES_MEDIA_WEBPATH . 'images/fileformats/' . $icon_size . 'px/' . $fileExtension . '.png';
 
         $how_to_process = $option_list[0] ?? '';
 
@@ -270,8 +278,10 @@ class Value_file extends BaseValue
         //make the key
         $key = self::makeTheKey($filepath, $security, $recId, $fieldid, $tableid);
 
-        $currentURL = common::curPageURL();
-        $currentURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'returnto');
+        $currentURL = CUSTOMTABLES_MEDIA_HOME_URL . 'index.php?option=com_customtables';
+
+        //$currentURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'returnto');
+        //$currentURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'file');
 
         //prepare new file name that includes the key
         $fna = explode('.', $rowValue);
@@ -281,6 +291,9 @@ class Value_file extends BaseValue
         $filepath = $filename . '_' . $key . '.' . $filetype;
 
         if (!$filename_only) {
+
+            $filepath = CUSTOMTABLES_MEDIA_HOME_URL . '/index.php?option=com_customtables&file=' . $filepath;
+            /*
             if (str_contains($currentURL, '?')) {
                 $filepath = $currentURL . '&file=' . $filepath;
             } else {
@@ -289,6 +302,7 @@ class Value_file extends BaseValue
                 else
                     $filepath = $currentURL . $filepath;
             }
+            */
         }
 
         return $filepath;

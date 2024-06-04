@@ -19,6 +19,10 @@ class InputBox_file extends BaseInputBox
 {
     function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
     {
+        $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+            . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
+        require_once($processor_file);
+
         parent::__construct($ct, $field, $row, $option_list, $attributes);
     }
 
@@ -38,7 +42,7 @@ class InputBox_file extends BaseInputBox
             if ($fileSize != 0)
                 $result .= self::renderBlobAndDeleteOption($fileSize, $this->field, $this->row, $this->ct->Table->fields, $this->row[$this->ct->Table->realidfieldname]);
         } else
-            $result .= self::renderFileAndDeleteOption($file, $this->field);
+            $result .= self::renderFileAndDeleteOption($file, $this->field, $this->row[$this->ct->Table->realidfieldname]);
 
         $result .= self::renderUploader($this->ct, $this->field);
 
@@ -46,14 +50,10 @@ class InputBox_file extends BaseInputBox
         return $result;
     }
 
-    protected static function renderBlobAndDeleteOption(int $fileSize, $field, $row, $fields, $listing_id): string
+    protected static function renderBlobAndDeleteOption(int $fileSize, Field $field, ?array $row, array $fields, ?string $listing_id): string
     {
         if ($fileSize == '')
             return '';
-
-        $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
-            . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
-        require_once($processor_file);
 
         $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
             . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'blob.php';
@@ -64,7 +64,7 @@ class InputBox_file extends BaseInputBox
 
         $filename = Value_blob::getBlobFileName($field, $fileSize, $row, $fields);
 
-        $filename_Icon = Value_file::process($filename, $field, ['', 'icon-filename-link', 48], $listing_id, false, $fileSize);
+        $filename_Icon = Value_file::process($filename, $field, ['', 'icon-filename-link', 48, '_blank'], $listing_id, false, $fileSize);
 
         $result .= $filename_Icon . '<br/><br/>';
 
@@ -78,7 +78,7 @@ class InputBox_file extends BaseInputBox
         return $result;
     }
 
-    protected static function renderFileAndDeleteOption(string $file, $field): string
+    protected static function renderFileAndDeleteOption(string $file, Field $field, ?string $listing_id): string
     {
         if ($file == '')
             return '';
@@ -86,29 +86,11 @@ class InputBox_file extends BaseInputBox
         if ($field->params === null or count($field->params) == 0)
             return '<p style="background-color:red;color:white;">Folder not selected</p>';
 
-        if ($field->type == 'filelink') {
-            $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0]);
-        } else {
-            if (count($field->params) < 2)
-                return '<p style="background-color:red;color:white;">Folder not selected</p>';
-
-            $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[1]);
-        }
-
-        if ($FileFolder !== '' and $FileFolder[0] == '/')
-            $FileFolder = substr($FileFolder, 1);
-
-        $link = common::UriRoot() . $FileFolder . '/' . $file;
-
-        $parts = explode('.', $file);
-        $file_extension = end($parts);
-
-        $image_src = CUSTOMTABLES_MEDIA_WEBPATH . 'images/fileformats/48px/' . $file_extension . '.png';
-
         $result = '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
+        $filename_Icon = Value_file::process($file, $field, ['', 'icon-filename-link', 48, '_blank'], $listing_id, false, 0);
 
-        $result .= '<a href="' . $link . '" target="_blank" title="' . $file . '"><img src="' . $image_src . '" style="width:48px;" alt="' . $file . '" /></a><br/>';
+        $result .= $filename_Icon . '<br/><br/>';
 
         if ($field->isrequired !== 1)
             $result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
