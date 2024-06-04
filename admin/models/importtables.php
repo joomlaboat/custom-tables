@@ -14,127 +14,137 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\CTMiscHelper;
 use CustomTables\database;
+use CustomTables\FileUploader;
 use CustomTables\ImportTables;
-
 use CustomTables\MySQLWhereClause;
-use Joomla\CMS\MVC\Model\ListModel;
 
-require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
+use Joomla\CMS\MVC\Model\ListModel;
 
 class CustomTablesModelImportTables extends ListModel
 {
-	var CT $ct;
+    var CT $ct;
 
-	function __construct()
-	{
-		parent::__construct();
-	}
+    function __construct()
+    {
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
 
-	function importTables(&$msg): bool
-	{
-		$fileId = common::inputGetCmd('fileid', '');
-		$filename = ESFileUploader::getFileNameByID($fileId);
-		$menuType = 'Custom Tables Import Menu';
+        parent::__construct();
+    }
 
-		$importFields = common::inputGetInt('importfields', 0);
-		$importLayouts = common::inputGetInt('importlayouts', 0);
-		$importMenu = common::inputGetInt('importmenu', 0);
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    function importTables(&$msg): bool
+    {
+        $fileId = common::inputGetCmd('fileid', '');
+        $filename = FileUploader::getFileNameByID($fileId);
+        $menuType = 'Custom Tables Import Menu';
 
-		$category = '';
-		return ImportTables::processFile($filename, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu);
-	}
+        $importFields = common::inputGetInt('importfields', 0);
+        $importLayouts = common::inputGetInt('importlayouts', 0);
+        $importMenu = common::inputGetInt('importmenu', 0);
 
-	function getColumns($line): array
-	{
-		$columns = explode(",", $line);
-		if (count($columns) < 1) {
-			echo 'incorrect field header<br/>';
-			return array();
-		}
+        $category = '';
+        return ImportTables::processFile($filename, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu);
+    }
 
-		for ($i = 0; $i < count($columns); $i++) {
-			$columns[$i] = trim($columns[$i]);
-		}
-		return $columns;
-	}
+    /*
+    function getColumns($line): array
+    {
+        $columns = explode(",", $line);
+        if (count($columns) < 1) {
+            echo 'incorrect field header<br/>';
+            return array();
+        }
 
-	function parseLine($allowedColumns, $fieldTypes, $line, &$maxId): array
-	{
-		$result = array();
-		$values = CTMiscHelper::csv_explode(',', $line);
-		$maxId++;
-		$result[] = $maxId;                                // id
+        for ($i = 0; $i < count($columns); $i++) {
+            $columns[$i] = trim($columns[$i]);
+        }
+        return $columns;
+    }
+    */
 
-		$c = 0;
-		for ($i = 0; $i < count($values); $i++) {
-			if ($allowedColumns[$c]) {
+    /*
+    function parseLine($allowedColumns, $fieldTypes, $line, &$maxId): array
+    {
+        $result = array();
+        $values = CTMiscHelper::csv_explode(',', $line);
+        $maxId++;
+        $result[] = $maxId;                                // id
 
-				$fieldTypePair = explode(':', $fieldTypes[$c]);
+        $c = 0;
+        for ($i = 0; $i < count($values); $i++) {
+            if ($allowedColumns[$c]) {
 
-				if ($fieldTypePair[0] == 'string' or $fieldTypePair[0] == 'multistring' or $fieldTypePair[0] == 'text' or $fieldTypePair[0] == 'multitext')
-					$result[] = '"' . $values[$i] . '"';
+                $fieldTypePair = explode(':', $fieldTypes[$c]);
 
-				elseif ($fieldTypePair[0] == 'email')
-					$result[] = '"' . $values[$i] . '"';
+                if ($fieldTypePair[0] == 'string' or $fieldTypePair[0] == 'multistring' or $fieldTypePair[0] == 'text' or $fieldTypePair[0] == 'multitext')
+                    $result[] = '"' . $values[$i] . '"';
 
-				elseif ($fieldTypePair[0] == 'url')
-					$result[] = '"' . $values[$i] . '"';
+                elseif ($fieldTypePair[0] == 'email')
+                    $result[] = '"' . $values[$i] . '"';
 
-				elseif ($fieldTypePair[0] == 'float' or $fieldTypePair[0] == 'int')
-					$result[] = $values[$i];
+                elseif ($fieldTypePair[0] == 'url')
+                    $result[] = '"' . $values[$i] . '"';
 
-				elseif ($fieldTypePair[0] == 'checkbox')
-					$result[] = $values[$i];
+                elseif ($fieldTypePair[0] == 'float' or $fieldTypePair[0] == 'int')
+                    $result[] = $values[$i];
 
-				elseif ($fieldTypePair[0] == 'date')
-					$result[] = '"' . $values[$i] . '"';
+                elseif ($fieldTypePair[0] == 'checkbox')
+                    $result[] = $values[$i];
 
-				elseif ($fieldTypePair[0] == 'radio')
-					$result[] = '"' . $values[$i] . '"';
+                elseif ($fieldTypePair[0] == 'date')
+                    $result[] = '"' . $values[$i] . '"';
 
-				else
-					$result[] = '""';//type unsupported
-			}
-			$c++;
-		}
-		return $result;
-	}
+                elseif ($fieldTypePair[0] == 'radio')
+                    $result[] = '"' . $values[$i] . '"';
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	function findMaxId($table): int
-	{
-		$whereClause = new MySQLWhereClause();
+                else
+                    $result[] = '""';//type unsupported
+            }
+            $c++;
+        }
+        return $result;
+    }
+    */
 
-		//$query = ' SELECT id FROM #__customtables_table_' . $table . ' ORDER BY id DESC LIMIT 1';
-		$maxIdRecords = database::loadObjectList('#__customtables_table_' . $table, ['ig'], $whereClause, 'id', 'DESC', 1);
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    /*
+    function findMaxId($table): int
+    {
+        $whereClause = new MySQLWhereClause();
 
-		if (count($maxIdRecords) != 1)
-			return -1;
+        //$query = ' SELECT id FROM #__customtables_table_' . $table . ' ORDER BY id DESC LIMIT 1';
+        $maxIdRecords = database::loadObjectList('#__customtables_table_' . $table, ['ig'], $whereClause, 'id', 'DESC', 1);
 
-		return $maxIdRecords[0]->id;
-	}
+        if (count($maxIdRecords) != 1)
+            return -1;
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	function getLanguageByCODE($code): int
-	{
-		//Example: $code='en-GB';
-		//$query = ' SELECT id FROM #__customtables_languages WHERE language="' . $code . '" LIMIT 1';
+        return $maxIdRecords[0]->id;
+    }
+    */
 
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('language', $code);
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    function getLanguageByCODE($code): int
+    {
+        //Example: $code='en-GB';
+        //$query = ' SELECT id FROM #__customtables_languages WHERE language="' . $code . '" LIMIT 1';
 
-		$rows = database::loadObjectList('#__customtables_languages', ['id'], $whereClause, null, null, 1);
-		if (count($rows) != 1)
-			return -1;
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('language', $code);
 
-		return $rows[0]->id;
-	}
+        $rows = database::loadObjectList('#__customtables_languages', ['id'], $whereClause, null, null, 1);
+        if (count($rows) != 1)
+            return -1;
+
+        return $rows[0]->id;
+    }
 }

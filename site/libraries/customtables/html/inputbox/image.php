@@ -102,7 +102,6 @@ class InputBox_image extends BaseInputBox
 
 
         } elseif (defined('WPINC')) {
-            //$formName = 'createrecord';
             $result .= '<input type="file" name="' . $this->attributes['id'] . '" accept=".jpg,.jpeg,.png,.gif,.svg,.webp" max-size="' . $max_file_size . '" />';
         }
 

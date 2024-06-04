@@ -13,8 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use ESFileUploader;
-
 class InputBox_file extends BaseInputBox
 {
     function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
@@ -40,18 +38,20 @@ class InputBox_file extends BaseInputBox
             $fileSize = intval($file);
 
             if ($fileSize != 0)
-                $result .= self::renderBlobAndDeleteOption($fileSize, $this->field, $this->row, $this->ct->Table->fields, $this->row[$this->ct->Table->realidfieldname]);
+                $result .= $this->renderBlobAndDeleteOption($fileSize);
         } else
-            $result .= self::renderFileAndDeleteOption($file, $this->field, $this->row[$this->ct->Table->realidfieldname]);
+            $result .= $this->renderFileAndDeleteOption($file, $this->row[$this->ct->Table->realidfieldname]);
 
-        $result .= self::renderUploader($this->ct, $this->field);
+        $result .= $this->renderUploader();
 
         $result .= '</div>';
         return $result;
     }
 
-    protected static function renderBlobAndDeleteOption(int $fileSize, Field $field, ?array $row, array $fields, ?string $listing_id): string
+    protected function renderBlobAndDeleteOption(int $fileSize): string
     {
+        $listing_id = $this->row[$this->ct->Table->realidfieldname];
+
         if ($fileSize == '')
             return '';
 
@@ -59,75 +59,74 @@ class InputBox_file extends BaseInputBox
             . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'blob.php';
         require_once($processor_file);
 
-        $result = '
-                <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
+        $result = '<div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $this->field->fieldname . '">';
 
-        $filename = Value_blob::getBlobFileName($field, $fileSize, $row, $fields);
-
-        $filename_Icon = Value_file::process($filename, $field, ['', 'icon-filename-link', 48, '_blank'], $listing_id, false, $fileSize);
+        $filename = Value_blob::getBlobFileName($this->field, $fileSize, $this->row, $this->ct->Table->fields);
+        $filename_Icon = Value_file::process($filename, $this->field, ['', 'icon-filename-link', 48, '_blank'], $listing_id, false, $fileSize);
 
         $result .= $filename_Icon . '<br/><br/>';
 
-        if ($field->isrequired !== 1)
-            $result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
+        if ($this->field->isrequired !== 1)
+            $result .= '<input type="checkbox" name="' . $this->field->prefix . $this->field->fieldname . '_delete" id="' . $this->field->prefix . $this->field->fieldname . '_delete" value="true">'
                 . ' Delete Data';
 
-        $result .= '
-                </div>';
+        $result .= '</div>';
 
         return $result;
     }
 
-    protected static function renderFileAndDeleteOption(string $file, Field $field, ?string $listing_id): string
+    protected function renderFileAndDeleteOption(string $file, ?string $listing_id): string
     {
         if ($file == '')
             return '';
 
-        if ($field->params === null or count($field->params) == 0)
+        if ($this->field->params === null or count($this->field->params) == 0)
             return '<p style="background-color:red;color:white;">Folder not selected</p>';
 
-        $result = '
-                <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
-        $filename_Icon = Value_file::process($file, $field, ['', 'icon-filename-link', 48, '_blank'], $listing_id, false, 0);
+        $result = '<div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $this->field->fieldname . '">';
+        $filename_Icon = Value_file::process($file, $this->field, ['', 'icon-filename-link', 48, '_blank'], $listing_id);
 
         $result .= $filename_Icon . '<br/><br/>';
 
-        if ($field->isrequired !== 1)
-            $result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
+        if ($this->field->isrequired !== 1)
+            $result .= '<input type="checkbox" name="' . $this->field->prefix . $this->field->fieldname . '_delete" id="' . $this->field->prefix . $this->field->fieldname . '_delete" value="true">'
                 . ' Delete File';
 
-        $result .= '
-                </div>';
+        $result .= '</div>';
 
         return $result;
     }
 
-    protected static function renderUploader(CT $ct, Field $field): string
+    protected function renderUploader(): string
     {
-        if ($field->type == 'file')
-            $fileExtensions = $field->params[2] ?? '';
-        elseif ($field->type == 'blob')
-            $fileExtensions = $field->params[1] ?? '';
+        $result = '';
+
+        $style = 'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
+        $element_id = 'ct_uploadfile_box_' . $this->field->fieldname;
+
+        if ($this->field->type == 'file')
+            $fileExtensions = $this->field->params[2] ?? '';
+        elseif ($this->field->type == 'blob')
+            $fileExtensions = $this->field->params[1] ?? '';
         else
             return false;
 
-        if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php'))
-            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
 
-        $accepted_file_types = ESFileUploader::getAcceptedFileTypes($fileExtensions);
+        $accepted_file_types = FileUploader::getAcceptedFileTypes($fileExtensions);
 
-        if ($field->type == 'blob') {
+        if ($this->field->type == 'blob') {
 
-            if ($field->params[0] == 'tiny')
+            if ($this->field->params[0] == 'tiny')
                 $custom_max_size = 255;
-            elseif ($field->params[0] == 'medium')
+            elseif ($this->field->params[0] == 'medium')
                 $custom_max_size = 16777215;
-            elseif ($field->params[0] == 'long')
+            elseif ($this->field->params[0] == 'long')
                 $custom_max_size = 4294967295;
             else
                 $custom_max_size = 65535;
         } else {
-            $custom_max_size = (int)$field->params[0];
+            $custom_max_size = (int)$this->field->params[0];
 
             if ($custom_max_size != 0 and $custom_max_size < 10000)
                 $custom_max_size = $custom_max_size * 1000000; //to change 20 to 20MB
@@ -136,51 +135,66 @@ class InputBox_file extends BaseInputBox
         $max_file_size = CTMiscHelper::file_upload_max_size($custom_max_size);
 
         $file_id = common::generateRandomString();
-        $URLString = common::UriRoot(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
+        $URLString = common::UriRoot(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname
             . '_fileid=' . $file_id
-            . '&Itemid=' . $field->ct->Params->ItemId
-            . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
-            . '&fieldname=' . $field->fieldname;
+            . '&Itemid=' . $this->field->ct->Params->ItemId
+            . (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
+            . '&fieldname=' . $this->field->fieldname;
 
-        if (common::clientAdministrator())   //since   3.2
-            $formName = 'adminForm';
-        else {
-            if ($ct->Env->isModal)
-                $formName = 'ctEditModalForm';
+        if (defined('_JEXEC')) {
+            if (common::clientAdministrator())   //since   3.2
+                $formName = 'adminForm';
             else {
-                $formName = 'ctEditForm';
-                $formName .= $ct->Params->ModuleId;
+                if ($this->ct->Env->isModal)
+                    $formName = 'ctEditModalForm';
+                else {
+                    $formName = 'ctEditForm';
+                    $formName .= $this->ct->Params->ModuleId;
+                }
             }
+
+            $scriptParams = [
+                $this->field->id,
+                '"' . $URLString . '"',
+                $max_file_size,
+                '"' . $accepted_file_types . '"',
+                '"' . $formName . '"',
+                'false',
+                '"ct_fileuploader_' . $this->field->fieldname . '"',
+                '"ct_eventsmessage_' . $this->field->fieldname . '"',
+                '"' . $file_id . '"',
+                '"' . $this->field->prefix . $this->field->fieldname . '"',
+                '"ct_ubloadedfile_box_' . $this->field->fieldname . '"'
+            ];
+
+            $ct_fileuploader = '<div id="ct_fileuploader_' . $this->field->fieldname . '"></div>';
+            $ct_eventsMessage = '<div id="ct_eventsmessage_' . $this->field->fieldname . '"></div>';
+
+            $inputBoxFieldName = '<input type="hidden" name="' . $this->field->prefix . $this->field->fieldname . '" id="' . $this->field->prefix . $this->field->fieldname . '" value="" ' . ($this->field->isrequired == 1 ? ' class="required"' : '') . ' />';
+            $inputBoxFieldName_FileName = '<input type="hidden" name="' . $this->field->prefix . $this->field->fieldname . '_filename" id="' . $this->field->prefix . $this->field->fieldname . '_filename" value="" />';
+
+            $result .= $inputBoxFieldName . $inputBoxFieldName_FileName
+                . common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>'
+                . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size);
+
+            $result .= $ct_fileuploader . $ct_eventsMessage;
+
+            $result .= '<script>ct_getUploader(' . implode(',', $scriptParams) . ')</script>';
+
+        } elseif (defined('WPINC')) {
+
+            $types = explode(' ', $accepted_file_types);
+            $accepted_file_types_string = '.' . implode(',.', $types);
+
+            $result .= '<input type="file" name="' . $this->field->prefix . $this->field->fieldname . '" accept="' . $accepted_file_types_string . '" max-size="' . $max_file_size . '" /><br/>';
+            $result .= common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>';
+            $result .= common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size);
         }
 
-        $scriptParams = [
-            $field->id,
-            '"' . $URLString . '"',
-            $max_file_size,
-            '"' . $accepted_file_types . '"',
-            '"' . $formName . '"',
-            'false',
-            '"ct_fileuploader_' . $field->fieldname . '"',
-            '"ct_eventsmessage_' . $field->fieldname . '"',
-            '"' . $file_id . '"',
-            '"' . $field->prefix . $field->fieldname . '"',
-            '"ct_ubloadedfile_box_' . $field->fieldname . '"'
-        ];
-
-        $script = '<script>ct_getUploader(' . implode(',', $scriptParams) . ')</script>';
-
-        return '<div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" '
-            . 'data-type="' . $field->type . '" '
-            . 'data-label="' . $field->title . '" '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $field->valuerule) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $field->valuerulecaption) . '" >'
-            . '<div id="ct_fileuploader_' . $field->fieldname . '"></div>'
-            . '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>'
-            . $script
-            . '<input type="hidden" name="' . $field->prefix . $field->fieldname . '" id="' . $field->prefix . $field->fieldname . '" value="" />'
-            . '<input type="hidden" name="' . $field->prefix . $field->fieldname . '_filename" id="' . $field->prefix . $field->fieldname . '_filename" value="" />'
-            . common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>'
-            . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size)
-            . '</div>';
+        return '<div style="' . $style . '"' . ($this->field->isrequired == 1 ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
+            . 'data-type="' . $this->field->type . '" '
+            . 'data-label="' . $this->field->title . '" '
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule ?? '') . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption ?? '') . '" >' . $result . '</div>';
     }
 }

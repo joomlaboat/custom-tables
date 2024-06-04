@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use ESFileUploader;
 use Exception;
 
 class Save_file
@@ -40,19 +39,25 @@ class Save_file
         $to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
 
         //Get new file
-        $fileId = null;
+        $pathToImageFile = null;
+        $fileName = null;
 
         if (defined('_JEXEC')) {
-            $fileId = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+            $pathToImageFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+            $fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
         } elseif (defined('WPINC')) {
             //Get new image
-            if (isset($_FILES[$this->field->comesfieldname]))
-                $fileId = $_FILES[$this->field->comesfieldname]['tmp_name'];
-        }
+            if (isset($_FILES[$this->field->comesfieldname])) {
+                $pathToImageFile = $_FILES[$this->field->comesfieldname]['tmp_name'];
+                $fileName = $_FILES[$this->field->comesfieldname]['name'];
+            }
+        } else
+            return null;
+
         //Set the variable to "false" to do not delete existing file
         $FileFolder = FileUtils::getOrCreateDirectoryPath($this->field->params[1]);
 
-        if (($fileId !== null and $fileId != '') or $to_delete == 'true') {
+        if (($pathToImageFile !== null and $pathToImageFile != '') or $to_delete == 'true') {
 
             $ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
 
@@ -62,7 +67,7 @@ class Save_file
             else
                 $filepath = CUSTOMTABLES_ABSPATH . $filepath;
 
-            if ($ExistingFile != '' and !self::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $this->field)) {
+            if ($ExistingFile != '' and !self::checkIfTheFileBelongsToAnotherRecord($ExistingFile)) {
                 $filename_full = $filepath . DIRECTORY_SEPARATOR . $ExistingFile;
 
                 if (file_exists($filename_full))
@@ -70,17 +75,17 @@ class Save_file
             }
         }
 
-        if ($fileId !== null and $fileId != '') {
+        if ($pathToImageFile !== null and $pathToImageFile != '') {
             //Upload new file
 
             if ($listing_id == 0) {
                 $fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
-                $value = $this->UploadSingleFile(null, $fileId, $fileSystemFileFolder);
+                $value = $this->UploadSingleFile(null, $pathToImageFile, $fileName, $fileSystemFileFolder);
             } else {
                 $ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
 
                 $fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
-                $value = $this->UploadSingleFile($ExistingFile, $fileId, $fileSystemFileFolder);
+                $value = $this->UploadSingleFile($ExistingFile, $pathToImageFile, $fileName, $fileSystemFileFolder);
             }
 
             //Set new image value
@@ -113,9 +118,9 @@ class Save_file
      * @throws Exception
      * @since 3.3.4
      */
-    private function UploadSingleFile(?string $ExistingFile, string $file_id, string $FileFolder): ?string
+    private function UploadSingleFile(?string $ExistingFile, string $pathToImageFile, string $fileName, string $FileFolder): ?string
     {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
 
         if ($this->field->type == 'file')
             $fileExtensions = $this->field->params[2] ?? '';
@@ -124,11 +129,11 @@ class Save_file
         else
             return null;
 
-        if ($file_id != '') {
+        if ($pathToImageFile != '') {
             if (empty($this->field->params[3])) {
 
                 //Joomla version the File Uploader adds random value to the filename to make sure it's a unique file name in tmp folder.
-                $parts = explode('_', $file_id);
+                $parts = explode('_', $fileName);
                 if (count($parts) > 3 and $parts[0] == 'ct') {
                     //Example:
                     //ct_1717446480_j586scaH994mTWz58cbFMX6RWUu25aJn0tbBI_doc1.pdf
@@ -138,15 +143,15 @@ class Save_file
                     unset($parts[0]);
                     $desiredFileName = implode('_', $parts);
                 } else
-                    $desiredFileName = $file_id;
+                    $desiredFileName = $fileName;
             } else
                 $desiredFileName = $this->field->params[3];
 
-            $accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileExtensions));
+            $accepted_file_types = explode(' ', FileUploader::getAcceptedFileTypes($fileExtensions));
             $accepted_filetypes = array();
 
             foreach ($accepted_file_types as $filetype) {
-                $mime = ESFileUploader::get_mime_type('1.' . $filetype);
+                $mime = FileUploader::get_mime_type('1.' . $filetype);
                 $accepted_filetypes[] = $mime;
 
                 if ($filetype == 'docx')
@@ -157,16 +162,18 @@ class Save_file
                     $accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
             }
 
-            $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
-
             $is_base64encoded = common::inputGetCmd('base64encoded', '');
             if ($is_base64encoded == "true") {
-                $src = $uploadedFile;
+                //$src = $uploadedFile;
 
-                $file = common::inputPostString($this->field->comesfieldname, '');
-                $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
-                common::base64file_decode($src, $dst);
-                $uploadedFile = $dst;
+                if (defined('_JEXEC')) {
+                    $file = common::inputPostString($this->field->comesfieldname, '');
+                    $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
+                    common::base64file_decode($pathToImageFile, $dst);
+                    $pathToImageFile = $dst;
+                } else {
+                    echo 'Base64 encoded file upload is not available in this CMS';
+                }
             }
 
             if (!empty($ExistingFile) and !$this->checkIfTheFileBelongsToAnotherRecord($ExistingFile)) {
@@ -178,34 +185,34 @@ class Save_file
                     unlink($filename_full);
             }
 
-            if (!file_exists($uploadedFile))
+            if (!file_exists($pathToImageFile))
                 return null;
 
-            $mime = mime_content_type($uploadedFile);
+            $mime = mime_content_type($pathToImageFile);
 
-            $parts = explode('.', $uploadedFile);
+            $parts = explode('.', $fileName);
             $fileExtension = end($parts);
             if ($mime == 'application/zip' and $fileExtension != 'zip') {
                 //could be docx, xlsx, pptx
-                $mime = ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
+                $mime = FileUploader::checkZIP_File_X($pathToImageFile, $fileExtension);
             }
 
             if (in_array($mime, $accepted_filetypes)) {
                 $new_filename = self::getCleanAndAvailableFileName($desiredFileName, $FileFolder);
                 $new_filename_path = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder . DIRECTORY_SEPARATOR . $new_filename);
 
-                if (@copy($uploadedFile, $new_filename_path)) {
-                    unlink($uploadedFile);
+                if (@copy($pathToImageFile, $new_filename_path)) {
+                    unlink($pathToImageFile);
                     //Copied
 
                     return $new_filename;
                 } else {
-                    unlink($uploadedFile);
+                    unlink($pathToImageFile);
                     //Cannot copy
                     return null;
                 }
             } else {
-                unlink($uploadedFile);
+                unlink($pathToImageFile);
                 return null;
             }
         }

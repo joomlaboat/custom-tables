@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use ESFileUploader;
 use Exception;
 use finfo;
 
@@ -30,8 +29,7 @@ class Value_blob extends BaseValue
      */
     static public function get_blob_value(Field $field): ?string
     {
-        if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php'))
-            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
 
         $file_id = common::inputPostString($field->comesfieldname, '');
 
@@ -50,7 +48,7 @@ class Value_blob extends BaseValue
 
         if ($mime == 'application/zip' and $fileExtension != 'zip') {
             //could be docx, xlsx, pptx
-            ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
+            FileUploader::checkZIP_File_X($uploadedFile, $fileExtension);
         }
 
         $fileData = addslashes(common::getStringFromFile($uploadedFile));

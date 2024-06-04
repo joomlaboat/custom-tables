@@ -14,6 +14,7 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Utility class for handling file and folder operations.
@@ -25,7 +26,8 @@ class FileUtils
      * Default folder path for Joomla.
      * @since 3.2.9
      */
-    private const DEFAULT_FOLDER = '/images';
+    private const DEFAULT_FOLDER_JOOMLA = '/images';
+    private const DEFAULT_FOLDER_WORDPRESS = '/wp-content/uploads';
 
     /**
      * Get or create a directory path within the Joomla environment.
@@ -42,7 +44,6 @@ class FileUtils
         $fullPath = str_replace('/', DIRECTORY_SEPARATOR, $fullPath);
 
         self::createDirectory($fullPath);
-
         return $folder;
     }
 
@@ -56,12 +57,18 @@ class FileUtils
      */
     private static function normalizeFolderPath(string $folder): string
     {
-        if (empty($folder)) {
-            return self::DEFAULT_FOLDER;
-        }
+
+        if (defined('_JEXEC'))
+            $defaultFolder = self::DEFAULT_FOLDER_JOOMLA;
+        else
+            $defaultFolder = self::DEFAULT_FOLDER_WORDPRESS;
+
+        if (empty($folder))
+            return $defaultFolder;
 
         $folder = self::ensureLeadingSlash($folder);
-        $folder = self::ensureImagesPrefix($folder);
+        $folder = self::ensureImagesPrefix($folder, $defaultFolder);
+
         return rtrim($folder, '/');
     }
 
@@ -84,11 +91,10 @@ class FileUtils
      * @return string The folder path with the "/images" prefix
      * @since 3.2.9
      */
-    private static function ensureImagesPrefix(string $folder): string
+    private static function ensureImagesPrefix(string $folder, string $defaultFolder): string
     {
-        if (!str_starts_with($folder, '/images')) {
-            $folder = self::DEFAULT_FOLDER . $folder;
-        }
+        if (!str_starts_with($folder, $defaultFolder))
+            $folder = $defaultFolder . $folder;
 
         return $folder;
     }
@@ -97,13 +103,13 @@ class FileUtils
      * Create the directory if it doesn't exist.
      *
      * @param string $path The full path to the directory
-     * @throws \RuntimeException If the directory cannot be created
+     * @throws RuntimeException If the directory cannot be created
      * @since 3.2.9
      */
     private static function createDirectory(string $path): void
     {
         if (!file_exists($path) && !mkdir($path, 0755, true) && !is_dir($path)) {
-            throw new \RuntimeException(sprintf('Directory "%s" could not be created', $path));
+            throw new RuntimeException(sprintf('Directory "%s" could not be created', $path));
         }
     }
 }

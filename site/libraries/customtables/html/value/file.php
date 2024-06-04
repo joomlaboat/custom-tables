@@ -157,9 +157,11 @@ class Value_file extends BaseValue
         else {
 
             $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[1] ?? '');
-            $filepath = $FileFolder . '/' . $filename;
+            $filepath = $FileFolder . DIRECTORY_SEPARATOR . $filename;
+            if ($filepath[0] == DIRECTORY_SEPARATOR)
+                $filepath = substr($filepath, 1, strlen($filepath) - 1);
 
-            $full_filepath = JPATH_SITE . ($filepath[0] == '/' ? '' : '/') . $filepath;
+            $full_filepath = CUSTOMTABLES_ABSPATH . $filepath;
             if (file_exists($full_filepath))
                 $file_size = filesize($full_filepath);
         }
@@ -203,7 +205,11 @@ class Value_file extends BaseValue
                 if ($filepath !== '' and $filepath[0] == '/')
                     $filepath = substr($filepath, 1);
 
-                $filepath = common::UriRoot() . $filepath;
+                $Uri_root = common::UriRoot();
+                if ($Uri_root != '' and $Uri_root != '/')
+                    $filepath = $Uri_root . '/' . $filepath;
+                else
+                    $filepath = $Uri_root . $filepath;
             }
 
             if (isset($option_list[3])) {

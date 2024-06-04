@@ -8,17 +8,15 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+namespace CustomTables;
+
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
-use CustomTables\CT;
-use CustomTables\CTMiscHelper;
-use CustomTables\TableHelper;
-use CustomTables\Fields;
+use Exception;
 use Joomla\CMS\Factory;
 
-class ESFileUploader
+class FileUploader
 {
     public static function getFileNameByID($fileId): string
     {
@@ -33,6 +31,10 @@ class ESFileUploader
         return '';
     }
 
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
     public static function uploadFile($fileId, $filetypes_str_argument = ""): string
     {
         $filetypes_str = self::getAcceptedFileTypes($filetypes_str_argument);
@@ -43,7 +45,7 @@ class ESFileUploader
 
         $output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
         $t = time();
-        $file = self::getfile_SafeMIME($fileId);
+        $file = self::getFileSafeMIME($fileId);
 
         $accepted_types = self::getAcceptableMimeTypes($filetypes_str);
 
@@ -64,7 +66,7 @@ class ESFileUploader
 
                 if ($mime == 'application/zip' and $fileExtension != 'zip') {
                     //could be docx, xlsx, pptx
-                    $mime = self::checkZIPfile_X($file["tmp_name"], $fileExtension);
+                    $mime = self::checkZIP_File_X($file["tmp_name"], $fileExtension);
                 }
 
                 if (in_array($mime, $accepted_types)) {
@@ -177,6 +179,10 @@ class ESFileUploader
         return $accepted_filetypes;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
     protected static function getTableRawByItemid()
     {
         $app = Factory::getApplication();
@@ -260,7 +266,7 @@ class ESFileUploader
             'eps' => 'application/postscript',
             'ps' => 'application/postscript',
 
-            // ms office
+            // MS Office
             'doc' => 'application/msword',
             'rtf' => 'text/rtf',
             'xls' => 'application/vnd.ms-excel',
@@ -306,7 +312,12 @@ class ESFileUploader
         }
     }
 
-    public static function getfile_SafeMIME($fileId)
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+
+    protected static function getFileSafeMIME($fileId)
     {
         $ct = new CT;
         if ($ct->Env->advancedTagProcessor) {
@@ -361,23 +372,23 @@ class ESFileUploader
         return $file;
     }
 
-    public static function checkZIPfile_X($fileNamePath, $fileExtension)
+    public static function checkZIP_File_X($fileNamePath, $fileExtension)
     {
         //Checks the file zip archive is actually a docx or xlsx or pptx
         //https://www.filesignatures.net/index.php?page=all&currentpage=6&order=EXT
         //504B0304 - zip
 
         /*
-        $magicnumbers=array(
+        $magicNumbers=array(
             'docx' => ["504B030414000600"],
             'xlsx' => [0x504B0304,0x504B030414000600],
             'pptx' => [0x504B0304,0x504B030414000600]
         );
         */
 
-        $magicnumbers = array(hex2bin("504B030414000600"), hex2bin("504B030414000800"));
+        $magicNumbers = array(hex2bin("504B030414000600"), hex2bin("504B030414000800"));
 
-        $l = strlen($magicnumbers[0]);
+        $l = strlen($magicNumbers[0]);
 
         $handle = fopen($fileNamePath, "rb");
         if (FALSE === $handle) {
@@ -388,7 +399,7 @@ class ESFileUploader
         fclose($handle);
 
         $c = substr($content, 0, $l);
-        if ($c == $magicnumbers[0] or $c == $magicnumbers[1]) {
+        if ($c == $magicNumbers[0] or $c == $magicNumbers[1]) {
             if ($fileExtension == 'docx')
                 return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
             elseif ($fileExtension == 'xlsx')
@@ -406,13 +417,11 @@ class ESFileUploader
         //https://stackoverflow.com/a/1.2.636
         $str = common::ctStripTags($str);
         $str = preg_replace('/[\r\n\t ]+/', ' ', $str);
-        $str = preg_replace('/[\"\*\/\:\<\>\?\'\|]+/', ' ', $str);
-        //$str = strtolower($str);
+        $str = preg_replace('/["*\/:<>?\'|]+/', ' ', $str);
         $str = html_entity_decode($str, ENT_QUOTES, "utf-8");
         $str = htmlentities($str, ENT_QUOTES, "utf-8");
         //$str = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $str);
         $str = str_replace(' ', '-', $str);
-        //$str = rawurlencode($str);
         return str_replace('%', '-', $str);
     }
 }

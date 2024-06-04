@@ -9,13 +9,12 @@
  **/
 
 // no direct access
+defined('_JEXEC') or die();
+
 use CustomTables\common;
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Uri\Uri;
-
-defined('_JEXEC') or die();
 
 // load tooltip behavior
 if ($this->version < 4) {
@@ -51,7 +50,7 @@ echo '
 	<div id="eventsmessage"></div>
 
 	<script>
-		ct_getUploader(1,"' . $urlString . '",' . $max_file_size . ',"txt html","esFileUploaderForm_Tables",true,"fileuploader","eventsmessage","' . $fileId . '","filetosubmit","ct_uploadedfile_box_file");//null);
+		ct_getUploader(1,"' . $urlString . '",' . $max_file_size . ',"txt html","esFileUploaderForm_Tables",true,"fileuploader","eventsmessage","' . $fileId . '","filetosubmit","ct_uploadedfile_box_file")
 	</script>
     <ul style="list-style: none;">
         <li><input type="checkbox" name="importfields" value="1" checked="checked" /> Import Table Fields</li>
@@ -65,7 +64,7 @@ echo '
 	<input type="hidden" name="option" value="com_customtables" />
 	<!--<input type="hidden" name="controller" value="importtables" />-->
 	<input type="hidden" name="task" value="importtables.importtables" />
-' . common::translate('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '
+' . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '
     ' . HTMLHelper::_('form.token') . '
 	</form>
 ';
