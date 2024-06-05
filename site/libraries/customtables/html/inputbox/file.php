@@ -39,8 +39,13 @@ class InputBox_file extends BaseInputBox
 
             if ($fileSize != 0)
                 $result .= $this->renderBlobAndDeleteOption($fileSize);
-        } else
-            $result .= $this->renderFileAndDeleteOption($file, $this->row[$this->ct->Table->realidfieldname]);
+        } else {
+            $listing_id = null;
+            if ($this->row !== null)
+                $listing_id = $this->row[$this->ct->Table->realidfieldname];
+
+            $result .= $this->renderFileAndDeleteOption($file, $listing_id);
+        }
 
         $result .= $this->renderUploader();
 

@@ -160,8 +160,9 @@
         </editparams>
     </type><!-- pro -->
 
+    <!-- WordPress Ready -->
     <type ct_name="changetime" label="Change Time" description="Stores the date/time when record was last modified."
-          priority="2">
+          priority="2" wordpress="true" order="14">
         <valueparams name="changetime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
@@ -221,8 +222,9 @@
         </valueparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="creationtime" label="Creation Time" description="Stores the date/time when record was created."
-          priority="2">
+          priority="2" wordpress="true" order="13">
         <valueparams name="creationtime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
@@ -790,7 +792,7 @@
     </type>
 
     <type ct_name="md5" label="MD5 Hash" description="MD5 Hash calculated based on selected fields values." priority="3"
-          proversion="1"><!-- pro -->
+          proversion="1" wordpress="true" order="16"><!-- pro -->
         <params>
             <param name="fieldlist" example="firstname,lastname,birthdate" label="List of Fields"
                    description='Field Values will be taken and MD5 Hash code will be calculated over it.' default=""
@@ -1567,10 +1569,11 @@
         </editparams>
     </type>
 
-    <type ct_name="viewcount" label="View Count" description="Stores the view count number." priority="2"/>
+    <type ct_name="viewcount" label="View Count" description="Stores the view count number." priority="2"
+          wordpress="false" order="15"/>
 
     <type ct_name="lastviewtime" label="View Time" description="Stores the date/time when record was last viewed."
-          priority="2">
+          priority="2" wordpress="false" order="14">
         <valueparams name="lastviewtime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>

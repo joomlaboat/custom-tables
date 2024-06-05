@@ -889,6 +889,7 @@ function renderInput_Field_readSelectBoxes(id) {
     let onchange_function = "";
 
     while (1) {
+
         const obj = document.getElementById(id + '_' + i);
         if (!obj)
             break;
@@ -923,9 +924,20 @@ function renderInput_Field_readSelectBoxes(id) {
 
     if (allHaveSelections) {
         //add new select box
+
         const selectBoxes = document.getElementById(id + '_selectboxes');
 
-        let tableObject = document.getElementById('jform_tableid');
+        let tableObjectId = '';
+        if (window.Joomla instanceof Object) {
+            tableObjectId = 'jform_tableid';
+        } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+            tableObjectId = 'table';
+        } else {
+            console.log('Error: renderInput_Layout not supported in this type of CMS');
+            return;
+        }
+
+        let tableObject = document.getElementById(tableObjectId);
         if (!tableObject)
             return;
 
