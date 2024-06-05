@@ -39,16 +39,18 @@ class Save_file
         $to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
 
         //Get new file
-        $pathToImageFile = null;
+        $CompletePathToFile = null;
         $fileName = null;
 
         if (defined('_JEXEC')) {
-            $pathToImageFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+            $temporaryFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+            $CompletePathToFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $temporaryFile;
+
             $fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
         } elseif (defined('WPINC')) {
             //Get new image
             if (isset($_FILES[$this->field->comesfieldname])) {
-                $pathToImageFile = $_FILES[$this->field->comesfieldname]['tmp_name'];
+                $CompletePathToFile = $_FILES[$this->field->comesfieldname]['tmp_name'];
                 $fileName = $_FILES[$this->field->comesfieldname]['name'];
             }
         } else
@@ -57,7 +59,7 @@ class Save_file
         //Set the variable to "false" to do not delete existing file
         $FileFolder = FileUtils::getOrCreateDirectoryPath($this->field->params[1]);
 
-        if (($pathToImageFile !== null and $pathToImageFile != '') or $to_delete == 'true') {
+        if (($CompletePathToFile !== null and $CompletePathToFile != '') or $to_delete == 'true') {
 
             $ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
 
@@ -75,17 +77,17 @@ class Save_file
             }
         }
 
-        if ($pathToImageFile !== null and $pathToImageFile != '') {
+        if ($CompletePathToFile !== null and $CompletePathToFile != '') {
             //Upload new file
 
             if ($listing_id == 0) {
                 $fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
-                $value = $this->UploadSingleFile(null, $pathToImageFile, $fileName, $fileSystemFileFolder);
+                $value = $this->UploadSingleFile(null, $CompletePathToFile, $fileName, $fileSystemFileFolder);
             } else {
                 $ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
 
                 $fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
-                $value = $this->UploadSingleFile($ExistingFile, $pathToImageFile, $fileName, $fileSystemFileFolder);
+                $value = $this->UploadSingleFile($ExistingFile, $CompletePathToFile, $fileName, $fileSystemFileFolder);
             }
 
             //Set new image value
@@ -118,7 +120,7 @@ class Save_file
      * @throws Exception
      * @since 3.3.4
      */
-    private function UploadSingleFile(?string $ExistingFile, string $pathToImageFile, string $fileName, string $FileFolder): ?string
+    private function UploadSingleFile(?string $ExistingFile, string $CompletePathToFile, string $fileName, string $FileFolder): ?string
     {
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
 
@@ -129,7 +131,7 @@ class Save_file
         else
             return null;
 
-        if ($pathToImageFile != '') {
+        if ($CompletePathToFile != '') {
             if (empty($this->field->params[3])) {
 
                 //Joomla version the File Uploader adds random value to the filename to make sure it's a unique file name in tmp folder.
@@ -169,8 +171,8 @@ class Save_file
                 if (defined('_JEXEC')) {
                     $file = common::inputPostString($this->field->comesfieldname, '');
                     $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
-                    common::base64file_decode($pathToImageFile, $dst);
-                    $pathToImageFile = $dst;
+                    common::base64file_decode($CompletePathToFile, $dst);
+                    $CompletePathToFile = $dst;
                 } else {
                     echo 'Base64 encoded file upload is not available in this CMS';
                 }
@@ -180,39 +182,37 @@ class Save_file
                 //Delete Old File
                 $filename_full = $FileFolder . DIRECTORY_SEPARATOR . $ExistingFile;
 
-
                 if (file_exists($filename_full))
                     unlink($filename_full);
             }
 
-            if (!file_exists($pathToImageFile))
+            if (!file_exists($CompletePathToFile))
                 return null;
 
-            $mime = mime_content_type($pathToImageFile);
-
+            $mime = mime_content_type($CompletePathToFile);
             $parts = explode('.', $fileName);
             $fileExtension = end($parts);
             if ($mime == 'application/zip' and $fileExtension != 'zip') {
                 //could be docx, xlsx, pptx
-                $mime = FileUploader::checkZIP_File_X($pathToImageFile, $fileExtension);
+                $mime = FileUploader::checkZIP_File_X($CompletePathToFile, $fileExtension);
             }
 
             if (in_array($mime, $accepted_filetypes)) {
                 $new_filename = self::getCleanAndAvailableFileName($desiredFileName, $FileFolder);
                 $new_filename_path = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder . DIRECTORY_SEPARATOR . $new_filename);
 
-                if (@copy($pathToImageFile, $new_filename_path)) {
-                    unlink($pathToImageFile);
+                if (@copy($CompletePathToFile, $new_filename_path)) {
+                    unlink($CompletePathToFile);
                     //Copied
 
                     return $new_filename;
                 } else {
-                    unlink($pathToImageFile);
+                    unlink($CompletePathToFile);
                     //Cannot copy
                     return null;
                 }
             } else {
-                unlink($pathToImageFile);
+                unlink($CompletePathToFile);
                 return null;
             }
         }
