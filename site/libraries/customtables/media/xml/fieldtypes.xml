@@ -243,6 +243,7 @@
         </editparams>
     </type>
 
+    <!-- Not used in WordPress version and will be obsolete in Joomla version in December 2024 -->
     <type ct_name="customtables" deprecated="1" name="customtables" label="Hierarchical List"
           description="Hierarchical List"
           rawquotes="1" ct_alias="customtables" disabled="false" ct_special="false" priority="3" proversion="1">
@@ -791,6 +792,7 @@
         </editparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="md5" label="MD5 Hash" description="MD5 Hash calculated based on selected fields values." priority="3"
           proversion="1" wordpress="true" order="16"><!-- pro -->
         <params>
@@ -1591,18 +1593,19 @@
         </editparams>
     </type>
 
+    <!-- WordPress Ready -->
     <type ct_name="virtual" name="virtual" label="Virtual Field"
           description="Virtual field is the field the value of which is computed - processed by Twig. Similar to Layout processing."
-          ct_alias="virtual" disabled="false" ct_special="false" priority="2">
+          ct_alias="virtual" disabled="false" ct_special="false" priority="2" wordpress="true" order="17">
         <params>
             <param name="layout" label="Layout" description="Value Layout" default="" type="fieldlayout"/>
 
             <param name="storage" label="Value Storage" type="list" default="virtual"
                    description="Store the value for future use in search or order by.">
-                <option value="virtual" label="Virtual (Computed on request)"/>
-                <option value="storedstring" label="Stored String"/>
-                <option value="storedintegersigned" label="Stored Integer Signed"/>
-                <option value="storedintegerunsigned" label="Stored Integer Unsigned"/>
+                <option value="virtual" label="Virtual (Computed on request)" wordpress="true"/>
+                <option value="storedstring" label="Stored String" wordpress="true"/>
+                <option value="storedintegersigned" label="Stored Integer Signed" wordpress="true"/>
+                <option value="storedintegerunsigned" label="Stored Integer Unsigned" wordpress="true"/>
             </param>
 
             <param name="length" label="Length"
