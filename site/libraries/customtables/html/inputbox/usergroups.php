@@ -42,15 +42,8 @@ class InputBox_usergroups extends BaseInputBox
         }
 
         $valueArray = explode(',', $value ?? '');
-
         self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-
-        try {
-            $records = $this->buildQuery();
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-
+        $records = $this->ct->Env->user->getUserGroupArray($this->field);
         $selector = (($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params[0] : '');
 
         switch ($selector) {
@@ -63,33 +56,12 @@ class InputBox_usergroups extends BaseInputBox
             case 'checkbox':
                 return $this->getCheckbox($records, $valueArray);
             case 'multibox':
-                return $this->getMultibox($records, $valueArray);
+                return $this->getMultipleValueBox($records, $valueArray);
             default:
                 return '<p>Incorrect selector</p>';
         }
     }
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    protected function buildQuery(): array
-    {
-        $whereClause = new MySQLWhereClause();
-
-        $availableUserGroups = $this->field->params[1] ?? '';
-        $availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', trim($availableUserGroups)));
-
-        if (count($availableUserGroupList) == 0) {
-            $whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');
-        } else {
-            foreach ($availableUserGroupList as $availableUserGroup) {
-                if ($availableUserGroup != '')
-                    $whereClause->addOrCondition('#__usergroups.title', $availableUserGroup);
-            }
-        }
-        return database::loadObjectList('#__usergroups', ['#__usergroups.id AS id', '#__usergroups.title AS name'], $whereClause, '#__usergroups.title');
-    }
 
     protected function getSelect(array $records, array $valueArray, bool $multiple = false, ?string $customElementId = null): string
     {
@@ -103,64 +75,69 @@ class InputBox_usergroups extends BaseInputBox
         if ($multiple)
             $attributes['name'] .= '[]';
 
-        $htmlresult = '<SELECT ' . self::attributes2String($attributes) . ($multiple ? ' MULTIPLE' : '') . '>';
+        $htmlResult = '<SELECT ' . self::attributes2String($attributes) . ($multiple ? ' MULTIPLE' : '') . '>';
 
-        foreach ($records as $row) {
-            $htmlresult .= '<option value="' . $row->id . '"'
-                . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' selected' : '')
-                . '>' . htmlspecialchars($row->name ?? '') . '</option>';
+        if (!$multiple) {
+            $htmlResult .= '<option value=""'
+                . (in_array("", $valueArray) ? ' selected' : '') . '>- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
         }
 
-        $htmlresult .= '</SELECT>';
-        return $htmlresult;
+        foreach ($records as $row) {
+            $htmlResult .= '<option value="' . $row['id'] . '"'
+                . ((in_array($row['id'], $valueArray) and count($valueArray) > 0) ? ' selected' : '')
+                . '>' . htmlspecialchars($row['name'] ?? '') . '</option>';
+        }
+
+        $htmlResult .= '</SELECT>';
+        return $htmlResult;
     }
 
     protected function getRadio(array $records, array $valueArray): string
     {
-        $htmlresult = '<table style="border:none;" id="usergroups_table_' . $this->attributes['id'] . '">';
+        $htmlResult = '<table style="border:none;" id="usergroups_table_' . $this->attributes['id'] . '">';
         $i = 0;
         foreach ($records as $row) {
-            $htmlresult .= '<tr><td style="vertical-align: middle">'
+            $htmlResult .= '<tr><td style="vertical-align: middle">'
                 . '<input type="radio" '
                 . 'name="' . $this->attributes['id'] . '" '
                 . 'id="' . $this->attributes['id'] . '_' . $i . '" '
-                . 'value="' . $row->id . '" '
+                . 'value="' . $row['id'] . '" '
                 . 'data-type="usergroups" '
-                . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' checked="checked" ' : '')
+                . ((in_array($row['id'], $valueArray) and count($valueArray) > 0) ? ' checked="checked" ' : '')
                 . ' /></td>'
                 . '<td style="vertical-align: middle">'
-                . '<label for="' . $this->attributes['id'] . '_' . $i . '">' . $row->name . '</label>'
+                . '<label for="' . $this->attributes['id'] . '_' . $i . '">' . $row['name'] . '</label>'
                 . '</td></tr>';
             $i++;
         }
-        $htmlresult .= '</table>';
+        $htmlResult .= '</table>';
 
-        return $htmlresult;
+        return $htmlResult;
     }
 
     protected function getCheckbox(array $records, array $valueArray): string
     {
-        $htmlresult = '<table style="border:none;" id="usergroups_table_' . $this->attributes['id'] . '">';
+        $htmlResult = '<table style="border:none;" id="usergroups_table_' . $this->attributes['id'] . '">';
         $i = 0;
         foreach ($records as $row) {
-            $htmlresult .= '<tr><td style="vertical-align: middle">'
+            $htmlResult .= '<tr><td style="vertical-align: middle">'
                 . '<input type="checkbox" '
                 . 'name="' . $this->attributes['id'] . '[]" '
                 . 'id="' . $this->attributes['id'] . '_' . $i . '" '
-                . 'value="' . $row->id . '" '
+                . 'value="' . $row['id'] . '" '
                 . 'data-type="usergroups" '
-                . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' checked="checked" ' : '')
+                . ((in_array($row['id'], $valueArray) and count($valueArray) > 0) ? ' checked="checked" ' : '')
                 . ' /></td>'
                 . '<td style="vertical-align: middle">'
-                . '<label for="' . $this->attributes['id'] . '_' . $i . '">' . $row->name . '</label>'
+                . '<label for="' . $this->attributes['id'] . '_' . $i . '">' . $row['name'] . '</label>'
                 . '</td></tr>';
             $i++;
         }
-        $htmlresult .= '</table>';
-        return $htmlresult;
+        $htmlResult .= '</table>';
+        return $htmlResult;
     }
 
-    protected function getMultibox(array $records, array $valueArray): string
+    protected function getMultipleValueBox(array $records, array $valueArray): string
     {
         $control_name = $this->attributes['id'];
 
@@ -177,7 +154,7 @@ class InputBox_usergroups extends BaseInputBox
             }
         }
 
-        $htmlresult = '
+        $htmlResult = '
 		<script>
 			ctInputBoxRecords_r["' . $control_name . '"] = ' . common::ctJsonEncode($ctInputBoxRecords_r) . ';
 			ctInputBoxRecords_v["' . $control_name . '"] = ' . common::ctJsonEncode($ctInputBoxRecords_v) . ';
@@ -187,7 +164,7 @@ class InputBox_usergroups extends BaseInputBox
 
         $single_box = $this->getSelect($records, $valueArray, false, $control_name . '_selector');
 
-        $htmlresult .= '<div style="padding-bottom:20px;"><div style="width:90%;" id="' . $control_name . '_box"></div>'
+        $htmlResult .= '<div style="padding-bottom:20px;"><div style="width:90%;" id="' . $control_name . '_box"></div>'
             . '<div style="height:30px;">'
             . '<div id="' . $control_name . '_addButton" style="visibility:visible;"><img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/new.png" alt="Add" title="Add" style="cursor: pointer;" '
             . 'onClick="ctInputBoxRecords_addItem(\'' . $control_name . '\',\'_selector\')" /></div>'
@@ -207,6 +184,6 @@ class InputBox_usergroups extends BaseInputBox
 			ctInputBoxRecords_showMultibox("' . $control_name . '","");
 		</script>
 		';
-        return $htmlresult;
+        return $htmlResult;
     }
 }

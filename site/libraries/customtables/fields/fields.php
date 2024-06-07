@@ -1113,6 +1113,10 @@ class Fields
                 //case 'multilangarticle':
                 return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null];
 
+            case 'usergroups':
+                $l = (int)$typeParams;
+                return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 1024, 'default' => null];
+
             case 'image':
                 $fileNameType = $typeParamsArray[3] ?? '';
                 $length = null;

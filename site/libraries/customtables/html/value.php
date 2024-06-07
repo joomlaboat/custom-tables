@@ -222,7 +222,7 @@ class Value
                 return CTUser::showUserGroup((int)$rowValue);
 
             case 'usergroups':
-                return CTUser::showUserGroups($rowValue);
+                return $this->ct->Env->user->showUserGroups($rowValue);
 
             case 'filelink':
                 $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'

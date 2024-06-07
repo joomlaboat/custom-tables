@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 
 use Exception;
 use JApplicationHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\User;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\CMS\Version;
@@ -34,6 +33,10 @@ class CTUser
     var ?string $username;
     var bool $guestCanAddNew;
 
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
     public function __construct(?int $id = null)
     {
         if ($id === 0)
@@ -51,7 +54,7 @@ class CTUser
             $version = (int)$version_object->getShortVersion();
 
             if ($version < 4)
-                $user = Factory::getUser($this->id);
+                $user = Factory::getUser($this->id);//For older Joomla versions
             else {
 
                 if ($this->id === null)
@@ -63,7 +66,7 @@ class CTUser
             $this->id = $user->id;
 
             if ($user !== null) {
-                $this->groups = $user->get('groups');
+                $this->groups = $user->get('groups');//For older Joomla versions
                 $this->email = $user->email;
                 $this->name = $user->name;
                 $this->username = $user->username;
@@ -73,19 +76,16 @@ class CTUser
         } elseif (defined('WPINC')) {
 
             if (function_exists('get_current_user_id')) {
-                $this->id = get_current_user_id();
+                $this->id = get_current_user_id(); //This is WordPress method
 
                 if (function_exists('wp_get_current_user')) {
-                    $current_user = wp_get_current_user();
+                    $current_user = wp_get_current_user(); //This is WordPress method
                     $this->groups = $current_user->roles;
 
-                    if (current_user_can('activate_plugins'))
+                    if (current_user_can('activate_plugins')) //This is WordPress method
                         $this->isUserAdministrator = true;
                     else
                         $this->isUserAdministrator = false;
-
-                    //$current_user = wp_get_current_user();
-                    //$has_capability = $current_user->has_cap('capability_name');
                 }
             }
         }
@@ -125,7 +125,7 @@ class CTUser
         $realUserId = CTUser::SetUserPassword($realUserId, $password);
         $userRow = CTUser::GetUserRow($realUserId);
 
-        $config = Factory::getConfig();
+        $config = Factory::getConfig();//For older Joomla versions
         $sitename = $config->get('sitename');
 
         if ($userRow !== null) {
@@ -207,7 +207,8 @@ class CTUser
         } elseif (defined('WPINC')) {
             $whereClause->addCondition('id', $userid);
         } else {
-            return 'GetUserRow not supported.';
+            echo 'GetUserRow not supported.';
+            return null;
         }
 
         $rows = database::loadAssocList('#__users', ['*'], $whereClause, null, null, 1);
@@ -238,7 +239,7 @@ class CTUser
             return $groupList;
 
         } elseif (defined('WPINC')) {
-            $user = get_userdata($userid);
+            $user = get_userdata($userid); //This is WordPress method
             $roles = $user->roles;
 
             $role_names = array();
@@ -271,14 +272,13 @@ class CTUser
 
         $msg = '';
         $password = strtolower(JUserHelper::genRandomPassword());
-        $articleId = 0;
 
         if (!@Email::checkEmail($email)) {
             common::enqueueMessage(common::translate('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"');
             return false;
         }
 
-        $realUserId = CTUser::CreateUserAccount($name, $email, $password, $email, $usergroups, $msg, $articleId);
+        $realUserId = CTUser::CreateUserAccount($name, $email, $password, $email, $usergroups, $msg);
 
         if ($msg != '') {
             common::enqueueMessage($msg);
@@ -315,14 +315,14 @@ class CTUser
         //Creates active user
         $userActivation = 0;//already activated
 
-        $config = Factory::getConfig();
+        $config = Factory::getConfig();//For older Joomla versions
 
         // Initialise the table with JUser.
         $version_object = new Version;
         $version = (int)$version_object->getShortVersion();
 
         if ($version < 4)
-            $user = Factory::getUser(0);
+            $user = Factory::getUser(0);//For older Joomla versions
         else
             $user = new User();
 
@@ -403,7 +403,7 @@ class CTUser
             $data['activate'] = $base . 'index.php?option=com_users&task=registration.activate&token=' . $data['activation'];
         }
 
-        $config = Factory::getConfig();
+        $config = Factory::getConfig();//For older Joomla versions
         $siteName = $config->get('sitename');
         $subject = common::translate('COM_USERS_EMAIL_ACCOUNT_DETAILS');
         $emailSubject = str_replace('{NAME}', $fullName, $subject);
@@ -423,8 +423,10 @@ class CTUser
         return $user->id;
     }
 
-    //------------- USER CREATION
-
+    /**
+     * @throws Exception
+     * @since 3.3.3
+     */
     static protected function getUserGroupIDsByName(string $group_names): ?array
     {
         $names = explode(',', $group_names);
@@ -456,13 +458,13 @@ class CTUser
      * @throws Exception
      * @since 3.2.2
      */
-    static public function UpdateUserField(string $realtablename, string $realidfieldname, string $userIdFieldName, string $existing_user_id, $listing_id): void
+    static public function UpdateUserField(string $realtablename, string $realIdFieldName, string $userIdFieldName, string $existing_user_id, $listing_id): void
     {
         $data = [
             $userIdFieldName => $existing_user_id
         ];
         $whereClauseUpdate = new MySQLWhereClause();
-        $whereClauseUpdate->addCondition($realidfieldname, $listing_id);
+        $whereClauseUpdate->addCondition($realIdFieldName, $listing_id);
         database::update($realtablename, $data, $whereClauseUpdate);
     }
 
@@ -522,7 +524,7 @@ class CTUser
         return false;
     }
 
-    public static function checkIfRecordBelongsToUser(CT &$ct, int $ug): bool
+    public static function checkIfRecordBelongsToUser(CT $ct, int $ug): bool
     {
         if (!isset($ct->Env->user->isUserAdministrator))
             return false;
@@ -563,13 +565,28 @@ class CTUser
 
     /**
      * @throws Exception
-     * @since 3.2.2
+     * @since 3.3.4
      */
-    public static function showUserGroups(?string $valueArrayString): string
+    public function showUserGroups(?string $valueArrayString): string
     {
         if ($valueArrayString == '')
             return '';
 
+        if (defined('_JEXEC')) {
+            return $this->resolveUserGroups_Joomla($valueArrayString);
+        } elseif (defined('WPINC')) {
+            return $this->resolveUserGroups_WordPress($valueArrayString);
+        } else {
+            return 'User Groups field type is not supported in this environment.';
+        }
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    protected function resolveUserGroups_Joomla(?string $valueArrayString): string
+    {
         $whereClause = new MySQLWhereClause();
 
         $valueArray = explode(',', $valueArrayString);
@@ -588,6 +605,120 @@ class CTUser
             $groups[] = $opt['title'];
 
         return implode(',', $groups);
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    protected function resolveUserGroups_WordPress(?string $valueArrayString): string
+    {
+        $records = $this->getUserGroupArray(null);
+        $valueArray = explode(',', $valueArrayString);
+
+        $groups = [];
+
+        foreach ($valueArray as $value) {
+            if ($value != '') {
+
+                foreach ($records as $record) {
+                    if ($record['id'] == $value)
+                        $groups[] = $record['name'];
+                }
+            }
+        }
+
+        return implode(',', $groups);
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    public function getUserGroupArray(?Field $field): array
+    {
+        if (defined('_JEXEC')) {
+            return self::getUserGroupArray_Joomla($field);
+        } elseif (defined('WPINC')) {
+            return self::getUserGroupArray_WordPress($field);
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    protected function getUserGroupArray_Joomla(?Field $field): array
+    {
+        $whereClause = new MySQLWhereClause();
+
+        if ($field !== null) {
+            $availableUserGroups = $field->params[1] ?? '';
+            $availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', strtolower(trim($availableUserGroups))));
+        } else {
+            $availableUserGroupList = null;
+        }
+
+        if ($availableUserGroupList === null or count($availableUserGroupList) == 0) {
+            $whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');
+        } else {
+            foreach ($availableUserGroupList as $availableUserGroup) {
+                if ($availableUserGroup != '')
+                    $whereClause->addOrCondition('#__usergroups.title', $availableUserGroup);
+            }
+        }
+        return database::loadAssocList('#__usergroups', ['#__usergroups.id AS id', '#__usergroups.title AS name'], $whereClause, '#__usergroups.title');
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    protected function getUserGroupArray_WordPress(?Field $field): array
+    {
+        $whereClause = new MySQLWhereClause();
+
+        $whereClause->addCondition('option_name', '#__user_roles');
+
+        $records = database::loadAssocList('#__options', ['option_value'], $whereClause, null, null, 1);
+        if (count($records) != 1)
+            return [];
+
+        $str = $records[0]['option_value'];
+        $groups = unserialize($str);
+
+        if ($field !== null) {
+            $availableUserGroups = $field->params[1] ?? '';
+            $availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', strtolower(trim($availableUserGroups))));
+        } else {
+            $availableUserGroupList = null;
+        }
+
+        $roles = array();
+
+        foreach ($groups as $role => $role_data) {
+
+            if ($availableUserGroupList !== null and count($availableUserGroupList) > 0) {
+                // Exclude roles that are not in the whitelist
+                if (!in_array(strtolower($role), $availableUserGroupList)) {
+                    continue;
+                }
+            }
+
+            $roles[] = array(
+                'id' => $role,
+                'name' => $role_data['name']
+            );
+        }
+
+        // Sort the roles by name
+        usort($roles, function ($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
+
+        return $roles;
     }
 
     public function checkUserGroupAccess($group = 0): bool
@@ -616,6 +747,5 @@ class CTUser
         } else {
             throw new Exception('User->authorise not implemented for WordPress yet.');
         }
-        return false;
     }
 }

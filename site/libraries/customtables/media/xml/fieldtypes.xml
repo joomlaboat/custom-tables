@@ -1548,17 +1548,19 @@
         </editparams>
     </type>
 
-    <type ct_name="usergroups" label="User Groups" description="User Group Multi Select Box" priority="3">
+    <!-- WordPress Ready -->
+    <type ct_name="usergroups" label="User Groups(Roles)" description="User Group(Role) Multi Select Box" priority="3"
+          wordpress="true" order="18">
         <params>
             <param name="selector" label="Selector" description="How to select records." default="single" type="list"
                    example="multi">
-                <option value="single" label="Single User Group (Select Box)"/>
-                <option value="multi" label="Multiple User Groups  (List Box)"/>
-                <option value="radio" label="Single User Group (Radio)"/>
-                <option value="checkbox" label="Multiple User Groups (Checkboxes)"/>
+                <option value="single" label="Single User Group/Role (Select Box)" wordpress="true"/>
+                <option value="multi" label="Multiple User Groups/Roles  (List Box)" wordpress="true"/>
+                <option value="radio" label="Single User Group/Role (Radio)" wordpress="true"/>
+                <option value="checkbox" label="Multiple User Groups/Roles (Checkboxes)" wordpress="true"/>
             </param>
-            <param type="string" name="availableusergroups" label="Available User Groups"
-                   description="List of available User Groups separated by comma. User groups that can be selected. Super Users disabled by default. If the field is empty then all user groups will be visible to select except Super Users group."/>
+            <param type="string" name="availableusergroups" label="Available User Groups/Roles"
+                   description="List of available User Groups/Roles separated by comma. User groups/roles that can be selected. Super Users disabled by default. If the field is empty then all user groups will be visible to select except Super Users group."/>
         </params>
 
         <editparams name="usergroups" label="Input Element Parameters" description="">
@@ -1571,9 +1573,11 @@
         </editparams>
     </type>
 
+    <!-- WordPress in Progress - detailed view needed -->
     <type ct_name="viewcount" label="View Count" description="Stores the view count number." priority="2"
           wordpress="false" order="15"/>
 
+    <!-- WordPress in Progress - detailed view needed -->
     <type ct_name="lastviewtime" label="View Time" description="Stores the date/time when record was last viewed."
           priority="2" wordpress="false" order="14">
         <valueparams name="lastviewtime" label="Date Format"

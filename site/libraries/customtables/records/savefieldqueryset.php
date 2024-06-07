@@ -276,8 +276,15 @@ class SaveFieldQuerySet
                 break;
 
             case 'usergroups':
-                $value = $this->get_usergroups_type_value();
-                $this->setNewValue($value);
+
+                require_once 'usergroups.php';
+                $usergroups = new Save_usergroups($this->ct, $this->field, $this->row_new);
+                $value = $usergroups->saveFieldSet();
+
+                //This way it will be clear if the value changed or not. If $this->newValue = null means that value not changed.
+                if ($value !== null and is_array($value))
+                    $this->setNewValue($value['value']);
+
                 return;
 
             case 'language':
@@ -639,33 +646,6 @@ class SaveFieldQuerySet
             return array($string, 0);
 
         return $val;
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.0.0
-     */
-    protected function get_usergroups_type_value(): ?string
-    {
-        switch (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] : '') {
-            case 'radio':
-            case 'single';
-                $value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
-                if (isset($value))
-                    return ',' . $value . ',';
-
-                break;
-            case 'multibox':
-            case 'checkbox':
-            case 'multi';
-                $valueArray = common::inputPost($this->field->comesfieldname, null, 'array');
-
-                if (isset($valueArray))
-                    return ',' . implode(',', $valueArray) . ',';
-
-                break;
-        }
-        return null;
     }
 
     /**
