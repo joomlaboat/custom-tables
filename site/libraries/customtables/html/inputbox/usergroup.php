@@ -17,73 +17,70 @@ use Exception;
 
 class InputBox_usergroup extends BaseInputBox
 {
-	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
-	{
-		parent::__construct($ct, $field, $row, $option_list, $attributes);
-	}
+    function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
+    {
+        parent::__construct($ct, $field, $row, $option_list, $attributes);
+    }
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.0
-	 */
-	function render(?string $value, ?string $defaultValue, bool $showUserWithRecords = false): string
-	{
-		if ($this->ct->Env->user->id === null)
-			return '';
+    /**
+     * @throws Exception
+     * @since 3.2.0
+     */
+    function render(?string $value, ?string $defaultValue, bool $showUserWithRecords = false): string
+    {
+        if ($this->ct->Env->user->id === null)
+            return '';
 
-		if ($value === null) {
-			$value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname);
-			if (!$value)
-				$value = $defaultValue;
-		}
+        if ($value === null) {
+            $value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname);
+            if (!$value)
+                $value = $defaultValue;
+        }
 
-		self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
 
-		try {
-			$options = $this->buildQuery($showUserWithRecords);
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
-		}
+        $availableUserGroups = $this->field->params[0] ?? '';
+        $availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', strtolower(trim($availableUserGroups))));
 
-		// Start building the select element with attributes
-		$select = '<select ' . self::attributes2String($this->attributes) . '>';
+        if ($showUserWithRecords)
+            $innerJoin = ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
+        else
+            $innerJoin = null;
 
-		// Optional default option
-		$selected = (0 === (int)$value) ? ' selected' : '';
-		$select .= '<option value=""' . $selected . '> - ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
+        try {
+            $records = $this->ct->Env->user->getUserGroupArray($availableUserGroupList, $innerJoin);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
 
-		// Generate options for each file in the folder
-		foreach ($options as $option) {
-			$selected = ($option->id === (int)$value) ? ' selected' : '';
-			$select .= '<option value="' . $option->id . '"' . $selected . '>' . $option->name . '</option>';
-		}
-		$select .= '</select>';
-		return $select;
-	}
+        // Start building the select element with attributes
+        $select = '<select ' . self::attributes2String($this->attributes) . '>';
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	protected function buildQuery(bool $showUserWithRecords = false): array
-	{
-		$whereClause = new MySQLWhereClause();
+        if (defined('_JEXEC')) {
+            // Optional default option
+            $selected = (0 === (int)$value) ? ' selected' : '';
+            $select .= '<option value=""' . $selected . '> - ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 
-		$from = '#__usergroups';
+            // Generate options for each file in the folder
+            foreach ($records as $record) {
+                $selected = ($record['id'] === (int)$value) ? ' selected' : '';
+                $select .= '<option value="' . $record['id'] . '"' . $selected . '>' . $record['name'] . '</option>';
+            }
+        } elseif (defined('WPINC')) {
+            $value = trim($value);
 
-		if ($showUserWithRecords)
-			$from .= ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
+            // Optional default option
+            $selected = ('' === $value) ? ' selected' : '';
+            $select .= '<option value=""' . $selected . '> - ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 
-		$availableUserGroupsList = (($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params : []);
+            // Generate options for each file in the folder
+            foreach ($records as $record) {
+                $selected = ($record['id'] === $value) ? ' selected' : '';
+                $select .= '<option value="' . $record['id'] . '"' . $selected . '>' . $record['name'] . '</option>';
+            }
+        }
+        $select .= '</select>';
 
-		if (count($availableUserGroupsList) == 0) {
-			$whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');
-		} else {
-			foreach ($availableUserGroupsList as $availableUserGroup) {
-				if ($availableUserGroup != '')
-					$whereClause->addOrCondition('#__usergroups.title', $availableUserGroup);
-			}
-		}
-		return database::loadObjectList($from, ['#__usergroups.id AS id', '#__usergroups.title AS name'], $whereClause, '#__usergroups.title', null, null, null, 'OBJECT', '#__usergroups.id');
-	}
+        return $select;
+    }
 }

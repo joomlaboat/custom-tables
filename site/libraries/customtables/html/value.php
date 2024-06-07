@@ -219,7 +219,12 @@ class Value
                 return InputBox_filebox::process($FileBoxRows, $this->field, $this->row[$this->ct->Table->realidfieldname], $option_list);
 
             case 'usergroup':
-                return CTUser::showUserGroup((int)$rowValue);
+                if (defined('_JEXEC'))
+                    return CTUser::showUserGroup_Joomla($rowValue);
+                elseif (defined('WPINC'))
+                    return $this->ct->Env->user->showUserGroup_WordPress($rowValue);
+                else
+                    return null;
 
             case 'usergroups':
                 return $this->ct->Env->user->showUserGroups($rowValue);

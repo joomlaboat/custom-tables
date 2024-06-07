@@ -267,7 +267,12 @@ class SaveFieldQuerySet
             case 'article':
 
             case 'usergroup':
-                $value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
+                if (defined('_JEXEC'))
+                    $value = common::inputPostInt($this->field->comesfieldname);
+                elseif (defined('WPINC'))
+                    $value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
+                else
+                    return;
 
                 if (isset($value)) {
                     $this->setNewValue($value);

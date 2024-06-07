@@ -391,9 +391,7 @@ class CTUser
 
         $uri = URI::getInstance();
         $base = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port')) . '/';
-
         $base = str_replace('/administrator/', '/', $base);
-
 
         $data['siteurl'] = $base;//JUri::base();
 
@@ -551,8 +549,11 @@ class CTUser
      * @throws Exception
      * @since 3.2.2
      */
-    public static function showUserGroup(int $userid): string
+    public static function showUserGroup_Joomla(?int $userid): ?string
     {
+        if ($userid === null or $userid == 0)
+            return null;
+
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('id', $userid);
 
@@ -560,7 +561,106 @@ class CTUser
         if (count($options) != 0)
             return $options[0]['title'];
 
-        return '';
+        return null;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    public function showUserGroup_WordPress(?string $value): ?string
+    {
+        if ($value === null)
+            return null;
+
+        $records = $this->getUserGroupArray(null);
+
+        foreach ($records as $record) {
+            if ($record['id'] == $value)
+                return $record['name'];
+        }
+
+        return null;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    public function getUserGroupArray(?array $availableUserGroupList, string $innerJoin = null): array
+    {
+        if (defined('_JEXEC')) {
+            return self::getUserGroupArray_Joomla($availableUserGroupList, $innerJoin);
+        } elseif (defined('WPINC')) {
+            return self::getUserGroupArray_WordPress($availableUserGroupList);
+        } else {
+            return [];
+        }
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    protected function getUserGroupArray_Joomla(?array $availableUserGroupList, ?string $innerJoin = null): array
+    {
+        $from = '#__usergroups';
+        if ($innerJoin !== null)
+            $from .= $innerJoin;
+
+        $whereClause = new MySQLWhereClause();
+
+        if ($availableUserGroupList === null or count($availableUserGroupList) == 0) {
+            $whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');
+        } else {
+            foreach ($availableUserGroupList as $availableUserGroup) {
+                if ($availableUserGroup != '')
+                    $whereClause->addOrCondition('#__usergroups.title', $availableUserGroup);
+            }
+        }
+        return database::loadAssocList($from, ['#__usergroups.id AS id', '#__usergroups.title AS name'], $whereClause, '#__usergroups.title', null, null, null, '#__usergroups.id');
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    protected function getUserGroupArray_WordPress(?array $availableUserGroupList): array
+    {
+        $whereClause = new MySQLWhereClause();
+
+        $whereClause->addCondition('option_name', '#__user_roles');
+
+        $records = database::loadAssocList('#__options', ['option_value'], $whereClause, null, null, 1);
+        if (count($records) != 1)
+            return [];
+
+        $str = $records[0]['option_value'];
+        $groups = unserialize($str);
+
+        $roles = array();
+
+        foreach ($groups as $role => $role_data) {
+
+            if ($availableUserGroupList !== null and count($availableUserGroupList) > 0) {
+                // Exclude roles that are not in the whitelist
+                if (!in_array(strtolower($role), $availableUserGroupList)) {
+                    continue;
+                }
+            }
+
+            $roles[] = array(
+                'id' => $role,
+                'name' => $role_data['name']
+            );
+        }
+
+        // Sort the roles by name
+        usort($roles, function ($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
+
+        return $roles;
     }
 
     /**
@@ -629,96 +729,6 @@ class CTUser
         }
 
         return implode(',', $groups);
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.3.4
-     */
-    public function getUserGroupArray(?Field $field): array
-    {
-        if (defined('_JEXEC')) {
-            return self::getUserGroupArray_Joomla($field);
-        } elseif (defined('WPINC')) {
-            return self::getUserGroupArray_WordPress($field);
-        } else {
-            return [];
-        }
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    protected function getUserGroupArray_Joomla(?Field $field): array
-    {
-        $whereClause = new MySQLWhereClause();
-
-        if ($field !== null) {
-            $availableUserGroups = $field->params[1] ?? '';
-            $availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', strtolower(trim($availableUserGroups))));
-        } else {
-            $availableUserGroupList = null;
-        }
-
-        if ($availableUserGroupList === null or count($availableUserGroupList) == 0) {
-            $whereClause->addCondition('#__usergroups.title', 'Super Users', '!=');
-        } else {
-            foreach ($availableUserGroupList as $availableUserGroup) {
-                if ($availableUserGroup != '')
-                    $whereClause->addOrCondition('#__usergroups.title', $availableUserGroup);
-            }
-        }
-        return database::loadAssocList('#__usergroups', ['#__usergroups.id AS id', '#__usergroups.title AS name'], $whereClause, '#__usergroups.title');
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.3.4
-     */
-    protected function getUserGroupArray_WordPress(?Field $field): array
-    {
-        $whereClause = new MySQLWhereClause();
-
-        $whereClause->addCondition('option_name', '#__user_roles');
-
-        $records = database::loadAssocList('#__options', ['option_value'], $whereClause, null, null, 1);
-        if (count($records) != 1)
-            return [];
-
-        $str = $records[0]['option_value'];
-        $groups = unserialize($str);
-
-        if ($field !== null) {
-            $availableUserGroups = $field->params[1] ?? '';
-            $availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', strtolower(trim($availableUserGroups))));
-        } else {
-            $availableUserGroupList = null;
-        }
-
-        $roles = array();
-
-        foreach ($groups as $role => $role_data) {
-
-            if ($availableUserGroupList !== null and count($availableUserGroupList) > 0) {
-                // Exclude roles that are not in the whitelist
-                if (!in_array(strtolower($role), $availableUserGroupList)) {
-                    continue;
-                }
-            }
-
-            $roles[] = array(
-                'id' => $role,
-                'name' => $role_data['name']
-            );
-        }
-
-        // Sort the roles by name
-        usort($roles, function ($a, $b) {
-            return strcasecmp($a['name'], $b['name']);
-        });
-
-        return $roles;
     }
 
     public function checkUserGroupAccess($group = 0): bool

@@ -1533,7 +1533,9 @@
 
     </type>
 
-    <type ct_name="usergroup" label="User Group" description="User Group Select Box." priority="3">
+    <!-- WordPress Ready -->
+    <type ct_name="usergroup" label="User Group" description="User Group Select Box." priority="3" wordpress="true"
+          order="18">
         <params>
             <param type="string" name="availableusergroups" label="Available User Groups"
                    description="List of available User Groups separated by comma. User groups that can be selected. Super Users disabled by default. If the field is empty then all user groups will be visible to select except Super Users group."/>
@@ -1550,7 +1552,7 @@
 
     <!-- WordPress Ready -->
     <type ct_name="usergroups" label="User Groups(Roles)" description="User Group(Role) Multi Select Box" priority="3"
-          wordpress="true" order="18">
+          wordpress="true" order="19">
         <params>
             <param name="selector" label="Selector" description="How to select records." default="single" type="list"
                    example="multi">

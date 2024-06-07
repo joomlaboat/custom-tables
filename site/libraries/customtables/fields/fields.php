@@ -1024,7 +1024,7 @@ class Fields
         return Fields::makeProjectedFieldType($ct_fieldTypeArray);
     }
 
-    public static function getProjectedFieldType(string $ct_fieldType, ?string $typeParams): array
+    public static function getProjectedFieldType(string $ct_fieldType, ?string $typeParams): ?array
     {
         //Returns an array of mysql column parameters
         if ($typeParams !== null)
@@ -1042,6 +1042,7 @@ class Fields
             case 'filelink':
             case 'file':
             case 'alias':
+            case 'usergroups':
             case 'url':
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 1024, 'default' => null];
             case 'color':
@@ -1105,17 +1106,20 @@ class Fields
                     $l = '20,2';
                 return ['data_type' => 'decimal', 'is_nullable' => true, 'is_unsigned' => false, 'length' => $l, 'default' => null];
 
+
             case 'userid':
             case 'user':
-            case 'usergroup':
             case 'sqljoin':
             case 'article':
-                //case 'multilangarticle':
                 return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null];
 
-            case 'usergroups':
-                $l = (int)$typeParams;
-                return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 1024, 'default' => null];
+            case 'usergroup':
+                if (defined('_JEXEC'))
+                    return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null];
+                elseif (defined('WPINC'))
+                    return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 1024, 'default' => null];
+                else
+                    return null;// not supported
 
             case 'image':
                 $fileNameType = $typeParamsArray[3] ?? '';
