@@ -24,7 +24,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress in Progress 30 -->
+    <!-- WordPress Ready 30 -->
     <type ct_name="userid" label="Author User" description="Stores the ID of the user who created the record."
           priority="2" wordpress="true" order="30">
         <editparams name="userid" label="Input Element Parameters" description="">
@@ -477,10 +477,10 @@
         </valueparams>
     </type>
 
-    <!-- WordPress NOT Ready 21 -->
+    <!-- WordPress Ready 21 -->
     <type ct_name="filelink" label="File Link"
           description="Path to a folder on the server. Provides file selection from particular folder." priority="3"
-          wordpress="false" order="21">
+          wordpress="true" order="21">
         <params>
             <param name="folder" label="Folder" example="/images/userfiles"
                    description="Folder a user can select a file from." default="" type="folder"/>
@@ -499,40 +499,43 @@
             <params>
                 <param name="private" label="Security" example="timelimited"
                        description="Encrypts the link to the file and limits access time to it." default="" type="list">
-                    <option value="" label="Public. Direct link to the file."/>
-                    <option value="timelimited" label="Time Limited (8-24 minutes)" code="d"/>
-                    <option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e"/>
-                    <option value="hostlimited" label="Time/Host Limited (8-24 minutes)" code="f"/>
-                    <option value="hostlimited_longterm" label="Time/Host Limited (1.5 - 4 hours)" code="g"/>
-                    <option value="private" label="Time/Host/User Limited (8-24 minutes)" code="h"/>
-                    <option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i"/>
+                    <option value="" label="Public. Direct link to the file." wordpress="true"/>
+                    <option value="timelimited" label="Time Limited (8-24 minutes)" code="d" wordpress="true"/>
+                    <option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e"
+                            wordpress="true"/>
+                    <option value="hostlimited" label="Time/Host Limited (8-24 minutes)" code="f" wordpress="true"/>
+                    <option value="hostlimited_longterm" label="Time/Host Limited (1.5 - 4 hours)" code="g"
+                            wordpress="true"/>
+                    <option value="private" label="Time/Host/User Limited (8-24 minutes)" code="h" wordpress="true"/>
+                    <option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i"
+                            wordpress="true"/>
                 </param>
 
                 <param name="format" label="Link" example="filename-link" description="How to render the link"
                        default="icon-filename-link" type="list">
-                    <option value="icon-filename-link" label="Clickable Icon and File Name"/>
-                    <option value="icon-link" label="Clickable Icon"/>
-                    <option value="filename-link" label="Clickable File Name"/>
-                    <option value="link-anchor" label="Clickable Link"/>
-                    <option value="icon" label="Icon (IMG tag)"/>
-                    <option value="" label="Link Only"/>
-                    <option value="filename" label="File Name"/>
-                    <option value="link-to-icon" label="Link to Icon file"/>
-                    <option value="extension" label="Extension"/>
+                    <option value="icon-filename-link" label="Clickable Icon and File Name" wordpress="true"/>
+                    <option value="icon-link" label="Clickable Icon" wordpress="true"/>
+                    <option value="filename-link" label="Clickable File Name" wordpress="true"/>
+                    <option value="link-anchor" label="Clickable Link" wordpress="true"/>
+                    <option value="icon" label="Icon (IMG tag)" wordpress="true"/>
+                    <option value="" label="Link Only" wordpress="true"/>
+                    <option value="filename" label="File Name" wordpress="true"/>
+                    <option value="link-to-icon" label="Link to Icon file" wordpress="true"/>
+                    <option value="extension" label="Extension" wordpress="true"/>
                 </param>
 
                 <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"
                        type="list">
-                    <option value="16" label="16px X 16px Icon"/>
-                    <option value="32" label="32px X 32px Icon"/>
-                    <option value="48" label="48px X 48px Icon"/>
+                    <option value="16" label="16px X 16px Icon" wordpress="true"/>
+                    <option value="32" label="32px X 32px Icon" wordpress="true"/>
+                    <option value="48" label="48px X 48px Icon" wordpress="true"/>
                 </param>
 
                 <param name="target" label="Target Window" example="parent"
                        description="Target browser window when opening the link" default="" type="list">
-                    <option value="" label="Parent"/>
-                    <option value="_blank" label="New Window With Navigation"/>
-                    <option value="savefile" label="Open Save File As Dialog Window"/>
+                    <option value="" label="Parent" wordpress="true"/>
+                    <option value="_blank" label="New Window With Navigation" wordpress="true"/>
+                    <option value="savefile" label="Open Save File As Dialog Window" wordpress="true"/>
                 </param>
 
             </params>
@@ -708,7 +711,7 @@
     <!-- WordPress NOT Ready 18 -->
     <type ct_name="imagegallery" label="Image Gallery" description="Provides Multiple Image Upload functionality."
           priority="3" proversion="1" link="https://joomlaboat.com/image-gallery"
-          link_title="Interactive Image Gallery examples" wordpress="true" order="18"><!-- pro -->
+          link_title="Interactive Image Gallery examples" wordpress="false" order="18"><!-- pro -->
         <params>
             <param name="sizes" example="id,100,100,,jpg" label="Image Size Options"
                    description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided."
