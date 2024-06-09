@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fieldtypes>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 12 -->
     <type ct_name="alias" name="alias" label="Alias (For SEO Links)"
           description="Alias field that can be used instead of listing_id for SEO purpose." ct_alias="alias"
-          disabled="false" ct_special="false" priority="1" wordpress="true" order="7">
+          disabled="false" ct_special="false" priority="1" wordpress="true" order="12">
     </type>
 
-    <!-- Not used in WordPress version -->
-    <type ct_name="article" label="Article" description="Select Article box." priority="3">
+    <!-- Not used in WordPress version 38-->
+    <type ct_name="article" label="Article" description="Select Article box." priority="3" wordpress="false" order="38">
         <params>
             <param type="int" name="categoryid" label="Category ID"
                    description="Category ID to allow selection from that category only."/>
@@ -24,8 +24,9 @@
         </editparams>
     </type>
 
+    <!-- WordPress in Progress 30 -->
     <type ct_name="userid" label="Author User" description="Stores the ID of the user who created the record."
-          priority="2">
+          priority="2" wordpress="true" order="30">
         <editparams name="userid" label="Input Element Parameters" description="">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
@@ -41,15 +42,15 @@
                 <param type="list" name="userAccountField" default="name"
                        label="What information about the user to show."
                        description="What information about the user to show." example="registerdate">
-                    <option value="id" label="User ID"/>
-                    <option value="name" label="User Name"/>
-                    <option value="username" label="Login Name (Username)"/>
-                    <option value="email" label="Email"/>
-                    <option value="registerdate" label="Registration Date"/>
+                    <option value="id" label="User ID" wordpress="true"/>
+                    <option value="name" label="User Name" wordpress="true"/>
+                    <option value="username" label="Login Name (Username)" wordpress="true"/>
+                    <option value="email" label="Email" wordpress="true"/>
+                    <option value="registerdate" label="Registration Date" wordpress="true"/>
                     <option value="lastvisitdate" label="Last Visit Date"/>
-                    <option value="online" label="Is Online Now"
+                    <option value="online" label="Is Online Now" wordpress="true"
                             description="The function returns 1 if the provided value indicates that the user is online, 0 if the value indicates that the user is offline, and NULL if the provided value is empty or invalid."/>
-                    <option value="usergroups" label="User Groups"/>
+                    <option value="usergroups" label="User Groups (Roles)" wordpress="true"/>
                 </param>
                 <param name="format" example="Y-m-d" label="Format" type="string"
                        description="PHP date format i.e. 'h:i:s'"/>
@@ -57,10 +58,10 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 22 -->
     <type ct_name="blob" label="Blob (Save file into the database)"
           description="A BLOB is a binary large object that can hold an entire file." priority="2" proversion="1"
-          wordpress="true" order="12">
+          wordpress="true" order="22">
         <params>
             <param name="type" label="Maximum length" example="medium" description="Maximum length of value to be held"
                    default="" type="list">
@@ -147,9 +148,10 @@
         </valueparams>
     </type>
 
+    <!-- WordPress NOT Ready 39 -->
     <type ct_name="log" label="Change Log"
           description="Logs all record modifications. User, Datetime, IP. You can return to the previous version of the record."
-          priority="3" proversion="1">
+          priority="3" proversion="1" wordpress="true" order="39">
         <editparams name="log" label="Input Element Parameters" description="">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
@@ -160,9 +162,9 @@
         </editparams>
     </type><!-- pro -->
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 27 -->
     <type ct_name="changetime" label="Change Time" description="Stores the date/time when record was last modified."
-          priority="2" wordpress="true" order="14">
+          priority="2" wordpress="true" order="27">
         <valueparams name="changetime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
@@ -181,10 +183,10 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 6 -->
     <type ct_name="checkbox" label="Checkbox (YES/NO)"
           description="Provides a single checkbox to be checked or unchecked" priority="1"
-          image="https://joomlaboat.com/images/components/ct/field-types/checkbox.png" wordpress="true" order="4">
+          image="https://joomlaboat.com/images/components/ct/field-types/checkbox.png" wordpress="true" order="6">
         <editparams name="checkbox" label="Input Element Parameters" description=""
         >
             <params>
@@ -201,9 +203,10 @@
         </editparams>
     </type>
 
+    <!-- WordPress NOT Ready 13 -->
     <type ct_name="color" name="color" label="Color"
           description="Provides Color Picker functionality in the Edit Form or hexadecimal value as an output."
-          ct_alias="color" disabled="false" ct_special="false" priority="2" wordpress="false"
+          ct_alias="color" disabled="false" ct_special="false" priority="2" wordpress="false" order="13"
           image="https://joomlaboat.com/images/components/ct/field-types/color.png">
         <editparams name="color" label="Format" description="Color Picker format."
         >
@@ -222,9 +225,9 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 26 -->
     <type ct_name="creationtime" label="Creation Time" description="Stores the date/time when record was created."
-          priority="2" wordpress="true" order="13">
+          priority="2" wordpress="true" order="26">
         <valueparams name="creationtime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
@@ -266,15 +269,16 @@
         </editparams>
     </type>
 
+    <!-- WordPress NOT Ready 32 -->
     <type ct_name="id" label="Custom Record ID" description="Autoincrement ID. parameter: start from number"
-          priority="2">
+          priority="2" wordpress="false" order="32">
         <params>
             <param name="startnumber" example="3" label="Start Number" description="The value starts from number"
                    default="1" type="number" min="1"/>
         </params>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 8 -->
     <type ct_name="date" label="Date" description="Date ot Date/Time Picker" priority="1" wordpress="true" order="8">
         <params>
             <param name="type" example="date" label="Type" description="Date or Date / Time"
@@ -307,7 +311,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 5 -->
     <type ct_name="email" label="Email" description="Provides an email field." priority="1" order="5" wordpress="true">
         <editparams name="email" label="Input Element Parameters" description="">
             <params>
@@ -319,10 +323,10 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 19 -->
     <type ct_name="file" label="File" description="Provides File Upload functionality." priority="2"
           helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types" proversion="1" wordpress="true"
-          order="11">
+          order="19">
         <params>
             <param name="size" label="Max File Size" example="8"
                    description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything."
@@ -396,9 +400,10 @@
         </valueparams>
     </type>
 
+    <!-- WordPress NOT Ready 20 -->
     <type ct_name="filebox" label="File Box"
           description="Provides Multiple File Upload functionality. It also tracks versions." priority="3"
-          proversion="1">
+          proversion="1" wordpress="false" order="20">
         <params>
             <param name="size" label="Max File Size" example="20"
                    description="Maximum file size that can be uploaded to the server (in megabytes). Note: check your PHP settings as well."
@@ -472,8 +477,10 @@
         </valueparams>
     </type>
 
+    <!-- WordPress NOT Ready 21 -->
     <type ct_name="filelink" label="File Link"
-          description="Path to a folder on the server. Provides file selection from particular folder." priority="3">
+          description="Path to a folder on the server. Provides file selection from particular folder." priority="3"
+          wordpress="false" order="21">
         <params>
             <param name="folder" label="Folder" example="/images/userfiles"
                    description="Folder a user can select a file from." default="" type="folder"/>
@@ -532,7 +539,7 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 3 -->
     <type ct_name="float" name="float" label="Float (Decimal) Number" description="Provides a decimal number inputbox."
           ct_alias="float" disabled="false" ct_special="false" priority="1" wordpress="true" order="3">
         <params>
@@ -572,9 +579,10 @@
         </editparams>
     </type>
 
+    <!-- WordPress NOT Ready 11 -->
     <type ct_name="googlemapcoordinates" label="GPS Coordinates"
           description="Google Map Coordinates (Latitude and Longitude) with selection map" priority="2"
-          wordpress="false">
+          wordpress="false" order="11">
         <editparams name="googlemapcoordinates" label="Input Element Parameters" description="">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
@@ -625,9 +633,9 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 17 -->
     <type ct_name="image" label="Image File" description="Provides Image Upload functionality." priority="2"
-          proversion="1" wordpress="true" order="10">
+          proversion="1" wordpress="true" order="17">
         <params>
             <param name="sizes" label="Image Size Options" example="id,100,100,,jpg"
                    description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided."
@@ -697,9 +705,10 @@
         </editparams>
     </type>
 
+    <!-- WordPress NOT Ready 18 -->
     <type ct_name="imagegallery" label="Image Gallery" description="Provides Multiple Image Upload functionality."
           priority="3" proversion="1" link="https://joomlaboat.com/image-gallery"
-          link_title="Interactive Image Gallery examples"><!-- pro -->
+          link_title="Interactive Image Gallery examples" wordpress="true" order="18"><!-- pro -->
         <params>
             <param name="sizes" example="id,100,100,,jpg" label="Image Size Options"
                    description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided."
@@ -768,7 +777,7 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 2 -->
     <type ct_name="int" name="int" label="Integer Number" description="Provides an integer number inputbox."
           ct_alias="int" disabled="false" ct_special="false" priority="1" wordpress="true" order="2">
         <editparams name="int" label="Input Element Parameters" description="">
@@ -781,8 +790,9 @@
         </editparams>
     </type>
 
+    <!-- WordPress Ready 37 -->
     <type ct_name="language" label="Language" description="Provides Language Selection box." priority="2">
-        <editparams name="language" label="Input Element Parameters" description="">
+        <editparams name="language" label="Input Element Parameters" description="" wordpress="false" order="37">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
                 <param name="attributes" label="Attributes"
@@ -792,9 +802,9 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 33 -->
     <type ct_name="md5" label="MD5 Hash" description="MD5 Hash calculated based on selected fields values." priority="3"
-          proversion="1" wordpress="true" order="16"><!-- pro -->
+          proversion="1" wordpress="true" order="33"><!-- pro -->
         <params>
             <param name="fieldlist" example="firstname,lastname,birthdate" label="List of Fields"
                    description='Field Values will be taken and MD5 Hash code will be calculated over it.' default=""
@@ -802,9 +812,10 @@
         </params>
     </type>
 
+    <!-- WordPress NOT Ready 14 -->
     <type ct_name="multilangstring" name="multilangstring" label="Multilingual Text String (Single Line)"
           description="Provides a set of text boxes for data entry. One inputbox for each language."
-          ct_alias="multilangstring" disabled="false" ct_special="false" priority="1">
+          ct_alias="multilangstring" disabled="false" ct_special="false" priority="1" wordpress="false" order="14">
         <params>
             <param name="length" label="Length" description="Number of characters. Number of characters not bytes."
                    hidden="false" default="255" type="number" min="1" max="1024" example="50"/>
@@ -844,9 +855,10 @@
         </editparams>
     </type>
 
+    <!-- WordPress NOT Ready 15 -->
     <type ct_name="multilangtext" name="multilangtext" label="Multilingual Text Area (Multiple Lines)"
           description="Provides a set of textarea boxes for data entry. One textarea box for each language."
-          ct_alias="multilangtext" disabled="false" ct_special="false" priority="1">
+          ct_alias="multilangtext" disabled="false" ct_special="false" priority="1" wordpress="false" order="15">
         <params>
             <param name="texteditor" label="Text Editor" description="" hidden="false" default="" type="list">
                 <option value="" label="No Editor"/>
@@ -910,9 +922,10 @@
         </editparams>
     </type>
 
+    <!-- WordPress NOT Ready 40 -->
     <type ct_name="ordering" name="ordering" label="Ordering/Sorting"
           description="Record custom position, a front-end tool to sort records in a custom order." ct_alias="ordering"
-          disabled="false" ct_special="false" priority="3"
+          disabled="false" ct_special="false" priority="3" wordpress="false" order="40"
           image="https://joomlaboat.com/images/components/ct/field-types/ordering-catalog.png"/>
     <!--
         <type ct_name="phponadd" label="PHP On Add"
@@ -953,9 +966,9 @@
         </params>
     </type>-->
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 7 -->
     <type ct_name="radio" label="Radio" description="Radio Buttons" depricated="1" priority="3" proversion="1"
-          repetitive="1" wordpress="true" order="9"><!-- pro -->
+          repetitive="1" wordpress="true" order="7"><!-- pro -->
         <params>
             <param name="params" label="Parameters" description="" default="" type="string"/>
         </params>
@@ -969,9 +982,10 @@
         </editparams>
     </type>
 
+    <!-- WordPress NOT Ready 31 -->
     <type ct_name="server" label="Server Info"
           description="Server and execution environment variables. See: https://php.net/manual/en/reserved.variables.server.php"
-          priority="3" proversion="1"><!-- pro -->
+          priority="3" proversion="1" wordpress="false" order="31"><!-- pro -->
         <params>
             <param name="option" label="Option" type="list" description="Select what information to save.">
                 <option value="REMOTE_ADDR" label="REMOTE_ADDR"
@@ -1063,9 +1077,11 @@
         </editparams>
     </type>
 
+    <!-- WordPress NOT Ready 23 -->
     <type ct_name="signature" name="signature" label="Signature"
           description="A signature pad that allows users to draw smooth signatures on canvas element and export the signatures to PNG/JPG/SVG/WebP images."
-          ct_alias="signature" disabled="false" ct_special="false" priority="2" proversion="1">
+          ct_alias="signature" disabled="false" ct_special="false" priority="2" proversion="1" wordpress="false"
+          order="23">
         <params>
             <param name="width" label="Width" description="Width in pixels" default="300" type="text" options=""/>
             <param name="height" label="Height" description="Height in pixels" default="150" type="text" options=""/>
@@ -1082,9 +1098,11 @@
         </params>
     </type>
 
+    <!-- WordPress NOT Ready 24 -->
     <type ct_name="sqljoin" label="Table Join"
           description="Left Join to another table. Finds the record to read a value of the specified field.&lt;br/&gt;&lt;br/&gt;To read any field of joined table use {{ fieldname.get('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read unprocessed value of the joined table field use this tag {{ fieldname.getvalue('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read joined table record processed using the Layout use this tag  {{ fieldname.layout('layout_name') }}."
-          priority="3" proversion="1">
+          priority="3" proversion="1" wordpress="false"
+          order="24">
         <params>
             <param name="table" label="Table" example="products"
                    description="Type the name of the Custom Table to join/link with." default="" type="table"
@@ -1183,8 +1201,10 @@
         </subvalueparams>
     </type>
 
+    <!-- WordPress NOT Ready 25 -->
     <type ct_name="records" label="Table Join List"
-          description="Concatenated ID list referencing another table. " priority="2" proversion="1">
+          description="Concatenated ID list referencing another table. " priority="2" proversion="1" wordpress="false"
+          order="25">
         <params>
             <param name="table" label="Table" description="Type the name of the Custom Table to join/link with."
                    example="products" default="" type="table" fieldchild="fieldtype_param_1"/>
@@ -1314,6 +1334,7 @@
         </subvalueparams>
     </type>
 
+    <!-- WordPress NOT ready 4 -->
     <type ct_name="text" name="text" label="Text Area (Multiple Lines)"
           description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false"
           priority="1" wordpress="false" order="4">
@@ -1380,7 +1401,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 1 -->
     <type ct_name="string" name="string" label="Text String (Single Line)"
           description="Provides a text box for data entry." ct_alias="string"
           disabled="false" ct_special="false" priority="1" wordpress="true" order="1">
@@ -1425,6 +1446,7 @@
         </editparams>
     </type>
 
+    <!-- WordPress NOT Ready 9 -->
     <type ct_name="time" label="Time"
           description="Time Selection. Saves value in ticks with defined offset. It will save time as number of seconds from the midnight by default."
           priority="2" wordpress="false" order="9">
@@ -1462,15 +1484,15 @@
         </editparams>
     </type>
 
-    <!-- Not used in WordPress version -->
+    <!-- Not used in WordPress version 16 -->
     <type ct_name="dummy" label="Translation"
           description="Use field name to add translations of some terms in your layout. This doesn't store anything in the Data Base."
-          priority="3"/>
+          priority="3" order="16"/>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 10 -->
     <type ct_name="url" label="URL / Link"
           description="URL / Link to some website. Must start with http:// or https:// " priority="1" wordpress="true"
-          order="6">
+          order="10">
         <params>
             <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
             <param type="radio" name="httpsonly" label="HTTPS Only" description="Allow only secure URL links" default=""
@@ -1483,9 +1505,10 @@
         </params>
     </type>
 
+    <!-- WordPress Ready 34 -->
     <type ct_name="user" label="User"
           description="Provides User Selection box.  It can also create a New User account if all necessary fields are set: Name,Email,User Group(s)"
-          priority="2">
+          priority="2" wordpress="false" order="34">
         <params>
             <param name="usergroups" label="User Groups"
                    description="Limit selection to certain User Group(s). Or used as default User Group(s) when creating a new user account."
@@ -1533,12 +1556,13 @@
 
     </type>
 
-    <!-- WordPress Ready -->
-    <type ct_name="usergroup" label="User Group" description="User Group Select Box." priority="3" wordpress="true"
-          order="18">
+    <!-- WordPress Ready 35 -->
+    <type ct_name="usergroup" label="User Group (Role)" description="User Group (Role) Select Box." priority="3"
+          wordpress="true"
+          order="35">
         <params>
-            <param type="string" name="availableusergroups" label="Available User Groups"
-                   description="List of available User Groups separated by comma. User groups that can be selected. Super Users disabled by default. If the field is empty then all user groups will be visible to select except Super Users group."/>
+            <param type="string" name="availableusergroups" label="Available User Groups (Roles)"
+                   description="List of available User Groups (Roles) separated by comma. User groups (role) that can be selected. Super Users disabled by default. If the field is empty then all user groups will be visible to select except Super Users group."/>
         </params>
         <editparams name="usergroup" label="Input Element Parameters" description="">
             <params>
@@ -1550,9 +1574,9 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 36 -->
     <type ct_name="usergroups" label="User Groups(Roles)" description="User Group(Role) Multi Select Box" priority="3"
-          wordpress="true" order="19">
+          wordpress="true" order="36">
         <params>
             <param name="selector" label="Selector" description="How to select records." default="single" type="list"
                    example="multi">
@@ -1575,13 +1599,13 @@
         </editparams>
     </type>
 
-    <!-- WordPress in Progress - detailed view needed -->
+    <!-- WordPress in Progress - detailed view needed 29 -->
     <type ct_name="viewcount" label="View Count" description="Stores the view count number." priority="2"
-          wordpress="false" order="15"/>
+          wordpress="false" order="29"/>
 
-    <!-- WordPress in Progress - detailed view needed -->
+    <!-- WordPress in Progress - detailed view needed 28 -->
     <type ct_name="lastviewtime" label="View Time" description="Stores the date/time when record was last viewed."
-          priority="2" wordpress="false" order="14">
+          priority="2" wordpress="false" order="28">
         <valueparams name="lastviewtime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
@@ -1599,10 +1623,10 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready -->
+    <!-- WordPress Ready 41 -->
     <type ct_name="virtual" name="virtual" label="Virtual Field"
           description="Virtual field is the field the value of which is computed - processed by Twig. Similar to Layout processing."
-          ct_alias="virtual" disabled="false" ct_special="false" priority="2" wordpress="true" order="17">
+          ct_alias="virtual" disabled="false" ct_special="false" priority="2" wordpress="true" order="41">
         <params>
             <param name="layout" label="Layout" description="Value Layout" default="" type="fieldlayout"/>
 
