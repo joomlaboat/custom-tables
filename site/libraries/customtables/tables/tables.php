@@ -10,97 +10,97 @@
 
 namespace CustomTables;
 
-use Exception;
-
 defined('_JEXEC') or die();
+
+use Exception;
 
 class Tables
 {
-	var CT $ct;
+    var CT $ct;
 
-	function __construct(&$ct)
-	{
-		$this->ct = &$ct;
-	}
+    function __construct(&$ct)
+    {
+        $this->ct = &$ct;
+    }
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function getAllTables(): array
-	{
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('published', 1);
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    public static function getAllTables(): array
+    {
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('published', 1);
 
-		$records = database::loadObjectList('#__customtables_tables', ['id', 'tablename', 'tabletitle'], $whereClause, 'tablename');
+        $records = database::loadObjectList('#__customtables_tables', ['id', 'tablename', 'tabletitle'], $whereClause, 'tablename');
 
-		$allTables = [];
-		foreach ($records as $rec)
-			$allTables[] = [$rec->id, $rec->tablename, $rec->tabletitle];
+        $allTables = [];
+        foreach ($records as $rec)
+            $allTables[] = [$rec->id, $rec->tablename, $rec->tabletitle];
 
-		return $allTables;
-	}
+        return $allTables;
+    }
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.9
-	 */
-	function loadRecords($tablename_or_id, string $filter = '', ?string $orderby = null, int $limit = 0): ?bool
-	{
-		if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
-			return null;
+    /**
+     * @throws Exception
+     * @since 3.2.9
+     */
+    function loadRecords($tablename_or_id, string $filter = '', ?string $orderby = null, int $limit = 0): ?bool
+    {
+        if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
+            return null;
 
-		if ($tablename_or_id == '')
-			return null;
+        if ($tablename_or_id == '')
+            return null;
 
-		$this->ct->getTable($tablename_or_id);
+        $this->ct->getTable($tablename_or_id);
 
-		if ($this->ct->Table->tablename === null) {
-			$this->ct->errors[] = 'Table not found.';
-			return false;
-		}
+        if ($this->ct->Table->tablename === null) {
+            $this->ct->errors[] = 'Table not found.';
+            return false;
+        }
 
-		$this->ct->Table->recordcount = 0;
-		$this->ct->setFilter($filter, 2);
+        $this->ct->Table->recordcount = 0;
+        $this->ct->setFilter($filter, 2);
 
-		$this->ct->Ordering->ordering_processed_string = $orderby ?? '';
-		$this->ct->Ordering->parseOrderByString();
+        $this->ct->Ordering->ordering_processed_string = $orderby ?? '';
+        $this->ct->Ordering->parseOrderByString();
 
-		$this->ct->Limit = $limit;
-		$this->ct->LimitStart = 0;
+        $this->ct->Limit = $limit;
+        $this->ct->LimitStart = 0;
 
-		$this->ct->getRecords(false, $limit);
-		return true;
-	}
+        $this->ct->getRecords(false, $limit);
+        return true;
+    }
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.4
-	 */
-	function loadRecord($tablename_or_id, string $recordId)
-	{
-		if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
-			return null;
+    /**
+     * @throws Exception
+     * @since 3.2.4
+     */
+    function loadRecord($tablename_or_id, string $recordId)
+    {
+        if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
+            return null;
 
-		if ($tablename_or_id == '')
-			return null;
+        if ($tablename_or_id == '')
+            return null;
 
-		$this->ct->getTable($tablename_or_id);
+        $this->ct->getTable($tablename_or_id);
 
-		if ($this->ct->Table->tablename === null) {
-			$this->ct->errors[] = 'Table not found.';
-			return null;
-		}
-		$this->ct->Table->recordcount = 0;
-		$this->ct->setFilter('', 2);
-		$this->ct->Filter->whereClause->addCondition($this->ct->Table->realidfieldname, $recordId);
-		$this->ct->Limit = 1;
-		$this->ct->LimitStart = 0;
-		$this->ct->getRecords();
+        if ($this->ct->Table->tablename === null) {
+            $this->ct->errors[] = 'Table not found.';
+            return null;
+        }
+        $this->ct->Table->recordcount = 0;
+        $this->ct->setFilter('', 2);
+        $this->ct->Filter->whereClause->addCondition($this->ct->Table->realidfieldname, $recordId);
+        $this->ct->Limit = 1;
+        $this->ct->LimitStart = 0;
+        $this->ct->getRecords();
 
-		if (count($this->ct->Records) == 0)
-			return null;
+        if (count($this->ct->Records) == 0)
+            return null;
 
-		return $this->ct->Records[0];
-	}
+        return $this->ct->Records[0];
+    }
 }

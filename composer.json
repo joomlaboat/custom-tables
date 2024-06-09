@@ -4,6 +4,7 @@
     "ext-apcu": "*",
     "ext-gd": "*",
     "ext-simplexml": "*",
-    "ext-mysql_xdevapi": "*"
+    "ext-mysql_xdevapi": "*",
+    "ext-json": "*"
   }
 }

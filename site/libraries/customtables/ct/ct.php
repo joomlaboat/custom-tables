@@ -17,7 +17,6 @@ use CustomTablesImageMethods;
 use Exception;
 use Joomla\CMS\Factory;
 use CustomTablesKeywordSearch;
-use Joomla\CMS\Language\Text;
 use CustomTables\CustomPHP\CleanExecute;
 
 class CT

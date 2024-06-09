@@ -17,9 +17,6 @@ use CustomTablesImageMethods;
 use Exception;
 use InvalidArgumentException;
 use Joomla\CMS\HTML\HTMLHelper;
-
-use CT_FieldTypeTag_log;
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
@@ -159,6 +156,7 @@ class Value
             case 'user':
             case 'userid':
             case 'sqljoin':
+            case 'log':
             case 'image':
                 return $ValueRenderer->render();
 
@@ -220,9 +218,9 @@ class Value
 
             case 'usergroup':
                 if (defined('_JEXEC'))
-                    return CTUser::showUserGroup_Joomla($rowValue);
+                    return CTUser::showUserGroup_Joomla((int)$rowValue);
                 elseif (defined('WPINC'))
-                    return $this->ct->Env->user->showUserGroup_WordPress($rowValue);
+                    return $this->ct->Env->user->showUserGroup_WordPress((int)$rowValue);
                 else
                     return null;
 
@@ -243,9 +241,6 @@ class Value
                         return $language->caption;
                 }
                 return '';
-
-            case 'log':
-                return CT_FieldTypeTag_log::getLogVersionLinks($this->ct, $rowValue, $this->row);
 
             case 'checkbox':
                 if ((int)$rowValue)
