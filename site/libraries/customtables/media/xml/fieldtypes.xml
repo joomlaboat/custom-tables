@@ -168,7 +168,7 @@
         <valueparams name="changetime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
-                <param name="format" label="Format" example="Y-m-d" type="string"
+                <param name="format" label="Format" example="Y-m-d H:i:s" type="string"
                        description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
             </params>
         </valueparams>
@@ -231,7 +231,7 @@
         <valueparams name="creationtime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
-                <param name="format" label="Format" example="Y-m-d" type="string"
+                <param name="format" label="Format" example="Y-m-d H:i:s" type="string"
                        description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
             </params>
         </valueparams>
@@ -1602,17 +1602,17 @@
         </editparams>
     </type>
 
-    <!-- WordPress in Progress - detailed view needed 29 -->
+    <!-- WordPress Ready 29 -->
     <type ct_name="viewcount" label="View Count" description="Stores the view count number." priority="2"
           wordpress="false" order="29"/>
 
-    <!-- WordPress in Progress - detailed view needed 28 -->
+    <!-- WordPress Ready 28 -->
     <type ct_name="lastviewtime" label="View Time" description="Stores the date/time when record was last viewed."
           priority="2" wordpress="false" order="28">
         <valueparams name="lastviewtime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
-                <param name="format" label="Format" example="Y-m-d" type="string"
+                <param name="format" label="Format" example="Y-m-d H:i:s" type="string"
                        description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
             </params>
         </valueparams>

@@ -255,7 +255,7 @@ class Details
      * @throws Exception
      * @since 3.2.2
      */
-    protected function SaveViewLogForRecord($rec): void
+    public function SaveViewLogForRecord($rec): void
     {
         $updateFields = [];
 

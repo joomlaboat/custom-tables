@@ -688,7 +688,6 @@ class common
 
         $config = Factory::getConfig();
         $timezone = new DateTimeZone($config->get('offset'));
-
         $date = Factory::getDate($dateString, $timezone);
 
         if ($format === 'timestamp')

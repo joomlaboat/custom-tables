@@ -74,7 +74,7 @@ class Value_log extends BaseValue
                 $result .= '<li>';
 
                 if ($version_date_string !== null) {
-                    $str = common::formatDate($version_date_string, 'Y-m-d H:m:s') . ' - ' . $version_author;
+                    $str = common::formatDate($version_date_string) . ' - ' . $version_author;
 
                     if (isset($data[3])) {
                         $decoded_data_rows = json_decode(base64_decode($data[3]), true);

@@ -736,7 +736,13 @@ class Layouts
         foreach ($fields as $field) {
             if (!in_array($field['type'], $fieldTypes_to_skip)) {
                 $result .= '<div class="control-group">';
-                $result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.title }}</div><div class="controls">{{ ' . $field['fieldname'] . ' }}</div>';
+
+                //if ($field['type'] == 'creationtime' or $field['type'] == 'changetime' or $field['type'] == 'lastviewtime')
+                $fieldTag = '{{ ' . $field['fieldname'] . ' }}';
+
+                $result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.title }}</div><div class="controls"> ' . $fieldTag . ' </div>';
+
+
                 $result .= '</div>';
             }
         }
@@ -949,6 +955,12 @@ class Layouts
         $details->layoutDetailsContent = $this->layoutCode;
         $details->pageLayoutNameString = $this->pageLayoutNameString;
         $details->pageLayoutLink = $this->pageLayoutLink;
+
+        if (isset($row)) {
+            if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+                $row = ctProHelpers::getSpecificVersionIfSet($this->ct, $row);
+        }
+
         $details->row = $row;
 
         /*
@@ -960,6 +972,12 @@ class Layouts
             elseif ($details->layoutType == 10)
                 $this->ct->Env->frmt = 'json';
         }*/
+
+        if (!is_null($row)) {
+            //Save view log
+            $details->SaveViewLogForRecord($row);
+            //$this->UpdatePHPOnView();
+        }
 
         return $details->render();
     }

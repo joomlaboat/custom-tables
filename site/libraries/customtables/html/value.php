@@ -249,7 +249,7 @@ class Value
                     return common::translate('COM_CUSTOMTABLES_NO');
 
             case 'date':
-            case 'lastviewtime':
+
                 return $this->dataProcess($rowValue, $option_list);
 
             case 'time':
@@ -262,6 +262,7 @@ class Value
 
             case 'changetime':
             case 'creationtime':
+            case 'lastviewtime':
                 return $this->timeProcess($rowValue, $option_list);
             case 'virtual':
                 return $this->virtualProcess();
