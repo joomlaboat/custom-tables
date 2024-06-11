@@ -18,7 +18,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use JESPagination;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Uri\Uri;
 
 class Twig_Html_Tags
 {
@@ -54,6 +53,10 @@ class Twig_Html_Tags
             . ' ' . common::translate('COM_CUSTOMTABLES_RESULT_S') . '</span>';
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     function add($Alias_or_ItemId = ''): string
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
@@ -220,14 +223,16 @@ class Twig_Html_Tags
         return common::translate('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
     }
 
-    //$returnto must be provided already decoded
-    function goback($defaultLabel = 'COM_CUSTOMTABLES_GO_BACK', $image_icon = '', $attribute = '', string $returnto = ''): string
+    /**
+     * $returnto must be provided already decoded
+     *
+     * @throws Exception
+     * @since 3.0.0
+     */
+    function goback($defaultLabel = null, $image_icon = '', $attribute = '', string $returnto = ''): string //WordPress Ready
     {
         if ($defaultLabel === null)
-            $defaultLabel = 'COM_CUSTOMTABLES_GO_BACK';
-
-        if (defined('_JEXEC'))
-            $label = common::translate($defaultLabel);
+            $label = common::translate('COM_CUSTOMTABLES_GO_BACK');
         else
             $label = $defaultLabel;
 
@@ -289,17 +294,17 @@ class Twig_Html_Tags
         if (count($available_modes) == 0)
             return '';
 
-        if (is_array($buttons))
-            $buttons_array = $buttons;
-        else
-            $buttons_array = explode(',', $buttons);
+        //if (is_array($buttons[0]))
+        //    $buttons_array = $buttons[0];
+        //else
+        //$buttons_array = explode(',', $buttons[0]);
 
-        if (count($buttons_array) == 0)
-            $buttons_array = $available_modes;
+        if (count($buttons) == 0)
+            $buttons = $available_modes;
 
         $html_buttons = [];
 
-        foreach ($buttons_array as $mode) {
+        foreach ($buttons as $mode) {
             if ($mode == 'checkbox') {
                 $html_buttons[] = '<input type="checkbox" id="esCheckboxAll' . $this->ct->Table->tableid . '" onChange="esCheckboxAllClicked(' . $this->ct->Table->tableid . ')" />';
             } else {
@@ -363,6 +368,10 @@ class Twig_Html_Tags
         return $available_modes;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     function print($linktype = '', $label = '', $class = 'ctEditFormButton btn button'): string
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
@@ -510,7 +519,7 @@ class Twig_Html_Tags
             }
 
             if ($first_field_type == '') {
-                $first_field_type = $fld['type'];
+                $first_field_type = $fld['type'];//TODO: Verify this part, something not right here
                 $first_fld = $fld;
             } else {
                 // If field types are mixed then use string search
@@ -697,8 +706,7 @@ class Twig_Html_Tags
         if (count($PathValue) == 0)
             return '';
         elseif ($list_type == '' or $list_type == 'list') {
-            $vlu = '<ul' . ($ul_css_class != '' ? ' class="' . $ul_css_class . '"' : '') . '><li>' . implode('</li><li>', $PathValue) . '</li></ul>';
-            return $vlu;
+            return '<ul' . ($ul_css_class != '' ? ' class="' . $ul_css_class . '"' : '') . '><li>' . implode('</li><li>', $PathValue) . '</li></ul>';
         } elseif ($list_type == 'comma')
             return implode(',', $PathValue);
         else
@@ -782,6 +790,10 @@ class Twig_Html_Tags
 	</div>';
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')
     {
         if (defined('_JEXEC')) {
@@ -798,6 +810,8 @@ class Twig_Html_Tags
 
         } elseif (defined('WPINC')) {
             $formName = 'ctEditForm';
+        } else {
+            return '{{ html.button }} is not available in this environment';
         }
 
         if ($this->ct->Env->frmt != '' and $this->ct->Env->frmt != 'html')
@@ -853,6 +867,10 @@ class Twig_Html_Tags
         return $vlu;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function renderSaveButton($optional_class, $title, $formName): string
     {
         if ($title == '')
@@ -862,6 +880,10 @@ class Twig_Html_Tags
             true, "saveandcontinue");
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function renderButtonHTML($optional_class, string $title, $formName, string $buttonId,
                                         string $redirect, bool $checkCaptcha, string $task): string
     {
@@ -890,6 +912,10 @@ class Twig_Html_Tags
         return '<input id="' . $buttonId . '" type="submit" class="' . $the_class . '"' . $attribute . ' onClick=\'' . $onclick . '\' value="' . $title . '">';
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function renderSaveAndCloseButton($optional_class, $title, $redirectLink, $formName): string
     {
         if ($title == '')
@@ -899,6 +925,10 @@ class Twig_Html_Tags
         return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandclose", $returnToEncoded, true, "save");
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function renderSaveAndPrintButton($optional_class, $title, $redirectLink, $formName): string
     {
         if ($title == '')
@@ -909,6 +939,10 @@ class Twig_Html_Tags
         return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandprint", $returnToEncoded, true, "saveandprint");
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function renderSaveAsCopyButton($optional_class, $title, $redirectLink, $formName): string
     {
         if ($title == '')
@@ -919,6 +953,10 @@ class Twig_Html_Tags
         return $this->renderButtonHTML($optional_class, $title, $formName, "customtables_button_saveandcopy", $returnToEncoded, true, "saveascopy");
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function renderCancelButton($optional_class, $title, $redirectLink, $formName): string
     {
         if ($this->ct->Env->isModal)
