@@ -72,38 +72,55 @@ class Twig_Record_Tags
             }
         }
 
-        if ($view_link == '')
-            $view_link = 'index.php?option=com_customtables&amp;view=details';
+        $listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
 
-        if (!is_null($this->ct->Params->ModuleId))
-            $view_link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+        if (defined('_JEXEC')) {
+            if ($view_link == '')
+                $view_link = 'index.php?option=com_customtables&amp;view=details';
 
-        if ($this->ct->Table->alias_fieldname != '') {
-            $alias = $this->ct->Table->record[$this->ct->Env->field_prefix . $this->ct->Table->alias_fieldname] ?? '';
-            if ($alias != '')
-                $view_link .= '&amp;alias=' . $alias;
-            else
-                $view_link .= '&amp;listing_id=' . $this->ct->Table->record[$this->ct->Table->realidfieldname];
-        } else
-            $view_link .= '&amp;listing_id=' . $this->ct->Table->record[$this->ct->Table->realidfieldname];
+            if (!is_null($this->ct->Params->ModuleId))
+                $view_link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
-        $view_link .= '&amp;Itemid=' . ($menu_item_id == 0 ? $this->ct->Params->ItemId : $menu_item_id);
-        $view_link .= (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId);
-        $view_link = CTMiscHelper::deleteURLQueryOption($view_link, 'returnto');
+            if ($this->ct->Table->alias_fieldname != '') {
+                $alias = $this->ct->Table->record[$this->ct->Env->field_prefix . $this->ct->Table->alias_fieldname] ?? '';
+                if ($alias != '') {
+                    $view_link .= '&amp;alias=' . $alias;
+                } else {
+                    $view_link = CTMiscHelper::deleteURLQueryOption($view_link, 'listing_id');
+                    $view_link .= '&amp;listing_id=' . $listing_id;
+                }
 
-        if ($add_returnto) {
-            if ($custom_not_base64_returnto)
-                $returnToEncoded = common::makeReturnToURL($custom_not_base64_returnto);
-            else
-                $returnToEncoded = common::makeReturnToURL($this->ct->Env->current_url . '#a' . $this->ct->Table->record[$this->ct->Table->realidfieldname]);
+            } else {
+                $view_link = CTMiscHelper::deleteURLQueryOption($view_link, 'listing_id');
+                $view_link .= '&amp;listing_id=' . $listing_id;
+            }
 
-            $view_link .= ($returnToEncoded != '' ? '&amp;returnto=' . $returnToEncoded : '');
-        }
+            $view_link .= '&amp;Itemid=' . ($menu_item_id == 0 ? $this->ct->Params->ItemId : $menu_item_id);
+            $view_link .= (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId);
 
-        if (defined('_JEXEC'))
+
+            $view_link = CTMiscHelper::deleteURLQueryOption($view_link, 'returnto');
+
+            if ($add_returnto) {
+                if ($custom_not_base64_returnto)
+                    $returnToEncoded = common::makeReturnToURL($custom_not_base64_returnto);
+                else
+                    $returnToEncoded = common::makeReturnToURL($this->ct->Env->current_url . '#a' . $listing_id);
+
+                $view_link .= ($returnToEncoded != '' ? '&amp;returnto=' . $returnToEncoded : '');
+            }
+
             return Route::_($view_link);
-        else
-            return $view_link;
+        } else {
+            $link = common::curPageURL();
+            $link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
+            $link = CTMiscHelper::deleteURLQueryOption($link, 'listing_id');
+
+            $link .= (str_contains($link, '?') ? '&amp;' : '?') . 'view' . $this->ct->Table->tableid . '=details';
+            $link .= '&amp;listing_id=' . $listing_id;
+
+            return $link;
+        }
     }
 
     function published(string $type = '', string $customTextPositive = "Published", string $customTextNegative = "Unpublished")

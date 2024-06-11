@@ -928,21 +928,39 @@ class Layouts
      */
     protected function renderDetails(): string
     {
+
+        if ($this->ct->Table->tablename !== null) {
+            $listing_id = common::inputGetCmd('listing_id');
+
+            if ($listing_id !== null) {
+                echo '$listing_id=' . $listing_id . '<br/>';
+                $row = $this->ct->Table->loadRecord($listing_id);
+            } else
+                return 'Record not loaded (listing_id parameter not specified)';
+        } else
+            return 'Table not selected';
+
+
         if ($this->ct->Table->record === null) {
             return 'Record not loaded';
         }
 
+
         $details = new Details($this->ct);
+        $details->layoutDetailsContent = $this->layoutCode;
+        $details->pageLayoutNameString = $this->pageLayoutNameString;
+        $details->pageLayoutLink = $this->pageLayoutLink;
+        $details->row = $row;
 
+        /*
         if ($details->load()) {
-
             if ($details->layoutType == 8)
                 $this->ct->Env->frmt = 'xml';
             elseif ($details->layoutType == 9)
                 $this->ct->Env->frmt = 'csv';
             elseif ($details->layoutType == 10)
                 $this->ct->Env->frmt = 'json';
-        }
+        }*/
 
         return $details->render();
     }
