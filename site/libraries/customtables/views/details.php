@@ -98,8 +98,6 @@ class Details
             }
         }
 
-        echo 'LoadRecord: $this->ct->Params->listing_id:' . $this->ct->Params->listing_id . '<br/>';
-
         if (!is_null($this->ct->Params->recordsTable) and !is_null($this->ct->Params->recordsUserIdField) and !is_null($this->ct->Params->recordsField)) {
             if (!$this->checkRecordUserJoin($this->ct->Params->recordsTable, $this->ct->Params->recordsUserIdField, $this->ct->Params->recordsField, $this->ct->Params->listing_id)) {
                 //YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE;

@@ -933,7 +933,6 @@ class Layouts
             $listing_id = common::inputGetCmd('listing_id');
 
             if ($listing_id !== null) {
-                echo '$listing_id=' . $listing_id . '<br/>';
                 $row = $this->ct->Table->loadRecord($listing_id);
             } else
                 return 'Record not loaded (listing_id parameter not specified)';
