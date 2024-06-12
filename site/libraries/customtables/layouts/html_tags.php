@@ -96,6 +96,8 @@ class Twig_Html_Tags
             $link = common::curPageURL();
             $link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
             $link .= (str_contains($link, '?') ? '&amp;' : '?') . 'view' . $this->ct->Table->tableid . '=edititem';
+            if (!empty($this->ct->Env->encoded_current_url))
+                $link .= '&amp;returnto=' . $this->ct->Env->encoded_current_url;
         } else {
             return '{{ html.add }} not supported.';
         }

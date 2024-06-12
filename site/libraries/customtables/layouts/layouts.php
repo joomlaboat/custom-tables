@@ -16,8 +16,10 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Exception;
-use Joomla\CMS\Uri\Uri;
 use LayoutProcessor;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class Layouts
 {
@@ -47,10 +49,10 @@ class Layouts
      * @throws Exception
      * @since 3.2.2
      */
-    function processLayoutTag(string &$htmlresult): bool
+    function processLayoutTag(string &$htmlResult): bool
     {
         $options = array();
-        $fList = CTMiscHelper::getListToReplace('layout', $options, $htmlresult, '{}');
+        $fList = CTMiscHelper::getListToReplace('layout', $options, $htmlResult, '{}');
 
         if (count($fList) == 0)
             return false;
@@ -69,7 +71,7 @@ class Layouts
             if ($ProcessContentPlugins)
                 CTMiscHelper::applyContentPlugins($layout);
 
-            $htmlresult = str_replace($fItem, $layout, $htmlresult);
+            $htmlResult = str_replace($fItem, $layout, $htmlResult);
             $i++;
         }
 
@@ -363,6 +365,13 @@ class Layouts
         );
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
+     * @throws Exception
+     * @since 3.0.0
+     */
     function parseRawLayoutContent(string $content, bool $applyContentPlugins = true): string
     {
         if ($this->ct->Env->legacySupport) {
@@ -690,7 +699,10 @@ class Layouts
     function createDefaultLayout_Edit_WP(array $fields, bool $addToolbar = true): string
     {
         $this->layoutType = 2;
-        $result = '<table class="form-table" role="presentation">';
+
+        $result = '<legend>{{ table.title }}</legend>{{ html.goback() }}';
+
+        $result .= '<table class="form-table" role="presentation">';
 
         $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];
 

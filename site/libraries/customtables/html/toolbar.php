@@ -140,6 +140,10 @@ class RecordToolbar
             $link = CTMiscHelper::deleteURLQueryOption($link, 'listing_id');
             $link .= (str_contains($link, '?') ? '&amp;' : '?') . 'view' . $this->ct->Table->tableid . '=edititem';
             $link .= '&amp;listing_id=' . $this->listing_id;
+
+            if (!empty($this->ct->Env->encoded_current_url))
+                $link .= '&amp;returnto=' . $this->ct->Env->encoded_current_url;
+
         } else {
             $link = '';
         }
