@@ -16,6 +16,7 @@ let wizardFields = [];
 let wizardLayouts = [];
 let joomlaVersion = 3;
 let languages = [];
+let custom_fields = [];
 
 //Used in layouteditor.php
 function loadLayout(version) {

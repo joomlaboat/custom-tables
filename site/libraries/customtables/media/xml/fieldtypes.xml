@@ -1539,7 +1539,7 @@
         <valueparams name="user" label="User Details Format" description="What information about the user to show."
                      example="registerdate">
             <params>
-                <param type="list" name="userAccountField" default="name"
+                <param type="user" name="userAccountField" default="name"
                        label="What information about the user to show."
                        description="What information about the user to show." example="registerdate">
                     <option value="id" label="User ID"/>
@@ -1553,7 +1553,7 @@
                     <option value="usergroups" label="User Groups"/>
                 </param>
                 <param name="format" example="Y-m-d" label="Format" type="string"
-                       description="PHP date format i.e. 'h:i:s'"/>
+                       description="The PHP date format 'Y-m-d h:i:s' is applied to Registration Date and Last Visit Date."/>
             </params>
         </valueparams>
 

@@ -106,6 +106,16 @@ function renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) {
             }
 
             return renderInput_List(id, param, vlu, attributes);
+
+        } else if (param_att.type === "user") {
+
+            if (vlu === '') {
+                if (typeof (param_att.default) !== "undefined")
+                    vlu = param_att.default;
+            }
+
+            return renderInput_User(id, param, vlu, attributes);
+
         } else if (param_att.type === "language") {
             return renderInput_Language(id, param, vlu, attributes);
         } else if (param_att.type === "table") {
@@ -742,6 +752,42 @@ function renderInput_List(id, param, value, onchange) {
 
     return result;
 }
+
+function renderInput_User(id, param, value, onchange) {
+    const options = getParamOptions(param, 'option');
+    let result = "";
+
+    result += '<select id="' + id + '" class="' + convertClassString('form-select') + '" data-type="list" ' + onchange + '>';
+
+    for (let o = 0; o < options.length; o++) {
+        const opt = options[o]["@attributes"];
+
+        if (window.Joomla instanceof Object || (typeof (opt.wordpress) !== "undefined" && opt.wordpress === "true")) {
+            if (opt.value === value)
+                result += '<option value="' + opt.value + '" selected="selected">' + opt.label + '</option>';
+            else
+                result += '<option value="' + opt.value + '" >' + opt.label + '</option>';
+        }
+    }
+
+    if (window.Joomla instanceof Object) {
+
+        for (let i = 0; i < custom_fields.length; i++) {
+            if (custom_fields[i][0] === 'com_users.user') {
+                if (custom_fields[i][2] === value)
+                    result += '<option value="' + custom_fields[i][2] + '" selected="selected">' + custom_fields[i][1] + '</option>';
+                else
+                    result += '<option value="' + custom_fields[i][2] + '" >' + custom_fields[i][1] + '</option>';
+            }
+        }
+    }
+
+
+    result += '</select>';
+
+    return result;
+}
+
 
 function renderInput_Language(id, param, value, onchange) {
     let result = '<select id="' + id + '" class="' + convertClassString('form-select') + '" ' + onchange + '>';

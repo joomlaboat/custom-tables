@@ -71,34 +71,40 @@ class LayoutEditor
         $index = count($onPageLoads);
         $result = '<div class="customlayoutform layouteditorbox">' . $textAreaCode . '</div><div id="' . $textAreaTabId . '"></div>';
 
-        $code = '
-		joomlaVersion =' . $ct->Env->version . ';
-		
+        $code = '';
+
+        if (count($onPageLoads) == 0) {
+            $code .= PHP_EOL . 'joomlaVersion = ' . $ct->Env->version . ';//layouteditor.php:77' . PHP_EOL;
+            $languages = $this->getKnownLanguages();
+            $code .= PHP_EOL . 'languages=[' . $languages . '];' . PHP_EOL;
+
+            $custom_fields = $this->getKnownCustomFields();
+            $code .= PHP_EOL . 'custom_fields=[' . $custom_fields . '];' . PHP_EOL;
+
+            if ($ct->Env->advancedTagProcessor)
+                $code .= PHP_EOL . 'proversion=true;' . PHP_EOL;
+        }
+
+        $code .= '
 		text_areas.push(["' . $textAreaId . '",' . $index . ']);
         codemirror_editors[' . $index . '] = CodeMirror.fromTextArea(document.getElementById("' . $textAreaId . '"), {
-          mode: "layouteditor",
-	   lineNumbers: true,
-        lineWrapping: true,
-		theme: "eclipse",
-          extraKeys: {"Ctrl-Space": "autocomplete"}
-
+            mode: "layouteditor",
+            lineNumbers: true,
+            lineWrapping: true,
+            theme: "eclipse",
+            extraKeys: {"Ctrl-Space": "autocomplete"}
         });
-	      var charWidth' . $index . ' = codemirror_editors[' . $index . '].defaultCharWidth(), basePadding = 4;
-      codemirror_editors[' . $index . '].on("renderLine", function(cm, line, elt) {
-        var off = CodeMirror.countColumn(line.text, null, cm.getOption("tabSize")) * charWidth' . $index . ';
-        elt.style.textIndent = "-" + off + "px";
-        elt.style.paddingLeft = (basePadding + off) + "px";
-      });
+        
+        var charWidth' . $index . ' = codemirror_editors[' . $index . '].defaultCharWidth(), basePadding = 4;
+        codemirror_editors[' . $index . '].on("renderLine", function(cm, line, elt) {
+            var off = CodeMirror.countColumn(line.text, null, cm.getOption("tabSize")) * charWidth' . $index . ';
+            elt.style.textIndent = "-" + off + "px";
+            elt.style.paddingLeft = (basePadding + off) + "px";
+        });
 
 		loadTagParams("' . $typeBoxId . '","' . $textAreaTabId . '","Joomla");
 ';
         if (count($onPageLoads) == 0) {
-            $languages = $this->getKnownLanguages();
-            $code .= PHP_EOL . 'languages=[' . $languages . '];' . PHP_EOL;
-
-            if ($ct->Env->advancedTagProcessor)
-                $code .= PHP_EOL . 'proversion=true;' . PHP_EOL;
-
             $code .= PHP_EOL . 'loadFields("jform_tableid","fieldWizardBox","Joomla");'
                 . PHP_EOL . 'loadLayout(' . $ct->Env->version . ');'
                 . PHP_EOL . 'addExtraEvents();' . PHP_EOL;
@@ -120,6 +126,24 @@ class LayoutEditor
                 $list[] = '["' . $row->sef . '","' . $row->title_native . '"]';
         } elseif (defined('_JEXEC')) {
             $list[] = '[en,"English"]';
+        }
+
+        return implode(',', $list);
+    }
+
+    private function getKnownCustomFields(): string
+    {
+        $list = array();
+
+        if (defined('_JEXEC')) {
+
+            $whereClause = new MySQLWhereClause();
+            $rows = database::loadObjectList('#__fields', ['context', 'title', 'name'], $whereClause, 'name');
+
+            foreach ($rows as $row)
+                $list[] = '["' . $row->context . '","' . $row->title . '","' . $row->name . '"]';
+        } elseif (defined('_JEXEC')) {
+            return '';
         }
 
         return implode(',', $list);
