@@ -454,6 +454,7 @@ class database
                 $selectTable_safe = preg_replace('/[^a-zA-Z0-9_#]/', '', $select[1]);//Joomla way
                 $selectField = preg_replace('/[^a-zA-Z0-9_]/', '', $select[2]);
                 $asValue = preg_replace('/[^a-zA-Z0-9_]/', '', $select[3] ?? 'vlu');
+                $variable = preg_replace('/[^a-zA-Z0-9_]/', '', $select[4] ?? null);
 
                 if ($select[0] == 'COUNT')
                     $selects[] = 'COUNT(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
@@ -471,7 +472,8 @@ class database
                     $selects[] = 'OCTET_LENGTH(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
                 elseif ($select[0] == 'SUBSTRING_255')
                     $selects[] = 'SUBSTRING(`' . $selectTable_safe . '`.`' . $selectField . '`,1,255) AS ' . $asValue;
-
+                elseif ($select[0] == 'USER_CUSTOM_FIELD')
+                    $selects[] = '(SELECT value FROM #__fields_values WHERE #__fields_values.field_id=#__fields.id AND #__fields_values.item_id=' . $variable . ') AS ' . $asValue;
             } elseif ($select == '*') {
                 $selects[] = '*';
             } elseif ($select == 'LISTING_PUBLISHED') {

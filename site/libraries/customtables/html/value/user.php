@@ -83,8 +83,14 @@ class Value_user extends BaseValue
             $field = strtolower($field);
             if ($field == '')
                 $field = 'name';
-            elseif (!in_array($field, $allowedFields))
-                return 'Wrong user field "' . $field . '". Available fields: id, name, email, username, registerdate, lastvisitdate, online.';
+            elseif (!in_array($field, $allowedFields)) {
+
+                $customFieldValue = self::tryToGetCustomFieldValue($field, $value);
+                if ($customFieldValue !== null)
+                    return $customFieldValue['value'];
+                else
+                    return 'Wrong user field "' . $field . '". Available fields: id, name, email, username, registerdate, lastvisitdate, online or Custom Field name.';
+            }
 
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition('id', $value);
@@ -106,6 +112,26 @@ class Value_user extends BaseValue
             }
         }
         return '';
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    private static function tryToGetCustomFieldValue(string $fieldName, int $userId): ?array
+    {
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('context', 'com_users.user');
+        $whereClause->addCondition('name', $fieldName);
+
+        $select = ['USER_CUSTOM_FIELD', '', '', 'value', $userId];//'(SELECT value FROM #__fields_values WHERE #__fields_values.field_id=a.asset_id AND item_id=' . $variable . ') AS ' . $asValue;
+
+        $values = database::loadObjectList('#__fields', [$select], $whereClause, null, null, 1);
+
+        if (count($values) == 0)
+            return null;
+
+        return ['value' => $values[0]->value];
     }
 
     /**
