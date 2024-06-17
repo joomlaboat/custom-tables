@@ -283,10 +283,10 @@ abstract class BaseInputBox
             $classes = explode(' ', $attributes['class']);
             if (!in_array($className, $classes)) {
                 $classes [] = $className;
-                $attributes['class'] = implode(' ', $classes);
+                $attributes['class'] = common::convertClassString(implode(' ', $classes));
             }
         } else {
-            $attributes['class'] = $className;
+            $attributes['class'] = common::convertClassString($className);
         }
     }
 

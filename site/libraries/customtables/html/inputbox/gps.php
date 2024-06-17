@@ -15,31 +15,31 @@ defined('_JEXEC') or die();
 
 class InputBox_gps extends BaseInputBox
 {
-	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
-	{
-		parent::__construct($ct, $field, $row, $option_list, $attributes);
-	}
+    function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
+    {
+        parent::__construct($ct, $field, $row, $option_list, $attributes);
+    }
 
-	function render(?string $value, ?string $defaultValue): string
-	{
-		$elementId = $this->attributes['id'];
+    function render(?string $value, ?string $defaultValue): string
+    {
+        $elementId = $this->attributes['id'];
 
-		if ($value === null) {
-			$value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
-				$value = $defaultValue;
-		}
+        if ($value === null) {
+            $value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            if ($value == '')
+                $value = $defaultValue;
+        }
 
-		if ($value === null)
-			return '';
+        if ($value === null)
+            return '';
 
-		$html = [];
-		$html[] = '<div class="input-group has-success">';
-		$html[] = '<input type="text" class="form-control valid form-control-success" id="' . $elementId . '" name="' . $elementId . '" value="' . htmlspecialchars($value ?? '') . '" />';
-		$html[] = '<button type="button" class="btn btn-primary" onclick="ctInputbox_googlemapcoordinates(\'' . $elementId . '\')" data-inputfield="comes_' . $elementId . '" data-button="comes_' . $elementId . '_btn">&nbsp;...&nbsp;</button>';
-		$html[] = '</div>';
-		$html[] = '<div id="' . $elementId . '_map" style="width: 480px; height: 540px;display:none;"></div>';
+        $html = [];
+        $html[] = '<div class="input-group has-success">';
+        $html[] = '<input type="text" class="form-control valid form-control-success" id="' . $elementId . '" name="' . $elementId . '" value="' . htmlspecialchars($value ?? '') . '" />';
+        $html[] = '<button type="button" class="' . common::convertClassString('btn btn-primary') . '" onclick="ctInputbox_googlemapcoordinates(\'' . $elementId . '\')" data-inputfield="comes_' . $elementId . '" data-button="comes_' . $elementId . '_btn">&nbsp;...&nbsp;</button>';
+        $html[] = '</div>';
+        $html[] = '<div id="' . $elementId . '_map" style="width: 480px; height: 540px;display:none;"></div>';
 
-		return implode("\n", $html);
-	}
+        return implode("\n", $html);
+    }
 }

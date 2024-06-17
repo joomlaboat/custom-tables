@@ -634,9 +634,9 @@ class Twig_Html_Tags
 
                 $labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
             }
-            return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\' title=\'' . $default_Label . '\'>' . $img . $labelHtml . '</button>';
+            return '<button class=\'' . common::convertClassString($class) . '\' onClick=\'ctSearchBoxDo()\' title=\'' . $default_Label . '\'>' . $img . $labelHtml . '</button>';
         } else {
-            return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\' title=\'' . $default_Label . '\'>' . $label . '</button>';
+            return '<button class=\'' . common::convertClassString($class) . '\' onClick=\'ctSearchBoxDo()\' title=\'' . $default_Label . '\'>' . $label . '</button>';
         }
     }
 
@@ -911,7 +911,7 @@ class Twig_Html_Tags
         else
             $onclick = 'setTask(event, "' . $task . '","' . $redirect . '",true,"' . $formName . '",' . $isModal . ',"' . $parentField . '");';
 
-        return '<input id="' . $buttonId . '" type="submit" class="' . $the_class . '"' . $attribute . ' onClick=\'' . $onclick . '\' value="' . $title . '">';
+        return '<input id="' . $buttonId . '" type="submit" class="' . common::convertClassString($the_class) . '"' . $attribute . ' onClick=\'' . $onclick . '\' value="' . $title . '">';
     }
 
     /**
