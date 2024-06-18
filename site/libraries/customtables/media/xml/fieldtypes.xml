@@ -164,39 +164,37 @@
         </editparams>
     </type><!-- pro -->
 
-    <!-- WordPress Ready 27 -->
-    <type ct_name="changetime" label="Change Time" description="Stores the date/time when record was last modified."
+    <!-- WordPress Ready 27 D -->
+    <type ct_name="changetime" label="Change Time" description="Stores the date/time when the record was last modified."
           priority="2" wordpress="true" order="27">
         <valueparams name="changetime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
                 <param name="format" label="Format" example="Y-m-d H:i:s" type="string"
-                       description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
+                       description="PHP date format, e.g., 'Y-m-d' or Joomla defined format (language supported) if left empty. Use 'timestamp' to return the datetime in UNIX timestamp format."/>
             </params>
         </valueparams>
 
         <editparams name="changetime" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
     </type>
 
-    <!-- WordPress Ready 6 -->
+    <!-- WordPress Ready 6 D -->
     <type ct_name="checkbox" label="Checkbox (YES/NO)"
-          description="Provides a single checkbox to be checked or unchecked" priority="1"
+          description="Provides a single checkbox to be checked or unchecked." priority="1"
           image="https://joomlaboat.com/images/components/ct/field-types/checkbox.png" wordpress="true" order="6">
-        <editparams name="checkbox" label="Input Element Parameters" description=""
-        >
+        <editparams name="checkbox" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
-
                 <param name="form" label="Format" example="yesno" description="Type of checkbox" default="" type="list">
                     <option value="" label="Simple HTML Checkbox"/>
                     <option value="yesno" label="Yes/No buttons"/>
@@ -205,23 +203,22 @@
         </editparams>
     </type>
 
-    <!-- WordPress NOT Ready 13 -->
+    <!-- WordPress NOT Ready 13 D -->
     <type ct_name="color" name="color" label="Color"
           description="Provides Color Picker functionality in the Edit Form or hexadecimal value as an output."
           ct_alias="color" disabled="false" ct_special="false" priority="2" wordpress="false" order="13"
           image="https://joomlaboat.com/images/components/ct/field-types/color.png">
-        <editparams name="color" label="Format" description="Color Picker format."
-        >
+        <editparams name="color" label="Format" description="Color Picker format.">
             <params>
-                <param name="transparent" label="Transparent" description="Allow transparency - alpha color." default=""
+                <param name="transparent" label="Transparent" description="Allow transparency (alpha color)." default=""
                        type="radio" options="|No,transparent|Yes"/>
             </params>
         </editparams>
 
-        <valueparams name="color" label="Color Output Parameters" description="Format color code.">
+        <valueparams name="color" label="Color Output Parameters" description="Format of the color code.">
             <params>
                 <param name="format" label="Format"
-                       description="Return formats: HEX is #rrggbb or #rrggbbaa, RGB is rgb(r,g,b) or rgbs(r,g,b,a)"
+                       description="Return formats: HEX is #rrggbb or #rrggbbaa, RGB is rgb(r,g,b) or rgba(r,g,b,a)"
                        default="" type="radio" options="|Hexadecimal,rgba|rgba()"/>
             </params>
         </valueparams>
