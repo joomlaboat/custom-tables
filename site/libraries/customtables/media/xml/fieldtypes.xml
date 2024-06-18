@@ -58,12 +58,13 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready 22 -->
+    <!-- WordPress Ready 22 D -->
     <type ct_name="blob" label="Blob (Save file into the database)"
           description="A BLOB is a binary large object that can hold an entire file." priority="2" proversion="1"
           wordpress="true" order="22">
         <params>
-            <param name="type" label="Maximum length" example="medium" description="Maximum length of value to be held"
+            <param name="type" label="Maximum length" example="medium"
+                   description="Maximum length of the value to be held."
                    default="" type="list">
                 <option value="tiny"
                         label="255 Bytes (TINYBLOB)"
@@ -81,21 +82,21 @@
             </param>
 
             <param name="filetypes" label="File Types" example="doc docx"
-                   description="List of acceptable file types (list separated by space)"
+                   description="List of acceptable file types (list separated by spaces)."
                    default="doc docx xls xlsx pdf pages ppt pptx" type="string"/>
             <param name="filenamefield" label="Field to get the file name from / to"
-                   description="Specify the name of the field where to store the original file name. By the default file name will be the current timestamp and guessed file extension."
+                   description="Specify the name of the field where to store the original file name. By default, the file name will be the current timestamp and guessed file extension."
                    type="field"/>
             <param type="string" name="customphp" label="Custom PHP"
-                   description="PHP file/function that will process file content before being downloaded by the user. File must be located at /components/com_customtables/customphp."
+                   description="PHP file/function that will process file content before being downloaded by the user. The file must be located at /components/com_customtables/customphp."
                    proversion="1" wordpress="false"/>
         </params>
 
         <editparams name="file" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
@@ -116,7 +117,7 @@
                             wordpress="true"/>
                 </param>
 
-                <param name="format" label="Link" example="filename-link" description="How to render the link"
+                <param name="format" label="Link" example="filename-link" description="How to render the link."
                        default="icon-filename-link" type="list">
                     <option value="icon-filename-link" label="Clickable Icon and File Name" wordpress="true"/>
                     <option value="icon-link" label="Clickable Icon" wordpress="true"/>
@@ -129,8 +130,9 @@
                     <option value="extension" label="Extension" wordpress="true"/>
                     <option value="file-size" label="File Size" wordpress="true"/>
                 </param>
-
-                <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"
+                "Link" example="filename-link" description="How to render the link."
+                default
+                <param name="icon" label="Icon" example="32" description="Select the icon size." default="32"
                        type="list">
                     <option value="16" label="16px X 16px Icon" wordpress="true"/>
                     <option value="32" label="32px X 32px Icon" wordpress="true"/>
@@ -138,7 +140,7 @@
                 </param>
 
                 <param name="target" label="Target Window" example="parent"
-                       description="Target browser window when opening the link" default="" type="list">
+                       description="Target browser window when opening the link." default="" type="list">
                     <option value="" label="Parent" wordpress="true"/>
                     <option value="_blank" label="New Window With Navigation" wordpress="true"/>
                     <option value="savefile" label="Open Save File As Dialog Window" wordpress="true"/>
@@ -148,15 +150,15 @@
         </valueparams>
     </type>
 
-    <!-- WordPress NOT Ready 39 -->
+    <!-- WordPress NOT Ready 39 D -->
     <type ct_name="log" label="Change Log"
-          description="Logs all record modifications. User, Datetime, IP. You can return to the previous version of the record."
+          description="Logs all record modifications. User, Date/time, and IP. You can return to the previous version of the record."
           priority="3" proversion="1" wordpress="true" order="39">
         <editparams name="log" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
