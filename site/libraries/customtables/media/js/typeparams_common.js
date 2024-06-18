@@ -330,8 +330,9 @@ function inputBoxPreRender(proVersion, param, param_count, i, vlu, att, typepara
         if (typeof (param_att) !== "undefined" && typeof (param_att.description) !== "undefined")
             description = param_att.description;
 
-        result += '<label id="fieldtype_param_' + i + '-lbl" for="fieldtype_param_' + i + '" class="hasPopover" title="" data-content="' + description + '"';
+        result += '<label id="fieldtype_param_' + i + '-lbl" for="fieldtype_param_' + i + '" class="hasPopover" data-content="' + description + '"';
         result += ' data-original-title="' + label + '"';
+        result += ' title="' + description + '"';
         result += ' >';
         result += label;
 

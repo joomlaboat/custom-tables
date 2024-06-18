@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fieldtypes>
 
-    <!-- WordPress Ready 12 -->
+    <!-- WordPress Ready 12 D -->
     <type ct_name="alias" name="alias" label="Alias (For SEO Links)"
-          description="Alias field that can be used instead of listing_id for SEO purpose." ct_alias="alias"
+          description="Alias field that can be used instead of listing_id for SEO purposes." ct_alias="alias"
           disabled="false" ct_special="false" priority="1" wordpress="true" order="12">
     </type>
 
-    <!-- Not used in WordPress version 38-->
+    <!-- Not used in WordPress version 38 D -->
     <type ct_name="article" label="Article" description="Select Article box." priority="3" wordpress="false" order="38">
         <params>
             <param type="int" name="categoryid" label="Category ID"
@@ -16,32 +16,32 @@
 
         <editparams name="article" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
     </type>
 
-    <!-- WordPress Ready 30 -->
+    <!-- WordPress Ready 30 D -->
     <type ct_name="userid" label="Author User" description="Stores the ID of the user who created the record."
           priority="2" wordpress="true" order="30">
         <editparams name="userid" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
 
-        <valueparams name="userid" label="User Details Format" description="What information about the user to show."
+        <valueparams name="userid" label="User Details Format" description="Information about the user to display."
                      example="registerdate">
             <params>
                 <param type="list" name="userAccountField" default="name"
-                       label="What information about the user to show."
-                       description="What information about the user to show." example="registerdate">
+                       label="Information about the user to display."
+                       description="Information about the user to display." example="registerdate">
                     <option value="id" label="User ID" wordpress="true"/>
                     <option value="name" label="User Name" wordpress="true"/>
                     <option value="username" label="Login Name (Username)" wordpress="true"/>
@@ -53,7 +53,7 @@
                     <option value="usergroups" label="User Groups (Roles)" wordpress="true"/>
                 </param>
                 <param name="format" example="Y-m-d" label="Format" type="string"
-                       description="PHP date format i.e. 'h:i:s'"/>
+                       description="PHP date format, e.g., 'h:i:s'"/>
             </params>
         </valueparams>
     </type>
@@ -245,6 +245,7 @@
             </params>
         </editparams>
     </type>
+
 
     <!-- Not used in WordPress version and will be obsolete in Joomla version in December 2024 -->
     <type ct_name="customtables" deprecated="1" name="customtables" label="Hierarchical List"
