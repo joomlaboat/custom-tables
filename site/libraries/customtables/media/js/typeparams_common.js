@@ -756,33 +756,37 @@ function renderInput_List(id, param, value, onchange) {
 
 function renderInput_User(id, param, value, onchange) {
     const options = getParamOptions(param, 'option');
-    let result = "";
 
-    result += '<select id="' + id + '" class="' + convertClassString('form-select') + '" data-type="list" ' + onchange + '>';
+    let selectOptions = [];
+
 
     for (let o = 0; o < options.length; o++) {
         const opt = options[o]["@attributes"];
 
-        if (window.Joomla instanceof Object || (typeof (opt.wordpress) !== "undefined" && opt.wordpress === "true")) {
-            if (opt.value === value)
-                result += '<option value="' + opt.value + '" selected="selected">' + opt.label + '</option>';
-            else
-                result += '<option value="' + opt.value + '" >' + opt.label + '</option>';
-        }
+        if (window.Joomla instanceof Object || (typeof (opt.wordpress) !== "undefined" && opt.wordpress === "true"))
+            selectOptions.push([opt.value, opt.label]);
     }
 
     if (window.Joomla instanceof Object) {
-
         for (let i = 0; i < custom_fields.length; i++) {
-            if (custom_fields[i][0] === 'com_users.user') {
-                if (custom_fields[i][2] === value)
-                    result += '<option value="' + custom_fields[i][2] + '" selected="selected">' + custom_fields[i][1] + '</option>';
-                else
-                    result += '<option value="' + custom_fields[i][2] + '" >' + custom_fields[i][1] + '</option>';
-            }
+            if (custom_fields[i][0] === 'com_users.user')
+                selectOptions.push([custom_fields[i][2], custom_fields[i][1]]);
         }
     }
 
+    // Sort the array by the first column
+    selectOptions.sort(function (a, b) {
+        return a[1].localeCompare(b[1]); // Sort by first column, assumed to be strings
+    });
+
+    let result = '<select id="' + id + '" class="' + convertClassString('form-select') + '" data-type="list" ' + onchange + '>';
+
+    for (let i = 0; i < selectOptions.length; i++) {
+        if (selectOptions[i][0] === value)
+            result += '<option value="' + selectOptions[i][0] + '" selected="selected">' + selectOptions[i][1] + '</option>';
+        else
+            result += '<option value="' + selectOptions[i][0] + '" >' + selectOptions[i][1] + '</option>'
+    }
 
     result += '</select>';
 
