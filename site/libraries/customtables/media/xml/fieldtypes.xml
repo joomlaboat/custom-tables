@@ -224,31 +224,30 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready 26 -->
-    <type ct_name="creationtime" label="Creation Time" description="Stores the date/time when record was created."
+    <!-- WordPress Ready 26 D -->
+    <type ct_name="creationtime" label="Creation Time" description="Stores the date/time when the record was created."
           priority="2" wordpress="true" order="26">
         <valueparams name="creationtime" label="Date Format"
                      description="This dictates how to format the date value of the field.">
             <params>
                 <param name="format" label="Format" example="Y-m-d H:i:s" type="string"
-                       description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
+                       description="PHP date format, e.g., 'Y-m-d' or Joomla defined format (language supported) if left empty. Use 'timestamp' to return the datetime in UNIX timestamp format."/>
             </params>
         </valueparams>
 
         <editparams name="creationtime" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
     </type>
 
-
-    <!-- Not used in WordPress version and will be obsolete in Joomla version in December 2024 -->
+    <!-- Not used in WordPress version and will be obsolete in Joomla version in December 2024 D -->
     <type ct_name="customtables" deprecated="1" name="customtables" label="Hierarchical List"
-          description="Hierarchical List"
+          description="Hierarchical List."
           rawquotes="1" ct_alias="customtables" disabled="false" ct_special="false" priority="3" proversion="1">
         <params>
             <param name="option" label="Option" description="" default="" type="string"/>
@@ -261,32 +260,32 @@
 
         <editparams name="customtables" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
     </type>
 
-    <!-- WordPress NOT Ready 32 -->
-    <type ct_name="id" label="Custom Record ID" description="Autoincrement ID. parameter: start from number"
+    <!-- WordPress NOT Ready 32 D -->
+    <type ct_name="id" label="Custom Record ID" description="Auto-increment ID. Parameter: start from number."
           priority="2" wordpress="false" order="32">
         <params>
-            <param name="startnumber" example="3" label="Start Number" description="The value starts from number"
+            <param name="startnumber" example="3" label="Start Number" description="The value starts from this number."
                    default="1" type="number" min="1"/>
         </params>
     </type>
 
-    <!-- WordPress Ready 8 -->
-    <type ct_name="date" label="Date" description="Date ot Date/Time Picker" priority="1" wordpress="true" order="8">
+    <!-- WordPress Ready 8 D -->
+    <type ct_name="date" label="Date" description="Date or Date/Time Picker." priority="1" wordpress="true" order="8">
         <params>
-            <param name="type" example="date" label="Type" description="Date or Date / Time"
+            <param name="type" example="date" label="Type" description="Date or Date/Time"
                    default="date" type="list">
                 <option value="date" label="Date Only"
-                        description="A date, supported range is 1000-01-01 to 9999-12-31" wordpress="true"/>
+                        description="A date, supported range is 1000-01-01 to 9999-12-31." wordpress="true"/>
                 <option value="datetime" label="Date and Time"
-                        description="A date and time combination, supported range is 1000-01-01 00:00:00 to 9999-12-31 23:59:59"
+                        description="A date and time combination, supported range is 1000-01-01 00:00:00 to 9999-12-31 23:59:59."
                         wordpress="true"/>
             </param>
         </params>
@@ -295,18 +294,18 @@
                      description="This dictates how to format the date value of the field.">
             <params>
                 <param name="format" example="Y-m-d" label="Format" type="string"
-                       description="PHP date format i.e. 'Y-m-d H:i:s' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format."/>
+                       description="PHP date format, e.g., 'Y-m-d H:i:s' or Joomla defined format (language supported) if left empty. Use 'timestamp' to return the datetime in UNIX timestamp format."/>
             </params>
         </valueparams>
 
         <editparams name="date" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
                 <param name="format" example="Y-m-d" label="Format" type="string"
-                       description="PHP date format i.e. 'Y-m-d H:i:s'"/>
+                       description="PHP date format, e.g., 'Y-m-d H:i:s'"/>
             </params>
         </editparams>
     </type>
