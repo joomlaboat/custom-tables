@@ -310,13 +310,13 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready 5 -->
+    <!-- WordPress Ready 5 D -->
     <type ct_name="email" label="Email" description="Provides an email field." priority="1" order="5" wordpress="true">
         <editparams name="email" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes like: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
