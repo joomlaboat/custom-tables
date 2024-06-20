@@ -14,6 +14,66 @@
                    description="Category ID to allow selection from that category only."/>
         </params>
 
+        <valueparams name="article" label="Article Details" description="What information about the article to show."
+                     example="introtext">
+            <params>
+                <param type="article" name="articleField" default="name"
+                       label="What information about the article to show."
+                       description="What information about the article to show." example="introtext">
+
+                    <option value="id" label="Article ID"/>
+                    <option value="asset_id" label="Asset ID"/>
+                    <option value="title" label="Title"/>
+                    <option value="alias" label="Alias"/>
+                    <option value="introtext" label="Article Text"/>
+                    <option value="fulltext" label="Article Full Text"/>
+                    <option value="state" label="State"/>
+                    <option value="catid" label="category ID"/>
+                    <option value="created" label="Created"/>
+                    <option value="created_by" label="Created By"/>
+                    <option value="created_by_alias" label="Created By Alias"/>
+                    <option value="modified" label="Modified"/>
+                    <option value="modified_by" label="Modified By"/>
+                    <option value="checked_out" label="Checked Out"/>
+                    <option value="checked_out_time" label="Checked Out Time"/>
+                    <option value="publish_up" label="Publish Up"/>
+                    <option value="publish_down" label="Publish Down"/>
+                    <option value="images" label="Images"/>
+                    <option value="urls" label="URLs"/>
+                    <option value="attribs" label="Attributes"/>
+                    <option value="version" label="Version"/>
+                    <option value="ordering" label="Ordering"/>
+                    <option value="metakey" label="Meta Keywords"/>
+                    <option value="metadesc" label="Meta Description"/>
+                    <option value="access" label="Access"/>
+                    <option value="hits" label="Hits"/>
+                    <option value="metadata" label="Meta Data"/>
+                    <option value="featured" label="Featured"/>
+                    <option value="language" label="Language"/>
+                    <option value="note" label="Note"/>
+                </param>
+
+                <param name="limit" label="Limit Output" type="list" example="50"
+                       description="Limits returning output text, first number of characters or first number of words.">
+                    <option value="" label="Returns as it is"/>
+                    <option value="chars"
+                            label="Returns first number of characters from text that was trimmed, sanitized and HTML tags stripped."/>
+                    <option value="words"
+                            label="Returns first number of words from text that was trimmed, sanitized and HTML tags stripped."/>
+                    <option value="firstimage" label="Returns the link to a first image found in the text."/>
+                </param>
+                <param name="length" label="Length" description="Number of characters or words. " hidden="false"
+                       default="" type="number" min="1" max="1024"/>
+                <param name="cleanbraces" label="Clean Braces"
+                       description="Deletes all braces from the text. (i.e. to avoid Content Plugins running.)"
+                       default="" type="radio" options="|No,true|Yes"/>
+                <param name="cleanquotes" label="Clean Quotes" description="Deletes all quotes from the text."
+                       default="" type="radio" options="|No,true|Yes"/>
+                <param name="format" example="Y-m-d" label="Format" type="string"
+                       description="The PHP date format 'Y-m-d h:i:s' can be applied to date type fields."/>
+            </params>
+        </valueparams>
+
         <editparams name="article" label="Input Element Parameters" description="">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes."/>

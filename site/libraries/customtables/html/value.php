@@ -157,6 +157,7 @@ class Value
             case 'userid':
             case 'sqljoin':
             case 'log':
+            case 'article':
             case 'image':
                 return $ValueRenderer->render();
 
@@ -193,13 +194,6 @@ class Value
                     return '<img src="' . $imageFileWeb . '" alt="' . $siteName . '" title="' . $siteName . '" style="width:' . $width . ';height:' . $height . ';" />';
                 }
                 return null;
-
-            case 'article':
-
-                if (defined('WPINC'))
-                    return 'CustomTables for WordPress: "article" field type is not available.';
-
-                return $this->articleProcess($rowValue, $option_list);
 
             case 'filebox':
 
@@ -356,45 +350,6 @@ class Value
             return "#" . $value;
     }
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    protected function articleProcess($rowValue, array $option_list)
-    {
-        if (isset($option_list[0]) and $option_list[0] != '')
-            $article_field = $option_list[0];
-        else
-            $article_field = 'title';
-
-        $article = $this->getArticle((int)$rowValue, $article_field);
-
-        if (isset($option_list[1])) {
-            $opts = str_replace(':', ',', $option_list[1]);
-            return BaseValue::TextFunctions($article, explode(',', $opts));
-        } else
-            return $article;
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    protected function getArticle($articleId, $field)
-    {
-        //$query = 'SELECT ' . $field . ' FROM #__content WHERE id=' . (int)$articleId . ' LIMIT 1';
-
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('id', (int)$articleId);
-
-        $rows = database::loadAssocList('#__content', [$field], $whereClause, null, null, 1);
-
-        if (count($rows) != 1)
-            return ""; //return nothing if article not found
-
-        return $rows[0][$field];
-    }
-
     protected function dataProcess($rowValue, array $option_list): string
     {
         if ($rowValue == '' or $rowValue == '0000-00-00' or $rowValue == '0000-00-00 00:00:00')
@@ -476,8 +431,11 @@ abstract class BaseValue
         $this->option_list = $option_list;
     }
 
-    public static function TextFunctions($content, $parameters)
+    public static function TextFunctions(?string $content, array $parameters): ?string
     {
+        if ($content === null)
+            return null;
+
         if (count($parameters) == 0)
             return $content;
 

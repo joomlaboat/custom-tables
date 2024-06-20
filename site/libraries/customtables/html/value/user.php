@@ -85,17 +85,17 @@ class Value_user extends BaseValue
                 $field = 'name';
             elseif (!in_array($field, $allowedFields)) {
 
-                $customFieldValue = self::tryToGetCustomFieldValue($field, $value);
+                $customFieldValue = self::tryToGetUserCustomFieldValue($field, $value);
                 if ($customFieldValue !== null)
                     return $customFieldValue['value'];
                 else
-                    return 'Wrong user field "' . $field . '". Available fields: id, name, email, username, registerdate, lastvisitdate, online or Custom Field name.';
+                    return 'Wrong user field "' . $field . '". Available fields: ' . implode(', ', $allowedFields) . '.';
             }
 
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition('id', $value);
 
-            $rows = database::loadAssocList('#__users', ['id', 'name', 'username', 'email', 'registerDate', 'lastvisitDate'], $whereClause, null, null, 1);
+            $rows = database::loadAssocList('#__users', [$field], $whereClause, null, null, 1);
 
             if (count($rows) != 0) {
                 $row = $rows[0];
@@ -118,13 +118,13 @@ class Value_user extends BaseValue
      * @throws Exception
      * @since 3.3.4
      */
-    private static function tryToGetCustomFieldValue(string $fieldName, int $userId): ?array
+    private static function tryToGetUserCustomFieldValue(string $fieldName, int $userId): ?array
     {
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('context', 'com_users.user');
         $whereClause->addCondition('name', $fieldName);
 
-        $select = ['USER_CUSTOM_FIELD', '', '', 'value', $userId];//'(SELECT value FROM #__fields_values WHERE #__fields_values.field_id=a.asset_id AND item_id=' . $variable . ') AS ' . $asValue;
+        $select = ['CUSTOM_FIELD', '', '', 'value', $userId];//'(SELECT value FROM #__fields_values WHERE #__fields_values.field_id=a.asset_id AND item_id=' . $variable . ') AS ' . $asValue;
 
         $values = database::loadObjectList('#__fields', [$select], $whereClause, null, null, 1);
 

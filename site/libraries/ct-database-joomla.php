@@ -472,8 +472,9 @@ class database
                     $selects[] = 'OCTET_LENGTH(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
                 elseif ($select[0] == 'SUBSTRING_255')
                     $selects[] = 'SUBSTRING(`' . $selectTable_safe . '`.`' . $selectField . '`,1,255) AS ' . $asValue;
-                elseif ($select[0] == 'USER_CUSTOM_FIELD')
+                elseif ($select[0] == 'CUSTOM_FIELD')
                     $selects[] = '(SELECT value FROM #__fields_values WHERE #__fields_values.field_id=#__fields.id AND #__fields_values.item_id=' . $variable . ') AS ' . $asValue;
+
             } elseif ($select == '*') {
                 $selects[] = '*';
             } elseif ($select == 'LISTING_PUBLISHED') {
