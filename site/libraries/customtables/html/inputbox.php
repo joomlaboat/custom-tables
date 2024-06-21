@@ -55,7 +55,7 @@ class Inputbox
         $this->field = new Field($this->ct, $fieldRow);
 
         //Set CSS classes
-        if ($this->field->type != "records")
+        if ($this->field->type != "records" and $this->field->type != "radio")
             BaseInputBox::addCSSClass($this->attributes, ($this->ct->Env->version < 4 ? 'inputbox' : 'form-control'));
 
         //Add attributes
