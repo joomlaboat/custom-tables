@@ -1529,7 +1529,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress NOT Ready 9 -->
+    <!-- WordPress NOT Ready 9 D -->
     <type ct_name="time" label="Time"
           description="Time Selection. Saves value in ticks with defined offset. It will save time as number of seconds from the midnight by default."
           priority="2" wordpress="false" order="9">
@@ -1539,7 +1539,7 @@
             <param type="string" name="max" default="23h59m59s" label="Max (To) Time"
                    description="Maximum (To) Time that can be selected." example="70h"/>
             <param type="string" name="step" default="1h" label="Step"
-                   description="Selection increment. you can use h - hours, m - minutes, s - seconds. Or combined: 1h5m"
+                   description="Selection increment. You can use h - hours, m - minutes, s - seconds. Or combined: 1h5m"
                    example="5m"/>
             <param type="string" name="ticks" default="1s" label="Save Ticks"
                    description="Save the value as a number of ticks." example="1s"/>
@@ -1572,7 +1572,7 @@
           description="Use field name to add translations of some terms in your layout. This doesn't store anything in the Data Base."
           priority="3" order="16"/>
 
-    <!-- WordPress Ready 10 -->
+    <!-- WordPress Ready 10 D -->
     <type ct_name="url" label="URL / Link"
           description="URL / Link to some website. Must start with http:// or https:// " priority="1" wordpress="true"
           order="10">
@@ -1588,9 +1588,9 @@
         </params>
     </type>
 
-    <!-- WordPress Ready 34 -->
+    <!-- WordPress Ready 34 D -->
     <type ct_name="user" label="User"
-          description="Provides User Selection box.  It can also create a New User account if all necessary fields are set: Name, Email and User Group(s)"
+          description="Provides User Selection box. It can also create a New User account if all necessary fields are set: Name, Email and User Group(s)"
           priority="2" wordpress="false" order="34">
         <params>
             <param name="usergroups" label="User Groups"
@@ -1601,7 +1601,7 @@
             <param type="string" name="emailtag" label="Email" parse="0"
                    description="Used to create new user account only. Field tags, example: {{ email }}"/>
             <param name="namefilter" label="Name Filter"
-                   description="Limit selection to certain name - name must content this characters." default=""
+                   description="Limit selection to certain name - name must contain these characters." default=""
                    type="string"/>
             <param name="uniqueusers" label="Unique Users"
                    description="Do not let assign same user account to different records." default="" type="radio"
@@ -1615,7 +1615,6 @@
                        type="string"/>
             </params>
         </editparams>
-
         <valueparams name="user" label="User Details Format" description="What information about the user to show."
                      example="registerdate">
             <params>
@@ -1636,13 +1635,11 @@
                        description="The PHP date format 'Y-m-d h:i:s' is applied to Registration Date and Last Visit Date."/>
             </params>
         </valueparams>
-
     </type>
 
-    <!-- WordPress Ready 35 -->
+    <!-- WordPress Ready 35 D -->
     <type ct_name="usergroup" label="User Group (Role)" description="User Group (Role) Select Box." priority="3"
-          wordpress="true"
-          order="35">
+          wordpress="true" order="35">
         <params>
             <param type="string" name="availableusergroups" label="Available User Groups (Roles)"
                    description="List of available User Groups (Roles) separated by comma. User groups (role) that can be selected. Super Users disabled by default. If the field is empty then all user groups will be visible to select except Super Users group."/>
@@ -1657,7 +1654,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready 36 -->
+    <!-- WordPress Ready 36 D -->
     <type ct_name="usergroups" label="User Groups(Roles)" description="User Group(Role) Multi Select Box" priority="3"
           wordpress="true" order="36">
         <params>
@@ -1682,11 +1679,11 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready 29 -->
+    <!-- WordPress Ready 29 D -->
     <type ct_name="viewcount" label="View Count" description="Stores the view count number." priority="2"
           wordpress="false" order="29"/>
 
-    <!-- WordPress Ready 28 -->
+    <!-- WordPress Ready 28 D -->
     <type ct_name="lastviewtime" label="View Time" description="Stores the date/time when record was last viewed."
           priority="2" wordpress="false" order="28">
         <valueparams name="lastviewtime" label="Date Format"
@@ -1706,7 +1703,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready 41 -->
+    <!-- WordPress Ready 41 D -->
     <type ct_name="virtual" name="virtual" label="Virtual Field"
           description="Virtual field is the field the value of which is computed - processed by Twig. Similar to Layout processing."
           ct_alias="virtual" disabled="false" ct_special="false" priority="2" wordpress="true" order="41">
