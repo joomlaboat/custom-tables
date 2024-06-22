@@ -382,40 +382,44 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready 19 -->
-    <type ct_name="file" label="File" description="Provides File Upload functionality." priority="2"
+    <!-- WordPress Ready 19 D -->
+    <type ct_name="file" label="File" description="Enables file upload functionality." priority="2"
           helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types" proversion="1" wordpress="true"
           order="19">
         <params>
             <param name="size" label="Max File Size" example="8"
-                   description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything."
+                   description="Obsolete. The maximum upload file size is determined by the PHP.ini file. No specification needed."
                    default="" type="int" min="1" max="1000" disabled="false"/>
             <param name="folder" label="Folder" example="/images/user_files"
-                   description="Folder where all the files will be kept. By default /images" default="" type="folder"/>
+                   description="Directory where all uploaded files will be stored. Default is /images."
+                   default="" type="folder"/>
             <param name="filetypes" label="File Types" example="doc docx"
-                   description="List of acceptable file types (list separated by space)"
+                   description="List of acceptable file types, separated by spaces."
                    default="doc docx xls xlsx pdf pages ppt pptx rtf" type="string"/>
             <param name="saveas" label="Save As File Name"
-                   description="Specify the name of a newly uploaded file. You may use field tags [fieldname]"
+                   description="Specify the name for a newly uploaded file. You can use field tags [fieldname]."
                    default="" type="string"/>
             <param type="string" name="customphp" label="Custom PHP"
-                   description="PHP file/function that will process file content before being downloaded by the user. File must be located at /components/com_customtables/customphp."
+                   description="PHP file/function to process file content before download. Must be located at /components/com_customtables/customphp."
                    proversion="1"/>
         </params>
 
-        <editparams name="file" label="Input Element Parameters" description="">
+        <editparams name="file" label="Input Element Parameters"
+                    description="Parameters for configuring the input element for file uploads.">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name(s) of the CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes such as: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
 
-        <valueparams label="File link format" description="">
+        <valueparams label="File link format"
+                     description="Parameters for defining the format and security of file download links.">
             <params>
                 <param name="private" label="Security" example="timelimited"
-                       description="Encrypts the link to the file and limits access time to it." default="" type="list">
+                       description="Encrypts the file link and restricts access time."
+                       default="" type="list">
                     <option value="" label="Public. Direct link to the file." wordpress="true"/>
                     <option value="timelimited" label="Time Limited (8-24 minutes)" code="d" wordpress="true"/>
                     <option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e"
@@ -428,7 +432,8 @@
                             wordpress="true"/>
                 </param>
 
-                <param name="format" label="Link" example="filename-link" description="How to render the link"
+                <param name="format" label="Link" example="filename-link"
+                       description="How the link should be displayed."
                        default="icon-filename-link" type="list">
                     <option value="icon-filename-link" label="Clickable Icon and File Name" wordpress="true"/>
                     <option value="icon-link" label="Clickable Icon" wordpress="true"/>
@@ -441,7 +446,7 @@
                     <option value="extension" label="Extension" wordpress="true"/>
                 </param>
 
-                <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"
+                <param name="icon" label="Icon" example="32" description="Select the icon size." default="32"
                        type="list">
                     <option value="16" label="16px X 16px Icon" wordpress="true"/>
                     <option value="32" label="32px X 32px Icon" wordpress="true"/>
@@ -449,45 +454,47 @@
                 </param>
 
                 <param name="target" label="Target Window" example="parent"
-                       description="Target browser window when opening the link" default="" type="list">
+                       description="Target browser window for opening the link." default="" type="list">
                     <option value="" label="Parent" wordpress="true"/>
                     <option value="_blank" label="New Window With Navigation" wordpress="true"/>
-                    <option value="savefile" label="Open Save File As Dialog Window" wordpress="true"/>
+                    <option value="savefile" label="Open Save File As Dialog" wordpress="true"/>
                 </param>
-
             </params>
         </valueparams>
     </type>
 
-    <!-- WordPress NOT Ready 20 -->
+    <!-- WordPress NOT Ready 20 D -->
     <type ct_name="filebox" label="File Box"
-          description="Provides Multiple File Upload functionality. It also tracks versions." priority="3"
+          description="Enables multiple file uploads and version tracking." priority="3"
           proversion="1" wordpress="false" order="20">
         <params>
             <param name="size" label="Max File Size" example="20"
                    description="Maximum file size that can be uploaded to the server (in megabytes). Note: check your PHP settings as well."
                    default="" type="int" min="1" max="1000" disabled="false"/>
             <param name="folder" label="Folder" example="/images/userfiles"
-                   description="Folder where all the files will be kept. By default /images" default="" type="folder"/>
+                   description="Directory where all uploaded files will be stored. Default is /images."
+                   default="" type="folder"/>
             <param name="filetypes" label="File Type" example="pdf ppt"
-                   description="List of acceptable file types (list separated by space)"
+                   description="List of acceptable file types, separated by spaces."
                    default="doc docx xls xlsx pdf pages ppt pptx rtf" type="string"/>
         </params>
 
-        <editparams name="filebox" label="Input Element Parameters" description="">
+        <editparams name="filebox" label="Input Element Parameters"
+                    description="Parameters for configuring the input element for multiple file uploads.">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name(s) of the CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes such as: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
 
-        <valueparams label="File link format" description="">
+        <valueparams label="File link format"
+                     description="Parameters for defining the format and security of file download links.">
             <params>
                 <param name="private" label="Security" example="timelimited"
-                       description="Encrypts the link to the file and limits access time to it." default="" type="list"
-                       disabled="false">
+                       description="Encrypts the file link and restricts access time."
+                       default="" type="list" disabled="false">
                     <option value="" label="Public. Direct link to the file."/>
                     <option value="timelimited" label="Time Limited (8-24 minutes)" code="d"/>
                     <option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e"/>
@@ -497,7 +504,8 @@
                     <option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i"/>
                 </param>
 
-                <param name="format" label="Link" example="filename-link" description="How to render the link"
+                <param name="format" label="Link" example="filename-link"
+                       description="How the link should be displayed."
                        default="icon-filename-link" type="list">
                     <option value="icon-filename-link" label="Clickable Icon and File Name"/>
                     <option value="icon-link" label="Clickable Icon"/>
@@ -511,7 +519,7 @@
                     <option value="file-size" label="File Size"/>
                 </param>
 
-                <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"
+                <param name="icon" label="Icon" example="32" description="Select the icon size." default="32"
                        type="list">
                     <option value="16" label="16px X 16px Icon"/>
                     <option value="32" label="32px X 32px Icon"/>
@@ -519,18 +527,18 @@
                 </param>
 
                 <param name="target" label="Target Window" example="parent"
-                       description="Target browser window when opening the link." default="" type="list">
+                       description="Target browser window for opening the link." default="" type="list">
                     <option value="" label="Parent"/>
                     <option value="_blank" label="New Window With Navigation"/>
                     <option value="savefile" label="Open Save File As Dialog Window"/>
                 </param>
 
-                <param name="listformat" label="List Format" example="," description="How to the output list format."
+                <param name="listformat" label="List Format" example="," description="Format of the output list."
                        default="" type="list">
-                    <option value="" label="Ordered List - OL and OL HTML tags"/>
+                    <option value="" label="Ordered List - OL and LI HTML tags"/>
                     <option value="ul" label="Unordered List - UL and LI HTML tags"/>
                     <option value="," label="Comma separated list"/>
-                    <option value=";" label="The list separated by semicolon"/>
+                    <option value=";" label="Semicolon separated list"/>
                 </param>
             </params>
         </valueparams>
