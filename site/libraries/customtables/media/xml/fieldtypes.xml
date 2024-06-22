@@ -544,28 +544,31 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready 21 -->
+    <!-- WordPress Ready 21 D -->
     <type ct_name="filelink" label="File Link"
-          description="Path to a folder on the server. Provides file selection from particular folder." priority="3"
+          description="Path to a folder on the server. Allows file selection from a specified folder." priority="3"
           wordpress="true" order="21">
         <params>
             <param name="folder" label="Folder" example="/images/userfiles"
-                   description="Folder a user can select a file from." default="" type="folder"/>
+                   description="Folder from which a user can select a file." default="" type="folder"/>
         </params>
 
-        <editparams name="file" label="Input Element Parameters" description="">
+        <editparams name="file" label="Input Element Parameters"
+                    description="Parameters for configuring the input element for file selection.">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name(s) of the CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes such as: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
 
-        <valueparams label="File link format" description="">
+        <valueparams label="File link format"
+                     description="Parameters for defining the format and security of file download links.">
             <params>
                 <param name="private" label="Security" example="timelimited"
-                       description="Encrypts the link to the file and limits access time to it." default="" type="list">
+                       description="Encrypts the file link and restricts access time."
+                       default="" type="list">
                     <option value="" label="Public. Direct link to the file." wordpress="true"/>
                     <option value="timelimited" label="Time Limited (8-24 minutes)" code="d" wordpress="true"/>
                     <option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e"
@@ -578,7 +581,8 @@
                             wordpress="true"/>
                 </param>
 
-                <param name="format" label="Link" example="filename-link" description="How to render the link"
+                <param name="format" label="Link" example="filename-link"
+                       description="How the link should be displayed."
                        default="icon-filename-link" type="list">
                     <option value="icon-filename-link" label="Clickable Icon and File Name" wordpress="true"/>
                     <option value="icon-link" label="Clickable Icon" wordpress="true"/>
@@ -591,7 +595,7 @@
                     <option value="extension" label="Extension" wordpress="true"/>
                 </param>
 
-                <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"
+                <param name="icon" label="Icon" example="32" description="Select the icon size." default="32"
                        type="list">
                     <option value="16" label="16px X 16px Icon" wordpress="true"/>
                     <option value="32" label="32px X 32px Icon" wordpress="true"/>
@@ -599,85 +603,88 @@
                 </param>
 
                 <param name="target" label="Target Window" example="parent"
-                       description="Target browser window when opening the link" default="" type="list">
+                       description="Target browser window for opening the link." default="" type="list">
                     <option value="" label="Parent" wordpress="true"/>
                     <option value="_blank" label="New Window With Navigation" wordpress="true"/>
                     <option value="savefile" label="Open Save File As Dialog Window" wordpress="true"/>
                 </param>
-
             </params>
         </valueparams>
     </type>
 
-    <!-- WordPress Ready 3 -->
-    <type ct_name="float" name="float" label="Float (Decimal) Number" description="Provides a decimal number inputbox."
+    <!-- WordPress Ready 3 D -->
+    <type ct_name="float" name="float" label="Float (Decimal) Number" description="Provides a decimal number input box."
           ct_alias="float" disabled="false" ct_special="false" priority="1" wordpress="true" order="3">
         <params>
             <param name="decimals" label="Decimals" example="2"
-                   description="Number of digits to the right of the decimal point (the scale). Must be no larger than Precision Number of digits."
+                   description="Number of digits to the right of the decimal point (the scale). Must be no larger than the Precision number of digits."
                    default="2" type="number" min="1" max="30"/>
             <param name="numberofdigits" label="Precision" description="Maximum number of digits (the precision)."
                    default="20" type="number" min="1" max="65"/>
             <param name="smart" label="Smart Input"
-                   description="Allows input without pressing decimal point key. Example: to type [12.67]  just type [1267] The decimal point will be placed by itself."
+                   description="Allows input without pressing the decimal point key. Example: to type [12.67] just type [1267]. The decimal point will be placed automatically."
                    default="" type="radio" options="|No,smart|Yes" example="smart"/>
         </params>
 
         <valueparams name="float" label="Decimal Number Format"
-                     description="This dictates how to format the decimal value of the field.">
+                     description="Defines how to format the decimal value of the field.">
             <params>
                 <param name="decimals" label="Number of decimals" example="2"
-                       description="Format returning number. Add tracing 0 if needed. (useful when formatting a currency)"
+                       description="Number of decimal places to display. Adds trailing zeros if needed (useful for formatting currency)."
                        hidden="false" default="" type="number" min="0" max="30"/>
                 <param name="decimalseparator" label="Decimal Separator" example="."
-                       description="Separate decimals with provided character. i.e. ',' or '.'" default=""
-                       type="string"/>
+                       description="Character to use as the decimal separator, e.g., ',' or '.'"
+                       default="" type="string"/>
                 <param name="thousandseparator" label="Thousand Separator" example=","
-                       description="Separate thousands with provided character. i.e. ',' or '.' or ' ' (space)"
+                       description="Character to use as the thousand separator, e.g., ',' or '.' or ' ' (space)"
                        default="" type="string"/>
             </params>
         </valueparams>
 
-        <editparams name="float" label="Input Element Parameters" description="">
+        <editparams name="float" label="Input Element Parameters"
+                    description="Parameters for configuring the input element for decimal numbers.">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" example="inputboxClass"
-                       description="Name or names of CSS class(s)."/>
+                       description="Name(s) of the CSS class(es)."/>
                 <param name="attributes" label="Attributes" example="readonly='readonly'"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes such as: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
     </type>
 
-    <!-- WordPress NOT Ready 11 -->
+    <!-- WordPress NOT Ready 11 D -->
     <type ct_name="googlemapcoordinates" label="GPS Coordinates"
           description="Google Map Coordinates (Latitude and Longitude) with selection map" priority="2"
           wordpress="false" order="11">
-        <editparams name="googlemapcoordinates" label="Input Element Parameters" description="">
+        <editparams name="googlemapcoordinates" label="Input Element Parameters"
+                    description="Parameters for configuring the input element for GPS coordinates.">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes such as: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
 
         <valueparams name="googlemapcoordinates" label="GPS Coordinates / Map"
-                     description="How to show GPS coordinates or a Map.">
+                     description="Defines how to display GPS coordinates or a map.">
             <params>
                 <param name="format" label="Format" example="map"
-                       description="Format the coordinates output or render a map." default="map" type="list">
+                       description="Format for the coordinates output or render a map." default="map" type="list">
                     <option value="" label="Latitude and Longitude separated by comma"/>
                     <option value="map" label="Google Map"/>
                     <option value="latitude" label="Latitude only"/>
                     <option value="longitude" label="Longitude only"/>
                 </param>
-                <param name="width" label="Map Width" description="Map Width in Pixels or %" style="width:50px;"
+                <param name="width" label="Map Width" description="Width of the map in pixels or percentage."
+                       style="width:50px;"
                        default="320" type="string"/>
-                <param name="height" label="Map Height" description="Map Width in Pixels or %" style="width:50px;"
+                <param name="height" label="Map Height" description="Height of the map in pixels or percentage."
+                       style="width:50px;"
                        default="240" type="string"/>
                 <param name="zoom" label="Map Zoom"
-                       description="The Google Maps API provides map tiles at various zoom levels for map type imagery. Most roadmap imagery is available from zoom levels 0 to 18"
+                       description="The Google Maps API provides map tiles at various zoom levels for map type imagery. Most roadmap imagery is available from zoom levels 0 to 18."
                        default="10" type="list">
                     <option value="0" label="0"/>
                     <option value="1" label="1"/>
