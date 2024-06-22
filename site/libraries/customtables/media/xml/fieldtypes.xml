@@ -710,24 +710,24 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready 17 -->
+    <!-- WordPress Ready 17 D -->
     <type ct_name="image" label="Image File" description="Provides Image Upload functionality." priority="2"
           proversion="1" wordpress="true" order="17">
         <params>
             <param name="sizes" label="Image Size Options" example="id,100,100,,jpg"
-                   description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided."
+                   description="Specify various size options. When an image file is uploaded, Custom Tables will create modified versions of the image file based on these settings."
                    default="" type="imagesizelist">
                 <sizeparam name="name" label="Name"
-                           description="Image Size Name (shortcut), modified file name will contain that name and can use it in layout to get the proper image."
+                           description="Image size name (shortcut). The modified file name will include this name and can be used in layout to get the appropriate image."
                            default="" type="string"/>
-                <sizeparam name="width" label="Width" description="Image Width in Pixels." style="width:50px;"
+                <sizeparam name="width" label="Width" description="Image width in pixels." style="width:50px;"
                            default="100" type="number" min="1" max="100000"/>
-                <sizeparam name="height" label="Height" description="Image Height in Pixels." style="width:50px;"
+                <sizeparam name="height" label="Height" description="Image height in pixels." style="width:50px;"
                            default="100" type="number" min="1" max="100000"/>
                 <sizeparam name="background" label="Background"
-                           description="Canvas background color. It will be visible after image crop. Possible values: #HEX Color: (#000000): Word Colors (black,white,red,green,blue,yellow), Fill: (fill) - Left Top corner pixel color will be used."
+                           description="Canvas background color visible after image crop. Possible values: #HEX Color (e.g., #000000), Word Colors (black, white, red, green, blue, yellow), Fill (left-top corner pixel color will be used)."
                            default="" type="string"/>
-                <sizeparam name="format" label="Image Format" description="New image file format." style="width80px;"
+                <sizeparam name="format" label="Image Format" description="New image file format." style="width:80px;"
                            default="jpg" type="list">
                     <option value="jpg" label="JPEG"/>
                     <option value="gif" label="GIF"/>
@@ -736,71 +736,71 @@
                 </sizeparam>
             </param>
             <param name="additionalparams" label="Image Processing Methods"
-                   description="Image processing methods that will be applied to newly uploaded image. This option available in Pro Version Only."
+                   description="Image processing methods to be applied to newly uploaded images. This option is available in the Pro Version only."
                    default="" type="multiselect">
                 <option value="" label="- Keep it as it is"/>
                 <option value="compare" label="Compare with existing images"
-                        description="Compares images, pixel by pixel, to avoid saving duplicates, shortcuts will be created. "
+                        description="Compares images pixel by pixel to avoid saving duplicates. Shortcuts will be created."
                         hasextra="true" proversion="1">
                     <extraoptions label="Tolerance Level">
                         <extraoption value="0" label="Identical"/>
-                        <extraoption value="1" label="95 % Hm.. Identical"/>
-                        <extraoption value="2" label="90 % Almost"/>
-                        <extraoption value="4" label="80 % Very close"/>
-                        <extraoption value="6" label="70 % Close"/>
-                        <extraoption value="8" label="60 % Little Close"/>
-                        <extraoption value="10" label="50 % Something there"/>
-                        <extraoption value="12" label="40 % From a distance"/>
-                        <extraoption value="14" label="30 % From a far distance"/>
-                        <extraoption value="16" label="20 % From a very far distance"/>
-                        <extraoption value="18" label="10 % Bit alike"/>
+                        <extraoption value="1" label="95% Hm.. Identical"/>
+                        <extraoption value="2" label="90% Almost"/>
+                        <extraoption value="4" label="80% Very close"/>
+                        <extraoption value="6" label="70% Close"/>
+                        <extraoption value="8" label="60% Little Close"/>
+                        <extraoption value="10" label="50% Something there"/>
+                        <extraoption value="12" label="40% From a distance"/>
+                        <extraoption value="14" label="30% From a far distance"/>
+                        <extraoption value="16" label="20% From a very far distance"/>
+                        <extraoption value="18" label="10% Bit alike"/>
                         <extraoption value="21" label="Far from identical"/>
                     </extraoptions>
                 </option>
-
             </param>
             <param name="folder" example="/images/product_photos" label="Folder"
                    description="Folder where all the files will be kept. By default /images" default="" type="folder"/>
 
             <param name="filename" label="Save As File Name"
-                   description=""
+                   description="Defines how the uploaded image file will be named."
                    default="" type="list">
                 <option value="" label="Date Time (YmdHis)" wordpress="true"/>
                 <option value="transliterated" label="Filename (Transliterated)" wordpress="true"
-                        description="Alphanumeric and transliterated also the whitespace is replaced with the underscore character. Extra Number can be added if the file name is not unique."/>
+                        description="Alphanumeric and transliterated. Whitespace is replaced with an underscore character. An extra number may be added if the file name is not unique."/>
                 <option value="original" label="Filename As It Is" wordpress="true"
-                        description="File name as it is, no changes. Extra Number can be added if the file name is not unique."/>
+                        description="File name as it is, with no changes. An extra number may be added if the file name is not unique."/>
             </param>
         </params>
-        <editparams name="image" label="Input Element Parameters" description="">
+        <editparams name="image" label="Input Element Parameters"
+                    description="Parameters for configuring the input element for image uploads.">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes such as: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
     </type>
 
-    <!-- WordPress NOT Ready 18 -->
+    <!-- WordPress NOT Ready 18 D -->
     <type ct_name="imagegallery" label="Image Gallery" description="Provides Multiple Image Upload functionality."
           priority="3" proversion="1" link="https://joomlaboat.com/image-gallery"
-          link_title="Interactive Image Gallery examples" wordpress="false" order="18"><!-- pro -->
+          link_title="Interactive Image Gallery examples" wordpress="false" order="18">
         <params>
             <param name="sizes" example="id,100,100,,jpg" label="Image Size Options"
-                   description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided."
+                   description="Specify various size options. When an image file is uploaded, Custom Tables will create modified versions of the image file based on these settings."
                    default="" type="imagesizelist">
                 <sizeparam name="name" label="Name"
-                           description="Image Size Name (shortcut), modified file name will contain that name and can use it in layout to get the proper image."
+                           description="Image size name (shortcut). The modified file name will include this name and can be used in layout to get the appropriate image."
                            default="" type="string"/>
-                <sizeparam name="width" label="Width" description="Image Width in Pixels." style="width:50px;"
+                <sizeparam name="width" label="Width" description="Image width in pixels." style="width:50px;"
                            default="100" type="number" min="1" max="100000"/>
-                <sizeparam name="height" label="Height" description="Image Height in Pixels." style="width:50px;"
+                <sizeparam name="height" label="Height" description="Image height in pixels." style="width:50px;"
                            default="100" type="number" min="1" max="100000"/>
                 <sizeparam name="background" label="Background"
-                           description="Canvas background color. It will be visible after image crop. Possible values: #HEX Color: (#000000): Word Colors (black,white,red,green,blue,yellow), Fill: (fill) - Left Top corner pixel color will be used."
+                           description="Canvas background color visible after image crop. Possible values: #HEX Color (e.g., #000000), Word Colors (black, white, red, green, blue, yellow), Fill (left-top corner pixel color will be used)."
                            default="" type="string"/>
-                <sizeparam name="format" label="Image Format" description="New image file format." style="width80px;"
+                <sizeparam name="format" label="Image Format" description="New image file format." style="width:80px;"
                            default="jpg" type="list">
                     <option value="jpg" label="JPEG"/>
                     <option value="gif" label="GIF"/>
@@ -809,10 +809,11 @@
                 </sizeparam>
             </param>
             <param name="additionalparams" label="Image Processing Methods"
-                   description="Image processing methods that will be applied to a newly uploaded image. This option available in Pro Version Only."
+                   description="Image processing methods to be applied to newly uploaded images. This option is available in the Pro Version only."
                    default="" type="multiselect">
-                <!--<option value="" label="- Keep it as it is" />-->
-                <!--<option value="compare" label="Compare With Existing Images" description="Compares images, pixel by pixel, to avoid saving duplicates, shortcuts will be used. " hasextra="true" proversion="1">
+                <!--
+                <option value="" label="- Keep it as it is" />
+                <option value="compare" label="Compare With Existing Images" description="Compares images, pixel by pixel, to avoid saving duplicates. Shortcuts will be used." hasextra="true" proversion="1">
                     <extraoptions label="Tolerance Level" >
                         <extraoption value="0" label="Identical" />
                         <extraoption value="1" label="95 % Hm.. Identical" />
@@ -827,41 +828,44 @@
                         <extraoption value="18" label="10 % Bit alike" />
                         <extraoption value="21" label="Far from identical" />
                     </extraoptions>
-                </option>-->
+                </option>
+                -->
             </param>
             <param name="folder" example="/images/product_photos" label="Folder"
                    description="Folder where all the files will be kept. By default /images" default="" type="folder"/>
         </params>
 
-        <editparams name="imagegallery" label="Input Element Parameters" description="">
+        <editparams name="imagegallery" label="Input Element Parameters"
+                    description="Parameters for configuring the input element for image galleries.">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes such as: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
 
         <valueparams name="imagegallery" label="Image Gallery"
-                     description="How to show the images, what size and how to separate them.">
+                     description="How to display the images, what size to use, and how to separate them.">
             <params>
                 <param type="imagesizeselector" name="size" label="Size"
                        description="Select the image size variant. Options: _thumbnail, _original, _count, CUSTOM_NAME"
                        example="preview"/>
                 <param name="separator" label="List Separator" example=";"
-                       description="Separate images with a character. i.e. `,` or `;`" default=";" type="string"/>
+                       description="Separate images with a character, e.g., `,` or `;`" default=";" type="string"/>
             </params>
         </valueparams>
     </type>
 
-    <!-- WordPress Ready 2 -->
-    <type ct_name="int" name="int" label="Integer Number" description="Provides an integer number inputbox."
+    <!-- WordPress Ready 2 D -->
+    <type ct_name="int" name="int" label="Integer Number" description="Provides an integer number input box."
           ct_alias="int" disabled="false" ct_special="false" priority="1" wordpress="true" order="2">
-        <editparams name="int" label="Input Element Parameters" description="">
+        <editparams name="int" label="Input Element Parameters"
+                    description="Parameters for configuring the input element for integer numbers.">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
                 <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       description="Optional attributes such as: disabled, onclick, onchange, etc." default=""
                        type="string"/>
             </params>
         </editparams>
