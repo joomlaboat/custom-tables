@@ -1186,11 +1186,10 @@
         </params>
     </type>
 
-    <!-- WordPress NOT Ready 24 -->
+    <!-- WordPress NOT Ready 24 D -->
     <type ct_name="sqljoin" label="Table Join"
           description="Left Join to another table. Finds the record to read a value of the specified field.&lt;br/&gt;&lt;br/&gt;To read any field of joined table use {{ fieldname.get('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read unprocessed value of the joined table field use this tag {{ fieldname.getvalue('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read joined table record processed using the Layout use this tag  {{ fieldname.layout('layout_name') }}."
-          priority="3" proversion="1" wordpress="false"
-          order="24">
+          priority="3" proversion="1" wordpress="false" order="24">
         <params>
             <param name="table" label="Table" example="products"
                    description="Type the name of the Custom Table to join/link with." default="" type="table"
@@ -1289,9 +1288,9 @@
         </subvalueparams>
     </type>
 
-    <!-- WordPress NOT Ready 25 -->
+    <!-- WordPress NOT Ready 25 D -->
     <type ct_name="records" label="Table Join List"
-          description="Concatenated ID list referencing another table. " priority="2" proversion="1" wordpress="false"
+          description="Concatenated ID list referencing another table." priority="2" proversion="1" wordpress="false"
           order="25">
         <params>
             <param name="table" label="Table" description="Type the name of the Custom Table to join/link with."
@@ -1422,7 +1421,7 @@
         </subvalueparams>
     </type>
 
-    <!-- WordPress NOT ready 4 -->
+    <!-- WordPress NOT ready 4 D -->
     <type ct_name="text" name="text" label="Text Area (Multiple Lines)"
           description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false"
           priority="1" wordpress="false" order="4">
@@ -1437,10 +1436,6 @@
             <param name="type" label="Maximum length" example="medium"
                    description="Maximum length of value to be held. The effective maximum length is less. The Joomla default utf8mb4 Character Set (4-Byte UTF-8 Unicode Encoding)."
                    default="" type="list">
-                TINYTEXT | 255 (2 8−1) bytes
-                TEXT | 65,535 (216−1) bytes = 64 KiB
-                MEDIUMTEXT | 16,777,215 (224−1) bytes = 16 MiB
-                LONGTEXT | 4,294,967,295 (232−1) bytes = 4 GiB
                 <option value="tiny"
                         label="Up to 255 Bytes - 63 characters (TINYTEXT)"
                         description="TINYTEXT can store up to 63 Unicode characters i.e 255 bytes. It is suitable for storing short comments, captions, titles etc."/>
@@ -1465,7 +1460,7 @@
                             label="Returns first number of words from text that was trimmed, sanitized and HTML tags stripped."/>
                     <option value="firstimage" label="Returns the link to a first image found in the text."/>
                 </param>
-                <param name="length" label="Length" description="Number of characters or words. " hidden="false"
+                <param name="length" label="Length" description="Number of characters or words." hidden="false"
                        default="" type="number" min="1" max="1024"/>
                 <param name="cleanbraces" label="Clean Braces"
                        description="Deletes all braces from the text. (i.e. to avoid Content Plugins running.)"
@@ -1483,13 +1478,13 @@
                        type="string"/>
                 <param name="width" label="Editor Width" description="Editor Width in Pixels or %"
                        default="100%" example="100%" type="string"/>
-                <param name="height" label="Editor Height" description="Editor Width in Pixels or %"
+                <param name="height" label="Editor Height" description="Editor Height in Pixels or %"
                        default="" example="300px" type="string"/>
             </params>
         </editparams>
     </type>
 
-    <!-- WordPress Ready 1 -->
+    <!-- WordPress Ready 1 D -->
     <type ct_name="string" name="string" label="Text String (Single Line)"
           description="Provides a text box for data entry." ct_alias="string"
           disabled="false" ct_special="false" priority="1" wordpress="true" order="1">
@@ -1510,7 +1505,7 @@
                             label="Returns first number of words from text that was trimmed, sanitized and HTML tags stripped."/>
                     <option value="firstimage" label="Returns the link to a first image found in the text."/>
                 </param>
-                <param name="length" label="Length" description="Number of characters or words. " hidden="false"
+                <param name="length" label="Length" description="Number of characters or words." hidden="false"
                        default="" type="number" min="1" max="1024" example="30"/>
                 <param name="cleanbraces" label="Clean Braces"
                        description="Deletes all braces from the text. (i.e. to avoid Content Plugins running.)"
