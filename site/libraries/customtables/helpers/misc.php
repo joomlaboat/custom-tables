@@ -950,4 +950,24 @@ class CTMiscHelper
 
         return $attributes;
     }
+
+    /**
+     * @throws Exception
+     * @since 3.3.5
+     */
+    public static function getCustomFieldValue(string $context, string $fieldName, int $userId): ?array
+    {
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('context', 'com_users.user');
+        $whereClause->addCondition('name', $fieldName);
+
+        $select = ['CUSTOM_FIELD', '', '', 'value', $userId];//'(SELECT value FROM #__fields_values WHERE #__fields_values.field_id=a.asset_id AND item_id=' . $variable . ') AS ' . $asValue;
+
+        $values = database::loadObjectList('#__fields', [$select], $whereClause, null, null, 1);
+
+        if (count($values) == 0)
+            return null;
+
+        return ['value' => $values[0]->value];
+    }
 }

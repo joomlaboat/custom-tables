@@ -796,7 +796,22 @@
              twigclass="user" wordpress="true">
             <params>
                 <param name="userid" label="User ID"
-                       description="To get the User Group Names of the specific user, leave it blank to get the Current User's User Groups Names."
+                       description="Specify the User Id or leave it blank to get the Current User's User Groups Names."
+                       hidden="false" default="" type="string"/>
+            </params>
+        </tag>
+
+        <tag name="customfield" label="Custom Field" startchar="{" endchar="}"
+             description="Returns a Custom Field value of current or specified user" proversion="1"
+             twigclass="user" wordpress="true">
+            <params>
+                <param type="user" name="userAccountField" default="name"
+                       label="Custom Field"
+                       description="What custom field value of the user to show." example="registerdate">
+                </param>
+
+                <param name="userid" label="User ID"
+                       description="Leave it blank to get the Current User's Custom Field value."
                        hidden="false" default="" type="string"/>
             </params>
         </tag>
