@@ -210,7 +210,7 @@
         </valueparams>
     </type>
 
-    <!-- WordPress NOT Ready 39 D -->
+    <!-- WordPress Ready 39 D -->
     <type ct_name="log" label="Change Log"
           description="Logs all record modifications. User, Date/time, and IP. You can return to the previous version of the record."
           priority="3" proversion="1" wordpress="true" order="39">
@@ -263,10 +263,10 @@
         </editparams>
     </type>
 
-    <!-- WordPress NOT Ready 13 D -->
+    <!-- WordPress Ready 13 D -->
     <type ct_name="color" name="color" label="Color"
           description="Provides Color Picker functionality in the Edit Form or hexadecimal value as an output."
-          ct_alias="color" disabled="false" ct_special="false" priority="2" wordpress="false" order="13"
+          ct_alias="color" disabled="false" ct_special="false" priority="2" wordpress="true" order="13"
           image="https://joomlaboat.com/images/components/ct/field-types/color.png">
         <editparams name="color" label="Format" description="Color Picker format.">
             <params>
