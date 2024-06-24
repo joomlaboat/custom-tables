@@ -454,7 +454,7 @@ class database
                 $selectTable_safe = preg_replace('/[^a-zA-Z0-9_#]/', '', $select[1]);//Joomla way
                 $selectField = preg_replace('/[^a-zA-Z0-9_]/', '', $select[2]);
                 $asValue = preg_replace('/[^a-zA-Z0-9_]/', '', $select[3] ?? 'vlu');
-                $variable = preg_replace('/[^a-zA-Z0-9_]/', '', $select[4] ?? null);
+                $variable = preg_replace('/[^a-zA-Z0-9_]/', '', $select[4] ?? '');
 
                 if ($select[0] == 'COUNT')
                     $selects[] = 'COUNT(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
