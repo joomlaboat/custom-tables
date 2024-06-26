@@ -653,10 +653,10 @@
         </editparams>
     </type>
 
-    <!-- WordPress NOT Ready 11 -->
+    <!-- WordPress Ready - 11 -->
     <type ct_name="googlemapcoordinates" label="GPS Coordinates"
           description="Google Map Coordinates (Latitude and Longitude) with selection map" priority="2"
-          wordpress="false" order="11">
+          wordpress="true" order="11">
         <editparams name="googlemapcoordinates" label="Input Element Parameters"
                     description="Parameters for configuring the input element for GPS coordinates.">
             <params>
@@ -672,10 +672,10 @@
             <params>
                 <param name="format" label="Format" example="map"
                        description="Format for the coordinates output or render a map." default="map" type="list">
-                    <option value="" label="Latitude and Longitude separated by comma"/>
-                    <option value="map" label="Google Map"/>
-                    <option value="latitude" label="Latitude only"/>
-                    <option value="longitude" label="Longitude only"/>
+                    <option value="" label="Latitude and Longitude separated by comma" wordpress="true"/>
+                    <option value="map" label="Google Map" wordpress="true"/>
+                    <option value="latitude" label="Latitude only" wordpress="true"/>
+                    <option value="longitude" label="Longitude only" wordpress="true"/>
                 </param>
                 <param name="width" label="Map Width" description="Width of the map in pixels or percentage."
                        style="width:50px;"
@@ -686,25 +686,25 @@
                 <param name="zoom" label="Map Zoom"
                        description="The Google Maps API provides map tiles at various zoom levels for map type imagery. Most roadmap imagery is available from zoom levels 0 to 18."
                        default="10" type="list">
-                    <option value="0" label="0"/>
-                    <option value="1" label="1"/>
-                    <option value="2" label="2"/>
-                    <option value="3" label="3"/>
-                    <option value="4" label="4"/>
-                    <option value="5" label="5"/>
-                    <option value="6" label="6"/>
-                    <option value="7" label="7"/>
-                    <option value="8" label="8"/>
-                    <option value="9" label="9"/>
-                    <option value="10" label="10"/>
-                    <option value="11" label="11"/>
-                    <option value="12" label="12"/>
-                    <option value="13" label="13"/>
-                    <option value="14" label="14"/>
-                    <option value="15" label="15"/>
-                    <option value="16" label="16"/>
-                    <option value="17" label="17"/>
-                    <option value="18" label="18"/>
+                    <option value="0" label="0" wordpress="true"/>
+                    <option value="1" label="1" wordpress="true"/>
+                    <option value="2" label="2" wordpress="true"/>
+                    <option value="3" label="3" wordpress="true"/>
+                    <option value="4" label="4" wordpress="true"/>
+                    <option value="5" label="5" wordpress="true"/>
+                    <option value="6" label="6" wordpress="true"/>
+                    <option value="7" label="7" wordpress="true"/>
+                    <option value="8" label="8" wordpress="true"/>
+                    <option value="9" label="9" wordpress="true"/>
+                    <option value="10" label="10" wordpress="true"/>
+                    <option value="11" label="11" wordpress="true"/>
+                    <option value="12" label="12" wordpress="true"/>
+                    <option value="13" label="13" wordpress="true"/>
+                    <option value="14" label="14" wordpress="true"/>
+                    <option value="15" label="15" wordpress="true"/>
+                    <option value="16" label="16" wordpress="true"/>
+                    <option value="17" label="17" wordpress="true"/>
+                    <option value="18" label="18" wordpress="true"/>
                 </param>
             </params>
         </valueparams>
