@@ -182,7 +182,7 @@ class MySQLWhereClause
 
         foreach ($conditions as $condition) {
             if ($condition['value'] === null) {
-                $where [] = $condition['field'];
+                $where [] = $condition['field'] . ' IS NULL';
             } elseif ($condition['operator'] == 'NULL') {
                 $where [] = $condition['field'] . ' IS NULL';
             } elseif ($condition['operator'] == 'NOT NULL') {
@@ -426,7 +426,7 @@ class database
             $query->setLimit(20000, $limitStart);
         if ($limitStart === null and $limit !== null)
             $query->setLimit($limit);
-
+        
         try {
             $db->setQuery($query);
         } catch (Exception $e) {
