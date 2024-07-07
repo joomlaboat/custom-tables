@@ -219,8 +219,6 @@ class CustomtablesControllerListOfRecords extends AdminController
 
     function importcsv()
     {
-        echo 'Import CSV Records';
-
         $redirect = 'index.php?option=' . $this->option;
         $redirect .= '&view=importrecords';
 
