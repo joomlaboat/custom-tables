@@ -58,7 +58,7 @@ class Environment
 
                 if (!is_null($plugin) and is_object($plugin) > 0) {
                     $pluginParamsArray = json_decode($plugin->params);
-                    $this->CustomPHPEnabled = (int)$pluginParamsArray->phpPlugin == 1;
+                    $this->CustomPHPEnabled = (int)($pluginParamsArray->phpPlugin ?? 0) == 1;
                 }
             }
             $this->field_prefix = 'es_';

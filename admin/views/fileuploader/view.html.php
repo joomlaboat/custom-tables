@@ -27,7 +27,7 @@ class CustomTablesViewFileUploader extends HtmlView
         if (ob_get_contents()) ob_end_clean();
 
         $fileid = common::inputGetCmd('fileid', '');
-        echo FileUploader::uploadFile($fileid, 'txt html');
+        echo FileUploader::uploadFile($fileid, 'txt html csv');
 
         die; //to stop rendering template and staff
     }

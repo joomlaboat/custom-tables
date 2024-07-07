@@ -97,7 +97,7 @@ class FileUploader
                     unlink($file["tmp_name"]);
                     $msg = 'File type (' . $mime . ') not permitted.';
                     if ($filetypes_str != '')
-                        $msg .= ' ' . common::translate('COM_CUSTOMTABLES_PERMITTED_TYPES') . ' ' . $filetypes_str;//implode(', ', $accepted_types);
+                        $msg .= ' ' . common::translate('COM_CUSTOMTABLES_PERMITTED_TYPES') . ' ' . $filetypes_str . ' (' . $filetypes_str_argument . ')';//implode(', ', $accepted_types);
 
                     $ret = ['error' => $msg];
                 }
