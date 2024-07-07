@@ -17,7 +17,6 @@ use Exception;
 
 class ImportCSV
 {
-
     /**
      * @throws Exception
      * @since 3.2.2
@@ -34,7 +33,7 @@ class ImportCSV
      * @throws Exception
      * @since 3.2.2
      */
-    private static function importCSVData(string $filename, $ct_tableid): string
+    private static function importCSVData(string $filename, int $ct_tableid): string
     {
         $arrayOfLines = self::getLines($filename);
         if ($arrayOfLines === null)
@@ -43,25 +42,25 @@ class ImportCSV
         $tableRow = TableHelper::getTableRowByID($ct_tableid);
         $fields = Fields::getFields($ct_tableid, true);
         $line = $arrayOfLines[0];
-
-        $fieldList = self::prepareFieldList($line, $fields);
+        $prepareFieldList = self::prepareFieldList($line, $fields);
+        $fieldList = $prepareFieldList['fieldList'];
         $fields = self::processFieldParams($fieldList, $fields);
 
-        if (in_array(-2, $fieldList)) {
+        if (in_array(-2, $fieldList))
             return common::translate('COM_CUSTOMTABLES_FIELD_NAMES_DO_NOT_MATCH');
-        }
 
-        $offset = 0;
+        if ($prepareFieldList['header'])
+            $offset = 1;
+        else
+            $offset = 0;
 
         for ($i = $offset; $i < count($arrayOfLines); $i++) {
+
             if (count($arrayOfLines[$i]) > 0) {
                 $result = self::prepareSQLQuery($fieldList, $fields, $arrayOfLines[$i]);
-
                 $listing_id = self::findRecord($tableRow->realtablename, $tableRow->realidfieldname, $tableRow->published_field_found, $result->where);
 
                 if (is_null($listing_id)) {
-                    //$query = 'INSERT ' . $tableRow->realtablename . ' SET ' . implode(', ', $result->sets);
-
                     try {
                         database::insert($tableRow->realtablename, $result->data);
                     } catch (Exception $e) {
@@ -110,6 +109,7 @@ class ImportCSV
     private static function prepareFieldList(array $fieldNames, array $fields): array
     {
         $fieldList = array();
+        $fieldsFoundCount = 0;
 
         foreach ($fieldNames as $fieldName_) {
             $index = 0;
@@ -123,10 +123,12 @@ class ImportCSV
 
                 if ($fieldName_ == '#' or $fieldName_ == '') {
                     $fieldList[] = -1;
+                    $fieldsFoundCount += 1;
                     $found = true;
                     break;
                 } elseif ($clean_field_name == $fieldName or (string)$field->fieldname == $fieldName or (string)$field->fieldtitle == $fieldName) {
                     $fieldList[] = $index;
+                    $fieldsFoundCount += 1;
                     $found = true;
                     break;
                 }
@@ -136,7 +138,7 @@ class ImportCSV
             if (!$found)
                 $fieldList[] = -2;
         }
-        return $fieldList;
+        return ['fieldList' => $fieldList, 'header' => $fieldsFoundCount > 0];
     }
 
     private static function removeBomUtf8($s): string
@@ -159,7 +161,8 @@ class ImportCSV
         foreach ($fieldList as $f_index) {
             if ($f_index >= 0) {
                 $fieldType = $fields[$f_index]->type;
-                if ($fieldType == 'sqljoin') {
+                if ($fieldType == 'sqljoin' or $fieldType == 'records') {
+
                     $type_params = CTMiscHelper::csv_explode(',', $fields[$f_index]->typeparams);
 
                     $tableName = $type_params[0];
@@ -202,6 +205,8 @@ class ImportCSV
                 $fieldParams = CTMiscHelper::csv_explode(',', $fieldParamsString);
 
                 if ($fieldType == 'sqljoin') {
+
+
                     if (isset($fields[$f_index]->sqljoin)) {
                         $realtablename = $fields[$f_index]->sqljoin->table;
 
@@ -233,6 +238,7 @@ class ImportCSV
                         }
                     }
                 } elseif ($fieldType == 'records') {
+
                     if (isset($fields[$f_index]->sqljoin)) {
                         $realtablename = $fields[$f_index]->sqljoin->table;
 
@@ -308,6 +314,7 @@ class ImportCSV
                     $data[$fields[$f_index]->realfieldname] = $ticks;
 
                 } else {
+
                     if (isset($line[$i])) {
                         $vlu = $line[$i];
                         $whereClause->addCondition($fields[$f_index]->realfieldname, $vlu);
@@ -339,7 +346,6 @@ class ImportCSV
     private static function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname, bool $published_field_found, $values_str): ?array
     {
         $whereClause = new MySQLWhereClause();
-
         $values = explode(',', $values_str);
 
         foreach ($values as $vlu)
@@ -347,7 +353,7 @@ class ImportCSV
 
 
         if ($published_field_found)
-            $whereClause->addOrCondition('published', 1);
+            $whereClause->addCondition('published', 1);
 
         $rows = database::loadAssocList($realtablename, [$realidfieldname], $whereClause);
 
@@ -369,9 +375,6 @@ class ImportCSV
     {
         if ($published_field_found)
             $whereClause->addCondition('published', 1);
-        //$wheres[] = 'published=1';
-
-        //$query = 'SELECT ' . $realidfieldname . ' FROM ' . $realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
 
         $rows = database::loadAssocList($realtablename, [$realidfieldname], $whereClause, null, null, 1);
 
