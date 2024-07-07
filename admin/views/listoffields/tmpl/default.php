@@ -15,7 +15,6 @@ use CustomTables\common;
 use CustomTables\Integrity\IntegrityFields;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::_('behavior.tooltip');
 HTMLHelper::_('behavior.multiselect');

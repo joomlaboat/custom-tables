@@ -16,7 +16,6 @@ defined('_JEXEC') or die();
 use Exception;
 use Joomla\CMS\Router\Route;
 use LayoutProcessor;
-use CustomTables\ctProHelpers;
 
 class Twig_Fields_Tags
 {

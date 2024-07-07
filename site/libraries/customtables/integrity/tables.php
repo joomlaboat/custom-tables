@@ -19,7 +19,6 @@ use CustomTables\TableHelper;
 use CustomTables\IntegrityChecks;
 use CustomTables\MySQLWhereClause;
 use Exception;
-use Joomla\CMS\Uri\Uri;
 
 class IntegrityTables extends IntegrityChecks
 {

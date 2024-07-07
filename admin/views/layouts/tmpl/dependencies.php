@@ -12,7 +12,6 @@
 use CustomTables\common;
 use CustomTables\database;
 use CustomTables\MySQLWhereClause;
-use Joomla\CMS\Uri\Uri;
 
 defined('_JEXEC') or die();
 

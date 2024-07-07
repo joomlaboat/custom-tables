@@ -20,7 +20,6 @@ use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
 use Exception;
-use Joomla\CMS\Language\Text;
 
 class IntegrityFields extends IntegrityChecks
 {

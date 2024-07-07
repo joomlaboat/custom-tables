@@ -22,7 +22,6 @@ use CustomTables\TableHelper;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
-use Joomla\CMS\Router\Route;
 
 class CustomTablesViewLog extends HtmlView
 {

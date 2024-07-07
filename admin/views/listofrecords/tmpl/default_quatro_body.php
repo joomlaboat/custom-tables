@@ -14,7 +14,6 @@ use CustomTables\common;
 
 use CustomTables\TwigProcessor;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Uri\Uri;
 
 $recordLayout = '';
 

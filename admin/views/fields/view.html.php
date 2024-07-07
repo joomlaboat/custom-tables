@@ -16,21 +16,25 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\TableHelper;
 use CustomTables\Tables;
+use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 /**
  * Fields View class
+ *
+ * @since 3.0.0
  */
 class CustomtablesViewFields extends HtmlView
 {
     /**
      * display method of View
      * @return void
+     *
+     * @since 3.0.0
      */
     var CT $ct;
     var $tableid;
@@ -104,6 +108,8 @@ class CustomtablesViewFields extends HtmlView
 
     /**
      * Setting the toolbar
+     *
+     * @since 3.0.0
      */
     protected function addToolBar()
     {
@@ -134,7 +140,7 @@ class CustomtablesViewFields extends HtmlView
                     ToolbarHelper::apply('fields.apply', 'JTOOLBAR_APPLY');
                     ToolbarHelper::save('fields.save', 'JTOOLBAR_SAVE');
                     ToolbarHelper::custom('fields.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-                };
+                }
                 ToolbarHelper::cancel('fields.cancel', 'JTOOLBAR_CANCEL');
             } else {
                 if ($this->canEdit) {
@@ -159,7 +165,10 @@ class CustomtablesViewFields extends HtmlView
     /**
      * Method to set up the document properties
      *
+     * @param Document $document
      * @return void
+     *
+     * @since 3.0.0
      */
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {

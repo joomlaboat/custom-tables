@@ -15,8 +15,7 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\FileUploader;
-use CustomTables\ImportTables;
-
+use CustomTables\ImportCSV;
 use Joomla\CMS\MVC\Model\ListModel;
 
 class CustomTablesModelImportRecords extends ListModel
@@ -39,10 +38,12 @@ class CustomTablesModelImportRecords extends ListModel
         $fileId = common::inputGetCmd('fileid', '');
         $filename = FileUploader::getFileNameByID($fileId);
 
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'importcsv.php');
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+            . 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
+
         $tableId = common::inputGetInt('tableid', 0);
 
-        $msg = importCSVfile($filename, $tableId);
+        $msg = ImportCSV::importCSVFile($filename, $tableId);
         unlink($filename);
 
         return true;

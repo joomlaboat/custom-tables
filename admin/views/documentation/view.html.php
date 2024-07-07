@@ -19,19 +19,21 @@ use CustomTables\Documentation;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-documentation.php');
 
 /**
  * Tables View class
+ * @since 3.0.0
  */
 class CustomtablesViewDocumentation extends HtmlView
 {
     /**
      * display method of View
      * @return void
+     *
+     * @since 3.0.0
      */
     var float $version;
     var ?\CustomTables\Documentation $documentation;
@@ -85,8 +87,8 @@ class CustomtablesViewDocumentation extends HtmlView
 		<script>
 			function readmoreOpenClose(itemid)
 			{
-			    var obj=document.getElementById(itemid);
-				var c=obj.className;
+			    let obj=document.getElementById(itemid);
+				let c=obj.className;
 				if(c.indexOf("ct_readmoreOpen")!=-1)
 					c=c.replace("ct_readmoreOpen","ct_readmoreClose");
 				else if(c.indexOf("ct_readmoreClosed")!=-1)

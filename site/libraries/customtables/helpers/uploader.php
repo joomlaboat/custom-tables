@@ -75,11 +75,12 @@ class FileUploader
                     $newFileName = $output_dir . 'ct_' . $t . '_' . $fileId . '_' . $fileName;
 
                     if (common::inputGetCmd('task') == 'importcsv') {
-                        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'importcsv.php');
+                        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+                            . 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
 
                         move_uploaded_file($file["tmp_name"], $newFileName);
 
-                        $msg = importCSVfile($newFileName, common::inputGetInt('tableid', 0));
+                        $msg = ImportCSV::importCSVFile($newFileName, common::inputGetInt('tableid', 0));
                         if ($msg != '' and $msg != 'success')
                             $ret = ['error' => $msg];
                         else
@@ -325,7 +326,9 @@ class FileUploader
             //If not then regular Joomla input method will be used
 
             if (!isset($_FILES[$fileId])) {
-                require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'importcsv.php');
+
+                require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+                    . 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
 
                 if ($ct->Env->clean)
                     die(common::ctJsonEncode(['error' => 'Failed to open file.']));

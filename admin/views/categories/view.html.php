@@ -18,11 +18,12 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 /**
  * Categories View class
+ *
+ * @since 3.0.0
  */
 class CustomtablesViewCategories extends HtmlView
 {

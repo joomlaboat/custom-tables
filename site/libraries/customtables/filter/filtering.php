@@ -14,7 +14,6 @@ defined('_JEXEC') or die();
 
 use DateTime;
 use Exception;
-use Joomla\CMS\Language\Text;
 use LayoutProcessor;
 
 class Filtering

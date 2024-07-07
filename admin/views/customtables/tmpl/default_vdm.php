@@ -10,7 +10,6 @@
 
 // No direct access to this file
 use CustomTables\common;
-use Joomla\CMS\Uri\Uri;
 
 defined('_JEXEC') or die();
 

@@ -13,7 +13,6 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Exception;
-use Joomla\CMS\Uri\Uri;
 
 class ExportTables
 {

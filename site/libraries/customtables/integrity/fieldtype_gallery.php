@@ -19,7 +19,6 @@ use CustomTables\database;
 use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
-use Joomla\CMS\Language\Text;
 
 class IntegrityFieldType_Gallery extends IntegrityChecks
 {

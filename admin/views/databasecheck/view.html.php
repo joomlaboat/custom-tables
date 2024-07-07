@@ -21,19 +21,22 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
  * Tables View class
+ *
+ * @since 3.0.0
  */
 class CustomtablesViewDataBaseCheck extends HtmlView
 {
     /**
      * display method of View
      * @return void
+     *
+     * @since 3.0.0
      */
     var CT $ct;
 

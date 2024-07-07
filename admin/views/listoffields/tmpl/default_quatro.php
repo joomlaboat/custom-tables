@@ -17,7 +17,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use CustomTables\Integrity\IntegrityFields;
-use Joomla\CMS\Uri\Uri;
 
 HTMLHelper::_('behavior.multiselect');
 

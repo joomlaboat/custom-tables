@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
 use Joomla\Utilities\ArrayHelper;
 
 class Ordering

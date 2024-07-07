@@ -14,7 +14,6 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 class LayoutEditor

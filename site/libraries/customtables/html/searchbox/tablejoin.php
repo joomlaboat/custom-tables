@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\Registry\Registry;
 use LayoutProcessor;
 use tagProcessor_Value;
 

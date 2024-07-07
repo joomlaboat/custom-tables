@@ -18,7 +18,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Uri\Uri;
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');

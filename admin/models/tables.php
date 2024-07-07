@@ -20,7 +20,6 @@ use CustomTables\TableHelper;
 use CustomTables\Fields;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Model\AdminModel;
@@ -54,8 +53,9 @@ class CustomtablesModelTables extends AdminModel
      * @param array $data Data for the form.
      * @param boolean $loadData True if the form is to load its own data (default case), false if not.
      *
-     * @return  mixed  A JForm object on success, false on failure
+     * @return  false|\Joomla\CMS\Form\Form|\Joomla\CMS\User\CurrentUserInterface  A JForm object on success, false on failure
      *
+     * @throws Exception
      * @since   1.6
      */
     public function getForm($data = array(), $loadData = true)
@@ -178,6 +178,7 @@ class CustomtablesModelTables extends AdminModel
      *
      * @return  boolean  Returns true on success, false on failure.
      *
+     * @throws Exception
      * @since   12.2
      */
     public function batch($commands, $pks, $contexts)
@@ -273,7 +274,7 @@ class CustomtablesModelTables extends AdminModel
     /**
      * Batch move items to a new category
      *
-     * @param integer $value The new category ID.
+     * @param $values
      * @param array $pks An array of row IDs.
      * @param array $contexts An array of item contexts.
      *
@@ -401,6 +402,7 @@ class CustomtablesModelTables extends AdminModel
      *
      * @return  boolean  True if allowed to delete the record. Defaults to the permission set in the component.
      *
+     * @throws Exception
      * @since   1.6
      */
     protected function canDelete($record)
@@ -423,6 +425,7 @@ class CustomtablesModelTables extends AdminModel
      *
      * @return  boolean  True if allowed to change the state of the record. Defaults to the permission set in the component.
      *
+     * @throws Exception
      * @since   1.6
      */
     protected function canEditState($record)
@@ -447,6 +450,7 @@ class CustomtablesModelTables extends AdminModel
      * @param string $key The name of the key for the primary key.
      *
      * @return    boolean
+     * @throws Exception
      * @since    2.5
      */
     protected function allowEdit($data = array(), $key = 'id')
@@ -488,6 +492,7 @@ class CustomtablesModelTables extends AdminModel
      *
      * @return  mixed  The data for the form.
      *
+     * @throws Exception
      * @since   1.6
      */
     protected function loadFormData()
@@ -506,7 +511,7 @@ class CustomtablesModelTables extends AdminModel
      *
      * @param integer $pk The id of the primary key.
      *
-     * @return  mixed  Object on success, false on failure.
+     * @return  false|stdClass  Object on success, false on failure.
      *
      * @since   1.6
      */

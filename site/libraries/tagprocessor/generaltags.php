@@ -17,7 +17,6 @@ use CustomTables\CTMiscHelper;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\CTUser;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Uri\Uri;
 
 /* All tags already implemented using Twig */

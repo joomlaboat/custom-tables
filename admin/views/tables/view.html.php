@@ -14,15 +14,17 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
+use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 /**
  * Tables View class
+ *
+ * @since 3.0.0
  */
 class CustomtablesViewTables extends HtmlView//JViewLegacy
 {
@@ -36,6 +38,9 @@ class CustomtablesViewTables extends HtmlView//JViewLegacy
     /**
      * display method of View
      * @return void
+     *
+     * @throws Exception
+     * @since 3.0.0
      */
     public function display($tpl = null)
     {
@@ -92,6 +97,8 @@ class CustomtablesViewTables extends HtmlView//JViewLegacy
 
     /**
      * Setting the toolbar
+     *
+     * @since 3.0.0
      */
     protected function addToolBar()
     {
@@ -106,7 +113,7 @@ class CustomtablesViewTables extends HtmlView//JViewLegacy
                 ToolbarHelper::apply('tables.apply', 'JTOOLBAR_APPLY');
                 ToolbarHelper::save('tables.save', 'JTOOLBAR_SAVE');
                 ToolbarHelper::custom('tables.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-            };
+            }
             ToolbarHelper::cancel('tables.cancel', 'JTOOLBAR_CANCEL');
         } else {
             if ($this->canEdit) {
@@ -130,7 +137,10 @@ class CustomtablesViewTables extends HtmlView//JViewLegacy
     /**
      * Method to set up the document properties
      *
+     * @param Document $document
      * @return void
+     *
+     * @since 3.0.0
      */
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {

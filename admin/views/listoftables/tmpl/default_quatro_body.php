@@ -18,7 +18,6 @@ use CustomTables\TableHelper;
 use CustomTables\ListOfTables;
 use CustomTables\Fields;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Uri\Uri;
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 $dbPrefix = database::getDBPrefix();
