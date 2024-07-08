@@ -9,14 +9,21 @@
                 description="COM_CUSTOMTABLES_CATEGORY_SEARCH_IN_NAME"
                 hint="JSEARCH_FILTER"
         />
+
         <field
                 name="published"
-                type="ctj3status"
+                type="list"
                 label="JOPTION_SELECT_PUBLISHED"
                 onchange="this.form.submit();"
                 extension="com_customtables"
         >
+            <option value="">JOPTION_SELECT_PUBLISHED</option>
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="-2">JTRASHED</option>
+            <option value="*">JALL</option>
         </field>
+
     </fields>
     <fields name="list">
         <field

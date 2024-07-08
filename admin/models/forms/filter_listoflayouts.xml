@@ -12,7 +12,7 @@
 
         <field
                 name="published"
-                type="ctj3status"
+                type="list"
                 label="JOPTION_SELECT_PUBLISHED"
                 onchange="this.form.submit();"
                 extension="com_customtables"

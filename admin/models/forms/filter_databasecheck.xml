@@ -10,15 +10,5 @@
                 hint="JSEARCH_FILTER"
         />
 
-        <field
-                name="published"
-                type="ctj3status"
-                label="JOPTION_SELECT_PUBLISHED"
-                onchange="this.form.submit();"
-                extension="com_customtables"
-        >
-        </field>
-    </fields>
-    <fields name="list">
     </fields>
 </form>
