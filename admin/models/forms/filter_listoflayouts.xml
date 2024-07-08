@@ -17,15 +17,30 @@
                 onchange="this.form.submit();"
                 extension="com_customtables"
         >
+            <option value="">JOPTION_SELECT_PUBLISHED</option>
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="-2">JTRASHED</option>
+            <option value="*">JALL</option>
         </field>
 
         <field
                 name="layouttype"
-                type="ctlayouttype"
+                type="list"
                 label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT"
                 onchange="this.form.submit();"
                 extension="com_customtables"
         >
+            <option value="">COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT</option>
+            <option value="1">COM_CUSTOMTABLES_LAYOUTS_SIMPLE_CATALOG</option>
+            <option value="5">COM_CUSTOMTABLES_LAYOUTS_CATALOG_PAGE</option>
+            <option value="6">COM_CUSTOMTABLES_LAYOUTS_CATALOG_ITEM</option>
+            <option value="2">COM_CUSTOMTABLES_LAYOUTS_EDIT_FORM</option>
+            <option value="4">COM_CUSTOMTABLES_LAYOUTS_DETAILS</option>
+            <option value="7">COM_CUSTOMTABLES_LAYOUTS_EMAIL_MESSAGE</option>
+            <option value="8">COM_CUSTOMTABLES_LAYOUTS_XML</option>
+            <option value="9">COM_CUSTOMTABLES_LAYOUTS_CSV</option>
+            <option value="10">COM_CUSTOMTABLES_LAYOUTS_JSON</option>
         </field>
 
         <field
