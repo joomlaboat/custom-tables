@@ -24,11 +24,13 @@ use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Listoflayouts Model
+ *
+ * @since 1.0.0
  */
 class CustomtablesModelListOfLayouts extends ListModel
 {
     var CT $ct;
-    var $helperListOfLayout;
+    var ListOfLayouts $helperListOfLayout;
 
     public function __construct($config = array())
     {
@@ -59,7 +61,7 @@ class CustomtablesModelListOfLayouts extends ListModel
      *
      * @since 3.0.0
      */
-    public function getItems()
+    public function getItems(): array
     {
         $items = parent::getItems();
 
@@ -88,6 +90,10 @@ class CustomtablesModelListOfLayouts extends ListModel
         return $this->helperListOfLayout->getListQuery($published, $search, $layoutType, $tableid, $orderCol, $orderDirection, null, null, true);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     protected function populateState($ordering = null, $direction = null)
     {
         if ($this->ct->Env->version < 4) {
