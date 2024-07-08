@@ -31,7 +31,6 @@ foreach ($this->items as $i => $item): ?>
     //$canDo = CustomtablesHelper::getActions('categories',$item,'listofcategories');
     ?>
     <tr class="row<?php echo $i % 2; ?>">
-
         <?php if ($this->canState or $this->canDelete): ?>
             <td class="text-center">
                 <?php if ($item->checked_out) : ?>
@@ -50,15 +49,32 @@ foreach ($this->items as $i => $item): ?>
             </td>
         <?php endif; ?>
 
+        <td class="text-center btns d-none d-md-table-cell itemnumber">
+            <?php if ($this->canEdit):
+
+                if ($item->checked_out)
+                    echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoftables.', $canCheckin);
+                else
+                    echo '<a aria-describedby="tip-tableedit' . $item->id . '" href="' . $edit . '&id=' . $item->id . '"><i class="fa fa-pencil"></i></a>';
+
+                ?>
+                <div role="tooltip"
+                     id="tip-tableedit<?php echo $item->id; ?>"><?php echo common::translate('Edit Table Details'); ?></div>
+            <?php else: ?>
+                <?php echo '<a class="btn btn" aria-describedby="tip-tableedit' . $item->id . '" href="#">...</a>'; ?>
+                <div role="tooltip"
+                     id="tip-tableedit<?php echo $item->id; ?>"><?php echo common::translate('Edit Table Details'); ?></div>
+            <?php endif; ?>
+        </td>
+
         <td>
             <div class="name">
                 <?php if ($this->canEdit): ?>
-                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->tablename); ?></a>
-                    <?php if ($item->checked_out):
+                    <a href="<?php echo common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $item->id; ?>"
+                       aria-describedby="tip-fieldcount<?php echo $item->id; ?> . '"><?php echo common::escape($item->tablename); ?></a>
 
-                        //echo //$this->renderCheckedOutStatus($item);
-                        echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoftables.', $canCheckin);
-                    endif; ?>
+                    <div role="tooltip"
+                         id="tip-fieldcount<?php echo $item->id; ?>"><?php echo $item->fieldcount . ' ' . common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?></div>
                 <?php else: ?>
                     <?php echo common::escape($item->tablename); ?>
                 <?php endif; ?>
@@ -107,18 +123,13 @@ foreach ($this->items as $i => $item): ?>
                     ?>
                 </ul>
             </div>
-
         </td>
 
         <td class="text-center btns d-none d-md-table-cell itemnumber">
-
-
             <?php echo '<a class="btn btn-success" aria-describedby="tip-tablefields' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $item->id . '">'
                 . $item->fieldcount . '</a>'; ?>
             <div role="tooltip"
                  id="tip-tablefields<?php echo $item->id; ?>"><?php echo common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?></div>
-
-
         </td>
 
         <td class="text-center btns d-none d-md-table-cell itemnumber">

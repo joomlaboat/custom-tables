@@ -11,6 +11,15 @@
         />
 
         <field
+                name="tablecategory"
+                type="ctcategory"
+                label="JOPTION_SELECT_CATEGORY"
+                onchange="this.form.submit();"
+                extension="com_customtables"
+        >
+        </field>
+
+        <field
                 name="published"
                 type="list"
                 label="JOPTION_SELECT_PUBLISHED"
@@ -22,15 +31,6 @@
             <option value="0">JUNPUBLISHED</option>
             <option value="-2">JTRASHED</option>
             <option value="*">JALL</option>
-        </field>
-
-        <field
-                name="tablecategory"
-                type="ctcategory"
-                label="JOPTION_SELECT_CATEGORY"
-                onchange="this.form.submit();"
-                extension="com_customtables"
-        >
         </field>
 
     </fields>

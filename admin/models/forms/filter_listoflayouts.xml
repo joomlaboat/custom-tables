@@ -11,20 +11,6 @@
         />
 
         <field
-                name="published"
-                type="list"
-                label="JOPTION_SELECT_PUBLISHED"
-                onchange="this.form.submit();"
-                extension="com_customtables"
-        >
-            <option value="">JOPTION_SELECT_PUBLISHED</option>
-            <option value="1">JPUBLISHED</option>
-            <option value="0">JUNPUBLISHED</option>
-            <option value="-2">JTRASHED</option>
-            <option value="*">JALL</option>
-        </field>
-
-        <field
                 name="layouttype"
                 type="list"
                 label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT"
@@ -50,6 +36,20 @@
                 onchange="this.form.submit();"
                 extension="com_customtables"
         >
+        </field>
+
+        <field
+                name="published"
+                type="list"
+                label="JOPTION_SELECT_PUBLISHED"
+                onchange="this.form.submit();"
+                extension="com_customtables"
+        >
+            <option value="">JOPTION_SELECT_PUBLISHED</option>
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="-2">JTRASHED</option>
+            <option value="*">JALL</option>
         </field>
 
     </fields>
