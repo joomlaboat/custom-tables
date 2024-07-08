@@ -17,42 +17,42 @@ HTMLHelper::_('behavior.multiselect');
 
 ?>
 <tr>
-	<?php if ($this->canEdit && $this->canState): ?>
+    <?php if ($this->canEdit && $this->canState): ?>
         <th style="width:20px;" class="nowrap center">
-			<?php echo HTMLHelper::_('grid.checkall'); ?>
+            <?php echo HTMLHelper::_('grid.checkall'); ?>
         </th>
-	<?php endif; ?>
+    <?php endif; ?>
 
     <th scope="col">
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col">
-		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
     </th>
 
-    <th scope="col">
-		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
+    <th scope="col" class="text-left d-none d-md-table-cell">
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL', 't.tablename', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col" class="text-center d-none d-md-table-cell">
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col" class="w-12 d-none d-xl-table-cell">
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col">
-		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
     </th>
 
     <th scope="col">
-		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
     </th>
 
     <th scope="col">
-		<?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
+        <?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
     </th>
 
     <th scope="col">

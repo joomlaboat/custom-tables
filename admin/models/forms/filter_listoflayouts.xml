@@ -28,6 +28,15 @@
         >
         </field>
 
+        <field
+                name="table"
+                type="cttable"
+                label="COM_CUSTOMTABLES_LAYOUTS_TABLE_SELECT"
+                onchange="this.form.submit();"
+                extension="com_customtables"
+        >
+        </field>
+
     </fields>
     <fields name="list">
         <field
@@ -41,6 +50,8 @@
             <option value="">JGLOBAL_SORT_BY</option>
             <option value="a.layoutname ASC">COM_CUSTOMTABLES_LAYOUTS_HEADING_NAME_ASC</option>
             <option value="a.layoutname DESC">COM_CUSTOMTABLES_LAYOUTS_HEADING_NAME_DESC</option>
+            <option value="t.tablename ASC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_ASC</option>
+            <option value="t.tablename DESC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_DESC</option>
             <option value="a.published ASC">COM_CUSTOMTABLES_LAYOUTS_STATE_ASC</option>
             <option value="a.published DESC">COM_CUSTOMTABLES_LAYOUTS_STATE_DESC</option>
             <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
