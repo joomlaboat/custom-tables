@@ -29,7 +29,7 @@
         </field>
 
         <field
-                name="table"
+                name="tableid"
                 type="cttable"
                 label="COM_CUSTOMTABLES_LAYOUTS_TABLE_SELECT"
                 onchange="this.form.submit();"
