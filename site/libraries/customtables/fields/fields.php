@@ -748,11 +748,11 @@ class Fields
 
         // Process field name
         if (function_exists("transliterator_transliterate"))
-            $newFieldName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $data['fieldname']);
+            $newFieldName = transliterator_transliterate("Any-Latin; Latin-ASCII;", $data['fieldname']);
         else
             $newFieldName = $data['fieldname'];
 
-        $newFieldName = strtolower(trim(preg_replace("/\W/", "", $newFieldName)));
+        $newFieldName = trim(preg_replace("/\W/", "", $newFieldName));
 
         //Shorten the Field Name
         if (strlen($newFieldName) > 40)

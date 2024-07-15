@@ -1424,26 +1424,30 @@
     <!-- WordPress NOT ready 4 -->
     <type ct_name="text" name="text" label="Text Area (Multiple Lines)"
           description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false"
-          priority="1" wordpress="false" order="4">
+          priority="1" wordpress="true" order="4">
         <params>
-            <param name="texteditor" label="Text Editor" description="" hidden="false" default="" type="list">
-                <option value="" label="No Editor"/>
-                <option value="rich" label="Rich Text Editor"/>
+            <param name="texteditor" label="Text Editor" description="" hidden="false" default=""
+                   type="list">
+                <option value="" label="No Editor" wordpress="true"/>
+                <option value="rich" label="Rich Text Editor" wordpress="false"/>
                 <!--<option value="codemirror" label="Code Mirror (Code Editor)" />-->
             </param>
-            <param name="spellcheck" label="Spell Checker" description="" default="" type="radio"
-                   options="|No,spellcheck|Yes"/>
+            <param name="spellcheck" label="Spell Checker" description="" wordpress="false" default="" type="list">
+                <option value="" wordpress="true" label="No"/>
+                <option value="spellcheck" label="Yes" wordpress="false"/>
+            </param>
+
             <param name="type" label="Maximum length" example="medium"
                    description="Maximum length of value to be held. The effective maximum length is less. The Joomla default utf8mb4 Character Set (4-Byte UTF-8 Unicode Encoding)."
-                   default="" type="list">
-                <option value="tiny"
+                   default="" type="list" wordpress="false">
+                <option value="tiny" wordpress="true"
                         label="Up to 255 Bytes - 63 characters (TINYTEXT)"
                         description="TINYTEXT can store up to 63 Unicode characters i.e 255 bytes. It is suitable for storing short comments, captions, titles etc."/>
-                <option value="" label="Up to 64KB - 16,383 characters (TEXT)"
+                <option value="" label="Up to 64KB - 16,383 characters (TEXT)" wordpress="true"
                         description="TEXT can store up to 16,383 Unicode characters i.e 64KB. It is suitable for storing summaries of articles, short notices, captions, etc."/>
-                <option value="medium" label="Up to 16MB - 4.2 million characters (MEDIUMTEXT)"
+                <option value="medium" label="Up to 16MB - 4.2 million characters (MEDIUMTEXT)" wordpress="true"
                         description="MEDIUMTEXT can store up to 4,194,303 Unicode characters i.e 16MB. It is suitable for larger text strings like books, research papers, and code backup."/>
-                <option value="long" label="Up to 4GB - 10.7 billion characters (LONGTEXT)"
+                <option value="long" label="Up to 4GB - 10.7 billion characters (LONGTEXT)" wordpress="true"
                         description="LONGTEXT can store up to 1,073,741,822 Unicode characters i.e 4GB. This is more than enough storage for any long-form text strings. For example, a book that MEDIUMTEXT can’t hold can be stored using LONGTEXT."/>
             </param>
         </params>
