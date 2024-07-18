@@ -124,7 +124,7 @@ class Documentation
                     }
                 }
 
-                $result .= '<h5>' . common::translate('Pure Value (As it is)') . ':</h5>'
+                $result .= '<h5>' . common::translate('COM_CUSTOMTABLES_FIELDTYPE_PUREVALUE') . ':</h5>'
                     . '<p>' . common::translate('COM_CUSTOMTABLES_EXAMPLE') . ':<br/><pre class="ct_doc_pre">'
                     . '{{ <i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.value }}'
                     . '</pre></p>';

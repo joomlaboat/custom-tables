@@ -20,10 +20,10 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
-$types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
+$log_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR;
 
-if (file_exists($types_path . '_type_log.php'))
-    require_once($types_path . '_type_log.php');
+if (file_exists($log_path . 'log.php'))
+    require_once($log_path . 'log.php');
 
 class Value
 {

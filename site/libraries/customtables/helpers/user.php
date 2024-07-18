@@ -351,16 +351,13 @@ class CTUser
                 $version = (int)$version_object->getShortVersion();
 
                 if ($version < 4)
-                    $msg = common::translate('COM_USERS_REGISTRATION_BIND_FAILED') . ': ' . $user->getError() ?? '';
+                    $msg = common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_BIND_FAILED') . ': ' . $user->getError() ?? '';
                 else
-                    $msg = common::translate('COM_USERS_REGISTRATION_BIND_FAILED') . ': ' . implode(',', $user->getErrors());
+                    $msg = common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_BIND_FAILED') . ': ' . implode(',', $user->getErrors());
             }
 
             return null;
         }
-
-        // Load the users' plugin group.
-        //JPluginHelper::importPlugin('user');
 
         // Store the data.
         if (!$user->save()) {
@@ -369,15 +366,14 @@ class CTUser
             $version = (int)$version_object->getShortVersion();
 
             if ($version < 4)
-                $msg = common::translate('COM_USERS_REGISTRATION_SAVE_FAILED') . ': ' . $user->getError() ?? '';
+                $msg = common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_SAVE_FAILED') . ': ' . $user->getError() ?? '';
             else
-                $msg = common::translate('COM_USERS_REGISTRATION_SAVE_FAILED') . ': ' . implode(',', $user->getErrors());
+                $msg = common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_SAVE_FAILED') . ': ' . implode(',', $user->getErrors());
 
             return null;
         }
 
         //Apply group
-
         foreach ($group_ids as $group_id) {
             //$query = 'INSERT #__user_usergroup_map SET user_id=' . $user->id . ', group_id=' . $group_id;
             database::insert('#__user_usergroup_map', ['user_id' => $user->id, 'group_id' => $group_id]);
