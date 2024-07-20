@@ -445,18 +445,14 @@ class SaveFieldQuerySet
                 //get max id
                 if ($this->row_old[$this->ct->Table->realidfieldname] == 0 or $this->row_old[$this->ct->Table->realidfieldname] == '' or $this->isCopy) {
                     $min_id = (($this->field->params !== null and count($this->field->params) > 0) ? (int)$this->field->params[0] : 0);
-
                     $whereClause = new MySQLWhereClause();
-
                     $rows = database::loadObjectList($this->ct->Table->realtablename, [['MAX', $this->ct->Table->realtablename, $this->field->realfieldname]], $whereClause, null, null, 1);
-
-                    print_r($rows);
 
                     if (count($rows) != 0) {
                         $value = (int)($rows[0]->vlu) + 1;
                         if ($value < $min_id)
                             $value = $min_id;
-                        
+
                         $this->setNewValue($value);
                     }
                 }
