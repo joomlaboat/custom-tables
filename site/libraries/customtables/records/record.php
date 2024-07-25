@@ -14,7 +14,7 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Exception;
-use CustomTables\CustomPHP\CleanExecute;
+use CustomTables\CustomPHP;
 use CustomTables\ctProHelpers;
 
 class record
@@ -24,6 +24,7 @@ class record
     var ?array $row_new;
     var Edit $editForm;
     var ?string $listing_id;
+    var bool $isItNewRecord;
 
     function __construct(CT $ct)
     {
@@ -32,6 +33,7 @@ class record
         $this->row_new = null;
         $this->listing_id = null;
         $this->editForm = new Edit($ct);
+        $this->isItNewRecord = true;
     }
 
     /**
@@ -91,10 +93,8 @@ class record
                 $phpOnChangeFound = true;
         }
 
-        $isItNewRecords = false;
-
         if ($this->listing_id === null) {
-            $isItNewRecords = true;
+            $this->isItNewRecord = true;
 
             if ($this->ct->Table->published_field_found)
                 $saveField->row_new['published'] = $this->ct->Params->publishStatus;
@@ -107,6 +107,7 @@ class record
             }
 
         } else {
+            $this->isItNewRecord = false;
 
             if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
                 ctProHelpers::updateLog($this->ct, $this->listing_id);
@@ -127,7 +128,7 @@ class record
             return false;
         }
 
-        if ($isItNewRecords) {
+        if ($this->isItNewRecord) {
             if ($this->listing_id !== null) {
                 $this->row_new = $this->ct->Table->loadRecord($this->listing_id);
 
@@ -135,10 +136,10 @@ class record
 
                     if ($this->ct->Env->advancedTagProcessor) {
                         if ($phpOnAddFound)
-                            CleanExecute::doPHPonAdd($this->ct, $this->row_new);
+                            CustomPHP::doPHPonAdd($this->ct, $this->row_new);
 
                         if ($phpOnChangeFound)
-                            CleanExecute::doPHPonChange($this->ct, $this->row_new);
+                            CustomPHP::doPHPonChange($this->ct, $this->row_new);
                     }
 
                     try {
@@ -161,9 +162,9 @@ class record
                 common::inputSet("listing_id", $this->row_new[$this->ct->Table->realidfieldname]);
                 if ($this->ct->Env->advancedTagProcessor) {
                     if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
-                        CleanExecute::doPHPonChange($this->ct, $this->row_new);
+                        CustomPHP::doPHPonChange($this->ct, $this->row_new);
                     if ($phpOnAddFound and $isCopy)
-                        CleanExecute::doPHPonAdd($this->ct, $this->row_new);
+                        CustomPHP::doPHPonAdd($this->ct, $this->row_new);
                 }
             }
         }
@@ -181,7 +182,7 @@ class record
                     $saveField->sendEmailIfAddressSet($this->listing_id, $this->row_new, $this->ct->Params->onRecordSaveSendEmailTo);
                 }
             } else {
-                if ($isItNewRecords or $isCopy) {
+                if ($this->isItNewRecord or $isCopy) {
                     //New record
                     if ($this->ct->Params->onRecordAddSendEmail == 1 and !empty($this->ct->Params->onRecordAddSendEmailTo))
                         $saveField->sendEmailIfAddressSet($this->listing_id, $this->row_new, $this->ct->Params->onRecordAddSendEmailTo);

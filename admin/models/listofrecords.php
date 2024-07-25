@@ -13,6 +13,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\database;
 
 use Joomla\CMS\Component\ComponentHelper;
@@ -20,152 +21,168 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 
 /**
- * Listofrecords Model
+ * ListOfRecords Model
+ *
+ * @since 1.0.09
  */
 class CustomtablesModelListOfRecords extends ListModel
 {
-	var CT $ct;
-	var $ordering_realfieldname;
+    var CT $ct;
+    var $ordering_realfieldname;
 
-	public function __construct($config = array())
-	{
-		$this->ct = new CT;
-		$this->ct->getTable(common::inputGetInt('tableid', 0));
+    public function __construct($config = array())
+    {
+        $this->ct = new CT;
 
-		if ($this->ct->Table->tablename === null) {
-			Factory::getApplication()->enqueueMessage('Table not selected.', 'error');
-			return;
-		}
+        $tableId = common::inputGetInt('tableid');
+        if (empty($tableId)) {
+            $Itemid = common::inputGetInt('Itemid');//This will allow to open admin menu items.
 
-		//Check if ordering type field exists
-		$this->ordering_realfieldname = '';
-		foreach ($this->ct->Table->fields as $field) {
-			if ($field['type'] == 'ordering') {
-				$this->ordering_realfieldname = $field['realfieldname'];
-				break;
-			}
-		}
+            if ($Itemid === null) {
+                Factory::getApplication()->enqueueMessage('Table not selected.', 'error');
+                return;
+            } else {
+                $params = CTMiscHelper::getMenuParams($Itemid);
+                $this->ct->getTable($params->establename);
+            }
+        } else {
+            $this->ct->getTable($tableId);
+        }
 
-		//Ordering
-		if (empty($config['filter_records']))
-			$config['filter_fields'] = array('id', 'published', 'custom');
+        if ($this->ct->Table->tablename === null) {
+            Factory::getApplication()->enqueueMessage('Table not found and not loaded.', 'error');
+            return;
+        }
 
-		parent::__construct($config);
-	}
+        //Check if ordering type field exists
+        $this->ordering_realfieldname = '';
+        foreach ($this->ct->Table->fields as $field) {
+            if ($field['type'] == 'ordering') {
+                $this->ordering_realfieldname = $field['realfieldname'];
+                break;
+            }
+        }
 
-	/**
-	 * Method to get an array of data items.
-	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 */
+        //Ordering
+        if (empty($config['filter_records']))
+            $config['filter_fields'] = array('id', 'published', 'custom');
 
-	public function getItems()
-	{
-		// load parent items
-		return parent::getItems();
-	}
+        parent::__construct($config);
+    }
 
-	/**
-	 * Method to autopopulate the model state.
-	 *
-	 * @return void
-	 */
-	protected function populateState($ordering = null, $direction = 'asc')
-	{
-		if ($this->ordering_realfieldname != '' and $ordering === null)
-			$ordering = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
+    /**
+     * Method to get an array of data items.
+     *
+     * @return  mixed  An array of data items on success, false on failure.
+     */
 
-		if ($this->ct->Env->version < 4) {
-			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-			$this->setState('filter.search', $search);
+    public function getItems()
+    {
+        // load parent items
+        return parent::getItems();
+    }
 
-			$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-			$this->setState('filter.published', $published);
-		}
+    /**
+     * Method to autopopulate the model state.
+     *
+     * @return void
+     */
+    protected function populateState($ordering = null, $direction = 'asc')
+    {
+        if ($this->ordering_realfieldname != '' and $ordering === null)
+            $ordering = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
 
-		$this->setState('params', ComponentHelper::getParams('com_customtables'));
+        if ($this->ct->Env->version < 4) {
+            $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+            $this->setState('filter.search', $search);
 
-		// List state information.
-		parent::populateState($ordering, $direction);
+            $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+            $this->setState('filter.published', $published);
+        }
 
-		if ($this->ct->Env->version < 4) {
-			$ordering = $this->state->get('list.ordering');
-			$direction = strtoupper($this->state->get('list.direction'));
-			$app = Factory::getApplication();
-			$app->setUserState($this->context . '.list.fullordering', $ordering . ' ' . $direction);
-		}
-	}
+        $this->setState('params', ComponentHelper::getParams('com_customtables'));
 
-	protected function getListQuery()
-	{
-		$db = database::getDB();
-		// Create a new query object.
+        // List state information.
+        parent::populateState($ordering, $direction);
 
-		//Select columns sanitation
-		$selects_sanitized = database::sanitizeSelects($this->ct->Table->selects, $this->ct->Table->realtablename);
+        if ($this->ct->Env->version < 4) {
+            $ordering = $this->state->get('list.ordering');
+            $direction = strtoupper($this->state->get('list.direction'));
+            $app = Factory::getApplication();
+            $app->setUserState($this->context . '.list.fullordering', $ordering . ' ' . $direction);
+        }
+    }
 
-		$query = 'SELECT ' . $selects_sanitized . ' FROM ' . $db->quoteName($this->ct->Table->realtablename);
+    protected function getListQuery()
+    {
+        $db = database::getDB();
+        // Create a new query object.
 
-		$wheres_and = [];
-		// Filter by published state
-		if ($this->ct->Table->published_field_found) {
-			$published = $this->getState('filter.published');
+        //Select columns sanitation
+        $selects_sanitized = database::sanitizeSelects($this->ct->Table->selects, $this->ct->Table->realtablename);
 
-			if (is_numeric($published))
-				$wheres_and[] = $this->ct->Table->realtablename . '.published = ' . (int)$published;
-			elseif (is_null($published) or $published === '')
-				$wheres_and[] = '(' . $this->ct->Table->realtablename . '.published = 0 OR ' . $this->ct->Table->realtablename . '.published = 1)';
-		}
+        $query = 'SELECT ' . $selects_sanitized . ' FROM ' . $db->quoteName($this->ct->Table->realtablename);
 
-		// Filter by search.
-		$search = $this->getState('filter.search');
+        $wheres_and = [];
+        // Filter by published state
+        if ($this->ct->Table->published_field_found) {
+            $published = $this->getState('filter.published');
 
-		if ($search != '') {
-			$wheres = [];
+            if (is_numeric($published))
+                $wheres_and[] = $this->ct->Table->realtablename . '.published = ' . (int)$published;
+            elseif (is_null($published) or $published === '')
+                $wheres_and[] = '(' . $this->ct->Table->realtablename . '.published = 0 OR ' . $this->ct->Table->realtablename . '.published = 1)';
+        }
 
-			foreach ($this->ct->Table->fields as $fieldRow) {
-				if ($fieldRow['type'] == 'string') {
-					$realfieldname = $fieldRow['realfieldname'];
-					$where = $db->quote('%' . $search . '%');
-					$wheres[] = ('(' . $this->ct->Table->realtablename . '.' . $realfieldname . ' LIKE ' . $where . ')');
-				}
-			}
-			$wheres_and[] = '(' . implode(' OR ', $wheres) . ')';
-		}
+        // Filter by search.
+        $search = $this->getState('filter.search');
 
-		if (count($wheres_and) > 0)
-			$query .= ' WHERE ' . implode(' AND ', $wheres_and);
+        if ($search != '') {
+            $wheres = [];
 
-		// Add the list ordering clause.
-		$order_by_Col = $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname;
-		$orderDirection = $this->state->get('list.direction', 'asc');
+            foreach ($this->ct->Table->fields as $fieldRow) {
+                if ($fieldRow['type'] == 'string') {
+                    $realfieldname = $fieldRow['realfieldname'];
+                    $where = $db->quote('%' . $search . '%');
+                    $wheres[] = ('(' . $this->ct->Table->realtablename . '.' . $realfieldname . ' LIKE ' . $where . ')');
+                }
+            }
+            $wheres_and[] = '(' . implode(' OR ', $wheres) . ')';
+        }
 
-		if ($this->ct->Env->version < 4) {
-			if ($this->ordering_realfieldname != '')
-				$order_by_Col = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
-		} else {
-			$orderCol = $this->state->get('list.ordering', ($this->ordering_realfieldname != '' ? 'custom' : 'id'));
+        if (count($wheres_and) > 0)
+            $query .= ' WHERE ' . implode(' AND ', $wheres_and);
 
-			if ($orderCol == 'published')
-				$order_by_Col = $this->ct->Table->realtablename . '.published';
-			elseif ($orderCol == 'custom' and $this->ordering_realfieldname != '')
-				$order_by_Col = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
-		}
-		$query .= ' ORDER BY ' . $db->quoteName($order_by_Col) . ' ' . $orderDirection;
+        // Add the list ordering clause.
+        $order_by_Col = $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname;
+        $orderDirection = $this->state->get('list.direction', 'asc');
 
-		return $query;
-	}
+        if ($this->ct->Env->version < 4) {
+            if ($this->ordering_realfieldname != '')
+                $order_by_Col = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
+        } else {
+            $orderCol = $this->state->get('list.ordering', ($this->ordering_realfieldname != '' ? 'custom' : 'id'));
 
-	/**
-	 * Method to get a store id based on model configuration state.
-	 * @return string A store id.
-	 * @since 1.0.0
-	 */
-	protected function getStoreId($id = '')
-	{
-		// Compile the store id.
-		$id .= ':' . $this->getState('filter.id');
-		$id .= ':' . $this->getState('filter.published');
-		return parent::getStoreId($id);
-	}
+            if ($orderCol == 'published')
+                $order_by_Col = $this->ct->Table->realtablename . '.published';
+            elseif ($orderCol == 'custom' and $this->ordering_realfieldname != '')
+                $order_by_Col = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
+        }
+        $query .= ' ORDER BY ' . $db->quoteName($order_by_Col) . ' ' . $orderDirection;
+
+        return $query;
+    }
+
+    /**
+     * Method to get a store id based on model configuration state.
+     * @return string A store id.
+     * @since 1.0.0
+     */
+    protected function getStoreId($id = '')
+    {
+        // Compile the store id.
+        $id .= ':' . $this->getState('filter.id');
+        $id .= ':' . $this->getState('filter.published');
+        return parent::getStoreId($id);
+    }
 }

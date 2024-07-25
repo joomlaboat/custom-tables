@@ -25,6 +25,17 @@
                message="COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_MESSAGE"
                hint="COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_HINT"
                autocomplete="on"/>
+        
+        <field type="list"
+               name="admin_menu"
+               label="COM_CUSTOMTABLES_CATEGORY_ADMIN_MENU"
+               description="COM_CUSTOMTABLES_CATEGORY_ADMIN_MENU_DESCRIPTION"
+               class="list_class"
+               default="0">
+            <!-- Option Set.-->
+            <option value="0">COM_CUSTOMTABLES_NO</option>
+            <option value="1">COM_CUSTOMTABLES_YES</option>
+        </field>
 
         <field
                 name="created"

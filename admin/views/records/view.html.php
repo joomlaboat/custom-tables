@@ -42,7 +42,20 @@ class CustomtablesViewRecords extends HtmlView
 
     public function display($tpl = null)
     {
-        $this->tableId = common::inputGetInt('tableid', 0);
+        $tableId = common::inputGetInt('tableid');
+        if ($tableId === null) {
+            $Itemid = common::inputGetInt('Itemid');
+
+            if ($Itemid === null) {
+                Factory::getApplication()->enqueueMessage('Table not selected..', 'error');
+                return;
+            }
+
+        } else {
+            $this->tableId = $tableId;
+        }
+
+
         $listing_id = common::inputGetCmd('id');
 
         $paramsArray = array();

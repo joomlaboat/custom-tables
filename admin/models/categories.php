@@ -12,8 +12,11 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use CustomTables\CTUser;
 
+use CustomTables\database;
+use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
@@ -23,6 +26,8 @@ use Joomla\CMS\MVC\Model\AdminModel;
 
 /**
  * Customtables Categories Model
+ *
+ * @since 1.0.0
  */
 class CustomtablesModelCategories extends AdminModel
 {
@@ -47,6 +52,7 @@ class CustomtablesModelCategories extends AdminModel
      *
      * @return  mixed  A JForm object on success, false on failure
      *
+     * @throws Exception
      * @since   1.6
      */
     public function getForm($data = array(), $loadData = true)
@@ -116,6 +122,8 @@ class CustomtablesModelCategories extends AdminModel
      * Method to get the script that have to be included on the form
      *
      * @return string    script files
+     *
+     * @since 1.0.0
      */
     public function getScript()
     {
@@ -147,12 +155,138 @@ class CustomtablesModelCategories extends AdminModel
      *
      * @return  boolean  True on success.
      *
+     * @throws Exception
      * @since   12.2
      */
-    public function publish(&$pks, $value = 1)
+    public function publish(&$pks, $value = 1): bool
     {
         if (!parent::publish($pks, $value)) {
             return false;
+        }
+
+        return $this->createMenuItemsIfNeeded();
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @since 3.3.7
+     */
+    function createMenuItemsIfNeeded(): bool
+    {
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('link', 'index.php?option=com_customtables&view=menu&category=', 'INSTR');
+
+        try {
+            $menu_rows = database::loadObjectList('#__menu', ['id', 'alias'], $whereClause, null, null);
+        } catch (Exception $e) {
+            $this->ct->errors[] = $e->getMessage();
+            return false;
+        }
+
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('published', 1);
+        $whereClause->addCondition('admin_menu', 1);
+
+        try {
+            $category_rows = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, null, null);
+        } catch (Exception $e) {
+            $this->ct->errors[] = $e->getMessage();
+            return false;
+        }
+
+        $db = database::getDB();
+
+        //Delete disconnected menu items
+        foreach ($menu_rows as $menu_row) {
+            $alias = $menu_row->alias;
+
+            $found = false;
+            foreach ($category_rows as $category_row) {
+                $slug = 'com-customtables-' . CTMiscHelper::slugify($category_row->categoryname);
+
+                if ($alias == $slug) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                //delete menu item
+                $query = 'DELETE FROM `#__menu` WHERE parent_id=1 AND client_id=1 AND alias="' . $alias . '" AND 
+                INSTR(`link`,"index.php?option=com_customtables&view=menu&category=")';
+                $db->setQuery($query);
+                $db->execute();
+            }
+        }
+
+        //Get component ID
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('name', 'COM_CUSTOMTABLES');
+
+        try {
+            $extension_rows = database::loadObjectList('#__extensions', ['extension_id'], $whereClause, null, null, 1);
+        } catch (Exception $e) {
+            $this->ct->errors[] = $e->getMessage();
+            return false;
+        }
+
+        if (count($extension_rows) == 0)
+            return false;
+
+        $component_id = $extension_rows[0]->extension_id;
+
+        //Get max rgt
+        try {
+            $whereClause = new MySQLWhereClause();
+            $rgt_rows = database::loadObjectList('#__menu', [['MAX', '#__menu', 'rgt', 'vlu']], $whereClause, null, null, 1);
+        } catch (Exception $e) {
+            $this->ct->errors[] = $e->getMessage();
+            return false;
+        }
+
+        if (count($rgt_rows) == 0)
+            return false;
+
+        $rgt = $rgt_rows[0]->vlu;
+
+        //Add Menu Items
+        foreach ($category_rows as $category_row) {
+            $slug = 'com-customtables-' . CTMiscHelper::slugify($category_row->categoryname);
+            $found = false;
+            foreach ($menu_rows as $menu_row) {
+                $alias = $menu_row->alias;
+
+                echo '$alias=' . $alias . ', $menu_row->alias=' . $menu_row->alias . ';<br/>';
+                if ($alias == $slug) {
+                    $found = true;
+                    break;
+                }
+
+            }
+
+            if (!$found) {
+
+                $columns = '(`id`, `menutype`, `title`, `alias`, `note`, `path`,
+                 `link`, `type`, `published`, `parent_id`, `level`, `component_id`,
+                 `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`,
+                  `lft`, `rgt`,
+                  `home`, `language`, `client_id`,
+                  `publish_up`, `publish_down`)';
+                $values = "(NULL, 'main', '" . $category_row->categoryname . "', '" . $slug . "', '', 'com-customtables-menu/" . $slug . "',
+                 'index.php?option=com_customtables&view=menu&category=" . $category_row->id . "', 'component', 1, 1, 1, " . $component_id . ", NULL, NULL, 0, 1, ' ', 0, '',
+                 " . ($rgt + 1) . ", " . ($rgt + 2) . ",
+                 0, '*', 1,
+                 NULL, NULL)";
+                $query = 'INSERT INTO `#__menu` ' . $columns . ' VALUES ' . $values;
+
+                echo '$query:' . $query . '<br/>';
+
+                $db->setQuery($query);
+                $db->execute();
+
+                $rgt += 2;
+            }
         }
         return true;
     }
@@ -166,6 +300,7 @@ class CustomtablesModelCategories extends AdminModel
      *
      * @return  boolean  Returns true on success, false on failure.
      *
+     * @throws Exception
      * @since   12.2
      */
     public function batch($commands, $pks, $contexts)
@@ -242,12 +377,13 @@ class CustomtablesModelCategories extends AdminModel
     /**
      * Batch copy items to a new category or current.
      *
-     * @param integer $values The new values.
+     * @param $value
      * @param array $pks An array of row IDs.
      * @param array $contexts An array of item contexts.
      *
      * @return  mixed  An array of new IDs on success, boolean false on failure.
      *
+     * @throws Exception
      * @since 12.2
      */
     protected function batchCopy($value, $pks, $contexts)
@@ -379,6 +515,7 @@ class CustomtablesModelCategories extends AdminModel
      *
      * @return  string  New value.
      *
+     * @throws Exception
      * @since   3.0
      */
     protected function generateUnique($field, $value)
@@ -475,10 +612,11 @@ class CustomtablesModelCategories extends AdminModel
      *
      * @return  boolean  True on success.
      *
+     * @throws Exception
      * @since   1.6
      */
 
-    public function save($data)
+    public function save($data): bool
     {
         if (common::inputGetCmd('task') === 'save2copy') {
             // Automatic handling of other unique fields
@@ -490,9 +628,9 @@ class CustomtablesModelCategories extends AdminModel
             }
         }
 
-        if (parent::save($data))
-            return true;
-
+        if (parent::save($data)) {
+            return $this->createMenuItemsIfNeeded();
+        }
         return false;
     }
 
@@ -503,6 +641,7 @@ class CustomtablesModelCategories extends AdminModel
      *
      * @return  boolean  True if allowed to delete the record. Defaults to the permission set in the component.
      *
+     * @throws Exception
      * @since   1.6
      */
     protected function canDelete($record)
@@ -522,6 +661,7 @@ class CustomtablesModelCategories extends AdminModel
      *
      * @return  boolean  True if allowed to change the state of the record. Defaults to the permission set in the component.
      *
+     * @throws Exception
      * @since   1.6
      */
     protected function canEditState($record)
@@ -547,6 +687,7 @@ class CustomtablesModelCategories extends AdminModel
      * @param string $key The name of the key for the primary key.
      *
      * @return    boolean
+     * @throws Exception
      * @since    2.5
      */
     protected function allowEdit($data = array(), $key = 'id')
@@ -594,6 +735,7 @@ class CustomtablesModelCategories extends AdminModel
      *
      * @return  mixed  The data for the form.
      *
+     * @throws Exception
      * @since   1.6
      */
     protected function loadFormData()

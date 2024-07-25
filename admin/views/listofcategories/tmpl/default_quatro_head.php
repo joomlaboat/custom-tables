@@ -10,27 +10,36 @@
 // No direct access to this file access');
 defined('_JEXEC') or die();
 
+use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
 
 HTMLHelper::_('behavior.multiselect');
 
 ?>
 <tr>
-	<?php if ($this->canState or $this->canDelete): ?>
+    <?php if ($this->canState or $this->canDelete): ?>
         <th class="w-1 text-center">
-			<?php echo HTMLHelper::_('grid.checkall'); ?>
+            <?php echo HTMLHelper::_('grid.checkall'); ?>
         </th>
-	<?php endif; ?>
+    <?php endif; ?>
 
     <th scope="col">
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL', 'a.categoryname', $this->listDirn, $this->listOrder); ?>
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL', 'a.categoryname', $this->listDirn, $this->listOrder); ?>
+    </th>
+
+    <th scope="col" class="w-12 d-none d-xl-table-cell text-center">
+        <?php echo common::translate('COM_CUSTOMTABLES_TABLES'); ?>
+    </th>
+
+    <th scope="col" class="w-12 d-none d-xl-table-cell text-center">
+        <?php echo common::translate('COM_CUSTOMTABLES_MENUS'); ?>
     </th>
 
     <th scope="col" class="text-center d-none d-md-table-cell">
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
     </th>
 
     <th scope="col" class="w-12 d-none d-xl-table-cell">
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_CATEGORIES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
 </tr>

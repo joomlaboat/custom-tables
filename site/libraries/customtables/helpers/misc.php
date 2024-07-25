@@ -422,7 +422,7 @@ class CTMiscHelper
      * @throws Exception
      * @since 3.2.2
      */
-    public static function getMenuParams($Itemid, $rawParams = '')
+    public static function getMenuParams(int $Itemid, string $rawParams = '')
     {
         if ($rawParams == '') {
             //$query = 'SELECT params FROM #__menu WHERE id=' . (int)$Itemid . ' LIMIT 1';

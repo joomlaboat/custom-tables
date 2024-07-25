@@ -356,6 +356,8 @@ class IntegrityCoreTables extends IntegrityChecks
         $categories_projected_fields[] = $fieldTypes['checked_out'];
         $categories_projected_fields[] = $fieldTypes['checked_out_time'];
 
+        $categories_projected_fields[] = ['name' => 'admin_menu', 'ct_fieldtype' => 'checkbox', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 0', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 0'];
+
         $categories_projected_indexes = [];
         $categories_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
         $categories_projected_indexes[] = ['name' => 'idx_categoryname', 'field' => 'categoryname'];

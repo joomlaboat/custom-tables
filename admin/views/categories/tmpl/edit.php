@@ -15,11 +15,11 @@ use Joomla\CMS\Router\Route;
 defined('_JEXEC') or die();
 
 if ($this->version >= 4) {
-	$wa = $this->document->getWebAssetManager();
-	$wa->useScript('keepalive')->useScript('form.validate');
+    $wa = $this->document->getWebAssetManager();
+    $wa->useScript('keepalive')->useScript('form.validate');
 } else {
-	HTMLHelper::_('behavior.formvalidation');
-	HTMLHelper::_('behavior.keepalive');
+    HTMLHelper::_('behavior.formvalidation');
+    HTMLHelper::_('behavior.keepalive');
 }
 ?>
 
@@ -29,18 +29,22 @@ if ($this->version >= 4) {
 
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
-
                 <div class="control-group">
                     <div class="control-label"><?php echo $this->form->getLabel('categoryname'); ?></div>
                     <div class="controls"><?php echo $this->form->getInput('categoryname'); ?></div>
                 </div>
-
+            </div>
+            <div class="span12">
+                <div class="control-group">
+                    <div class="control-label"><?php echo $this->form->getLabel('admin_menu'); ?></div>
+                    <div class="controls"><?php echo $this->form->getInput('admin_menu'); ?></div>
+                </div>
             </div>
         </div>
 
         <div>
             <input type="hidden" name="task" value="categories.edit"/>
-			<?php echo HTMLHelper::_('form.token'); ?>
+            <?php echo HTMLHelper::_('form.token'); ?>
         </div>
     </div>
 </form>

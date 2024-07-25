@@ -20,13 +20,17 @@ use CustomTables\CT;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 /**
- * Customtables View class for the Listoffields
+ * Customtables View class for the ListOfRecords
+ *
+ * @since 1.0.0
  */
-class CustomtablesViewListofrecords extends HtmlView
+class CustomtablesViewListOfRecords extends HtmlView
 {
     /**
      * Listoffields view display method
      * @return void
+     *
+     * @since 3.0.0
      */
     var CT $ct;
     var $ordering_realfieldname;
@@ -41,7 +45,7 @@ class CustomtablesViewListofrecords extends HtmlView
             CustomtablesHelper::addSubmenu('listofrecords');
         }
 
-        if ($this->ct->Table->tableid == 0)
+        if ($this->ct->Table === null or $this->ct->Table->tableid == 0)
             return;
 
         //Check if ordering type field exists

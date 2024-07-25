@@ -17,7 +17,7 @@ use CustomTablesImageMethods;
 use Exception;
 use Joomla\CMS\Factory;
 use CustomTablesKeywordSearch;
-use CustomTables\CustomPHP\CleanExecute;
+use CustomTables\CustomPHP;
 
 class CT
 {
@@ -432,8 +432,10 @@ class CT
         $new_row = array();
 
         if (defined('_JEXEC')) {
-            if ($this->Env->advancedTagProcessor)
-                CleanExecute::executeCustomPHPfile($this->Table->tablerow['customphp'], $new_row, $row);
+            if ($this->Env->advancedTagProcessor) {
+                $customPHP = new CustomPHP($this, 'delete');
+                $customPHP->executeCustomPHPFile($this->Table->tablerow['customphp'], $new_row, $row);
+            }
         }
 
         return 1;
@@ -499,7 +501,7 @@ class CT
         common::inputSet("listing_id", $listing_id);
 
         if ($this->Env->advancedTagProcessor)
-            CleanExecute::doPHPonChange($this, $row);
+            CustomPHP::doPHPonChange($this, $row);
 
         //update MD5s
         $this->updateMD5($listing_id);
@@ -510,8 +512,10 @@ class CT
         //TODO use $saveField->saveField
         //$this->updateDefaultValues($row);
 
-        if ($this->Env->advancedTagProcessor)
-            CleanExecute::executeCustomPHPfile($this->Table->tablerow['customphp'], $row, $row);
+        if ($this->Env->advancedTagProcessor) {
+            $customPHP = new CustomPHP($this, 'refresh');
+            $customPHP->executeCustomPHPFile($this->Table->tablerow['customphp'], $row, $row);
+        }
 
         //Send email note if applicable
         if ($this->Params->onRecordAddSendEmail == 3 and !empty($this->Params->onRecordSaveSendEmailTo)) {

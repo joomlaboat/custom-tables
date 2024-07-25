@@ -22,6 +22,7 @@ use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Script File of Customtables Component
@@ -68,6 +69,21 @@ class com_customtablesInstallerScript
         if (!$VersionObject->isCompatible('3.6.0')) {
             $app->enqueueMessage('Please upgrade to at least Joomla! 3.6.0 before continuing!', 'error');
         }
+
+        //Temporary change component_id of custom back-end menu items to keep them and prevent installer from deleting them.
+        $version_object = new Version;
+        $version = (int)$version_object->getShortVersion();
+
+        if ($version < 4)
+            $db = Factory::getDbo();
+        else
+            $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+        $db->setQuery('UPDATE #__menu SET component_id=0 WHERE client_id=1 AND (
+    INSTR(link,"index.php?option=com_customtables&view=listofrecords&Itemid=") OR
+    INSTR(link,"index.php?option=com_customtables&view=menu&category=")
+    )');
+        $db->execute();
     }
 
     /**

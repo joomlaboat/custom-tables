@@ -20,7 +20,7 @@ use tagProcessor_Item;
 use tagProcessor_If;
 use tagProcessor_Page;
 use tagProcessor_Value;
-use CustomTables\CustomPHP\CleanExecute;
+use CustomTables\CustomPHP;
 
 class SaveFieldQuerySet
 {
@@ -853,7 +853,7 @@ class SaveFieldQuerySet
 
         $error = '';
         if ($this->ct->Env->advancedTagProcessor)
-            $value = CleanExecute::execute($parsed_condition, $error);
+            $value = CustomPHP::execute($parsed_condition, $error);
         else
             $value = $parsed_condition;
 

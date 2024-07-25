@@ -17,7 +17,7 @@ use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\Filtering;
-use CustomTables\CustomPHP\CleanExecute;
+use CustomTables\CustomPHP;
 use CustomTables\MySQLWhereClause;
 use CustomTables\record;
 use CustomTables\TwigProcessor;
@@ -109,13 +109,12 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
      * @throws Exception
      * @since 3.2.3
      */
-    function store(string &$link, bool $isCopy = false, string $listing_id = null): bool
+    function store(string &$link, bool $isCopy = false, ?string $listing_id = null): bool
     {
         $record = new record($this->ct);
 
         //IP Filter
         $USER_IP = SaveFieldQuerySet::getUserIP();
-
         $IP_Black_List = array();
 
         if (in_array($USER_IP, $IP_Black_List))
@@ -135,12 +134,15 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
             }
 
             if ($this->ct->Env->advancedTagProcessor) {
-
                 try {
-                    CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
+                    $action = $record->isItNewRecord ? 'create' : 'update';
+
+                    $customPHP = new CustomPHP($this->ct, $action);
+                    $customPHP->executeCustomPHPFile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
                 } catch (Exception $e) {
                     $this->ct->errors[] = 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
                 }
+
                 $return2Link_Updated = common::getReturnToURL();
                 if ($return2Link != $return2Link_Updated)
                     $link = $return2Link_Updated;
