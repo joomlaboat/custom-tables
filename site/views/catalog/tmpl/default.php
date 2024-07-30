@@ -18,16 +18,16 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 if ($this->ct->Env->frmt == 'html') {
-	if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
-	{
-		if ($this->ct->Params->showPageHeading) {
+    if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
+    {
+        if ($this->ct->Params->showPageHeading) {
 
-			if ($this->ct->Params->pageTitle) {
-				$title = common::translate($this->ct->Params->pageTitle);
-				echo '<div class="page-header' . ($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">' . $title . '</h2></div>';
-			}
-		}
-	}
+            if ($this->ct->Params->pageTitle) {
+                $title = common::translate($this->ct->Params->pageTitle);
+                echo '<div class="page-header' . ($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">' . $title . '</h2></div>';
+            }
+        }
+    }
 }
 /*
 if ($this->ct->Env->frmt == 'json') {
@@ -51,39 +51,39 @@ if ($this->ct->Env->frmt == 'json') {
 */
 
 try {
-	echo $this->catalog->render();
+    echo $this->catalog->render();
 } catch (Exception $e) {
-	echo 'Error during the Catalog rendering: ' . $e->getMessage();
+    echo 'Error during the Catalog rendering: ' . $e->getMessage();
 }
 
 if (common::inputGetInt('clean', 0) == 1 or common::inputGetCmd('listing_id') !== null)
-	die;//Clean exit, single record loaded.
+    die;//Clean exit, single record loaded.
 
 if (count($this->catalog->ct->errors)) {
-	Factory::getApplication()->enqueueMessage(implode(',', $this->catalog->ct->errors), 'error');
+    Factory::getApplication()->enqueueMessage(implode(',', $this->catalog->ct->errors), 'error');
 }
 
 if ($this->ct->Env->frmt == 'html') {
-	if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
+    if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
 
-		$orderby_pair = explode(' ', $this->ct->Ordering->orderby);
-		$edit_userGroup = (int)$this->ct->Params->editUserGroups;
-		$isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
+        $order_by_pair = explode(' ', $this->ct->Ordering->orderby);
+        $edit_userGroup = (int)$this->ct->Params->editUserGroups;
+        $isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
 
-		if ($isEditable) {
+        if ($isEditable) {
 
-			$saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component&clean=1';
-			if ($this->ct->Env->version < 4) {
-				HTMLHelper::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid, 'asc', $saveOrderingUrl);
-			} else {
-				HTMLHelper::_('draggablelist.draggable');
-			}
-		}
-	}
+            $saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component&clean=1';
+            if ($this->ct->Env->version < 4) {
+                HTMLHelper::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid, 'asc', $saveOrderingUrl);
+            } else {
+                HTMLHelper::_('draggablelist.draggable');
+            }
+        }
+    }
 
-	if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
-	{
-		echo '<!-- Modal content -->
+    if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
+    {
+        echo '<!-- Modal content -->
 <div id="ctModal" class="ctModal">
     <div id="ctModal_box" class="ctModal_content">
         <span id="ctModal_close" class="ctModal_close">&times;</span>
@@ -91,7 +91,7 @@ if ($this->ct->Env->frmt == 'html') {
     </div>
 </div>
 <!-- end of the modal -->';
-	} else {
-		//die;//Not sure why is it here
-	}
+    } else {
+        //die;//Not sure why is it here
+    }
 }

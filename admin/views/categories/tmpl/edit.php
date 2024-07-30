@@ -42,9 +42,7 @@ if ($this->version >= 4) {
             </div>
         </div>
 
-        <div>
-            <input type="hidden" name="task" value="categories.edit"/>
-            <?php echo HTMLHelper::_('form.token'); ?>
-        </div>
+        <input type="hidden" name="task" value="categories.edit"/>
+        <?php echo HTMLHelper::_('form.token'); ?>
     </div>
 </form>

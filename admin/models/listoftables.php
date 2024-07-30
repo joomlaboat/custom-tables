@@ -22,7 +22,9 @@ use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Version;
 
 /**
- * Listoftables Model
+ * ListOfTables Model
+ *
+ * @since 1.0.0
  */
 class CustomtablesModelListOfTables extends ListModel
 {
@@ -93,16 +95,10 @@ class CustomtablesModelListOfTables extends ListModel
             $this->setState('filter.published', $published);
         }
 
-        $category_id = common::inputGetInt('category');
+        $category_id = common::inputGetInt('categoryid');
 
-        if ($category_id !== null) {
-
-            //$this->state->set('filter.tablecategory', $category_id);
-            //$this->state->set('filter[tablecategory]', $category_id);
-            //$this->setState('filter.tablecategory', $category_id);
+        if ($category_id !== null)
             $this->setState('.filter.tablecategory', $category_id);
-            //$this->setState('filter[tablecategory]', 3);
-        }
 
         // Load the parameters.
         $this->setState('params', ComponentHelper::getParams('com_customtables'));
@@ -131,7 +127,7 @@ class CustomtablesModelListOfTables extends ListModel
         $published = $this->getState('filter.published');
         $search = $this->getState('filter.search');
 
-        $category_id = common::inputGetInt('category');
+        $category_id = common::inputGetInt('categoryid');
         if ($category_id !== null) {
             $this->state->set('filter.tablecategory', $category_id);
             $this->setState('filter.tablecategory', $category_id);

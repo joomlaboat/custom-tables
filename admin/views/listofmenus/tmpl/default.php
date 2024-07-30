@@ -18,18 +18,11 @@ use Joomla\CMS\Router\Route;
 HTMLHelper::_('behavior.multiselect');
 
 ?>
-<h3>Categories provide an optional method for organizing your Tables.</h3>
-<p>
-    Here's how it works. A Category contains Tables. One Table can only be in one Category.</p>
-<p>
-    If you have a large number of tables on your site, the reason to use categories is to simply group the tables,
-    so you can find them.
-    For example, on the Custom Tables/Tables page, you can filter tables based on Category. So if you have 100 tables in
-    your site, you can find a Tables more easily if you know its Category.
-</p>
-<?php if (!$this->ct->Env->advancedTagProcessor): ?><p>AVAILABLE IN PRO VERSION ONLY</p><?php endif; ?>
+<h3>Admin menus - You can create a component like menus to access tables of one category. The main purpose of this
+    functionality is to create new installable extensions.</h3>
 
-<form action="<?php echo Route::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post"
+<form action="<?php echo Route::_('index.php?option=com_customtables&view=listofmenus&categoryid=' . $this->categoryId); ?>"
+      method="post"
       name="adminForm" id="adminForm">
     <div class="row">
         <div class="col-md-12">
@@ -53,7 +46,7 @@ HTMLHelper::_('behavior.multiselect');
                             <span id="filteredBy"><?php echo common::translate('JGLOBAL_FILTERED_BY'); ?></span>
                         </caption>
                         <thead>
-                        <?php include('default_quatro_head.php'); ?>
+                        <?php include('default_head.php'); ?>
                         </thead>
                         <tbody>
                         <?php echo $this->loadTemplate('quatro_body'); ?>
@@ -81,7 +74,8 @@ HTMLHelper::_('behavior.multiselect');
                 <?php endif; ?>
 
                 <input type="hidden" name="task" value="">
-                <input type="hidden" name="boxchecked" value="0">
+                <input type="hidden" name="boxchecked" value="0"/>
+                <input type="hidden" name="category" value="0"/>
                 <?php echo HTMLHelper::_('form.token'); ?>
             </div>
         </div>

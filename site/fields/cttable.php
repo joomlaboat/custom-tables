@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die();
 
+use CustomTables\common;
 use CustomTables\database;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Form\FormField;
@@ -22,57 +23,62 @@ $versionObject = new Version;
 $version = (int)$versionObject->getShortVersion();
 
 if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
-	define('CUSTOMTABLES_LIBRARIES_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries');
+    define('CUSTOMTABLES_LIBRARIES_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries');
 
 trait JFormFieldCTTableCommon
 {
-	protected static function getOptionList(): array
-	{
-		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('published', 1);
+    protected static function getOptionList(): array
+    {
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
+        $whereClause = new MySQLWhereClause();
 
-		$tables = database::loadObjectList('#__customtables_tables',
-			['id', 'tablename'], $whereClause, 'tablename');
+        $categoryId = common::inputGetInt('categoryid');
+        if ($categoryId !== null)
+            $whereClause->addCondition('tablecategory', $categoryId);
+        
+        $whereClause->addCondition('published', 1);
 
-		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT')];
+        $tables = database::loadObjectList('#__customtables_tables',
+            ['id', 'tablename'], $whereClause, 'tablename');
 
-		if ($tables) {
-			foreach ($tables as $table)
-				$options[] = HTMLHelper::_('select.option', $table->tablename, $table->tablename);
-		}
-		return $options;
-	}
+        $options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT')];
+
+        if ($tables) {
+            foreach ($tables as $table)
+                $options[] = HTMLHelper::_('select.option', $table->tablename, $table->tablename);
+        }
+        return $options;
+    }
 }
 
 if ($version < 4) {
 
-	JFormHelper::loadFieldClass('list');
+    JFormHelper::loadFieldClass('list');
 
-	class JFormFieldCTTable extends JFormFieldList
-	{
-		use JFormFieldCTTableCommon;
+    class JFormFieldCTTable extends JFormFieldList
+    {
+        use JFormFieldCTTableCommon;
 
-		protected $type = 'CTTable';
+        protected $type = 'CTTable';
 
-		protected function getOptions()//$name, $value, &$node, $control_name)
-		{
-			return self::getOptionList();
-		}
-	}
+        protected function getOptions()//$name, $value, &$node, $control_name)
+        {
+            return self::getOptionList();
+        }
+    }
 } else {
-	class JFormFieldCTTable extends FormField
-	{
-		use JFormFieldCTTableCommon;
+    class JFormFieldCTTable extends FormField
+    {
+        use JFormFieldCTTableCommon;
 
-		public $type = 'CTTable';
-		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
+        public $type = 'CTTable';
+        protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
 
-		protected function getInput()
-		{
-			$data = $this->getLayoutData();
-			$data['options'] = self::getOptionList();
-			return $this->getRenderer($this->layout)->render($data);
-		}
-	}
+        protected function getInput()
+        {
+            $data = $this->getLayoutData();
+            $data['options'] = self::getOptionList();
+            return $this->getRenderer($this->layout)->render($data);
+        }
+    }
 }

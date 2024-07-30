@@ -175,7 +175,7 @@ class CustomtablesModelCategories extends AdminModel
     function createMenuItemsIfNeeded(): bool
     {
         $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('link', 'index.php?option=com_customtables&view=menu&category=', 'INSTR');
+        $whereClause->addCondition('link', 'index.php?option=com_customtables&view=adminmenu&category=', 'INSTR');
 
         try {
             $menu_rows = database::loadObjectList('#__menu', ['id', 'alias'], $whereClause, null, null);
@@ -214,7 +214,7 @@ class CustomtablesModelCategories extends AdminModel
             if (!$found) {
                 //delete menu item
                 $query = 'DELETE FROM `#__menu` WHERE parent_id=1 AND client_id=1 AND alias="' . $alias . '" AND 
-                INSTR(`link`,"index.php?option=com_customtables&view=menu&category=")';
+                INSTR(`link`,"index.php?option=com_customtables&view=adminmenu&category=")';
                 $db->setQuery($query);
                 $db->execute();
             }
@@ -274,7 +274,7 @@ class CustomtablesModelCategories extends AdminModel
                   `home`, `language`, `client_id`,
                   `publish_up`, `publish_down`)';
                 $values = "(NULL, 'main', '" . $category_row->categoryname . "', '" . $slug . "', '', 'com-customtables-menu/" . $slug . "',
-                 'index.php?option=com_customtables&view=menu&category=" . $category_row->id . "', 'component', 1, 1, 1, " . $component_id . ", NULL, NULL, 0, 1, ' ', 0, '',
+                 'index.php?option=com_customtables&view=adminmenu&category=" . $category_row->id . "', 'component', 1, 1, 1, " . $component_id . ", NULL, NULL, 0, 1, ' ', 0, '',
                  " . ($rgt + 1) . ", " . ($rgt + 2) . ",
                  0, '*', 1,
                  NULL, NULL)";

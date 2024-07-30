@@ -19,34 +19,36 @@ use Joomla\CMS\Table\Table;
  */
 class CustomtablesTableLayouts extends Table
 {
-	var $id = null;
-	var $changetimestamp = null;
+    var $id = null;
+    var $changetimestamp = null;
 
-	var $layoutcode = null;
-	var $layoutmobile = null;
-	var $layoutcss = null;
-	var $layoutjs = null;
+    var $layoutcode = null;
+    var $layoutmobile = null;
+    var $layoutcss = null;
+    var $layoutjs = null;
 
-	var $layoutname = null;
-	var $layoutType = null;
-	var $tableid = null;
-	var $published = null;
-	var $created_by = null;
-	var $modified_by = null;
-	var $created = null;
-	var $modified = null;
-	var $checked_out = null;
-	var $checked_out_time = null;
+    var $layoutname = null;
+    var $layoutType = null;
+    var $tableid = null;
+    var $published = null;
+    var $created_by = null;
+    var $modified_by = null;
+    var $created = null;
+    var $modified = null;
+    var $checked_out = null;
+    var $checked_out_time = null;
 
-	//protected $_jsonEncode = array('params', 'metadata');
+    //protected $_jsonEncode = array('params', 'metadata');
 
-	/**
-	 * Constructor
-	 *
-	 * @param object Database connector object
-	 */
-	function __construct(&$db)
-	{
-		parent::__construct('#__customtables_layouts', 'id', $db);
-	}
+    /**
+     * Constructor
+     *
+     * @param object $db Database connector object
+     *
+     * @since 1.0.0
+     */
+    function __construct(&$db)
+    {
+        parent::__construct('#__customtables_layouts', 'id', $db);
+    }
 }

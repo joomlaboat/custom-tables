@@ -20,11 +20,11 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 
 /**
- * ListOfCategories Model
+ * ListOfMenus Model
  *
- * @since 1.0.0
+ * @since 3.6.7
  */
-class CustomtablesModelListOfCategories extends ListModel
+class CustomtablesModelListOfMenus extends ListModel
 {
     var CT $ct;
 
@@ -34,7 +34,7 @@ class CustomtablesModelListOfCategories extends ListModel
             $config['filter_fields'] = array(
                 'a.id', 'id',
                 'a.published', 'published',
-                'a.categoryname', 'categoryname'
+                'a.title', 'title'
             );
         }
         parent::__construct($config);
@@ -51,7 +51,6 @@ class CustomtablesModelListOfCategories extends ListModel
     public function getItems()
     {
         // load parent items
-        // return items
         return parent::getItems();
     }
 
@@ -65,25 +64,10 @@ class CustomtablesModelListOfCategories extends ListModel
      */
     protected function populateState($ordering = null, $direction = null)
     {
-        if ($this->ct->Env->version < 4) {
-            $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-            $this->setState('filter.search', $search);
-
-            $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-            $this->setState('filter.published', $published);
-        }
-
         $this->setState('params', ComponentHelper::getParams('com_customtables'));
 
         // List state information.
         parent::populateState($ordering, $direction);
-
-        if ($this->ct->Env->version < 4) {
-            $ordering = $this->state->get('list.ordering');
-            $direction = strtoupper($this->state->get('list.direction'));
-            $app = Factory::getApplication();
-            $app->setUserState($this->context . '.list.fullordering', $ordering . ' ' . $direction);
-        }
     }
 
     /**
@@ -97,12 +81,9 @@ class CustomtablesModelListOfCategories extends ListModel
     {
         $db = database::getDB();
 
-        $selects = [
-            'a.*',
-            '(SELECT COUNT(t.id) FROM #__customtables_tables AS t WHERE t.published!=-2 AND a.id=t.tablecategory) AS table_count'];
-
-        $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $db->quoteName('#__customtables_categories') . ' AS a';
+        $query = 'SELECT a.* FROM ' . $db->quoteName('#__menu') . ' AS a';
         $where = [];
+        $where  [] = 'INSTR(link,"index.php?option=com_customtables&view=listofrecords&Itemid=")';
         // Filter by published state
         $published = $this->getState('filter.published');
         if (is_numeric($published))
@@ -117,7 +98,7 @@ class CustomtablesModelListOfCategories extends ListModel
                 $where [] = 'a.id = ' . (int)substr($search, 3);
             } else {
                 $search = $db->quote('%' . $search . '%');
-                $where [] = '(a.categoryname LIKE ' . $search . ')';
+                $where [] = '(a.title LIKE ' . $search . ')';
             }
         }
 
@@ -144,7 +125,7 @@ class CustomtablesModelListOfCategories extends ListModel
         $id .= ':' . $this->getState('filter.id');
         $id .= ':' . $this->getState('filter.search');
         $id .= ':' . $this->getState('filter.published');
-        $id .= ':' . $this->getState('filter.categoryname');
+        $id .= ':' . $this->getState('filter.title');
 
         return parent::getStoreId($id);
     }

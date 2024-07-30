@@ -2,7 +2,6 @@
 /**
  * CustomTables Joomla! 3.x/4.x/5.x Component
  * @package Custom Tables
- * @subpackage controllers/tables.php
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
  * @copyright (C) 2018-2024. Ivan Komlev
@@ -15,15 +14,16 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CTUser;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 
 /**
- * Tables Controller
+ * Menu Controller
  *
- * @since 1.0.0
- **/
-class CustomtablesControllerTables extends FormController
+ * @since 3.6.7
+ */
+class CustomtablesControllerMenus extends FormController
 {
     /**
      * Current or most recently performed task.
@@ -36,30 +36,8 @@ class CustomtablesControllerTables extends FormController
 
     public function __construct($config = array())
     {
-        $this->view_list = 'Listoftables'; // safeguard for setting the return view listing to the main view.
+        $this->view_list = 'listofmenus'; // safeguard for setting the return view listing to the main view.
         parent::__construct($config);
-    }
-
-    /**
-     * Method to run batch operations.
-     *
-     * @param object $model The model.
-     *
-     * @return  boolean   True if successful, false otherwise and internal error is set.
-     *
-     * @since   2.5
-     */
-    public function batch($model = null)
-    {
-        JSession::checkToken() or jexit(common::translate('JINVALID_TOKEN'));
-
-        // Set the model
-        $model = $this->getModel('Tables', '', array());
-
-        // Preset the redirect
-        $this->setRedirect(Route::_('index.php?option=com_customtables&view=listoftables' . $this->getRedirectToListAppend(), false));
-
-        return parent::batch($model);
     }
 
     /**
@@ -74,6 +52,11 @@ class CustomtablesControllerTables extends FormController
      */
     public function cancel($key = null)
     {
+        $categoryId = common::inputGetInt('categoryid', 0);
+
+        echo '$categoryId=' . $categoryId;
+        die;
+
         // get the referal details
         $this->ref = common::inputGet('ref', 0, 'word');
         $this->refid = common::inputGet('refid', 0, 'int');
@@ -82,7 +65,7 @@ class CustomtablesControllerTables extends FormController
 
         if ($cancel) {
             if ($this->refid) {
-                $redirect = '&view=' . (string)$this->ref . '&layout=edit&id=' . (int)$this->refid;
+                $redirect = '&view=' . (string)$this->ref . '&layout=edit&categoryid=' . $categoryId . '&id=' . (int)$this->refid;
 
                 // Redirect to the item screen.
                 $this->setRedirect(
@@ -91,7 +74,7 @@ class CustomtablesControllerTables extends FormController
                     )
                 );
             } elseif ($this->ref) {
-                $redirect = '&view=' . (string)$this->ref;
+                $redirect = '&view=' . (string)$this->ref . '&categoryid=' . $categoryId;
 
                 // Redirect to the list screen.
                 $this->setRedirect(
@@ -104,7 +87,7 @@ class CustomtablesControllerTables extends FormController
             // Redirect to the items screen.
             $this->setRedirect(
                 Route::_(
-                    'index.php?option=' . $this->option . '&view=' . $this->view_list, false
+                    'index.php?option=' . $this->option . '&view=' . $this->view_list . '&categoryid=' . $categoryId, false
                 )
             );
         }
@@ -145,7 +128,7 @@ class CustomtablesControllerTables extends FormController
                 )
             );
         } elseif ($this->ref && $saved) {
-            $redirect = '&view=' . $this->ref;
+            $redirect = '&view=' . (string)$this->ref;
 
             // Redirect to the list screen.
             $this->setRedirect(
@@ -157,8 +140,35 @@ class CustomtablesControllerTables extends FormController
         return $saved;
     }
 
+
+    public function add($key = NULL, $urlVar = NULL)
+    {
+        parent::edit($key, $urlVar);
+        $redirect = 'index.php?option=' . $this->option;
+        $categoryId = common::inputGetInt('categoryid', 0);
+        $id = common::inputGet('id', 0, 'int');
+
+        $redirect .= '&view=menus&layout=edit&categoryid=' . (int)$categoryId . '&id=' . (int)$id;
+
+        $context = 'com_customtables.edit.menus';
+        Factory::getApplication()->setUserState($context . '.id', $id);
+
+        // Redirect to the item screen.
+        $application = Factory::getApplication();
+        $application->redirect(Route::_($redirect, false));
+        $application->close();
+        exit(0);
+    }
+
+    public function edit($key = NULL, $urlVar = NULL)
+    {
+        echo $urlVar;
+        die;
+        parent::edit($key, $urlVar);
+    }
+
     /**
-     * Method override to check if you can add a new record.
+     * Method overrides to check if you can add a new record.
      *
      * @param array $data An array of input data.
      *
@@ -167,19 +177,19 @@ class CustomtablesControllerTables extends FormController
      * @since   1.6
      */
     protected function allowAdd($data = array())
-    {
-        // In the absence of better information, revert to the component permissions.
+    {        // In the absence of better information, revert to the component permissions.
         return parent::allowAdd($data);
     }
 
     /**
-     * Method override to check if you can edit an existing record.
+     * Method overrides to check if you can edit an existing record.
      *
      * @param array $data An array of input data.
      * @param string $key The name of the key for the primary key.
      *
      * @return  boolean
      *
+     * @throws Exception
      * @since   1.6
      */
     protected function allowEdit($data = array(), $key = 'id')
@@ -192,9 +202,9 @@ class CustomtablesControllerTables extends FormController
 
         if ($recordId) {
             // The record has been set. Check the record permissions.
-            $permission = $user->authorise('core.edit', 'com_customtables.tables.' . (int)$recordId);
+            $permission = $user->authorise('core.edit', 'com_customtables.menu.' . (int)$recordId);
             if (!$permission) {
-                if ($user->authorise('core.edit.own', 'com_customtables.tables.' . $recordId)) {
+                if ($user->authorise('core.edit.own', 'com_customtables.menu.' . $recordId)) {
                     // Now test the owner is the user.
                     $ownerId = (int)isset($data['created_by']) ? $data['created_by'] : 0;
                     if (empty($ownerId)) {
@@ -229,9 +239,10 @@ class CustomtablesControllerTables extends FormController
      *
      * @return  string  The arguments to append to the redirect URL.
      *
+     * @throws Exception
      * @since   12.2
      */
-    protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
+    protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id'): string
     {
         $tmpl = common::inputGetCmd('tmpl');
         $layout = common::inputGet('layout', 'edit', 'string');

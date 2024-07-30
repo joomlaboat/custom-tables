@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form
+        addrulepath="/administrator/components/com_customtables/models/rules"
+        addfieldpath="/administrator/components/com_customtables/models/fields"
+>
+
+    <fieldset name="details">
+
+        <field type="CTTable" name="establename" label="Table"
+               description="Select the Table for reading the records. You can create a new table in Components/Custom Tables/Tables."
+               required="true"/>
+        <field addfieldpath="/components/com_customtables/fields" type="CTCatalogLayout"
+               name="escataloglayout" default="" label="Page Layout"
+               description="Select Catalog Page Layout. This parameter is available on Custom Tables - Records menu item type."/>
+
+        <field type="CTItemLayout" name="esitemlayout" default="" label="Item Layout"
+               description="Select Item Layout. This parameter can be used on Records menu item and if Page layout type is Catalog Page not Simple Catalog."/>
+
+        <field type="CTEditLayout" name="eseditlayout" default="" label="Edit Layout"
+               description="Select Edit Form Layout. This parameter is available on most of the Custom Tables menu item types because the edit form can be opened from the Records (catalog) page, or even as the modal form."/>
+
+        <field type="CTDetailsLayout" name="esdetailslayout" default="" label="Details Layout"
+               description="Select Record Details Layout. This parameter is available on Record Details and Records menu item type pages."/>
+
+        <field type="text" name="filter" filter="raw" default="" label="Search Parameter"
+               description="Field to search in = (or &#60; or &#60;= or &#62; or &#62;= or != and == 'exact match') value (or Twig tag as {{ user.id }} for example ) to have more then one condition use 'and', 'or' to get a value from the URL query parameter use {{ url.getint('param_name') }} tag or equivalent. Example 'color={{ url.getstring('string') }}' this will read value 'color' from the url query. To get the current date use {{ 'now'|date('m/d/Y') }} or {{ 'now'|date('Y') }} for the year or {{ 'now'|date('m') }} for the month. Also you can format the date using MySql date_format() format specifiers, example 1: {now:%m}. Example 2: 'birthdate:%m%d' to get the month and the day of the field value."/>
+        <field type="list" name="showpublished" default="0" label="Show published records"
+               description="Additional filter to show published or unpublished records.">
+            <option value="0">Show Published Only</option>
+            <option value="1">Show Unpublished Only</option>
+            <option value="2">Show Any</option>
+        </field>
+
+        <field type="text" name="useridfield" default="" label="Author user id field."
+               description="
+The 'User' type field name - checks if a record belongs to the current user. The table must contain the user type field.
+There is the option to find out if a record belongs to the current user through parent tables.
+Syntax example: 'user or parents(children).user'.
+In this case, there will be two checks: first, it will check if the record belongs to the current user, and then it will check if the record belongs to any parent record that belongs to the current user. At least one check must be positive."/>
+
+        <field type="text" name="recordstable" default="" label="User Join Table"
+               description="Table that contains record's user ids"/>
+        <field type="text" name="recordsuseridfield" default="" label="User Join User ID Field"
+               description="Field that contains user id"/>
+        <field type="text" name="recordsfield" default="" label="User Join Field"
+               description="Field that contains record's user ids"/>
+
+        <field type="text" name="groupby" default="" label="Group By"
+               description="Field name to group results by."/>
+
+        <field type="text" name="limit" default="0" label="Limit clause - the number of records per page."
+               description="The LIMIT clause is useful on large tables with thousands of records. Returning a large number of records can impact performance. 0 means to not limit - to show all the records."/>
+
+
+        description="Sort By parameter is used to sort the result-set in ascending or descending order. The ORDER BY
+        keyword sorts the records in ascending order by default. To sort the records in descending order, use the `desc`
+        keyword.">
+        <field type="text" name="sortby" default="" label="Default sort by field"
+               description="Enter the field name to sort by and select ascending or descending order. Example 1: 'title desc' where 'title' is the field name and 'desc' is the keyword to set the descending order (z-a) Example 2: `title asc`. Note that the keyword `asc` is not necessary. Example 3: `title`. This can be overridden in the font-end using the Order By select box - {{ html.orderby }} tag."/>
+        <field type="text" name="forcesortby" default="" label="Forced sort by field"
+               description="Same as Sort By but cannot be overridden in the font-end."/>
+
+        <field type="list" name="guestcanaddnew" default="0" label="Guest can add new records"
+               description="Public user group, logged out or unregistered users can add new records. This is useful for contact forms. Use {{ html.captcha }} tag to stop the spam.">
+            <option value="1">Guest can add new records</option>
+            <option value="0">Only registered can add new records</option>
+            <option value="-1">Disable Add New records</option>
+        </field>
+
+        <field name="addusergroups" type="CTUserGroup" default="8" label="Who may add records"
+               description="Select the user group that may add the records."/>
+        <field name="editusergroups" type="CTUserGroup" default="8" label="Who may edit records"
+               description="Select the user group that may edit records."/>
+        <field name="publishusergroups" type="CTUserGroup" default="8" label="Who may publish records (Admin)"
+               description="Select the user group that may publish and unpublish records."/>
+        <field name="deleteusergroups" type="CTUserGroup" default="8" label="Who may delete records"
+               description="Select the user group that may delete records."/>
+
+        <field type="list" name="publishstatus" default="1" label="Default Publish Status"
+               description="Publish status set to new records">
+            <option value="1">Published</option>
+            <option value="0">Not Published</option>
+        </field>
+
+        <!--
+        description="JCONFIG_PERMISSIONS_DESC"
+                    <field name="asset_id" type="hidden" filter="unset"/>
+                    <field
+                            name="rules"
+                            type="rules"
+                            label="JCONFIG_PERMISSIONS_LABEL"
+                            class="inputbox"
+                            validate="rules"
+                            filter="rules"
+                            component="com_customtables"
+                            section="catalog"
+                    />-->
+
+
+        <field type="text" name="returnto" default="" size="70" label="Custom Return To"
+               description="Visitor will be redirected to this link after record added or saved. This field may contain Twig tags and even record field values. Example: {{ fieldname }} to get the field value."/>
+
+        <field type="text" name="msgitemissaved" default="" size="70" label="Record Saved Message"
+               description="This message will appear above the content (Joomla notification message box) after record is saved or added."/>
+
+        <field type="CTEmailLayout" name="onrecordaddsendemaillayout" default="" label="Email Message Layout"
+               description="Choose the layout type for the email message body creation."/>
+
+        <field type="list" name="onrecordaddsendemail" default="0" label="Send Email Under Conditions"
+               description="Specify the condition for sending emails. For instance, contact forms may need to be sent when a website visitor adds a record. Note: Changes in the published status count as editing.">
+            <option value="1">When a record is added</option>
+            <option value="2">When a record is saved</option>
+            <option value="3">Based on specific conditions (Works on refresh too)</option>
+            <option value="0">Do not send</option>
+        </field>
+
+        <field type="text" name="onrecordaddsendemailto" default="" size="1024"
+               label="Send Email When Record is Added To:"
+               description="Enter the recipient email addresses for notifications when a record is added. Separate multiple emails with a comma.
+
+            To set a custom subject for an email, append the colon ':' after the email address, followed by the desired subject.
+
+            You can also utilize field values from the added record by using Twig tags.
+
+            Example 1: {{ email }}
+            Example 2: test@yahoo.com, test@gmail.com, {{ email }}: My Test Email
+            Example 3: {{ customeremail }}: Thank you {{ name }} for your participation.
+"/>
+
+        <field type="text" name="onrecordsavesendemailto" default="" size="1024"
+               label="Send Email When Record is Saved To:"
+               description="Enter the recipient email addresses for notifications when a record is saved or refreshed. Separate multiple emails with a comma.
+
+            To set a custom subject for an email, append the colon ':' after the email address, followed by the desired subject.
+
+            You can also utilize field values from the saved record by using Twig tags.
+
+            Example 1: {{ email }}
+            Example 2: test@yahoo.com, test@gmail.com, {{ email }}: My Test Email
+            Example 3: {{ customeremail }}: Thank you {{ name }} for your participation.
+"/>
+
+        <field type="text" name="sendemailcondition" default="" size="50" label="Conditions for Sending Email"
+               description="Specify conditions for triggering the 'Record Saved' event. For example (using PHP syntax): 'approved=1 OR name=='Mark'"/>
+
+        <field type="string" name="emailsentstatusfield" default="" label="Field for Email Sent Status"
+               description="Designate a field to track the status of email sending. This field should be of type 'integer' or 'checkbox'. '1' represents sent, '0' represents not sent."/>
+    </fieldset>
+</form>

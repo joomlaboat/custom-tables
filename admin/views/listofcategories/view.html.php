@@ -23,12 +23,16 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
  * Customtables View class for the Listofcategories
+ *
+ * @since 1.0.0
  */
 class CustomtablesViewListofcategories extends HtmlView
 {
     /**
      * Listofcategories view display method
      * @return void
+     *
+     * @since 1.0.0
      */
     var CT $ct;
     var $isEmptyState = false;

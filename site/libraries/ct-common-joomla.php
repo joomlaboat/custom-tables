@@ -450,8 +450,13 @@ class common
     public static function UriRoot(bool $pathOnly = false): string
     {
         //Uri::root() returns the string http://www.mydomain.org/mysite/ (or https if you're using SSL, etc).
-        //common::UriRoot(true) returns the string /mysite.
-        return Uri::root($pathOnly);
+        //common::UriRoot(true) returns the string /mysite/
+
+        $url = Uri::root($pathOnly);
+        if ($url[strlen($url) - 1] != '/')
+            $url = $url . '/';
+
+        return $url;
     }
 
     public static function ctParseUrl($argument)

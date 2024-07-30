@@ -81,7 +81,7 @@ class com_customtablesInstallerScript
 
         $db->setQuery('UPDATE #__menu SET component_id=0 WHERE client_id=1 AND (
     INSTR(link,"index.php?option=com_customtables&view=listofrecords&Itemid=") OR
-    INSTR(link,"index.php?option=com_customtables&view=menu&category=")
+    INSTR(link,"index.php?option=com_customtables&view=adminmenu&category=")
     )');
         $db->execute();
     }

@@ -53,14 +53,14 @@ $user = new CTUser();
         </td>
 
         <td class="text-center btns d-none d-md-table-cell itemnumber">
-            <?php echo '<a class="btn btn-success" aria-describedby="tip-category-tables' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoftables&category=' . $item->id . '">'
+            <?php echo '<a class="btn btn-success" aria-describedby="tip-category-tables' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoftables&categoryid=' . $item->id . '">'
                 . $item->table_count . '</a>'; ?>
             <div role="tooltip"
                  id="tip-category-tables<?php echo $item->id; ?>"><?php echo common::translate('COM_CUSTOMTABLES_TABLES'); ?></div>
         </td>
 
         <td class="text-center btns d-none d-md-table-cell itemnumber">
-            <?php echo '<a class="btn btn-success" aria-describedby="tip-tablefields' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $item->id . '">'
+            <?php echo '<a class="btn btn-secondary" aria-describedby="tip-tablefields' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listofmenus&categoryid=' . $item->id . '">'
                 . ($item->table_count - 10) . '</a>'; ?>
             <div role="tooltip"
                  id="tip-tablefields<?php echo $item->id; ?>"><?php echo common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?></div>

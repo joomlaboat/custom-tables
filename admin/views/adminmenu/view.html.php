@@ -22,44 +22,19 @@ use Joomla\CMS\Version;
 
 /**
  * CustomTables Category Menu View class
- * @since 3.3.7
+ * @since 3.6.7
  */
-class CustomTablesViewMenu extends HtmlView
+class CustomTablesViewAdminMenu extends HtmlView
 {
     /**
      * View display method
      * @param null $tpl
      * @return void
      * @throws Exception
-     * @since 3.2.9
+     * @since 3.6.7
      */
     function display($tpl = null): void
     {
-        /*
-        $version = new Version;
-        $this->version = (int)$version->getShortVersion();
-
-        // Assign data to the view
-        $this->icons = $this->get('Icons');
-        $this->contributors = CustomtablesHelper::getContributors();
-
-        // get the manifest details of the component
-        $this->manifest = CustomtablesHelper::manifest();
-
-        // Set the toolbar
-        $this->addToolBar();
-
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors), 500);
-        }
-
-        // Display the template
-        if ($this->version < 4)
-            parent::display($tpl);
-        else
-
-            */
         parent::display($tpl);
 
         // Set the document
@@ -82,20 +57,4 @@ class CustomTablesViewMenu extends HtmlView
         // set page title
         $document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
     }
-
-    /**
-     * Setting the toolbar
-     * @since 3.2.9
-     */
-    /*
-     * protected function addToolBar()
-    {
-        $canDo = ContentHelper::getActions('com_customtables', '');
-        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');
-
-        if ($canDo->get('core.admin') || $canDo->get('core.options')) {
-            ToolbarHelper::preferences('com_customtables');
-        }
-    }
-    */
 }

@@ -14,34 +14,36 @@ defined('_JEXEC') or die();
 use Joomla\CMS\Table\Table;
 
 /**
- * Listoftables Table class
+ * ListOfTables Table class
+ *
+ * @since 1.0.0
  */
-class CustomtablesTableTables extends Table//JTable
+class CustomtablesTableTables extends Table
 {
-	var $id = null;
-	var $customphp = null;
-	var $description = null;
-	var $tablecategory = null;
-	var $tablename = null;
-	var $tabletitle = null;
-	var $published = null;
-	var $created_by = null;
-	var $modified_by = null;
-	var $created = null;
-	var $modified = null;
-	var $checked_out = null;
-	var $checked_out_time = null;
-	var $allowimportcontent = null;
-	var $customtablename = null;
-	var $customidfield = null;
+    var $id = null;
+    var $customphp = null;
+    var $description = null;
+    var $tablecategory = null;
+    var $tablename = null;
+    var $tabletitle = null;
+    var $published = null;
+    var $created_by = null;
+    var $modified_by = null;
+    var $created = null;
+    var $modified = null;
+    var $checked_out = null;
+    var $checked_out_time = null;
+    var $allowimportcontent = null;
+    var $customtablename = null;
+    var $customidfield = null;
 
-	/**
-	 * Constructor
-	 *
-	 * @param object Database connector object
-	 */
-	function __construct(&$db)
-	{
-		parent::__construct('#__customtables_tables', 'id', $db);
-	}
+    /**
+     * Constructor
+     *
+     * @param object Database connector object
+     */
+    function __construct(&$db)
+    {
+        parent::__construct('#__customtables_tables', 'id', $db);
+    }
 }
