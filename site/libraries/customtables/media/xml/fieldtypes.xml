@@ -1186,10 +1186,10 @@
         </params>
     </type>
 
-    <!-- WordPress NOT Ready 24 -->
+    <!-- WordPress Ready 24 -->
     <type ct_name="sqljoin" label="Table Join"
           description="Left Join to another table. Finds the record to read a value of the specified field.&lt;br/&gt;&lt;br/&gt;To read any field of joined table use {{ fieldname.get('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read unprocessed value of the joined table field use this tag {{ fieldname.getvalue('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read joined table record processed using the Layout use this tag  {{ fieldname.layout('layout_name') }}."
-          priority="3" proversion="1" wordpress="false" order="24">
+          priority="3" proversion="1" wordpress="true" order="24">
         <params>
             <param name="table" label="Table" example="products"
                    description="Type the name of the Custom Table to join/link with." default="" type="table"
@@ -1210,15 +1210,15 @@
                    description="Allow to select unpublished records." default="" type="radio" options="|No,true|Yes"/>
             <param name="selector" label="Selector" example="dropdown" description="How to select records."
                    default="dropdown" type="list">
-                <option value="dropdown" label="Dropdown List"/>
-                <option value="radio" label="Radio"/>
+                <option value="dropdown" label="Dropdown List" wordpress="true"/>
+                <option value="radio" label="Radio" wordpress="true"/>
             </param>
 
             <param name="addforeignkey" label="Add Foreign Key" example="noforignkey"
                    description="A FOREIGN KEY is a key used to link two tables together. The FOREIGN KEY constraint is used to prevent actions that would destroy links between tables. Like deleting table records. Enabled by default."
                    default="noforignkey" type="list" proversion="1">
-                <option value="addforeignkey" label="Add Foreign Key"/>
-                <option value="noforeignkey" label="No Foreign Key"/>
+                <option value="addforeignkey" label="Add Foreign Key" wordpress="true"/>
+                <option value="noforeignkey" label="No Foreign Key" wordpress="true"/>
             </param>
         </params>
 
@@ -1248,7 +1248,7 @@
                        description="An option to improve the select box UI, allowing in-list search and other visual enhancements."
                        type="list" default=""
                        example="improved" optional="1">
-                    <option value="" label="Standard"/>
+                    <option value="" label="Standard" wordpress="true"/>
                     <option value="improved" label="Improved (Joomla)"/>
                     <option value="virtualselect" label="Improved (Virtual Select)"/>
                 </param>

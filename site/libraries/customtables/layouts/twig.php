@@ -298,7 +298,6 @@ class TwigProcessor
                     $this->errorMessage = $msg;
                     $this->ct->errors[] = $msg;
 
-//				$msg = $e->getMessage();
                     if ($this->pageLayoutLink !== null)
                         $msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
 

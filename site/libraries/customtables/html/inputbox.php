@@ -161,20 +161,20 @@ class Inputbox
                 if (!$this->isTwig)
                     return 'Old Table Join tags no longer supported';
 
-                if (defined('_JEXEC')) {
-                    $path = CUSTOMTABLES_PRO_PATH . 'inputbox' . DIRECTORY_SEPARATOR;
+                //if (defined('_JEXEC')) {
+                $path = CUSTOMTABLES_PRO_PATH . 'inputbox' . DIRECTORY_SEPARATOR;
 
-                    if (file_exists($path . 'tablejoin.php')) {
-                        require_once($path . 'tablejoin.php');
+                if (file_exists($path . 'tablejoin.php')) {
+                    require_once($path . 'tablejoin.php');
 
-                        $inputBoxRenderer = new ProInputBoxTableJoin($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
-                        return $inputBoxRenderer->render($value, $this->defaultValue);
-                    } else {
-                        return common::translate('COM_CUSTOMTABLES_AVAILABLE');
-                    }
+                    $inputBoxRenderer = new ProInputBoxTableJoin($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
+                    return $inputBoxRenderer->render($value, $this->defaultValue);
                 } else {
-                    return 'Table Join field type is not supported by WordPress version of the Custom Tables yet.';
+                    return common::translate('COM_CUSTOMTABLES_AVAILABLE');
                 }
+            //} else {
+            //    return 'Table Join field type is not supported by WordPress version of the Custom Tables yet.';
+            //}
 
             case 'records':
 

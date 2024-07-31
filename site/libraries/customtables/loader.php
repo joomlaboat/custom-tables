@@ -82,7 +82,6 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
         define('CUSTOMTABLES_MEDIA_HOME_URL', home_url());
     }
 
-    //or Factory::getApplication()->getName() == 'administrator'
     if (!defined('_JEXEC') or ($loadTwig === null or $loadTwig) and !class_exists('Twig')) {
 
         if ($componentName == 'com_customtables' or $componentName == 'com_extensiontranslator') {
@@ -145,7 +144,7 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
     require_once($pathDataTypes . 'record_tags.php');
     require_once($pathDataTypes . 'html_tags.php');
     require_once($pathDataTypes . 'Twig_User_Tags.php');
-    
+
     $pathDataTypes = $path . 'logs' . DIRECTORY_SEPARATOR;
     require_once($pathDataTypes . 'logs.php');
 

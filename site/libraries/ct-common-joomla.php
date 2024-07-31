@@ -726,4 +726,22 @@ class common
         $app = Factory::getApplication();
         return $app->isClient('administrator');
     }
+
+    /**
+     * @throws Exception
+     * @since 3.6.7
+     */
+    public static function setUserState(string $key, $value)
+    {
+        Factory::getApplication()->setUserState($key, $value);
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.6.7
+     */
+    public static function getUserState(string $key, $default = null)
+    {
+        return Factory::getApplication()->getUserState($key) ?? $default;
+    }
 }

@@ -29,13 +29,14 @@ trait JFormFieldCTTableCommon
 {
     protected static function getOptionList(): array
     {
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
         $whereClause = new MySQLWhereClause();
 
         $categoryId = common::inputGetInt('categoryid');
         if ($categoryId !== null)
             $whereClause->addCondition('tablecategory', $categoryId);
-        
+
         $whereClause->addCondition('published', 1);
 
         $tables = database::loadObjectList('#__customtables_tables',
