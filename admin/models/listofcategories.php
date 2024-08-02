@@ -99,7 +99,9 @@ class CustomtablesModelListOfCategories extends ListModel
 
         $selects = [
             'a.*',
-            '(SELECT COUNT(t.id) FROM #__customtables_tables AS t WHERE t.published!=-2 AND a.id=t.tablecategory) AS table_count'];
+            '(SELECT COUNT(t.id) FROM #__customtables_tables AS t WHERE t.published!=-2 AND a.id=t.tablecategory) AS table_count',
+            '(SELECT COUNT(m.id) FROM #__menu AS m WHERE m.published!=-2 AND INSTR(m.link,"index.php?option=com_customtables&view=listofrecords&Itemid=")) AS menu_count'
+        ];
 
         $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $db->quoteName('#__customtables_categories') . ' AS a';
         $where = [];

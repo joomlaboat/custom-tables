@@ -47,7 +47,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
                 <?php
                 $iconClass = '';
                 if (!$this->saveOrder)
-                    $iconClass = ' inactive" title="' . common::translate('JORDERINGDISABLED');
+                    $iconClass = ' inactive" title="' . common::translate('COM_CUSTOMTABLES_ORDERINGDISABLED');
                 ?>
 
                 <span class="sortable-handler<?php echo $iconClass; ?>">

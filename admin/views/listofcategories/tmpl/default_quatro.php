@@ -18,16 +18,10 @@ use Joomla\CMS\Router\Route;
 HTMLHelper::_('behavior.multiselect');
 
 ?>
-<h3>Categories provide an optional method for organizing your Tables.</h3>
-<p>
-    Here's how it works. A Category contains Tables. One Table can only be in one Category.</p>
-<p>
-    If you have a large number of tables on your site, the reason to use categories is to simply group the tables,
-    so you can find them.
-    For example, on the Custom Tables/Tables page, you can filter tables based on Category. So if you have 100 tables in
-    your site, you can find a Tables more easily if you know its Category.
-</p>
-<?php if (!$this->ct->Env->advancedTagProcessor): ?><p>AVAILABLE IN PRO VERSION ONLY</p><?php endif; ?>
+<?php echo common::translate("COM_CUSTOMTABLES_CATEGORIES_DESCRIPTION"); ?>
+
+<?php if (!$this->ct->Env->advancedTagProcessor): ?>
+    <p><?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?></p><?php endif; ?>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post"
       name="adminForm" id="adminForm">
@@ -35,7 +29,7 @@ HTMLHelper::_('behavior.multiselect');
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
                 <?php
-                // Search tools bar
+                // Search toolbar
                 if (!$this->isEmptyState)
                     echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
                 ?>

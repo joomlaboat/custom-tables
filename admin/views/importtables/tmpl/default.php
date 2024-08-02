@@ -38,8 +38,8 @@ $fileId = common::generateRandomString();
 $max_file_size = CTMiscHelper::file_upload_max_size();
 
 echo '<form method="post" action="" id="esFileUploaderForm_Tables">';
-echo '<h2>Import Tables</h2>';
-echo '<p>This function allows for the importation of table structures from .txt files encoded in JSON format.</p>';
+echo '<h2>' . common::translate('COM_CUSTOMTABLES_DASHBOARD_IMPORTTABLES') . '</h2>';
+echo '<p>' . common::translate('COM_CUSTOMTABLES_IMPORTTABLES_DESCRIPTION') . '</p>';
 
 $urlString = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileId;
 echo '
@@ -53,9 +53,9 @@ echo '
 		ct_getUploader(1,"' . $urlString . '",' . $max_file_size . ',"txt html","esFileUploaderForm_Tables",true,"fileuploader","eventsmessage","' . $fileId . '","filetosubmit","ct_uploadedfile_box_file")
 	</script>
     <ul style="list-style: none;">
-        <li><input type="checkbox" name="importfields" value="1" checked="checked" /> Import Table Fields</li>
-        <li><input type="checkbox" name="importlayouts" value="1" checked="checked" /> Import Layouts</li>
-        <li><input type="checkbox" name="importmenu" value="1" checked="checked" /> Import Menu</li>
+        <li><input type="checkbox" name="importfields" value="1" checked="checked" /> ' . common::translate('COM_CUSTOMTABLES_IMPORTTABLES_TABLE_FIELDS') . '</li>
+        <li><input type="checkbox" name="importlayouts" value="1" checked="checked" /> ' . common::translate('COM_CUSTOMTABLES_IMPORTTABLES_LAYOUTS') . '</li>
+        <li><input type="checkbox" name="importmenu" value="1" checked="checked" /> ' . common::translate('COM_CUSTOMTABLES_IMPORTTABLES_MENU') . '</li>
 
     </ul>
     <input type="hidden" id="filetosubmit" name="filetosubmit" value="" checked="checked" />

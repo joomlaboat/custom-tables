@@ -18,8 +18,13 @@ use CustomTables\common;
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Session\Session;
 
-if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading)
-    $response_object['page_title'] = common::translate($this->ct->Params->pageTitle);
+if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading) {
+
+    if (defined('_JEXEC'))
+        $response_object['page_title'] = common::translate($this->ct->Params->pageTitle);
+    else
+        $response_object['page_title'] = $this->ct->Params->pageTitle;
+}
 
 if (ob_get_contents())
     ob_end_clean();
