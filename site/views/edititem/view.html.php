@@ -40,6 +40,12 @@ class CustomTablesViewEditItem extends HtmlView
             return false;
         }
 
+        if (empty($this->ct->Table->fieldname)) {
+            common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'));
+            echo common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED');
+            return false;
+        }
+
         if (!isset($this->ct->Table->fields) or !is_array($this->ct->Table->fields)) {
             common::enqueueMessage('Fields not set');
             echo common::translate('Fields not set');
