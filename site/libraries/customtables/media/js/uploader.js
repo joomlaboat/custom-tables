@@ -116,7 +116,7 @@ function ct_getUploader(index, URL_String, maxFileSize, allowedTypes, UploaderFo
             },
             onError: function (files, status, errMsg, pd) {
 
-                $("#" + EventMessageBox).html("<br/>Error " + errMsg + " for: " + JSON.stringify(files));
+                $("#" + EventMessageBox).html("<br/>Error: " + errMsg + " for: " + JSON.stringify(files));
             },
             onCancel: function (files, pd) {
                 $("#" + EventMessageBox).html("<br/>Canceled  files: " + JSON.stringify(files));

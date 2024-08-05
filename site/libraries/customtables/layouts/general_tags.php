@@ -118,7 +118,7 @@ class Twig_Url_Tags
         }
 
         if ($include_host)
-            $WebsiteRoot = common::UriRoot();
+            $WebsiteRoot = common::UriRoot(false, false);
         else
             $WebsiteRoot = CUSTOMTABLES_MEDIA_HOME_URL;
 

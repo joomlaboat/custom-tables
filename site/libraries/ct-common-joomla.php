@@ -447,14 +447,17 @@ class common
         return $_SERVER[$param];
     }
 
-    public static function UriRoot(bool $pathOnly = false): string
+    public static function UriRoot(bool $pathOnly = false, bool $addTrailingSlash = false): string
     {
-        //Uri::root() returns the string http://www.mydomain.org/mysite/ (or https if you're using SSL, etc).
-        //common::UriRoot(true) returns the string /mysite/
+        //Uri::root() returns the string http://www.mydomain.org/mysite (or https if you're using SSL, etc).
+        //common::UriRoot(true) returns the string /mysite
 
         $url = Uri::root($pathOnly);
-        if ($url[strlen($url) - 1] != '/')
-            $url = $url . '/';
+        if (strlen($url) > 0 and $url[strlen($url) - 1] == '/')
+            $url = substr($url, 0, strlen($url) - 1);
+
+        if ($addTrailingSlash and ($url == "" or $url[strlen($url) - 1] != '/'))
+            $url .= '/';
 
         return $url;
     }

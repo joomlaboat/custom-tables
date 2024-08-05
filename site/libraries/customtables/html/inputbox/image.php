@@ -32,7 +32,7 @@ class InputBox_image extends BaseInputBox
         $image = Value_image::getImageSRC($this->row, $this->field->realfieldname, $ImageFolder);
 
         if ($image !== null)
-            $result .= $this->renderImageAndDeleteOption($this->field, common::UriRoot() . $image['src'], $image['shortcut']);
+            $result .= $this->renderImageAndDeleteOption($this->field, common::UriRoot(false, true) . $image['src'], $image['shortcut']);
 
         $result .= $this->renderUploader();
         $result .= '</div>';

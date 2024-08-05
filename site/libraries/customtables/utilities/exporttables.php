@@ -66,13 +66,19 @@ class ExportTables
                 $a = $i . '';
             }
 
+            if ($path[0] == '/')
+                $pathLink = substr($path[0], 1);
+            else
+                $pathLink = $path[0];
+
+
             //Save file
-            $link = str_replace(DIRECTORY_SEPARATOR, '/', common::UriRoot());
+            $link = common::UriRoot(false, true);//str_replace(DIRECTORY_SEPARATOR, '/', );
 
-            if ($link[strlen($link) - 1] != '/' and $path[0] != '/')
-                $link .= '/';
+            //if ($link[strlen($link) - 1] != '/' and $path[0] != '/')
+            //    $link .= '/';
 
-            $link .= $path . '/' . $filename_available;
+            $link .= $pathLink . '/' . $filename_available;
 
             $msg = common::saveString2File($tmp_path . $filename_available, $output_str);
             if ($msg !== null) {

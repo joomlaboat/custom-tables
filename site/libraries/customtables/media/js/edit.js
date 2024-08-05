@@ -369,16 +369,20 @@ function doFilters(obj, label, filters_string) {
                 return false;
             }
         } else if (filter === 'domain' && filter_parts.length > 1) {
-            let domains = filter_parts[1].split(",");
+            let domain = filter_parts[1].split(",");
             let hostname = "";
 
             try {
                 hostname = (new URL(value)).hostname;
+
             } catch (err) {
                 alert(TranslateText('COM_CUSTOMTABLES_JS_URL_INVALID', label, value));
                 return false;
             }
+            console.log("hostname: " + hostname);
+            console.log("domain: " + domain);
 
+            /*
             let found = false;
             for (let f = 0; f < domains.length; f++) {
 
@@ -387,8 +391,8 @@ function doFilters(obj, label, filters_string) {
                     break;
                 }
             }
-
-            if (!found) {
+*/
+            if (domain !== hostname && 'www.' + domain !== hostname && domain !== 'www.' + hostname) {
                 alert(TranslateText('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID', value, label, filter_parts[1]));
                 return false;
             }
@@ -636,7 +640,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     let attributesStringClean = attributesStringDataSet.replace(/[^ -~]+/g, "");
     let attributes = JSON.parse(attributesStringClean);
     alert(JSON.stringify(attributes));
-        
+
     //let onchange = Base64.decode(wrapper.dataset.onchange).replace(/[^ -~]+/g, "");
 
 

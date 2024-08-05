@@ -217,11 +217,7 @@ class Value_file extends BaseValue
                 else
                     $fileWebPath = $filepath;
 
-                $Uri_root = common::UriRoot();
-                if ($Uri_root != '' and $Uri_root[strlen($Uri_root) - 1] != '/' and $fileWebPath[0] != '/')
-                    $fileWebPath = $Uri_root . '/' . $fileWebPath;
-                else
-                    $fileWebPath = $Uri_root . $fileWebPath;
+                $fileWebPath = common::UriRoot(false, true) . $fileWebPath;
             }
 
             if (isset($option_list[3])) {
