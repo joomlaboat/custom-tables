@@ -28,7 +28,6 @@ class CustomTablesViewFileUploader extends HtmlView
 
         $fieldname = common::inputGetCmd('fieldname', '');
         $fileid = common::inputGetCmd($fieldname . '_fileid', '');
-
         $task = common::inputGetCmd('op', '');
 
         if ($task == 'delete') {
