@@ -1075,7 +1075,6 @@
              description="(Deprecated) Use {currenturl:base64} instead. Returns Base64 encrypted Link to catalog page with an anchor to a current record."
              proversion="1" deprecated="1" twigreplacement="url.base64"/>
 
-
         <tag name="currenturl" label="Current URL (Deprecated)" startchar="{" endchar="}" hidedefaultexample="1"
              deprecated="1"
              description="Returns current URL or any query parameter, it can also be base64 encoded if you include that keyword."
@@ -1083,7 +1082,7 @@
              twigmapname="option"
              twigmapparam="parameter">
             <params>
-                <param name="option" label="Option" type="list" description="Select on of the available options.">
+                <param name="option" label="Option" type="list" description="Select one of the available options.">
                     <option value="string" label="String" description="" twigexactreplacement="getstring"/>
                     <option value="word" label="Word" description="" twigexactreplacement="getword"/>
                     <option value="cmd" label="Command" description="" twigexactreplacement="getcmd"/>
@@ -1140,8 +1139,46 @@
              layouttypes="1,2,4,5,6" wordpress="false">
             <params>
                 <param name="content" label="Content" type="string"
-                       example="&lt;script src='/components/com_oxfordsms/js/ajax.js' type='text/javascript'&gt;&lt;/script&gt;"
+                       example="&lt;script src='https://code.jquery.com/ui/1.12.1/jquery-ui.js' type='text/javascript'&gt;&lt;/script&gt;"
                        description="You can add script or css link here or style tags. This will go to HTML document HEAD part."/>
+            </params>
+        </tag>
+
+        <tag name="script" label="Add JavaScript file" startchar="{" endchar="}" hidedefaultexample="1"
+             description="Inserts a JavaScript file into the HTML document page.. This tag allows you to add external JavaScript files to your WordPress or Joomla site."
+             proversion="0" twigclass="document"
+             layouttypes="1,2,4,5,6" wordpress="true">
+            <params>
+                <param name="link" label="Link to the file" type="string"
+                       example="https://code.jquery.com/ui/1.12.1/jquery-ui.js' type='text/javascript'&gt;&lt;/script&gt;"
+                       description="URL of the JavaScript file to be included. This should be a full URL to the external JavaScript file you want to include in your document."/>
+            </params>
+        </tag>
+
+        <tag name="style" label="Add CSS file" startchar="{" endchar="}" hidedefaultexample="1"
+             description="Inserts a CSS file into the HTML document page.. This tag allows you to add external CSS files to your WordPress or Joomla site."
+             proversion="0" twigclass="document"
+             layouttypes="1,2,4,5,6" wordpress="true">
+            <params>
+                <param name="link" label="Link to the file" type="string"
+                       example="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' type='text/css'&gt;&lt;/link&gt;"
+                       description="URL of the CSS file to be included. This should be a full URL to the external CSS file you want to include in your document."/>
+            </params>
+        </tag>
+
+        <tag name="jslibrary" label="Add JavaScript Library" startchar="{" endchar="}" hidedefaultexample="1"
+             description="Inserts a common JavaScript library into the HTML document page. This tag allows you to include widely used JavaScript libraries such as jQuery, jQuery UI, and WordPress utility functions."
+             proversion="1" twigclass="document"
+             layouttypes="1,2,4,5,6" wordpress="true">
+            <params>
+                <param name="library" label="Library" type="list"
+                       description="Select a common JavaScript library to include.">
+                    <option value="jquery" label="The jQuery library" description="The jQuery library."/>
+                    <option value="jquery-ui-core" label="The core jQuery UI library"
+                            description="The core jQuery UI library."/>
+                    <option value="jquery-ui-tabs" label="The jQuery UI tabs module"
+                            description="The jQuery UI tabs module."/>
+                </param>
             </params>
         </tag>
 
@@ -1150,7 +1187,7 @@
              layouttypes="1,2,4,5,6" wordpress="false">
             <params>
                 <param name="keywords" label="Keywords" type="string"
-                       description="List of keywords. You may include [fieldname] to get keywords from. "/>
+                       description="List of keywords. You may include {{ fieldname }} to get keywords from. "/>
             </params>
         </tag>
 
@@ -1183,7 +1220,7 @@
         </tag>
 
         <tag name="sitename" label="Site Name" startchar="{" endchar="}" layouttypes="1,2,4,5,6"
-             description="Return the Site Name set in configuration.php file" proversion="1" twigclass="document"
+             description="Return the Site Name set in the configuration." proversion="1" twigclass="document"
              wordpress="true"/>
 
         <!-- Deprecated -->

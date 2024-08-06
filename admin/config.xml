@@ -48,6 +48,14 @@
         />
 
         <field
+                name="chatgptapikey"
+                type="text"
+                label="ChatGPT API Key"
+                default=""
+                description="Used with the Custom Tables ChatGPT module."
+        />
+
+        <field
                 name="toolbaricons"
                 type="list"
                 label="Toolbar Icons"

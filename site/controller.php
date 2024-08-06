@@ -63,13 +63,9 @@ class CustomTablesController extends BaseController
                     require_once('controllers/editfiles.php');
                     break;
 
-                case 'createuser':
-                case 'resetuserpassword':
-                case 'paypal':
-                case 'a2checkout':
                 case 'files':
                 case 'fileuploader':
-                case 'structure' :
+                case 'chatgpt' :
                     parent::display();
                     break;
 
