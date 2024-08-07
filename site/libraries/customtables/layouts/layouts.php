@@ -508,6 +508,9 @@ class Layouts
         } else
             $output['html'] = 'CustomTable: Unknown Layout Type';
 
+        $output['scripts'] = $this->ct->LayoutVariables['scripts'] ?? null;
+        $output['styles'] = $this->ct->LayoutVariables['styles'] ?? null;
+        $output['jslibrary'] = $this->ct->LayoutVariables['jslibrary'] ?? null;
         return $output;
     }
 

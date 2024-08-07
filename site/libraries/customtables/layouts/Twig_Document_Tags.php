@@ -61,6 +61,10 @@ class Twig_Document_Tags
             $this->ct->document->addScript($link);
             return '';
         } elseif (defined('WPINC')) {
+            if (!isset($this->ct->LayoutVariables['scripts']))
+                $this->ct->LayoutVariables['scripts'] = [];
+
+            $this->ct->LayoutVariables['scripts'][] = $link;
             return '';
         } else {
             return '{{ document.script() }} not supported in this version of Custom Tables';
@@ -73,6 +77,10 @@ class Twig_Document_Tags
             $this->ct->document->addStyleSheet($link);
             return '';
         } elseif (defined('WPINC')) {
+            if (!isset($this->ct->LayoutVariables['styles']))
+                $this->ct->LayoutVariables['styles'] = [];
+
+            $this->ct->LayoutVariables['styles'][] = $link;
             return '';
         } else {
             return '{{ document.style() }} not supported in this version of Custom Tables';
@@ -98,9 +106,13 @@ class Twig_Document_Tags
                     // Add the jQuery UI CSS
                     $this->ct->document->addStyleSheet('https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css');
             }
-            
+
             return '';
         } elseif (defined('WPINC')) {
+            if (!isset($this->ct->LayoutVariables['jslibrary']))
+                $this->ct->LayoutVariables['jslibrary'] = [];
+
+            $this->ct->LayoutVariables['jslibrary'][] = $library;
             return '';
         } else {
             return '{{ document.jslibrary() }} not supported in this version of Custom Tables';

@@ -1173,11 +1173,12 @@
             <params>
                 <param name="library" label="Library" type="list"
                        description="Select a common JavaScript library to include.">
-                    <option value="jquery" label="The jQuery library" description="The jQuery library."/>
+                    <option value="jquery" label="The jQuery library" description="The jQuery library."
+                            wordpress="true"/>
                     <option value="jquery-ui-core" label="The core jQuery UI library"
-                            description="The core jQuery UI library."/>
+                            description="The core jQuery UI library." wordpress="true"/>
                     <option value="jquery-ui-tabs" label="The jQuery UI tabs module"
-                            description="The jQuery UI tabs module."/>
+                            description="The jQuery UI tabs module." wordpress="true"/>
                 </param>
             </params>
         </tag>
