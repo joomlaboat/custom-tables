@@ -675,7 +675,10 @@ function getLayout_Page() {
     result += '<div style="float:right;">{{ html.recordcount }}</div>\r\n';
     result += '<div style="float:left;">{{ html.add }}</div>\r\n';
     result += '\r\n';
-    result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
+
+    if (window.Joomla instanceof Object)
+        result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
+
     result += '<div class="datagrid">\r\n';
     result += '<div>{{ html.batch("edit","publish","unpublish","refresh","delete") }}</div>\r\n\r\n';
 

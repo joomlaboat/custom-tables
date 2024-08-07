@@ -523,7 +523,9 @@ class Layouts
 
         if ($addToolbar) {
             $result .= '<div style="float:left;">{{ html.add }}</div>' . PHP_EOL;
-            $result .= '<div style="text-align:center;">{{ html.print }}</div>' . PHP_EOL;
+
+            if (defined('_JEXEC'))
+                $result .= '<div style="text-align:center;">{{ html.print }}</div>' . PHP_EOL;
         }
 
         $result .= '<div class="datagrid">' . PHP_EOL;
