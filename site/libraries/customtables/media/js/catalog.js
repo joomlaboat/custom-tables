@@ -263,12 +263,13 @@ function ctSearchBoxDo() {
     }
 
     // Check if a Joomla class is defined
-    let link = ctWebsiteRoot;
+    let link;
 
     if (typeof Joomla !== 'undefined') {
+        link = ctWebsiteRoot;
         link += 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
     } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
-        console.log("ctWebsiteRoot:" + ctWebsiteRoot);
+        link = window.location.href;
     }
 
     let whereList = [];
@@ -277,7 +278,6 @@ function ctSearchBoxDo() {
         whereList.push("where=" + encodeURIComponent(w.join(" and ")));
 
     link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], whereList, link);
-    console.log("link:" + link);
     window.location.href = link;
 }
 

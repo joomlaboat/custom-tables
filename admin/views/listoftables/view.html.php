@@ -22,14 +22,10 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
- * Customtables View class for the Listoftables
+ * Customtables View class for the ListOfTables
+ *
+ * @since 1.0.0
  */
-
-//$versionObject = new Version;
-//$version = (int)$versionObject->getShortVersion();
-
-//trait CustomTablesViewListOfTablesCommonFunctionality
-//{
 class CustomTablesViewListOfTables extends HtmlView
 {
     var CT $ct;
@@ -70,12 +66,6 @@ class CustomTablesViewListOfTables extends HtmlView
                 $this->sidebar = JHtmlSidebar::render();
             } else
                 $this->addToolbar_4();
-
-            // load the batch html
-            //if ($this->canCreate && $this->canEdit && $this->canState)
-            //{
-            //$this->batchDisplay = JHtmlBatch_::render();
-            //}
         }
 
         // Check for errors.
@@ -206,23 +196,3 @@ class CustomTablesViewListOfTables extends HtmlView
         }
     }
 }
-/*
-// Define the CustomtablesViewListoftables class using the trait and conditional inheritance
-if ($version >= 4) {
-	class CustomTablesViewListOfTables extends HtmlView
-	{
-		use CustomTablesViewListOfTablesCommonFunctionality;
-
-		var CT $ct;
-		var $languages;
-	}
-} else {
-	class CustomTablesViewListOfTables extends JViewLegacy
-	{
-		use CustomTablesViewListOfTablesCommonFunctionality;
-
-		var CT $ct;
-		var $languages;
-	}
-}
-*/

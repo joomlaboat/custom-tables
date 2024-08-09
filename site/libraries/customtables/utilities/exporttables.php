@@ -26,7 +26,6 @@ class ExportTables
      */
     public static function export($table_ids, $path = 'tmp'): ?array
     {
-        $link = '';
         $tables = array();
         $output = array();
 
@@ -67,17 +66,12 @@ class ExportTables
             }
 
             if ($path[0] == '/')
-                $pathLink = substr($path[0], 1);
+                $pathLink = substr($path, 1);
             else
-                $pathLink = $path[0];
-
+                $pathLink = $path;
 
             //Save file
-            $link = common::UriRoot(false, true);//str_replace(DIRECTORY_SEPARATOR, '/', );
-
-            //if ($link[strlen($link) - 1] != '/' and $path[0] != '/')
-            //    $link .= '/';
-
+            $link = common::UriRoot(false, true);
             $link .= $pathLink . '/' . $filename_available;
 
             $msg = common::saveString2File($tmp_path . $filename_available, $output_str);
@@ -101,14 +95,14 @@ class ExportTables
         $whereClause->addCondition('published', 1);
         $whereClause->addCondition('tableid', (int)$table['id']);
 
-        $fields = database::loadAssocList('#__customtables_fields', ['*'], $whereClause, null, null);
+        $fields = database::loadAssocList('#__customtables_fields', ['*'], $whereClause);
 
         //get layouts
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('published', 1);
         $whereClause->addCondition('tableid', (int)$table['id']);
 
-        $layouts = database::loadAssocList('#__customtables_layouts', ['*'], $whereClause, null, null);
+        $layouts = database::loadAssocList('#__customtables_layouts', ['*'], $whereClause);
 
         //Get depended menu items
         $whereClause = new MySQLWhereClause();
@@ -123,14 +117,17 @@ class ExportTables
             $whereClause->addCondition('params', '"establename":"' . $table['tablename'] . '"', 'INSTR');
         }
 
-        $menu = database::loadAssocList('#__menu', ['*'], $whereClause, null, null);
+        if (defined('_JEXEC'))
+            $menu = database::loadAssocList('#__menu', ['*'], $whereClause);
+        else
+            $menu = null;
 
         //Get depended on records
         if (intval($table['allowimportcontent']) == 1) {
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition('published', 1);
 
-            $records = database::loadAssocList('#__customtables_table_' . $table['tablename'], ['*'], $whereClause, null, null);
+            $records = database::loadAssocList('#__customtables_table_' . $table['tablename'], ['*'], $whereClause);
         } else
             $records = null;
 

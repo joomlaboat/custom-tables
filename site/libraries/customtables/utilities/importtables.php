@@ -80,7 +80,7 @@ class ImportTables
                 if ($importlayouts)
                     ImportTables::processLayouts($ct, $tableid, $table['layouts'], $msg);
 
-                if ($importmenu)
+                if ($importmenu and is_array($table['menu']))
                     ImportTables::processMenu($table['menu'], $menuType, $msg);
 
                 IntegrityChecks::check($ct, false);

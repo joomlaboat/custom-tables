@@ -113,10 +113,8 @@ class record
                 ctProHelpers::updateLog($this->ct, $this->listing_id);
 
             try {
-
                 $whereClauseUpdate = new MySQLWhereClause();
                 $whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
-
                 database::update($this->ct->Table->realtablename, $saveField->row_new, $whereClauseUpdate);
             } catch (Exception $e) {
                 $this->ct->errors[] = $e->getMessage();
@@ -159,7 +157,10 @@ class record
 
             $this->row_new = $this->ct->Table->loadRecord($this->listing_id);
             if ($this->row_new !== null) {
-                common::inputSet("listing_id", $this->row_new[$this->ct->Table->realidfieldname]);
+
+                if (defined('_JEXEC'))
+                    common::inputSet("listing_id", $this->row_new[$this->ct->Table->realidfieldname]);
+
                 if ($this->ct->Env->advancedTagProcessor) {
                     if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
                         CustomPHP::doPHPonChange($this->ct, $this->row_new);
