@@ -101,6 +101,10 @@ class CustomTablesViewChatGPT extends HtmlView
         }
     }
 
+    /**
+     * @throws Exception
+     * @since 3.3.8
+     */
     protected function getModuleParamsAndTables(int $module_id)
     {
         $db = database::getDB();
@@ -112,51 +116,22 @@ class CustomTablesViewChatGPT extends HtmlView
         $params = json_decode($result[0]['params']);
 
         if (($params->tablename ?? '') !== '')
-            $this->tables[] = $params->tablename;
+            $this->tables[] = ['table' => $params->tablename, 'filter' => $params->filter ?? ''];
 
         if (($params->tablename2 ?? '') !== '')
-            $this->tables[] = $params->tablename2;
+            $this->tables[] = ['table' => $params->tablename2, 'filter2' => $params->filter ?? ''];
 
         if (($params->tablename3 ?? '') !== '')
-            $this->tables[] = $params->establename3;
+            $this->tables[] = ['table' => $params->establename3, 'filter3' => $params->filter ?? ''];
 
         if (($params->establename4 ?? '') !== '')
-            $this->tables[] = $params->establename4;
+            $this->tables[] = ['table' => $params->establename4, 'filter4' => $params->filter ?? ''];
 
         if (($params->tablename5 ?? '') !== '')
-            $this->tables[] = $params->establename5;
-    }
+            $this->tables[] = ['table' => $params->establename5, 'filter5' => $params->filter ?? ''];
 
-    /**
-     * @throws Exception
-     * @since 3.3.8
-     */
-    public function generateSQLQuery($query)
-    {
-        // Define the system messages
-
-        //$systemContentColorFormat = "Color is saved in HEX format.";
-        $this->saveMessage(["role" => "system", "content" => "You are a helpful assistant who generates SQL queries or gives direct answers if a query is not needed."
-            . " Your responses should only include the SQL query or direct answer with no additional explanation."], false);
-
-        foreach ($this->tables as $tableName) {
-            $tableStructure = $this->getTableStructure($tableName);
-            $this->saveMessage([
-                "role" => "system",
-                "content" => "Table Name: " . $tableStructure['tableName'] . "."
-                    . " Fields: " . $this->convertFieldNameSet($tableStructure['Fields']) . "."
-                    . " Data Example in JSON: " . $tableStructure['Example'] . "."
-            ]);
-        }
-
-        $this->saveMessage(["role" => "user", "content" => $query]);
-
-        $response = $this->getResponse($this->messages);
-
-        $isSQLQuery = preg_match('/\b(SELECT)\b/i', $response);
-
-        $this->saveMessage(["role" => "assistant", "content" => $response], !$isSQLQuery);
-        return $response;
+        if (($params->knowledge ?? '') !== '')
+            $this->saveMessage(["role" => "system", "content" => $params->knowledge]);
     }
 
     /**
@@ -216,16 +191,55 @@ class CustomTablesViewChatGPT extends HtmlView
      * @throws Exception
      * @since 3.3.8
      */
-    public function getTableStructure(string $tableName): array
+    public function generateSQLQuery($query)
+    {
+        // Define the system messages
+
+        //$systemContentColorFormat = "Color is saved in HEX format.";
+        $this->saveMessage(["role" => "system", "content" => "You are a helpful assistant who generates SQL queries or gives direct answers if a query is not needed."
+            . " Your responses should only include the SQL query or direct answer with no additional explanation."], false);
+
+        foreach ($this->tables as $table) {
+            $tableStructure = $this->getTableStructure($table);
+
+            $this->saveMessage([
+                "role" => "system",
+                "content" => "Table Name: " . $tableStructure['tableName'] . "."
+                    . " Fields: " . $this->convertFieldNameSet($tableStructure['Fields']) . "
+"
+                    . " Mandatory Where Conditions: " . $tableStructure['Where'] . "
+"
+                    . " Data Example in JSON: " . $tableStructure['Example'] . "
+."
+            ]);
+        }
+
+        $this->saveMessage(["role" => "user", "content" => $query]);
+
+        $response = $this->getResponse($this->messages);
+
+        $isSQLQuery = preg_match('/\b(SELECT)\b/i', $response);
+
+        $this->saveMessage(["role" => "assistant", "content" => $response], true);// !$isSQLQuery);
+        return $response;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.8
+     */
+    public function getTableStructure(array $table): array
     {
         $ct = new CT();
 
-        $tableRow = TableHelper::getTableRowByNameAssoc($tableName);
+        $tableRow = TableHelper::getTableRowByNameAssoc($table['table']);
         if (!is_array($tableRow) and $tableRow == 0) {
             common::enqueueMessage('Table not found');
         } else {
             $ct->setTable($tableRow);
         }
+
+        $ct->setFilter($table['filter']);
 
         $fields = [];
         $fields[] = ["FieldName" => 'id', "Type" => 'PRIMARY KEY', "MySQLType" => Fields::getProjectedFieldType('_id', null)];
@@ -245,7 +259,8 @@ class CustomTablesViewChatGPT extends HtmlView
         return [
             "tableName" => $ct->Table->realtablename,
             "Fields" => $fields,
-            "Example" => json_encode($result)
+            "Example" => json_encode($result),
+            "Where" => $ct->Filter->whereClause
         ];
     }
 
@@ -332,9 +347,9 @@ class CustomTablesViewChatGPT extends HtmlView
      */
     public function generateAnswer($user_message, $query, $data)
     {
-        $this->saveMessage(["role" => "system", "content" => 'You are a helpful assistant who generates answers based on JSON data captured by query (' . $query . ').'], false);
-        $this->saveMessage(["role" => "system", "content" => 'The JSON data provided is: ' . $data], false);
-        $this->saveMessage(["role" => "user", "content" => $user_message], false);
+        $this->saveMessage(["role" => "system", "content" => 'You are a helpful assistant who generates answers based on data captured by query (' . $query . ').'], true);
+        $this->saveMessage(["role" => "system", "content" => 'The JSON data provided is: ' . $data], true);
+        $this->saveMessage(["role" => "user", "content" => $user_message . ' (use the data)'], true);
 
         $response = $this->getResponse($this->messages);
         $this->saveMessage(["role" => "assistant", "content" => $response]);
