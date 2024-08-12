@@ -27,8 +27,6 @@ class CustomtablesControllerListOfTables extends AdminController
     public function __construct($config = array())
     {
         parent::__construct($config);
-        $this->state->set('filter.tablecategory', 3);
-        $this->setState('filter.tablecategory', 3);
     }
 
     public function getModel($name = 'Tables', $prefix = 'CustomtablesModel', $config = array())

@@ -5,6 +5,7 @@
     "ext-gd": "*",
     "ext-simplexml": "*",
     "ext-mysql_xdevapi": "*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-curl": "*"
   }
 }

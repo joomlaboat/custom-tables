@@ -15,14 +15,20 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Fields;
+use CustomTables\MySQLWhereClause;
 use CustomTables\TableHelper;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
 
 class CustomTablesViewChatGPT extends HtmlView
 {
-    var $chatGPTAPIKey;
+    var string $chatGPTAPIKey;
+
+    var array $savedMessages;
+    var array $messages;
+    var array $tables;
 
     function display($tpl = null)
     {
@@ -32,12 +38,22 @@ class CustomTablesViewChatGPT extends HtmlView
 
         if ($task == 'chatgpt') {
 
+            //Load messages
+            $session = Factory::getSession();
+            $sessionId = $session->getId();
+
+            $whereClause = new MySQLWhereClause();
+            $whereClause->addCondition('published', 1);
+            $whereClause->addCondition('es_SessionID', $sessionId);
+
+            $this->savedMessages = database::loadAssocList('#__customtables_table_ctchatgpt', ['id', 'es_Role', 'es_Content'], $whereClause);
+            $this->convertCTRecordsToMessages($this->savedMessages);
+
             $joomla_params = ComponentHelper::getParams('com_customtables');
             $this->chatGPTAPIKey = $joomla_params->get('chatgptapikey');
-            //$user_message = 'what is the most expensive color';
 
             $module_id = common::inputGetCmd('module');
-            $tableName = $this->getModuleParamsTableName($module_id);
+            $this->getModuleParamsAndTables($module_id);
 
             $user_message = null;
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -58,15 +74,17 @@ class CustomTablesViewChatGPT extends HtmlView
             // Handle user request
             if ($user_message !== null) {
 
-
                 // Generate the SQL query dynamically
-                $sql_query = $this->generateSQLQuery($tableName, $user_message);
+                $sql_query = $this->generateSQLQuery($user_message);
 
-
-                // Execute the generated SQL query securely
-                $data = $this->fetchFromDatabase($sql_query);
-
-                $query_result = $this->generateAnswer($user_message, $sql_query, $data);
+                $isSQLQuery = preg_match('/\b(SELECT)\b/i', $sql_query);
+                if ($isSQLQuery) {
+                    // Execute the generated SQL query securely
+                    $queryData = $this->fetchFromDatabase($sql_query);
+                    $query_result = $this->generateAnswer($user_message, $sql_query, $queryData);
+                } else {
+                    $query_result = $sql_query;
+                }
 
                 echo json_encode(["message" => $query_result]);
                 die;
@@ -74,11 +92,17 @@ class CustomTablesViewChatGPT extends HtmlView
         }
     }
 
-    protected function getModuleParamsTableName(int $module_id)
+    protected function convertCTRecordsToMessages($messages)
     {
+        $this->messages = [];
+        foreach ($messages as $message) {
+            $new_message = ['role' => $message['es_Role'], 'content' => $message['es_Content']];
+            $this->messages[] = $new_message;
+        }
+    }
 
-        $example_query = 'SELECT params FROM `#__modules` WHERE id=' . $module_id;
-
+    protected function getModuleParamsAndTables(int $module_id)
+    {
         $db = database::getDB();
         $db->setQuery('SELECT params FROM `#__modules` WHERE id=' . $module_id);
         $result = $db->loadAssocList();
@@ -86,46 +110,121 @@ class CustomTablesViewChatGPT extends HtmlView
             return null;
 
         $params = json_decode($result[0]['params']);
-        return $params->establename;
+
+        if (($params->tablename ?? '') !== '')
+            $this->tables[] = $params->tablename;
+
+        if (($params->tablename2 ?? '') !== '')
+            $this->tables[] = $params->tablename2;
+
+        if (($params->tablename3 ?? '') !== '')
+            $this->tables[] = $params->establename3;
+
+        if (($params->establename4 ?? '') !== '')
+            $this->tables[] = $params->establename4;
+
+        if (($params->tablename5 ?? '') !== '')
+            $this->tables[] = $params->establename5;
     }
 
-    public function generateSQLQuery($tableName, $query)
+    /**
+     * @throws Exception
+     * @since 3.3.8
+     */
+    public function generateSQLQuery($query)
     {
-        $tableStructure = $this->getTableStructure($tableName);
+        // Define the system messages
 
-        $fieldString = '';
-        $i = 1;
-        foreach ($tableStructure['Fields'] as $field) {
-            $fieldString .= $i . '. ' . $field['FieldName'] . ' (' . $this->formatMySQLType($field['MySQLType']) . ') - ' . $field['Type'] . ';
-';
+        //$systemContentColorFormat = "Color is saved in HEX format.";
+        $this->saveMessage(["role" => "system", "content" => "You are a helpful assistant who generates SQL queries or gives direct answers if a query is not needed."
+            . " Your responses should only include the SQL query or direct answer with no additional explanation."], false);
 
-            $i++;
+        foreach ($this->tables as $tableName) {
+            $tableStructure = $this->getTableStructure($tableName);
+            $this->saveMessage([
+                "role" => "system",
+                "content" => "Table Name: " . $tableStructure['tableName'] . "."
+                    . " Fields: " . $this->convertFieldNameSet($tableStructure['Fields']) . "."
+                    . " Data Example in JSON: " . $tableStructure['Example'] . "."
+            ]);
         }
 
-        // Format the table structure as part of the system message
-        $systemContent = "You are a helpful assistant who generates SQL queries. Your responses should only include the SQL query with no additional explanation or text. The table structure is as follows: " .
+        $this->saveMessage(["role" => "user", "content" => $query]);
 
-            "Table Name: " . $tableStructure['tableName'] . ". Fields: 
-" . $fieldString . "
+        $response = $this->getResponse($this->messages);
 
-Data Example in JSON: " . $tableStructure['Example'];
-        $messages = [
-            ["role" => "system", "content" => $systemContent],
-            ["role" => "user", "content" => $query]
-        ];
+        $isSQLQuery = preg_match('/\b(SELECT)\b/i', $response);
 
-        return $this->getResponse($messages);
+        $this->saveMessage(["role" => "assistant", "content" => $response], !$isSQLQuery);
+        return $response;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.3.8
+     */
+    function saveMessage(array $message, bool $saveToDataBase = true): ?string
+    {
+        //Check if the message is already exists
+        $found = false;
+        foreach ($this->messages as $existingMessage) {
+            if ($message['role'] !== 'user' and $message['role'] !== 'assistant' and $existingMessage['role'] == $message['role'] and $existingMessage['content'] == $message['content']) {
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            $this->messages[] = $message;
+
+            if ($saveToDataBase) {
+
+                $session = Factory::getSession();
+                $sessionId = $session->getId();
+                $data = ['es_SessionID' => $sessionId,
+                    'es_Role' => $message['role'],
+                    'es_Content' => $message['content']];
+
+                $listing_id = database::insert('#__customtables_table_ctchatgpt', $data);
+                $data['id'] = $listing_id;
+                $this->savedMessages[] = $data;
+
+                $this->unpublishOldMessages();
+
+                return $listing_id;
+            } else
+                return null;
+        }
+        return null;
+    }
+
+    protected function unpublishOldMessages()
+    {
+        do {
+
+            $removedElement = array_shift($this->savedMessages);
+            $whereClause = new MySQLWhereClause();
+            $whereClause->addCondition('id', $removedElement['id']);
+            $data = ['published' => 0];
+            database::update('#__customtables_table_ctchatgpt', $data, $whereClause);
+
+
+        } while (count($this->savedMessages) > 10);
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.8
+     */
     public function getTableStructure(string $tableName): array
     {
         $ct = new CT();
 
         $tableRow = TableHelper::getTableRowByNameAssoc($tableName);
         if (!is_array($tableRow) and $tableRow == 0) {
-            common::enqueueMessage('Table not found', 'error');
+            common::enqueueMessage('Table not found');
         } else {
-            $ct->setTable($tableRow, null, false);
+            $ct->setTable($tableRow);
         }
 
         $fields = [];
@@ -150,7 +249,21 @@ Data Example in JSON: " . $tableStructure['Example'];
         ];
     }
 
-    protected function formatMySQLType($mysqlType)
+    protected function convertFieldNameSet(array $fields): string
+    {
+        $fieldString = '';
+        $i = 1;
+        foreach ($fields as $field) {
+            $fieldString .= $i . '. ' . $field['FieldName'] . ' (' . $this->formatMySQLType($field['MySQLType']) . ') - ' . $field['Type'] . ';
+';
+
+            $i++;
+        }
+
+        return $fieldString;
+    }
+
+    protected function formatMySQLType($mysqlType): string
     {
         $type = $mysqlType['data_type'];
         $length = isset($mysqlType['length']) ? "length " . $mysqlType['length'] : "";
@@ -189,19 +302,19 @@ Data Example in JSON: " . $tableStructure['Example'];
     protected function fetchFromDatabase($sql_query)
     {
         // Ensure the query starts with "SELECT" and does not contain any harmful keywords
-        $allowed_keywords = ['select', 'from', 'where', 'join', 'order by', 'group by', 'having', 'limit', 'offset'];
-        $disallowed_keywords = ['update', 'delete', 'insert', 'drop', 'alter'];
+        //$allowed_keywords = ['select', 'from', 'where', 'join', 'order by', 'group by', 'having', 'limit', 'offset'];
+        $disallowed_keywords = ['update', 'delete', 'insert', 'drop', 'alter', 'create', 'grant'];
 
         $sql_query_lower = strtolower($sql_query);
         $first_word = strtok($sql_query_lower, ' ');
 
         if ($first_word !== 'select') {
-            return "Only SELECT queries are allowed.";
+            return json_encode(['error' => "Only SELECT queries are allowed."]);
         }
 
         foreach ($disallowed_keywords as $keyword) {
             if (strpos($sql_query_lower, $keyword) !== false) {
-                return "Invalid query.";
+                return json_encode(['error' => "Prohibited query."]);
             }
         }
 
@@ -213,19 +326,18 @@ Data Example in JSON: " . $tableStructure['Example'];
 
     }
 
+    /**
+     * @throws Exception
+     * @since 3.6.8
+     */
     public function generateAnswer($user_message, $query, $data)
     {
-        // Your responses should only include the answer "
-        //    . "with no additional explanation or text.
-        // Format the table structure as part of the system message
-        $systemContent = "
-        You are a helpful assistant who generates answers based on JSON data captured by query (" . $query . "). The JSON data provided is: " . $data;
+        $this->saveMessage(["role" => "system", "content" => 'You are a helpful assistant who generates answers based on JSON data captured by query (' . $query . ').'], false);
+        $this->saveMessage(["role" => "system", "content" => 'The JSON data provided is: ' . $data], false);
+        $this->saveMessage(["role" => "user", "content" => $user_message], false);
 
-        $messages = [
-            ["role" => "system", "content" => $systemContent],
-            ["role" => "user", "content" => $user_message]
-        ];
-
-        return $this->getResponse($messages);
+        $response = $this->getResponse($this->messages);
+        $this->saveMessage(["role" => "assistant", "content" => $response]);
+        return $response;
     }
 }

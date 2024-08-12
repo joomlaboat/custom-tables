@@ -16,6 +16,7 @@ use Joomla\CMS\MVC\Controller\AdminController;
 
 /**
  * Customtables Controller
+ * @since 1.0.0
  */
 class CustomtablesControllerCustomtables extends AdminController
 {
