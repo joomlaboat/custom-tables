@@ -36,6 +36,7 @@ class ImportCSV
     private static function importCSVData(string $filename, int $ct_tableid): string
     {
         $arrayOfLines = self::getLines($filename);
+
         if ($arrayOfLines === null)
             return common::translate('COM_CUSTOMTABLES_CSV_FILE_EMPTY');
 
@@ -46,8 +47,8 @@ class ImportCSV
         $fieldList = $prepareFieldList['fieldList'];
         $fields = self::processFieldParams($fieldList, $fields);
 
-        if (in_array(-2, $fieldList))
-            return common::translate('COM_CUSTOMTABLES_FIELD_NAMES_DO_NOT_MATCH');
+        //if (in_array(-2, $fieldList))
+        //  return common::translate('COM_CUSTOMTABLES_FIELD_NAMES_DO_NOT_MATCH');
 
         if ($prepareFieldList['header'])
             $offset = 1;
@@ -55,7 +56,6 @@ class ImportCSV
             $offset = 0;
 
         for ($i = $offset; $i < count($arrayOfLines); $i++) {
-
             if (count($arrayOfLines[$i]) > 0) {
                 $result = self::prepareSQLQuery($fieldList, $fields, $arrayOfLines[$i]);
                 $listing_id = self::findRecord($tableRow->realtablename, $tableRow->realidfieldname, $tableRow->published_field_found, $result->where);

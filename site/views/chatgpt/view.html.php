@@ -21,7 +21,6 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
-
 class CustomTablesViewChatGPT extends HtmlView
 {
     var string $chatGPTAPIKey;
@@ -175,16 +174,14 @@ class CustomTablesViewChatGPT extends HtmlView
 
     protected function unpublishOldMessages()
     {
-        do {
+        while (count($this->savedMessages) > 10) {
 
             $removedElement = array_shift($this->savedMessages);
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition('id', $removedElement['id']);
             $data = ['published' => 0];
             database::update('#__customtables_table_ctchatgpt', $data, $whereClause);
-
-
-        } while (count($this->savedMessages) > 10);
+        }
     }
 
     /**
