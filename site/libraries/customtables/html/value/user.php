@@ -95,7 +95,14 @@ class Value_user extends BaseValue
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition('id', $value);
 
-            $rows = database::loadAssocList('#__users', [$field], $whereClause, null, null, 1);
+            if ($field == 'registerdate')
+                $real_field = 'registerDate';
+            elseif ($field == 'lastvisitdate')
+                $real_field = 'lastvisitDate';
+            else
+                $real_field = $field;
+
+            $rows = database::loadAssocList('#__users', [$real_field], $whereClause, null, null, 1);
 
             if (count($rows) != 0) {
                 $row = $rows[0];

@@ -57,7 +57,7 @@ class Twig_Html_Tags
      * @throws Exception
      * @since 3.0.0
      */
-    function add($Alias_or_ItemId = ''): string
+    function add($Alias_or_ItemId = '', bool $isModal = false): string
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
@@ -77,12 +77,22 @@ class Twig_Html_Tags
 
         if (defined('_JEXEC')) {
             if ($Alias_or_ItemId != '' and is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)
-                $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url . '&amp;Itemid=' . $Alias_or_ItemId;
+                $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' . $Alias_or_ItemId;
             elseif ($Alias_or_ItemId != '')
-                $link = common::UriRoot(true) . '/index.php/' . $Alias_or_ItemId . '?returnto=' . $this->ct->Env->encoded_current_url;
+                $link = common::UriRoot(true) . '/index.php/' . $Alias_or_ItemId;
             else
-                $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto=' . $this->ct->Env->encoded_current_url
+                $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto='
                     . '&amp;Itemid=' . $this->ct->Params->ItemId;
+
+            if ($isModal) {
+                $tmp_current_url = common::makeReturnToURL($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
+                $link .= (str_contains($link, '?') ? '&amp;' : '?') . 'returnto=' . $tmp_current_url;
+
+                $link = 'javascript:ctEditModal(\'' . $link . '\',null)';
+            } else {
+                $link .= (str_contains($link, '?') ? '&amp;' : '?') . 'returnto=' . $this->ct->Env->encoded_current_url;
+            }
+
 
             if (!is_null($this->ct->Params->ModuleId))
                 $link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;

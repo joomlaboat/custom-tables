@@ -708,7 +708,6 @@ class common
             return (string)$date->getTimestamp();
 
         $date->setTimezone($timezone);
-
         return $date->format($format, true);
     }
 

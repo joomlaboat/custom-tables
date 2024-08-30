@@ -83,6 +83,84 @@ class CustomTablesEdit {
             });
     }
 
+
+    async refreshRecord(url, listing_id, successCallback, errorCallback) {
+        let completeURL = url + '?tmpl=component&clean=1&task=refresh';
+        if (listing_id !== undefined && listing_id !== null)
+            completeURL += '&ids=' + listing_id;
+
+
+        try {
+            const response = await fetch(completeURL);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+
+
+        //let postData = new URLSearchParams();
+        //postData.append('task', 'refresh');
+        alert(completeURL);
+        fetch(completeURL, {
+            method: 'GET'
+        })
+            .then(response => {
+
+                alert(response);
+
+                if (response.redirected) {
+                    if (errorCallback && typeof errorCallback === 'function') {
+                        errorCallback('Login required or not authorized.');
+                    } else {
+                        console.error('Login required or not authorized. Error status code 200: Redirect.');
+                    }
+                    return null;
+                }
+
+                if (!response.ok) {
+                    // If the HTTP status code is not successful, throw an error object that includes the response
+                    throw {status: 'error', message: 'HTTP status code: ' + response.status, response: response};
+                    return null;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data === null)
+                    return;
+
+                alert(data.status);
+
+                if (data.status === 'saved') {
+                    if (successCallback && typeof successCallback === 'function') {
+                        successCallback(data);
+                    } else {
+
+                    }
+                } else if (data.status === 'error') {
+                    if (errorCallback && typeof errorCallback === 'function') {
+                        errorCallback(data);
+                    } else {
+                        console.error(data.message);
+                    }
+                }
+            })
+            .catch(error => {
+                if (errorCallback && typeof errorCallback === 'function') {
+                    errorCallback({
+                        status: 'error',
+                        message: 'An error occurred during the request.',
+                    });
+                } else {
+                    console.error('Error 145:', error);
+                    console.log(completeURL);
+                }
+            });
+    }
+
     //Reloads a particular table row (record) after changes have been made. It identifies the table and the specific row based on the provided listing_id and then triggers a refresh to update the displayed data.
     reloadRecord(listing_id) {
 
@@ -152,6 +230,11 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
     }
 }
 
+function stripInvalidCharacters(str) {
+    // This regular expression matches all non-printable ASCII characters
+    return str.replace(/[^\x20-\x7E]/g, '');
+}
+
 function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField, returnLinkEncoded) {
 
     let params = "";
@@ -211,7 +294,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
                         ctHidePopUp();
 
                     if (returnLinkEncoded !== "")
-                        location.href = Base64.decode(returnLinkEncoded);
+                        location.href = stripInvalidCharacters(Base64.decode(returnLinkEncoded));
 
                 } else {
                     if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)

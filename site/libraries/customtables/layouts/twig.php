@@ -44,7 +44,7 @@ class TwigProcessor
      */
     public function __construct(CT $ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
     {
-        $this->debug = true;
+        $this->debug = false;
 
         $this->parseParams = $parseParams;
         $this->errorMessage = null;
@@ -62,9 +62,14 @@ class TwigProcessor
         $tag1 = '{% block record %}';
         $pos1 = strpos($layoutContent, $tag1);
 
-        if (!class_exists('Twig\Loader\ArrayLoader')) {
-            $this->errorMessage = 'Twig not loaded. Go to Global Configuration/ Custom Tables Configuration to enable it.';
-            common::enqueueMessage($this->errorMessage);
+        try {
+            if (!class_exists('Twig\Loader\ArrayLoader')) {//
+                $this->errorMessage = 'Twig not loaded. Go to Global Configuration/ Custom Tables Configuration to enable it.';
+                common::enqueueMessage($this->errorMessage);
+                return;
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
             return;
         }
 
@@ -96,7 +101,7 @@ class TwigProcessor
             ]);
         } else {
             $this->recordBlockFound = false;
-            $loader = new ArrayLoader([
+            $loader = new \Twig\Loader\ArrayLoader([
                 $this->pageLayoutName => $layoutContent,
             ]);
         }

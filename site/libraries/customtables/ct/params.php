@@ -234,7 +234,7 @@ class Params
         else
             $this->listing_id = $menu_params['listingid'] ?? null;
 
-        if ($this->listing_id == 0 or $this->listing_id == '' or $this->listing_id == '0')
+        if ($this->listing_id == '' or $this->listing_id == '0')
             $this->listing_id = null;
 
         $this->tableName = null;

@@ -136,6 +136,9 @@ function renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) {
             if (param_att.min !== null)
                 extra += ' step="' + param_att.step + '"';
 
+            if (parseInt(vlu) < parseInt(param_att.min))
+                vlu = param_att.min;
+
             return '<input data-type="' + param_att.type + '" class="' + convertClassString('form-control') + '" type="number" id="' + id + '" value="' + vlu + '" ' + extra + ' ' + attributes + '>';
         } else if (param_att.type === "list") {
 
@@ -468,11 +471,9 @@ function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQ
                 }
 
                 if (inputBoxType !== "array" && isNaN(v) && v !== 'true' && v !== 'false') {
+
                     if (v.indexOf('"') !== -1)
                         v = v.replaceAll('"', '****quote****');
-
-                    //if (v.indexOf("'") !== -1)
-                    //v = v.replaceAll("'", '****apos****');
 
                     v = '"' + v + '"';
                 }
@@ -651,7 +652,22 @@ function renderInput_ImageSizeSelector(id, param, value, attributes, fieldTypePa
 }
 
 function BuildImageSizeTable() {
-    const value = temp_imagesizelist_string;//document.getElementById(temp_imagesize_parambox_id).value;
+
+
+    let value = temp_imagesizelist_string;//document.getElementById(temp_imagesize_parambox_id).value;
+
+    //if (value.indexOf('****quote****') !== -1)
+    value = value.replaceAll('****quote****', '');
+
+    //if (value.indexOf('****comma****') !== -1)
+    value = value.replaceAll('****comma****', ',');
+
+    //if (value.indexOf('****semicolon****') !== -1)
+    value = value.replaceAll('****semicolon****', ';');
+
+
+    console.log("value:888:" + value);
+
     const value_array = value.split(";");
     let result = '';
     let i;
@@ -732,6 +748,17 @@ function updateParamString_ImageSizes(sizeParam, countList, countParams, tempIma
     const obj = document.getElementById(temp_imagesize_parambox_id);
     temp_imagesizelist_string = obj.value;
 
+    if (temp_imagesizelist_string.indexOf('"') !== -1)
+        temp_imagesizelist_string = temp_imagesizelist_string.replaceAll('"', '****quote****');
+
+    if (temp_imagesizelist_string.indexOf(',') !== -1)
+        temp_imagesizelist_string = temp_imagesizelist_string.replaceAll(',', '****comma****');
+
+    if (temp_imagesizelist_string.indexOf(';') !== -1)
+        temp_imagesizelist_string = temp_imagesizelist_string.replaceAll(';', '****semicolon****');
+
+    console.log("temp_imagesizelist_string:" + temp_imagesizelist_string);
+
     const sizeParam_ = temp_imagesize_updateparent[0];
     const countList_ = temp_imagesize_updateparent[1];
     const countParams_ = temp_imagesize_updateparent[2];
@@ -767,7 +794,10 @@ function addImageSize(vlu) {
         temp_imagesizelist_string = vlu + ',';
     else
         temp_imagesizelist_string = value + ';';
+
     obj.value = temp_imagesizelist_string;
+
+    console.log("GGGtemp_imagesizelist_string:" + temp_imagesizelist_string);
 
     const obj2 = document.getElementById(temp_imagesize_box_id);
     obj2.innerHTML = BuildImageSizeTable();

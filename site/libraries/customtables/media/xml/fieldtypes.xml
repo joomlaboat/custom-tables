@@ -720,14 +720,14 @@
                 <sizeparam name="name" label="Name"
                            description="Image size name (shortcut). The modified file name will include this name and can be used in layout to get the appropriate image."
                            default="" type="string"/>
-                <sizeparam name="width" label="Width" description="Image width in pixels." style="width:50px;"
-                           default="100" type="number" min="1" max="100000"/>
-                <sizeparam name="height" label="Height" description="Image height in pixels." style="width:50px;"
-                           default="100" type="number" min="1" max="100000"/>
+                <sizeparam name="width" label="Width" description="Image width in pixels." style="width:100px;"
+                           default="100" type="number" min="1" max="100000" step="1"/>
+                <sizeparam name="height" label="Height" description="Image height in pixels." style="width:100px;"
+                           default="100" type="number" min="1" max="100000" step="1"/>
                 <sizeparam name="background" label="Background"
                            description="Canvas background color visible after image crop. Possible values: #HEX Color (e.g., #000000), Word Colors (black, white, red, green, blue, yellow), Fill (left-top corner pixel color will be used)."
                            default="" type="string"/>
-                <sizeparam name="format" label="Image Format" description="New image file format." style="width:80px;"
+                <sizeparam name="format" label="Image Format" description="New image file format." style="width:150px;"
                            default="jpg" type="list">
                     <option value="jpg" label="JPEG"/>
                     <option value="gif" label="GIF"/>

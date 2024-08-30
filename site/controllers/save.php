@@ -85,6 +85,16 @@ function CustomTablesDelete($this_)
     return true;
 }
 
+/*
+function cleanUrl($url)
+{
+    // Remove all non-URL safe characters
+    $url = preg_replace('/[^a-zA-Z0-9_\-\/:.?&=]/', '', $url);
+
+    // Remove double slashes except for http:// or https://
+    return preg_replace('#(?<!:)//+#', '/', $url);
+}*/
+
 /**
  * @throws Exception
  * @since 3.2.2
@@ -111,6 +121,8 @@ function CustomTablesSave(string $task, $this_)
             $isOk = $model->copy($msg_, $link);
         else
             $isOk = $model->store($link);
+
+        //$link = cleanUrl($link);
 
         if ($task == 'saveandcontinue') {
             $link = CTMiscHelper::deleteURLQueryOption($link, "listing_id");

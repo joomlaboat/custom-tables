@@ -177,7 +177,7 @@
         <field type="hidden"
                name="typeparams"
                label="COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL"
-               maxlength="255"
+               maxlength="1024"
                description="COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_DESCRIPTION"
                class="text_area fullwidth"
                readonly="true"

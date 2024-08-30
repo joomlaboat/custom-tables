@@ -117,7 +117,8 @@ function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 
     es_LinkLoading = true;
 
-    document.getElementById(toolbarBoxId).innerHTML = '';
+    if (document.getElementById(toolbarBoxId))
+        document.getElementById(toolbarBoxId).innerHTML = '';
 
     let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
 

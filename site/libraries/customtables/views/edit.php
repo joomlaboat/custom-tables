@@ -115,7 +115,7 @@ class Edit
      * @throws Exception
      * @since 3.2.2
      */
-    function render(?array $row, string $formLink, string $formName, bool $addFormTag = true): string
+    function render(?array $row, $formLink, string $formName, bool $addFormTag = true): string
     {
         $result = '';
 
@@ -182,16 +182,16 @@ class Edit
         $twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
 
         try {
-            $pageLayout = $twig->process($this->row);
+            $pageLayout = @$twig->process($this->row);
         } catch (Exception $e) {
-            die('Caught exception: ' . $e->getMessage());
+            return 'Caught exception: ' . $e->getMessage();
         }
 
         if ($twig->errorMessage !== null) {
             if (defined('_JEXEC')) {
                 $this->ct->errors[] = $twig->errorMessage;
             } else {
-                die($twig->errorMessage);
+                return $twig->errorMessage;
             }
         }
 

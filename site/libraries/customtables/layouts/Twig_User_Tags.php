@@ -203,6 +203,7 @@ class Twig_User_Tags
             return '';
 
         $userRow = CTUser::GetUserRow($user_id);
+
         if ($userRow !== null) {
 
             // Check if the environment is recognized
@@ -218,9 +219,9 @@ class Twig_User_Tags
                 return null;
             }
 
-            if ($date == '0000-00-00 00:00:00')
+            if ($date == '0000-00-00 00:00:00') {
                 return 'Never';
-            else {
+            } else {
 
                 $timestamp = strtotime($date);
 
