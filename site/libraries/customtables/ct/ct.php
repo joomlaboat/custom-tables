@@ -462,7 +462,7 @@ class CT
         else
             $this->Table->saveLog($listing_id, 4);
 
-        $this->RefreshSingleRecord($listing_id, 0);
+        $this->RefreshSingleRecord($listing_id, 0, ($status == 1 ? 'publish' : 'unpublish'));
         return 1;
     }
 
@@ -470,7 +470,7 @@ class CT
      * @throws Exception
      * @since 3.2.2
      */
-    public function RefreshSingleRecord($listing_id, $save_log): int
+    public function RefreshSingleRecord($listing_id, $save_log, string $action = 'refresh'): int
     {
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition($this->Table->realidfieldname, $listing_id);
@@ -513,7 +513,7 @@ class CT
         //$this->updateDefaultValues($row);
 
         if ($this->Env->advancedTagProcessor) {
-            $customPHP = new CustomPHP($this, 'refresh');
+            $customPHP = new CustomPHP($this, $action);
             $customPHP->executeCustomPHPFile($this->Table->tablerow['customphp'], $row, $row);
         }
 

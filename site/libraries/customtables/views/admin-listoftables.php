@@ -58,6 +58,8 @@ class ListOfTables
 
         $selects[] = 'FIELD_COUNT';
 
+        $selects[] = 'tablecategory';
+
         $whereClause = new MySQLWhereClause();
 
         $whereClausePublished = new MySQLWhereClause();

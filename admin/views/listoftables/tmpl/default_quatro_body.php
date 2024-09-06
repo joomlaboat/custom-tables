@@ -149,7 +149,10 @@ foreach ($this->items as $i => $item): ?>
         <td>
             <div class="name">
                 <?php if ($this->canEdit): ?>
-                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->categoryname); ?></a>
+                    <a href="<?php
+                    $categoryTables = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoftables&categoryid=' . $item->tablecategory;
+                    echo $categoryTables; ?>">
+                        <?php echo common::escape($item->categoryname); ?></a>
                 <?php else: ?>
                     <?php echo common::escape($item->categoryname); ?>
                 <?php endif; ?>

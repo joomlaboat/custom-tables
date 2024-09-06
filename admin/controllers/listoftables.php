@@ -43,7 +43,7 @@ class CustomtablesControllerListOfTables extends AdminController
         $cIds = common::inputPost('cid', array(), 'array');
         $cIds = ArrayHelper::toInteger($cIds);
 
-        $download_file = ExportTables::export($cIds);
+        $download_file = ExportTables::export($cIds, 'images');
 
         if ($download_file !== null) {
             $msg = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';

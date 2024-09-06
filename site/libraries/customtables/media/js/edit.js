@@ -89,7 +89,6 @@ class CustomTablesEdit {
         if (listing_id !== undefined && listing_id !== null)
             completeURL += '&ids=' + listing_id;
 
-
         try {
             const response = await fetch(completeURL);
             if (!response.ok) {
@@ -101,16 +100,13 @@ class CustomTablesEdit {
             console.error('There was a problem with the fetch operation:', error);
         }
 
-
         //let postData = new URLSearchParams();
         //postData.append('task', 'refresh');
-        alert(completeURL);
+
         fetch(completeURL, {
             method: 'GET'
         })
             .then(response => {
-
-                alert(response);
 
                 if (response.redirected) {
                     if (errorCallback && typeof errorCallback === 'function') {
@@ -131,8 +127,6 @@ class CustomTablesEdit {
             .then(data => {
                 if (data === null)
                     return;
-
-                alert(data.status);
 
                 if (data.status === 'saved') {
                     if (successCallback && typeof successCallback === 'function') {
@@ -716,16 +710,13 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         filters = JSON.parse(decodedFilterString);
     }
 
-    let attributesStringDataSet = Base64.decode(wrapper.dataset.data - attributes);
+    let attributesStringDataSet = Base64.decode(wrapper.dataset.attributes);
 
     //The code searches the string for any characters that are not in the printable ASCII range (from space to tilde).
     //It replaces any such characters with an empty string, effectively removing them from the string.
     let attributesStringClean = attributesStringDataSet.replace(/[^ -~]+/g, "");
-    let attributes = JSON.parse(attributesStringClean);
-    alert(JSON.stringify(attributes));
-
+    //let attributes = JSON.parse(attributesStringClean);
     //let onchange = Base64.decode(wrapper.dataset.onchange).replace(/[^ -~]+/g, "");
-
 
     let next_index = index;
     let next_sub_index = sub_index;
@@ -1530,6 +1521,8 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
     if (searchValue != "")
         url += "&search=" + searchValue;
 
+    alert(url);
+
     let newList = [];
 
     try {
@@ -1547,6 +1540,9 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 
             newList.push({value: jsonData[i].value, label: decodeURI(label)});
         }
+
+        console.log("newList:" + JSON.stringify(newList));
+
         virtualSelect.setServerOptions(newList);
     } catch (error) {
         alert(error);
