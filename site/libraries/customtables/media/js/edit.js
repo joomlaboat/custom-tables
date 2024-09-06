@@ -1521,8 +1521,6 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
     if (searchValue != "")
         url += "&search=" + searchValue;
 
-    alert(url);
-
     let newList = [];
 
     try {
@@ -1540,9 +1538,6 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 
             newList.push({value: jsonData[i].value, label: decodeURI(label)});
         }
-
-        console.log("newList:" + JSON.stringify(newList));
-
         virtualSelect.setServerOptions(newList);
     } catch (error) {
         alert(error);

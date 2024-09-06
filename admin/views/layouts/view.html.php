@@ -293,14 +293,12 @@ class CustomtablesViewLayouts extends HtmlView
         $whereClause = new MySQLWhereClause();
         $i = 0;
         foreach ($whereToSearch as $w) {
-            $whereClause->addOrCondition('params', '"' . $w . '":"' . $whatToLookFor[$i] . '"', 'INSTR');
-            //$where[] = 'INSTR(params,\'"' . $w . '":"' . $whatToLookFor[$i] . '"\')';
+            $string2 = '"' . $w . '":"' . $whatToLookFor[$i] . '"';
+            $whereClause->addOrCondition('params', $string2, 'INSTR');
             $i++;
         }
 
         if ($whereClause->hasConditions()) {
-
-            //$query = 'SELECT id,title FROM #__menu WHERE ' . implode(' OR ', $where);
 
             $rows = database::loadAssocList('#__menu', ['id', 'title'], $whereClause, null, null);
 

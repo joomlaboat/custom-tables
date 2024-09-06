@@ -146,9 +146,6 @@ class Details
     protected function checkRecordUserJoin($recordsTable, $recordsUserIdField, $recordsField, $listing_id): bool
     {
         //TODO: avoid es_
-        //$query = 'SELECT COUNT(*) AS count FROM #__customtables_table_' . $recordsTable . ' WHERE es_' . $recordsUserIdField . '='
-        //. $this->ct->Env->user->id . ' AND INSTR(es_' . $recordsField . ',",' . $listing_id . ',") LIMIT 1';
-
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('es_' . $recordsUserIdField, $this->ct->Env->user->id);
         $whereClause->addCondition('es_' . $recordsField, ',' . $listing_id . ',', 'INSTR');
