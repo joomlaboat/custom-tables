@@ -45,7 +45,7 @@ class CustomTablesViewLog extends HtmlView
         $user = new CTUser();
 
         $this->action = common::inputGetInt('action', 0);
-        $this->userid = common::inputGetInt('user', 0);//$user->id
+        $this->userid = common::inputGetInt('user', 0);
         $this->tableId = common::inputGetInt('table', 0);
 
         //Is user super Admin?
@@ -178,8 +178,6 @@ class CustomTablesViewLog extends HtmlView
             . '<td>';
 
         if ($a == 1 or $a == 2) {
-            //$link = 'index.php?option=com_customtables&view=edititem&listing_id=' . $rec['listingid'];// . '&Itemid=' . $rec['Itemid'];
-            //<a href="' . $link . '" target="_blank"></a>
             $result .= '<img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' style="width:16px;height:16px;" />';
         } else
             $result .= '<img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' style="width:16px;height:16px;" />';
@@ -187,8 +185,6 @@ class CustomTablesViewLog extends HtmlView
         $result .= '</td>'
             . '<td>' . $rec['USER_NAME'] . '</td>';
 
-        //$link = Route::_('index.php?option=com_customtables&view=details&listing_id=' . $rec['listingid'] . '&Itemid=' . $rec['Itemid']);
-        //<a href="' . $link . '" target="_blank"></a>
         $result .= '<td>' . $rec['datetime'] . '</td>'
             . '<td style="vertical-align:top;">' . $rec['tabletitle'] . '</td>';
 

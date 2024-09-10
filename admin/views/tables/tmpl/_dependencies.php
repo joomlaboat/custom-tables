@@ -208,13 +208,10 @@ function _getTablesThatDependOnThisTable($tablename)
     $serverType = database::getServerType();
     if ($serverType == 'postgresql')
         $whereClause->addCondition('typeparams', $tablename . ',%', 'LIKE');
-    //$where[] = 'typeparams LIKE \'' . $tablename . ',%\'';
     else {
         $whereClauseTemp = new MySQLWhereClause();
         $whereClauseTemp->addOrCondition('typeparams', $tablename . ',%', 'LIKE');
         $whereClauseTemp->addOrCondition('typeparams', '"' . $tablename . '",%', 'LIKE');
-
-        //$where[] = '(typeparams LIKE "' . $tablename . ',%" OR typeparams LIKE \'"' . $tablename . '",%\')';
         $whereClause->addNestedCondition($whereClauseTemp);
     }
 

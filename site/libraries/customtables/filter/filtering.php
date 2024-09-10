@@ -33,32 +33,24 @@ class Filtering
         if ($this->ct->Table->published_field_found) {
 
             //TODO: Fix this mess by replacing the state with a text code like 'published','unpublished','everything','any','trash'
-            //$showPublished = 0 - show published
-            //$showPublished = 1 - show unpublished
-            //$showPublished = 2 - show everything
-            //$showPublished = -1 - show published and unpublished
-            //$showPublished = -2 - show trashed
+            //showPublished = 0 - show published
+            //showPublished = 1 - show unpublished
+            //showPublished = 2 - show everything
+            //showPublished = -1 - show published and unpublished
+            //showPublished = -2 - show trashed
 
             if ($this->showPublished == 0) {
                 $this->whereClause->addCondition($this->ct->Table->realtablename . '.published', 1);
-                //$this->where[] = $this->ct->Table->realtablename . '.published=1';
-                //$this->whereData[$this->ct->Table->realtablename . '.published'] = 1;
             }
             if ($this->showPublished == 1) {
                 $this->whereClause->addCondition($this->ct->Table->realtablename . '.published', 0);
-                //$this->where[] = $this->ct->Table->realtablename . '.published=0';
-                //$this->whereData[$this->ct->Table->realtablename . '.published'] = 0;
             }
             if ($this->showPublished == -1) {
                 $this->whereClause->addOrCondition($this->ct->Table->realtablename . '.published', 0);
                 $this->whereClause->addOrCondition($this->ct->Table->realtablename . '.published', 1);
-                //$this->where[] = '(' . $this->ct->Table->realtablename . '.published=0 OR ' . $this->ct->Table->realtablename . '.published=1)';
-                //$this->whereData[$this->ct->Table->realtablename . '.published'] = [0, 1];
             }
             if ($this->showPublished == -2) {
                 $this->whereClause->addCondition($this->ct->Table->realtablename . '.published', -2);
-                //$this->where[] = $this->ct->Table->realtablename . '.published=-2';
-                //$this->whereData[$this->ct->Table->realtablename . '.published'] = -2;
             }
         }
     }
@@ -1042,13 +1034,10 @@ class Filtering
         //Query condition
         if ($value2 == 'NULL' and $comparison_operator == '=')
             $whereClause->addCondition($value1, null, 'NULL');
-        //$query = $value1 . ' IS NULL';
         elseif ($value2 == 'NULL' and $comparison_operator == '!=')
             $whereClause->addCondition($value1, null, 'NOT NULL');
-        //$query = $value1 . ' IS NOT NULL';
         else
             $whereClause->addCondition($value1, $value2, $comparison_operator);
-        //$query = $value1 . ' ' . $comparison_operator . ' ' . $value2;
         return $whereClause;
     }
 
@@ -1185,10 +1174,8 @@ class LinkJoinFilters
 
         $selects = [];
         $selects[] = $tableRow['realtablename'] . '.' . $tableRow['realidfieldname'];
-
         $whereClause = new MySQLWhereClause();
 
-        //$where = '';
         if ($tableRow['published_field_found']) {
             $selects[] = 'LISTING_PUBLISHED';
             $whereClause->addCondition($tableRow['realtablename'] . '.published', 1);

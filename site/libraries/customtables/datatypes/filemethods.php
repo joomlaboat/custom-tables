@@ -33,8 +33,6 @@ class CustomTablesFileMethods
     static public function getFileExtByID($tableName, $fileBoxName, $file_id): string
     {
         $fileBoxTableName = '#__customtables_filebox_' . $tableName . '_' . $fileBoxName;
-        //$query = 'SELECT file_ext FROM ' . $fileBoxTableName . ' WHERE fileid=' . (int)$file_id . ' LIMIT 1';
-
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('fileid', (int)$file_id);
 

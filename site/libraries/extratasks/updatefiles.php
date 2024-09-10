@@ -71,8 +71,6 @@ class updateFiles
      */
     protected static function countFiles($realtablename, $realfieldname, $realidfieldname): int
     {
-        //$query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL AND ' . $realfieldname . ' != ""';
-
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition($realfieldname, null, 'NOT NULL');
         $whereClause->addCondition($realfieldname, '', '!=');
@@ -87,9 +85,6 @@ class updateFiles
      */
     protected static function processFiles(CT &$ct, $fieldrow, array $old_params, array $new_params): ?string
     {
-        //$query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE '
-        //. $fieldrow->realfieldname . ' IS NOT NULL AND ' . $fieldrow->realfieldname . ' != ""';
-
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition($fieldrow->realfieldname, null, 'NOT NULL');
         $whereClause->addCondition($fieldrow->realfieldname, '', '!=');

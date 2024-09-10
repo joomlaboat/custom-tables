@@ -31,7 +31,6 @@ if ($version < 4) {
 
         public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
         {
-            //$query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition('published', 1);
             $records = database::loadObjectList('#__customtables_tables', ['id', 'tabletitle'], $whereClause, 'tabletitle');

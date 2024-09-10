@@ -86,13 +86,10 @@ class Catalog
                     //$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
                 } else {
                     $items = explode(';', $cookieValue);
-
                     $whereClauseTemp = new MySQLWhereClause();
-                    //$arr = array();
                     foreach ($items as $item) {
                         $pair = explode(',', $item);
                         $whereClauseTemp->addOrCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], (int)$pair[0]);
-                        //$arr[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . (int)$pair[0];//id must be a number
                     }
                     $this->ct->Filter->whereClause->addNestedCondition($whereClauseTemp);
                 }

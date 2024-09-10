@@ -191,8 +191,6 @@ class CustomTablesViewChatGPT extends HtmlView
     public function generateSQLQuery($query)
     {
         // Define the system messages
-
-        //$systemContentColorFormat = "Color is saved in HEX format.";
         $this->saveMessage(["role" => "system", "content" => "You are a helpful assistant who generates SQL queries or gives direct answers if a query is not needed."
             . " Your responses should only include the SQL query or direct answer with no additional explanation."], false);
 
@@ -314,7 +312,6 @@ class CustomTablesViewChatGPT extends HtmlView
     protected function fetchFromDatabase($sql_query)
     {
         // Ensure the query starts with "SELECT" and does not contain any harmful keywords
-        //$allowed_keywords = ['select', 'from', 'where', 'join', 'order by', 'group by', 'having', 'limit', 'offset'];
         $disallowed_keywords = ['update', 'delete', 'insert', 'drop', 'alter', 'create', 'grant'];
 
         $sql_query_lower = strtolower($sql_query);

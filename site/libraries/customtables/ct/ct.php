@@ -175,9 +175,6 @@ class CT
      */
     function getRecords(bool $all = false, int $limit = 0): bool
     {
-        //$where = count($this->Filter->where) > 0 ? ' WHERE ' . implode(' AND ', $this->Filter->where) : '';
-        //$where = str_replace('\\', '', $where); //Just to make sure that there is nothing weird in the query
-
         $count = $this->getNumberOfRecords($this->Filter->whereClause);
 
         if ($count === null)
@@ -644,12 +641,8 @@ class CT
     public function UserIDField_BuildWheres(string $userIdField, string $listing_id): MySQLWhereClause
     {
         $whereClause = new MySQLWhereClause();
-        //$wheres = [];
-
         $statement_items = common::ExplodeSmartParams($userIdField); //"and" and "or" as separators
-
         $whereClauseOwner = new MySQLWhereClause();
-        //$wheres_owner = array();
 
         foreach ($statement_items as $item) {
             $field = $item[1];
@@ -658,7 +651,6 @@ class CT
                 //check if the record belong to the current user
                 $user_field_row = Fields::FieldRowByName($field, $this->Table->fields);
                 $whereClauseOwner->addCondition($user_field_row['realfieldname'], $this->Env->user->id);
-                //$wheres_owner[] = [$item[0], $user_field_row['realfieldname'] . '=' . $this->Env->user->id];
             } else {
                 //example: parents(children).user
                 $statement_parts = explode('.', $field);
@@ -732,25 +724,9 @@ class CT
         }
 
         $whereClause->addNestedCondition($whereClauseOwner);
-        /*
-        $wheres_owner_str = '';
-        $index = 0;
-        foreach ($wheres_owner as $field) {
-            if ($index == 0) {
-                $whereClause->addNestedCondition($whereClauseOwner);
-                $wheres_owner_str .= $field[1];
-            }
-            else
-                $wheres_owner_str .= ' ' . strtoupper($field[0]) . ' ' . $field[1];
 
-            $index += 1;
-        }
-*/
         if ($listing_id != '' and $listing_id != 0)
             $whereClause->addCondition($this->Table->realidfieldname, $listing_id);
-
-        //if ($wheres_owner_str != '')
-        //$wheres[] = '(' . $wheres_owner_str . ')';
 
         return $whereClause;
     }

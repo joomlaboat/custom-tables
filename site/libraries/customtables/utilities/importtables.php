@@ -360,8 +360,6 @@ class ImportTables
             $whereClauseUpdate = new MySQLWhereClause();
             $whereClauseUpdate->addCondition('id', $tableid);
             database::update('#__customtables_tables', $data, $whereClauseUpdate);
-
-            //$query = 'UPDATE ' . $mysqlTableName . ' SET tablecategory=' . (int)$categoryId . ' WHERE id=' . (int)$tableid;
         }
     }
 

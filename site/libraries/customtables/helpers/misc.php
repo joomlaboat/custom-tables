@@ -425,10 +425,8 @@ class CTMiscHelper
     public static function getMenuParams(int $Itemid, string $rawParams = '')
     {
         if ($rawParams == '') {
-            //$query = 'SELECT params FROM #__menu WHERE id=' . (int)$Itemid . ' LIMIT 1';
-
             $whereClause = new MySQLWhereClause();
-            $whereClause->addCondition('id', (int)$Itemid);
+            $whereClause->addCondition('id', $Itemid);
 
             $rows = database::loadObjectList('#__menu', ['params'], $whereClause, null, null, 1);
 

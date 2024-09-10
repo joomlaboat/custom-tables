@@ -30,7 +30,6 @@ class ListOfLayouts
      */
     public static function getLayouts()
     {
-        //$query = 'SELECT id,layoutname,tableid,layouttype FROM #__customtables_layouts WHERE published=1 ORDER BY layoutname';
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('published', 1);
         return database::loadObjectList('#__customtables_layouts', ['id', 'layoutname', 'tableid', 'layouttype'], $whereClause, 'layoutname');

@@ -38,15 +38,6 @@ class Forms
 
     public static function renderHTMLSelectBoxFromDB(string $objectId, ?int $value, bool $addSelectOption, string $tableName, array $selects, MySQLWhereClause $whereClause, ?string $orderBy = null, array $arguments = []): string
     {
-        //$whereClause = new MySQLWhereClause();
-        //$whereClause->addCondition($tableName, $selects);
-        /*
-        $sql = 'SELECT ' . implode(',', $selects) . ' FROM '
-            . $tableName;
-
-        if ($where !== null and count($where) > 0)
-            $sql .= ' WHERE ' . implode(' AND ', $where);
-*/
         $options = database::loadAssocList($tableName, $selects, $whereClause, ($orderBy !== null ? $orderBy : null));
 
         $selectBoxOptions = [];

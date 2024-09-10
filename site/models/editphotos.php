@@ -192,9 +192,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
             $whereClauseUpdate->addCondition('listingid', $this->listing_id);
             $whereClauseUpdate->addCondition('photoid', $image->photoid);
             database::update($this->phototablename, $data, $whereClauseUpdate);
-
-            //$query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safeTitle . '" WHERE listingid='
-            //	. $this->listing_id . ' AND photoid=' . $image->photoid;
             $i++;
         }
         return true;
@@ -206,9 +203,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
      */
     function getPhotoList()
     {
-        //$query = 'SELECT ordering, photoid,  title' . $this->ct->Languages->Postfix . ' AS title, photo_ext FROM ' . $this->phototablename
-        //. ' WHERE listingid=' . $this->listing_id . ' ORDER BY ordering, photoid';
-
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('listingid', $this->listing_id);
 

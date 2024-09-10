@@ -85,7 +85,6 @@ class CustomTablesKeywordSearch
             $AndOrOr_text = common::translate('COM_CUSTOMTABLES_AND');
 
         foreach ($mod_fieldlist as $mod_field) {
-            //$where = '';
             $inner = '';
 
             $fieldrow = null;
@@ -110,8 +109,6 @@ class CustomTablesKeywordSearch
             if (count($keyword_arr) > 1) //Do not search because there is only one keyword, and it's already checked
             {
                 $inner = '';
-
-                //$where_arr = array();
                 $inner_arr = array();
                 $kw_text_array = array();
                 $whereClause = new MySQLWhereClause();
@@ -123,15 +120,13 @@ class CustomTablesKeywordSearch
 
                         $whereClause->addNestedCondition($whereClauseTemp);
 
-                        //$where_arr[] = $w;
                         if (!in_array($inner, $inner_arr)) {
                             $inner_arr[] = $inner;
                             $kw_text_array[] = $kw;
                         }
-                    }//if($w!='')
+                    }
                 }
 
-                //$where = implode(' ' . $AndOrOr . ' ', $where_arr);
                 $inner = implode(' ', $inner_arr);
 
                 if ($whereClause->hasConditions())
@@ -140,14 +135,11 @@ class CustomTablesKeywordSearch
                 $this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
             }
 
-            //$where = '';
             $inner = '';
-            //$where_arr = array();
             $whereClause = new MySQLWhereClause();
-
             $inner_arr = array();
-
             $kw_text_array = array();
+
             foreach ($keyword_arr as $kw) {
                 $inner = '';
 
@@ -157,7 +149,6 @@ class CustomTablesKeywordSearch
                     if ($whereClauseTemp->hasConditions()) {
                         $whereClause->addNestedCondition($whereClauseTemp);
 
-                        //$where_arr[] = $w;
                         if (!in_array($inner, $inner_arr)) {
                             $inner_arr[] = $inner;
                             $kw_text_array[] = $kw;
@@ -166,10 +157,7 @@ class CustomTablesKeywordSearch
                 }
             }
 
-            //$where = implode(' ' . $AndOrOr . ' ', $where_arr);
             $inner = implode(' ', $inner_arr);
-
-            //$where = str_replace('\\', '', $where);
 
             if ($whereClause->hasConditions())
                 $this->getKeywordSearch($inner, $whereClause, $result_rows, $count, $listing_ids);
@@ -177,7 +165,6 @@ class CustomTablesKeywordSearch
             $this->PathValue[] = common::translate('COM_CUSTOMTABLES_CONTAINS') . ' "' . implode('" ' . $AndOrOr_text . ' "', $kw_text_array) . '"';
         }
 
-        // -------------------
         $whereClause = new MySQLWhereClause();
 
         foreach ($mod_fieldlist as $mod_field) {
@@ -189,16 +176,11 @@ class CustomTablesKeywordSearch
                     break;
                 }
             }
-            //$fieldrow = TableHelper::FieldRowByName($f, $this->ct->Table->fields);//2011.6.1
 
             //any
             $keyword_arr = explode(' ', $keywords);
-            //$where = '';
             $inner = '';
             $inner_arr = array();
-            //$where_arr = array();
-            //$fieldTypeFound = false;
-
             $kw_text_array = array();
 
             foreach ($keyword_arr as $kw) {
@@ -224,18 +206,6 @@ class CustomTablesKeywordSearch
 
                     case 'records':
                         $typeParamsArrayy = explode(',', $fieldrow['typeparams']);
-                        /*
-                        $filtertitle = '';
-                        if (count($typeParamsArrayy) < 1)
-                            $filtertitle .= 'table not specified';
-
-                        if (count($typeParamsArrayy) < 2)
-                            $filtertitle .= 'field or layout not specified';
-
-                        if (count($typeParamsArrayy) < 3)
-                            $filtertitle .= 'selector not specified';
-                        */
-
                         $esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
                         $esr_field = $typeParamsArrayy[1];
 
@@ -250,18 +220,6 @@ class CustomTablesKeywordSearch
                         common::enqueueMessage('Search box not ready yet.');
 
                         $typeParamsArrayy = explode(',', $fieldrow['typeparams']);
-                        /*
-                        $filtertitle = '';
-                        if (count($typeParamsArrayy) < 1)
-                            $filtertitle .= 'table not specified';
-
-                        if (count($typeParamsArrayy) < 2)
-                            $filtertitle .= 'field or layout not specified';
-
-                        if (count($typeParamsArrayy) < 3)
-                            $filtertitle .= 'selector not specified';
-                        */
-
                         $esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
                         $esr_field = $typeParamsArrayy[1];
 

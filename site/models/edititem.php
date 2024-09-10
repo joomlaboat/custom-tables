@@ -294,21 +294,9 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
         $filtering = new Filtering($this->ct, $this->ct->Params->showPublished);
         $filtering->addWhereExpression($filter);
-        //$whereArray = $filtering->where;
 
         if ($this->ct->Table->published_field_found)
             $filtering->whereClause->addCondition('published', 1);
-        //$whereArray[] = 'published=1';
-
-        //$where = '';
-        //if (count($filtering->whereClause->conditions) > 0) {
-        //	$where = ' WHERE ' . $filtering->whereClause->getWhereClause();// implode(" AND ", $whereArray);
-        //}
-
-        //$query = 'SELECT ' . $this->ct->Table->realidfieldname . ' FROM ' . $this->ct->Table->realtablename . ' ' . $where;
-
-        //$query .= ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC'; //show last
-        //$query .= ' LIMIT 1';
 
         try {
             $rows = database::loadAssocList($this->ct->Table->realtablename, [$this->ct->Table->realidfieldname], $filtering->whereClause, $this->ct->Table->realidfieldname, 'DESC', 1);
@@ -330,7 +318,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
      */
     function findRecordByUserID(): ?string
     {
-        //$wheres = array();
         $whereClause = new MySQLWhereClause();
 
         if ($this->ct->Table->published_field_found)
@@ -344,8 +331,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
         $whereClauseUser = $this->ct->UserIDField_BuildWheres($this->ct->Params->userIdField, $this->listing_id);
         $whereClause->addNestedCondition($whereClauseUser);
-        //$wheres = array_merge($wheres, $wheres_user);
-        //$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
 
         try {
             $rows = database::loadAssocList($this->ct->Table->realtablename, $this->ct->Table->selects, $whereClause, null, null, 1);
@@ -374,8 +359,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
         if ($link == '')
             return '';
-
-        //$query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
 
         //try {
         $whereClause = new MySQLWhereClause();

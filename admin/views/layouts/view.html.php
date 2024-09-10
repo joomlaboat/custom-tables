@@ -289,7 +289,6 @@ class CustomtablesViewLayouts extends HtmlView
                 break;
         }
 
-        //$where = array();
         $whereClause = new MySQLWhereClause();
         $i = 0;
         foreach ($whereToSearch as $w) {

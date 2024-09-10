@@ -86,8 +86,6 @@ if ($version < 4) {
         {
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition('published', 1);
-
-            //$query = 'SELECT id,categoryname FROM #__customtables_categories WHERE published=1 ORDER BY categoryname';
             $records = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, 'categoryname');
 
             $options = array();

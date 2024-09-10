@@ -24,178 +24,174 @@ use Joomla\CMS\MVC\Controller\AdminController;
 
 class CustomtablesControllerListOfFields extends AdminController
 {
-	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFFIELDS';
+    protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFFIELDS';
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.3
-	 */
-	public function checkin($model = null)
-	{
-		$tableid = common::inputGet('tableid', 0, 'int');
-		$redirect = 'index.php?option=' . $this->option;
-		$redirect .= '&view=listoffields&tableid=' . (int)$tableid;
+    /**
+     * @throws Exception
+     * @since 3.2.3
+     */
+    public function checkin($model = null)
+    {
+        $tableid = common::inputGet('tableid', 0, 'int');
+        $redirect = 'index.php?option=' . $this->option;
+        $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
 
-		$cid = common::inputPost('cid', array(), 'array');
-		$cid = ArrayHelper::toInteger($cid);
-		$count = count($cid);
+        $cid = common::inputPost('cid', array(), 'array');
+        $cid = ArrayHelper::toInteger($cid);
+        $count = count($cid);
 
-		foreach ($cid as $id) {
-			$data = [
-				'checked_out' => 0,
-				'checked_out_time' => null
-			];
-			$whereClauseUpdate = new MySQLWhereClause();
-			$whereClauseUpdate->addCondition('id', $id);
-			database::update('#__customtables_fields', $data, $whereClauseUpdate);
+        foreach ($cid as $id) {
+            $data = [
+                'checked_out' => 0,
+                'checked_out_time' => null
+            ];
+            $whereClauseUpdate = new MySQLWhereClause();
+            $whereClauseUpdate->addCondition('id', $id);
+            database::update('#__customtables_fields', $data, $whereClauseUpdate);
+        }
 
-			//$query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $id;
-		}
+        if ($count == 1)
+            $msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN';
+        elseif ($count == 0)
+            $msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_0';
+        else
+            $msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_MORE';
 
-		if ($count == 1)
-			$msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN';
-		elseif ($count == 0)
-			$msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_0';
-		else
-			$msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_MORE';
+        Factory::getApplication()->enqueueMessage(common::translate($msg, $count), 'success');
 
-		Factory::getApplication()->enqueueMessage(common::translate($msg, $count), 'success');
+        // Redirect to the item screen.
+        $this->setRedirect(
+            Route::_(
+                $redirect, false
+            )
+        );
+    }
 
-		// Redirect to the item screen.
-		$this->setRedirect(
-			Route::_(
-				$redirect, false
-			)
-		);
-	}
+    public function getModel($name = 'Fields', $prefix = 'CustomtablesModel', $config = array())
+    {
+        return parent::getModel($name, $prefix, array('ignore_request' => true));
+    }
 
-	public function getModel($name = 'Fields', $prefix = 'CustomtablesModel', $config = array())
-	{
-		return parent::getModel($name, $prefix, array('ignore_request' => true));
-	}
+    public function publish()
+    {
+        if ($this->task == 'publish')
+            $status = 1;
+        elseif ($this->task == 'unpublish')
+            $status = 0;
+        elseif ($this->task == 'trash')
+            $status = -2;
+        else
+            return;
 
-	public function publish()
-	{
-		if ($this->task == 'publish')
-			$status = 1;
-		elseif ($this->task == 'unpublish')
-			$status = 0;
-		elseif ($this->task == 'trash')
-			$status = -2;
-		else
-			return;
+        $tableid = common::inputGet('tableid', 0, 'int');
 
-		$tableid = common::inputGet('tableid', 0, 'int');
+        if ($tableid != 0) {
+            $table = TableHelper::getTableRowByID($tableid);
+            if (!is_object($table) and $table == 0) {
+                Factory::getApplication()->enqueueMessage('Table not found', 'error');
+                return;
+            } else {
+                $tablename = $table->tablename;
+            }
+        }
 
-		if ($tableid != 0) {
-			$table = TableHelper::getTableRowByID($tableid);
-			if (!is_object($table) and $table == 0) {
-				Factory::getApplication()->enqueueMessage('Table not found', 'error');
-				return;
-			} else {
-				$tablename = $table->tablename;
-			}
-		}
+        $cid = common::inputPost('cid', array(), 'array');
+        $cid = ArrayHelper::toInteger($cid);
 
-		$cid = common::inputPost('cid', array(), 'array');
-		$cid = ArrayHelper::toInteger($cid);
+        $ok = true;
 
-		$ok = true;
+        foreach ($cid as $id) {
+            if ((int)$id != 0) {
+                $id = (int)$id;
+                $isok = $this->setPublishStatusSingleRecord($id, $status);
+                if (!$isok) {
+                    $ok = false;
+                    break;
+                }
+            }
+        }
 
-		foreach ($cid as $id) {
-			if ((int)$id != 0) {
-				$id = (int)$id;
-				$isok = $this->setPublishStatusSingleRecord($id, $status);
-				if (!$isok) {
-					$ok = false;
-					break;
-				}
-			}
-		}
+        $redirect = 'index.php?option=' . $this->option;
+        $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
 
-		$redirect = 'index.php?option=' . $this->option;
-		$redirect .= '&view=listoffields&tableid=' . (int)$tableid;
+        if ($this->task == 'trash')
+            $msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_TRASHED';
+        elseif ($this->task == 'publish')
+            $msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_PUBLISHED';
+        else
+            $msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_UNPUBLISHED';
 
-		if ($this->task == 'trash')
-			$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_TRASHED';
-		elseif ($this->task == 'publish')
-			$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_PUBLISHED';
-		else
-			$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_UNPUBLISHED';
+        if (count($cid) == 1)
+            $msg .= '_1';
 
-		if (count($cid) == 1)
-			$msg .= '_1';
+        Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
 
-		Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
+        // Redirect to the item screen.
+        $this->setRedirect(
+            Route::_(
+                $redirect, false
+            )
+        );
+    }
 
-		// Redirect to the item screen.
-		$this->setRedirect(
-			Route::_(
-				$redirect, false
-			)
-		);
-	}
+    /**
+     * @throws Exception
+     * @since 3.2.3
+     */
+    protected function setPublishStatusSingleRecord(int $id, int $status): bool
+    {
+        $data = [
+            'published' => $status
+        ];
+        $whereClauseUpdate = new MySQLWhereClause();
+        $whereClauseUpdate->addCondition('id', $id);
+        database::update('#__customtables_fields', $data, $whereClauseUpdate);
+        return true;
+    }
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.3
-	 */
-	protected function setPublishStatusSingleRecord(int $id, int $status): bool
-	{
-		$data = [
-			'published' => $status
-		];
-		$whereClauseUpdate = new MySQLWhereClause();
-		$whereClauseUpdate->addCondition('id', $id);
-		database::update('#__customtables_fields', $data, $whereClauseUpdate);
+    public function delete()
+    {
+        $tableId = common::inputGetInt('tableid');
 
-		//$query = 'UPDATE #__customtables_fields SET published=' . (int)$status . ' WHERE id=' . (int)$id;
-		return true;
-	}
+        if ($tableId !== null) {
+            $ct = new CT();
+            $ct->getTable($tableId);
 
-	public function delete()
-	{
-		$tableId = common::inputGetInt('tableid');
+            if ($ct->Table->tablename === null) {
+                Factory::getApplication()->enqueueMessage('Table not found', 'error');
+                return;
+            }
+        } else {
+            Factory::getApplication()->enqueueMessage('Table not set', 'error');
+            return;
+        }
 
-		if ($tableId !== null) {
-			$ct = new CT();
-			$ct->getTable($tableId);
+        $cid = common::inputPost('cid', array(), 'array');
+        $cid = ArrayHelper::toInteger($cid);
 
-			if ($ct->Table->tablename === null) {
-				Factory::getApplication()->enqueueMessage('Table not found', 'error');
-				return;
-			}
-		} else {
-			Factory::getApplication()->enqueueMessage('Table not set', 'error');
-			return;
-		}
+        foreach ($cid as $id) {
+            if ((int)$id != 0) {
+                $id = (int)$id;
+                $ok = Fields::deleteField_byID($ct, $id);
+                if (!$ok)
+                    break;
+            }
+        }
 
-		$cid = common::inputPost('cid', array(), 'array');
-		$cid = ArrayHelper::toInteger($cid);
+        $redirect = 'index.php?option=' . $this->option;
+        $redirect .= '&view=listoffields&tableid=' . (int)$tableId;
 
-		foreach ($cid as $id) {
-			if ((int)$id != 0) {
-				$id = (int)$id;
-				$ok = Fields::deleteField_byID($ct, $id);
-				if (!$ok)
-					break;
-			}
-		}
+        $msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_DELETED';
+        if (count($cid) == 1)
+            $msg .= '_1';
 
-		$redirect = 'index.php?option=' . $this->option;
-		$redirect .= '&view=listoffields&tableid=' . (int)$tableId;
+        Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
 
-		$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_DELETED';
-		if (count($cid) == 1)
-			$msg .= '_1';
-
-		Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
-
-		// Redirect to the item screen.
-		$this->setRedirect(
-			Route::_(
-				$redirect, false
-			)
-		);
-	}
+        // Redirect to the item screen.
+        $this->setRedirect(
+            Route::_(
+                $redirect, false
+            )
+        );
+    }
 }
