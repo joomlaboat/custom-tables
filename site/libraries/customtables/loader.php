@@ -161,9 +161,6 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
     require_once($pathDataTypes . 'savefieldqueryset.php');
     require_once($pathDataTypes . 'record.php');
 
-    //$path_datatypes = $path . 'customphp' . DIRECTORY_SEPARATOR;
-    //require_once($path_datatypes.'customphp.php');
-
     $pathDataTypes = $path . 'table' . DIRECTORY_SEPARATOR;
     require_once($pathDataTypes . 'table.php');
 

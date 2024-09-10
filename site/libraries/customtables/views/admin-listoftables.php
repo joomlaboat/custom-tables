@@ -252,11 +252,9 @@ class ListOfTables
             // Case: Creating a new third-party table
             $customTableName = $newTableName;
             TableHelper::createTableIfNotExists($dbPrefix, $newTableName, $tableTitle, $customTableName ?? '');
-            //$messages[] = ['New third-party table created.'];
 
             //Add fields if it's a third-party table and no fields added yet.
             TableHelper::addThirdPartyTableFieldsIfNeeded($database, $newTableName, $customTableName);
-            //$messages[] = __('Third-party fields added.', 'customtables');
         } else {
             // Case: Updating an existing table or creating a new custom table
             $originalTableId = common::inputPostInt('originaltableid', 0, 'create-edit-table');
@@ -264,11 +262,9 @@ class ListOfTables
             if ($originalTableId != 0 and $old_tablename != '') {
                 // Copying an existing table
                 TableHelper::copyTable($this->ct, $originalTableId, $newTableName, $old_tablename, $customTableName);
-                //$messages[] = __('Table copied.', 'customtables');
             } else {
                 // Creating a new custom table (without copying)
                 TableHelper::createTableIfNotExists($dbPrefix, $newTableName, $tableTitle, $customTableName ?? '');
-                //$messages[] = __('Table created.', 'customtables');
             }
         }
         return $messages;

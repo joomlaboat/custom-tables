@@ -543,7 +543,7 @@ class SaveFieldQuerySet
     {
         //Original value but modified during the process
         $this->row_old[$this->field->realfieldname] = $value;
-        //$this->row_new is empty at the beginning and if record needs to be updated new item with the key is added.
+        //row_new is empty at the beginning and if record needs to be updated new item with the key is added.
         $this->row_new[$this->field->realfieldname] = $value;
     }
 

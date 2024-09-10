@@ -306,11 +306,6 @@ class Twig_Html_Tags
         if (count($available_modes) == 0)
             return '';
 
-        //if (is_array($buttons[0]))
-        //    $buttons_array = $buttons[0];
-        //else
-        //$buttons_array = explode(',', $buttons[0]);
-
         if (count($buttons) == 0)
             $buttons = $available_modes;
 

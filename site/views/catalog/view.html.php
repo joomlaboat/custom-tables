@@ -127,8 +127,6 @@ class CustomTablesViewCatalog extends HtmlView
      */
     function SaveViewLogForRecord($rec, $allowedFields)
     {
-        //$update_fields = array();
-
         $data = [];
         $whereClauseUpdate = new MySQLWhereClause();
         $whereClauseUpdate->addCondition('id', $rec[$this->ct->Table->realidfieldname]);

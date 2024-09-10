@@ -234,7 +234,6 @@ class Twig_Record_Tags
         $newCt->setTable($tableRow);
         $f = new Filtering($newCt, 2);
         $f->addWhereExpression($filter);
-        //$additional_where = implode(' AND ', $f->where);
 
         if ($order_by_option != '') {
             $field_details = $this->join_getRealFieldName($order_by_option, $tableRow);
@@ -563,7 +562,7 @@ class Twig_Record_Tags
         if ($fieldName == '_id') {
             $fieldRealFieldName = $tableRow['realidfieldname'];
         } elseif ($fieldName == '_published') {
-            $fieldRealFieldName = 'listing_published';//$tableRow['published'];
+            $fieldRealFieldName = 'listing_published';
         } else {
             $tableFields = Fields::getFields($tableName);
 

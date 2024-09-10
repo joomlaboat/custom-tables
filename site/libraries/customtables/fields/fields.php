@@ -553,12 +553,7 @@ class Fields
                 $msg = 'Caught exception fixMYSQLField 2: ' . $e->getMessage();
             }
         } else {
-            //try {
             database::changeColumn($realtablename, $fieldname, $fieldname, $PureFieldType, $title);
-            //} catch (Exception $e) {
-            //$msg = 'Caught exception fixMYSQLField 3: ' . $e->getMessage();
-            //return false;
-            //}
         }
 
         $msg = '';

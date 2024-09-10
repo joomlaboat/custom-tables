@@ -145,7 +145,6 @@ class Diagram
         $colors[] = '#0000FF';
         $colors[] = '#808080';
         $colors[] = '#00008B';
-        //$colors[]='#000000';
         $colors[] = '#ADD8E6';
         $colors[] = '#FFA500';
         $colors[] = '#800080';
@@ -165,7 +164,6 @@ class Diagram
         $text_colors[] = '#FFFFFF';
         $text_colors[] = '#000000';
         $text_colors[] = '#FFFFFF';
-        //$text_colors[]='#FFFFFF';//black
         $text_colors[] = '#000000';
         $text_colors[] = '#000000';
         $text_colors[] = '#FFFFFF';

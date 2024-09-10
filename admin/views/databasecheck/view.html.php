@@ -65,7 +65,7 @@ class CustomtablesViewDataBaseCheck extends HtmlView
         if ($this->getLayout() !== 'modal') {
             // Include helper submenu
             CustomtablesHelper::addSubmenu('databasecheck');
-            //$this->addToolBar();
+
             if ($this->version < 4) {
                 $this->addToolbar_3();
                 $this->sidebar = JHtmlSidebar::render();

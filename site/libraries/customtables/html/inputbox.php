@@ -62,7 +62,6 @@ class Inputbox
         $this->option_list = $option_list;
         $this->place_holder = $this->field->title;
 
-        //$this->attributesArray['class'] = $CSSClass;
         $this->attributes['data-type'] = $this->field->type;
 
         if (!isset($this->attributes['title']))

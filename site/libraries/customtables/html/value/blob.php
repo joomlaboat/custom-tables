@@ -64,7 +64,7 @@ class Value_blob extends BaseValue
     {
         $filename = '';
 
-        //$field->params[2] is the Field to get the file name from / to
+        //params[2] is the Field to get the file name from / to
         if (isset($field->params[2]) and $field->params[2] != '') {
             $fileNameField_String = $field->params[2];
             $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $fields);

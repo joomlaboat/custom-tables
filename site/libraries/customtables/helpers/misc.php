@@ -74,7 +74,7 @@ class CTMiscHelper
     {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
         $size = preg_replace('/[^\d\.]/', '', $size); // Remove the non-numeric characters from the size.
-        //$size = preg_replace('/[^\d.]/', '', $size); // Remove the non-numeric characters from the size.
+
         if ($unit) {
             // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
             return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
@@ -212,7 +212,6 @@ class CTMiscHelper
         $desc = trim($matches[0]);
         $desc = str_replace("/n", "", $desc);
         $desc = str_replace("/r", "", $desc);
-        //$desc = str_replace("+", "&plus;", $desc);
 
         if ($cleanBraces)
             $desc = preg_replace('!{.*?}!s', '', $desc);
@@ -486,12 +485,9 @@ class CTMiscHelper
             // Remove any runs of periods (thanks falstro!)
             $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
         } else {
-            //$filename = preg_replace("([^\w\s\d\-_~,;\[\]\().])", '', $filename);
-
             $filename = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
             // Remove any runs of periods (thanks falstro!)
             $filename = preg_replace("(\.{2,})", '', $filename);
-            //$filename = preg_replace("([.]{2,})", '', $filename);
         }
 
         if ($format != '')
@@ -502,8 +498,7 @@ class CTMiscHelper
 
     public static function strip_tags_content($text, $tags = '', $invert = FALSE)
     {
-        //$tags - list of tags. Example: <b><span>
-
+        //tags - list of tags. Example: <b><span>
         preg_match_all('/<(.+?)\s*\/?\s*>/si', trim($tags), $tags);
         $tags = array_unique($tags[1]);
 
@@ -549,9 +544,6 @@ class CTMiscHelper
         //$text = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower()', $text);
         if (function_exists('iconv'))
             $text = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $text);
-
-        //$text = iconv('utf-8', 'us-ascii//IGNORE//TRANSLIT', $text);
-        //$text = iconv('utf-8', 'ISO-8859-1//TRANSLIT', $text);
 
         $text = trim($text, '-');
 
@@ -639,16 +631,8 @@ class CTMiscHelper
 
     public static function suggest_TempFileName(&$webFileLink, ?string $fileExtension = null): ?string
     {
-        //$tempDir = 'tmp';
-
-        //if ($tempDir[0] != '/' and $tempDir[0] != '\\') {
         $output_dir = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR;
         $webDir = common::UriRoot(true) . 'tmp/';
-        //} else {
-        //$output_dir = str_replace('//','/',CUSTOMTABLES_ABSPATH . $tempDir) . DIRECTORY_SEPARATOR;
-        //$webDir = DIRECTORY_SEPARATOR . substr($tempDir, 1) . DIRECTORY_SEPARATOR;
-        //}
-
         $random_name = common::generateRandomString();
 
         while (1) {

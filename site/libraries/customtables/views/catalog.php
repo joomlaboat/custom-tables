@@ -83,7 +83,6 @@ class Catalog
             if (isset($cookieValue)) {
                 if ($cookieValue == '') {
                     $this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], 0);
-                    //$this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
                 } else {
                     $items = explode(';', $cookieValue);
                     $whereClauseTemp = new MySQLWhereClause();

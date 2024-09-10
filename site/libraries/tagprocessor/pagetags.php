@@ -49,16 +49,11 @@ class tagProcessor_Page
         foreach ($fList as $fItem) {
             $option_list = explode(',', $options[$i]);
             $format = $option_list[0];
-
-            //$format, $link_type = 'anchor', $image = '', $imagesize = '', $menu_item_alias = '', $csv_column_separator = ','
-
             $link_type = isset($option_list[1]) ? $option_list[1] : '';
             $image = isset($option_list[2]) ? $option_list[2] : '';
             $imagesize = isset($option_list[3]) ? $option_list[3] : '';
             $menu_item_alias = isset($option_list[4]) ? $option_list[4] : '';
-
             $vlu = $ct_url->format($format, $link_type, $image, $imagesize, $menu_item_alias, ',');
-
             $pageLayout = str_replace($fItem, $vlu, $pageLayout);
             $i++;
         }

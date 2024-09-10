@@ -62,7 +62,7 @@ if ($version < 4) {
 
         protected $type = 'CTTable';
 
-        protected function getOptions()//$name, $value, &$node, $control_name)
+        protected function getOptions()
         {
             return self::getOptionList();
         }

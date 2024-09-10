@@ -41,17 +41,8 @@ class InputBox_fileLink extends BaseInputBox
             }
         }
 
-        //$parts = explode('/', $path);
         $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-
-        //if ($parts[0] == 'images' or (isset($parts[1]) and $parts[1] == 'images')) {
-        //	$relativePath = CUSTOMTABLES_ABSPATH;
-        //	$real_path = $relativePath . $path; //use path relative to website root directory
-        //} else {
-        //$relativePath = '';
         $real_path = $path;//un-relative path
-        //}
-
         $options = [];
 
         if (file_exists($real_path)) {

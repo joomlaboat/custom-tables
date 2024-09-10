@@ -591,7 +591,6 @@ class Documentation
         switch ($param_att->type) {
             case 'number':
 
-                //$result .= '&nbsp;&nbsp;&nbsp;&nbsp;* **' . common::translate('COM_CUSTOMTABLES_DEFAULT') . '** - ' . $param_att->default . '<br/>';
                 $result .= '<pre>    </pre>* **' . common::translate('COM_CUSTOMTABLES_DEFAULT') . '** - ' . $param_att->default . '<br/>';
 
                 if (!empty($param_att->min))
@@ -640,9 +639,7 @@ class Documentation
                     else
                         $par = '**' . $option_att->value . '** - (';
 
-                    //$result .= '&nbsp;&nbsp;&nbsp;&nbsp;* ' . $par . $option_att->label . ((!empty($option_att->description) and $option_att->description != '') ? '. ' . $option_att->description : '') . ')';
                     $result .= '<pre>    </pre>* ' . $par . $option_att->label . ((!empty($option_att->description) and $option_att->description != '') ? '. ' . $option_att->description : '') . ')';
-
                     $result .= '<br/>';
 
                     if ($value_example == '' and $option_att->value != '')
@@ -1090,9 +1087,6 @@ if ($this->onlyWordpress) {
 
                     if (count($param_att) != 0) {
                         $result .= $count . '. ' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . '<br/>';
-                        //if (!empty($param_att->type)) {
-                        //$result .= $this->renderMenuItemFieldsInternal($field);
-                        //}
                     }
 
                     $count += 1;

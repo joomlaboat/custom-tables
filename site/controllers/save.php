@@ -122,8 +122,6 @@ function CustomTablesSave(string $task, $this_)
         else
             $isOk = $model->store($link);
 
-        //$link = cleanUrl($link);
-
         if ($task == 'saveandcontinue') {
             $link = CTMiscHelper::deleteURLQueryOption($link, "listing_id");
 

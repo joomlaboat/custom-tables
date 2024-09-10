@@ -869,7 +869,7 @@ class Layouts
                     $this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], 0);
                 } else {
                     $items = explode(';', $cookieValue);
-                    //$arr = array();
+
                     foreach ($items as $item) {
                         $pair = explode(',', $item);
                         $this->ct->Filter->whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], (int)$pair[0]);

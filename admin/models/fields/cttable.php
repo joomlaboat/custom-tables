@@ -29,7 +29,7 @@ if ($version < 4) {
     {
         public $type = 'cttable';
 
-        public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+        public function getOptions($add_empty_option = true)
         {
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition('published', 1);
@@ -62,7 +62,7 @@ if ($version < 4) {
             return $this->getRenderer($this->layout)->render($data);
         }
 
-        public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+        public function getOptions($add_empty_option = true)
         {
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition('published', 1);

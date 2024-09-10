@@ -115,8 +115,6 @@ class Value_imagegallery extends BaseValue
             } elseif ($imagePrefix == '_original') {
                 $imageName = $imageFolderServer . DIRECTORY_SEPARATOR . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId;
                 $imageFileExtension = $imgMethods->getImageExtension($imageName);
-                //$imageFile = $imageName . '.' . $imageFileExtension;
-
                 $imageSRCListArray[] = ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension;
 
             } else {

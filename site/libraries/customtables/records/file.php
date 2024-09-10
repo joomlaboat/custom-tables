@@ -169,7 +169,6 @@ class Save_file
 
             $is_base64encoded = common::inputGetCmd('base64encoded', '');
             if ($is_base64encoded == "true") {
-                //$src = $uploadedFile;
 
                 if (defined('_JEXEC')) {
                     $file = common::inputPostString($this->field->comesfieldname, '');

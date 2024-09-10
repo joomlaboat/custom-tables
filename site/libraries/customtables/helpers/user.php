@@ -133,11 +133,7 @@ class CTUser
             $user_name = $userRow['username'];
             $user_email = $userRow['email'];
         } else {
-
             return false;
-            //$user_full_name = 'user: '.$realUserId.' not found.';
-            //$user_name = 'user: '.$realUserId.' not found.';
-            //$user_email = 'user: '.$realUserId.' not found.';
         }
         $subject = 'Your {SITENAME} password reset request';
 

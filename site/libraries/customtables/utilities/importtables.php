@@ -144,7 +144,6 @@ class ImportTables
         else
             $mySQLTableName = $table;
 
-        //$sets = array();
         $data = [];
         $keys = array_keys($rows_new);
 
@@ -156,7 +155,6 @@ class ImportTables
         }
 
         foreach ($keys as $key) {
-            //$type = null;
 
             if (!in_array($key, $ignore_fields)) {
                 $fieldname = ImportTables::checkFieldName($key, $force_id, $exceptions);
@@ -352,7 +350,6 @@ class ImportTables
 
         if ($categoryId != $categoryId_ or is_null($categoryId)) {
             //Update Category ID in table
-            //$mysqlTableName = '#__customtables_tables';
 
             $data = [
                 'tablecategory' => (int)$categoryId

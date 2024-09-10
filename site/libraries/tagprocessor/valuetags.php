@@ -374,7 +374,6 @@ class tagProcessor_Value
 
                 $img = $rowValue;
                 if (str_contains($img, '-')) {
-                    //$isShortcut=true;
                     $img = str_replace('-', '', $img);
                 }
 
@@ -469,7 +468,6 @@ class tagProcessor_Value
                             . $fieldRow['fieldname'] . '\',' . $row[$ct->Table->realidfieldname] . ',\''
                             . $postfix . '\',' . (int)$ct->Params->ModuleId . ');';
 
-                        //$attributes = 'onchange="' . $onchange . '"' . $style;
                         $attributes = $style;
 
                         if (isset($value_option_list[1]))

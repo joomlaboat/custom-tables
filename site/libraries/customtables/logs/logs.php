@@ -17,32 +17,31 @@ use Exception;
 
 trait Logs
 {
-	public function saveLog($listing_id, int $action): void
-	{
-		// Actions:
-		// 1 - New
-		// 2 - Edit
-		// 3 - Publish
-		// 4 - Unpublish
-		// 5 - Delete
-		// 6 - Image Uploaded
-		// 7 - Image Deleted
-		// 8 - File Uploaded
-		// 9 - File Deleted
+    public function saveLog($listing_id, int $action): void
+    {
+        // Actions:
+        // 1 - New
+        // 2 - Edit
+        // 3 - Publish
+        // 4 - Unpublish
+        // 5 - Delete
+        // 6 - Image Uploaded
+        // 7 - Image Deleted
+        // 8 - File Uploaded
+        // 9 - File Deleted
 
-		//$sets = array();
-		$data = [];
-		$data ['userid'] = (int)$this->Env->user->id;
-		$data ['datetime'] = ['NOW()', 'sanitized'];
-		$data ['tableid'] = $this->tableid;
-		$data ['listingid'] = (int)$listing_id;
-		$data ['action'] = $action;
-		$data ['Itemid'] = (int)common::inputGetInt('Itemid', 0);
+        $data = [];
+        $data ['userid'] = (int)$this->Env->user->id;
+        $data ['datetime'] = ['NOW()', 'sanitized'];
+        $data ['tableid'] = $this->tableid;
+        $data ['listingid'] = (int)$listing_id;
+        $data ['action'] = $action;
+        $data ['Itemid'] = (int)common::inputGetInt('Itemid', 0);
 
-		try {
-			database::insert('#__customtables_log', $data);
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
-		}
-	}
+        try {
+            database::insert('#__customtables_log', $data);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
 }
