@@ -150,20 +150,24 @@ function _renderTableList($rows): string
 
     foreach ($rows as $row) {
 
-        $result .= '<tr>
+        $fields = explode(';', $row['fields'] ?? '');
+
+        if (count($fields) > 0 and $fields[0] !== '') {
+
+            $result .= '<tr>
         <td><a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tablename'] . '</a></td>
 		<td><a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tabletitle'] . '</a></td>
-        <td><ul style="list-style-type:none;margin:0;">';
+        <td>';
 
-        $fields = explode(';', $row['fields']);
-
-        foreach ($fields as $field) {
-            if ($field != "") {
-                $pair = explode(',', $field);
-                $result .= '<li><a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=' . $row['tableid'] . '&id=' . $pair[0] . '" target="_blank">' . $pair[1] . '</a></li>';
+            $result .= '<ul style="list-style-type:none;margin:0;">';
+            foreach ($fields as $field) {
+                if ($field != "") {
+                    $pair = explode(',', $field);
+                    $result .= '<li><a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=' . $row['tableid'] . '&id=' . $pair[0] . '" target="_blank">' . $pair[1] . '</a></li>';
+                }
             }
+            $result .= '</ul></td></tr>';
         }
-        $result .= '</ul></td></tr>';
     }
 
     $result .= '</tbody>
