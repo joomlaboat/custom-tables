@@ -223,7 +223,7 @@ class CustomtablesViewLayouts extends HtmlView
         }
     }
 
-    public function renderTextArea($value, $id, $typeBoxId, &$onPageLoads): string
+    public function renderTextArea($value, $id, $typeBoxId, &$onPageLoads, string $mode = 'layouteditor'): string
     {
         $result = '<div style="width: 100%;position: relative;">';
 
@@ -236,7 +236,7 @@ class CustomtablesViewLayouts extends HtmlView
         $textAreaCode = '<textarea name="jform[' . $id . ']" id="' . $textAreaId . '" filter="raw" style="width:100%;" rows="30">' . htmlspecialchars($value ?? '') . '</textarea>';
         $textAreaTabId = $id . '-tab';
 
-        $result .= $this->layoutEditor->renderEditor($textAreaCode, $textAreaId, $typeBoxId, $textAreaTabId, $onPageLoads);
+        $result .= $this->layoutEditor->renderEditor($textAreaCode, $textAreaId, $typeBoxId, $textAreaTabId, $onPageLoads, $mode);
 
         return $result;
     }

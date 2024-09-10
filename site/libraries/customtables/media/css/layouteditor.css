@@ -114,6 +114,7 @@
     z-index: 32000;
     border: 1px solid grey;
     background: #e7f29e;
+    color: #000000;
     border-radius: 10px;
     padding: 30px;
 
@@ -124,6 +125,14 @@
     animation-name: myAnimation;
     animation-duration: 6000ms;
     animation-fill-mode: forwards;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* Styles for dark mode */
+    .ct_tip {
+        background: #303409;
+        color: #FFFFFF;
+    }
 }
 
 .FieldTagWizard {
@@ -276,6 +285,13 @@
     border: 1px solid #888;
     width: 80%;
     max-width: 800px;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* Styles for dark mode */
+    .layouteditor_modal-content {
+        background-color: var(--body-bg);
+    }
 }
 
 /* The Close Button */

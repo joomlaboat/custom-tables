@@ -56,14 +56,16 @@ class LayoutEditor
             $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
             $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
             $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
+
             $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/theme/' . $this->theme . '.css">');
+            $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/theme/material-darker.css">');
 
             if ($version >= 4)
                 $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/media/system/css/fields/switcher.css">');
         }
     }
 
-    public function renderEditor(string $textAreaCode, string $textAreaId, string $typeBoxId, string $textAreaTabId, array &$onPageLoads): string
+    public function renderEditor(string $textAreaCode, string $textAreaId, string $typeBoxId, string $textAreaTabId, array &$onPageLoads, string $mode = 'layouteditor'): string
     {
         $ct = new CT;
 
@@ -85,12 +87,17 @@ class LayoutEditor
         }
 
         $code .= '
+        
+        // Detect if dark mode is enabled
+        if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
+            codemirror_theme = "material-darker";
+        
 		text_areas.push(["' . $textAreaId . '",' . $index . ']);
         codemirror_editors[' . $index . '] = CodeMirror.fromTextArea(document.getElementById("' . $textAreaId . '"), {
-            mode: "layouteditor",
+            mode: "' . $mode . '",
             lineNumbers: true,
             lineWrapping: true,
-            theme: "eclipse",
+            theme: codemirror_theme,
             extraKeys: {"Ctrl-Space": "autocomplete"}
         });
         
@@ -177,11 +184,9 @@ class LayoutEditor
 
 	' . implode('', $onPageLoads) . '
 		adjustEditorHeight();
-
     };
 	
 	setTimeout(addTabExtraEvents, 500);
-
     ';
 
         $document = Factory::getDocument();
