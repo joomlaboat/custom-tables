@@ -128,7 +128,7 @@ class TwigProcessor
             }
         }
 
-        $this->variables = [];
+        $this->variables = ['globalVariables'];
         $this->twig->addGlobal('table', new Twig_Table_Tags($this->ct));
         $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
     }

@@ -201,8 +201,27 @@ class Twig_Document_Tags
         return null;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.4.1
+     */
+    public function get(string $variable)
+    {
+        return $this->variables['globalVariables'][$variable];
+    }
+
     function languagepostfix(): string
     {
         return $this->ct->Languages->Postfix;
     }
+
+    /**
+     * @throws Exception
+     * @since 3.4.1
+     */
+    public function set(string $variable, $value)
+    {
+        $this->variables['globalVariables'][$variable] = $value;
+    }
+
 }
