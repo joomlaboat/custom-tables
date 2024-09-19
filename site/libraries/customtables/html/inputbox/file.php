@@ -11,6 +11,9 @@
 namespace CustomTables;
 
 // no direct access
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die();
 
 class InputBox_file extends BaseInputBox
@@ -172,8 +175,8 @@ class InputBox_file extends BaseInputBox
                 '"ct_ubloadedfile_box_' . $this->field->fieldname . '"'
             ];
 
-            $ct_fileuploader = '<div id="ct_fileuploader_' . $this->field->fieldname . '"></div>';
-            $ct_eventsMessage = '<div id="ct_eventsmessage_' . $this->field->fieldname . '"></div>';
+            $ct_fileuploader = '<div id="ct_fileuploader_' . $this->field->fieldname . '" style="display: inline;"></div>';
+            $ct_eventsMessage = '<div id="ct_eventsmessage_' . $this->field->fieldname . '" style="display: inline;"></div>';
 
             $inputBoxFieldName = '<input type="hidden" name="' . $this->field->prefix . $this->field->fieldname . '" id="' . $this->field->prefix . $this->field->fieldname . '" value="" ' . ($this->field->isrequired == 1 ? ' class="required"' : '') . ' />';
             $inputBoxFieldName_FileName = '<input type="hidden" name="' . $this->field->prefix . $this->field->fieldname . '_filename" id="' . $this->field->prefix . $this->field->fieldname . '_filename" value="" />';
@@ -182,9 +185,45 @@ class InputBox_file extends BaseInputBox
                 . common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>'
                 . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size);
 
-            $result .= $ct_fileuploader . $ct_eventsMessage;
+
+            $joomla_params = ComponentHelper::getParams('com_customtables');
+            $GoogleDriveAPIKey = $joomla_params->get('GoogleDriveAPIKey');
+            $GoogleDriveClientId = $joomla_params->get('GoogleDriveClientId');
+
+            $result .= '<div style="vertical-align: top;">';
+
+            if ($GoogleDriveAPIKey !== '' and $GoogleDriveClientId !== '')
+                $result .= '<br/><button class="ajax-file-upload" data-accept="' . $accepted_file_types . '" id="CustomTablesGoogleDrivePick_' . $this->field->fieldname . '">Load from Google Drive</button>';
+
+            $result .= $ct_fileuploader;
+            $result .= '</div>';
+
+            $result .= $ct_eventsMessage;
 
             $result .= '<script>ct_getUploader(' . implode(',', $scriptParams) . ')</script>';
+
+            if ($GoogleDriveAPIKey !== '' and $GoogleDriveClientId !== '') {
+                $app = Factory::getApplication();
+                $document = $app->getDocument();
+                $document->addCustomTag('<script src="https://apis.google.com/js/api.js"></script>');
+                $document->addCustomTag('<script src="https://accounts.google.com/gsi/client"></script>');
+
+                $result .= '
+<script>
+    document.getElementById("CustomTablesGoogleDrivePick_' . $this->field->fieldname . '").addEventListener("click", () => {
+        event.preventDefault(); // Prevent the default action
+
+        if (!CTEditHelper.GoogleDriveAccessToken) {
+            CTEditHelper.GoogleDriveTokenClient["' . $this->field->fieldname . '"].requestAccessToken({ prompt: "consent" });
+        } else {
+            CTEditHelper.GoogleDriveLoadPicker("' . $this->field->fieldname . '","' . $GoogleDriveAPIKey . '", CTEditHelper.GoogleDriveAccessToken);
+        }
+        return false;
+    });
+    gapi.load("client", CTEditHelper.GoogleDriveInitClient("' . $this->field->fieldname . '","' . $GoogleDriveAPIKey . '","' . $GoogleDriveClientId . '"));
+</script>';
+
+            }
 
         } elseif (defined('WPINC')) {
 

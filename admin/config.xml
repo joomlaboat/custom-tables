@@ -48,6 +48,22 @@
         />
 
         <field
+                name="GoogleDriveAPIKey"
+                type="text"
+                label="Google Drive API Developer Key"
+                default=""
+                description=""
+        />
+
+        <field
+                name="GoogleDriveClientId"
+                type="text"
+                label="Google Drive API ClientID"
+                default=""
+                description=""
+        />
+
+        <field
                 name="chatgptapikey"
                 type="text"
                 label="ChatGPT API Key"
