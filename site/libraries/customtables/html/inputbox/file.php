@@ -185,7 +185,6 @@ class InputBox_file extends BaseInputBox
                 . common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>'
                 . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size);
 
-
             $joomla_params = ComponentHelper::getParams('com_customtables');
             $GoogleDriveAPIKey = $joomla_params->get('GoogleDriveAPIKey');
             $GoogleDriveClientId = $joomla_params->get('GoogleDriveClientId');
@@ -197,9 +196,7 @@ class InputBox_file extends BaseInputBox
 
             $result .= $ct_fileuploader;
             $result .= '</div>';
-
             $result .= $ct_eventsMessage;
-
             $result .= '<script>ct_getUploader(' . implode(',', $scriptParams) . ')</script>';
 
             if ($GoogleDriveAPIKey !== '' and $GoogleDriveClientId !== '') {
@@ -220,12 +217,42 @@ class InputBox_file extends BaseInputBox
         }
         return false;
     });
+    
     gapi.load("client", CTEditHelper.GoogleDriveInitClient("' . $this->field->fieldname . '","' . $GoogleDriveAPIKey . '","' . $GoogleDriveClientId . '"));
+
 </script>';
 
             }
 
         } elseif (defined('WPINC')) {
+
+            $GoogleDriveAPIKey = get_option('customtables-googledriveapikey') ?? '';
+            $GoogleDriveClientId = get_option('customtables-googledriveclientid') ?? '';
+
+            if ($GoogleDriveAPIKey !== '' and $GoogleDriveClientId !== '') {
+                $result .= '<br/><button type="button" class="" data-accept="' . $accepted_file_types . '" id="CustomTablesGoogleDrivePick_' . $this->field->fieldname . '">Load from Google Drive</button>';
+
+                $result .= '<div id="ct_eventsmessage_' . $this->field->fieldname . '" style="display: inline;"></div>';
+
+                $result .= '
+<script>
+    document.getElementById("CustomTablesGoogleDrivePick_' . $this->field->fieldname . '").addEventListener("click", () => {
+        event.preventDefault(); // Prevent the default action
+
+        if (!CTEditHelper.GoogleDriveAccessToken) {
+            CTEditHelper.GoogleDriveTokenClient["' . $this->field->fieldname . '"].requestAccessToken({ prompt: "consent" });
+        } else {
+            CTEditHelper.GoogleDriveLoadPicker("' . $this->field->fieldname . '","' . $GoogleDriveAPIKey . '", CTEditHelper.GoogleDriveAccessToken);
+        }
+        return false;
+    });
+    
+    window.addEventListener("load", function() {
+        // Your code here
+        gapi.load("client", CTEditHelper.GoogleDriveInitClient("' . $this->field->fieldname . '","' . $GoogleDriveAPIKey . '","' . $GoogleDriveClientId . '"));
+    });
+</script>';
+            }
 
             $types = explode(' ', $accepted_file_types);
             $accepted_file_types_string = '.' . implode(',.', $types);
