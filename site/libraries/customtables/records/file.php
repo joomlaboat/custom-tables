@@ -122,55 +122,81 @@ class Save_file
      * @throws Exception
      * @since 3.4.1
      */
+
     private function downloadGoogleDriveFile(string $temporaryFile, string $path): ?string
     {
         try {
-            $data = (array)@json_decode($temporaryFile);
+            $data = json_decode($temporaryFile, true);
+            if (!$data) {
+                throw new Exception('Invalid JSON data');
+            }
         } catch (Exception $e) {
+            error_log('Error decoding JSON: ' . $e->getMessage());
             return null;
         }
 
         // Extract the file information
-        $fileId = $data['fileId'];
-        //$fileName = $data['fileName'];
-        $parts = explode('.', $data['fileName']);
-        $fileExtension = end($parts);
-        $fileName = common::generateRandomString() . '.' . $fileExtension;
-        $accessToken = $data['accessToken'];
+        $fileId = $data['fileId'] ?? null;
+        $fileName = $data['fileName'] ?? null;
+        $accessToken = $data['accessToken'] ?? null;
 
-        // Set up the cURL request to download the file from Google Drive
-        $url = 'https://www.googleapis.com/drive/v3/files/' . $fileId . '?alt=media';
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Authorization: Bearer " . $accessToken
-        ]);
-
-        // Execute the cURL request
-        $fileContent = curl_exec($ch);
-
-        if (curl_errno($ch)) {
-            echo 'Error downloading file from Google Drive: ' . curl_error($ch) . '<br/>';
-            common::enqueueMessage('Error downloading file from Google Drive: ' . curl_error($ch));
-            exit;
-        }
-
-        // Define the upload directory (make sure this directory exists and is writable)
-        $CompletePathToFile = $path . DIRECTORY_SEPARATOR . $fileName;
-
-        curl_close($ch);
-
-        //echo $fileContent;
-        // Save the file to the server
-        if (!file_put_contents($CompletePathToFile, $fileContent) !== false) {
-            echo 'Error saving file to server. Path: ' . $CompletePathToFile . '<br/>';
-            common::enqueueMessage('Error saving file to server. Path: ' . $CompletePathToFile);
-            die;
+        if (!$fileId || !$fileName || !$accessToken) {
+            error_log('Missing required file information');
             return null;
         }
 
-        return $CompletePathToFile;
+        $parts = explode('.', $fileName);
+        $fileExtension = end($parts);
+        $uniqueFileName = common::generateRandomString() . '.' . $fileExtension;
+        $completePathToFile = $path . DIRECTORY_SEPARATOR . $uniqueFileName;
+
+        // Set up the cURL request to download the file from Google Drive
+        $url = 'https://www.googleapis.com/drive/v3/files/' . $fileId . '?alt=media';
+        $ch = curl_init($url);
+
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => false,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTPHEADER => ["Authorization: Bearer " . $accessToken],
+            CURLOPT_BUFFERSIZE => 128 * 1024, // 128 KB
+            CURLOPT_NOPROGRESS => false,
+            CURLOPT_PROGRESSFUNCTION => function ($downloadSize, $downloaded, $uploadSize, $uploaded) {
+                // You can implement progress reporting here if needed
+            },
+        ]);
+
+        $fileHandle = fopen($completePathToFile, 'wb');
+        if ($fileHandle === false) {
+            error_log('Unable to open file for writing: ' . $completePathToFile);
+            return null;
+        }
+
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, function ($ch, $data) use ($fileHandle) {
+            return fwrite($fileHandle, $data);
+        });
+
+        $success = curl_exec($ch);
+        fclose($fileHandle);
+
+        if ($success === false) {
+            $error = curl_error($ch);
+            error_log('Error downloading file from Google Drive: ' . $error);
+            common::enqueueMessage('Error downloading file from Google Drive: ' . $error);
+            curl_close($ch);
+            return null;
+        }
+
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            error_log('HTTP Error: ' . $httpCode);
+            common::enqueueMessage('Error downloading file from Google Drive. HTTP Code: ' . $httpCode);
+            return null;
+        }
+
+        return $completePathToFile;
     }
 
     /**
