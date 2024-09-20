@@ -136,7 +136,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
             if ($this->ct->Env->advancedTagProcessor) {
                 try {
                     $action = $record->isItNewRecord ? 'create' : 'update';
-
                     $customPHP = new CustomPHP($this->ct, $action);
                     $customPHP->executeCustomPHPFile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
                 } catch (Exception $e) {

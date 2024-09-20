@@ -142,13 +142,16 @@ class Environment
             if (file_exists($path . 'servertags.php'))
                 require_once($path . 'servertags.php');
         } elseif (defined('WPINC') and defined('CustomTablesWPPro\CTWPPRO')) {
-            $path = CUSTOMTABLES_PRO_PATH . 'helpers.php';
+            $path = CUSTOMTABLES_PRO_PATH;
             $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
             $path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
 
-            if (file_exists($path)) {
+            if (file_exists($path . 'helpers.php')) {
                 $this->advancedTagProcessor = true;
-                require_once($path);
+                require_once($path . 'helpers.php');
+                if (file_exists($path . 'CustomPHP.php')) {
+                    require_once($path . 'CustomPHP.php');
+                }
             }
         }
 

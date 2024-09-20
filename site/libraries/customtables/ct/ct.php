@@ -428,11 +428,9 @@ class CT
 
         $new_row = array();
 
-        if (defined('_JEXEC')) {
-            if ($this->Env->advancedTagProcessor and $this->Table->tablerow['customphp'] !== null) {
-                $customPHP = new CustomPHP($this, 'delete');
-                $customPHP->executeCustomPHPFile($this->Table->tablerow['customphp'], $new_row, $row);
-            }
+        if ($this->Env->advancedTagProcessor and $this->Table->tablerow['customphp'] !== null) {
+            $customPHP = new CustomPHP($this, 'delete');
+            $customPHP->executeCustomPHPFile($this->Table->tablerow['customphp'], $new_row, $row);
         }
 
         return 1;

@@ -150,6 +150,9 @@ class ListOfTables
 
         $newTableName = strtolower(trim(preg_replace("/\W/", "", $newTableName)));
 
+        $customPHP = common::inputPostString('customphp', null, 'create-edit-table');
+        $data ['customphp'] = $customPHP;
+
         if ($newTableName == "")
             return ['Please provide the table name.'];
 

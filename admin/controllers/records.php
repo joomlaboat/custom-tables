@@ -98,7 +98,6 @@ class CustomtablesControllerRecords extends FormController
             if ($ct->Env->advancedTagProcessor) {
                 try {
                     $action = $record->isItNewRecord ? 'create' : 'update';
-
                     $customPHP = new CustomPHP($ct, $action);
                     $customPHP->executeCustomPHPFile($ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
                 } catch (Exception $e) {

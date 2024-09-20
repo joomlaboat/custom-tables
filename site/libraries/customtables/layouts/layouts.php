@@ -466,6 +466,18 @@ class Layouts
                 $record->editForm->layoutContent = $this->layoutCode;
                 $listing_id = common::inputGetCmd('id');
                 if ($record->save($listing_id, false)) {
+
+                    if ($this->ct->Env->advancedTagProcessor) {
+
+                        try {
+                            $action = $record->isItNewRecord ? 'create' : 'update';
+                            $customPHP = new CustomPHP($this->ct, $action);
+                            $customPHP->executeCustomPHPFile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
+                        } catch (Exception $e) {
+                            $ct->errors[] = 'Custom PHP file: ' . $ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
+                        }
+                    }
+
                     common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'notice');
                 } else {
                     common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'));
