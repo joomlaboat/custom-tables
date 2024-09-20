@@ -108,12 +108,12 @@ class CustomTablesEdit {
 
                 let buttonId = "CustomTablesGoogleDrivePick_" + fieldName;
                 const file = response.result;
-
+                let prefix;
                 const button = document.getElementById(buttonId);
                 if (button) {
                     const acceptValue = button.dataset.accept;
                     if (acceptValue) {
-                        let parts = file.name.split(".");
+                        let parts = file.name.toLowerCase().split(".");
                         let fileExtension = parts[parts.length - 1];
                         let acceptTypes = acceptValue.split(' ');
                         if (acceptTypes.indexOf(fileExtension) === -1) {
@@ -121,22 +121,35 @@ class CustomTablesEdit {
                             document.getElementById("ct_eventsmessage_" + fieldName).innerHTML = content;
                             return;
                         }
+                    } else {
+                        console.error('Accept file extensions not found.', error);
+                        return;
                     }
+
+                    prefix = button.dataset.prefix;
+                    if (!prefix) {
+                        console.error('Prefix not found.', error);
+                        return;
+                    }
+                } else {
+                    console.error('Button "' + buttonId + '" not found.', error);
+                    return;
                 }
 
                 let fileSize = CTEditHelper.formatFileSize(file.size);
                 let content = '<div class="ajax-file-upload-statusbar" style="width: 400px;"><div class="ajax-file-upload-filename">1). ' + file.name + ' (' + fileSize + ')</div></div>';
+                document.getElementById("ct_eventsmessage_" + fieldName).innerHTML = content;
+                document.getElementById(prefix + fieldName + '_filename').value = file.name;
 
-                content += JSON.stringify({
+                let data = JSON.stringify({
                     fileId: file.id,
                     fileName: file.name,
-                    mimeType: file.mimeType,
-                    size: file.size,
-                    downloadUrl: file.webContentLink,
+                    //mimeType: file.mimeType,
+                    //size: file.size,
+                    //downloadUrl: file.webContentLink,
                     accessToken: access_token
                 })
-
-                document.getElementById("ct_eventsmessage_" + fieldName).innerHTML = content;
+                document.getElementById(prefix + fieldName + '_data').value = data;
             }, function (error) {
                 console.error("Error getting file metadata:", error);
                 document.getElementById("ct_eventsmessage_" + fieldName).innerHTML = "Error getting file metadata.";
