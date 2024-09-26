@@ -474,7 +474,7 @@ class Layouts
                             $customPHP = new CustomPHP($this->ct, $action);
                             $customPHP->executeCustomPHPFile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
                         } catch (Exception $e) {
-                            $ct->errors[] = 'Custom PHP file: ' . $ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
+                            $this->ct->errors[] = 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
                         }
                     }
 
@@ -737,7 +737,7 @@ class Layouts
                 $label = '<th scope="row">
                             <label ' . $attribute . '>'
                     . '{{ ' . $field['fieldname'] . '.title }}'
-                    . ((int)$field['isrequired'] == 1 ? '<span class="description">(' . __('required', 'customtables') . ')</span>' : '')
+                    . ((int)$field['isrequired'] == 1 ? '<span class="description">(' . __('required', 'customtables') . ')</span>' : '')//WP version
                     . '</label>
                         </th>';
 

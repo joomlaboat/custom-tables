@@ -93,7 +93,8 @@ class record
                 $phpOnChangeFound = true;
         }
 
-        if ($this->listing_id === null) {
+        if (empty($this->listing_id)) {
+
             $this->isItNewRecord = true;
 
             if ($this->ct->Table->published_field_found)
