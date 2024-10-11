@@ -467,7 +467,7 @@ class Layouts
                 $listing_id = common::inputGetCmd('id');
                 if ($record->save($listing_id, false)) {
 
-                    if ($this->ct->Env->advancedTagProcessor) {
+                    if ($this->ct->Env->advancedTagProcessor and !empty($this->ct->Table->tablerow['customphp'])) {
 
                         try {
                             $action = $record->isItNewRecord ? 'create' : 'update';

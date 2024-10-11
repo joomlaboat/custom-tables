@@ -56,7 +56,7 @@ class Save_file
         } else {
             if (defined('_JEXEC')) {
                 $temporaryFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
-                if (!empty($CompletePathToFile))
+                if (!empty($temporaryFile))
                     $CompletePathToFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $temporaryFile;
 
                 $fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');

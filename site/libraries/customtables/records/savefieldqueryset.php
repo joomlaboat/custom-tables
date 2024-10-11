@@ -377,7 +377,7 @@ class SaveFieldQuerySet
                 $value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
 
                 if ($value !== null) {
-                    if ((int)$value == 1 or $value == 'on')
+                    if ((int)$value == 1 or $value == 'on' or $value == 'true')
                         $value = 1;
                     else
                         $value = 0;

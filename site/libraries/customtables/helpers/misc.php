@@ -244,6 +244,10 @@ class CTMiscHelper
             return 'rgb(' . implode(',', $colors) . ')';
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     public static function getListToReplace(string $par, array &$options, string $text, string $qtype, string $separator = ':', string $quote_char = '"'): array
     {
         $fList = array();
@@ -421,7 +425,7 @@ class CTMiscHelper
      * @throws Exception
      * @since 3.2.2
      */
-    public static function getMenuParams(int $Itemid, string $rawParams = '')
+    public static function getMenuParams(int $Itemid, string $rawParams = ''): ?array
     {
         if ($rawParams == '') {
             $whereClause = new MySQLWhereClause();
@@ -430,24 +434,45 @@ class CTMiscHelper
             $rows = database::loadObjectList('#__menu', ['params'], $whereClause, null, null, 1);
 
             if (count($rows) == 0)
-                return '';
+                return null;
 
             $row = $rows[0];
             $rawParams = $row->params;
         }
-        return json_decode($rawParams);
+        return (array)json_decode($rawParams);
     }
-
 
     /**
      * @throws Exception
      * @since 3.2.2
      */
-    public static function getGroupIdByTitle($grouptitle): string
+    public static function getMenuParamsByAlias(string $alias): ?array
+    {
+        if ($alias === '')
+            return null;
+
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('alias', $alias);
+
+        $rows = database::loadObjectList('#__menu', ['params'], $whereClause, null, null, 1);
+
+        if (count($rows) == 0)
+            return null;
+
+        $row = $rows[0];
+        $rawParams = $row->params;
+        return (array)json_decode($rawParams);
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    public static function getGroupIdByTitle($groupTitle): string
     {
         // Execute the query and load the rules from the result.
         $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('title', trim($grouptitle));
+        $whereClause->addCondition('title', trim($groupTitle));
         $rows = database::loadObjectList('#__usergroups', ['id'], $whereClause, null, null, 1);
 
         if (count($rows) < 1)

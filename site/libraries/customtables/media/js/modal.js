@@ -104,6 +104,21 @@ function ctShowModal(showCloseButton) {
 }
 
 function ctShowPopUp(content_html, showCloseButton) {
+
+    // Check if the modal already exists, if not, insert it
+    if (!document.getElementById("ctModal")) {
+        let modalHTML = `
+            <div id="ctModal" class="ctModal">
+                <div id="ctModal_box" class="ctModal_content">
+                    <span id="ctModal_close" class="ctModal_close">&times;</span>
+                    <div id="ctModal_content"></div>
+                </div>
+            </div>`;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);  // Insert before </body>
+    }
+
+    // Now proceed with the rest of the modal handling logic
     let ctModal_close = document.getElementById("ctModal_close");
 
     if (showCloseButton)

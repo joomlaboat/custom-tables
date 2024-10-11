@@ -95,7 +95,7 @@ class CustomtablesControllerRecords extends FormController
         if ($saved) {
             $listing_id = $record->listing_id;
 
-            if ($ct->Env->advancedTagProcessor) {
+            if ($ct->Env->advancedTagProcessor and !empty($ct->Table->tablerow['customphp'])) {
                 try {
                     $action = $record->isItNewRecord ? 'create' : 'update';
                     $customPHP = new CustomPHP($ct, $action);

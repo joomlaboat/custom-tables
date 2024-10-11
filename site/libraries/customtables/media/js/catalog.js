@@ -529,8 +529,14 @@ function ctCatalogUpdate(tableid, recordsId, row_index) {
 
             if (http.readyState === 4) {
                 let res = http.response;
-                let rows = document.getElementById(element_tableid).rows;
-                rows[row_index].innerHTML = res;
+                let tableObj = document.getElementById(element_tableid);
+                if (tableObj) {
+                    let rows = tableObj.rows;
+                    if (rows) {
+                        if (rows[row_index])
+                            rows[row_index].innerHTML = res;
+                    }
+                }
             }
         }
         http.send(params);

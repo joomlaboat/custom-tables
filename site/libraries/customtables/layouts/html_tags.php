@@ -62,25 +62,30 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin)
-            return '';
-
         $userGroups = $this->ct->Env->user->groups;
+
+        if ($Alias_or_ItemId !== '')
+            $this->ct->Params->loadParameterUsingMenuAlias($Alias_or_ItemId);
 
         $add_userGroup = (int)$this->ct->Params->addUserGroups;
 
-        if (!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup, $userGroups))
-            return ''; //Not permitted
+        //echo '$add_userGroup=' . $add_userGroup . '*<br/>';
 
-        if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
-            return ''; //Not permitted
+        if (!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup, $userGroups))
+            return '2'; //Not permitted
 
         if (defined('_JEXEC')) {
             if ($Alias_or_ItemId != '' and is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)
                 $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' . $Alias_or_ItemId;
-            elseif ($Alias_or_ItemId != '')
+            elseif ($Alias_or_ItemId != '') {
+
                 $link = common::UriRoot(true) . '/index.php/' . $Alias_or_ItemId;
-            else
+                $link = CTMiscHelper::deleteURLQueryOption($link, 'option');
+                $link = CTMiscHelper::deleteURLQueryOption($link, 'edit');
+                $link .= (str_contains($link, '?') ? '&amp;' : '?') . 'option=com_customtables';
+                $link .= '&amp;view=edititem';
+
+            } else
                 $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto='
                     . '&amp;Itemid=' . $this->ct->Params->ItemId;
 

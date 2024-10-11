@@ -133,7 +133,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
                 $this->ct->messages[] = $this->ct->Params->msgItemIsSaved;
             }
 
-            if ($this->ct->Env->advancedTagProcessor) {
+            if ($this->ct->Env->advancedTagProcessor and !empty($this->ct->Table->tablerow['customphp'])) {
                 try {
                     $action = $record->isItNewRecord ? 'create' : 'update';
                     $customPHP = new CustomPHP($this->ct, $action);

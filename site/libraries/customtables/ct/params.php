@@ -96,6 +96,10 @@ class Params
             $this->constructWPParams();
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2
+     */
     protected function constructJoomlaParams(?array $menu_paramsArray = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
         $this->app = Factory::getApplication();
@@ -153,7 +157,6 @@ class Params
         $menu_params['ct_pagelayout'] = $menu_params_registry->get('ct_pagelayout');
         $menu_params['esitemlayout'] = $menu_params_registry->get('esitemlayout');
         $menu_params['ct_itemlayout'] = $menu_params_registry->get('ct_itemlayout');
-        $menu_params['esdetailslayout'] = $menu_params_registry->get('esdetailslayout');
         $menu_params['esdetailslayout'] = $menu_params_registry->get('esdetailslayout');
         $menu_params['eseditlayout'] = $menu_params_registry->get('eseditlayout');
         $menu_params['onrecordaddsendemaillayout'] = $menu_params_registry->get('onrecordaddsendemaillayout');
@@ -407,7 +410,6 @@ class Params
         $this->recordsField = null;
     }
 
-    //Used by Joomla version of teh Custom Tables
     protected function getForceItemId(array $menu_params): void
     {
         $forceItemId = $menu_params['forceitemid'] ?? null;
@@ -429,6 +431,8 @@ class Params
         $this->ItemId = common::inputGetInt('Itemid', 0);
     }
 
+    //Used by Joomla version of the Custom Tables
+
     function setWPParams(array $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
 
@@ -440,5 +444,31 @@ class Params
 
         $this->returnTo = common::curPageURL();
         $this->returnTo = CTMiscHelper::deleteURLQueryOption($this->returnTo, 'listing_id');
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.4.3
+     */
+    function loadParameterUsingMenuAlias(string $Alias_or_ItemId): bool
+    {
+        if ($Alias_or_ItemId == '')
+            return false;
+
+        if (defined('_JEXEC')) {
+
+            if (is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)
+                $params = CTMiscHelper::getMenuParams($Alias_or_ItemId);
+            else
+                $params = CTMiscHelper::getMenuParamsByAlias($Alias_or_ItemId);
+
+            if ($params === null)
+                return false;
+
+            $this->constructJoomlaParams($params, true, null);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

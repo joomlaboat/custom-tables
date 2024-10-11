@@ -378,10 +378,11 @@ function stripInvalidCharacters(str) {
 
 function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField, returnLinkEncoded) {
 
+    let fieldsProcessed = [];
     let params = "";
     let opt;
     for (let i = 0; i < elements.length; i++) {
-        if (elements[i].name && elements[i].name !== '' && elements[i].name !== 'returnto') {
+        if (elements[i].name && elements[i].name !== '' && elements[i].name !== 'returnto' && fieldsProcessed.indexOf(elements[i].name) === -1) {
 
             if (elements[i].type === "select-multiple") {
 
@@ -393,8 +394,30 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
                         params += "&" + elements[i].name + "=" + opt.value;
                 }
 
-            } else
+            } else if (elements[i].type === "checkbox") {
+                // Handle checkboxes: add "true" if checked, "false" if unchecked
+                params += "&" + elements[i].name + "=" + (elements[i].checked ? "true" : "false");
+            } else if (elements[i].type === "radio") {
+                // Handle radio buttons: Check if any radio button with the same name is selected
+                const radios = document.getElementsByName(elements[i].name);
+                let radioChecked = false;
+
+                for (let r = 0; r < radios.length; r++) {
+                    if (radios[r].checked) {
+                        params += "&" + radios[r].name + "=" + radios[r].value;
+                        radioChecked = true;
+                        break;  // No need to check further once one is selected
+                    }
+                }
+
+                // If no radio button is selected, set a default value (if desired)
+                if (!radioChecked) {
+                    params += "&" + elements[i].name + "=none";  // You can set "none" or another default value
+                }
+            } else {
                 params += "&" + elements[i].name + "=" + elements[i].value;
+            }
+            fieldsProcessed.push(elements[i].name);
         }
     }
 

@@ -55,7 +55,7 @@ foreach ($this->items as $i => $item): ?>
                 if ($item->checked_out)
                     echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoftables.', $canCheckin);
                 else
-                    echo '<a aria-describedby="tip-tableedit' . $item->id . '" href="' . $edit . '&id=' . $item->id . '"><i class="fa fa-pencil"></i></a>';
+                    echo '<a aria-describedby="tip-tableedit' . $item->id . '" href="' . $edit . '&id=' . $item->id . '"><i class="fa fa-pencil"></i>Edit</a>';
 
                 ?>
                 <div role="tooltip"

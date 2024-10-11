@@ -43,7 +43,11 @@ class CustomtablesModelListOfRecords extends ListModel
                 return;
             } else {
                 $params = CTMiscHelper::getMenuParams($Itemid);
-                $this->ct->getTable($params->establename);
+                if ($params === null) {
+                    Factory::getApplication()->enqueueMessage('Alias or Itemid not found.', 'error');
+                    return;
+                }
+                $this->ct->getTable($params['establename']);
             }
         } else {
             $this->ct->getTable($tableId);

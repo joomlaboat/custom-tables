@@ -318,8 +318,15 @@ class Fields
      */
     public static function checkIfFieldExists($realtablename, $realfieldname): bool
     {
+        // Get the list of existing fields
         $realFieldNames = Fields::getListOfExistingFields($realtablename, false);
-        return in_array($realfieldname, $realFieldNames);
+
+        // Convert all field names to lowercase
+        $realFieldNamesLower = array_map('strtolower', $realFieldNames);
+
+        // Check if the lowercase field name exists in the lowercase array
+        return in_array(strtolower($realfieldname), $realFieldNamesLower);
+        //TODO:  case sensitive field names renaming doesnt work, fix it.
     }
 
     /**
@@ -941,6 +948,8 @@ class Fields
             elseif ($table_row->customtablename == $table_row->tablename)
                 $realfieldname = $data['fieldname'];
         }
+
+        echo '$realfieldname=' . $realfieldname . '<br>';
 
         if ($realfieldname === '')
             throw new Exception('Add New Field: Field name cannot be empty.');
