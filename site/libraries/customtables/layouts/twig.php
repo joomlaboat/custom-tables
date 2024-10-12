@@ -113,6 +113,8 @@ class TwigProcessor
 
     protected function addGlobals(): void
     {
+        $this->ct->LayoutVariables['globalVariables'] = [];
+
         $this->twig->addGlobal('document', new Twig_Document_Tags($this->ct));
         $this->twig->addGlobal('fields', new Twig_Fields_Tags($this->ct));
         $this->twig->addGlobal('user', new Twig_User_Tags($this->ct));
@@ -128,7 +130,6 @@ class TwigProcessor
             }
         }
 
-        $this->variables = ['globalVariables'];
         $this->twig->addGlobal('table', new Twig_Table_Tags($this->ct));
         $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
     }

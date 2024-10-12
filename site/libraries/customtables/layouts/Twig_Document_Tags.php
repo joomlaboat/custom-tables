@@ -207,7 +207,7 @@ class Twig_Document_Tags
      */
     public function get(string $variable)
     {
-        return $this->variables['globalVariables'][$variable];
+        return $this->ct->LayoutVariables['globalVariables'][$variable];
     }
 
     function languagepostfix(): string
@@ -221,7 +221,7 @@ class Twig_Document_Tags
      */
     public function set(string $variable, $value)
     {
-        $this->variables['globalVariables'][$variable] = $value;
+        $this->ct->LayoutVariables['globalVariables'][$variable] = $value;
     }
 
 }

@@ -681,7 +681,7 @@
              twigclass="tables" proversion="1" wordpress="true">
             <params>
                 <param type="layout" name="layout" label="Catalog Layout" table=""
-                       layouttype="catalogpage,simplecatalog"
+                       layouttype="catalogitem,details"
                        example="CountriesPage"/>
                 <param type="string" name="recordidorfilter" label="Record ID or filter"
                        description="Example 1: 65, example 2: population>1000000" example="62"/>
@@ -1234,6 +1234,28 @@
              twigreplacement="document.setmetakeywords" layouttypes="1,2,4,5,6"/>
         <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" deprecated="1"
              twigreplacement="document.setmetadescription" layouttypes="1,2,4,5,6"/>
+
+        <tag name="set" label="Set Variable Value" startchar="{" endchar="}" twigclass="document"
+             description="Sets a global variable value that can be accessed in included layouts."
+             proversion="1" wordpress="true">
+            <params>
+                <param name="variable" label="Variable" type="string"
+                       example="{{ document.set('speed', 65) }}"
+                       description="The variable 'speed' is now available in included layouts. For example, you can display it like this: The speed is {{ document.get('speed') }}."/>
+                <param name="value" label="Value" type="string"
+                       description="The value to assign to the specified variable."/>
+            </params>
+        </tag>
+
+        <tag name="get" label="Get Variable Value" startchar="{" endchar="}" twigclass="document"
+             description="Retrieves a global variable value that can be accessed in included layouts."
+             proversion="1" wordpress="true">
+            <params>
+                <param name="variable" label="Variable" type="string"
+                       example="{{ document.get('speed') }}"
+                       description="Retrieves the value of the 'speed' variable, which can be set in the parent layout with {{ document.set('speed', 65) }}."/>
+            </params>
+        </tag>
 
     </tagset>
 
