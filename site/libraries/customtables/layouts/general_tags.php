@@ -221,7 +221,7 @@ class Twig_Url_Tags
     function itemid(): ?int
     {
         if (defined('_JEXEC'))
-            return common::inputGetInt('Itemid', 0);
+            return $this->ct->Params->ItemId;
         else {
             common::enqueueMessage('Warning: The {{ url.itemid }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
             return null;
