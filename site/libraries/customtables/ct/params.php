@@ -83,6 +83,10 @@ class Params
 
     var bool $blockExternalVars;
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     function __construct(?array $menu_params = null, $blockExternalVars = false, ?string $ModuleId = null)
     {
         $this->ModuleId = null;
@@ -188,6 +192,10 @@ class Params
         return $menu_params;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     function setParams(?array $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
         if (defined('_JEXEC'))
@@ -198,6 +206,10 @@ class Params
         }
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     function setJoomlaParams(?array $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
         $this->blockExternalVars = $blockExternalVars;
@@ -217,9 +229,8 @@ class Params
                 $this->setDefault();
                 return;
             }
-        }
-
-        $this->getForceItemId($menu_params);
+        } else
+            $menu_params = $this->getForceItemId($menu_params);
 
         if (!$blockExternalVars and common::inputGetString('alias', ''))
             $this->alias = CTMiscHelper::slugify(common::inputGetString('alias'));
@@ -228,9 +239,7 @@ class Params
 
         $this->pageTitle = $menu_params['page_title'] ?? null;
         $this->showPageHeading = $menu_params['show_page_heading'] ?? false;
-
-        if (isset($menu_params['pageclass_sfx']))
-            $this->pageClassSFX = common::ctStripTags($menu_params['pageclass_sfx'] ?? '');
+        $this->pageClassSFX = common::ctStripTags($menu_params['pageclass_sfx'] ?? '');
 
         if (!$blockExternalVars and common::inputGetCmd('listing_id') !== null)
             $this->listing_id = common::inputGetCmd('listing_id');
@@ -247,7 +256,7 @@ class Params
 
         if ($this->tableName === null) {
             $this->tableName = $menu_params['establename'] ?? null; //Table name or id not sanitized
-            if ($this->tableName === null or $this->tableName === null)
+            if ($this->tableName === null)
                 $this->tableName = $menu_params['tableid']; //Used in the back-end
         }
 
@@ -273,7 +282,7 @@ class Params
         //Sorting
         if (!$blockExternalVars and !is_null(common::inputGetCmd('sortby')))
             $this->sortBy = strtolower(common::inputGetCmd('sortby'));
-        elseif (isset($menu_params['sortby']) and !is_null($menu_params['sortby']))
+        elseif (isset($menu_params['sortby']))
             $this->sortBy = strtolower($menu_params['sortby']);
 
         $this->forceSortBy = $menu_params['forcesortby'] ?? null;
@@ -410,7 +419,11 @@ class Params
         $this->recordsField = null;
     }
 
-    protected function getForceItemId(array $menu_params): void
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
+    protected function getForceItemId(array $menu_params): ?array
     {
         $forceItemId = $menu_params['forceitemid'] ?? null;
         if (is_null($forceItemId))
@@ -421,14 +434,21 @@ class Params
             if ((is_numeric($forceItemId))) {
                 if ((int)$forceItemId != 0) {
                     $this->ItemId = (int)$forceItemId;
-                    return;
+                    return CTMiscHelper::getMenuParams($this->ItemId);
                 }
             } elseif ($forceItemId != '') {
-                $this->ItemId = (int)CTMiscHelper::FindItemidbyAlias($forceItemId);//Accepts menu Itemid and alias
-                return;
+                $alias = $forceItemId;
+
+                $menu_Row = CTMiscHelper::FindMenuItemRowByAlias($alias);
+                if ($menu_Row === null)
+                    return null;
+
+                $this->ItemId = (int)$menu_Row['id'];
+                return (array)json_decode($menu_Row['params']);
             }
         }
         $this->ItemId = common::inputGetInt('Itemid', 0);
+        return $menu_params;
     }
 
     //Used by Joomla version of the Custom Tables
@@ -465,7 +485,7 @@ class Params
             if ($params === null)
                 return false;
 
-            $this->constructJoomlaParams($params, true, null);
+            $this->constructJoomlaParams($params);
             return true;
         } else {
             return false;

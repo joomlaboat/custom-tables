@@ -13,7 +13,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
-use \CustomTables\Twig_Html_Tags;
+use \CustomTables\Twig_HTML_Tags;
 use \CustomTables\Twig_Url_Tags;
 use \CustomTables\Twig_Record_Tags;
 
@@ -21,7 +21,7 @@ class tagProcessor_Page
 {
     public static function process(CT &$ct, string &$pageLayout): void
     {
-        $ct_html = new Twig_Html_Tags($ct, false);
+        $ct_html = new Twig_HTML_Tags($ct, false);
         $ct_url = new Twig_Url_Tags($ct, false);
         $ct_record = new Twig_Record_Tags($ct);
 
@@ -59,7 +59,7 @@ class tagProcessor_Page
         }
     }
 
-    public static function PathValue(Twig_Html_Tags &$ct_html, string &$pageLayout): void
+    public static function PathValue(Twig_HTML_Tags &$ct_html, string &$pageLayout): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('navigation', $options, $pageLayout, '{}');
@@ -79,7 +79,7 @@ class tagProcessor_Page
         }
     }
 
-    protected static function AddNew(Twig_Html_Tags &$ct_html, string &$pageLayout): void
+    protected static function AddNew(Twig_HTML_Tags &$ct_html, string &$pageLayout): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('add', $options, $pageLayout, '{}');
@@ -101,7 +101,7 @@ class tagProcessor_Page
         }
     }
 
-    protected static function Pagination(Twig_Html_Tags &$ct_html, string &$pageLayout): void
+    protected static function Pagination(Twig_HTML_Tags &$ct_html, string &$pageLayout): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('pagination', $options, $pageLayout, '{}');
@@ -136,7 +136,7 @@ class tagProcessor_Page
         }
     }
 
-    protected static function PageToolBar(Twig_Html_Tags &$ct_html, string &$pageLayout): void
+    protected static function PageToolBar(Twig_HTML_Tags &$ct_html, string &$pageLayout): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('batchtoolbar', $options, $pageLayout, '{}');
@@ -151,7 +151,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function PageToolBarCheckBox(Twig_Html_Tags &$ct_html, string &$pageLayout): void
+    static protected function PageToolBarCheckBox(Twig_HTML_Tags &$ct_html, string &$pageLayout): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('checkbox', $options, $pageLayout, '{}');
@@ -162,7 +162,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function SearchButton(Twig_Html_Tags &$ct_html, string &$pageLayout): void
+    static protected function SearchButton(Twig_HTML_Tags &$ct_html, string &$pageLayout): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('searchbutton', $options, $pageLayout, '{}');
@@ -176,7 +176,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function SearchBOX(Twig_Html_Tags &$ct_html, string &$pageLayout)
+    static protected function SearchBOX(Twig_HTML_Tags &$ct_html, string &$pageLayout)
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('search', $options, $pageLayout, '{}');
@@ -216,7 +216,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function RecordCount(CT &$ct, Twig_Html_Tags &$ct_html, string &$pageLayout): void
+    static protected function RecordCount(CT &$ct, Twig_HTML_Tags &$ct_html, string &$pageLayout): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('recordcount', $options, $pageLayout, '{}');
@@ -234,7 +234,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function PrintButton(Twig_Html_Tags &$ct_html, string &$pageLayout): void
+    static protected function PrintButton(Twig_HTML_Tags &$ct_html, string &$pageLayout): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('print', $options, $pageLayout, '{}');

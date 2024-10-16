@@ -19,7 +19,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use JESPagination;
 use Joomla\CMS\Router\Route;
 
-class Twig_Html_Tags
+class Twig_HTML_Tags
 {
     var CT $ct;
     var bool $isTwig;
@@ -151,29 +151,29 @@ class Twig_Html_Tags
 
         $fileid = common::generateRandomString();
         $fieldid = '9999999';//some unique number. TODO
-        $objectname = 'importcsv';
+        $objectName = 'importcsv';
 
         HTMLHelper::_('behavior.formvalidator');
 
         $urlstr = Route::_('index.php?option=com_customtables&amp;view=fileuploader&amp;tmpl=component'
             . '&amp;tableid=' . $this->ct->Table->tableid
             . '&amp;task=importcsv'
-            . '&amp;' . $objectname . '_fileid=' . $fileid
+            . '&amp;' . $objectName . '_fileid=' . $fileid
             . '&amp;Itemid=' . $this->ct->Params->ItemId
             . (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId)
-            . '&amp;fieldname=' . $objectname);
+            . '&amp;fieldname=' . $objectName);
 
         return '<div>
-                    <div id="ct_fileuploader_' . $objectname . '"></div>
-                    <div id="ct_eventsmessage_' . $objectname . '"></div>
+                    <div id="ct_fileuploader_' . $objectName . '"></div>
+                    <div id="ct_eventsmessage_' . $objectName . '"></div>
                     <form action="" name="ctUploadCSVForm" id="ctUploadCSVForm">
                 	<script>
                         //UploadFileCount=1;
-                    	ct_getUploader(' . $fieldid . ',"' . $urlstr . '",' . $max_file_size . ',"csv","ctUploadCSVForm",true,"ct_fileuploader_' . $objectname . '","ct_eventsmessage_' . $objectname . '","' . $fileid . '","'
-            . $this->ct->Env->field_input_prefix . $objectname . '","ct_uploadedfile_box_' . $objectname . '")
+                    	ct_getUploader(' . $fieldid . ',"' . $urlstr . '",' . $max_file_size . ',"csv","ctUploadCSVForm",true,"ct_fileuploader_' . $objectName . '","ct_eventsmessage_' . $objectName . '","' . $fileid . '","'
+            . $this->ct->Env->field_input_prefix . $objectName . '","ct_uploadedfile_box_' . $objectName . '")
                     </script>
-                    <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectname . '" id="' . $this->ct->Env->field_input_prefix . $objectname . '" value="" />
-                    <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectname . '_filename" id="' . $this->ct->Env->field_input_prefix . $objectname . '_filename" value="" />
+                    <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectName . '" id="' . $this->ct->Env->field_input_prefix . $objectName . '" value="" />
+                    <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectName . '_filename" id="' . $this->ct->Env->field_input_prefix . $objectName . '_filename" value="" />
 			' . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '
                     </form>
                 </div>
@@ -429,6 +429,8 @@ class Twig_Html_Tags
      */
     function search($list_of_fields_string_or_array = null, $class = '', $reload = false, $improved = ''): string
     {
+        $fld = null;
+
         if (is_string($reload))
             $reload = $reload == 'reload';
 
@@ -530,13 +532,15 @@ class Twig_Html_Tags
                 );
             }
 
-            if ($first_field_type == '') {
-                $first_field_type = $fld['type'];//TODO: Verify this part, something not right here
-                $first_fld = $fld;
-            } else {
-                // If field types are mixed then use string search
-                if ($first_field_type != $fld['type'])
-                    $first_field_type = 'string';
+            if ($fld !== null) {
+                if ($first_field_type == '') {
+                    $first_field_type = $fld['type'];//TODO: Verify this part, something not right here
+                    $first_fld = $fld;
+                } else {
+                    // If field types are mixed then use string search
+                    if ($first_field_type != $fld['type'])
+                        $first_field_type = 'string';
+                }
             }
         }
         $first_fld['type'] = $first_field_type;
@@ -1058,13 +1062,11 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin)
-            return '';
-
         $modes = func_get_args();
 
         $edit_userGroup = (int)$this->ct->Params->editUserGroups;
         $publish_userGroup = (int)$this->ct->Params->publishUserGroups;
+
         if ($publish_userGroup == 0)
             $publish_userGroup = $edit_userGroup;
 

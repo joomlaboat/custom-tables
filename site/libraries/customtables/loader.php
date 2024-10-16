@@ -142,7 +142,7 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
     require_once($pathDataTypes . 'twig.php');
     require_once($pathDataTypes . 'general_tags.php');
     require_once($pathDataTypes . 'record_tags.php');
-    require_once($pathDataTypes . 'html_tags.php');
+    require_once($pathDataTypes . 'Twig_HTML_Tags.php');
     require_once($pathDataTypes . 'Twig_User_Tags.php');
     require_once($pathDataTypes . 'Twig_Document_Tags.php');
 

@@ -63,7 +63,7 @@ class Twig_Record_Tags
 
         if ($menu_item_alias != "") {
             $menu_item = CTMiscHelper::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
-            if ($menu_item != 0) {
+            if ($menu_item !== null) {
                 $menu_item_id = (int)$menu_item['id'];
                 $link = $menu_item['link'];
 

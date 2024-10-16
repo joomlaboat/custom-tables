@@ -124,7 +124,7 @@ class Catalog
         if ($layoutName !== null) {
             $pageLayout = $Layouts->getLayout($layoutName);
             if (isset($Layouts->layoutId)) {
-                $pageLayoutNameString = (($layoutName ?? '') == '' ? 'InlinePageLayout' : $layoutName);
+                $pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
                 $pageLayoutLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
             } else {
                 $this->ct->errors[] = 'Layout "' . $layoutName . '" not found.';
@@ -222,10 +222,12 @@ class Catalog
             die($jsonOutput->render($pageLayout));
         }
 
+        $twig = null;
+
         try {
             $twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
             if (count($this->ct->errors) > 0)
-                return 'There is an error in rendering the catalog page.';
+                return 'There is an error in rendering the catalog page:' . implode(', ', $this->ct->errors);
 
             $pageLayout = $twig->process();
         } catch (Exception $e) {
@@ -234,7 +236,7 @@ class Catalog
 
         if ($twig->errorMessage !== null) {
             $this->ct->errors[] = $twig->errorMessage;
-            return 'There is an error in rendering the catalog page.';
+            return 'There is an error in rendering the catalog page :' . implode(', ', $this->ct->errors);
         }
 
         if ($this->ct->Params->allowContentPlugins)

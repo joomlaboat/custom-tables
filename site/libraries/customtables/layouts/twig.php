@@ -19,6 +19,7 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;
+use CustomTables\Value_imagegallery;
 
 class TwigProcessor
 {
@@ -119,7 +120,7 @@ class TwigProcessor
         $this->twig->addGlobal('fields', new Twig_Fields_Tags($this->ct));
         $this->twig->addGlobal('user', new Twig_User_Tags($this->ct));
         $this->twig->addGlobal('url', new Twig_Url_Tags($this->ct));
-        $this->twig->addGlobal('html', new Twig_Html_Tags($this->ct));
+        $this->twig->addGlobal('html', new Twig_HTML_Tags($this->ct));
         $this->twig->addGlobal('record', new Twig_Record_Tags($this->ct));
 
         if (defined('_JEXEC')) {
@@ -407,6 +408,10 @@ class fieldObject
             }
             $vlu = implode(',', $b);
         } elseif ($this->field->type == 'imagegallery') {
+
+            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
+                . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'imagegallery.php');
+
             $id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
             $rows = Value_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $id);
             $imageSRCList = Value_imagegallery::getImageGallerySRC($rows, $options[0] ?? '', $this->field->fieldname, $this->field->params, $this->ct->Table->tableid);

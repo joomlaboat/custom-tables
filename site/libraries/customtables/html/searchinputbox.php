@@ -31,10 +31,10 @@ class SearchInputBox
      * @throws Exception
      * @since 3.2.1
      */
-    function renderFieldBox(string  $prefix, string $objName, array $fieldrow, string $cssclass, $index, string $where, string $whereList,
+    function renderFieldBox(string  $prefix, string $objName, array $fieldRow, string $cssClass, $index, string $where, string $whereList,
                             ?string $onchange, ?string $field_title = null): string
     {
-        $this->field = new Field($this->ct, $fieldrow);
+        $this->field = new Field($this->ct, $fieldRow);
         $place_holder = $this->field->title;
 
         if ($field_title === null)
@@ -45,8 +45,8 @@ class SearchInputBox
         if (!empty($onchange))
             BaseInputBox::addOnChange($attributes, $onchange);
 
-        if (!empty($cssclass))
-            BaseInputBox::addCSSClass($attributes, $cssclass);
+        if (!empty($cssClass))
+            BaseInputBox::addCSSClass($attributes, $cssClass);
 
         $attributes['data-type'] = $this->field->type;
 
@@ -63,8 +63,8 @@ class SearchInputBox
         $value = common::inputGetCmd($prefix . $objName);
 
         if ($value == '') {
-            if (isset($fieldrow['fields']) and count($fieldrow['fields']) > 0)
-                $where_name = implode(';', $fieldrow['fields']);
+            if (isset($fieldRow['fields']) and count($fieldRow['fields']) > 0)
+                $where_name = implode(';', $fieldRow['fields']);
             else
                 $where_name = $this->field->fieldname;
 
@@ -80,13 +80,15 @@ class SearchInputBox
             $default_class = 'form-control';
 
         //Try to instantiate a class dynamically
-        $aliasMap = ['sqljoin' => 'tablejoin',
+        $aliasMap = [
+            '_id' => 'string',
+            '_published' => 'string',
+            'sqljoin' => 'tablejoin',
             'records' => 'tablejoinlist',
             'userid' => 'user',
             'usergroups' => 'usergroup',
             'int' => 'string',
             'float' => 'string',
-            '_id' => 'string',
             //'phponchange'=>'string',
             //'phponadd'=>'string',
             'multilangstring' => 'string',
@@ -99,11 +101,13 @@ class SearchInputBox
 
         if (isset($this->field->fieldrow['fields']) and is_array($this->field->fieldrow['fields']) and count($this->field->fieldrow['fields']) > 1)
             $fieldTypeShort = 'string';
-        else
-            $fieldTypeShort = str_replace('_', '', $this->field->type);
+        else {
 
-        if (key_exists($fieldTypeShort, $aliasMap))
-            $fieldTypeShort = $aliasMap[$fieldTypeShort];
+            if (key_exists($this->field->type, $aliasMap))
+                $fieldTypeShort = $aliasMap[$this->field->type];
+            else
+                $fieldTypeShort = $this->field->type;
+        }
 
         $additionalFile = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
             . DIRECTORY_SEPARATOR . 'searchbox' . DIRECTORY_SEPARATOR . $fieldTypeShort . '.php';
@@ -115,10 +119,8 @@ class SearchInputBox
             return $searchBoxRenderer->render($value);
         }
 
-        return 'SearchBox: Type "' . $this->field->type . ' is unknown or unsupported.';
+        return 'SearchBox: Type "' . $this->field->type . '" is unknown or unsupported.';
     }
-
-
 }
 
 abstract class BaseSearch
@@ -158,21 +160,4 @@ abstract class BaseSearch
         }
         return $result;
     }
-    /*
-        protected function getOnChangeAttributeString(): void
-        {
-            if (isset($this->attributes['onchange']) or $this->attributes['onchange'] !== null)
-                rurn;
-
-            /*
-            $this->attributes['onchange'] = $this->moduleName . '_onChange('
-                . $this->index . ','
-                . 'this.value,'
-                . '\'' . $this->field->fieldname . '\','
-                . '\'' . urlencode($this->where) . '\','
-                . '\'' . urlencode($this->whereList) . '\','
-                . '\'' . $this->ct->Languages->Postfix . '\''
-                . ')';
-
-    }*/
 }

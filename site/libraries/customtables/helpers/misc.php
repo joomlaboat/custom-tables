@@ -606,20 +606,20 @@ class CTMiscHelper
      * @throws Exception
      * @since 3.2.2
      */
-    public static function FindMenuItemRowByAlias($alias)
+    public static function FindMenuItemRowByAlias($alias): ?int
     {
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('published', 1);
         $whereClause->addCondition('alias', $alias);
 
         $rows = database::loadAssocList('#__menu', ['*'], $whereClause);
-        if (!$rows) return 0;
-        if (count($rows) < 1) return 0;
+        if (!$rows) return null;
+        if (count($rows) < 1) return null;
 
         return $rows[0];
     }
 
-    public static function applyContentPlugins(string &$htmlresult): string
+    public static function applyContentPlugins(string &$htmlResult): string
     {
         $version_object = new Version;
         $version = (int)$version_object->getShortVersion();
@@ -633,10 +633,10 @@ class CTMiscHelper
             $content_params = $mainframe->getParams('com_content');
 
             if ($version >= 4) {
-                $htmlresult = \Joomla\CMS\HTML\Helpers\Content::prepare($htmlresult, $content_params);
+                $htmlResult = \Joomla\CMS\HTML\Helpers\Content::prepare($htmlResult, $content_params);
             } else {
                 $o = new stdClass();
-                $o->text = $htmlresult;
+                $o->text = $htmlResult;
                 $o->created_by_alias = 0;
 
                 JPluginHelper::importPlugin('content');
@@ -644,14 +644,14 @@ class CTMiscHelper
                 $dispatcher = \JDispatcher::getInstance();
                 $dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
 
-                $htmlresult = $o->text;
+                $htmlResult = $o->text;
             }
 
             if (defined('_JEXEC'))
                 $myDoc->setTitle(common::translate($pageTitle)); //because content plugins may overwrite the title
 
         }
-        return $htmlresult;
+        return $htmlResult;
     }
 
     public static function suggest_TempFileName(&$webFileLink, ?string $fileExtension = null): ?string
