@@ -1502,12 +1502,13 @@
             <params>
                 <param name="limit" label="Limit Output" type="list"
                        description="Limits returning output text, first number of characters or first number of words.">
-                    <option value="" label="Returns as it is"/>
-                    <option value="chars"
+                    <option value="" label="Returns as it is" wordpress="true"/>
+                    <option value="chars" wordpress="true"
                             label="Returns first number of characters from text that was trimmed, sanitized and HTML tags stripped."/>
-                    <option value="words"
+                    <option value="words" wordpress="true"
                             label="Returns first number of words from text that was trimmed, sanitized and HTML tags stripped."/>
-                    <option value="firstimage" label="Returns the link to a first image found in the text."/>
+                    <option value="firstimage" label="Returns the link to a first image found in the text."
+                            wordpress="true"/>
                 </param>
                 <param name="length" label="Length" description="Number of characters or words." hidden="false"
                        default="" type="number" min="1" max="1024" example="30"/>

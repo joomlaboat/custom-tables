@@ -859,8 +859,7 @@ function do_render_current_TagSets() {
         let tagSet = tagsets[i];
         let a = tagSet["@attributes"];
 
-        if (typeof (a.deprecated) == "undefined" || a.deprecated === "0") {
-
+        if (typeof (a.deprecated) == "undefined" || parseInt(a.deprecated) === 0) {
             tabs.push({
                 'id': 'layouteditor_tags' + index + '_' + i + '', 'title': a.label,
                 'content': '<p>' + a.description + '</p>' + renderTags(index, tagSet)
