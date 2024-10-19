@@ -159,14 +159,15 @@ class record
             $this->row_new = $this->ct->Table->loadRecord($this->listing_id);
             if ($this->row_new !== null) {
 
-                if (defined('_JEXEC'))
+                if (defined('_JEXEC')) {
                     common::inputSet("listing_id", $this->row_new[$this->ct->Table->realidfieldname]);
 
-                if ($this->ct->Env->advancedTagProcessor) {
-                    if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
-                        CustomPHP::doPHPonChange($this->ct, $this->row_new);
-                    if ($phpOnAddFound and $isCopy)
-                        CustomPHP::doPHPonAdd($this->ct, $this->row_new);
+                    if ($this->ct->Env->advancedTagProcessor) {
+                        if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
+                            CustomPHP::doPHPonChange($this->ct, $this->row_new);
+                        if ($phpOnAddFound and $isCopy)
+                            CustomPHP::doPHPonAdd($this->ct, $this->row_new);
+                    }
                 }
             }
         }

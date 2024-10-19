@@ -699,7 +699,9 @@ function getLayout_Page() {
     result += '</table>\r\n';
 
     result += '</div>\r\n\r\n';
-    result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+
+    if (window.Joomla instanceof Object)
+        result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
 
     return result;
 }
@@ -823,7 +825,10 @@ function getLayout_SimpleCatalog() {
 
     result += '\r\n';
     result += '</div>\r\n';
-    result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+
+    if (window.Joomla instanceof Object)
+        result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+    
     return result;
 }
 

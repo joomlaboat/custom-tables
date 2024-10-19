@@ -19,7 +19,6 @@ use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;
-use CustomTables\Value_imagegallery;
 
 class TwigProcessor
 {
@@ -102,7 +101,7 @@ class TwigProcessor
             ]);
         } else {
             $this->recordBlockFound = false;
-            $loader = new \Twig\Loader\ArrayLoader([
+            $loader = new ArrayLoader([
                 $this->pageLayoutName => $layoutContent,
             ]);
         }
@@ -338,9 +337,18 @@ class fieldObject
         $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, [], $this->parseParams);
 
         if ($this->DoHTMLSpecialChars)
-            $vlu = htmlentities($vlu, ENT_QUOTES + ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+            $vlu = $this->escapeJsonCharacters($vlu);
 
         return strval($vlu);
+    }
+
+    function escapeJsonCharacters($value)
+    {
+        // Replace characters that can break JSON format
+        $search = ['\\', '"', "\n", "\r", "\t", "\b", "\f"];
+        $replace = ['\\\\', '\"', '\n', '\r', '\t', '\b', '\f'];
+
+        return str_replace($search, $replace, $value);
     }
 
     public function __call($name, $arguments)
@@ -434,7 +442,7 @@ class fieldObject
             $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, []);
 
             if ($this->DoHTMLSpecialChars)
-                $vlu = htmlentities($vlu, ENT_QUOTES + ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+                $vlu = $this->escapeJsonCharacters($vlu);
 
             return $vlu;
         } else {
@@ -442,7 +450,7 @@ class fieldObject
         }
 
         if ($this->DoHTMLSpecialChars)
-            $vlu = htmlentities($vlu, ENT_QUOTES + ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+            $vlu = $this->escapeJsonCharacters($vlu);
 
         return $vlu;
     }

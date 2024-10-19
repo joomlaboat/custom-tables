@@ -443,8 +443,8 @@ class Layouts
 
         $output = ['style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
 
-        if ($this->layoutType == 1 or $this->layoutType == 5) {
-
+        if (in_array($this->layoutType, [1, 5, 8, 9, 10])) {
+            //Simple Catalog or Catalog Page
             if ($task == 'delete') {
 
                 $listing_id = common::inputGetCmd('listing_id', 0);
@@ -460,7 +460,7 @@ class Layouts
             $output['html'] = $this->renderCatalog();
 
         } elseif ($this->layoutType == 2) {
-
+            //Edit Form
             if ($task == 'saveandcontinue' or $task == 'save') {
                 $record = new record($this->ct);
                 $record->editForm->layoutContent = $this->layoutCode;
@@ -515,7 +515,8 @@ class Layouts
 
             $output['fieldtypes'] = $this->ct->editFieldTypes;
 
-        } elseif ($this->layoutType == 4) {
+        } elseif ($this->layoutType == 4 or $this->layoutType == 6) {
+            //Details or Catalog Item
             $output['html'] = $this->renderDetails();
         } else
             $output['html'] = 'CustomTable: Unknown Layout Type';
@@ -615,8 +616,10 @@ class Layouts
         $result .= PHP_EOL;
         $result .= '</div>' . PHP_EOL;
 
-        if ($addToolbar)
-            $result .= '<br/><div style="text-align:center;">{{ html.pagination }}</div>' . PHP_EOL;
+        if (defined('_JEXEC')) {
+            if ($addToolbar)
+                $result .= '<br/><div style="text-align:center;">{{ html.pagination }}</div>' . PHP_EOL;
+        }
 
         return $result;
     }

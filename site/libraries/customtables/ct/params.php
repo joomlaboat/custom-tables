@@ -455,7 +455,132 @@ class Params
 
     function setWPParams(array $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
+        $this->blockExternalVars = $blockExternalVars;
+        $this->ModuleId = $ModuleId;
 
+        if (!$blockExternalVars and common::inputGetCmd('listing_id') !== null)
+            $this->listing_id = common::inputGetCmd('listing_id');
+        else
+            $this->listing_id = $menu_params['listingid'] ?? null;
+
+        if ($this->listing_id == '' or $this->listing_id == '0')
+            $this->listing_id = null;
+
+        $this->tableName = null;
+
+        if (common::inputGetInt("ctmodalform", 0) == 1)
+            $this->tableName = common::inputGetInt("tableid");//Used in Save Modal form content.
+
+        if ($this->tableName === null) {
+            $this->tableName = $menu_params['establename'] ?? null; //Table name or id not sanitized
+            if ($this->tableName === null)
+                $this->tableName = $menu_params['tableid']; //Used in the back-end
+        }
+
+        //Filter
+        $this->userIdField = $menu_params['useridfield'] ?? null;
+
+        if (!$blockExternalVars and common::inputGetString('filter')) {
+
+            $filter = common::inputGetString('filter', '');
+            if (is_array($filter)) {
+                $this->filter = $filter['search'];
+            } else
+                $this->filter = $filter;
+        } else {
+            $this->filter = $menu_params['filter'] ?? null;
+        }
+
+        $this->showPublished = (int)($menu_params['showpublished'] ?? 1);
+
+        //Group BY
+        $this->groupBy = $menu_params['groupby'] ?? null;
+
+        //Sorting
+        if (!$blockExternalVars and !is_null(common::inputGetCmd('sortby')))
+            $this->sortBy = strtolower(common::inputGetCmd('sortby'));
+        elseif (isset($menu_params['sortby']))
+            $this->sortBy = strtolower($menu_params['sortby']);
+
+        $this->forceSortBy = $menu_params['forcesortby'] ?? null;
+
+        //Limit
+        $this->limit = common::inputGetInt('limit', (int)($menu_params['limit'] ?? 20));
+
+        //Layouts
+        $this->pageLayout = $menu_params['escataloglayout'] ?? null;
+        if (is_null($this->pageLayout))
+            $this->pageLayout = $menu_params['ct_pagelayout'] ?? null;
+
+        $this->itemLayout = $menu_params['esitemlayout'] ?? null;
+        if (is_null($this->itemLayout))
+            $this->itemLayout = $menu_params['ct_itemlayout'] ?? null;
+
+        $this->detailsLayout = $menu_params['esdetailslayout'] ?? null;
+        $this->editLayout = $menu_params['eseditlayout'] ?? null;
+        $this->onRecordAddSendEmailLayout = $menu_params['onrecordaddsendemaillayout'] ?? null;
+        $this->allowContentPlugins = false;
+
+        //Shopping Cart
+
+        if (isset($menu_params['showcartitemsonly']) and $menu_params['showcartitemsonly'] != '')
+            $this->showCartItemsOnly = (bool)(int)$menu_params['showcartitemsonly'];
+        else
+            $this->showCartItemsOnly = false;
+
+        $this->showCartItemsPrefix = 'customtables_';
+        if (isset($menu_params['showcartitemsprefix']) and $menu_params['showcartitemsprefix'] != '')
+            $this->showCartItemsPrefix = $menu_params['showcartitemsprefix'];
+
+        $this->cartReturnTo = $menu_params['cart_returnto'] ?? null;
+        $this->cartMsgItemAdded = $menu_params['cart_msgitemadded'] ?? null;
+        $this->cartMsgItemDeleted = $menu_params['cart_msgitemdeleted'] ?? null;
+        $this->cartMsgItemUpdated = $menu_params['cart_msgitemupdated'] ?? null;
+
+        //Permissions
+        $this->editUserGroups = $menu_params['editusergroups'] ?? null;
+        $this->addUserGroups = $menu_params['addusergroups'] ?? 0;
+        if ($this->addUserGroups == 0)
+            $this->addUserGroups = $this->editUserGroups;
+
+        $this->publishUserGroups = $menu_params['publishusergroups'] ?? 0;
+        if ($this->publishUserGroups == 0)
+            $this->publishUserGroups = $this->editUserGroups;
+
+        $this->deleteUserGroups = $menu_params['deleteusergroups'] ?? 0;
+        if ($this->deleteUserGroups == 0)
+            $this->deleteUserGroups = $this->editUserGroups;
+
+        $this->guestCanAddNew = $menu_params['guestcanaddnew'] ?? null;
+        $this->publishStatus = $menu_params['publishstatus'] ?? null;
+
+        if ($this->publishStatus === null) {
+            if (!$blockExternalVars)
+                $this->publishStatus = common::inputGetInt('published');
+            else
+                $this->publishStatus = 1;
+        } else
+            $this->publishStatus = (int)$this->publishStatus;
+
+        //Emails
+        $this->onRecordAddSendEmail = (int)($menu_params['onrecordaddsendemail'] ?? null);
+        $this->sendEmailCondition = $menu_params['sendemailcondition'] ?? null;
+        $this->onRecordAddSendEmailTo = $menu_params['onrecordaddsendemailto'] ?? null;
+        $this->onRecordSaveSendEmailTo = $menu_params['onrecordsavesendemailto'] ?? null;
+        $this->emailSentStatusField = $menu_params['emailsentstatusfield'] ?? null;
+
+        //Form Saved
+        if (!$blockExternalVars and common::inputGetCmd('returnto'))
+            $this->returnTo = common::getReturnToURL();
+        else {
+            $this->returnTo = $menu_params['returnto'] ?? null;
+        }
+        $this->requiredLabel = $menu_params['requiredlabel'] ?? null;
+        $this->msgItemIsSaved = $menu_params['msgitemissaved'] ?? null;
+
+        $this->recordsTable = $menu_params['recordstable'] ?? null;
+        $this->recordsUserIdField = $menu_params['recordsuseridfield'] ?? null;
+        $this->recordsField = $menu_params['recordsfield'] ?? null;
     }
 
     protected function constructWPParams(): void
