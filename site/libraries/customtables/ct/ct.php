@@ -26,7 +26,7 @@ class CT
     var ?Params $Params;
     var ?Table $Table;
     var ?array $Records;
-    var string $GroupBy;
+    var ?string $GroupBy; // real field name
     var ?Ordering $Ordering;
     var ?Filtering $Filter;
     var ?string $alias_fieldname;
@@ -62,7 +62,7 @@ class CT
         $this->Env = new Environment($enablePlugin);
         $this->Params = new Params($menuParams, $blockExternalVars, $ModuleId);
 
-        $this->GroupBy = '';
+        $this->GroupBy = null;
         $this->isEditForm = false;
         $this->LayoutVariables = [];
         $this->editFields = [];
@@ -198,18 +198,14 @@ class CT
 
             if ($limit > 0) {
                 $this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-                    (count($ordering) > 0 ? implode(',', $ordering) : null), null, $limit);
+                    (count($ordering) > 0 ? implode(',', $ordering) : null), null, $limit, null, $this->GroupBy);
                 $this->Limit = $limit;
             } else {
                 $the_limit = $this->Limit;
 
                 if ($all) {
-                    if ($the_limit > 0)
-                        $this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-                            (count($ordering) > 0 ? implode(',', $ordering) : null), null, 20000, 0);
-                    else
-                        $this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-                            (count($ordering) > 0 ? implode(',', $ordering) : null));
+                    $this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
+                        (count($ordering) > 0 ? implode(',', $ordering) : null), null, 20000, null, $this->GroupBy);
                 } else {
                     if ($the_limit > 20000)
                         $the_limit = 20000;
@@ -222,7 +218,7 @@ class CT
 
                     try {
                         $this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-                            (count($ordering) > 0 ? implode(',', $ordering) : null), null, $the_limit, $this->LimitStart);
+                            (count($ordering) > 0 ? implode(',', $ordering) : null), null, $the_limit, $this->LimitStart, $this->GroupBy);
                     } catch (Exception $e) {
                         $this->errors[] = $e->getMessage();
                         return false;
@@ -325,7 +321,7 @@ class CT
         if ($this->Params->groupBy != '')
             $this->GroupBy = Fields::getRealFieldName($this->Params->groupBy, $this->Table->fields);
         else
-            $this->GroupBy = '';
+            $this->GroupBy = null;
 
         if ($this->Params->blockExternalVars) {
             if ((int)$this->Params->limit > 0) {
