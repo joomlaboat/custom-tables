@@ -14,7 +14,7 @@ defined('_JEXEC') or die();
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use \CustomTables\Twig_HTML_Tags;
-use \CustomTables\Twig_Url_Tags;
+use \CustomTables\Twig_URL_Tags;
 use \CustomTables\Twig_Record_Tags;
 
 class tagProcessor_Page
@@ -22,7 +22,7 @@ class tagProcessor_Page
     public static function process(CT &$ct, string &$pageLayout): void
     {
         $ct_html = new Twig_HTML_Tags($ct, false);
-        $ct_url = new Twig_Url_Tags($ct, false);
+        $ct_url = new Twig_URL_Tags($ct, false);
         $ct_record = new Twig_Record_Tags($ct);
 
         tagProcessor_Page::FormatLink($ct_url, $pageLayout);//{format:xls}  the link to the same page but in xls format
@@ -39,7 +39,7 @@ class tagProcessor_Page
         tagProcessor_Page::processRecordlist($pageLayout, $ct_record); //Twig version added - original replaced
     }
 
-    public static function FormatLink(Twig_Url_Tags &$ct_url, string &$pageLayout): void
+    public static function FormatLink(Twig_URL_Tags &$ct_url, string &$pageLayout): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('format', $options, $pageLayout, '{}');

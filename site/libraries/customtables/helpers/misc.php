@@ -981,4 +981,70 @@ class CTMiscHelper
 
         return ['value' => $values[0]->value];
     }
+
+    public static function ExplodeSmartParamsArray(string $param): array
+    {
+        $items = self::ExplodeSmartParams($param);
+
+        $new_items = array();
+
+        foreach ($items as $item) {
+            $logic_operator = $item[0];
+            $comparison_operator_str = $item[1];
+            $comparison_operator = '';
+
+            if ($logic_operator == 'or' or $logic_operator == 'and') {
+                if (!(!str_contains($comparison_operator_str, '<=')))
+                    $comparison_operator = '<=';
+                elseif (!(!str_contains($comparison_operator_str, '>=')))
+                    $comparison_operator = '>=';
+                elseif (str_contains($comparison_operator_str, '!=='))
+                    $comparison_operator = '!==';
+                elseif (!(!str_contains($comparison_operator_str, '!=')))
+                    $comparison_operator = '!=';
+                elseif (str_contains($comparison_operator_str, '=='))
+                    $comparison_operator = '==';
+                elseif (str_contains($comparison_operator_str, '='))
+                    $comparison_operator = '=';
+                elseif (!(!str_contains($comparison_operator_str, '<')))
+                    $comparison_operator = '<';
+                elseif (!(!str_contains($comparison_operator_str, '>')))
+                    $comparison_operator = '>';
+
+                if ($comparison_operator != '') {
+                    $whr = CTMiscHelper::csv_explode($comparison_operator, $comparison_operator_str, '"', false);
+
+                    if (count($whr) == 2) {
+                        $fieldNamesString = trim(preg_replace("/[^a-zA-Z\d,:\-_;]/", "", trim($whr[0])));
+                        $new_items[] = ['logic' => $logic_operator, 'comparison' => $comparison_operator, 'field' => $fieldNamesString, 'value' => trim($whr[1])];
+                    }
+                } else {
+                    //this to process boolean values.
+                    //example "a and b" is equal to "a!=0 and b!=0"
+                    $fieldNamesString = trim(preg_replace("/[^a-zA-Z\d,:\-_;]/", "", trim($comparison_operator_str)));
+                    $new_items[] = ['logic' => $logic_operator, 'comparison' => '!=', 'field' => $fieldNamesString, 'value' => 0, 'equation' => $comparison_operator_str];
+                }
+            }
+        }
+
+        return $new_items;
+    }
+
+    private static function ExplodeSmartParams(string $param): array
+    {
+        $items = array();
+
+        $a = CTMiscHelper::csv_explode(' and ', $param, '"', true);
+        foreach ($a as $b) {
+            $c = CTMiscHelper::csv_explode(' or ', $b, '"', true);
+
+            if (count($c) == 1)
+                $items[] = array('and', $b);
+            else {
+                foreach ($c as $d)
+                    $items[] = array('or', $d);
+            }
+        }
+        return $items;
+    }
 }

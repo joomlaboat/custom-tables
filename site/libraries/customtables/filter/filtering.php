@@ -114,108 +114,75 @@ class Filtering
             return;
 
         $param = $this->sanitizeAndParseFilter($param, true);
-        $items = common::ExplodeSmartParams($param);
-        $logic_operator = '';
+        $items = CTMiscHelper::ExplodeSmartParamsArray($param);
 
         foreach ($items as $item) {
-            $logic_operator = $item[0];
-            $comparison_operator_str = $item[1];
-            $comparison_operator = '';
+
             $whereClauseTemp = new MySQLWhereClause();
 
-            if ($logic_operator == 'or' or $logic_operator == 'and') {
-                if (!(!str_contains($comparison_operator_str, '<=')))
-                    $comparison_operator = '<=';
-                elseif (!(!str_contains($comparison_operator_str, '>=')))
-                    $comparison_operator = '>=';
-                elseif (str_contains($comparison_operator_str, '!=='))
-                    $comparison_operator = '!==';
-                elseif (!(!str_contains($comparison_operator_str, '!=')))
-                    $comparison_operator = '!=';
-                elseif (str_contains($comparison_operator_str, '=='))
-                    $comparison_operator = '==';
-                elseif (str_contains($comparison_operator_str, '='))
-                    $comparison_operator = '=';
-                elseif (!(!str_contains($comparison_operator_str, '<')))
-                    $comparison_operator = '<';
-                elseif (!(!str_contains($comparison_operator_str, '>')))
-                    $comparison_operator = '>';
+            $fieldNames = explode(';', $item['field']);
+            $value = $item['value'];
 
-                if ($comparison_operator != '') {
-                    $whr = CTMiscHelper::csv_explode($comparison_operator, $comparison_operator_str, '"', false);
+            if ($this->ct->Env->legacySupport) {
+                require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
+                $LayoutProc = new LayoutProcessor($this->ct);
+                $LayoutProc->layout = $value;
+                $value = $LayoutProc->fillLayout();
+            }
 
-                    if (count($whr) == 2) {
-                        $fieldNamesString = trim(preg_replace("/[^a-zA-Z\d,:\-_;]/", "", trim($whr[0])));
+            $twig = new TwigProcessor($this->ct, $value);
+            $value = $twig->process();
 
-                        $fieldNames = explode(';', $fieldNamesString);
-                        $value = trim($whr[1]);
+            if ($twig->errorMessage !== null) {
+                $this->ct->errors[] = $twig->errorMessage;
+                return;
+            }
 
-                        if ($this->ct->Env->legacySupport) {
-                            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
-                            $LayoutProc = new LayoutProcessor($this->ct);
-                            $LayoutProc->layout = $value;
-                            $value = $LayoutProc->fillLayout();
-                        }
+            foreach ($fieldNames as $fieldname_) {
+                $fieldname_parts = explode(':', $fieldname_);
+                $fieldname = $fieldname_parts[0];
+                $field_extra_param = '';
+                if (isset($fieldname_parts[1]))
+                    $field_extra_param = $fieldname_parts[1];
 
-                        $twig = new TwigProcessor($this->ct, $value);
-                        $value = $twig->process();
+                if ($fieldname == '_id') {
+                    $fieldRow = array(
+                        'id' => 0,
+                        'fieldname' => '_id',
+                        'type' => '_id',
+                        'typeparams' => '',
+                        'realfieldname' => $this->ct->Table->realidfieldname,
+                    );
+                } elseif ($fieldname == '_published') {
+                    $fieldRow = array(
+                        'id' => 0,
+                        'fieldname' => '_published',
+                        'type' => '_published',
+                        'typeparams' => '',
+                        'realfieldname' => 'listing_published'
+                    );
+                } else {
+                    //Check if it's a range filter
+                    $fieldNameParts = explode('_r_', $fieldname);
+                    $fieldRow = Fields::FieldRowByName($fieldNameParts[0], $this->ct->Table->fields);
+                }
 
-                        if ($twig->errorMessage !== null) {
-                            $this->ct->errors[] = $twig->errorMessage;
-                            return;
-                        }
+                if (!is_null($fieldRow) and array_key_exists('type', $fieldRow)) {
 
-                        foreach ($fieldNames as $fieldname_) {
-                            $fieldname_parts = explode(':', $fieldname_);
-                            $fieldname = $fieldname_parts[0];
-                            $field_extra_param = '';
-                            if (isset($fieldname_parts[1]))
-                                $field_extra_param = $fieldname_parts[1];
+                    $w = $this->processSingleFieldWhereSyntax($fieldRow, $item['comparison'], $fieldname, $value, $field_extra_param, count($fieldNames) > 1);
 
-                            if ($fieldname == '_id') {
-                                $fieldrow = array(
-                                    'id' => 0,
-                                    'fieldname' => '_id',
-                                    'type' => '_id',
-                                    'typeparams' => '',
-                                    'realfieldname' => $this->ct->Table->realidfieldname,
-                                );
-                            } elseif ($fieldname == '_published') {
-                                $fieldrow = array(
-                                    'id' => 0,
-                                    'fieldname' => '_published',
-                                    'type' => '_published',
-                                    'typeparams' => '',
-                                    'realfieldname' => 'listing_published'
-                                );
-                            } else {
-                                //Check if it's a range filter
-                                $fieldNameParts = explode('_r_', $fieldname);
-                                $fieldrow = Fields::FieldRowByName($fieldNameParts[0], $this->ct->Table->fields);
-                            }
-
-                            if (!is_null($fieldrow) and array_key_exists('type', $fieldrow)) {
-
-                                $w = $this->processSingleFieldWhereSyntax($fieldrow, $comparison_operator, $fieldname, $value, $field_extra_param, count($fieldNames) > 1);
-
-                                if ($w->hasConditions())
-                                    $whereClauseTemp->addNestedOrCondition($w);
-                            }
-                        }
-                    }
+                    if ($w->hasConditions())
+                        $whereClauseTemp->addNestedOrCondition($w);
                 }
             }
 
             if ($whereClauseTemp->hasConditions()) {
-                if ($logic_operator == 'or')
-                    $this->whereClause->addNestedOrCondition($whereClauseTemp);//'(' . implode(' ' . $logic_operator . ' ', $wheres) . ')';
+                if ($item['login'] == 'or')
+                    $this->whereClause->addNestedOrCondition($whereClauseTemp);
                 else
-                    $this->whereClause->addNestedCondition($whereClauseTemp);//'(' . implode(' ' . $logic_operator . ' ', $wheres) . ')';
+                    $this->whereClause->addNestedCondition($whereClauseTemp);
             }
         }
-
-        if ($logic_operator == '')
-            $this->ct->errors[] = sprintf("Search parameter '%s' is incorrect", $param);
     }
 
     /**

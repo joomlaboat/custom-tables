@@ -256,27 +256,6 @@ class common
         return Factory::getApplication()->input->server->get($parameter, $default, $filter);
     }
 
-    public static function ExplodeSmartParams(string $param): array
-    {
-        $items = array();
-
-        if ($param === null)
-            return $items;
-
-        $a = CTMiscHelper::csv_explode(' and ', $param, '"', true);
-        foreach ($a as $b) {
-            $c = CTMiscHelper::csv_explode(' or ', $b, '"', true);
-
-            if (count($c) == 1)
-                $items[] = array('and', $b);
-            else {
-                foreach ($c as $d)
-                    $items[] = array('or', $d);
-            }
-        }
-        return $items;
-    }
-
     public static function folderList(string $directory): ?array
     {
         $folders = [];

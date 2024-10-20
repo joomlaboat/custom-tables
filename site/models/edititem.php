@@ -202,34 +202,31 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
     {
         if ($userIdField != '') {
             $userIdFields = array();
-            $statement_items = common::ExplodeSmartParams($userIdField); //"and" and "or" as separators
+            $statement_items = CTMiscHelper::ExplodeSmartParamsArray($userIdField); //"and" and "or" as separators
 
             foreach ($statement_items as $item) {
-                if ($item[0] == 'or' or $item[0] == 'and') {
-                    $field = $item[1];
-                    if (!str_contains($field, '.')) {
-                        //Current table field name
-                        //find selected field
-                        foreach ($this->ct->Table->fields as $fieldrow) {
-                            if ($fieldrow['fieldname'] == $field and ($fieldrow['type'] == 'userid' or $fieldrow['type'] == 'user')) {
-                                $userIdFields[] = [$item[0], $item[1]];
+                if (!str_contains($item['equation'], '.')) {
+                    //Current table field name
+                    //find selected field
+                    foreach ($this->ct->Table->fields as $fieldRow) {
+                        if ($fieldRow['fieldname'] == $item['equation'] and ($fieldRow['type'] == 'userid' or $fieldRow['type'] == 'user')) {
+                            $userIdFields[] = [$item['logic'], $item['equation']];
 
-                                //Following apply to current table fields only and to only one (the last one in the statement)
-                                $params = $fieldrow['typeparams'];
-                                $parts = CTMiscHelper::csv_explode(',', $params);
+                            //Following apply to current table fields only and to only one (the last one in the statement)
+                            $params = $fieldRow['typeparams'];
+                            $parts = CTMiscHelper::csv_explode(',', $params);
 
-                                $this->userIdField_UniqueUsers = false;
-                                if (isset($parts[4]) and $parts[4] == 'unique')
-                                    $this->userIdField_UniqueUsers = true;
+                            $this->userIdField_UniqueUsers = false;
+                            if (isset($parts[4]) and $parts[4] == 'unique')
+                                $this->userIdField_UniqueUsers = true;
 
-                                break;
-                            }
+                            break;
                         }
-                    } else {
-                        //Table join
-                        //parents(children).user
-                        $userIdFields[] = [$item[0], $item[1]];
                     }
+                } else {
+                    //Table join
+                    //parents(children).user
+                    $userIdFields[] = [$item['logic'], $item['equation']];
                 }
             }
 
@@ -344,219 +341,6 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
         $row = $rows[0];
         return $row[$this->ct->Table->realidfieldname];
     }
-
-    /**
-     * @throws Exception
-     * @since 3.2.4
-     */
-    /*
-     *
-     * This method can be replaced with in layout return link variable
-     *
-    function PrepareAcceptReturnToLink($link): ?string
-    {
-
-        if ($link == '')
-            return '';
-
-        //try {
-        $whereClause = new MySQLWhereClause();
-        $rows = database::loadAssocList($this->ct->Table->realtablename, $this->ct->Table->selects, $whereClause, $this->ct->Table->realidfieldname, 'DESC', 1);
-
-        //} catch (Exception $e) {
-        //	$this->ct->errors[] = $e->getMessage();
-        //	return false;
-        //}
-
-        if (count($rows) != 1) {
-            $this->ct->errors[] = 'Record not saved';
-            return false;
-        }
-
-        $row = $rows[0];
-
-        if ($this->ct->Env->legacySupport) {
-            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
-            $LayoutProc = new LayoutProcessor($this->ct);
-            $LayoutProc->layout = $link;
-            $link = $LayoutProc->fillLayout($row, "", '[]', true);
-        }
-
-        $twig = new TwigProcessor($this->ct, $link);
-        try {
-            $link = $twig->process($row);
-            //$this->ct->errors[] = $twig->errorMessage;
-
-        } catch (Exception $e) {
-            $this->ct->errors[] = $e->getMessage();
-
-            $link = '';
-        }
-
-        if ($twig->errorMessage !== null) {
-            $this->ct->errors[] = $twig->errorMessage;
-            $link = '';
-        }
-        return $link;
-    }
-    */
-
-    /*
-    function CheckValueRule($prefix,$fieldname, $fieldType, $typeParams)
-    {
-        $valuearray=array();
-        $value='';
-
-        switch($fieldType)
-            {
-                case 'records':
-
-                    $typeParamsArrayy=explode(',',$typeParams);
-                    if(count($typeParamsArrayy)>2)
-                    {
-                        $esr_selector=$typeParamsArrayy[2];
-                        $selectorpair=explode(':',$esr_selector);
-
-                        switch($selectorpair[0])
-                        {
-                            case 'single';
-                                    $value=common::inputPostString($prefix.$fieldname);
-                                break;
-
-                            case 'multi';
-                                    $valuearray = common::inputGet( $prefix.$fieldname, array(), 'post', 'array' );
-                                    $value='"'.implode('","',$valuearray).'"';
-                                break;
-                            case 'multibox';
-                                    $valuearray = common::inputGet( $prefix.$fieldname, array(), 'post', 'array' );
-                                    $value='"'.implode('","',$valuearray).'"';
-                                break;
-
-                            case 'radio';
-                                    $value=common::inputPostString($prefix.$fieldname);
-                                break;
-
-                            case 'checkbox';
-                                    $valuearray = common::inputGet( $prefix.$fieldname, array(), 'post', 'array' );
-                                    $value='"'.implode('","',$valuearray).'"';
-                                break;
-                        }
-
-                    }
-
-                    break;
-                case 'radio':
-                        $value=common::inputPostString($prefix.$fieldname);
-                    break;
-
-                case 'googlemapcoordinates':
-                        $value=common::inputPostString($prefix.$fieldname);
-                    break;
-
-                case 'string':
-                        $value=common::inputPostString($prefix.$fieldname);
-                    break;
-
-                case 'multilangstring':
-
-                    $firstlanguage=true;
-                    foreach($this->ct->Languages->LanguageList as $lang)
-                    {
-                        if($firstlanguage)
-                        {
-                            $postfix='';
-                            $firstlanguage=false;
-                        }
-                        else
-                            $postfix='_'.$lang->sef;
-
-                        $valuearray[]=common::inputPostString($prefix.$fieldname.$postfix);
-
-                    }
-                    $value='"'.implode('","',$valuearray).'"';
-                    break;
-
-
-                case 'text':
-                    $value = ComponentHelper::filterText(common::inputPost($prefix.$fieldname, '', 'raw'));
-                    break;
-
-                case 'multilangtext':
-
-                    $firstlanguage=true;
-                    foreach($this->ct->Languages->LanguageList as $lang)
-                    {
-                        if($firstlanguage)
-                        {
-                            $postfix='';
-                            $firstlanguage=false;
-                        }
-                        else
-                            $postfix='_'.$lang->sef;
-
-                        $value_ = ComponentHelper::filterText(common::inputPost($prefix.$fieldname.$postfix, '', 'raw'));
-
-                        $valuearray[]=$value_;
-
-                    }
-                    $value='"'.implode('","',$valuearray).'"';
-                    break;
-
-                case 'int':
-                        $value=common::inputPostInt($prefix.$fieldname,0);
-                    break;
-
-                case 'user':
-                        $value=(int)common::inputPostInt($prefix.$fieldname,0);
-                    break;
-
-                case 'float':
-                        $value=common::inputPostFloat($prefix.$fieldname,0,'FLOAT');
-                    break;
-
-
-                case 'article':
-                        $value=common::inputPostInt($prefix.$fieldname,0);
-                    break;
-
-                case 'multilangarticle':
-
-                    $firstlanguage=true;
-                    foreach($this->ct->Languages->LanguageList as $lang)
-                    {
-                        if($firstlanguage)
-                        {
-                            $postfix='';
-                            $firstlanguage=false;
-                        }
-                        else
-                            $postfix='_'.$lang->sef;
-
-                        $valuearray[]=common::inputPostInt($prefix.$fieldname.$postfix,0);
-
-                    }
-                    $value='"'.implode('","',$valuearray).'"';
-                    break;
-
-                case 'email':
-                        $value=common::inputPostString($prefix.$fieldname);
-                    break;
-
-                case 'checkbox':
-                        $value=common::inputPostCmd($prefix.$fieldname);
-                    break;
-
-                case 'date':
-                        $value=common::inputPostString($prefix.$fieldname);
-                    break;
-            }
-
-        if($value=='')
-            $value='""';
-
-        return;
-    }
-    */
 
     /**
      * @throws Exception

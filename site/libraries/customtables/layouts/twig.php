@@ -118,7 +118,7 @@ class TwigProcessor
         $this->twig->addGlobal('document', new Twig_Document_Tags($this->ct));
         $this->twig->addGlobal('fields', new Twig_Fields_Tags($this->ct));
         $this->twig->addGlobal('user', new Twig_User_Tags($this->ct));
-        $this->twig->addGlobal('url', new Twig_Url_Tags($this->ct));
+        $this->twig->addGlobal('url', new Twig_URL_Tags($this->ct));
         $this->twig->addGlobal('html', new Twig_HTML_Tags($this->ct));
         $this->twig->addGlobal('record', new Twig_Record_Tags($this->ct));
 

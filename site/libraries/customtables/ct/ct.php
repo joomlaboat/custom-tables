@@ -639,19 +639,19 @@ class CT
     public function UserIDField_BuildWheres(string $userIdField, string $listing_id): MySQLWhereClause
     {
         $whereClause = new MySQLWhereClause();
-        $statement_items = common::ExplodeSmartParams($userIdField); //"and" and "or" as separators
+        $statement_items = CTMiscHelper::ExplodeSmartParamsArray($userIdField); //"and" and "or" as separators
         $whereClauseOwner = new MySQLWhereClause();
 
         foreach ($statement_items as $item) {
-            $field = $item[1];
-            if (!str_contains($field, '.')) {
+
+            if (!str_contains($item['equation'], '.')) {
                 //example: user
                 //check if the record belong to the current user
-                $user_field_row = Fields::FieldRowByName($field, $this->Table->fields);
+                $user_field_row = Fields::FieldRowByName($item['equation'], $this->Table->fields);
                 $whereClauseOwner->addCondition($user_field_row['realfieldname'], $this->Env->user->id);
             } else {
                 //example: parents(children).user
-                $statement_parts = explode('.', $field);
+                $statement_parts = explode('.', $item['equation']);
                 if (count($statement_parts) != 2) {
                     $this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_USERID_FIELD_ERROR');
                     return $whereClause;
