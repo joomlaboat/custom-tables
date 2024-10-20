@@ -196,7 +196,7 @@ class Details
      */
     protected function buildQuery(MySQLWhereClause $whereClause, ?int $limit): array
     {
-        $ordering = $this->ct->GroupBy != '' ? [$this->ct->GroupBy] : [];
+        $ordering = $this->ct->GroupBy !== null ? [$this->ct->GroupBy] : [];
 
         if (is_null($this->ct->Table) or is_null($this->ct->Table->tablerow)) {
             return [];

@@ -45,7 +45,7 @@ class Tables
      * @throws Exception
      * @since 3.2.9
      */
-    function loadRecords($tablename_or_id, string $filter = '', ?string $orderby = null, int $limit = 0): ?bool
+    function loadRecords($tablename_or_id, string $filter = '', ?string $orderby = null, int $limit = 0, string $groupBy = ''): ?bool
     {
         if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
             return null;
@@ -62,6 +62,13 @@ class Tables
 
         $this->ct->Table->recordcount = 0;
         $this->ct->setFilter($filter, 2);
+
+
+        //Grouping
+        if ($groupBy != '')
+            $this->ct->GroupBy = Fields::getRealFieldName($groupBy, $this->ct->Table->fields);
+        else
+            $this->ct->GroupBy = null;
 
         $this->ct->Ordering->ordering_processed_string = $orderby ?? '';
         $this->ct->Ordering->parseOrderByString();

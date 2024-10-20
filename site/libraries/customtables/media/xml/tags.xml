@@ -695,7 +695,7 @@
              twigclass="tables" proversion="1" wordpress="true">
             <params>
                 <param type="layout" name="layout" label="Catalog Layout" table=""
-                       layouttype="catalogpage,simplecatalog"
+                       layouttype="catalogpage,simplecatalog,xml,csv,json"
                        example="CountriesPage"/>
                 <param type="string" name="filter" label="Filter" description="Example: price>100"
                        example="population>1000000"/>
@@ -703,6 +703,9 @@
                        example="name"/>
                 <param type="string" name="limit" label="Limit" description="Max number of records to load. Example: 20"
                        example="20"/>
+                <param type="field" name="field" label="Field"
+                       description="Group records that have the same values into summary records, like `find the number of customers in each country`."
+                       repetitive="0"/>
             </params>
         </tag>
     </tagset>
