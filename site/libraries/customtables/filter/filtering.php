@@ -177,7 +177,7 @@ class Filtering
             }
 
             if ($whereClauseTemp->hasConditions()) {
-                if ($item['login'] == 'or')
+                if ($item['logic'] == 'or')
                     $this->whereClause->addNestedOrCondition($whereClauseTemp);
                 else
                     $this->whereClause->addNestedCondition($whereClauseTemp);

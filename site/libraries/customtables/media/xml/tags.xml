@@ -211,7 +211,8 @@
         </tag>
 
         <tag name="captcha" label="Captcha" startchar="{" endchar="}" twigclass="html"
-             description="Provides the use of a captcha plugin (if enabled)." proversion="1" wordpress="true">
+             description="Provides the use of a captcha widget." proversion="1" wordpress="true"
+             example="{{ html.captcha(SITE_KEY, SECRET_KEY) }}">
             <params>
 
                 <param name="public_key" label="Site Key" type="string" required="true"
