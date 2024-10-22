@@ -198,6 +198,9 @@ class Ordering
             //set state
             if (!$this->Params->blockExternalVars)
                 $app->setUserState('com_customtables.esorderby', $this->ordering_processed_string);
+        } else {
+            if ($this->Params->sortBy != '')
+                $this->ordering_processed_string = $this->Params->sortBy;
         }
     }
 
