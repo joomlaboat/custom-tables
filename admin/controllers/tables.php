@@ -180,6 +180,7 @@ class CustomtablesControllerTables extends FormController
      *
      * @return  boolean
      *
+     * @throws Exception
      * @since   1.6
      */
     protected function allowEdit($data = array(), $key = 'id')
@@ -229,6 +230,7 @@ class CustomtablesControllerTables extends FormController
      *
      * @return  string  The arguments to append to the redirect URL.
      *
+     * @throws Exception
      * @since   12.2
      */
     protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')

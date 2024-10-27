@@ -95,66 +95,6 @@ class TableHelper
      * @throws Exception
      * @since 3.2.2
      */
-    public static function getTableRowByID(int $tableid): ?object
-    {
-        if ($tableid == 0)
-            return null;
-
-        $row = self::getTableRowByIDAssoc($tableid);
-        if (!is_array($row))
-            return null;
-
-        return (object)$row;
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    public static function getTableRowByIDAssoc(int $tableid)
-    {
-        if ($tableid == 0)
-            return null;
-
-        return self::getTableRowByWhere(['id' => $tableid]);
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    public static function getTableRowByWhere(array $where)
-    {
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addConditionsFromArray($where);
-        $rows = database::loadAssocList('#__customtables_tables AS s', self::getTableRowSelectArray(), $whereClause, null, null, 1);
-
-        if (count($rows) != 1)
-            return null;
-
-        $row = $rows[0];
-        $published_field_found = true;
-
-        if ($row['customtablename'] != '') {
-            $realFields = Fields::getListOfExistingFields($row['realtablename'], false);
-
-            if (!in_array('published', $realFields))
-                $published_field_found = false;
-        }
-        $row['published_field_found'] = $published_field_found;
-
-        return $row;
-    }
-
-    public static function getTableRowSelectArray(): array
-    {
-        return ['*', 'REAL_TABLE_NAME', 'REAL_ID_FIELD_NAME', 'PUBLISHED_FIELD_FOUND'];
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
     public static function createTableIfNotExists(string $dbPrefix, string $tableName, string $tableTitle, string $complete_table_name = ''): bool
     {
         if ($complete_table_name == '')
@@ -356,6 +296,38 @@ class TableHelper
      * @throws Exception
      * @since 3.2.2
      */
+    public static function getTableRowByWhere(array $where)
+    {
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addConditionsFromArray($where);
+        $rows = database::loadAssocList('#__customtables_tables AS s', self::getTableRowSelectArray(), $whereClause, null, null, 1);
+
+        if (count($rows) != 1)
+            return null;
+
+        $row = $rows[0];
+        $published_field_found = true;
+
+        if ($row['customtablename'] != '') {
+            $realFields = Fields::getListOfExistingFields($row['realtablename'], false);
+
+            if (!in_array('published', $realFields))
+                $published_field_found = false;
+        }
+        $row['published_field_found'] = $published_field_found;
+
+        return $row;
+    }
+
+    public static function getTableRowSelectArray(): array
+    {
+        return ['*', 'REAL_TABLE_NAME', 'REAL_ID_FIELD_NAME', 'PUBLISHED_FIELD_FOUND'];
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public static function copyTable(CT $ct, $originalTableId, $new_table, $old_table, $customTableName = '')
     {
         //Copy Table
@@ -423,5 +395,50 @@ class TableHelper
             database::insert('#__customtables_fields', $data);
         }
         return true;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.4.3
+     */
+    public static function deleteTable(int $tableId): object
+    {
+        $table_row = TableHelper::getTableRowByID($tableId);
+
+        if (isset($table_row->tablename) and (!isset($table_row->customtablename) or empty($table_row->customtablename))) // do not delete third-party tables
+            database::dropTableIfExists($table_row->tablename);
+
+        database::deleteRecord('#__customtables_fields', 'tableid', (string)$tableId);
+        database::deleteRecord('#__customtables_tables', 'id', $tableId);
+        database::deleteTableLessFields();//TODO: No longer needed but lets keep ot for one year till Oct 2025 to make sure that all unused fields deleted.
+        return $table_row;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    public static function getTableRowByID(int $tableid): ?object
+    {
+        if ($tableid == 0)
+            return null;
+
+        $row = self::getTableRowByIDAssoc($tableid);
+        if (!is_array($row))
+            return null;
+
+        return (object)$row;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    public static function getTableRowByIDAssoc(int $tableid)
+    {
+        if ($tableid == 0)
+            return null;
+
+        return self::getTableRowByWhere(['id' => $tableid]);
     }
 }

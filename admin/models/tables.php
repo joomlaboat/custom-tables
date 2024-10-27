@@ -136,18 +136,35 @@ class CustomtablesModelTables extends AdminModel
      */
     public function delete(&$pks)
     {
-        foreach ($pks as $tableid) {
-            $table_row = TableHelper::getTableRowByID($tableid);
+        // Ensure the pks is an array
+        if (!is_array($pks) || empty($pks))
+            throw new Exception(common::translate('COM_CUSTOMTABLES_NO_ITEM_SELECTED'));
 
-            if (isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename === null)) // do not delete third-party tables
-                database::dropTableIfExists($table_row->tablename);
+        $db = database::getDB();
+
+        try {
+            // Start transaction
+            $db->transactionStart();
+
+            foreach ($pks as $tableid) {
+                $table_row = TableHelper::deleteTable((int)$tableid);
+
+                // Add to activity log if you have one
+                $msg = common::translate('COM_CUSTOMTABLES_TABLE_DELETED') . ' ' . $table_row->tablename;
+                Factory::getApplication()->enqueueMessage($msg);
+            }
+
+            // Commit transaction
+            $db->transactionCommit();
+
+            // Clear cache
+            $this->cleanCache();
+
+        } catch (Exception $e) {
+            // Roll back transaction on error
+            $db->transactionRollback();
+            throw new Exception($e->getMessage());
         }
-
-        if (!parent::delete($pks))
-            return false;
-
-        database::deleteTableLessFields();
-
         return true;
     }
 

@@ -426,7 +426,7 @@ class database
             $query->setLimit(20000, $limitStart);
         if ($limitStart === null and $limit !== null)
             $query->setLimit($limit);
-        
+
         try {
             $db->setQuery($query);
         } catch (Exception $e) {
@@ -723,7 +723,7 @@ class database
         elseif ($type == 'filebox')
             $realTableName = '#__customtables_filebox_' . $tablename;
         else
-            $realTableName = '#__customtables_' . $tablename;
+            $realTableName = '#__customtables_table_' . $tablename;
 
         $serverType = self::getServerType();
 

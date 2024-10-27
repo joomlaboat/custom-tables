@@ -98,24 +98,6 @@ class ListOfTables
      * @throws Exception
      * @since 3.2.2
      */
-    function deleteTable(int $tableId): bool
-    {
-        $table_row = TableHelper::getTableRowByID($tableId);
-
-        if (isset($table_row->tablename) and (!isset($table_row->customtablename))) // do not delete third-party tables
-            database::dropTableIfExists($table_row->tablename);
-
-        database::deleteRecord('#__customtables_tables', 'id', $tableId);
-        database::deleteTableLessFields();
-        return true;
-    }
-
-    //Used in WordPress version
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
     function save(?int $tableId): ?array
     {
         $data = [];
