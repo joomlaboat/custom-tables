@@ -105,8 +105,20 @@ class Environment
         }
 
         if (defined('_JEXEC')) {
-            $mainframe = Factory::getApplication();
-            if ($mainframe->getCfg('sef')) {
+
+            if ($this->version < 4) {
+                $mainframe = Factory::getApplication();
+                $sef = $mainframe->getCfg('sef');
+            } else {
+                try {
+                    $sef = Factory::getApplication()->get('sef');
+                } catch (Exception $e) {
+                    // Handle error if needed
+                    $sef = false;
+                }
+            }
+
+            if ($sef) {
                 $this->WebsiteRoot = CUSTOMTABLES_MEDIA_HOME_URL;
                 if ($this->WebsiteRoot == '' or $this->WebsiteRoot[strlen($this->WebsiteRoot) - 1] != '/') //Root must have the slash character "/" in the end
                     $this->WebsiteRoot .= '/';

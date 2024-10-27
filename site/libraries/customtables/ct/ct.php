@@ -53,8 +53,16 @@ class CT
         $this->messages = [];
 
         if (defined('_JEXEC')) {
+
             $this->app = Factory::getApplication();
-            $this->document = $this->app->getDocument();
+
+            if (!($this->app instanceof \Joomla\CMS\Application\ConsoleApplication)) {
+                try {
+                    $this->document = $this->app->getDocument();
+                } catch (Exception $e) {
+                    // Handle error if needed
+                }
+            }
         }
 
         $this->Languages = new Languages;
@@ -160,21 +168,13 @@ class CT
 
     /**
      * @throws Exception
-     * @since 3.2.3
-     */
-    function setFilter(?string $filter_string = null, int $showpublished = 0): void
-    {
-        $this->Filter = new Filtering($this, $showpublished);
-        if ($filter_string != '')
-            $this->Filter->addWhereExpression($filter_string);
-    }
-
-    /**
-     * @throws Exception
      * @since 3.2.2
      */
     function getRecords(bool $all = false, int $limit = 0): bool
     {
+        //if ($this->Filter === null)
+        //$this->setFilter();
+
         $count = $this->getNumberOfRecords($this->Filter->whereClause);
 
         if ($count === null)
@@ -252,6 +252,17 @@ class CT
             $this->Table->recordcount = intval($rows[0]->record_count);
 
         return $this->Table->recordcount;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.3
+     */
+    function setFilter(?string $filter_string = null, int $showpublished = 0): void
+    {
+        $this->Filter = new Filtering($this, $showpublished);
+        if ($filter_string != '')
+            $this->Filter->addWhereExpression($filter_string);
     }
 
     /**

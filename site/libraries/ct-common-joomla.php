@@ -423,7 +423,7 @@ class common
 
     public static function getServerParam(string $param)
     {
-        return $_SERVER[$param];
+        return $_SERVER[$param] ?? null;
     }
 
     public static function UriRoot(bool $pathOnly = false, bool $addTrailingSlash = false): string

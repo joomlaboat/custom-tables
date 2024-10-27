@@ -63,14 +63,14 @@ class CTUser
                     $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($this->id);
             }
 
-            $this->id = $user->id;
-
             if ($user !== null) {
+                $this->id = $user->id;
                 $this->groups = $user->get('groups');//For older Joomla versions
                 $this->email = $user->email;
                 $this->name = $user->name;
                 $this->username = $user->username;
             }
+
             $this->isUserAdministrator = in_array(8, $this->groups);//8 is Super Users
 
         } elseif (defined('WPINC')) {

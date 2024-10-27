@@ -30,7 +30,7 @@ class Filtering
         $this->whereClause = new MySQLWhereClause();
         $this->showPublished = $showPublished;
 
-        if ($this->ct->Table->published_field_found) {
+        if ($this->ct->Table !== null and $this->ct->Table->published_field_found) {
 
             //TODO: Fix this mess by replacing the state with a text code like 'published','unpublished','everything','any','trash'
             //showPublished = 0 - show published
