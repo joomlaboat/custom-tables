@@ -38,52 +38,80 @@ class com_customtablesInstallerScript
      *
      * @since 1.0.0
      */
-    function uninstall($parent)
+    public function uninstall($parent)
     {
-        // little notice as after service, in case of bad experience with component.
+        // Display the original uninstall message
         echo '<h2>Did something go wrong? Are you disappointed?</h2>
-		<p>Please let me know at <a href="mailto:support@joomlaboat.com">support@joomlaboat.com</a>.
-		<br />We at JoomlaBoat.com are committed to building extensions that performs proficiently! You can help us, really!
-		<br />Send me your thoughts on improvements that is needed, trust me, I will be very grateful!
-		<br />Visit us at <a href="https://joomlaboat.com" target="_blank">https://joomlaboat.com</a> today!</p>';
+    <p>Please let me know at <a href="mailto:support@joomlaboat.com">support@joomlaboat.com</a>.
+    <br />We at JoomlaBoat.com are committed to building extensions that performs proficiently! You can help us, really!
+    <br />Send me your thoughts on improvements that is needed, trust me, I will be very grateful!
+    <br />Visit us at <a href="https://joomlaboat.com" target="_blank">https://joomlaboat.com</a> today!</p>';
     }
 
     /**
      * method to run before an installation/update/uninstall method
      *
-     * @return void
+     * @return true
      *
      * @throws Exception
      * @since 1.0.0
      */
-    function preflight($type, $parent)
+    public function preflight($type, $parent)
     {
-        // get application
-        $app = Factory::getApplication();
-        // is redundant ...mmm
         if ($type == 'uninstall') {
-            return;
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+            $prefix = $db->getPrefix();
+
+            // Get list of CustomTables tables
+            $tables = $db->setQuery("SHOW TABLES LIKE '{$prefix}customtables_%'")->loadColumn();
+
+            if (count($tables) > 0) {
+                echo '<div class="alert alert-info" style="margin-bottom: 20px;">
+                <h4>To delete all CustomTables database tables, run these SQL queries:</h4>
+                <pre style="background:#f5f5f5; padding:10px; margin-top:10px; overflow:auto;">';
+
+                foreach ($tables as $table) {
+                    echo 'DROP TABLE IF EXISTS ' . $db->quoteName($table) . ";\n";
+                }
+
+                echo '</pre>
+                <p><strong>Note:</strong> Save these queries before closing this window.</p>
+            </div>';
+            }
         }
-        // the default for both install and update
-        $VersionObject = new Version();
-        if (!$VersionObject->isCompatible('3.6.0')) {
-            $app->enqueueMessage('Please upgrade to at least Joomla! 3.6.0 before continuing!', 'error');
+
+        // Rest of your existing code...
+        if ($type !== 'uninstall') {
+            $app = Factory::getApplication();
+            $VersionObject = new Version();
+            if (!$VersionObject->isCompatible('3.6.0')) {
+                $app->enqueueMessage('Please upgrade to at least Joomla! 3.6.0 before continuing!', 'error');
+            }
+
+            //Temporary change component_id of custom back-end menu items
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+            $db->setQuery('UPDATE #__menu SET component_id=0 WHERE client_id=1 AND (
+            INSTR(link,"index.php?option=com_customtables&view=listofrecords&Itemid=") OR
+            INSTR(link,"index.php?option=com_customtables&view=adminmenu&category=")
+        )');
+            $db->execute();
         }
 
-        //Temporary change component_id of custom back-end menu items to keep them and prevent installer from deleting them.
-        $version_object = new Version;
-        $version = (int)$version_object->getShortVersion();
-
-        if ($version < 4)
-            $db = Factory::getDbo();
-        else
-            $db = Factory::getContainer()->get(DatabaseInterface::class);
-
-        $db->setQuery('UPDATE #__menu SET component_id=0 WHERE client_id=1 AND (
-    INSTR(link,"index.php?option=com_customtables&view=listofrecords&Itemid=") OR
-    INSTR(link,"index.php?option=com_customtables&view=adminmenu&category=")
-    )');
-        $db->execute();
+        return true;
     }
 
     /**
@@ -95,9 +123,9 @@ class com_customtablesInstallerScript
      */
     function postflight($type, $parent)
     {
-
+        // Your existing postflight code
         if ($type == 'uninstall') {
-            return; //No need to do anything
+            return;
         }
 
         if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images'))
