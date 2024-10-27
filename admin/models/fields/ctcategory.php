@@ -89,13 +89,12 @@ if ($version < 4) {
             $records = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, 'categoryname');
 
             $options = array();
-            if ($records) {
-                if ($add_empty_option)
-                    $options[] = ['value' => '', 'text' => common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT')];
+            if ($add_empty_option)
+                $options[] = ['value' => '', 'text' => common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT')];
 
-                foreach ($records as $rec)
-                    $options[] = ['value' => $rec->id, 'text' => $rec->categoryname];
-            }
+            foreach ($records as $rec)
+                $options[] = ['value' => $rec->id, 'text' => $rec->categoryname];
+
             return $options;
         }
     }

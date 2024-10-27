@@ -88,6 +88,10 @@ HTMLHelper::_('behavior.multiselect');
     </div>
 </form>
 
+<?php
+
+/*
+
 <script>
     let custom_tables_category = parseInt("<?php echo $this->activeFilters['tablecategory']; ?>");
 
@@ -96,3 +100,5 @@ HTMLHelper::_('behavior.multiselect');
         obj.value = custom_tables_category + '';
     }
 </script>
+*/
+?>
