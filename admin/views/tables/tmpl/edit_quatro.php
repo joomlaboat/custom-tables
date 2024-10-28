@@ -181,6 +181,18 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
                             <?php echo $this->form->getInput('customidfield'); ?>
                         </div>
                     </div>
+                    <div class="control-group">
+                        <div class="control-label"><?php echo $this->form->getLabel('customidfieldtype'); ?></div>
+                        <div class="controls">
+                            <?php echo $this->form->getInput('customidfieldtype'); ?>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label"><?php echo $this->form->getLabel('customfieldprefix'); ?></div>
+                        <div class="controls">
+                            <?php echo $this->form->getInput('customfieldprefix'); ?>
+                        </div>
+                    </div>
                 <?php endif; ?>
 
 
@@ -253,6 +265,8 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
         <script>
             disableProField("jform_customtablename");
             disableProField("jform_customidfield");
+            disableProField("jform_customidfieldtype");
+            disableProField("jform_customfieldprefix");
         </script>
     <?php endif; ?>
 

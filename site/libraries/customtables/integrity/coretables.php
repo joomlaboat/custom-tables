@@ -145,21 +145,19 @@ class IntegrityCoreTables extends IntegrityChecks
 
         foreach ($projected_fields as $projected_field) {
 
-            if (isset($projected_field['ct_fieldtype']) and $projected_field['ct_fieldtype'] != '') {
-                $projected_realfieldname = $projected_field['name'];
-                $fieldType = $projected_field['ct_fieldtype'];
-                $typeParams = '';
+            $projected_realfieldname = $projected_field['name'];
+            $typeParams = '';
 
-                if (IntegrityFields::addFieldIfNotExists($ct, $realtablename, $ExistingFields, $projected_realfieldname, $fieldType, $typeParams))
-                    $ExistingFields = database::getExistingFields($realtablename, false);//reload list of existing fields if one field has been added.
+            if (!Fields::checkIfFieldExists($realtablename, $projected_realfieldname))
+                database::addColumn($realtablename, $projected_realfieldname, $projected_field['mysql_type']);
 
-                $ct_fieldtype = $projected_field['ct_fieldtype'];
+            $ExistingFields = database::getExistingFields($realtablename, false);//reload list of existing fields if one field has been added.
+            $ct_fieldtype = $projected_field['ct_fieldtype'];
 
-                if (isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams'] != '')
-                    $typeParams = $projected_field['ct_typeparams'];
+            if (isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams'] != '')
+                $typeParams = $projected_field['ct_typeparams'];
 
-                IntegrityCoreTables::checkCoreTableFields($realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeParams, $projected_field['name']);
-            }
+            IntegrityCoreTables::checkCoreTableFields($realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeParams, $projected_field['name']);
         }
     }
 
@@ -222,6 +220,10 @@ class IntegrityCoreTables extends IntegrityChecks
         $tables_projected_fields[] = $fieldTypes['modified'];
         $tables_projected_fields[] = $fieldTypes['checked_out'];
         $tables_projected_fields[] = $fieldTypes['checked_out_time'];
+
+        // int UNSIGNED NOT NULL AUTO_INCREMENT
+        $tables_projected_fields[] = ['name' => 'customidfieldtype', 'ct_fieldtype' => 'string', 'ct_typeparams' => 127, 'mysql_type' => 'VARCHAR(255) NULL DEFAULT "int UNSIGNED NOT NULL AUTO_INCREMENT"', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT "int UNSIGNED NOT NULL AUTO_INCREMENT"'];
+        $tables_projected_fields[] = ['name' => 'customfieldprefix', 'ct_fieldtype' => 'string', 'ct_typeparams' => 50, 'mysql_type' => 'VARCHAR(50) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(50) NULL DEFAULT NULL'];
 
         $tables_projected_indexes = [];
         $tables_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];

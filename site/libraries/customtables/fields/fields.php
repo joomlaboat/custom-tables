@@ -1416,7 +1416,7 @@ class Fields
         ];
 
         database::createTable('#__customtables_gallery_' . $tablename . '_' . $fieldname, 'photoid',
-            $columns, 'Image Gallery', null, 'BIGINT UNSIGNED');
+            $columns, 'Image Gallery', null, 'BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
 
         return true;
     }
@@ -1434,8 +1434,8 @@ class Fields
             'title varchar(100) null'
         ];
         database::createTable('#__customtables_filebox_' . $tablename . '_' . $fieldname, 'fileid', $columns,
-            'File Box', null, 'BIGINT UNSIGNED');
-
+            'File Box', null, 'BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
+        
         return true;
     }
 
@@ -1681,6 +1681,49 @@ class Fields
                 return $length;
         }
         return '';
+    }
+
+    public static function parseFieldTypeFromString(string $fieldType): array
+    {
+        $newData = [];
+
+        // Convert to uppercase for consistent comparison
+        $upperFieldType = strtoupper($fieldType);
+
+        // Extract base data type
+        preg_match('/^\s*([A-Za-z]+)/', $fieldType, $matches);
+        $newData['data_type'] = strtolower($matches[1] ?? '');
+
+        // Extract length/precision for supported types
+        if (in_array($newData['data_type'], ['varchar', 'char', 'decimal', 'int'])) {
+            preg_match('/\(([^)]+)\)/', $fieldType, $matches);
+            $newData['length'] = $matches[1] ?? null;
+        }
+
+        // Check if unsigned
+        $newData['is_unsigned'] = str_contains($upperFieldType, 'UNSIGNED');
+
+        // Check if nullable
+        $newData['is_nullable'] = !str_contains($upperFieldType, 'NOT NULL');
+
+        // Check if auto increment
+        $newData['autoincrement'] = str_contains($upperFieldType, 'AUTO_INCREMENT');
+
+        // Default value (if specified)
+        preg_match('/DEFAULT\s+([^\s]+)/i', $fieldType, $matches);
+        $newData['default'] = $matches[1] ?? null;
+
+        // Clean up default value if it's NULL
+        if ($newData['default'] !== null) {
+            if (strtoupper($newData['default']) === 'NULL') {
+                $newData['default'] = null;
+            } else {
+                // Remove quotes if present
+                $newData['default'] = trim($newData['default'], "'\"");
+            }
+        }
+
+        return $newData;
     }
 
     /**

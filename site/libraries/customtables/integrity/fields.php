@@ -52,7 +52,7 @@ class IntegrityFields extends IntegrityChecks
         $projected_fields = Fields::getFields($ct->Table->tableid, false, false);
 
         //Delete unnecessary fields:
-        $projected_fields[] = ['realfieldname' => 'id', 'type' => '_id', 'typeparams' => '', 'isrequired' => 1];
+        $projected_fields[] = ['realfieldname' => $ct->Table->realidfieldname, 'type' => '_id', 'typeparams' => '', 'isrequired' => 1];
         $projected_fields[] = ['realfieldname' => 'published', 'type' => '_published', 'typeparams' => '', 'isrequired' => 1];
 
         $task = common::inputGetCmd('task');
@@ -75,11 +75,16 @@ class IntegrityFields extends IntegrityChecks
 
                 $found_field = '';
 
-                if ($projected_field['realfieldname'] == 'id' and $existingFieldName == 'id') {
+                if ($projected_field['realfieldname'] == $ct->Table->realidfieldname and $existingFieldName == $ct->Table->realidfieldname) {
                     $found = true;
                     $found_field = '_id';
                     $projected_field['fieldtitle'] = 'Primary Key';
-                    $projected_data_type = Fields::getProjectedFieldType('_id', null);
+
+                    if ($ct->Table->tablerow['customidfieldtype'] !== null and $ct->Table->tablerow['customidfieldtype'] != '') {
+                        $projected_data_type = Fields::parseFieldTypeFromString($ct->Table->tablerow['customidfieldtype']);
+                    } else {
+                        $projected_data_type = Fields::getProjectedFieldType('_id', null);
+                    }
 
                     break;
                 } elseif ($projected_field['realfieldname'] == 'published' and $existingFieldName == 'published') {

@@ -805,7 +805,7 @@ class database
         $db->execute();
     }
 
-    public static function addColumn(string $realTableName, string $columnName, string $type, ?bool $nullable, ?string $extra = null, ?string $comment = null): void
+    public static function addColumn(string $realTableName, string $columnName, string $type, ?bool $nullable = null, ?string $extra = null, ?string $comment = null): void
     {
         $db = self::getDB();
 
@@ -816,7 +816,8 @@ class database
         $db->execute();
     }
 
-    public static function createTable(string $realTableName, string $privateKey, array $columns, string $comment, ?array $keys = null, string $primaryKeyType = 'int'): void
+    public static function createTable(string $realTableName, string $privateKey, array $columns, string $comment,
+                                       ?array $keys = null, string $primaryKeyType = 'int UNSIGNED NOT NULL AUTO_INCREMENT'): void
     {
         $db = self::getDB();
 
@@ -825,7 +826,9 @@ class database
             $db->setQuery('CREATE SEQUENCE IF NOT EXISTS ' . $realTableName . '_seq');
             $db->execute();
 
-            $allColumns = array_merge([$privateKey . ' ' . $primaryKeyType . ' NOT NULL DEFAULT nextval (\'' . $realTableName . '_seq\')'], $columns);
+            $primaryKeyTypeString = str_replace('AUTO_INCREMENT', 'DEFAULT nextval (\'' . $realTableName . '_seq\')', $primaryKeyType);
+
+            $allColumns = array_merge([$privateKey . ' ' . $primaryKeyTypeString], $columns);
 
             $query = 'CREATE TABLE IF NOT EXISTS ' . $realTableName . '(' . implode(',', $allColumns) . ')';
             $db->setQuery($query);
@@ -836,11 +839,7 @@ class database
 
         } else {
 
-            $primaryKeyTypeString = 'INT UNSIGNED';//(11)
-            if ($primaryKeyType !== 'int')
-                $primaryKeyTypeString = $primaryKeyType;
-
-            $allColumns = array_merge(['`' . $privateKey . '` ' . $primaryKeyTypeString . ' NOT NULL AUTO_INCREMENT'], $columns, ['PRIMARY KEY (`' . $privateKey . '`)']);
+            $allColumns = array_merge(['`' . $privateKey . '` ' . $primaryKeyType], $columns, ['PRIMARY KEY (`' . $privateKey . '`)']);
 
             if ($keys !== null)
                 $allColumns = array_merge($allColumns, $keys);

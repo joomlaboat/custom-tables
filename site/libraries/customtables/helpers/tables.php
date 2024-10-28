@@ -95,7 +95,9 @@ class TableHelper
      * @throws Exception
      * @since 3.2.2
      */
-    public static function createTableIfNotExists(string $dbPrefix, string $tableName, string $tableTitle, string $complete_table_name = ''): bool
+    public static function createTableIfNotExists(string $dbPrefix, string $tableName, string $tableTitle,
+                                                  string $complete_table_name = '', string $privateKey = 'id',
+                                                  string $primaryKeyType = 'int UNSIGNED NOT NULL AUTO_INCREMENT'): bool
     {
         if ($complete_table_name == '')
             $realTableName = $dbPrefix . 'customtables_table_' . $tableName;
@@ -141,7 +143,7 @@ class TableHelper
             $columns = [
                 'published tinyint(1) NOT NULL DEFAULT 1'
             ];
-            database::createTable($realTableName, 'id', $columns, $tableTitle);
+            database::createTable($realTableName, $privateKey, $columns, $tableTitle, null, $primaryKeyType);
             return true;
         }
         return false;
@@ -255,7 +257,9 @@ class TableHelper
             //Update primary key column
 
             $data = [
-                'customidfield' => $primary_key_column
+                'customidfield' => $primary_key_column,
+                'customidfieldtype' => $field->column_type . ($field->is_nullable ? ' NULL' : ' NOT NULL'), //TODO Add more details
+                'customfieldprefix' => null
             ];
             $whereClauseUpdate = new MySQLWhereClause();
             $whereClauseUpdate->addCondition('id', (int)$tableRow->id);
