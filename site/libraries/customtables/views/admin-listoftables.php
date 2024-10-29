@@ -132,8 +132,17 @@ class ListOfTables
 
         $newTableName = strtolower(trim(preg_replace("/\W/", "", $newTableName)));
 
-        $customPHP = common::inputPostString('customphp', null, 'create-edit-table');
+        $customPHP = common::inputPostString('customidfield', null, 'create-edit-table');
         $data ['customphp'] = $customPHP;
+
+        $customPHP = common::inputPostString('customidfield', null, 'create-edit-table');
+        $data ['customidfield'] = $customPHP;
+
+        $customPHP = common::inputPostString('customidfieldtype', null, 'create-edit-table');
+        $data ['customidfieldtype'] = $customPHP;
+
+        $customPHP = common::inputPostString('customfieldprefix', null, 'create-edit-table');
+        $data ['customfieldprefix'] = $customPHP;
 
         if ($newTableName == "")
             return ['Please provide the table name.'];

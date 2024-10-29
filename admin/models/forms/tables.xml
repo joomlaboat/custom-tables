@@ -148,7 +148,7 @@
 
         <field type="text"
                name="customfieldprefix"
-               label="Primary Key Field"
+               label="Field Name Prefix"
                description="Field name prefix. Example by default: es_phone. Type - to save fields without prefix, be careful because MySQL has many registered names like, 'group', 'select', 'where' etc."
                required="false"
                filter="CMD"

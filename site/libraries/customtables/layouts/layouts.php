@@ -517,6 +517,11 @@ class Layouts
 
         } elseif ($this->layoutType == 4 or $this->layoutType == 6) {
             //Details or Catalog Item
+            if ($this->ct->Table->record === null) {
+                $listing_id = common::inputGetCmd('listing_id');
+                if ($listing_id !== null)
+                    $this->ct->Table->loadRecord($listing_id);
+            }
             $output['html'] = $this->renderDetails();
         } else
             $output['html'] = 'CustomTable: Unknown Layout Type';
@@ -983,11 +988,9 @@ class Layouts
         } else
             return 'Table not selected';
 
-
         if ($this->ct->Table->record === null) {
-            return 'Record not loaded';
+            return 'Record not loaded!';
         }
-
 
         $details = new Details($this->ct);
         $details->layoutDetailsContent = $this->layoutCode;

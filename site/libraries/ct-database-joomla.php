@@ -805,7 +805,8 @@ class database
         $db->execute();
     }
 
-    public static function addColumn(string $realTableName, string $columnName, string $type, ?bool $nullable = null, ?string $extra = null, ?string $comment = null): void
+    public static function addColumn(string  $realTableName, string $columnName, string $type, ?bool $nullable = null, ?string $extra = null,
+                                     ?string $comment = null): void
     {
         $db = self::getDB();
 
