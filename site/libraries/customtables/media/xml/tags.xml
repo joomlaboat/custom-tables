@@ -702,9 +702,10 @@
                        example="population>1000000"/>
                 <param type="string" name="orderby" label="Order By Field" description="Example: name desc"
                        example="name"/>
-                <param type="string" name="limit" label="Limit" description="Max number of records to load. Example: 20"
+                <param type="string" name="limit" label="Limit"
+                       description="Max number of records to load. Example: 20. 0 is default and means No Limit."
                        example="20"/>
-                <param type="field" name="field" label="Field"
+                <param type="field" name="field" label="Group by Field"
                        description="Group records that have the same values into summary records, like `find the number of customers in each country`."
                        repetitive="0"/>
             </params>

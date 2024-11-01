@@ -130,7 +130,7 @@ class TableHelper
                     $realTableName = $dbPrefix . 'customtables_table_' . $tableName;
 
                     if ($row2->Engine != 'InnoDB') {
-                        database::setTableInnoDBEngine($realTableName, $tableTitle);
+                        database::setTableInnoDBEngine($realTableName);
                     }
 
                     database::changeTableComment($realTableName, $tableTitle);
@@ -159,7 +159,7 @@ class TableHelper
 
         if ($old_tablename != $tablename) {
             //rename table
-            $tableStatus = database::getTableStatus($old_tablename, 'table');
+            $tableStatus = database::getTableStatus($old_tablename);
 
             if (count($tableStatus) > 0)
                 database::renameTable($old_tablename, $tablename);
@@ -190,14 +190,13 @@ class TableHelper
      */
     public static function addThirdPartyTableFieldsIfNeeded($database, $tablename, $realtablename): bool
     {
-        $fields = Fields::getFields($tablename);
-        if (count($fields) > 0)
+        $ct = new CT;
+        $ct->getTable($tablename);
+
+        if (count($ct->Table->fields) > 0)
             return false;
 
         //Add third-party fields
-
-        $tableRow = self::getTableRowByName($tablename);
-
         $whereClause = new MySQLWhereClause();
 
         $serverType = database::getServerType();
@@ -222,10 +221,14 @@ class TableHelper
         $fields = database::loadObjectList('information_schema.columns', $selects, $whereClause);
 
         $primary_key_column = '';
+        $primary_key_column_type = '';
+        $primary_key_column_type_is_nullable = null;
         $ordering = 1;
         foreach ($fields as $field) {
             if ($primary_key_column == '' and strtolower($field->column_key) == 'pri') {
                 $primary_key_column = $field->column_name;
+                $primary_key_column_type = $field->column_type;
+                $primary_key_column_type_is_nullable = $field->is_nullable;
             } else {
                 $ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type, $field->column_type);
                 if ($ct_field_type['type'] === null) {
@@ -233,8 +236,8 @@ class TableHelper
                     return false;
                 }
 
-                $data['tableid'] = (int)$tableRow->id;
-                $data['fieldname'] = strtolower($field->column_name);
+                $data['tableid'] = $ct->Table->tableid;
+                $data['fieldname'] = $field->column_name;//strtolower();
                 $data['fieldtitle'] = ucwords(strtolower($field->column_name));
                 $data['allowordering'] = true;
                 $data['type'] = $ct_field_type['type'];
@@ -245,7 +248,7 @@ class TableHelper
                 $data['ordering'] = $ordering;
                 $data['defaultvalue'] = $field->column_default != '' ? $field->column_default : null;
                 $data['description'] = $field->column_comment != '' ? $field->column_comment : null;
-                $data['customfieldname'] = $field->column_name;
+                //$data['customfieldname'] = $field->column_name;
                 $data['isrequired'] = 0;
 
                 database::insert('#__customtables_fields', $data);
@@ -258,11 +261,11 @@ class TableHelper
 
             $data = [
                 'customidfield' => $primary_key_column,
-                'customidfieldtype' => $field->column_type . ($field->is_nullable ? ' NULL' : ' NOT NULL'), //TODO Add more details
+                'customidfieldtype' => $primary_key_column_type . ($primary_key_column_type_is_nullable ? ' NULL' : ' NOT NULL'), //TODO Add more details
                 'customfieldprefix' => null
             ];
             $whereClauseUpdate = new MySQLWhereClause();
-            $whereClauseUpdate->addCondition('id', (int)$tableRow->id);
+            $whereClauseUpdate->addCondition('id', $ct->Table->tableid);
             database::update('#__customtables_tables', $data, $whereClauseUpdate);
         }
         return true;
@@ -344,7 +347,8 @@ class TableHelper
         }
 
         //Copy Fields
-        $fields = array('fieldname', 'allowordering', 'isrequired', 'isdisabled', 'alwaysupdatevalue', 'parentid', 'ordering', 'defaultvalue', 'customfieldname', 'type', 'typeparams', 'valuerule', 'valuerulecaption',
+        //'customfieldname',
+        $fields = array('fieldname', 'allowordering', 'isrequired', 'isdisabled', 'alwaysupdatevalue', 'parentid', 'ordering', 'defaultvalue', 'type', 'typeparams', 'valuerule', 'valuerulecaption',
             'created_by', 'modified_by', 'created', 'modified');
 
         $moreThanOneLanguage = false;

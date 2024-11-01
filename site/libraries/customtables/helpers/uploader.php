@@ -140,9 +140,14 @@ class FileUploader
     {
         if ($filetypes_str == '') {
             $fieldname = common::inputGetCmd('fieldname', '');
-            $tableRow = self::getTableRawByItemid();
-            $tableId = $tableRow['id'];
-            $fieldRow = Fields::getFieldRowByName($fieldname, $tableId, '', true);
+            $tableName = self::getTableRawByItemid();
+
+            $ct = new CT;
+            $ct->getTable($tableName);
+            if ($ct->Table === null)
+                return [];
+
+            $fieldRow = Fields::getFieldRowByName($fieldname, $ct->Table);
             if ($fieldRow === null)
                 return [];
 
@@ -178,26 +183,6 @@ class FileUploader
         }
 
         return $accepted_filetypes;
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.3.4
-     */
-    protected static function getTableRawByItemid()
-    {
-        $app = Factory::getApplication();
-        $Itemid = common::inputGetInt('Itemid', 0);
-
-        $menuItem = $app->getMenu()->getItem($Itemid);
-        // Get params for menuItem
-
-        $esTable = new TableHelper;
-        $tableName = $menuItem->params->get('tableName');
-        if ($tableName === null)
-            return 0;
-
-        return $esTable->getTableRowByNameAssoc($tableName);
     }
 
     public static function get_mime_type($filename): string
@@ -426,5 +411,24 @@ class FileUploader
         //$str = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $str);
         $str = str_replace(' ', '-', $str);
         return str_replace('%', '-', $str);
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.4
+     */
+    protected static function getTableNameByItemid(): ?string
+    {
+        $app = Factory::getApplication();
+        $Itemid = common::inputGetInt('Itemid', 0);
+
+        $menuItem = $app->getMenu()->getItem($Itemid);
+        // Get params for menuItem
+
+        $tableName = $menuItem->params->get('tableName');
+        if ($tableName === null)
+            return null;
+
+        return $tableName;
     }
 }

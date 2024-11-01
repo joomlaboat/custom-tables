@@ -23,7 +23,7 @@ class InputBox_checkbox extends BaseInputBox
     function render(?string $value, ?string $defaultValue): string
     {
         if ($value === null) {
-            $value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
+            $value = common::inputGetInt($this->ct->Table->fieldPrefix . $this->field->fieldname, 0);
             if ($value == 0)
                 $value = (int)$defaultValue;
         } else {

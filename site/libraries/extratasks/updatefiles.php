@@ -26,12 +26,10 @@ class updateFiles
      * @throws Exception
      * @since 3.2.2
      */
-    public static function process(): array
+    public static function process(int $tableId): array
     {
-        $ct = new CT;
-
-        $stepsize = (int)common::inputGetInt('stepsize', 10);
-        $startindex = (int)common::inputGetInt('startindex', 0);
+        $stepSize = (int)common::inputGetInt('stepsize', 10);
+        $startIndex = (int)common::inputGetInt('startindex', 0);
 
         $old_typeparams = base64_decode(common::inputGetBase64('old_typeparams', ''));
         if ($old_typeparams == '')
@@ -49,33 +47,33 @@ class updateFiles
         if ($fieldid == 0)
             return array('error' => 'fieldid not set');
 
-        $fieldrow = Fields::getFieldRow($fieldid);
-
-        $ct->getTable($fieldrow->tableid);
+        $ct = new CT;
+        $ct->getTable($tableId);
+        $fieldRow = Fields::getFieldRow($ct->Table->fieldPrefix, $fieldid);
 
         $count = 0;
-        if ($startindex == 0) {
-            $count = updateFiles::countFiles($ct->Table->realtablename, $fieldrow->realfieldname, $ct->Table->realidfieldname);
-            if ($stepsize > $count)
-                $stepsize = $count;
+        if ($startIndex == 0) {
+            $count = updateFiles::countFiles($ct->Table->realtablename, $fieldRow->realfieldname);
+            if ($stepSize > $count)
+                $stepSize = $count;
         }
 
-        $status = updateFiles::processFiles($ct, $fieldrow, $old_params, $new_params);
+        $status = updateFiles::processFiles($ct, $fieldRow, $old_params, $new_params);
 
-        return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
+        return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);
     }
 
     /**
      * @throws Exception
      * @since 3.2.2
      */
-    protected static function countFiles($realtablename, $realfieldname, $realidfieldname): int
+    protected static function countFiles($realtablename, $realfieldname): int
     {
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition($realfieldname, null, 'NOT NULL');
         $whereClause->addCondition($realfieldname, '', '!=');
 
-        $rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause, null, null);
+        $rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause);
         return (int)$rows[0]['record_count'];
     }
 
@@ -89,7 +87,9 @@ class updateFiles
         $whereClause->addCondition($fieldrow->realfieldname, null, 'NOT NULL');
         $whereClause->addCondition($fieldrow->realfieldname, '', '!=');
 
-        $rows = database::loadAssocList($ct->Table->realtablename, $ct->Table->selects, $whereClause, null, null);
+        $rows = database::loadAssocList($ct->Table->realtablename, $ct->Table->selects, $whereClause);
+
+        $old_FileFolder = null;
 
         foreach ($rows as $file) {
             $field_row_old = (array)$fieldrow;

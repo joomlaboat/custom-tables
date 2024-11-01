@@ -19,39 +19,39 @@ use Joomla\CMS\Table\Table;
  */
 class CustomtablesTableFields extends Table
 {
-	var $id = null;
-	var $tableid = null;
-	var $allowordering = null;
-	var $defaultvalue = null;
-	var $fieldname = null;
-	var $customfieldname = null;
-	var $fieldtitle = null;
-	var $description = null;
-	var $isrequired = null;
-	var $isdisabled = null;
-	var $savevalue = null;
-	var $alwaysupdatevalue = null;
-	var $type = null;
-	var $typeParams = null;
-	var ?string $valuerule = null;
-	var ?string $valuerulecaption = null;
-	var $published = null;
-	var $parentid = null;
-	var $created_by = null;
-	var $modified_by = null;
-	var $created = null;
-	var $modified = null;
-	var $checked_out = null;
-	var $checked_out_time = null;
-	var $ordering = null;
+    var $id = null;
+    var $tableid = null;
+    var $allowordering = null;
+    var $defaultvalue = null;
+    var $fieldname = null;
+    //var $customfieldname = null;
+    var $fieldtitle = null;
+    var $description = null;
+    var $isrequired = null;
+    var $isdisabled = null;
+    var $savevalue = null;
+    var $alwaysupdatevalue = null;
+    var $type = null;
+    var $typeParams = null;
+    var ?string $valuerule = null;
+    var ?string $valuerulecaption = null;
+    var $published = null;
+    var $parentid = null;
+    var $created_by = null;
+    var $modified_by = null;
+    var $created = null;
+    var $modified = null;
+    var $checked_out = null;
+    var $checked_out_time = null;
+    var $ordering = null;
 
-	/**
-	 * Constructor
-	 *
-	 * @param object Database connector object
-	 */
-	function __construct(&$db)
-	{
-		parent::__construct('#__customtables_fields', 'id', $db);
-	}
+    /**
+     * Constructor
+     *
+     * @param object Database connector object
+     */
+    function __construct(&$db)
+    {
+        parent::__construct('#__customtables_fields', 'id', $db);
+    }
 }

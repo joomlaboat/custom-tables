@@ -11,22 +11,31 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 
 class tagProcessor_If
 {
+    /**
+     * @throws Exception
+     *
+     * @since 1.0.0
+     */
     protected static function processValue(CT &$ct, string $value, ?array &$row): string
     {
         tagProcessor_General::process($ct, $value, $row);
         tagProcessor_Page::process($ct, $value);
         tagProcessor_Item::process($ct, $value, $row, '');
-        tagProcessor_Value::processValues($ct, $value, $row, '[]');
+        tagProcessor_Value::processValues($ct, $value, $row);
 
         return $value;
     }
 
+    /**
+     * @throws Exception
+     *
+     * @since 1.0.0
+     */
     public static function process(CT &$ct, string &$pageLayout, ?array &$row): void
     {
         $options = array();
@@ -52,7 +61,12 @@ class tagProcessor_If
         tagProcessor_If::IFUserTypeStatment($pageLayout, $ct->Env->user, $ct->Env->user->id);
     }
 
-    protected static function parseIfStatements(string $statement, CT &$ct, string &$htmlresult, ?array &$row): void
+    /**
+     * @throws Exception
+     *
+     * @since 1.0.0
+     */
+    protected static function parseIfStatements(string $statement, CT &$ct, string &$htmlResult, ?array &$row): void
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplaceAdvanced('{if:' . $statement . '}', '{endif}', $options, $htmlResult, '{if:');
@@ -202,7 +216,12 @@ class tagProcessor_If
 
     //---------------------- old
 
-    public static function IFUserTypeStatment(string &$htmlresult, &$user, $currentUserId)
+    /**
+     * @throws Exception
+     *
+     * @since 1.0.0
+     */
+    public static function IFUserTypeStatment(string &$htmlresult, $user, $currentUserId)
     {
         $options = array();
         $fList = CTMiscHelper::getListToReplace('_if_usertype', $options, $htmlresult, '[]');

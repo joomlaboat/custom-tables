@@ -47,7 +47,7 @@ class Value_log extends BaseValue
         //get creation date
         foreach ($this->ct->Table->fields as $fieldRow) {
             if ($fieldRow['type'] == 'creationtime') {
-                $version_date_string = $this->ct->Table->record[$this->ct->Env->field_prefix . $fieldRow['fieldname']];
+                $version_date_string = $this->ct->Table->record[$this->ct->Table->fieldPrefix . $fieldRow['fieldname']];
                 break;
             }
         }
@@ -59,7 +59,7 @@ class Value_log extends BaseValue
                 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
                     . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
 
-                $version_author = Value_user::renderUserValue($this->ct->Table->record[$this->ct->Env->field_prefix . $fieldRow['fieldname']]);
+                $version_author = Value_user::renderUserValue($this->ct->Table->record[$this->ct->Table->fieldPrefix . $fieldRow['fieldname']]);
                 break;
             }
         }
@@ -160,7 +160,7 @@ class Value_log extends BaseValue
 
         foreach ($this->ct->Table->fields as $fieldRow) {
             if ($fieldRow['type'] != 'log' and $fieldRow['type'] != 'dummy' and !Fields::isVirtualField($fieldRow)) {
-                $field_name = $this->ct->Env->field_prefix . $fieldRow['fieldname'];
+                $field_name = $this->ct->Table->fieldPrefix . $fieldRow['fieldname'];
                 if (isset($decoded_data_row[$field_name]))
                     $version_size += strlen($decoded_data_row[$field_name]);
             }

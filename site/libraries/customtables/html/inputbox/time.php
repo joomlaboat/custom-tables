@@ -164,7 +164,7 @@ class InputBox_time extends BaseInputBox
     function render(?string $value, ?string $defaultValue): string
     {
         if ($value === null) {
-            $value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname);
+            $value = common::inputGetCmd($this->ct->Table->fieldPrefix . $this->field->fieldname);
 
             if ($value === null)
                 $value = $defaultValue;

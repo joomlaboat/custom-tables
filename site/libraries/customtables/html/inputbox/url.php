@@ -15,38 +15,38 @@ defined('_JEXEC') or die();
 
 class InputBox_url extends BaseInputBox
 {
-	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
-	{
-		parent::__construct($ct, $field, $row, $option_list, $attributes);
-		self::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-	}
+    function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
+    {
+        parent::__construct($ct, $field, $row, $option_list, $attributes);
+        self::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+    }
 
-	function render(?string $value, ?string $defaultValue): string
-	{
-		if ($value === null) {
-			$value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			//https://stackoverflow.com/questions/58265286/remove-all-special-characters-from-string-to-make-it-a-valid-email-but-keep-%C3%A4%C3%B6%C3%BC
-			$value = preg_replace('/[^\p{L}\d\-.;@_]/u', '', $value);
+    function render(?string $value, ?string $defaultValue): string
+    {
+        if ($value === null) {
+            $value = common::inputGetString($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
+            //https://stackoverflow.com/questions/58265286/remove-all-special-characters-from-string-to-make-it-a-valid-email-but-keep-%C3%A4%C3%B6%C3%BC
+            $value = preg_replace('/[^\p{L}\d\-.;@_]/u', '', $value);
 
-			if ($value == '')
-				$value = $defaultValue;
-		}
+            if ($value == '')
+                $value = $defaultValue;
+        }
 
-		$filters = array();
-		$filters[] = 'url';
+        $filters = array();
+        $filters[] = 'url';
 
-		if (isset($this->field->params[1]) and $this->field->params[1] == 'true')
-			$filters[] = 'https';
+        if (isset($this->field->params[1]) and $this->field->params[1] == 'true')
+            $filters[] = 'https';
 
-		if (isset($this->field->params[2]) and $this->field->params[2] != '')
-			$filters[] = 'domain:' . $this->field->params[2];
+        if (isset($this->field->params[2]) and $this->field->params[2] != '')
+            $filters[] = 'domain:' . $this->field->params[2];
 
-		$this->attributes['type'] = 'text';
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
-		$this->attributes['maxlength'] = 1024;
-		$this->attributes['data-sanitizers'] = 'trim';
-		$this->attributes['data-filters'] = implode(',', $filters);
+        $this->attributes['type'] = 'text';
+        $this->attributes['value'] = htmlspecialchars($value ?? '');
+        $this->attributes['maxlength'] = 1024;
+        $this->attributes['data-sanitizers'] = 'trim';
+        $this->attributes['data-filters'] = implode(',', $filters);
 
-		return '<input ' . self::attributes2String($this->attributes) . ' />';
-	}
+        return '<input ' . self::attributes2String($this->attributes) . ' />';
+    }
 }

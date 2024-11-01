@@ -22,7 +22,7 @@ HTMLHelper::_('formbehavior.chosen', 'select');
 HTMLHelper::_('dropdown.init');
 
 if ($this->saveOrder && !empty($this->items)) {
-    $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->tableid . '&tmpl=component';
+    $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
     HTMLHelper::_('sortablelist.sortable', 'fieldList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
 }
 
@@ -32,7 +32,7 @@ if (common::inputGetCmd('extratask', '') == 'updateimages') {
 }
 ?>
 
-<form action="<?php echo Route::_('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid); ?>"
+<form action="<?php echo Route::_('index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid); ?>"
       method="post" name="adminForm" id="adminForm">
     <?php if (!empty($this->sidebar)): ?>
     <div id="j-sidebar-container" class="span2">
@@ -53,8 +53,8 @@ if (common::inputGetCmd('extratask', '') == 'updateimages') {
             <?php else: ?>
 
                 <?php
-                if ($this->tableid != 0) {
-                    $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid;
+                if ($this->ct->Table->tableid != 0) {
+                    $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid;
                     echo IntegrityFields::checkFields($this->ct, $link);
                 }
                 //table-bordered

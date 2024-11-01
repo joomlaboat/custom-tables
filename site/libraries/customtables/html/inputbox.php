@@ -208,7 +208,7 @@ class Inputbox
             $value = common::inputPostString($this->field->realfieldname, null, 'create-edit-record');
 
             if ($value == '') {
-                $f = str_replace($this->ct->Env->field_prefix, '', $this->field->realfieldname);//legacy support
+                $f = str_replace($this->ct->Table->fieldPrefix, '', $this->field->realfieldname);//legacy support
                 $value = common::getWhereParameter($f);
             }
 

@@ -30,7 +30,7 @@ class InputBox_string extends BaseInputBox
     function render(?string $value, ?string $defaultValue): string
     {
         if ($value === null) {
-            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetString($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
             if ($value == '')
                 $value = $defaultValue;
         }

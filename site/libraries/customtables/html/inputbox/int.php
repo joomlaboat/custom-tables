@@ -15,24 +15,24 @@ defined('_JEXEC') or die();
 
 class InputBox_int extends BaseInputBox
 {
-	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
-	{
-		parent::__construct($ct, $field, $row, $option_list, $attributes);
-		self::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-	}
+    function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
+    {
+        parent::__construct($ct, $field, $row, $option_list, $attributes);
+        self::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+    }
 
-	function render(?string $value, ?string $defaultValue): string
-	{
-		if ($value === null) {
-			$value = common::inputGetAlnum($this->ct->Env->field_prefix . $this->field->fieldname, '');
-			if ($value == '')
-				$value = $defaultValue;
-		}
+    function render(?string $value, ?string $defaultValue): string
+    {
+        if ($value === null) {
+            $value = common::inputGetAlnum($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
+            if ($value == '')
+                $value = $defaultValue;
+        }
 
-		$this->attributes['type'] = 'text';
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
-		$this->attributes['maxlength'] = 32;
+        $this->attributes['type'] = 'text';
+        $this->attributes['value'] = htmlspecialchars($value ?? '');
+        $this->attributes['maxlength'] = 32;
 
-		return '<input ' . self::attributes2String($this->attributes) . ' />';
-	}
+        return '<input ' . self::attributes2String($this->attributes) . ' />';
+    }
 }

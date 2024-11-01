@@ -40,6 +40,9 @@ class Table
     var ?array $fileboxes;
     var ?array $selects;
 
+    var string $fieldPrefix;
+    var string $fieldInputPrefix;
+
     /**
      * @throws Exception
      * @since 3.2.2
@@ -66,10 +69,13 @@ class Table
         $this->imagegalleries = null;
         $this->fileboxes = null;
         $this->selects = null;
+        $this->fieldPrefix = $this->Env->field_prefix;
+        $this->fieldInputPrefix = $this->Env->field_input_preprefix . $this->fieldPrefix;
 
-        if ($tablename_or_id_not_sanitized === null or $tablename_or_id_not_sanitized == '')
+        if (empty($tablename_or_id_not_sanitized))
             return;
-        elseif (is_numeric($tablename_or_id_not_sanitized)) {
+
+        if (is_numeric($tablename_or_id_not_sanitized)) {
             $this->tablerow = TableHelper::getTableRowByIDAssoc((int)$tablename_or_id_not_sanitized);// int sanitizes the input
         } else {
             $tablename_or_id = strtolower(trim(preg_replace('/\W/', '', $tablename_or_id_not_sanitized)));//[^a-zA-Z_\d]
@@ -89,7 +95,7 @@ class Table
      * @throws Exception
      * @since 3.2.2
      */
-    function setTable($tableRow, $useridFieldName = null): void
+    protected function setTable($tableRow, $useridFieldName = null): void
     {
         $this->tablerow = $tableRow;
         $this->tablename = $this->tablerow['tablename'];
@@ -107,8 +113,23 @@ class Table
         $this->fileboxes = array();
         $this->useridfieldname = '';
 
+        if ($this->tablerow['customfieldprefix'] !== null) {
+            $this->fieldPrefix = $this->tablerow['customfieldprefix'];
+            if ($this->fieldPrefix == 'NO-PREFIX')
+                $this->fieldPrefix = '';
+
+            $this->fieldInputPrefix = $this->Env->field_input_preprefix . $this->fieldPrefix;
+        } elseif (!empty($this->customtablename)) {
+            //Do not use global field prefix for third-party tables.
+            $this->fieldPrefix = '';
+            $this->fieldInputPrefix = $this->Env->field_input_preprefix . $this->fieldPrefix;
+        }
+
         //Fields
-        $this->fields = Fields::getFields($this->tableid);
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('f.published', 1);
+        $whereClause->addCondition('f.tableid', $this->tableid);
+        $this->fields = database::loadAssocList('#__customtables_fields AS f', Fields::getFieldRowSelectArray($this->fieldPrefix), $whereClause, 'f.ordering, f.fieldname');
 
         foreach ($this->fields as $fld) {
 

@@ -39,7 +39,6 @@ class ImportTables
             $msg = 'Uploaded file "' . $filename . '" not found.';
             return false;
         }
-        return true;
     }
 
     /**
@@ -75,7 +74,7 @@ class ImportTables
                 //Next: Add/Update Fields
 
                 if ($importfields)
-                    ImportTables::processFields($tableid, $table['table']['tablename'], $table['fields'], $msg);
+                    ImportTables::processFields($table['table']['tablename'], $msg);
 
                 if ($importlayouts)
                     ImportTables::processLayouts($ct, $tableid, $table['layouts'], $msg);
@@ -117,7 +116,7 @@ class ImportTables
             ImportTables::updateRecords('tables', $table_new, $table_old, true, ['categoryname']);
         } else {
             //Create table record
-            $tableId = ImportTables::insertRecords('tables', $table_new, true, ['categoryname']);
+            $tableId = ImportTables::insertRecords('#__customtables_tables', $table_new, ['categoryname']);
         }
 
         //Create mysql table
@@ -208,59 +207,54 @@ class ImportTables
      * @throws Exception
      * @since 3.2.2
      */
-    public static function insertRecords(string $table, array $rows, bool $addPrefix = true, array $exceptions = array(), bool $force_id = false,
-                                         string $add_field_prefix = '', array $field_conversion_map = array(), bool $save_checked_out = false): ?int
+    public static function insertRecords(string $mysqlTableName, array $rows, array $exceptions = array(),
+                                         bool   $force_id = false, string $fieldPrefix = null, int $tableId = null): ?int
     {
-        if ($addPrefix)
-            $mysqlTableName = '#__customtables_' . $table;
-        else
-            $mysqlTableName = $table;
-
         $data = [];
 
         $keys = array_keys($rows);
         $ignore_fields = ['asset_id', 'created_by', 'modified_by', 'version', 'hits', 'publish_up', 'publish_down', 'checked_out_time'];
 
-        if (!$save_checked_out) {
-            $ignore_fields[] = 'checked_out';
-            $ignore_fields[] = 'checked_out_time';
-        }
+        //if (!$save_checked_out) {
+        $ignore_fields[] = 'checked_out';
+        $ignore_fields[] = 'checked_out_time';
+        //}
 
         if (!defined('_JEXEC'))
             $ignore_fields[] = 'tablecategory';
 
-        $core_fields = ['id', 'published'];
-        $tablesToIgnore = ['tables', 'fields', 'layouts', '#__menu', "#__usergourps", "#__viewlevels"];
+        //$core_fields = ['id', 'published'];
+        $tablesToIgnore = ['#__customtables_tables', '#__customtables_fields', '#__customtables_layouts', '#__menu', "#__usergourps", "#__viewlevels"];
 
         foreach ($keys as $key) {
             $isOk = false;
 
-            if (isset($field_conversion_map[$key])) {
+            //if (isset($field_conversion_map[$key])) {
+            //$isOk = true;
+            //if (is_array($field_conversion_map[$key])) {
+            //$fieldname = $field_conversion_map[$key]['name'];
+            //} else
+            //$fieldname = $field_conversion_map[$key];
+            //} elseif (count($field_conversion_map) > 0 and in_array($key, $field_conversion_map)) {
+            //$isOk = true;
+            //if (in_array($key, $core_fields))
+            //$fieldname = $key;
+            //else
+            //$fieldname = $add_field_prefix . $key;
+            //} else {
+            $fieldname = ImportTables::checkFieldName($key, $force_id, $exceptions);
+            if ($fieldname != '') {
                 $isOk = true;
-                if (is_array($field_conversion_map[$key])) {
-                    $fieldname = $field_conversion_map[$key]['name'];
-                } else
-                    $fieldname = $field_conversion_map[$key];
-            } elseif (count($field_conversion_map) > 0 and in_array($key, $field_conversion_map)) {
-                $isOk = true;
-                if (in_array($key, $core_fields))
-                    $fieldname = $key;
-                else
-                    $fieldname = $add_field_prefix . $key;
-            } else {
-                $fieldname = ImportTables::checkFieldName($key, $force_id, $exceptions);
-                if ($fieldname != '') {
-                    $isOk = true;
-                    if (!in_array($fieldname, $core_fields))
-                        $fieldname = $add_field_prefix . $fieldname;
-                }
+                //if (!in_array($fieldname, $core_fields))
+                //$fieldname = $fieldname;//$add_field_prefix .
             }
+            //}
 
             if ($fieldname != null and !in_array($fieldname, $ignore_fields) and $isOk) {
 
                 if (!Fields::checkIfFieldExists($mysqlTableName, $fieldname)) {
                     //Add field
-                    if ($addPrefix and in_array($table, $tablesToIgnore)) {
+                    if (in_array($mysqlTableName, $tablesToIgnore)) {
                         //$data[$fieldname] = $rows[$key];
                     } else {
                         $data[$fieldname] = $rows[$key];
@@ -273,8 +267,8 @@ class ImportTables
 
                             //TODO: check how it works
                             $whereClause = new MySQLWhereClause();
-                            $whereClause->addCondition('tableid', '(SELECT id A FROM #__customtables_tables WHERE tablename=' . database::quote($table) . ')', '=', true);
-                            $whereClause->addCondition('fieldname', str_replace('es_', '', $nonLanguageFieldName));
+                            $whereClause->addCondition('tableid', $tableId, '=', true);
+                            $whereClause->addCondition('fieldname', str_replace($fieldPrefix, '', $nonLanguageFieldName));
                             $col = database::loadColumn('#__customtables_fields', ['type'], $whereClause, null, null, 1);
 
                             $fieldType = '';
@@ -389,15 +383,14 @@ class ImportTables
      * @throws Exception
      * @since 3.2.2
      */
-    protected static function processFields($tableid, $tableName, $fields, &$msg): bool
+    protected static function processFields(string $tableName, &$msg): bool
     {
         $ct = new CT;
+        $ct->getTable($tableName);
 
-        foreach ($fields as $field) {
-            $fieldid = ImportTables::processField($ct, $tableid, $tableName, $field);
-            if ($fieldid != 0) {
-                //Good
-            } else {
+        foreach ($ct->Table->fields as $field) {
+            $fieldid = ImportTables::processField($ct, $field);
+            if ($fieldid == 0) {
                 $msg = 'Could not Add or Update field "' . $field['fieldname'] . '"';
                 return false;
             }
@@ -409,26 +402,26 @@ class ImportTables
      * @throws Exception
      * @since 3.2.2
      */
-    protected static function processField(CT $ct, $tableid, $tableName, &$field_new)
+    protected static function processField(CT $ct, array &$field_new)
     {
         //This function creates the table field and returns field's id.
         //If field with same name already exists then existing field will be updated, and it's ID will be returned.
 
-        $field_new['tableid'] = $tableid;//replace tableid
+        $field_new['tableid'] = $ct->Table->tableid;//replace tableid
         $fieldName = $field_new['fieldname'];
-        $field_old = Fields::getFieldRowByName($fieldName, $tableid, '', true);
+        $field_old = Fields::getFieldRowByName($fieldName, $ct->Table);
 
         if (is_array($field_old) and count($field_old) > 0) {
             $fieldid = $field_old['id'];
             ImportTables::updateRecords('fields', $field_new, $field_old);
         } else {
             //Create field record
-            $fieldid = ImportTables::insertRecords('fields', $field_new);
+            $fieldid = ImportTables::insertRecords('#__customtables_fields', $field_new);
             if ($fieldid != 0) {
                 //Field added
                 //Lets create mysql field
                 $PureFieldType = Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
-                Fields::addField($ct, '#__customtables_table_' . $tableName, $ct->Env->field_prefix . $fieldName,
+                Fields::addField($ct, $ct->Table->realtablename, $ct->Table->fieldPrefix . $fieldName,
                     $PureFieldType, $field_new['fieldtitle'], $field_new);
             }
         }
@@ -486,7 +479,7 @@ class ImportTables
             ImportTables::updateRecords('layouts', $layout_new, $layout_old);
         } else {
             //Create layout record
-            $layoutId = ImportTables::insertRecords('layouts', $layout_new);
+            $layoutId = ImportTables::insertRecords('#__customtables_layouts', $layout_new);
         }
         $Layouts->storeAsFile($layout_new);
         return $layoutId;
@@ -601,7 +594,7 @@ class ImportTables
 
             //Alias,New ID, Old ID
             $menus[] = [$menuitem_alias, $menuItemId, 0];
-            $menuItemId = ImportTables::insertRecords('#__menu', $menuitem_new, false);
+            $menuItemId = ImportTables::insertRecords('#__menu', $menuitem_new);
             $menuitem_new['id'] = $menuItemId;
         }
         return $menuItemId;
@@ -635,17 +628,21 @@ class ImportTables
      * @throws Exception
      * @since 3.2.2
      */
-    protected static function processRecords($tableName, $records): bool
+    protected static function processRecords(string $tableName, array $records): bool
     {
-        $mySQLTableName = '#__customtables_table_' . $tableName;
+        $ct = new CT();
+        $ct->getTable($tableName);
+        if ($ct->Table === null) {
+            return false;    // Exit if table to connect with not found
+        }
 
         foreach ($records as $record) {
-            $record_old = ImportTables::getRecordByField($mySQLTableName, 'id', $record['id'], false);//get record by id
+            $record_old = ImportTables::getRecordByField($ct->Table->realtablename, $ct->Table->realidfieldname, $record[$ct->Table->realidfieldname], false);//get record by id
 
             if ($record_old != 0)
-                ImportTables::updateRecords($mySQLTableName, $record, $record_old, false, array(), true);//update single existing record
+                ImportTables::updateRecords($ct->Table->realtablename, $record, $record_old, false, array(), true);//update single existing record
             else
-                ImportTables::insertRecords($mySQLTableName, $record, false, array(), true);//insert single new record
+                ImportTables::insertRecords($ct->Table->realtablename, $record, array(), true, $ct->Table->fieldPrefix, $ct->Table->tableid);//insert single new record
         }
         return true;
     }
@@ -744,6 +741,10 @@ class ImportTables
         }
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     public static function rebuildMenuTree($menuitem_new)
     {
         // https://joomla.stackexchange.com/questions/5104/programmatically-add-menu-item-in-component

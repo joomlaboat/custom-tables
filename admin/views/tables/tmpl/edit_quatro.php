@@ -53,10 +53,10 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
                     if ($moreThanOneLang) {
                         $id .= '_' . $lang->sef;
 
-                        $cssclass = 'form-control valid form-control-success';
+                        $cssClass = 'form-control valid form-control-success';
                         $att = '';
                     } else {
-                        $cssclass = 'form-control required valid form-control-success';
+                        $cssClass = 'form-control required valid form-control-success';
                         $att = ' required ';
                     }
 
@@ -74,7 +74,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 							<br/><b>' . $lang->title . '</b>
 						</div>
 						<div class="controls">
-							<input type="text" name="jform[' . $id . ']" id="jform_' . $id . '"  value="' . $vlu . '" class="' . $cssclass . '" '
+							<input type="text" name="jform[' . $id . ']" id="jform_' . $id . '"  value="' . $vlu . '" class="' . $cssClass . '" '
                         . 'placeholder="Table Title" maxlength="255" ' . $att . ' />
 							
 						</div>
@@ -190,12 +190,21 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
                     <div class="control-group">
                         <div class="control-label"><?php echo $this->form->getLabel('customfieldprefix'); ?></div>
                         <div class="controls">
-                            <?php echo $this->form->getInput('customfieldprefix'); ?>
+                            <?php
+
+                            $vlu = $this->item->customfieldprefix;
+
+                            if ($this->item->customfieldprefix === null) {
+                                echo 'customfieldprefix IS NULL*';
+                                $vlu = 'ct_';
+                            }
+                            ?>
+                            <input type="text" name="jform[customfieldprefix]" id="jform_customfieldprefix"
+                                   value="<?php echo $vlu; ?>" class="form-control valid form-control-success"
+                                   placeholder="" maxlength="50"/>
                         </div>
                     </div>
                 <?php endif; ?>
-
-
             </div>
         </div>
 

@@ -50,10 +50,19 @@ class ListOfFields
      */
     function getListQuery(int $tableId, $published = null, $search = null, $type = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0, bool $returnQueryString = false)
     {
+        if ($tableId == 0)
+            return null;
+
+        $this->ct->getTable($tableId);
+        if ($this->ct->Table === null) {
+            common::enqueueMessage('Table not found');
+            return null;
+        }
+
         $selects = [
             'a.*',
             'TABLE_TITLE',
-            'REAL_FIELD_NAME'
+            ['REAL_FIELD_NAME', $this->ct->Table->fieldPrefix]
         ];
 
         $whereClause = new MySQLWhereClause();
@@ -88,12 +97,16 @@ class ListOfFields
             $whereClause->addCondition('a.type', (int)$type);
 
         // Filter by Type
-        if ($tableId != 0)
-            $whereClause->addCondition('a.tableid', (int)$tableId);
+        $whereClause->addCondition('a.tableid', $tableId);
 
         return database::loadAssocList('#__customtables_fields AS a', $selects, $whereClause, $orderCol, $orderDirection, $limit, $start, null, $returnQueryString);
     }
 
+    /**
+     * @throws Exception`
+     *
+     * @since 3.0.0
+     */
     public function renderBody(): string
     {
         $result = '';
@@ -107,6 +120,11 @@ class ListOfFields
         return $result;
     }
 
+    /**
+     * @throws Exception
+     *
+     * @since 3.0.0
+     */
     protected function renderBodyLine(object $item, int $i, $canCheckin, $userChkOut): string
     {
         if (defined('WPINC')) {
@@ -232,7 +250,7 @@ class ListOfFields
     protected function checkTypeParams(string $type, string $typeParams): string
     {
         if ($type == 'sqljoin' or $type == 'records') {
-            $params = CTMiscHelper::csv_explode(',', $typeParams, '"', false);
+            $params = CTMiscHelper::csv_explode(',', $typeParams);
 
             $error = [];
 
@@ -247,6 +265,11 @@ class ListOfFields
         return '';
     }
 
+    /**
+     * @throws Exception
+     *
+     * @since 3.0.0
+     */
     function save(?int $tableId, ?int $fieldId): bool
     {
         $fieldId = Fields::saveField($tableId, $fieldId);

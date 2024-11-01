@@ -16,7 +16,7 @@ use CustomTables\database;
 use CustomTables\Fields;
 use Joomla\CMS\HTML\HTMLHelper;
 
-$edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=" . $this->tableid;
+$edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=" . $this->ct->Table->tableid;
 $dbPrefix = database::getDBPrefix();
 $hashRealTableName = database::realTableName($this->ct->Table->realtablename);
 $hashRealTableName = str_replace($dbPrefix, '#__', $hashRealTableName);
@@ -31,7 +31,7 @@ $hashRealTableName = str_replace($dbPrefix, '#__', $hashRealTableName);
     $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || $item->checked_out == 0;
     $userChkOut = new CTUser($item->checked_out);
     ?>
-    <tr class="row<?php echo $i % 2; ?>" sortable-group-id="<?php echo $this->tableid; ?>">
+    <tr class="row<?php echo $i % 2; ?>" sortable-group-id="<?php echo $this->ct->Table->tableid; ?>">
 
         <td class="nowrap center">
             <?php if ($this->canEdit): ?>
@@ -73,7 +73,7 @@ $hashRealTableName = str_replace($dbPrefix, '#__', $hashRealTableName);
         <td class="hidden-phone">
 
             <?php if ($this->canEdit): ?>
-                <a href="<?php echo $edit; ?>&tableid=<?php echo $this->tableid; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->fieldname); ?></a>
+                <a href="<?php echo $edit; ?>&tableid=<?php echo $this->ct->Table->tableid; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->fieldname); ?></a>
                 <?php if ($item->checked_out): ?>
                     <?php echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoffields.', $canCheckin); ?>
                 <?php endif; ?>

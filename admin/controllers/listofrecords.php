@@ -30,30 +30,24 @@ class CustomtablesControllerListOfRecords extends AdminController
         return parent::getModel($name, $prefix, array('ignore_request' => true));
     }
 
+    /**
+     * @throws Exception
+     * @since 1.0.0
+     */
     public function publish()
     {
-        $status = (int)($this->task == 'publish');
         $tableid = common::inputGet('tableid', 0, 'int');
 
-        if ($tableid != 0) {
-            $tableRow = TableHelper::getTableRowByIDAssoc($tableid);
-            if (!is_array($tableRow) and $tableRow == 0) {
-                Factory::getApplication()->enqueueMessage('Table not found', 'error');
-                return;
-            } else {
-                $tablename = $tableRow['tablename'];
-            }
-        } else {
+        $ct = new CT();
+        $ct->getTable($tableid);
+
+        if ($ct->Table === null) {
             Factory::getApplication()->enqueueMessage('Table not set', 'error');
             return;
         }
 
+        $status = (int)($this->task == 'publish');
         $cid = common::inputPost('cid', array(), 'array');
-        $paramsArray = $this->getRecordParams($tableid, $tablename, 0);
-
-        $ct = new CT($paramsArray, false);
-        $ct->setTable($tableRow);
-
         foreach ($cid as $id) {
             if ($id != '') {
                 if ($ct->setPublishStatusSingleRecord($id, $status) == -1)
@@ -79,39 +73,23 @@ class CustomtablesControllerListOfRecords extends AdminController
         );
     }
 
-    protected function getRecordParams(int $tableid, string $tablename, $recordid): array
-    {
-        $paramsArray = array();
-
-        $paramsArray['listingid'] = $recordid;
-        $paramsArray['estableid'] = $tableid;
-        $paramsArray['establename'] = $tablename;
-
-        return $paramsArray;
-    }
-
+    /**
+     * @throws Exception
+     * @since 1.0.0
+     */
     public function delete()
     {
         $tableid = common::inputGet('tableid', 0, 'int');
 
-        if ($tableid != 0) {
-            $tableRow = TableHelper::getTableRowByIDAssoc($tableid);
-            if (!is_array($tableRow) and $tableRow == 0) {
-                Factory::getApplication()->enqueueMessage('Table not found', 'error');
-                return;
-            } else {
-                $tablename = $tableRow['tablename'];
-            }
-        } else {
+        $ct = new CT();
+        $ct->getTable($tableid);
+
+        if ($ct->Table === null) {
             Factory::getApplication()->enqueueMessage('Table not set', 'error');
             return;
         }
 
         $cid = common::inputPost('cid', array(), 'array');
-        $paramsArray = $this->getRecordParams($tableid, $tablename, 0);
-
-        $ct = new CT($paramsArray, false);
-        $ct->setTable($tableRow);
 
         foreach ($cid as $id) {
             if ($id != '') {
@@ -139,6 +117,10 @@ class CustomtablesControllerListOfRecords extends AdminController
         );
     }
 
+    /**
+     * @throws Exception
+     * @since 1.0.0
+     */
     public function ordering()
     {
         $ct = new CT;
@@ -159,6 +141,10 @@ class CustomtablesControllerListOfRecords extends AdminController
         }
     }
 
+    /**
+     * @throws Exception
+     * @since 1.0.0
+     */
     public function exportcsv()
     {
         $tableid = common::inputGet('tableid', 0, 'int');
@@ -217,6 +203,10 @@ class CustomtablesControllerListOfRecords extends AdminController
         return false;
     }
 
+    /**
+     * @throws Exception
+     * @since 1.0.0
+     */
     function importcsv()
     {
         $redirect = 'index.php?option=' . $this->option;

@@ -144,7 +144,7 @@ class Search_tablejoin extends BaseSearch
         //Process records depending on field type and layout
         $list_values = $this->get_List_Values($ct, $value_field, $dynamic_filter);
 
-        $htmlResult = self::renderDynamicFilter($ct, $value, $tableName, $dynamic_filter, $control_name);
+        $htmlResult = self::renderDynamicFilter($ct, $value, $dynamic_filter, $control_name);
         $htmlResult .= self::renderDropdownSelector_Box($list_values, $value, $control_name, $dynamic_filter, $addNoValue);
 
         return $htmlResult;
@@ -250,7 +250,7 @@ class Search_tablejoin extends BaseSearch
             }
 
             if ($dynamic_filter != '')
-                $d = $row[$ct->Env->field_prefix . $dynamic_filter];
+                $d = $row[$ct->Table->fieldPrefix . $dynamic_filter];
             else
                 $d = '';
 
@@ -260,21 +260,26 @@ class Search_tablejoin extends BaseSearch
         return $list_values;
     }
 
-    static protected function renderDynamicFilter(CT $ct, $value, $tableName, $dynamic_filter, $control_name): string
+    /**
+     * @throws Exception
+     *
+     * @since 3.0.0
+     */
+    static protected function renderDynamicFilter(CT $ct, $value, $dynamic_filter, $control_name): string
     {
-        $htmlresult = '';
+        $htmlResult = '';
 
         if ($dynamic_filter != '') {
             $filterValue = '';
             foreach ($ct->Records as $row) {
                 if ($row[$ct->Table->realidfieldname] == $value) {
-                    $filterValue = $row[$ct->Env->field_prefix . $dynamic_filter];
+                    $filterValue = $row[$ct->Table->fieldPrefix . $dynamic_filter];
                     break;
                 }
             }
-            $htmlresult .= LinkJoinFilters::getFilterBox($tableName, $dynamic_filter, $control_name, $filterValue);
+            $htmlResult .= LinkJoinFilters::getFilterBox($ct, $dynamic_filter, $control_name, $filterValue);
         }
-        return $htmlresult;
+        return $htmlResult;
     }
 
     protected function renderDropdownSelector_Box($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue = false): string

@@ -33,7 +33,10 @@ class CustomTablesViewListOfTables extends HtmlView
 
     function display($tpl = null)
     {
-        $this->ct = new CT;
+        // Get the model
+        $model = $this->getModel();
+        
+        $this->ct = $model->ct;
 
         if ($this->getLayout() !== 'modal') {
             // Include helper submenu

@@ -7,44 +7,31 @@
             label="COM_CUSTOMTABLES_CONFIG_GLOBAL_LABEL"
             description="COM_CUSTOMTABLES_CONFIG_GLOBAL_DESC">
 
-        <!--
-                        <field
-                    name="row_format"
-                    type="list"
-                    label="InnoDB Row Formats"
-                    default="COMPACT"
-                    description="The row format of a table determines how its rows are physically stored, which in turn can affect the performance of queries and DML operations. As more rows fit into a single disk page, queries and index lookups can work faster, less cache memory is required in the buffer pool, and less I/O is required to write out updated values. Changing the parameter will affect new tables only."
-                    >
-                    <option value="REDUNDANT">REDUNDANT Row Format</option>
-                    <option value="COMPACT">COMPACT Row Format</option>
-                    <option value="DYNAMIC">DYNAMIC Row Format</option>
-                    <option value="COMPRESSED">COMPRESSED Row Format</option>
-                </field>
-
-        -->
-        <!--		<field name="authorTitle"
-                    type="spacer"
-                    label="COM_CUSTOMTABLES_CONFIG_AUTHOR"
-                />
-        -->
-
         <field
                 name="loadTwig"
                 type="list"
                 label="Load Twig"
                 default="1"
-                description="Some templates come with the Twig and to avoid the conflict is recommended to disable the Twig load (declaration) in Custom Tables."
+                description="Controls whether Custom Tables should load the Twig templating engine. Disable this if your template already includes Twig to prevent conflicts. Most templates work fine with Twig enabled, but some specialized templates may require disabling it."
         >
             <option value="1">Load Twig</option>
             <option value="0">Do not load Twig</option>
         </field>
 
         <field
+                name="fieldPrefix"
+                type="text"
+                label="Field Name Prefix"
+                default="ct_"
+                description="Specifies the prefix added to all table field names (e.g., 'ct_FieldName'). This prefix helps prevent conflicts with MySQL reserved words and ensures database compatibility. Only modify this if you have a specific reason to use a different prefix scheme. Type NO-PREFIX to have field names without a prefix. Changing the prefix doesnt automatically renames fields. You will have to do it manually."
+        />
+
+        <field
                 name="googlemapapikey"
                 type="text"
                 label="Google Map API Key"
                 default=""
-                description=""
+                description="Enter your Google Maps API key to enable map functionality. Required for displaying maps and using location-based features in your tables."
         />
 
         <field
@@ -52,7 +39,7 @@
                 type="text"
                 label="Google Drive API Developer Key"
                 default=""
-                description=""
+                description="Enter your Google Drive API Developer Key to enable integration with Google Drive services. Required for accessing and managing files stored in Google Drive."
         />
 
         <field
@@ -60,7 +47,7 @@
                 type="text"
                 label="Google Drive API ClientID"
                 default=""
-                description=""
+                description="Enter your Google Drive API Client ID for authentication. This is required alongside the API Key for secure access to Google Drive services."
         />
 
         <field
@@ -68,7 +55,7 @@
                 type="text"
                 label="ChatGPT API Key"
                 default=""
-                description="Used with the Custom Tables ChatGPT module."
+                description="Enter your OpenAI API key to enable ChatGPT integration. This key is required to use AI-powered features within the Custom Tables ChatGPT module, such as content generation and data analysis."
         />
 
         <field
@@ -76,14 +63,10 @@
                 type="list"
                 label="Toolbar Icons"
                 default=""
-                description="What type of toolbar icons to use : Image Icons or Font Awesome."
+                description="Choose the icon style for your toolbar interface. Image Icons use traditional PNG/JPG files, while Font Awesome provides scalable vector icons that load faster and look crisp at any size. Font Awesome Solid is the recommended modern option."
         >
             <option value="">Image Icons</option>
             <option value="fas">Font Awesome - Solid</option>
-            <!--			FA PRO ICONS ($99/year) -->
-            <!--			<option value="far">Font Awesome - Regular</option>-->
-            <!--			<option value="fal">Font Awesome - Light</option>-->
-            <!--			<option value="fad">Font Awesome - Duotone</option>-->
         </field>
 
         <field
@@ -91,7 +74,7 @@
                 type="list"
                 label="Legacy Support"
                 default="puretwig"
-                description="Support old style layout syntax, example: *fieldname*, [fieldname], |fieldname|, {button:save}. Use Twig tags instead: {{ fieldname.title }}, {{ fieldname }}, {{ fieldname.value }}, {{ html.button('save') }}"
+                description="Determines whether to support legacy layout syntax alongside modern Twig templates. 'Pure Twig' is recommended for new installations, offering cleaner syntax and better performance. Choose 'Twig and Legacy' only if you're maintaining older layouts that use *fieldname*, [fieldname], or similar syntax."
         >
             <option value="legacy">Twig and Legacy</option>
             <option value="puretwig">Pure Twig</option>
@@ -102,7 +85,7 @@
                 type="text"
                 label="Folder where to save Layouts (Optional)"
                 default=""
-                description="The layout source code can be save as files if the path is specified."
+                description="Specify a folder path where layout files should be stored on the server. This allows you to version control your layouts and edit them directly using your preferred text editor. Leave empty to store layouts in the database."
         />
 
         <field name="authorName"

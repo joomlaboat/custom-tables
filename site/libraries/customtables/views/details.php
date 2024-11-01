@@ -16,7 +16,9 @@ defined('_JEXEC') or die();
 use Exception;
 use LayoutProcessor;
 use tagProcessor_PHP;
-use CustomTables\ctProHelpers;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class Details
 {
@@ -143,14 +145,19 @@ class Details
      * @throws Exception
      * @since 3.2.2
      */
-    protected function checkRecordUserJoin($recordsTable, $recordsUserIdField, $recordsField, $listing_id): bool
+    protected function checkRecordUserJoin(string $recordsTable, $recordsUserIdField, $recordsField, $listing_id): bool
     {
-        //TODO: avoid es_
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('es_' . $recordsUserIdField, $this->ct->Env->user->id);
-        $whereClause->addCondition('es_' . $recordsField, ',' . $listing_id . ',', 'INSTR');
+        $ct = new CT;
+        $ct->getTable($recordsTable);
+        if ($ct->Table === null) {
+            return false;    // Exit if table to connect with not found
+        }
 
-        $rows = database::loadAssocList('#__customtables_table_' . $recordsTable, ['COUNT_ROWS'], $whereClause, null, null, 1);
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition($ct->Table->fieldPrefix . $recordsUserIdField, $this->ct->Env->user->id);
+        $whereClause->addCondition($ct->Table->fieldPrefix . $recordsField, ',' . $listing_id . ',', 'INSTR');
+
+        $rows = database::loadAssocList($ct->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
         $num_rows = $rows[0]['record_count'];
 
         if ($num_rows == 0)
@@ -285,6 +292,13 @@ class Details
         return true;
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws Exception
+     * @since 3.0.0
+     */
     public function render(): string
     {
         $layoutDetailsContent = $this->layoutDetailsContent;

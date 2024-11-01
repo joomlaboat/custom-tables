@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use Exception;
 use Joomla\CMS\Editor\Editor;
 
 class InputBox_multilingualtext extends BaseInputBox
@@ -22,6 +23,10 @@ class InputBox_multilingualtext extends BaseInputBox
         parent::__construct($ct, $field, $row, $option_list, $attributes);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.0.0
+     */
     function render(?string $value, ?string $defaultValue): string
     {
         $RequiredLabel = 'Field is required';
@@ -37,16 +42,18 @@ class InputBox_multilingualtext extends BaseInputBox
             $fieldname = $this->field->fieldname . $postfix;
 
             $value = null;
-            if (isset($this->row) and array_key_exists($this->ct->Env->field_prefix . $fieldname, $this->row)) {
-                $value = $this->row[$this->ct->Env->field_prefix . $fieldname];
+            if (isset($this->row) and array_key_exists($this->ct->Table->fieldPrefix . $fieldname, $this->row)) {
+                $value = $this->row[$this->ct->Table->fieldPrefix . $fieldname];
             } else {
-                Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Env->field_prefix . $this->field->fieldname, $this->ct->Env->field_prefix . $fieldname);
-                $this->ct->errors[] = 'Field "' . $this->ct->Env->field_prefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.';
+                Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Table->fieldPrefix . $this->field->fieldname,
+                    $this->ct->Table->fieldPrefix . $fieldname);
+
+                $this->ct->errors[] = 'Field "' . $this->ct->Table->fieldPrefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.';
                 $value = '';
             }
 
             if ($value === null) {
-                $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+                $value = common::inputGetString($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
                 if ($value == '')
                     $value = $defaultValue;
             }

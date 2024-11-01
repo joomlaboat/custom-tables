@@ -343,13 +343,11 @@ class Filtering
 
                     if ($valueNew !== '') {
                         if ($asString) {
-                            $tempCT = new CT();
+                            $tempCT = new CT;
                             if ($typeParamsArray[0] != '') {
-                                $tempTableRow = TableHelper::getTableRowByNameAssoc($typeParamsArray[0]);// getTableRowByIDAssoc($this->tableid);
-                                if (!is_array($tempTableRow)) {
+                                $tempCT->getTable($typeParamsArray[0]);
+                                if ($tempCT->Table === null) {
                                     throw new Exception('processSingleFieldWhereSyntax: Table not found.');
-                                } else {
-                                    $tempCT->setTable($tempTableRow, null, false);
                                 }
                             } else {
                                 throw new Exception('processSingleFieldWhereSyntax: Table not set.');
@@ -738,12 +736,12 @@ class Filtering
         }
 
         if ($valueArr[0] != '' and $valueArr[1] != '') {
-            $whereClause->addCondition('es_' . $from_field, $v_min, '>=');
-            $whereClause->addCondition('es_' . $from_field, $v_max, '<=');
+            $whereClause->addCondition($this->ct->Table->fieldPrefix . $from_field, $v_min, '>=');
+            $whereClause->addCondition($this->ct->Table->fieldPrefix . $from_field, $v_max, '<=');
         } elseif ($valueArr[0] != '' and $valueArr[1] == '')
-            $whereClause->addCondition('es_' . $from_field, $v_min, '>=');
+            $whereClause->addCondition($this->ct->Table->fieldPrefix . $from_field, $v_min, '>=');
         elseif ($valueArr[1] != '' and $valueArr[0] == '')
-            $whereClause->addCondition('es_' . $from_field, $v_max, '<=');
+            $whereClause->addCondition($this->ct->Table->fieldPrefix . $from_field, $v_max, '<=');
 
         if (!$whereClause->hasConditions())
             return $whereClause;
@@ -1081,15 +1079,15 @@ class LinkJoinFilters
      * @throws Exception
      * @since 3.2.2
      */
-    static public function getFilterBox($tableName, $dynamicFilterFieldName, $control_name, $filterValue, $control_name_postfix = ''): string
+    static public function getFilterBox(CT $ct, $dynamicFilterFieldName, $control_name, $filterValue, $control_name_postfix = ''): string
     {
-        $fieldRow = Fields::getFieldRowByName($dynamicFilterFieldName, null, $tableName);
+        $fieldRow = Fields::getFieldRowByName($dynamicFilterFieldName, $ct->Table);
 
         if ($fieldRow === null)
             return '';
 
-        if ($fieldRow->type == 'sqljoin' or $fieldRow->type == 'records')
-            return LinkJoinFilters::getFilterElement_SqlJoin($fieldRow->typeparams, $control_name, $filterValue, $control_name_postfix);
+        if ($fieldRow['type'] == 'sqljoin' or $fieldRow['type'] == 'records')
+            return LinkJoinFilters::getFilterElement_SqlJoin($fieldRow['typeparams'], $control_name, $filterValue, $control_name_postfix);
 
         return '';
     }
@@ -1109,28 +1107,30 @@ class LinkJoinFilters
         else
             return '<p style="color:white;background-color:red;">sqljoin: field not set</p>';
 
-        $tableRow = TableHelper::getTableRowByNameAssoc($tablename);
-        if (!is_array($tableRow))
+        $ct = new CT;
+        $ct->getTable($tablename);
+
+        if ($ct->Table === null)
             return '<p style="color:white;background-color:red;">sqljoin: table "' . $tablename . '" not found</p>';
 
-        $fieldrow = Fields::getFieldRowByName($field, $tableRow['id']);
-        if (!is_object($fieldrow))
+        $fieldRow = Fields::getFieldRowByName($field, $ct->Table);
+        if (!is_array($fieldRow))
             return '<p style="color:white;background-color:red;">sqljoin: field "' . $field . '" not found</p>';
 
         $selects = [];
-        $selects[] = $tableRow['realtablename'] . '.' . $tableRow['realidfieldname'];
+        $selects[] = $ct->Table->realtablename . '.' . $ct->Table->realidfieldname;
         $whereClause = new MySQLWhereClause();
 
-        if ($tableRow['published_field_found']) {
+        if ($ct->Table->published_field_found) {
             $selects[] = 'LISTING_PUBLISHED';
-            $whereClause->addCondition($tableRow['realtablename'] . '.published', 1);
+            $whereClause->addCondition($ct->Table->realtablename . '.published', 1);
         } else {
             $selects[] = 'LISTING_PUBLISHED_1';
         }
 
-        $selects[] = $tableRow['realtablename'] . '.' . $fieldrow->realfieldname;
+        $selects[] = $ct->Table->realtablename . '.' . $fieldRow['realfieldname'];
 
-        $rows = database::loadAssocList($tableRow['realtablename'], $selects, $whereClause, $fieldrow->realfieldname);
+        $rows = database::loadAssocList($ct->Table->realtablename, $selects, $whereClause, $fieldRow['realfieldname']);
 
         $result .= '
 		<script>
@@ -1143,10 +1143,10 @@ class LinkJoinFilters
         $result .= '<option value="">- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 
         foreach ($rows as $row) {
-            if ($row[$tableRow['realidfieldname']] == $filterValue or str_contains($filterValue, ',' . $row[$tableRow['realidfieldname']] . ','))
-                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '" selected>' . htmlspecialchars($row[$fieldrow->realfieldname] ?? '') . '</option>';
+            if ($row[$ct->Table->realidfieldname] == $filterValue or str_contains($filterValue, ',' . $row[$ct->Table->realidfieldname] . ','))
+                $result .= '<option value="' . $row[$ct->Table->realidfieldname] . '" selected>' . htmlspecialchars($row[$fieldRow['realfieldname']] ?? '') . '</option>';
             else
-                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '">' . htmlspecialchars($row[$fieldrow->realfieldname] ?? '') . '</option>';
+                $result .= '<option value="' . $row[$ct->Table->realidfieldname] . '">' . htmlspecialchars($row[$fieldRow['realfieldname']] ?? '') . '</option>';
         }
         $result .= '</select>
 ';

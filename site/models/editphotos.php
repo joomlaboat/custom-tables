@@ -121,11 +121,11 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
      */
     function getGallery(): bool
     {
-        $fieldrow = Fields::getFieldRowByName($this->galleryname, $this->ct->Table->tableid, '', true);
-        if ($fieldrow === null)
+        $fieldRow = Fields::getFieldRowByName($this->galleryname, $this->ct->Table);
+        if ($fieldRow === null)
             return false;
 
-        $this->field = new Field($this->ct, $fieldrow, $this->row);
+        $this->field = new Field($this->ct, $fieldRow, $this->row);
         $this->GalleryTitle = $this->field->title;
         $this->imagefolderword = CustomTablesImageMethods::getImageFolder($this->field->params);
         $this->imagefolderweb = $this->imagefolderword;
@@ -252,7 +252,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
         }
 
         //Check file
-        if (!CustomTablesImageMethods::CheckImage($uploadedFile, CTMiscHelper::file_upload_max_size())) {
+        if (!CustomTablesImageMethods::CheckImage($uploadedFile)) {
             Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'), 'error');
             unlink($uploadedFile);
             return false;

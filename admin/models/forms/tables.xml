@@ -125,7 +125,6 @@
                label="COM_CUSTOMTABLES_TABLES_CUSTOMTABLENAME_LABEL"
                description="COM_CUSTOMTABLES_TABLES_CUSTOMTABLENAME_DESCRIPTION"
                required="false"
-               filter="CMD"
                hint="COM_CUSTOMTABLES_TABLES_CUSTOMTABLENAME_HINT"/>
 
         <field type="text"
@@ -149,10 +148,10 @@
         <field type="text"
                name="customfieldprefix"
                label="Field Name Prefix"
-               description="Field name prefix. Example by default: es_phone. Type - to save fields without prefix, be careful because MySQL has many registered names like, 'group', 'select', 'where' etc."
+               description="Field name prefix. Example by default: es_phone. Type - to save fields without prefix, be careful because MySQL has many registered names like, 'group', 'select', 'where' etc. If you change the filed prefix then you will have to manually change all the field prefixes."
                required="false"
                filter="CMD"
-               default="es_"
+               default=""
                hint=""/>
     </fieldset>
 

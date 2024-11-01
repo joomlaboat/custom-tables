@@ -137,7 +137,7 @@ class CustomTablesViewCatalog extends HtmlView
                     $data[$mFld['realfieldname']] = common::currentDate();
 
                 if ($mFld['type'] == 'viewcount')
-                    $data[$mFld['realfieldname']] = ((int)($rec[$this->ct->Env->field_prefix . $mFld['fieldname']]) + 1);
+                    $data[$mFld['realfieldname']] = ((int)($rec[$this->ct->Table->fieldPrefix . $mFld['fieldname']]) + 1);
             }
         }
 

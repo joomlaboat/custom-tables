@@ -7,7 +7,8 @@
  * @copyright (C) 2018-2024. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
-// No direct access to this file access');
+
+// No direct access to this file access
 defined('_JEXEC') or die();
 
 use CustomTables\common;
@@ -22,21 +23,22 @@ HTMLHelper::_('behavior.multiselect');
 
 $saveOrderingUrl = '';
 if ($this->saveOrder && !empty($this->items)) {
-    $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->tableid . '&tmpl=component';
+    $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
     HTMLHelper::_('draggablelist.draggable');
-}
-
-if (common::inputGetCmd('extratask', '') == 'updateimages') {
-    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
-    extraTasks::prepareJS();
 }
 
 if ($this->ct->Table === null): ?>
     <?php
     Factory::getApplication()->enqueueMessage('Table not found', 'error');
     ?>
-<?php else: ?>
-    <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid); ?>"
+<?php else:
+
+    if (common::inputGetCmd('extratask', '') == 'updateimages') {
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
+        extraTasks::prepareJS($this->ct->Table->fieldPrefix);
+    }
+    ?>
+    <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid); ?>"
           method="post" name="adminForm" id="adminForm">
         <div class="row">
             <div class="col-md-12">
@@ -55,8 +57,8 @@ if ($this->ct->Table === null): ?>
 
                         <?php
 
-                        if ($this->tableid != 0) {
-                            $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid;
+                        if ($this->ct->Table->tableid != 0) {
+                            $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid;
                             echo IntegrityFields::checkFields($this->ct, $link);
                         }
                         ?>

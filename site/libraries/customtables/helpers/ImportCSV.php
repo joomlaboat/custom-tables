@@ -40,15 +40,12 @@ class ImportCSV
         if ($arrayOfLines === null)
             return common::translate('COM_CUSTOMTABLES_CSV_FILE_EMPTY');
 
-        $tableRow = TableHelper::getTableRowByID($ct_tableid);
-        $fields = Fields::getFields($ct_tableid, true);
+        $ct = new CT;
+        $ct->getTable($ct_tableid);
         $line = $arrayOfLines[0];
-        $prepareFieldList = self::prepareFieldList($line, $fields);
+        $prepareFieldList = self::prepareFieldList($line, $ct->Table->fields);
         $fieldList = $prepareFieldList['fieldList'];
-        $fields = self::processFieldParams($fieldList, $fields);
-
-        //if (in_array(-2, $fieldList))
-        //  return common::translate('COM_CUSTOMTABLES_FIELD_NAMES_DO_NOT_MATCH');
+        $fields = self::processFieldParams($fieldList, $ct->Table->fields);
 
         if ($prepareFieldList['header'])
             $offset = 1;
@@ -58,11 +55,11 @@ class ImportCSV
         for ($i = $offset; $i < count($arrayOfLines); $i++) {
             if (count($arrayOfLines[$i]) > 0) {
                 $result = self::prepareSQLQuery($fieldList, $fields, $arrayOfLines[$i]);
-                $listing_id = self::findRecord($tableRow->realtablename, $tableRow->realidfieldname, $tableRow->published_field_found, $result->where);
+                $listing_id = self::findRecord($ct->Table->realtablename, $ct->Table->realidfieldname, $ct->Table->published_field_found, $result->where);
 
                 if (is_null($listing_id)) {
                     try {
-                        database::insert($tableRow->realtablename, $result->data);
+                        database::insert($ct->Table->realtablename, $result->data);
                     } catch (Exception $e) {
                         return $e->getMessage();
                     }
@@ -119,14 +116,14 @@ class ImportCSV
 
             $found = false;
             foreach ($fields as $field) {
-                $clean_field_name = strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $field->fieldtitle));
+                $clean_field_name = strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $field['fieldtitle']));
 
                 if ($fieldName_ == '#' or $fieldName_ == '') {
                     $fieldList[] = -1;
                     $fieldsFoundCount += 1;
                     $found = true;
                     break;
-                } elseif ($clean_field_name == $fieldName or (string)$field->fieldname == $fieldName or (string)$field->fieldtitle == $fieldName) {
+                } elseif ($clean_field_name == $fieldName or (string)$field['fieldname'] == $fieldName or (string)$field['fieldtitle'] == $fieldName) {
                     $fieldList[] = $index;
                     $fieldsFoundCount += 1;
                     $found = true;
@@ -156,7 +153,7 @@ class ImportCSV
      * @throws Exception
      * @since 3.2.2
      */
-    private static function processFieldParams($fieldList, array $fields): array
+    private static function processFieldParams(array $fieldList, array $fields): array
     {
         foreach ($fieldList as $f_index) {
             if ($f_index >= 0) {
@@ -167,20 +164,22 @@ class ImportCSV
 
                     $tableName = $type_params[0];
                     $fieldName = $type_params[1];
-                    $tableRow = TableHelper::getTableRowByName($tableName);
 
-                    if (!is_object($tableRow)) {
+                    $ct = new CT;
+                    $ct->getTable($tableName);
+
+                    if (!$ct->Table) {
                         echo common::ctJsonEncode(['error' => 'sqljoin field(' . $fields[$f_index]->fieldtitle . ') table not found']);
                         die;//Import CSV field error
                     }
 
-                    $SQJJoinField = Fields::getFieldRowByName($fieldName, $tableRow->id);
+                    $SQJJoinField = Fields::getFieldRowByName($fieldName, $ct->Table);
 
                     $fields[$f_index]->sqljoin = (object)[
-                        'table' => $tableRow->realtablename,
+                        'table' => $ct->Table->realtablename,
                         'field' => $SQJJoinField->realfieldname,
-                        'realidfieldname' => $tableRow->realidfieldname,
-                        'published_field_found' => $tableRow->published_field_found];
+                        'realidfieldname' => $ct->Table->realidfieldname,
+                        'published_field_found' => $ct->Table->published_field_found];
                 }
             }
         }
@@ -191,7 +190,7 @@ class ImportCSV
      * @throws Exception
      * @since 3.2.2
      */
-    private static function prepareSQLQuery($fieldList, $fields, $line): object
+    private static function prepareSQLQuery(array $fieldList, array $fields, $line): object
     {
         $data = [];
         $whereClause = new MySQLWhereClause();
@@ -205,7 +204,6 @@ class ImportCSV
                 $fieldParams = CTMiscHelper::csv_explode(',', $fieldParamsString);
 
                 if ($fieldType == 'sqljoin') {
-
 
                     if (isset($fields[$f_index]->sqljoin)) {
                         $realtablename = $fields[$f_index]->sqljoin->table;

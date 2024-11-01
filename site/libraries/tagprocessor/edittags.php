@@ -120,7 +120,7 @@ class tagProcessor_Edit
                         $result = '';
 
                         if ($fieldrow['type'] == 'date')
-                            $calendars[] = $inputBox->ct->Env->field_prefix . $fieldrow['fieldname'];
+                            $calendars[] = $inputBox->ct->Table->fieldPrefix . $fieldrow['fieldname'];
 
                         if ($fieldrow['type'] != 'dummy' and !Fields::isVirtualField($fieldrow))
                             $result = $inputBox->renderFieldBox($fieldrow, $row, $option_list, '');

@@ -62,7 +62,7 @@ class IntegrityCoreTables extends IntegrityChecks
         if (!TableHelper::checkIfTableExists($table->realtablename))
             IntegrityCoreTables::createCoreTable($ct, $table);
         else
-            IntegrityCoreTables::checkCoreTable($ct, $table->realtablename, $table->fields);
+            IntegrityCoreTables::checkCoreTable($table->realtablename, $table->fields);
     }
 
     /**
@@ -139,7 +139,7 @@ class IntegrityCoreTables extends IntegrityChecks
      * @throws Exception
      * @since 3.2.2
      */
-    public static function checkCoreTable(CT $ct, $realtablename, $projected_fields): void
+    public static function checkCoreTable($realtablename, $projected_fields): void
     {
         $ExistingFields = database::getExistingFields($realtablename, false);
 
@@ -148,10 +148,12 @@ class IntegrityCoreTables extends IntegrityChecks
             $projected_realfieldname = $projected_field['name'];
             $typeParams = '';
 
-            if (!Fields::checkIfFieldExists($realtablename, $projected_realfieldname))
+            if (!Fields::checkIfFieldExists($realtablename, $projected_realfieldname)) {
+                common::enqueueMessage('Field: ' . $projected_realfieldname . ' added.', 'notice');
                 database::addColumn($realtablename, $projected_realfieldname, $projected_field['mysql_type']);
+                $ExistingFields = database::getExistingFields($realtablename, false);
+            }
 
-            $ExistingFields = database::getExistingFields($realtablename, false);//reload list of existing fields if one field has been added.
             $ct_fieldtype = $projected_field['ct_fieldtype'];
 
             if (isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams'] != '')
@@ -258,7 +260,7 @@ class IntegrityCoreTables extends IntegrityChecks
         $fields_projected_fields[] = ['name' => 'ordering', 'ct_fieldtype' => 'int', 'mysql_type' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'postgresql_type' => 'INT NOT NULL DEFAULT 0'];
 
         $fields_projected_fields[] = ['name' => 'defaultvalue', 'ct_fieldtype' => 'string', 'ct_typeparams' => 1024, 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
-        $fields_projected_fields[] = ['name' => 'customfieldname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NULL', 'postgresql_type' => 'VARCHAR(100) NULL'];
+        //$fields_projected_fields[] = ['name' => 'customfieldname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NULL', 'postgresql_type' => 'VARCHAR(100) NULL'];
         $fields_projected_fields[] = ['name' => 'type', 'ct_fieldtype' => 'string', 'ct_typeparams' => 50, 'mysql_type' => 'VARCHAR(50) NULL', 'postgresql_type' => 'VARCHAR(50) NULL'];
         $fields_projected_fields[] = ['name' => 'typeparams', 'ct_fieldtype' => 'string', 'ct_typeparams' => 1024, 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];
         $fields_projected_fields[] = ['name' => 'valuerule', 'ct_fieldtype' => 'string', 'ct_typeparams' => 1024, 'mysql_type' => 'VARCHAR(1024) NULL', 'postgresql_type' => 'VARCHAR(1024) NULL'];

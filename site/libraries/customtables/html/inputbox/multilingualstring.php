@@ -76,7 +76,7 @@ class InputBox_multilingualstring extends BaseInputBox
     {
         $value = $this->row[$this->field->realfieldname . $postfix] ?? null;
         if ($value === null) {
-            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname . $postfix, '');
+            $value = common::inputGetString($this->ct->Table->fieldPrefix . $this->field->fieldname . $postfix, '');
             if ($value == '')
                 $value = $defaultValue;
         }

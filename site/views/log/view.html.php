@@ -13,12 +13,10 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Details;
 use CustomTables\MySQLWhereClause;
 use CustomTables\Params;
-use CustomTables\TableHelper;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -42,8 +40,6 @@ class CustomTablesViewLog extends HtmlView
     function display($tpl = null)
     {
         $this->ct = new CT;
-        $user = new CTUser();
-
         $this->action = common::inputGetInt('action', 0);
         $this->userid = common::inputGetInt('user', 0);
         $this->tableId = common::inputGetInt('table', 0);
@@ -215,23 +211,13 @@ class CustomTablesViewLog extends HtmlView
         $menu = $app->getMenu();
         $menuParams = $menu->getParams($Itemid);
         $menuParamsArray = Params::menuParamsRegistry2Array($menuParams);
+        $ct = new CT($menuParamsArray, true);
+        $ct->getTable($tableId);
 
-        $ct = new CT($menuParamsArray, false);
-
-        if ($tableId != 0) {
-            $tableRow = TableHelper::getTableRowByIDAssoc($tableId);
-
-            if (!is_array($tableRow) and $tableRow == 0) {
-                Factory::getApplication()->enqueueMessage('Table not found', 'error');
-            } else {
-                $ct->setTable($tableRow, null, false);
-            }
-        } else {
+        if ($ct->Table === null) {
+            Factory::getApplication()->enqueueMessage("Table '" . $tableId . "' not found.", 'error');
             return "Table '" . $tableId . "' not found.";
         }
-
-        if ($ct->Table === null or $ct->Table->tablename === null)
-            return "Table not found.";
 
         $layoutContent = '{{ ' . $FieldName . ' }}';
         $twig = new TwigProcessor($ct, $layoutContent);

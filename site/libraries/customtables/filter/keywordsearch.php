@@ -261,12 +261,12 @@ class CustomTablesKeywordSearch
             case 'text':
             case 'phponadd':
             case 'string':
-                $whereClause->addCondition('es_' . $fieldname, $regExpression, 'REGEXP');
+                $whereClause->addCondition($this->ct->Table->fieldPrefix . $fieldname, $regExpression, 'REGEXP');
                 break;
 
             case 'multilangtext':
             case 'multilangstring':
-                $whereClause->addCondition('es_' . $fieldname . $this->ct->Languages->Postfix, $regExpression, 'REGEXP');
+                $whereClause->addCondition($this->ct->Table->fieldPrefix . $fieldname . $this->ct->Languages->Postfix, $regExpression, 'REGEXP');
                 break;
 
             case 'records':
@@ -314,7 +314,7 @@ class CustomTablesKeywordSearch
         $ordering = array();
 
         if ($this->groupby != '')
-            $ordering[] = $this->ct->Env->field_prefix . $this->groupby;
+            $ordering[] = $this->ct->Table->fieldPrefix . $this->groupby;
 
         $from = $this->ct->Table->realtablename . (count($inner) != '' ? ' ' . implode(' ', $inner) : '');
         $rows = database::loadAssocList($from, $selects,

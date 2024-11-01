@@ -24,7 +24,7 @@ class ListOfTables
         $this->ct = $ct;
     }
 
-    public static function getNumberOfRecords($realtablename, $realIdField): int
+    public static function getNumberOfRecords($realtablename): int
     {
         try {
             $whereClause = new MySQLWhereClause();

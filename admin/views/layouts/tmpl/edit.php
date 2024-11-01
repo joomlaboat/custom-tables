@@ -13,6 +13,7 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
+use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\ListOfLayouts;
@@ -42,10 +43,12 @@ $onPageLoads = array();
 $typeBoxId = "jform_layouttype";
 
 foreach ($this->allTables as $table) {
-    $fields = Fields::getFields($table[0], true);
+
+    $ct = new CT;
+    $ct->getTable($table[0]);
     $list = array();
-    foreach ($fields as $field)
-        $list[] = [$field->id, $field->fieldname];
+    foreach ($ct->Table->fields as $field)
+        $list[] = [$field['id'], $field['fieldname']];
 
     echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . common::ctJsonEncode($list) . '</div>
 ';

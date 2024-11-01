@@ -29,7 +29,7 @@ use Joomla\CMS\Version;
 class CustomtablesModelListOfTables extends ListModel
 {
     var CT $ct;
-    var $helperListOfTables;
+    var ListOfTables $helperListOfTables;
 
     public function __construct($config = array())
     {
@@ -46,8 +46,6 @@ class CustomtablesModelListOfTables extends ListModel
         parent::__construct($config);
 
         $this->ct = new CT;
-        $this->ct->setParams();
-
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoftables.php');
         $this->helperListOfTables = new listOfTables($this->ct);
     }
@@ -59,7 +57,7 @@ class CustomtablesModelListOfTables extends ListModel
      *
      * @since 1.0.0
      */
-    public function getItems()
+    public function getItems(): array
     {
         $items = parent::getItems();
 
@@ -134,7 +132,6 @@ class CustomtablesModelListOfTables extends ListModel
         $category = $this->getState('filter.tablecategory');
         $orderCol = $this->state->get('list.ordering', 'a.id');
         $orderDirection = $this->state->get('list.direction', 'asc');
-
         return $this->helperListOfTables->getListQuery($published, $search, $category, $orderCol, $orderDirection, null, null, true);
     }
 

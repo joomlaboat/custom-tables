@@ -385,8 +385,13 @@ class CustomtablesModelTables extends AdminModel
         if ($data['customidfieldtype'] === null)
             $data['customidfieldtype'] = 'int UNSIGNED NOT NULL AUTO_INCREMENT';
 
-        if ($data['customfieldprefix'] === null)
+        echo '$data[customfieldprefix]:' . $data['customfieldprefix'] . '<br/>';
+
+        if ($data['customfieldprefix'] === null) {
+            echo ' IS NULL<br/>';
             $data['customfieldprefix'] = 'es_';
+            die;
+        }
 
         if ($data['customtablename'] == '-new-') {
             $data['customtablename'] = $tablename;

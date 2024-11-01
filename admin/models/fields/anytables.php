@@ -67,7 +67,7 @@ if ($version < 4) {
             } else {
                 $database = database::getDataBaseName();
                 $whereClause->addCondition('table_schema', $database);
-                $whereClause->addCondition('!INSTR(TABLE_NAME,\'' . $prefix . 'customtables_\')', null);
+                $whereClause->addCondition('INSTR(TABLE_NAME,\'' . $prefix . 'customtables_\')', 'false', '=', true);
                 $whereClause->addCondition('TABLE_NAME', $prefix . 'user_keys', '!=');
                 $whereClause->addCondition('TABLE_NAME', $prefix . 'user_usergroup_map', '!=');
                 $whereClause->addCondition('TABLE_NAME', $prefix . 'usergroups', '!=');
@@ -142,7 +142,7 @@ if ($version < 4) {
             } else {
                 $database = database::getDataBaseName();
                 $whereClause->addCondition('table_schema', $database);
-                $whereClause->addCondition('!INSTR(TABLE_NAME,\'' . $prefix . 'customtables_\')', null);
+                $whereClause->addCondition('INSTR(TABLE_NAME,\'' . $prefix . 'customtables_\')', 'false', '=', true);
                 $whereClause->addCondition('TABLE_NAME', $prefix . 'user_keys', '!=');
                 $whereClause->addCondition('TABLE_NAME', $prefix . 'user_usergroup_map', '!=');
                 $whereClause->addCondition('TABLE_NAME', $prefix . 'usergroups', '!=');

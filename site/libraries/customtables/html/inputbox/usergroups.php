@@ -32,7 +32,7 @@ class InputBox_usergroups extends BaseInputBox
             return '';
 
         if ($value === null) {
-            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname);
+            $value = common::inputGetString($this->ct->Table->fieldPrefix . $this->field->fieldname);
             if ($value === null)
                 $value = $defaultValue;
 

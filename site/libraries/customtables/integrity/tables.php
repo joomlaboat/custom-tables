@@ -26,11 +26,11 @@ class IntegrityTables extends IntegrityChecks
      * @throws Exception
      * @since 3.2.2
      */
-    public static function checkTables(&$ct)
+    public static function checkTables(&$ct): array
     {
-        $tables = IntegrityTables::getTables();
-        if ($tables === null)
-            return [];
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('a.published', 1);
+        $tables = database::loadAssocList('#__customtables_tables AS a', ['id', 'tablename', 'tabletitle', 'customtablename'], $whereClause, 'tablename', 'asc');
 
         IntegrityTables::checkIfTablesExists($tables);
         $result = [];
@@ -38,17 +38,16 @@ class IntegrityTables extends IntegrityChecks
         foreach ($tables as $table) {
 
             //Check if table exists
-            $rows = database::getTableStatus($table['tablename'], 'table');
-
+            $rows = database::getTableStatus($table['tablename']);
             $tableExists = !(count($rows) == 0);
 
             if ($tableExists) {
 
-                $ct->setTable($table, null, false);
+                $ct->getTable($table['id']);
                 $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=databasecheck&tableid=' . $table['id'];
                 $content = IntegrityFields::checkFields($ct, $link);
 
-                $zeroId = IntegrityTables::getZeroRecordID($table['realtablename'], $table['realidfieldname']);
+                $zeroId = IntegrityTables::getZeroRecordID($ct->Table->realtablename, $ct->Table->realidfieldname);
 
                 if ($content != '' or $zeroId > 0) {
                     if (!str_contains($link, '?'))
@@ -65,53 +64,6 @@ class IntegrityTables extends IntegrityChecks
             }
         }
         return $result;
-    }
-
-    protected static function getTables(): ?array
-    {
-        // Create a new query object.
-        try {
-            return self::getTablesQuery();
-        } catch (Exception $e) {
-            common::enqueueMessage($e->getMessage());
-        }
-
-        try {
-            self::getTablesQuery(true);
-        } catch (Exception $e) {
-            common::enqueueMessage($e->getMessage());
-        }
-        return null;
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    protected static function getTablesQuery(bool $simple = false): array
-    {
-        $whereClause = new MySQLWhereClause();
-
-        if ($simple) {
-            $selects = [];
-            $selects[] = 'id';
-            $selects[] = 'tablename';
-        } else {
-            $selects = TableHelper::getTableRowSelectArray();
-
-            if (defined('_JEXEC'))
-                $selects[] = 'CATEGORY_NAME';
-
-            $selects[] = 'FIELD_COUNT';
-        }
-
-        // Add the list ordering clause.
-        $orderCol = 'tablename';
-        $orderDirection = 'asc';
-
-        $whereClause->addCondition('a.published', 1);
-
-        return database::loadAssocList('#__customtables_tables AS a', $selects, $whereClause, $orderCol, $orderDirection);
     }
 
     /**

@@ -42,12 +42,10 @@ class Twig_Tables_Tags
             return '';
         }
 
-        $join_table_fields = Fields::getFields($table);
-
         $join_ct = new CT;
         $tables = new Tables($join_ct);
-        $tableRow = TableHelper::getTableRowByNameAssoc($table);
-        $join_ct->setTable($tableRow);
+        $join_ct->getTable($table);
+        $join_table_fields = $join_ct->Table->fields;
 
         if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
             try {

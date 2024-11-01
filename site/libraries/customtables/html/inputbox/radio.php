@@ -44,7 +44,7 @@ class InputBox_radio extends BaseInputBox
         $i = 0;
 
         if ($value === null) {
-            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetString($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
             $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
             if ($value == '')
                 $value = $defaultValue;
@@ -83,7 +83,7 @@ class InputBox_radio extends BaseInputBox
         $i = 0;
 
         if ($value === null) {
-            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetString($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
             $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
             if ($value == '')
                 $value = $defaultValue;

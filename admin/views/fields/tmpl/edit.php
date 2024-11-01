@@ -13,6 +13,7 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
+use CustomTables\CT;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -44,10 +45,12 @@ if (in_array(common::inputGetCmd('extratask', ''), $this->extrataskOptions)) {
 }
 
 foreach ($this->allTables as $table) {
-    $fields = Fields::getFields($table[0], true);
+
+    $ct = new CT;
+    $ct->getTable($table[0]);
     $list = array();
-    foreach ($fields as $field)
-        $list[] = [$field->id, $field->fieldname];
+    foreach ($ct->Table->fields as $field)
+        $list[] = [$field['id'], $field['fieldname']];
 
     echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . common::ctJsonEncode($list) . '</div>
 ';
@@ -106,7 +109,7 @@ foreach ($this->allTables as $table) {
                         <div class="controls"><?php echo $this->form->getInput('fieldname'); ?></div>
                     </div>
 
-                    <?php if ($this->table_row->customtablename != ''): ?>
+                    <?php /* if ($this->table_row->customtablename != ''): ?>
                         <hr/>
                         <p><?php echo common::translate('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD') . ': "' . $this->table_row->customtablename . '"'; ?></p>
                         <div class="control-group">
@@ -114,7 +117,7 @@ foreach ($this->allTables as $table) {
                             <div class="controls"><?php echo $this->form->getInput('customfieldname'); ?></div>
                         </div>
 
-                    <?php endif; ?>
+                    <?php endif; */ ?>
 
                     <hr/>
 

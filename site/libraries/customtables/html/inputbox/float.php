@@ -24,7 +24,7 @@ class InputBox_float extends BaseInputBox
     function render(?string $value, ?string $defaultValue): string
     {
         if ($value === null) {
-            $value = common::inputGetFloat($this->ct->Env->field_prefix . $this->field->fieldname);
+            $value = common::inputGetFloat($this->ct->Table->fieldPrefix . $this->field->fieldname);
             if ($value === null)
                 $value = (float)$defaultValue;
         }

@@ -196,17 +196,18 @@ class CustomTablesViewChatGPT extends HtmlView
 
         foreach ($this->tables as $table) {
             $tableStructure = $this->getTableStructure($table);
-
-            $this->saveMessage([
-                "role" => "system",
-                "content" => "Table Name: " . $tableStructure['tableName'] . "."
-                    . " Fields: " . $this->convertFieldNameSet($tableStructure['Fields']) . "
+            if ($tableStructure !== null) {
+                $this->saveMessage([
+                    "role" => "system",
+                    "content" => "Table Name: " . $tableStructure['tableName'] . "."
+                        . " Fields: " . $this->convertFieldNameSet($tableStructure['Fields']) . "
 "
-                    . " Mandatory Where Conditions: " . $tableStructure['Where'] . "
+                        . " Mandatory Where Conditions: " . $tableStructure['Where'] . "
 "
-                    . " Data Example in JSON: " . $tableStructure['Example'] . "
+                        . " Data Example in JSON: " . $tableStructure['Example'] . "
 ."
-            ]);
+                ]);
+            }
         }
 
         $this->saveMessage(["role" => "user", "content" => $query]);
@@ -223,15 +224,14 @@ class CustomTablesViewChatGPT extends HtmlView
      * @throws Exception
      * @since 3.3.8
      */
-    public function getTableStructure(array $table): array
+    public function getTableStructure(array $table): ?array
     {
         $ct = new CT();
 
-        $tableRow = TableHelper::getTableRowByNameAssoc($table['table']);
-        if (!is_array($tableRow) and $tableRow == 0) {
+        $ct->getTable($table['table']);
+        if ($ct->Table === null) {
             common::enqueueMessage('Table not found');
-        } else {
-            $ct->setTable($tableRow);
+            return null;
         }
 
         $ct->setFilter($table['filter']);

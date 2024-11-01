@@ -14,7 +14,6 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
-use CustomTables\TableHelper;
 use CustomTables\Filtering;
 use CustomTables\FindSimilarImage;
 use CustomTables\MySQLWhereClause;
@@ -25,6 +24,9 @@ class CustomTablesImageMethods
 
     public static function getImageFolder(array $params)
     {
+        $ImageFolderPath = null;
+        $ImageFolder = null;
+
         if (defined('_JEXEC')) {
 
             if (isset($params[2]) and !empty($params[2])) {
@@ -69,7 +71,7 @@ class CustomTablesImageMethods
         return $ImageFolder;
     }
 
-    public static function CheckImage($src, $memoryLimit): bool
+    public static function CheckImage($src): bool
     {
         if (!file_exists($src))
             return false;
@@ -668,21 +670,16 @@ class CustomTablesImageMethods
             if (isset($pair[2])) {
 
                 $tablename = str_replace('#__customtables_table_', '', $realtablename);
-                $tableRow = TableHelper::getTableRowByNameAssoc($tablename);
+
                 $newCt = new CT();
-                $newCt->setTable($tableRow);
+                $newCt->getTable($tablename);
+                if ($newCt->Table === null)
+                    return 0;
+
                 $f = new Filtering($newCt);
                 $f->addWhereExpression($pair[2]);
                 $whereClause = $f->whereClause;
             }
-            //A bit of sanitation
-            /*
-            $additional_filter = str_replace('"', '', $additional_filter);
-            $additional_filter = str_replace("'", '', $additional_filter);
-            $additional_filter = str_replace(";", '', $additional_filter);
-            $additional_filter = str_replace("/", '', $additional_filter);
-            $additional_filter = str_replace("\\", '', $additional_filter);
-            */
 
             $ImageID = -FindSimilarImage::find($uploadedfile, $level_identity, $realtablename, $realfieldname, $ImageFolder, $whereClause);
 

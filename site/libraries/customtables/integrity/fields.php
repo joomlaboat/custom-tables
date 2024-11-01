@@ -50,7 +50,7 @@ class IntegrityFields extends IntegrityChecks
             $result .= '<p>Table "<span style="color:green;">' . $ct->Table->tabletitle . '</span>" <span style="color:green;">added.</span></p>';
 
         $ExistingFields = database::getExistingFields($ct->Table->realtablename, false);
-        $projected_fields = Fields::getFields($ct->Table->tableid, false, false);
+        $projected_fields = $ct->Table->fields;
 
         //Delete unnecessary fields:
         $projected_fields[] = ['realfieldname' => $ct->Table->realidfieldname, 'type' => '_id', 'typeparams' => '', 'isrequired' => 1];
@@ -134,7 +134,7 @@ class IntegrityFields extends IntegrityChecks
                     }
                     break;
                 } elseif ($projected_field['type'] == 'sqljoin' and $existingFieldName == $projected_field['realfieldname']) {
-                    $tempParams = CTMiscHelper::csv_explode(',', $projected_field['typeparams'], '"', false);
+                    $tempParams = CTMiscHelper::csv_explode(',', $projected_field['typeparams']);
                     $tempTable = $tempParams[0];
 
                     if (!empty($tempTable)) {
@@ -179,7 +179,7 @@ class IntegrityFields extends IntegrityChecks
                     elseif ($found_field == '_published')
                         $nice_field_name = $ct->Table->realtablename . '.published';
                     else {
-                        $nice_field_name = str_replace($ct->Env->field_prefix, '', $found_field)
+                        $nice_field_name = str_replace($ct->Table->fieldPrefix, '', $found_field)
                             . ($projected_field['typeparams'] != '' ? ' (' . $projected_field['typeparams'] . ')' : '');
                     }
 

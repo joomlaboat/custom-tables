@@ -81,7 +81,7 @@ class Twig_Record_Tags
                 $view_link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
             if ($this->ct->Table->alias_fieldname != '') {
-                $alias = $this->ct->Table->record[$this->ct->Env->field_prefix . $this->ct->Table->alias_fieldname] ?? '';
+                $alias = $this->ct->Table->record[$this->ct->Table->fieldPrefix . $this->ct->Table->alias_fieldname] ?? '';
                 if ($alias != '') {
                     $view_link .= '&amp;alias=' . $alias;
                 } else {
@@ -182,7 +182,9 @@ class Twig_Record_Tags
             return null;
         }
 
-        $join_table_fields = Fields::getFields($join_table);
+        $join_ct = new CT;
+        $join_ct->getTable($join_table);
+        $join_table_fields = $join_ct->Table->fields;
 
         if (count($join_table_fields) == 0) {
             $this->ct->errors[] = '{{ record.joincount("' . $join_table . '") }} - Table not found or it has no fields.';
@@ -211,37 +213,36 @@ class Twig_Record_Tags
     {
         if ($sj_tablename === null or $sj_tablename == '') return '';
 
-        $tableRow = TableHelper::getTableRowByNameAssoc($sj_tablename);
+        $newCt = new CT();
+        $newCt->getTable($sj_tablename);
+        if ($newCt->Table === null)
+            return '';
 
-        if (!is_array($tableRow)) return '';
-
-        $field_details = $this->join_getRealFieldName($field1_findWhat, $this->ct->Table->tablerow);
+        $field_details = $this->join_getRealFieldName($field1_findWhat, $this->ct->Table);
         if ($field_details === null) return '';
         $field1_findWhat_realName = $field_details[0];
         $field1_type = $field_details[1];
 
-        $field_details = $this->join_getRealFieldName($field2_lookWhere, $tableRow);
+        $field_details = $this->join_getRealFieldName($field2_lookWhere, $newCt->Table);
         if ($field_details === null) return '';
         $field2_lookWhere_realName = $field_details[0];
         $field2_type = $field_details[1];
 
-        $field_details = $this->join_getRealFieldName($field3_readValue, $tableRow);
+        $field_details = $this->join_getRealFieldName($field3_readValue, $newCt->Table);
         if ($field_details === null) return '';
         $field3_readValue_realName = $field_details[0];
 
-        $newCt = new CT();
-        $newCt->setTable($tableRow);
         $f = new Filtering($newCt, 2);
         $f->addWhereExpression($filter);
 
         if ($order_by_option != '') {
-            $field_details = $this->join_getRealFieldName($order_by_option, $tableRow);
+            $field_details = $this->join_getRealFieldName($order_by_option, $newCt->Table);
             $order_by_option_realName = $field_details[0] ?? '';
         } else
             $order_by_option_realName = '';
 
         try {
-            $rows = $this->join_buildQuery($sj_function, $tableRow, $field1_findWhat_realName, $field1_type, $field2_lookWhere_realName,
+            $rows = $this->join_buildQuery($sj_function, $newCt->Table, $field1_findWhat_realName, $field1_type, $field2_lookWhere_realName,
                 $field2_type, $field3_readValue_realName, $f->whereClause, $order_by_option_realName);
         } catch (Exception $e) {
             $this->ct->errors[] = $e->getMessage();
@@ -256,9 +257,8 @@ class Twig_Record_Tags
             if ($sj_function == 'smart') {
                 //TODO: review smart advanced join
                 $vlu = $row['vlu'];
-                $tempCTFields = Fields::getFields($tableRow['id']);
 
-                foreach ($tempCTFields as $fieldRow) {
+                foreach ($newCt->Table->fields as $fieldRow) {
                     if ($fieldRow['fieldname'] == $field3_readValue) {
                         $fieldRow['realfieldname'] = 'vlu';
                         $valueProcessor = new Value($this->ct);
@@ -276,22 +276,20 @@ class Twig_Record_Tags
      * @throws Exception
      * @since 3.2.2
      */
-    protected function join_getRealFieldName(string $fieldName, array $tableRow): ?array
+    protected function join_getRealFieldName(string $fieldName, Table $table): ?array
     {
-        $tableId = (int)$tableRow['id'];
-
         if ($fieldName == '_id') {
-            return [$tableRow['realidfieldname'], '_id'];
+            return [$table->realidfieldname, '_id'];
         } elseif ($fieldName == '_published') {
-            if ($tableRow['published_field_found'])
+            if ($table->published_field_found)
                 return ['listing_published', '_published'];
             else
                 $this->ct->errors[] = '{{ record.join... }} - Table does not have "published" field.';
         } else {
-            $field1_row = Fields::getFieldRowByName($fieldName, $tableId);
+            $field1_row = Fields::getFieldRowByName($fieldName, $table);
 
-            if (is_object($field1_row)) {
-                return [$field1_row->realfieldname, $field1_row->type];
+            if (is_array($field1_row)) {
+                return [$field1_row['realfieldname'], $field1_row['type']];
             } else
                 $this->ct->errors[] = '{{ record.join... }} - Field "' . $fieldName . '" not found.';
         }
@@ -302,47 +300,47 @@ class Twig_Record_Tags
      * @throws Exception
      * @since 3.2.2
      */
-    protected function join_buildQuery($sj_function, $tableRow, $field1_findWhat, $field1_type, $field2_lookWhere,
+    protected function join_buildQuery($sj_function, Table $table, $field1_findWhat, $field1_type, $field2_lookWhere,
                                        $field2_type, $field3_readValue, MySQLWhereClause $whereClauseAdditional, $order_by_option): array
     {
         $whereClause = new MySQLWhereClause();
         $selects = [];
 
         if ($sj_function == 'count')
-            $selects[] = ['COUNT', $tableRow['realtablename'], $field3_readValue];
+            $selects[] = ['COUNT', $table->realtablename, $field3_readValue];
         elseif ($sj_function == 'sum')
-            $selects[] = ['SUM', $tableRow['realtablename'], $field3_readValue];
+            $selects[] = ['SUM', $table->realtablename, $field3_readValue];
         elseif ($sj_function == 'avg')
-            $selects[] = ['AVG', $tableRow['realtablename'], $field3_readValue];
+            $selects[] = ['AVG', $table->realtablename, $field3_readValue];
         elseif ($sj_function == 'min')
-            $selects[] = ['VALUE', $tableRow['realtablename'], $field3_readValue];
+            $selects[] = ['VALUE', $table->realtablename, $field3_readValue];
         elseif ($sj_function == 'max')
-            $selects[] = ['MAX', $tableRow['realtablename'], $field3_readValue];
+            $selects[] = ['MAX', $table->realtablename, $field3_readValue];
         else {
             //need to resolve record value if it's "records" type
-            $selects[] = ['VALUE', $tableRow['realtablename'], $field3_readValue];
+            $selects[] = ['VALUE', $table->realtablename, $field3_readValue];
         }
 
-        $sj_tablename = $tableRow['tablename'];
+        $sj_tablename = $table->tablename;
         $leftJoin = '';
 
         if ($this->ct->Table->tablename != $sj_tablename) {
             // Join not needed when we are in the same table
-            $leftJoin = ' LEFT JOIN `' . $tableRow['realtablename'] . '` ON ';
+            $leftJoin = ' LEFT JOIN `' . $table->realtablename . '` ON ';
 
             if ($field1_type == 'records') {
                 if ($field2_type == 'records') {
                     $leftJoin .= '1==2'; //todo
                 } else {
-                    $leftJoin .= 'INSTR(`' . $this->ct->Table->realtablename . '`.`' . $field1_findWhat . '`,CONCAT(",",`' . $tableRow['realtablename'] . '`.`' . $field2_lookWhere . '`,","))';
+                    $leftJoin .= 'INSTR(`' . $this->ct->Table->realtablename . '`.`' . $field1_findWhat . '`,CONCAT(",",`' . $table->realtablename . '`.`' . $field2_lookWhere . '`,","))';
                 }
             } else {
                 if ($field2_type == 'records') {
-                    $leftJoin .= 'INSTR(`' . $tableRow['realtablename'] . '`.`' . $field2_lookWhere . '`'
+                    $leftJoin .= 'INSTR(`' . $table->realtablename . '`.`' . $field2_lookWhere . '`'
                         . ',  CONCAT(",",`' . $this->ct->Table->realtablename . '`.`' . $field1_findWhat . '`,","))';
                 } else {
                     $leftJoin .= ' `' . $this->ct->Table->realtablename . '`.`' . $field1_findWhat . '` = '
-                        . ' `' . $tableRow['realtablename'] . '`.`' . $field2_lookWhere . '`';
+                        . ' `' . $table->realtablename . '`.`' . $field2_lookWhere . '`';
                 }
             }
         }
@@ -358,7 +356,7 @@ class Twig_Record_Tags
         $from = $this->ct->Table->realtablename . ' ' . $leftJoin;
 
         return database::loadAssocList($from, $selects, $whereClause,
-            ($order_by_option != '' ? $tableRow['realtablename'] . '.' . $order_by_option : null), null, 1);
+            ($order_by_option != '' ? $table->realtablename . '.' . $order_by_option : null), null, 1);
     }
 
     /**
@@ -391,7 +389,9 @@ class Twig_Record_Tags
             return '';
         }
 
-        $join_table_fields = Fields::getFields($join_table);
+        $tempCT = new CT;
+        $tempCT->getTable($join_table);
+        $join_table_fields = $tempCT->Table->fields;
 
         if (count($join_table_fields) == 0) {
             $this->ct->errors[] = '{{ ' . $tag . '("' . $join_table . '",value_field_name) }} - Table "' . $join_table . '" not found or it has no fields.';
@@ -483,7 +483,9 @@ class Twig_Record_Tags
             return '';
         }
 
-        $join_table_fields = Fields::getFields($layouts->tableId);
+        $layoutsCT = new CT;
+        $layoutsCT->getTable($layouts->tableId);
+        $join_table_fields = $layoutsCT->Table->fields;
 
         $complete_filter = $filter;
 
@@ -542,8 +544,9 @@ class Twig_Record_Tags
             return null;
         }
 
-        $tableRow = TableHelper::getTableRowByNameAssoc($tableName);
-        if (!is_array($tableRow)) {
+        $newCT = new CT();
+        $newCT->getTable($tableName);
+        if ($newCT->Table === null) {
             $this->ct->errors[] = '{{ record.count("' . $tableName . '") }} - Table not found.';
             return null;
         }
@@ -559,19 +562,18 @@ class Twig_Record_Tags
         }
 
         if ($fieldName == '_id') {
-            $fieldRealFieldName = $tableRow['realidfieldname'];
+            $fieldRealFieldName = $newCT->Table->realidfieldname;
         } elseif ($fieldName == '_published') {
             $fieldRealFieldName = 'listing_published';
         } else {
-            $tableFields = Fields::getFields($tableName);
 
-            if (count($tableFields) == 0) {
+            if (count($newCT->Table->fields) == 0) {
                 $this->ct->errors[] = '{{ record.count("' . $tableName . '") }} - Table not found or it has no fields.';
                 return null;
             }
 
             $field = null;
-            foreach ($tableFields as $tableField) {
+            foreach ($newCT->Table->fields as $tableField) {
                 if ($tableField['fieldname'] == $fieldName) {
                     $field = new Field($this->ct, $tableField);
                     break;
@@ -585,14 +587,12 @@ class Twig_Record_Tags
             $fieldRealFieldName = $field->realfieldname;
         }
 
-        $newCt = new CT();
-        $newCt->setTable($tableRow);
 
-        $f = new Filtering($newCt, 2);
+        $f = new Filtering($newCT, 2);
         $f->addWhereExpression($filter);
 
         try {
-            $rows = $this->count_buildQuery($function, $tableRow['realtablename'], $fieldRealFieldName, $f->whereClause);
+            $rows = $this->count_buildQuery($function, $newCT->Table->realtablename, $fieldRealFieldName, $f->whereClause);
         } catch (Exception $e) {
             $this->ct->errors[] = $e->getMessage();
             return null;

@@ -25,9 +25,8 @@ class updateImages
      * @throws Exception
      * @since 3.2.2
      */
-    public static function process(): array
+    public static function process(int $tableId): array
     {
-        $ct = new CT;
         $stepSize = common::inputGetInt('stepsize', 10);
         $startIndex = common::inputGetInt('startindex', 0);
 
@@ -47,13 +46,13 @@ class updateImages
         if ($fieldid == 0)
             return array('error' => 'fieldid not set');
 
-        $fieldRow = Fields::getFieldRow($fieldid);
-
-        $ct->getTable($fieldRow->tableid);
+        $ct = new CT;
+        $ct->getTable($tableId);
+        $fieldRow = Fields::getFieldRow($ct->Table->fieldPrefix, $fieldid);
 
         $count = 0;
         if ($startIndex == 0) {
-            $count = self::countImages($ct->Table->realtablename, $ct->Table->realidfieldname);
+            $count = self::countImages($ct->Table->realtablename);
             if ($stepSize > $count)
                 $stepSize = $count;
         }
@@ -66,12 +65,12 @@ class updateImages
      * @throws Exception
      * @since 3.2.2
      */
-    public static function countImages(string $realtablename, string $realidfieldname): int
+    public static function countImages(string $realtablename): int
     {
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('$realfieldname', null, 'NOT NULL');
 
-        $rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause, null, null);
+        $rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause);
         return (int)$rows[0]['record_count'];
     }
 
