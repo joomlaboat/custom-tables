@@ -40,7 +40,7 @@ class com_customtablesInstallerScript
      */
     public function uninstall($parent)
     {
-        // Display the original uninstall message
+        // Display the original uninstallation message
         echo '<h2>Did something go wrong? Are you disappointed?</h2>
     <p>Please let me know at <a href="mailto:support@joomlaboat.com">support@joomlaboat.com</a>.
     <br />We at JoomlaBoat.com are committed to building extensions that performs proficiently! You can help us, really!
@@ -56,7 +56,7 @@ class com_customtablesInstallerScript
      * @throws Exception
      * @since 1.0.0
      */
-    public function preflight($type, $parent)
+    public function preflight($type, $parent): bool
     {
         if ($type == 'uninstall') {
             $version_object = new Version;
@@ -85,10 +85,7 @@ class com_customtablesInstallerScript
                 <p><strong>Note:</strong> Save these queries before closing this window.</p>
             </div>';
             }
-        }
-
-        // Rest of your existing code...
-        if ($type !== 'uninstall') {
+        } else {
             $app = Factory::getApplication();
             $VersionObject = new Version();
             if (!$VersionObject->isCompatible('3.6.0')) {
@@ -106,7 +103,6 @@ class com_customtablesInstallerScript
                 $db = Factory::getContainer()->get(DatabaseInterface::class);
         }
         $this->updateMenuItems($db);
-        $this->setFieldPrefix($db);
         return true;
     }
 
@@ -117,61 +113,6 @@ class com_customtablesInstallerScript
             INSTR(link,"index.php?option=com_customtables&view=adminmenu&category=")
         )');
         $db->execute();
-    }
-
-    function setFieldPrefix($db)
-    {
-        try {
-
-            $dbPrefix = $db->getPrefix();
-
-            // Get list of CustomTables tables
-            $tables = $db->setQuery("SHOW TABLES LIKE '{$dbPrefix}customtables_table_%'")->loadColumn();
-
-            foreach ($tables as $table) {
-                // Get all columns for the current table
-                $columns = $db->getTableColumns($table);
-
-                // Remove known standard fields
-                unset($columns['id']);
-                unset($columns['published']);
-
-                // If there are any custom fields left
-                if (!empty($columns)) {
-                    $firstField = key($columns);
-                    // Extract prefix (everything before the first underscore)
-                    if (strpos($firstField, '_') !== false) {
-                        $prefix = substr($firstField, 0, strpos($firstField, '_') + 1);
-
-                        // Verify all other custom fields use the same prefix
-                        $prefixValid = true;
-                        foreach ($columns as $fieldName => $fieldType) {
-                            if (!str_starts_with($fieldName, $prefix)) {
-                                $prefixValid = false;
-                                break;
-                            }
-                        }
-
-                        if ($prefixValid) {
-                            // Store table name and its prefix
-
-                            $tableName = str_replace($dbPrefix . 'customtables_table_', '', $table);
-
-                            $query = 'UPDATE #__customtables_tables SET customfieldprefix=' . $db->quote($prefix)
-                                . ' WHERE tablename = ' . $db->quote($tableName) . ' AND customfieldprefix IS NULL';
-
-                            $db->setQuery($query);
-                            $db->execute();
-                        }
-                    }
-                }
-            }
-
-        } catch (Exception $e) {
-            JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -240,17 +181,73 @@ class com_customtablesInstallerScript
                 . '</a>'
                 . '<h3>Upgrade was Successful!</h3>';
         }
+
+        if ($type == 'update') {
+
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $db = Factory::getDbo();
+            else
+                $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+            $this->setFieldPrefix($db);
+        }
     }
 
-    /**
-     * method to update the component
-     *
-     * @return void
-     *
-     * @since 1.0.0
-     */
-    function update($parent)
+    function setFieldPrefix($db): bool
     {
-        // Update logic here if needed
+        try {
+
+            $dbPrefix = $db->getPrefix();
+
+            // Get list of CustomTables tables
+            $tables = $db->setQuery("SHOW TABLES LIKE '{$dbPrefix}customtables_table_%'")->loadColumn();
+
+            foreach ($tables as $table) {
+                // Get all columns for the current table
+                $columns = $db->getTableColumns($table);
+
+                // Remove known standard fields
+                unset($columns['id']);
+                unset($columns['published']);
+
+                // If there are any custom fields left
+                if (!empty($columns)) {
+                    $firstField = key($columns);
+                    // Extract prefix (everything before the first underscore)
+                    if (strpos($firstField, '_') !== false) {
+                        $prefix = substr($firstField, 0, strpos($firstField, '_') + 1);
+
+                        // Verify all other custom fields use the same prefix
+                        $prefixValid = true;
+                        foreach ($columns as $fieldName => $fieldType) {
+                            if (!str_starts_with($fieldName, $prefix)) {
+                                $prefixValid = false;
+                                break;
+                            }
+                        }
+
+                        if ($prefixValid) {
+                            // Store table name and its prefix
+
+                            $tableName = str_replace($dbPrefix . 'customtables_table_', '', $table);
+
+                            $query = 'UPDATE #__customtables_tables SET customfieldprefix=' . $db->quote($prefix)
+                                . ' WHERE tablename = ' . $db->quote($tableName) . ' AND customfieldprefix IS NULL';
+
+                            $db->setQuery($query);
+                            $db->execute();
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception $e) {
+            JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            return false;
+        }
+        return true;
     }
 }

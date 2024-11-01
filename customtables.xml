@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
     <name>COM_CUSTOMTABLES</name>
-    <creationDate>October 2024</creationDate>
+    <creationDate>November 2024</creationDate>
     <author>JoomlaBoat.com</author>
     <authorEmail>support@joomlaboat.com</authorEmail>
     <authorUrl>https://joomlaboat.com</authorUrl>
@@ -14,7 +14,7 @@
 		<p>Personalized Database Tables for Joomla! This component creates custom tables with custom fields and shows it in front-end in following formats: Catalog, Detailed page, Edit form.</p>
 		<p>Created by <a href="https://joomlaboat.com" target="_blank">Ivan Komlev</a><br />
 		<small>Development started in 2010</small><br/>
-		<small>Current Version 3.4.3 (October 18, 2024)</small>
+		<small>Current Version 3.4.4 (November, 2024)</small>
 		</p>
 	]]></description>
 

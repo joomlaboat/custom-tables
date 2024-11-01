@@ -318,7 +318,6 @@ class Fields
 
     public static function getFieldRowSelectArray(string $fieldPrefix): array
     {
-        echo 'getFieldRowSelectArray-fieldPrefix: ' . $fieldPrefix . '<br/>';
         return ['*', ['REAL_FIELD_NAME', $fieldPrefix]];
     }
 
