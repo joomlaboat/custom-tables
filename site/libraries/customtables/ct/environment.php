@@ -169,9 +169,6 @@ class Environment
         if (defined('_JEXEC')) {
             $params = ComponentHelper::getParams('com_customtables');
             $this->field_prefix = $params->get('fieldPrefix') ?? 'ct_';
-            if ($this->field_prefix == 'NO-PREFIX')
-                $this->field_prefix = '';
-
             $this->loadTwig = $params->get('loadTwig') == '1';
             $this->toolbarIcons = strval($params->get('toolbaricons'));
             $this->legacySupport = $params->get('legacysupport') == 'legacy';
@@ -189,7 +186,11 @@ class Environment
             }
 
         } else {
-            $this->field_prefix = 'ct_';
+
+            $this->field_prefix = get_option('customtables-fieldprefix') ?? 'ct_';
+            if (empty($this->field_prefix))
+                $this->field_prefix = 'ct_';
+
             $this->loadTwig = true;
             $this->toolbarIcons = '';
             $this->legacySupport = false;

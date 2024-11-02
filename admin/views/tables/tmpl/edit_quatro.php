@@ -194,14 +194,13 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
                             $vlu = $this->item->customfieldprefix;
 
-                            if ($this->item->customfieldprefix === null) {
-                                echo 'customfieldprefix IS NULL*';
-                                $vlu = 'ct_';
+                            if (empty($this->item->customfieldprefix) === null) {
+                                $vlu = $this->ct->Env->field_prefix;
                             }
                             ?>
                             <input type="text" name="jform[customfieldprefix]" id="jform_customfieldprefix"
                                    value="<?php echo $vlu; ?>" class="form-control valid form-control-success"
-                                   placeholder="" maxlength="50"/>
+                                   placeholder="<?php echo $this->ct->Env->field_prefix; ?>" maxlength="50"/>
                         </div>
                     </div>
                 <?php endif; ?>

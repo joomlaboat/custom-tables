@@ -306,7 +306,6 @@ class database
         else
             //return Factory::getContainer()->get('DatabaseDriver');
             return Factory::getContainer()->get(DatabaseInterface::class);
-
     }
 
     /**

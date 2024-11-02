@@ -113,17 +113,17 @@ class Table
         $this->fileboxes = array();
         $this->useridfieldname = '';
 
-        if ($this->tablerow['customfieldprefix'] !== null) {
+        if (!empty($this->tablerow['customfieldprefix'])) {
             $this->fieldPrefix = $this->tablerow['customfieldprefix'];
-            if ($this->fieldPrefix == 'NO-PREFIX')
-                $this->fieldPrefix = '';
-
-            $this->fieldInputPrefix = $this->Env->field_input_preprefix . $this->fieldPrefix;
         } elseif (!empty($this->customtablename)) {
             //Do not use global field prefix for third-party tables.
             $this->fieldPrefix = '';
-            $this->fieldInputPrefix = $this->Env->field_input_preprefix . $this->fieldPrefix;
         }
+
+        if ($this->fieldPrefix == 'NO-PREFIX')
+            $this->fieldPrefix = '';
+
+        $this->fieldInputPrefix = $this->Env->field_input_preprefix . $this->fieldPrefix;
 
         //Fields
         $whereClause = new MySQLWhereClause();

@@ -140,21 +140,6 @@ class CT
         }
     }
 
-    /**
-     * @throws Exception
-     * @since 3.2.3
-     */
-    /*
-    public function setTable(array $tableRow, $userIdFieldName = null): void
-    {
-        $this->Table = new Table($this->Languages, $this->Env, 0);
-        $this->Table->setTable($tableRow, $userIdFieldName);
-
-        $this->Ordering = new Ordering($this->Table, $this->Params);
-        $this->prepareSEFLinkBase();
-    }
-    */
-
     protected function prepareSEFLinkBase(): void
     {
         if (is_null($this->Table))

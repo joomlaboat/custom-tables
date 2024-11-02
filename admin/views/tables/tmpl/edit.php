@@ -188,12 +188,20 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
                 <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('customidfieldtype'); ?></div>
                     <div class="controls">
-                        <?php
-                        if (!$this->ct->Env->advancedTagProcessor)
-                            echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
-                        else
-                            echo $this->form->getInput('customidfieldtype');
-                        ?>
+                        <?php if (!$this->ct->Env->advancedTagProcessor): ?>
+                            <?php echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />'; ?>
+
+                        <?php else:
+                            $vlu = $this->item->customfieldprefix;
+
+                            if (empty($this->item->customfieldprefix) === null) {
+                                $vlu = $this->ct->Env->field_prefix;
+                            }
+                            ?>
+                            <input type="text" name="jform[customfieldprefix]" id="jform_customfieldprefix"
+                                   value="<?php echo $vlu; ?>" class="form-control valid form-control-success"
+                                   placeholder="<?php echo $this->ct->Env->field_prefix; ?>" maxlength="50"/>
+                        <?php endif; ?>
                     </div>
                 </div>
 
