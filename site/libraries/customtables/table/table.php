@@ -70,7 +70,7 @@ class Table
         $this->fileboxes = null;
         $this->selects = null;
         $this->fieldPrefix = $this->Env->field_prefix;
-        $this->fieldInputPrefix = $this->Env->field_input_preprefix . $this->fieldPrefix;
+        $this->fieldInputPrefix = 'com' . $this->fieldPrefix;
 
         if (empty($tablename_or_id_not_sanitized))
             return;

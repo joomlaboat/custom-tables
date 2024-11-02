@@ -856,7 +856,6 @@ class Layouts
     protected function renderCatalog(): string
     {
         // -------------------- Table
-
         if ($this->ct->Table === null) {
             $this->ct->getTable($this->ct->Params->tableName);
 
