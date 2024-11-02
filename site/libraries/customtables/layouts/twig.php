@@ -545,9 +545,9 @@ class fieldObject
             $postfix = '';
 
             if ($this->ct->Table->record === null)
-                $ajax_prefix = 'com__';//example: com_153_es_fieldname or com_153_ct_fieldname
+                $ajax_prefix = $this->ct->Table->fieldInputPrefix . '_';//example: com_153_es_fieldname or com_153_ct_fieldname
             else
-                $ajax_prefix = 'com_' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . '_';//example: com_153_es_fieldname or com_153_ct_fieldname
+                $ajax_prefix = $this->ct->Table->fieldInputPrefix . $this->ct->Table->record[$this->ct->Table->realidfieldname] . '_';//example: com_153_es_fieldname or com_153_ct_fieldname
 
             if ($this->field->type == 'multilangstring') {
                 if (isset($args[4])) {

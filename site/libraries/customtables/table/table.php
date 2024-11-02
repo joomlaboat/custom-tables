@@ -123,7 +123,7 @@ class Table
         if ($this->fieldPrefix == 'NO-PREFIX')
             $this->fieldPrefix = '';
 
-        $this->fieldInputPrefix = $this->Env->field_input_preprefix . $this->fieldPrefix;
+        $this->fieldInputPrefix = 'com' . $this->fieldPrefix;
 
         //Fields
         $whereClause = new MySQLWhereClause();

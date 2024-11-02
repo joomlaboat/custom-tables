@@ -151,14 +151,14 @@ class Value_file extends BaseValue
     {
         $listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname] ?? null;
 
+        if (empty($this->rowValue))
+            return '';
+
         return self::process($this->rowValue, $this->field, $this->option_list, $listing_id);
     }
 
-    public static function process($filename, Field $field, $option_list, $record_id, $filename_only = false, int $file_size = 0)
+    public static function process(string $filename, Field $field, array $option_list, string $record_id, bool $filename_only = false, int $file_size = 0)
     {
-        if ($filename == '')
-            return '';
-
         if ($field->type == 'filelink') {
             $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0] ?? '');
             $filepath = $FileFolder . '/' . $filename;

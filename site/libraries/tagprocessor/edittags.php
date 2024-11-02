@@ -18,7 +18,7 @@ use CustomTables\Twig_HTML_Tags;
 
 class tagProcessor_Edit
 {
-    public static function process(CT &$ct, &$pageLayout, &$row, $getEditFieldNamesOnly = false): array
+    public static function process(CT &$ct, string &$pageLayout, array &$row, bool $getEditFieldNamesOnly = false): array
     {
         $ct_html = new Twig_HTML_Tags($ct, false);
 

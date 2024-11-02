@@ -45,7 +45,7 @@ if ($this->ct->Env->legacySupport) {
 }
 
 
-$form_items = tagProcessor_Edit::process($this->ct, $this->pageLayout, $this->row, 'comes_');
+$form_items = tagProcessor_Edit::process($this->ct, $this->pageLayout, $this->row, true);
 
 $response_object = [];
 

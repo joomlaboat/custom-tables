@@ -84,7 +84,7 @@ class Inputbox
     {
         $this->row = $row;
         $this->field = new Field($this->ct, $this->field->fieldrow, $this->row);
-        $this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm ? $this->row[$this->ct->Table->realidfieldname] . '_' : '');
+        $this->prefix = $this->ct->Table->fieldInputPrefix . (!$this->ct->isEditForm ? $this->row[$this->ct->Table->realidfieldname] . '_' : '');
         $this->attributes['name'] = $this->prefix . $this->field->fieldname;
         $this->attributes['id'] = $this->prefix . $this->field->fieldname;
 

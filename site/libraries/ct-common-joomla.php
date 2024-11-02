@@ -571,7 +571,7 @@ class common
      * @throws Exception
      * @since 3.2.9
      */
-    public static function loadJSAndCSS(Params $params, Environment $env): void
+    public static function loadJSAndCSS(Params $params, Environment $env, string $fieldInputPrefix): void
     {
         $app = Factory::getApplication();
         $document = $app->getDocument();
@@ -609,8 +609,14 @@ class common
 
         $document->addCustomTag('<script>let ctWebsiteRoot = "' . $env->WebsiteRoot . '";</script>');
 
-        if ($params->ModuleId == null)
-            $document->addCustomTag('<script>ctItemId = "' . $params->ItemId . '";</script>');
+        if ($params->ModuleId == null) {
+            $document->addCustomTag('
+<script>
+    ctItemId = "' . $params->ItemId . '";
+    ctFieldInputPrefix = "' . $fieldInputPrefix . '";
+</script>
+');
+        }
 
         //Styles
         $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" type="text/css" rel="stylesheet" >');

@@ -19,6 +19,8 @@ use Joomla\CMS\MVC\Model\ListModel;
 
 /**
  * Customtables Model
+ *
+ * @since 1.0.0
  */
 class CustomtablesModelCustomtables extends ListModel
 {
@@ -58,10 +60,12 @@ class CustomtablesModelCustomtables extends ListModel
             $i = 0;
             $url = '';
             if (CustomtablesHelper::checkArray($views)) {
+
                 foreach ($views as $view) {
                     $action = true;
                     $add = false;
                     $name = '';
+
                     // external views (links)
                     if (strpos($view, '||') !== false) {
                         $dwd = explode('||', $view);
@@ -69,7 +73,7 @@ class CustomtablesModelCustomtables extends ListModel
                             list($type, $name, $url) = $dwd;
                             $viewName = $name;
                             $alt = $name;
-                            $image = $name . '.' . $type;
+                            $image = $name . '.' . $type ?? 'png';
                             $name = 'COM_CUSTOMTABLES_DASHBOARD_' . CustomtablesHelper::safeString($name, 'U');
                         }
                     } // internal views
@@ -87,14 +91,14 @@ class CustomtablesModelCustomtables extends ListModel
                             switch ($action) {
                                 case 'add':
                                     $url = 'index.php?option=com_customtables&view=' . $name . '&layout=edit';
-                                    $image = $name . '_' . $action . '.' . $type;
+                                    $image = $name . '_' . $action . '.' . $type ?? 'png';
                                     $alt = $name . '&nbsp;' . $action;
                                     $name = 'COM_CUSTOMTABLES_DASHBOARD_' . CustomtablesHelper::safeString($name, 'U') . '_ADD';
                                     $add = true;
                                     break;
                                 default:
                                     $url = 'index.php?option=com_categories&view=categories&extension=com_customtables.' . $name;
-                                    $image = $name . '_' . $action . '.' . $type;
+                                    $image = $name . '_' . $action . '.' . $type ?? 'png';
                                     $alt = $name . '&nbsp;' . $action;
                                     $name = 'COM_CUSTOMTABLES_DASHBOARD_' . CustomtablesHelper::safeString($name, 'U') . '_' . CustomtablesHelper::safeString($action, 'U');
                                     break;

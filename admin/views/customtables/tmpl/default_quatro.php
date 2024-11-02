@@ -58,7 +58,7 @@ use CustomTables\common;
                 <h2 class="accordion-header" id="heading_vdm">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target="#collapse_vdm" aria-expanded="true" aria-controls="collapse_vdm">
-                        Accordion Item 1 Title <!-- Replace with your title -->
+                        About
                     </button>
                 </h2>
                 <div id="collapse_vdm" class="accordion-collapse collapse show" aria-labelledby="heading_vdm"

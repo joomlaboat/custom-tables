@@ -170,10 +170,10 @@ class Twig_HTML_Tags
                 	<script>
                         //UploadFileCount=1;
                     	ct_getUploader(' . $fieldid . ',"' . $urlstr . '",' . $max_file_size . ',"csv","ctUploadCSVForm",true,"ct_fileuploader_' . $objectName . '","ct_eventsmessage_' . $objectName . '","' . $fileid . '","'
-            . $this->ct->Env->field_input_prefix . $objectName . '","ct_uploadedfile_box_' . $objectName . '")
+            . $this->ct->Table->fieldInputPrefix . $objectName . '","ct_uploadedfile_box_' . $objectName . '")
                     </script>
-                    <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectName . '" id="' . $this->ct->Env->field_input_prefix . $objectName . '" value="" />
-                    <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectName . '_filename" id="' . $this->ct->Env->field_input_prefix . $objectName . '_filename" value="" />
+                    <input type="hidden" name="' . $this->ct->Table->fieldInputPrefix . $objectName . '" id="' . $this->ct->Table->fieldInputPrefix . $objectName . '" value="" />
+                    <input type="hidden" name="' . $this->ct->Table->fieldInputPrefix . $objectName . '_filename" id="' . $this->ct->Table->fieldInputPrefix . $objectName . '_filename" value="" />
 			' . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '
                     </form>
                 </div>

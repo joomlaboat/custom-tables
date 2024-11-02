@@ -741,7 +741,7 @@ class Layouts
 
             if (!in_array($field['type'], $fieldTypes_to_skip)) {
 
-                $attribute = 'for="' . $this->ct->Env->field_input_prefix . $field['fieldname'] . '"';
+                $attribute = 'for="' . $this->ct->Table->fieldInputPrefix . $field['fieldname'] . '"';
                 $label = '<th scope="row">
                             <label ' . $attribute . '>'
                     . '{{ ' . $field['fieldname'] . '.title }}'
@@ -855,9 +855,6 @@ class Layouts
      */
     protected function renderCatalog(): string
     {
-        if ($this->ct->Env->frmt == 'html')
-            common::loadJSAndCSS($this->ct->Params, $this->ct->Env);
-
         // -------------------- Table
 
         if ($this->ct->Table === null) {
@@ -868,6 +865,9 @@ class Layouts
                 return 'Catalog View: Table not selected.';
             }
         }
+
+        if ($this->ct->Env->frmt == 'html')
+            common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
         // --------------------- Filter
         $this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);

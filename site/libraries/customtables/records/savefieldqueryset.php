@@ -333,6 +333,7 @@ class SaveFieldQuerySet
             case 'file':
 
                 require_once 'file.php';
+
                 $image = new Save_file($this->ct, $this->field, $this->row_new);
                 $value = $image->saveFieldSet($listing_id);
 

@@ -404,14 +404,14 @@ function removeURLParameter(url, parameter) {
 
 function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, postfix, ModuleId) {
     let ids = record_ids.split(',');
-    const obj_checkbox_off = document.getElementById("comes__" + fieldname_ + "_off");
+    const obj_checkbox_off = document.getElementById(ctFieldInputPrefix + "_" + fieldname_ + "_off");
     if (obj_checkbox_off) {
 
         for (let i = 0; i < ids.length; i++) {
-            let objectNameOff = "comes_" + ids[i] + "_" + fieldname_ + "_off";
+            let objectNameOff = ctFieldInputPrefix + ids[i] + "_" + fieldname_ + "_off";
             document.getElementById(objectNameOff).value = obj_checkbox_off.value;
 
-            let objectName = "comes_" + ids[i] + "_" + fieldname_;
+            let objectName = ctFieldInputPrefix + ids[i] + "_" + fieldname_;
             if (parseInt(obj_checkbox_off.value) === 1)
                 document.getElementById(objectName).checked = true;
             else
@@ -421,11 +421,11 @@ function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, 
         }
 
     } else {
-        let objectName = "comes__" + fieldname_;
+        let objectName = ctFieldInputPrefix + "_" + fieldname_;
         let value = document.getElementById(objectName).value;
 
         for (let i = 0; i < ids.length; i++) {
-            let objectName = "comes_" + ids[i] + "_" + fieldname_;
+            let objectName = ctFieldInputPrefix + "_" + ids[i] + "_" + fieldname_;
             let obj = document.getElementById(objectName);
             obj.value = value;
             ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, ids[i], postfix, ModuleId);
@@ -448,16 +448,20 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
 
     let params = "";
 
-    const obj_checkbox_off = document.getElementById("comes_" + record_id + "_" + fieldname_ + "_off");
+    const obj_checkbox_off = document.getElementById(ctFieldInputPrefix + record_id + "_" + fieldname_ + "_off");
     if (obj_checkbox_off) {
         //A bit confusing. But this is needed to save Unchecked values
         //It's because unchecked checkbox has value NULL
-        params = "comes_" + fieldname_ + "_off=" + obj_checkbox_off.value; // if this set 1 then the checkbox value will be 0
+        params = ctFieldInputPrefix + fieldname_ + "_off=" + obj_checkbox_off.value; // if this set 1 then the checkbox value will be 0
 
-        if (parseInt(obj_checkbox_off.value) === 1) params += "&comes_" + fieldname_ + "=0"; else params += "&comes_" + fieldname_ + "=1";
+        if (parseInt(obj_checkbox_off.value) === 1)
+            params += "&" + ctFieldInputPrefix + fieldname_ + "=0";
+        else
+            params += "&" + ctFieldInputPrefix + fieldname_ + "=1";
+
     } else {
-        let objectName = "comes_" + record_id + "_" + fieldname_;
-        params += "&comes_" + fieldname_ + "=" + document.getElementById(objectName).value;
+        let objectName = ctFieldInputPrefix + record_id + "_" + fieldname_;
+        params += "&" + ctFieldInputPrefix + fieldname_ + "=" + document.getElementById(objectName).value;
     }
     ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId, params);
 }
@@ -475,7 +479,7 @@ function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, pos
 
     params += "&listing_id=" + record_id;
 
-    const obj = document.getElementById("com_" + record_id + "_" + fieldname + postfix + "_div");
+    const obj = document.getElementById(ctFieldInputPrefix + record_id + "_" + fieldname + postfix + "_div");
     if (obj) obj.className = "ct_loader";
 
     let http = CreateHTTPRequestObject();   // defined in ajax.js

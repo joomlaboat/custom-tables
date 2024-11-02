@@ -72,7 +72,7 @@ class Forms
         if ($field->type == 'dummy')
             return $field->title;
 
-        $field_label = '<label id="' . $this->ct->Env->field_input_prefix . $field->fieldname . '-lbl" for="' . $this->ct->Env->field_input_prefix . $field->fieldname . '" ';
+        $field_label = '<label id="' . $this->ct->Table->fieldInputPrefix . $field->fieldname . '-lbl" for="' . $this->ct->Table->fieldInputPrefix . $field->fieldname . '" ';
         $class = ($field->description != '' ? 'hasPopover' : '') . ($field->isrequired == 1 ? ' required' : '');
 
         if ($class != '')

@@ -445,7 +445,7 @@ class tagProcessor_Value
 
                     if ($isEditable) {
                         $postfix = '';
-                        $ajax_prefix = 'com_' . $row[$ct->Table->realidfieldname] . '_';//example: com_153_es_fieldname or com_153_ct_fieldname
+                        $ajax_prefix = $ct->Table->fieldInputPrefix . $row[$ct->Table->realidfieldname] . '_';//example: com_153_es_fieldname or com_153_ct_fieldname
 
                         $value_option_list = array();
                         if (isset($pureValueOptionArr[1]))

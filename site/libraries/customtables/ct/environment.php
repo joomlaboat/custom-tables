@@ -36,11 +36,7 @@ class Environment
     var bool $advancedTagProcessor;
     var bool $isMobile;
     var bool $isModal;
-
     var string $field_prefix;
-    var string $field_input_prefix;
-    var string $field_input_preprefix;
-
     var bool $loadTwig;
     var string $toolbarIcons;
     var bool $legacySupport;
@@ -213,10 +209,6 @@ class Environment
             The exact location and structure of these settings can vary depending on how the plugin developer chose to implement them. It's important to note that well-developed plugins should handle settings securely and follow WordPress coding standards.
             */
         }
-
-        $this->field_input_preprefix = 'com';
-        $this->field_input_prefix = $this->field_input_preprefix . $this->field_prefix;
-
         $this->isPlugin = false;
     }
 
