@@ -590,25 +590,6 @@ class Fields
         }
     }
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    public static function getFieldName(int $fieldid): string
-    {
-        if ($fieldid == 0)
-            $fieldid = common::inputGetInt('fieldid', 0);
-
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('id', $fieldid);
-
-        $rows = database::loadObjectList('#__customtables_fields', ['fieldname'], $whereClause, null, null, 1);
-        if (count($rows) != 1)
-            return '';
-
-        return $rows[0]->fieldname;
-    }
-
     public static function shortFieldObjects($fields): array
     {
         $field_objects = [];
