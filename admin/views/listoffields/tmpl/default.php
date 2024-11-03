@@ -28,7 +28,7 @@ if ($this->saveOrder && !empty($this->items)) {
 
 if (common::inputGetCmd('extratask', '') == 'updateimages') {
     require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
-    extraTasks::prepareJS();
+    extraTasks::prepareJS($this->ct->Table);
 }
 ?>
 

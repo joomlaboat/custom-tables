@@ -37,11 +37,9 @@ class CustomtablesViewFields extends HtmlView
      * @since 3.0.0
      */
     var CT $ct;
-    var $tableid;
-    var $table_row;
-    var $allTables;
-    var $docuemnt;
-    var $item;
+    var array $allTables;
+
+    var array $item;
 
     public function display($tpl = null)
     {
@@ -56,11 +54,11 @@ class CustomtablesViewFields extends HtmlView
         $this->item = $this->get('Item');
 
         if ((int)$this->item->id == 0)
-            $this->tableid = common::inputGetInt('tableid', 0);
+            $tableid = common::inputGetInt('tableid', 0);
         else
-            $this->tableid = $this->item->tableid;
+            $tableid = $this->item->tableid;
 
-        $this->table_row = TableHelper::getTableRowByID($this->tableid);
+        $this->ct->getTable($tableid);
 
         $this->script = $this->get('Script');
         $this->state = $this->get('State');

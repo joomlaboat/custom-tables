@@ -48,17 +48,20 @@ class updateImages
 
         $ct = new CT;
         $ct->getTable($tableId);
-        $fieldRow = Fields::getFieldRow($ct->Table->fieldPrefix, $fieldid);
+        $fieldRow = $ct->Table->getFieldById($fieldid);
+        if ($fieldRow === null) {
+            return array('error' => 'field id set but field not found');
+        } else {
+            $count = 0;
+            if ($startIndex == 0) {
+                $count = self::countImages($ct->Table->realtablename);
+                if ($stepSize > $count)
+                    $stepSize = $count;
+            }
 
-        $count = 0;
-        if ($startIndex == 0) {
-            $count = self::countImages($ct->Table->realtablename);
-            if ($stepSize > $count)
-                $stepSize = $count;
+            $status = self::processImages($ct, $fieldRow, $old_params, $new_params);
+            return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);
         }
-
-        $status = self::processImages($ct, $fieldRow, $old_params, $new_params);
-        return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);
     }
 
     /**

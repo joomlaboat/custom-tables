@@ -199,6 +199,18 @@ class Table
         return null;
     }
 
+    function getFieldById(int $fieldId)
+    {
+        if (is_null($this->fields))
+            return null;
+
+        foreach ($this->fields as $field) {
+            if ($field['id'] == $fieldId)
+                return $field;
+        }
+        return null;
+    }
+
     /**
      * @throws Exception
      * @since 3.2.2

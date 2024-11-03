@@ -12,6 +12,7 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
+use CustomTables\Table;
 use CustomTables\TableHelper;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
@@ -23,15 +24,13 @@ class extraTasks
      *
      * @since 3.0.0
      */
-    public static function prepareJS(string $fieldPrefix)
+    public static function prepareJS(Table $table)
     {
-        $fieldid = common::inputGetInt('fieldid', 0);
-        if ($fieldid == 0)
+        $fieldId = common::inputGetInt('fieldid', 0);
+        if ($fieldId == 0)
             return;
 
-        $field_row = Fields::getFieldRow($fieldPrefix, $fieldid);
-        $tableid = $field_row->tableid;
-        $table_row = TableHelper::getTableRowByID($tableid);
+        $field_row = $table->getFieldById($fieldId);
 
         $document = Factory::getDocument();
         $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/extratasks.js"></script>');
@@ -44,7 +43,7 @@ class extraTasks
 
         if ($extraTask != '') {
             $extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . common::inputGetBase64('old_typeparams', '') . '","'
-                . common::inputGetBase64('new_typeparams', '') . '",' . (int)$tableid . ',' . (int)$fieldid . ',"' . $table_row->tabletitle . '","'
+                . common::inputGetBase64('new_typeparams', '') . '",' . (int)$table->tableid . ',' . (int)$fieldId . ',"' . $table->tabletitle . '","'
                 . $field_row->fieldtitle . '",' . $stepSize . ');';
 
             $js = '

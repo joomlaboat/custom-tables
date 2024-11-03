@@ -35,7 +35,7 @@ if ($this->ct->Table === null): ?>
 
     if (common::inputGetCmd('extratask', '') == 'updateimages') {
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
-        extraTasks::prepareJS($this->ct->Table->fieldPrefix);
+        extraTasks::prepareJS($this->ct->Table);
     }
     ?>
     <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid); ?>"

@@ -210,16 +210,14 @@ class Fields
      * @throws Exception
      * @since 3.2.2
      */
-    public static function deleteField_byID(CT &$ct, $fieldid): bool
+    public static function deleteField_byID(CT &$ct, $fieldId): bool
     {
         if ($ct->Table->tablename === null) {
             die('deleteField_byID: Table not selected.');
         }
 
         $ImageFolder = CUSTOMTABLES_IMAGES_PATH;
-
-
-        $fieldRow = Fields::getFieldRow($ct->Table->fieldPrefix, $fieldid, true);
+        $fieldRow = $ct->Table->getFieldById($fieldId);
 
         if (is_null($fieldRow))
             return false;
@@ -292,34 +290,8 @@ class Fields
         }
 
         //Delete field from the list
-        database::deleteRecord('#__customtables_fields', 'id', $fieldid);
+        database::deleteRecord('#__customtables_fields', 'id', $fieldId);
         return true;
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    public static function getFieldRow(string $fieldPrefix, int $fieldid = 0, bool $assocList = false)
-    {
-        if ($fieldid == 0)
-            $fieldid = common::inputGetInt('fieldid', 0);
-
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('id', $fieldid);
-
-        $rows = database::loadObjectList('#__customtables_fields', Fields::getFieldRowSelectArray($fieldPrefix),
-            $whereClause, 1, null, null, null, ($assocList ? 'ARRAY_A' : 'OBJECT'));
-
-        if (count($rows) != 1)
-            return null;
-
-        return $rows[0];
-    }
-
-    public static function getFieldRowSelectArray(string $fieldPrefix): array
-    {
-        return ['*', ['REAL_FIELD_NAME', $fieldPrefix]];
     }
 
     /**
@@ -626,7 +598,6 @@ class Fields
         return $field;
     }
 
-
     /**
      * @throws Exception
      * @since 3.1.8
@@ -844,12 +815,12 @@ class Fields
      * @throws Exception
      * @since 3.2.2
      */
-    protected static function update_physical_field(CT $ct, int $fieldid, array $data): bool
+    protected static function update_physical_field(CT $ct, int $fieldId, array $data): bool
     {
         $realtablename = $ct->Table->realtablename;
 
-        if ($fieldid != 0) {
-            $fieldRow = Fields::getFieldRow($ct->Table->fieldPrefix, $fieldid);
+        if ($fieldId != 0) {
+            $fieldRow = $ct->Table->getFieldById($fieldId);
             $ex_type = $fieldRow->type;
             $ex_typeparams = $fieldRow->typeparams;
             $realfieldname = $fieldRow->realfieldname;
@@ -885,7 +856,7 @@ class Fields
         else
             $fieldFound = false;
 
-        if ($fieldid != 0 and $fieldFound) {
+        if ($fieldId != 0 and $fieldFound) {
 
             if ($PureFieldType !== null) {
                 try {
@@ -900,11 +871,11 @@ class Fields
             }
 
             if ($ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-                ctProHelpers::update_physical_field_set_extra_tasks($ex_type, $new_type, $ex_typeparams, $new_typeparams, $fieldid);
+                ctProHelpers::update_physical_field_set_extra_tasks($ex_type, $new_type, $ex_typeparams, $new_typeparams, $fieldId);
         }
         //---------------------------------- end convert field
 
-        if ($fieldid == 0 or !$fieldFound) {
+        if ($fieldId == 0 or !$fieldFound) {
             //Add Field
             Fields::addField($ct, $realtablename, $realfieldname, $PureFieldType, $fieldTitle, $data);
         }
@@ -1485,6 +1456,32 @@ class Fields
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
+    public static function getFieldRow(string $fieldPrefix, int $fieldid = 0, bool $assocList = false)
+    {
+        if ($fieldid == 0)
+            $fieldid = common::inputGetInt('fieldid', 0);
+
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('id', $fieldid);
+
+        $rows = database::loadObjectList('#__customtables_fields', Fields::getFieldRowSelectArray($fieldPrefix),
+            $whereClause, 1, null, null, null, ($assocList ? 'ARRAY_A' : 'OBJECT'));
+
+        if (count($rows) != 1)
+            return null;
+
+        return $rows[0];
+    }
+
+    public static function getFieldRowSelectArray(string $fieldPrefix): array
+    {
+        return ['*', ['REAL_FIELD_NAME', $fieldPrefix]];
     }
 
     public static function convertRawFieldType(array $rawDataType): array

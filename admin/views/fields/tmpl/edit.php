@@ -41,7 +41,7 @@ if ($this->version >= 4) {
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
 
 if (in_array(common::inputGetCmd('extratask', ''), $this->extrataskOptions)) {
-    extraTasks::prepareJS();
+    extraTasks::prepareJS($this->ct->Table);
 }
 
 foreach ($this->allTables as $table) {
@@ -101,23 +101,13 @@ foreach ($this->allTables as $table) {
 
                     <div class="control-group">
                         <div class="control-label"><?php echo $this->form->getLabel('tableid'); ?></div>
-                        <div class="controls"><?php echo $this->form->getInput('tableid', null, $this->tableid); ?></div>
+                        <div class="controls"><?php echo $this->form->getInput('tableid', null, $this->ct->Table->tableid); ?></div>
                     </div>
 
                     <div class="control-group">
                         <div class="control-label"><?php echo $this->form->getLabel('fieldname'); ?></div>
                         <div class="controls"><?php echo $this->form->getInput('fieldname'); ?></div>
                     </div>
-
-                    <?php /* if ($this->table_row->customtablename != ''): ?>
-                        <hr/>
-                        <p><?php echo common::translate('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD') . ': "' . $this->table_row->customtablename . '"'; ?></p>
-                        <div class="control-group">
-                            <div class="control-label"><?php echo $this->form->getLabel('customfieldname'); ?></div>
-                            <div class="controls"><?php echo $this->form->getInput('customfieldname'); ?></div>
-                        </div>
-
-                    <?php endif; */ ?>
 
                     <hr/>
 
@@ -255,7 +245,7 @@ foreach ($this->allTables as $table) {
 
             <div>
                 <input type="hidden" name="task" value="fields.edit"/>
-                <input type="hidden" name="tableid" value="<?php echo $this->tableid; ?>"/>
+                <input type="hidden" name="tableid" value="<?php echo $this->ct->Table->tableid; ?>"/>
                 <?php echo HTMLHelper::_('form.token'); ?>
             </div>
 

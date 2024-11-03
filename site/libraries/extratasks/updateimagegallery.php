@@ -45,15 +45,16 @@ class updateImageGallery
 
         $ct = new CT;
         $ct->getTable($tableId);
-        $fieldRow = Fields::getFieldRow($ct->Table->fieldPrefix, $fieldid);
+        $fieldRow = $ct->Table->getFieldById($fieldid);
+        if ($fieldRow === null) {
+            return array('error' => 'field id set but field not found');
+        } else {
+            $count = 0;
+            if ($startIndex == 0)
+                $count = updateImages::countImages($ct->Table->realtablename);
 
-        $count = 0;
-        if ($startIndex == 0) {
-            $count = updateImages::countImages($ct->Table->realtablename, $ct->Table->realidfieldname);
+            $status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params);
+            return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);
         }
-
-        $status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params);
-
-        return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);
     }
 }
