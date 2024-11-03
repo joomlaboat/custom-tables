@@ -512,7 +512,8 @@ class Twig_Record_Tags
 
         $tables = new Tables($join_ct);
 
-        if ($tables->loadRecords($complete_filter, $orderby, $limit)) {
+        $join_ct->setFilter($complete_filter, 2);
+        if ($join_ct->getRecords(false, $limit, $orderby)) {
             $twig = new TwigProcessor($join_ct, $pageLayout);
 
             $value = $twig->process();

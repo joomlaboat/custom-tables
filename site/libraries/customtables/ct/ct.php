@@ -163,15 +163,23 @@ class CT
      * @throws Exception
      * @since 3.2.2
      */
-    function getRecords(bool $all = false, int $limit = 0): bool
+    function getRecords(bool $all = false, int $limit = 0, ?string $orderby = null, string $groupBy = null): bool
     {
-        //if ($this->Filter === null)
-        //$this->setFilter();
-
         $count = $this->getNumberOfRecords($this->Filter->whereClause);
 
         if ($count === null)
             return false;
+
+        //Grouping
+        if (!empty($groupBy)) {
+            $tempFieldRow = $this->Table->getFieldByName($groupBy);
+            if ($tempFieldRow !== null)
+                $this->GroupBy = $tempFieldRow['realfieldname'];
+        }
+
+        //Ordering
+        if ($orderby != null)
+            $this->Ordering->ordering_processed_string = $orderby;
 
         if ($this->Ordering->ordering_processed_string !== null) {
             $this->Ordering->parseOrderByString();
