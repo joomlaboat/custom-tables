@@ -1462,22 +1462,6 @@ class Fields
      * @throws Exception
      * @since 3.2.2
      */
-    public static function getFieldRow(string $fieldPrefix, int $fieldid = 0, bool $assocList = false)
-    {
-        if ($fieldid == 0)
-            $fieldid = common::inputGetInt('fieldid', 0);
-
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('id', $fieldid);
-
-        $rows = database::loadObjectList('#__customtables_fields', Fields::getFieldRowSelectArray($fieldPrefix),
-            $whereClause, 1, null, null, null, ($assocList ? 'ARRAY_A' : 'OBJECT'));
-
-        if (count($rows) != 1)
-            return null;
-
-        return $rows[0];
-    }
 
     public static function getFieldRowSelectArray(string $fieldPrefix): array
     {
