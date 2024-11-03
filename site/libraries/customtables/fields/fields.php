@@ -259,7 +259,7 @@ class Fields
             } elseif ($field->type == 'user' or $field->type == 'userid' or $field->type == 'sqljoin') {
                 Fields::removeForeignKey($tableRow['realtablename'], $field->realfieldname);
             } elseif ($field->type == 'file') {
-                // delete all files
+                // TODO: delete all files
                 //if(file_exists($filename))
                 //unlink($filename);
             }
@@ -1462,11 +1462,6 @@ class Fields
      * @throws Exception
      * @since 3.2.2
      */
-
-    public static function getFieldRowSelectArray(string $fieldPrefix): array
-    {
-        return ['*', ['REAL_FIELD_NAME', $fieldPrefix]];
-    }
 
     public static function convertRawFieldType(array $rawDataType): array
     {

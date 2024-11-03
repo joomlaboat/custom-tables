@@ -129,7 +129,7 @@ class Table
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('f.published', 1);
         $whereClause->addCondition('f.tableid', $this->tableid);
-        $this->fields = database::loadAssocList('#__customtables_fields AS f', Fields::getFieldRowSelectArray($this->fieldPrefix), $whereClause, 'f.ordering, f.fieldname');
+        $this->fields = database::loadAssocList('#__customtables_fields AS f', ['*', ['REAL_FIELD_NAME', $this->fieldPrefix]], $whereClause, 'f.ordering, f.fieldname');
 
         foreach ($this->fields as $fld) {
 

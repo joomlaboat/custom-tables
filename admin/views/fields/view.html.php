@@ -14,7 +14,6 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\TableHelper;
 use CustomTables\Tables;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
@@ -107,6 +106,7 @@ class CustomtablesViewFields extends HtmlView
     /**
      * Setting the toolbar
      *
+     * @throws Exception
      * @since 3.0.0
      */
     protected function addToolBar()

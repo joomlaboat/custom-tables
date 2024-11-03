@@ -13,8 +13,6 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\Table;
-use CustomTables\TableHelper;
-use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
 class extraTasks
@@ -43,7 +41,7 @@ class extraTasks
 
         if ($extraTask != '') {
             $extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . common::inputGetBase64('old_typeparams', '') . '","'
-                . common::inputGetBase64('new_typeparams', '') . '",' . (int)$table->tableid . ',' . (int)$fieldId . ',"' . $table->tabletitle . '","'
+                . common::inputGetBase64('new_typeparams', '') . '",' . $table->tableid . ',' . (int)$fieldId . ',"' . $table->tabletitle . '","'
                 . $field_row->fieldtitle . '",' . $stepSize . ');';
 
             $js = '
