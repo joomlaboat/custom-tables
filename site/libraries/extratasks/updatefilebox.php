@@ -14,7 +14,6 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
-use CustomTables\Fields;
 
 class updateFileBox
 {

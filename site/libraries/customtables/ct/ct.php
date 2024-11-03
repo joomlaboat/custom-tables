@@ -370,18 +370,18 @@ class CT
      */
     public function deleteSingleRecord($listing_id): int
     {
-        //delete images if exist
-        $imageMethods = new CustomTablesImageMethods;
-
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition($this->Table->realidfieldname, $listing_id);
 
-        $rows = database::loadAssocList($this->Table->realtablename, ['*'], $whereClause);
+        $rows = database::loadAssocList($this->Table->realtablename, $this->Table->selects, $whereClause, null, null, 1);
 
         if (count($rows) == 0)
             return -1;
 
         $row = $rows[0];
+
+        //delete images if exist
+        $imageMethods = new CustomTablesImageMethods;
 
         foreach ($this->Table->fields as $fieldRow) {
             $field = new Field($this, $fieldRow, $row);

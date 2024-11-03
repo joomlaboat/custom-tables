@@ -15,10 +15,7 @@ use CustomTables\common;
 
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
-use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
 
 /**
  * CustomTables Category Menu View class

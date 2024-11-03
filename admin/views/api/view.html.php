@@ -13,7 +13,6 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\Fields;
 use Joomla\CMS\MVC\View\HtmlView;
 
 // import Joomla view library

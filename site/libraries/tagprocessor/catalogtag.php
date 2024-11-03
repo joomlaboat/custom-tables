@@ -19,7 +19,6 @@ require_once('render_json.php');
 require_once('render_image.php');
 
 use CustomTables\CTMiscHelper;
-use CustomTables\Fields;
 use CustomTables\TwigProcessor;
 
 class tagProcessor_Catalog

@@ -15,7 +15,6 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\Field;
-use CustomTables\Fields;
 use CustomTables\CTUser;
 use CustomTables\SaveFieldQuerySet;
 

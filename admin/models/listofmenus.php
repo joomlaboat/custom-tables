@@ -15,8 +15,6 @@ use CustomTables\CT;
 
 use CustomTables\database;
 use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Factory;
-
 use Joomla\CMS\MVC\Model\ListModel;
 
 /**

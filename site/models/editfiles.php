@@ -16,8 +16,6 @@ use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Field;
-use CustomTables\Fields;
-
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;

@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\TableHelper;
-use CustomTables\Tables;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;

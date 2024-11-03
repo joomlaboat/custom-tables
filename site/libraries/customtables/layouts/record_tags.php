@@ -510,8 +510,6 @@ class Twig_Record_Tags
             return '';
         }
 
-        $tables = new Tables($join_ct);
-
         $join_ct->setFilter($complete_filter, 2);
         if ($join_ct->getRecords(false, $limit, $orderby)) {
             $twig = new TwigProcessor($join_ct, $pageLayout);

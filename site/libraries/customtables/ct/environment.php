@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use Exception;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Version;
 use Joomla\CMS\Factory;

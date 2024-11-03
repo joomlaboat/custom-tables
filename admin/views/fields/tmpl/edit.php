@@ -14,7 +14,6 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;

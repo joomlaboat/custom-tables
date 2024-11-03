@@ -15,7 +15,6 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\database;
-use CustomTables\Fields;
 use CustomTables\Filtering;
 use CustomTables\CustomPHP;
 use CustomTables\MySQLWhereClause;

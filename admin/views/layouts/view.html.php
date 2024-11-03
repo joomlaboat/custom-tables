@@ -17,7 +17,6 @@ use CustomTables\database;
 use CustomTables\LayoutEditor;
 use CustomTables\MySQLWhereClause;
 use CustomTables\TableHelper;
-use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
