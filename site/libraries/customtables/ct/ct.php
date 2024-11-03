@@ -647,7 +647,7 @@ class CT
             if (!str_contains($item['equation'], '.')) {
                 //example: user
                 //check if the record belong to the current user
-                $user_field_row = Fields::FieldRowByName($item['equation'], $this->Table->fields);
+                $user_field_row = $this->Table->getFieldByName($item['equation']);
                 $whereClauseOwner->addCondition($user_field_row['realfieldname'], $this->Env->user->id);
             } else {
                 //example: parents(children).user
@@ -675,9 +675,8 @@ class CT
                 }
 
                 $tempTable = new Table($this->Languages, $this->Env, $parent_table_row->id);
-                $parent_table_fields = $tempTable->fields;
 
-                $parent_join_field_row = Fields::FieldRowByName($parent_join_field, $parent_table_fields);
+                $parent_join_field_row = $tempTable->getFieldByName($parent_join_field);
 
                 if (count($parent_join_field_row) == 0) {
                     $this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR');
@@ -690,7 +689,7 @@ class CT
                 }
 
                 //User field
-                $parent_user_field_row = Fields::FieldRowByName($parent_user_field, $parent_table_fields);
+                $parent_user_field_row = $tempTable->getFieldByName($parent_user_field);
 
                 if (count($parent_user_field_row) == 0) {
                     $this->errors[] = sprintf("Menu Item - 'UserID Field name' parameter has an error: User field '%s' not found.", $parent_user_field);

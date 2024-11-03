@@ -164,7 +164,7 @@ class Filtering
                 } else {
                     //Check if it's a range filter
                     $fieldNameParts = explode('_r_', $fieldname);
-                    $fieldRow = Fields::FieldRowByName($fieldNameParts[0], $this->ct->Table->fields);
+                    $fieldRow = $this->ct->Table->getFieldByName($fieldNameParts[0]);
                 }
 
                 if (!is_null($fieldRow) and array_key_exists('type', $fieldRow)) {
@@ -862,10 +862,10 @@ class Filtering
         $titleStart = '';
         $whereClause = new MySQLWhereClause();
 
-        $fieldrow1 = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
+        $fieldRow1 = $this->ct->Table->getFieldByName($fieldname);
 
-        if (!is_null($fieldrow1)) {
-            $title1 = $fieldrow1['fieldtitle' . $this->ct->Languages->Postfix];
+        if (!is_null($fieldRow1)) {
+            $title1 = $fieldRow1['fieldtitle' . $this->ct->Languages->Postfix];
         } else
             $title1 = $fieldname;
 
@@ -890,9 +890,9 @@ class Filtering
                 $titleStart = $startDateTime->format($dateFormat);
             } else {
                 // Invalid date format, handle the error or set a default value
-                $fieldrowStart = Fields::FieldRowByName($valueStart, $this->ct->Table->fields);
+                $fieldRowStart = $this->ct->Table->getFieldByName($valueStart);
                 $valueStart = $valueStart;
-                $titleStart = $fieldrowStart['fieldtitle' . $this->ct->Languages->Postfix];
+                $titleStart = $fieldRowStart['fieldtitle' . $this->ct->Languages->Postfix];
             }
         }
 
@@ -904,9 +904,9 @@ class Filtering
                 $titleEnd = $endDateTime->format($dateFormat);
             } else {
                 // Invalid date format, handle the error or set a default value
-                $fieldrowEnd = Fields::FieldRowByName($valueEnd, $this->ct->Table->fields);
+                $fieldRowEnd = $this->ct->Table->getFieldByName($valueEnd);
                 $valueEnd = $valueEnd;
-                $titleEnd = $fieldrowEnd['fieldtitle' . $this->ct->Languages->Postfix];
+                $titleEnd = $fieldRowEnd['fieldtitle' . $this->ct->Languages->Postfix];
             }
         }
 
@@ -916,18 +916,18 @@ class Filtering
                 . common::translate('COM_CUSTOMTABLES_DATE_FROM') . ' ' . $titleStart . ' '
                 . common::translate('COM_CUSTOMTABLES_DATE_TO') . ' ' . $titleEnd;
 
-            $whereClause->addCondition($fieldrow1['realfieldname'], $valueStart, '>=');
-            $whereClause->addCondition($fieldrow1['realfieldname'], $valueEnd, '<=');
+            $whereClause->addCondition($fieldRow1['realfieldname'], $valueStart, '>=');
+            $whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd, '<=');
         } elseif ($valueStart and $valueEnd === null) {
             $this->PathValue[] = $title1 . ' '
                 . common::translate('COM_CUSTOMTABLES_FROM') . ' ' . $titleStart;
 
-            $whereClause->addCondition($fieldrow1['realfieldname'], $valueStart, '>=');
+            $whereClause->addCondition($fieldRow1['realfieldname'], $valueStart, '>=');
         } elseif ($valueStart === null and $valueEnd) {
             $this->PathValue[] = $title1 . ' '
                 . common::translate('COM_CUSTOMTABLES_TO') . ' ' . $valueEnd;
 
-            $whereClause->addCondition($fieldrow1['realfieldname'], $valueEnd, '<=');
+            $whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd, '<=');
         }
         return $whereClause;
     }
@@ -937,10 +937,10 @@ class Filtering
         $whereClause = new MySQLWhereClause();
 
         //field 1
-        $fieldrow1 = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
-        if ($fieldrow1 !== null) {
-            $value1 = $fieldrow1['realfieldname'];
-            $title1 = $fieldrow1['fieldtitle' . $this->ct->Languages->Postfix];
+        $fieldRow1 = $this->ct->Table->getFieldByName($fieldname);
+        if ($fieldRow1 !== null) {
+            $value1 = $fieldRow1['realfieldname'];
+            $title1 = $fieldRow1['fieldtitle' . $this->ct->Languages->Postfix];
         } else {
             $value1 = $fieldname;
             $title1 = $fieldname;
@@ -962,10 +962,10 @@ class Filtering
         } else
             return $whereClause;
 
-        $fieldrow2 = Fields::FieldRowByName($value, $this->ct->Table->fields);
-        if ($fieldrow2 !== null) {
+        $fieldRow2 = $this->ct->Table->getFieldByName($value);
+        if ($fieldRow2 !== null) {
             $value2 = $value;
-            $title2 = $fieldrow2['fieldtitle' . $this->ct->Languages->Postfix];
+            $title2 = $fieldRow2['fieldtitle' . $this->ct->Languages->Postfix];
         } else {
             $value2 = $value;
             $title2 = $value;

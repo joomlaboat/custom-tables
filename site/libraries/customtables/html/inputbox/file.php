@@ -69,7 +69,8 @@ class InputBox_file extends BaseInputBox
 
         $result = '<div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $this->field->fieldname . '">';
 
-        $filename = Value_blob::getBlobFileName($this->field, $fileSize, $this->row, $this->ct->Table->fields);
+        $this->ct->Table->record = $this->row;
+        $filename = Value_blob::getBlobFileName($this->field, $fileSize, $this->ct->Table);
         $filename_Icon = Value_file::process($filename, $this->field, ['', 'icon-filename-link', 48, '_blank'], $listing_id, false, $fileSize);
 
         $result .= $filename_Icon . '<br/><br/>';

@@ -436,8 +436,8 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
         $from_listing_id = $from_parts[0];
         $to_listing_id = $to_parts[0];
 
-        $from_field = Fields::FieldRowByName($from_parts[1], $this->ct->Table->fields);
-        $to_field = Fields::FieldRowByName($to_parts[1], $this->ct->Table->fields);
+        $from_field = $this->ct->Table->getFieldByName($from_parts[1]);
+        $to_field = $this->ct->Table->getFieldByName($to_parts[1]);
 
         if (!isset($from_field['type']))
             die(common::ctJsonEncode(['error' => 'From field not found.']));

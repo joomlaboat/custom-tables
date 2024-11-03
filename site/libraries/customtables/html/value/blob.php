@@ -53,21 +53,22 @@ class Value_blob extends BaseValue
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
             . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'blob.php');
 
-        $filename = self::getBlobFileName($this->field, $value, $this->ct->Table->record, $this->ct->Table->fields);
+        $filename = self::getBlobFileName($this->field, $value, $this->ct->Table);
 
         $listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname] ?? null;
 
         return Value_file::process($filename, $this->field, $option_list, $listing_id, false, intval($value));
     }
 
-    public static function getBlobFileName(Field $field, int $valueSize, array $row, array $fields)
+    public static function getBlobFileName(Field $field, int $valueSize, Table $table)
     {
+        $row = $table->record;
         $filename = '';
 
         //params[2] is the Field to get the file name from / to
         if (isset($field->params[2]) and $field->params[2] != '') {
             $fileNameField_String = $field->params[2];
-            $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $fields);
+            $fileNameField_Row = $table->getFieldByName($fileNameField_String);
             $fileNameField = $fileNameField_Row['realfieldname'];
             $filename = $row[$fileNameField];
         }

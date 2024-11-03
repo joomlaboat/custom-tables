@@ -187,6 +187,18 @@ class Table
         }
     }
 
+    function getFieldByName(string $fieldname)
+    {
+        if (is_null($this->fields))
+            return null;
+
+        foreach ($this->fields as $field) {
+            if ($field['fieldname'] == $fieldname)
+                return $field;
+        }
+        return null;
+    }
+
     /**
      * @throws Exception
      * @since 3.2.2

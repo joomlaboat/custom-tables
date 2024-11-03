@@ -408,7 +408,7 @@ class Value_file extends BaseValue
 
             if (isset($this->field->params[2])) {
                 $fileNameField_String = $this->field->params[2];
-                $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $this->ct->Table->fields);
+                $fileNameField_Row = $this->ct->Table->getFieldByName($fileNameField_String);
                 $fileNameField = $fileNameField_Row['realfieldname'];
                 $filepath = $this->row[$fileNameField];
             } else {

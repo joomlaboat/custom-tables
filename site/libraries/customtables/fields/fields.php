@@ -218,6 +218,7 @@ class Fields
 
         $ImageFolder = CUSTOMTABLES_IMAGES_PATH;
 
+
         $fieldRow = Fields::getFieldRow($ct->Table->fieldPrefix, $fieldid, true);
 
         if (is_null($fieldRow))
@@ -629,18 +630,6 @@ class Fields
             return null;
 
         return $rows[0];
-    }
-
-    public static function FieldRowByName(string $fieldname, ?array $ctFields)
-    {
-        if (is_null($ctFields))
-            return null;
-
-        foreach ($ctFields as $field) {
-            if ($field['fieldname'] == $fieldname)
-                return $field;
-        }
-        return null;
     }
 
     public static function getRealFieldName($fieldname, $ctFields, $all_fields = false)

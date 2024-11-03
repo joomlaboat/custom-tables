@@ -475,7 +475,7 @@ class Twig_HTML_Tags
                 $list_of_fields[] = '_published';
             } else {
                 //Check if field name is exist in selected table
-                $fld = Fields::FieldRowByName($field_name_string, $this->ct->Table->fields);
+                $fld = $this->ct->Table->getFieldByName($field_name_string);
 
                 if (!is_array($fld)) {
                     $this->ct->errors[] = 'Search box: Field name "' . $field_name_string . '" not found.';
