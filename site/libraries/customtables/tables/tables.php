@@ -63,12 +63,13 @@ class Tables
         $this->ct->Table->recordcount = 0;
         $this->ct->setFilter($filter, 2);
 
-
         //Grouping
-        if ($groupBy != '')
-            $this->ct->GroupBy = Fields::getRealFieldName($groupBy, $this->ct->Table->fields);
-        else
-            $this->ct->GroupBy = null;
+        $this->ct->GroupBy = null;
+        if (!empty($groupBy)) {
+            $tempFieldRow = $this->ct->Table->getFieldByName($groupBy);
+            if ($tempFieldRow !== null)
+                $this->ct->GroupBy = $tempFieldRow['realfieldname'];
+        }
 
         $this->ct->Ordering->ordering_processed_string = $orderby ?? '';
         $this->ct->Ordering->parseOrderByString();

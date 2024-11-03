@@ -72,12 +72,14 @@ class tagProcessor_Catalog
         $twig = new TwigProcessor($ct, $itemLayout);
 
         //Grouping
-        if ($ct->Params->groupBy != '')
-            $groupBy = Fields::getRealFieldName($ct->Params->groupBy, $ct->Table->fields);
-        else
-            $groupBy = '';
+        $groupBy = null;
+        if (!empty($ct->Params->groupBy)) {
+            $tempFieldRow = $ct->Table->getFieldByName($ct->Params->groupBy);
+            if ($tempFieldRow !== null)
+                $ct->GroupBy = $tempFieldRow['realfieldname'];
+        }
 
-        if ($groupBy == '') {
+        if (empty($groupBy)) {
             $number = 1 + $ct->LimitStart;
             $RealRows = [];
 

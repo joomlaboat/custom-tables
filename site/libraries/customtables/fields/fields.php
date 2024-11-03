@@ -632,15 +632,6 @@ class Fields
         return $rows[0];
     }
 
-    public static function getRealFieldName($fieldname, $ctFields, $all_fields = false)
-    {
-        foreach ($ctFields as $row) {
-            if (($all_fields or $row['allowordering'] == 1) and $row['fieldname'] == $fieldname)
-                return $row['realfieldname'];
-        }
-        return '';
-    }
-
     public static function shortFieldObjects($fields): array
     {
         $field_objects = [];

@@ -322,10 +322,12 @@ class CT
             $this->Limit = 0;
 
         //Grouping
-        if ($this->Params->groupBy != '')
-            $this->GroupBy = Fields::getRealFieldName($this->Params->groupBy, $this->Table->fields);
-        else
-            $this->GroupBy = null;
+        $this->GroupBy = null;
+        if (!empty($this->Params->groupBy)) {
+            $tempFieldRow = $this->Table->getFieldByName($this->Params->groupBy);
+            if ($tempFieldRow !== null)
+                $this->GroupBy = $tempFieldRow['realfieldname'];
+        }
 
         if ($this->Params->blockExternalVars) {
             if ((int)$this->Params->limit > 0) {
