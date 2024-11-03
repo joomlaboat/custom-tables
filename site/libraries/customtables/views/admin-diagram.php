@@ -29,23 +29,9 @@ class Diagram
      */
     public function __construct(?int $categoryId = null)
     {
-        $this->AllTables = $this->getAllTables($categoryId);
+        $this->AllTables = TableHelper::getAllTables($categoryId);
         $this->AllFields = $this->getAllFields();
         $this->tables = $this->prepareTables();
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    protected function getAllTables(?int $categoryId = null): array
-    {
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('published', 1);
-        if ($categoryId !== null)
-            $whereClause->addCondition('tablecategory', $categoryId);
-
-        return database::loadAssocList('#__customtables_tables', ['*'], $whereClause, 'tablename', null);
     }
 
     /**
@@ -56,7 +42,7 @@ class Diagram
     {
         $whereClause = new MySQLWhereClause();
         $whereClause->addCondition('published', 1);
-        return database::loadAssocList('#__customtables_fields', ['*'], $whereClause, 'fieldname', null);
+        return database::loadAssocList('#__customtables_fields', ['*'], $whereClause, 'fieldname');
     }
 
     protected function prepareTables(): array
@@ -75,7 +61,7 @@ class Diagram
                 $attr = ["name" => $field['fieldname'], "type" => $field['type']];
 
                 if ($field['type'] == 'sqljoin' or $field['type'] == 'records') {
-                    $params = CTMiscHelper::csv_explode(',', $field['typeparams'], '"', false);
+                    $params = CTMiscHelper::csv_explode(',', $field['typeparams']);
                     $jointable = $params[0];
                     $attr["join"] = $jointable;
                     $attr["joincolor"] = '';

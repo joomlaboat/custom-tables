@@ -16,6 +16,7 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\LayoutEditor;
 use CustomTables\MySQLWhereClause;
+use CustomTables\TableHelper;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -117,7 +118,7 @@ class CustomtablesViewLayouts extends HtmlView
         elseif ($this->item->layoutjs != '')
             $this->active_tab = 'layoutjs-tab';
 
-        $this->allTables = Tables::getAllTables();
+        $this->allTables = TableHelper::getAllTables();
         $this->document = Factory::getDocument();
 
         // Set the document

@@ -14,6 +14,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\TableHelper;
 use CustomTables\Tables;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
@@ -90,7 +91,7 @@ class CustomtablesViewFields extends HtmlView
             throw new Exception(implode("\n", $errors), 500);
         }
 
-        $this->allTables = Tables::getAllTables();
+        $this->allTables = TableHelper::getAllTables();
 
         // Set the document
         $this->document = Factory::getDocument();

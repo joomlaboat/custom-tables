@@ -14,7 +14,6 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\ListOfLayouts;
 use Joomla\CMS\Factory;
@@ -45,12 +44,12 @@ $typeBoxId = "jform_layouttype";
 foreach ($this->allTables as $table) {
 
     $ct = new CT;
-    $ct->getTable($table[0]);
+    $ct->getTable($table['id']);
     $list = array();
     foreach ($ct->Table->fields as $field)
         $list[] = [$field['id'], $field['fieldname']];
 
-    echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . common::ctJsonEncode($list) . '</div>
+    echo '<div id="fieldsData' . $table['id'] . '" style="display:none;">' . common::ctJsonEncode($list) . '</div>
 ';
 }
 ?>

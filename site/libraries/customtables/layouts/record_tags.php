@@ -503,9 +503,16 @@ class Twig_Record_Tags
         }
 
         $join_ct = new CT;
+
+        $join_ct->getTable($layouts->tableId);
+        if ($join_ct->Table === null) {
+            $this->ct->errors[] = '{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.';
+            return '';
+        }
+
         $tables = new Tables($join_ct);
 
-        if ($tables->loadRecords($layouts->tableId, $complete_filter, $orderby, $limit)) {
+        if ($tables->loadRecords($complete_filter, $orderby, $limit)) {
             $twig = new TwigProcessor($join_ct, $pageLayout);
 
             $value = $twig->process();

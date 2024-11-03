@@ -449,4 +449,18 @@ class TableHelper
 
         return self::getTableRowByWhere(['id' => $tableid]);
     }
+
+    /**
+     * @throws Exception
+     * @since 3.4.4
+     */
+    public static function getAllTables(?int $categoryId = null): array
+    {
+        $whereClause = new MySQLWhereClause();
+        $whereClause->addCondition('published', 1);
+        if ($categoryId !== null)
+            $whereClause->addCondition('tablecategory', $categoryId);
+
+        return database::loadAssocList('#__customtables_tables', ['id', 'tablename', 'tabletitle'], $whereClause, 'tablename');
+    }
 }
