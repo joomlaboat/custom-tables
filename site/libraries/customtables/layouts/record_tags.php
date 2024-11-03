@@ -286,7 +286,7 @@ class Twig_Record_Tags
             else
                 $this->ct->errors[] = '{{ record.join... }} - Table does not have "published" field.';
         } else {
-            $field1_row = Fields::getFieldRowByName($fieldName, $table);
+            $field1_row = $table->getFieldByName($fieldName);
 
             if (is_array($field1_row)) {
                 return [$field1_row['realfieldname'], $field1_row['type']];

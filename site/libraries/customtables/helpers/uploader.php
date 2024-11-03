@@ -147,7 +147,7 @@ class FileUploader
             if ($ct->Table === null)
                 return [];
 
-            $fieldRow = Fields::getFieldRowByName($fieldname, $ct->Table);
+            $fieldRow = $ct->Table->getFieldByName($fieldname);
             if ($fieldRow === null)
                 return [];
 

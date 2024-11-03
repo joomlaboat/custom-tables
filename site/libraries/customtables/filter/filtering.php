@@ -1081,7 +1081,7 @@ class LinkJoinFilters
      */
     static public function getFilterBox(CT $ct, $dynamicFilterFieldName, $control_name, $filterValue, $control_name_postfix = ''): string
     {
-        $fieldRow = Fields::getFieldRowByName($dynamicFilterFieldName, $ct->Table);
+        $fieldRow = $ct->Table->getFieldByName($dynamicFilterFieldName);
 
         if ($fieldRow === null)
             return '';
@@ -1113,7 +1113,7 @@ class LinkJoinFilters
         if ($ct->Table === null)
             return '<p style="color:white;background-color:red;">sqljoin: table "' . $tablename . '" not found</p>';
 
-        $fieldRow = Fields::getFieldRowByName($field, $ct->Table);
+        $fieldRow = $ct->Table->getFieldByName($field);
         if (!is_array($fieldRow))
             return '<p style="color:white;background-color:red;">sqljoin: field "' . $field . '" not found</p>';
 

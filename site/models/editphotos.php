@@ -121,7 +121,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
      */
     function getGallery(): bool
     {
-        $fieldRow = Fields::getFieldRowByName($this->galleryname, $this->ct->Table);
+        $fieldRow = $this->ct->Table->getFieldByName($this->galleryname);
         if ($fieldRow === null)
             return false;
 

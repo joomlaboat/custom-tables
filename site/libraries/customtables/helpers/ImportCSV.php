@@ -173,7 +173,7 @@ class ImportCSV
                         die;//Import CSV field error
                     }
 
-                    $SQJJoinField = Fields::getFieldRowByName($fieldName, $ct->Table);
+                    $SQJJoinField = $ct->Table->getFieldByName($fieldName);
 
                     $fields[$f_index]->sqljoin = (object)[
                         'table' => $ct->Table->realtablename,

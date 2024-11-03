@@ -409,7 +409,7 @@ class ImportTables
 
         $field_new['tableid'] = $ct->Table->tableid;//replace tableid
         $fieldName = $field_new['fieldname'];
-        $field_old = Fields::getFieldRowByName($fieldName, $ct->Table);
+        $field_old = $ct->Table->getFieldByName($fieldName);
 
         if (is_array($field_old) and count($field_old) > 0) {
             $fieldid = $field_old['id'];

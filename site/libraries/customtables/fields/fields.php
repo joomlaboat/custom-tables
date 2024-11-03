@@ -609,29 +609,6 @@ class Fields
         return $rows[0]->fieldname;
     }
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    public static function getFieldRowByName(string $fieldName, Table $table): ?array
-    {
-        if ($fieldName == '')
-            return null;
-
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('s.published', 1);
-        $whereClause->addCondition('s.tableid', $table->tableid);
-        $whereClause->addCondition('s.fieldname', trim($fieldName));
-
-        $from = '#__customtables_fields AS s';
-        $rows = database::loadAssocList($from, self::getFieldRowSelectArray($table->fieldPrefix), $whereClause, null, null, 1);
-
-        if (count($rows) != 1)
-            return null;
-
-        return $rows[0];
-    }
-
     public static function shortFieldObjects($fields): array
     {
         $field_objects = [];
