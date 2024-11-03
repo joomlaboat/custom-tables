@@ -316,13 +316,9 @@ class CustomTablesEdit {
             }
         });
     }
-
-
 }
 
 const CTEditHelper = new CustomTablesEdit();
-let ctFieldInputPrefix = null;
-let ctItemId = 0;
 
 function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField) {
 

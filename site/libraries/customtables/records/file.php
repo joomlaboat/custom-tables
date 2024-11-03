@@ -43,9 +43,6 @@ class Save_file
 
         $fileData = common::inputPostString($this->field->comesfieldname . '_data', null, 'create-edit-record');
 
-        echo '$fileData:';
-        print_r($fileData);
-
         if (!empty($fileData) and $fileData[0] == '{') {
 
             if (defined('_JEXEC'))

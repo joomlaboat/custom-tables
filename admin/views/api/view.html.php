@@ -54,8 +54,12 @@ class CustomtablesViewAPI extends HtmlView
                 case 'getfields':
                     $ct = new CT;
                     $ct->getTable($tableId);
+                    if ($ct->Table === null) {
+                        $result = array('error' => 'tableid "' . $tableId . '" set but not loaded.');
+                        break;
+                    }
 
-                    $result = (object)$ct->Table->fields;// Fields::getFields($ct->Table, true);//TODO:  Check the output
+                    $result = $ct->Table->fields;// Fields::getFields($ct->Table, true);//TODO:  Check the output
                     break;
                 case 'updateimages':
                     $result = updateImages::process($tableId);

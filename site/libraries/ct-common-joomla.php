@@ -596,10 +596,8 @@ class common
         $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/edit.js"></script>');
         $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/esmulti.js"></script>');
         $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/modal.js"></script>');
-
         $document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.js"></script>');
         $document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.css" />');
-
 
         $joomla_params = ComponentHelper::getParams('com_customtables');
         $googleMapAPIKey = $joomla_params->get('googlemapapikey');
@@ -607,16 +605,18 @@ class common
         if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
             $document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
 
-        $document->addCustomTag('<script>let ctWebsiteRoot = "' . $env->WebsiteRoot . '";</script>');
+        $js = [];
+        $js[] = 'let ctWebsiteRoot = "' . $env->WebsiteRoot . '";';
+        $js[] = 'let ctFieldInputPrefix = "' . $fieldInputPrefix . '";';
 
-        if ($params->ModuleId == null) {
-            $document->addCustomTag('
+        if ($params->ModuleId == null)
+            $js[] = 'let ctItemId = "' . $params->ItemId . '";';
+
+        $document->addCustomTag('
 <script>
-    ctItemId = "' . $params->ItemId . '";
-    ctFieldInputPrefix = "' . $fieldInputPrefix . '";
+    ' . implode(PHP_EOF, $js) . '
 </script>
 ');
-        }
 
         //Styles
         $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" type="text/css" rel="stylesheet" >');

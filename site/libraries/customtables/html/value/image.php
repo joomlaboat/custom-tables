@@ -94,9 +94,6 @@ class Value_image extends BaseValue
      */
     function render(): ?string
     {
-        //if (defined('WPINC'))
-        //return 'CustomTables for WordPress: "image" field type is not available yet.';
-
         $image = self::getImageSRCLayoutView($this->option_list, $this->rowValue, $this->field->params);
         if ($image === null)
             return null;

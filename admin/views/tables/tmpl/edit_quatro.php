@@ -230,31 +230,6 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
         }
         ?>
 
-        <?php /* if ($this->canDo->get('core.admin')) : ?>
-	
-	<?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'permissions', common::translate('COM_CUSTOMTABLES_TABLES_PERMISSION')); ?>
-		<div class="row-fluid form-horizontal-desktop">
-			<div class="span12">
-				<fieldset class="adminform">
-					<div class="adminformlist">
-					
-					
-					<?php 
-					
-					foreach ($this->form->getFieldset('accesscontrol') as $field): ?>
-						<!--<div>-->
-							<?php echo $field->label; echo $field->input;?>
-						<!--</div>-->
-						<div class="clearfix"></div>
-					<?php endforeach; ?>
-					</div>
-				</fieldset>
-			</div>
-		</div>
-	<?php echo HTMLHelper::_('uitab.endTab');
-	endif;
-	*/
-
         echo HTMLHelper::_('uitab.endTabSet'); ?>
 
         <div>

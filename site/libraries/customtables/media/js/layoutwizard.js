@@ -72,7 +72,7 @@ function loadFieldsData(tableid) {
             if (response.ok) {
                 response.json().then(function (json) {
 
-                    wizardFields = Array.from(json);
+                    wizardFields = json;
                     current_table_id = tableid;
                     updateFieldsBox();
                 });
@@ -94,6 +94,9 @@ function loadFieldsData(tableid) {
             http.onreadystatechange = function () {
                 if (http.readyState === 4) {
                     let res = http.response;
+
+                    console.log("layoutwizard:98 result:" + res);
+
                     wizardFields = JSON.parse(res);
                     current_table_id = tableid;
                     updateFieldsBox();
@@ -277,7 +280,7 @@ function renderFieldsBox() {
     const l = wizardFields.length;
 
     if (l === 0) {
-        return '<div class="FieldTagWizard"><p>There are no Fields in selected table.</p></div>';
+        return '<div class="FieldTagWizard"><p>There are no fields in selected table.</p></div>';
     } else {
         replaceOldFieldTitleTagsWithTwigStyle();
     }
@@ -354,6 +357,8 @@ function renderFieldTags(startChar, postfix, endChar, fieldtypes_to_skip, param_
 
     for (let index = 0; index < l; index++) {
         const field = wizardFields[index];
+
+        console.log("field: " + JSON.stringify(field));
 
         if (fieldtypes_to_skip.indexOf(field.type) === -1) {
             let t = field.fieldname + postfix;
@@ -828,7 +833,7 @@ function getLayout_SimpleCatalog() {
 
     if (window.Joomla instanceof Object)
         result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
-    
+
     return result;
 }
 

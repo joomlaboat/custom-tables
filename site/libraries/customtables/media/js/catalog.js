@@ -7,7 +7,7 @@
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-let es_LinkLoading = false;
+let ctLinkLoading = false;
 
 function ctCreateUser(msg, listing_id, toolbarBoxId, ModuleId) {
     if (confirm(msg)) {
@@ -57,9 +57,9 @@ function esPrepareLink(deleteParams, addParams, custom_link) {
 }
 
 function esEditObject(objId, toolbarBoxId, Itemid, tmpl, returnto) {
-    if (es_LinkLoading) return;
+    if (ctLinkLoading) return;
 
-    es_LinkLoading = true;
+    ctLinkLoading = true;
     document.getElementById(toolbarBoxId).innerHTML = '';
 
     let return_to = btoa(window.location.href);
@@ -96,7 +96,7 @@ function runTheTask(task, tableid, recordId, url, responses, last) {
                         if (task === 'delete') document.getElementById("ctTable_" + tableid).deleteRow(index); else ctCatalogUpdate(tableid, recordId, index);
                     }
 
-                    es_LinkLoading = false;
+                    ctLinkLoading = false;
 
                     if (last) {
                         let toolbarBoxId = 'esToolBar_' + task + '_box_' + tableid;
@@ -113,9 +113,9 @@ function runTheTask(task, tableid, recordId, url, responses, last) {
 }
 
 function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
-    if (es_LinkLoading) return;
+    if (ctLinkLoading) return;
 
-    es_LinkLoading = true;
+    ctLinkLoading = true;
 
     if (document.getElementById(toolbarBoxId))
         document.getElementById(toolbarBoxId).innerHTML = '';
@@ -154,9 +154,9 @@ function ctLimitChanged(object) {
 }
 
 function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
-    if (es_LinkLoading) return;
+    if (ctLinkLoading) return;
 
-    es_LinkLoading = true;
+    ctLinkLoading = true;
     document.getElementById(toolbarBoxId).innerHTML = '';
 
     let task = publish === 1 ? 'task=publish' : 'task=unpublish';
@@ -190,9 +190,9 @@ function findRowIndexById(tableid, rowId) {
 }
 
 function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
-    if (es_LinkLoading) return;
+    if (ctLinkLoading) return;
 
-    es_LinkLoading = true;
+    ctLinkLoading = true;
 
     if (confirm(msg)) {
 
@@ -228,7 +228,7 @@ function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
 
             window.location.href = link;
         }
-    } else es_LinkLoading = false;
+    } else ctLinkLoading = false;
 }
 
 function es_SearchBoxKeyPress(e) {
@@ -237,9 +237,9 @@ function es_SearchBoxKeyPress(e) {
 }
 
 function ctSearchBoxDo() {
-    if (es_LinkLoading) return;
+    if (ctLinkLoading) return;
 
-    es_LinkLoading = true;
+    ctLinkLoading = true;
     let w = [];
     let allSearchElements = document.querySelectorAll('[ctSearchBoxField]');
 
@@ -283,9 +283,9 @@ function ctSearchBoxDo() {
 }
 
 function ctSearchReset() {
-    if (es_LinkLoading) return;
+    if (ctLinkLoading) return;
 
-    es_LinkLoading = true;
+    ctLinkLoading = true;
 
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
     link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], [], link);
@@ -328,14 +328,14 @@ function getListOfSelectedRecords(tableid) {
 
 function ctToolBarDO(task, tableid) {
 
-    if (es_LinkLoading) return;
+    if (ctLinkLoading) return;
 
-    es_LinkLoading = true;
+    ctLinkLoading = true;
     const elements = getListOfSelectedRecords(tableid);
 
     if (elements.length === 0) {
         alert(TranslateText('COM_CUSTOMTABLES_JS_SELECT_RECORDS'));
-        es_LinkLoading = false;
+        ctLinkLoading = false;
         return;
     }
 
@@ -345,7 +345,7 @@ function ctToolBarDO(task, tableid) {
         if (elements.length === 1) msg = TranslateText('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1l'); else msg = TranslateText('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE').replace('%s', elements.length);
 
         if (!confirm(msg)) {
-            es_LinkLoading = false;
+            ctLinkLoading = false;
             return;
         }
     }
@@ -369,14 +369,11 @@ function ctToolBarDO(task, tableid) {
             let last = i === elements.length - 1;
             runTheTask(task, tableid, listing_id, url, accept_responses, last);
         }
-
-
     } else {
         let returnto = btoa(window.location.href);
         link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'ids=' + elements.toString(), 'returnto=' + returnto], link);
         window.location.href = link;
     }
-
 }
 
 //https://stackoverflow.com/a/1634841
@@ -682,9 +679,9 @@ function ctValue_googlemapcoordinates(boxId, lat, long, zoom) {
 
 function ctSearchBarDateRangeUpdate(fieldName) {
     setTimeout(function () {
-        let obj = document.getElementById("es_search_box_" + fieldName);
-        let date_start = document.getElementById("es_search_box_" + fieldName + "_start").value
-        let date_end = document.getElementById("es_search_box_" + fieldName + "_end").value;
+        let obj = document.getElementById(ctFieldInputPrefix + "search_box_" + fieldName);
+        let date_start = document.getElementById(ctFieldInputPrefix + "search_box_" + fieldName + "_start").value
+        let date_end = document.getElementById(ctFieldInputPrefix + "search_box_" + fieldName + "_end").value;
         obj.value = date_start + "-to-" + date_end;
     }, 300)
 }
