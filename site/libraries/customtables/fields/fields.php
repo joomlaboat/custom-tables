@@ -759,8 +759,9 @@ class Fields
         }
 
         if ($fieldId === null) {
-            $already_exists = Fields::getFieldID($tableId, $newFieldName);
-            if ($already_exists == 0) {
+
+            $already_exists = $ct->Table->getFieldByName($newFieldName);
+            if ($already_exists === null) {
                 $data['fieldname'] = $newFieldName;
             } else {
                 return null; //Abort if the table with this name already exists.
@@ -828,25 +829,6 @@ class Fields
             self::findAndFixOrderingFieldRecords($ct, $data['realfieldname']);
 
         return $fieldId;
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    public static function getFieldID($tableid, $fieldname): int
-    {
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('published', 1);
-        $whereClause->addCondition('tableid', $tableid);
-        $whereClause->addCondition('fieldname', $fieldname);
-
-        $rows = database::loadObjectList('#__customtables_fields', ['id'], $whereClause, null, null, 1);
-        if (count($rows) == 0)
-            return 0;
-
-        $row = $rows[0];
-        return $row->id;
     }
 
     /**
