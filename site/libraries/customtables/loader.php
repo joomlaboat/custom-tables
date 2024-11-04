@@ -172,9 +172,6 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
     require_once($pathDataTypes . 'inputbox.php');
     require_once($pathDataTypes . 'value.php');
 
-    $pathDataTypes = $path . 'tables' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'tables.php');
-
     $pathDataTypes = $path . 'fields' . DIRECTORY_SEPARATOR;
     require_once($pathDataTypes . 'fields.php');
 

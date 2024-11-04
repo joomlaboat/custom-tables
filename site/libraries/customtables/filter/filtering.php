@@ -757,10 +757,10 @@ class Filtering
         return $whereClause;
     }
 
-    function Search_String($value, $fieldrow, $comparison_operator, $isMultilingual = false): MySQLWhereClause
+    function Search_String($value, array $fieldRow, $comparison_operator, $isMultilingual = false): MySQLWhereClause
     {
         $whereClause = new MySQLWhereClause();
-        $realfieldname = $fieldrow['realfieldname'] . ($isMultilingual ? $this->ct->Languages->Postfix : '');
+        $realfieldname = $fieldRow['realfieldname'] . ($isMultilingual ? $this->ct->Languages->Postfix : '');
         $v = $this->getString_vL($value);
         $serverType = database::getServerType();
 
@@ -792,7 +792,6 @@ class Filtering
                             true
                         );
                     }
-
                     $PathValue[] = $vl;
                 }
                 if ($nestedWhereClause->hasConditions())//if (count($new_v_list) > 1)
@@ -800,7 +799,7 @@ class Filtering
             }
 
             $opt_title = ':';
-            $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . implode(', ', $PathValue);
+            $this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . implode(', ', $PathValue);
 
             if ($parentWhereClause->hasConditions())
                 $whereClause->addNestedCondition($parentWhereClause);
@@ -826,7 +825,7 @@ class Filtering
             if ($comparison_operator == '=')
                 $opt_title = ':';
 
-            $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . ($v == '' ? 'NOT SELECTED' : $v);
+            $this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . ($v == '' ? 'NOT SELECTED' : $v);
             return $whereClause;
         }
     }

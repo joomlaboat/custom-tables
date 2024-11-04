@@ -614,7 +614,8 @@ class common
 
         $document->addCustomTag('
 <script>
-    ' . implode(PHP_EOF, $js) . '
+    ' . implode('
+', $js) . '
 </script>
 ');
 

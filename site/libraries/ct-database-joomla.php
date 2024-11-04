@@ -452,7 +452,7 @@ class database
                 $fieldPrefix = preg_replace('/[^a-zA-Z0-9_#]/', '', $select[1]);
 
                 if ($serverType == 'postgresql') {
-                    $selects[] = 'CONCAT("' . $fieldPrefix . '",fieldname) END AS realfieldname';
+                    $selects[] = 'CONCAT("' . $fieldPrefix . '",fieldname) AS realfieldname';
                 } else {
                     $selects[] = 'CONCAT("' . $fieldPrefix . '",fieldname) AS realfieldname';
                 }

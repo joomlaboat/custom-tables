@@ -230,7 +230,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
         }
         ?>
 
-        echo HTMLHelper::_('uitab.endTabSet'); ?>
+        <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
         <div>
             <input type="hidden" name="task" value="tables.edit"/>
