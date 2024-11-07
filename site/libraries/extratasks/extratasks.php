@@ -42,7 +42,7 @@ class extraTasks
         if ($extraTask != '') {
             $extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . common::inputGetBase64('old_typeparams', '') . '","'
                 . common::inputGetBase64('new_typeparams', '') . '",' . $table->tableid . ',' . (int)$fieldId . ',"' . $table->tabletitle . '","'
-                . $field_row->fieldtitle . '",' . $stepSize . ');';
+                . $field_row['fieldtitle'] . '",' . $stepSize . ');';
 
             $js = '
 		<script>

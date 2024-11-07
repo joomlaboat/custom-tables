@@ -80,19 +80,19 @@ class updateImages
      * @throws Exception
      * @since 3.2.2
      */
-    public static function processImages(CT &$ct, $fieldRow, array $old_params, array $new_params): ?string
+    public static function processImages(CT &$ct, array $fieldRow, array $old_params, array $new_params): ?string
     {
         $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition($fieldRow->realfieldname, null, 'NOT NULL');
+        $whereClause->addCondition($fieldRow['realfieldname'], null, 'NOT NULL');
 
-        $rows = database::loadAssocList($ct->Table->realtablename, [$fieldRow->realfieldname], $whereClause);
+        $rows = database::loadAssocList($ct->Table->realtablename, [$fieldRow['realfieldname']], $whereClause);
         $old_ImageFolder = '';
         $imgMethods = new CustomTablesImageMethods;
 
         foreach ($rows as $img) {
 
             if ((is_numeric($img) and intval($img) > 0) or !is_numeric($img)) {
-                $field_row_old = (array)$fieldRow;
+                $field_row_old = $fieldRow;
                 $field_row_old['params'] = $old_params;
 
                 $field_old = new Field($ct, $field_row_old, $img);
@@ -103,7 +103,7 @@ class updateImages
 
                 $old_imageSizes = $imgMethods->getCustomImageOptions($field_old->params[0]);
 
-                $field_row_new = (array)$fieldRow;
+                $field_row_new = $fieldRow;
 
                 $field_new = new Field($ct, $field_row_new, $img);
                 $field_new->params = $new_params;
@@ -113,7 +113,7 @@ class updateImages
 
                 $new_imageSizes = $imgMethods->getCustomImageOptions($field_new->params[0]);
 
-                $status = self::processImage($imgMethods, $old_imageSizes, $new_imageSizes, $img[$fieldRow->realfieldname], $old_ImageFolder, $new_ImageFolder);
+                $status = self::processImage($imgMethods, $old_imageSizes, $new_imageSizes, $img[$fieldRow['realfieldname']], $old_ImageFolder, $new_ImageFolder);
                 //if $status is null then all good, status is a text string with error message if any
                 if ($status !== null)
                     return $status;

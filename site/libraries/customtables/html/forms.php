@@ -58,7 +58,7 @@ class Forms
         return '<select name="' . $objectId . '" id="' . $objectId . '" ' . implode(' ', $arguments) . '>' . implode('', $selectBoxOptions) . '</select>';
     }
 
-    function renderFieldLabel($field, $allowSortBy = false)
+    function renderFieldLabel(Field $field, $allowSortBy = false)
     {
         $OrderingField = null;
         $OrderingDirection = null;

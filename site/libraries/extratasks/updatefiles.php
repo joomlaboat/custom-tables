@@ -54,7 +54,7 @@ class updateFiles
         } else {
             $count = 0;
             if ($startIndex == 0) {
-                $count = updateFiles::countFiles($ct->Table->realtablename, $fieldRow->realfieldname);
+                $count = updateFiles::countFiles($ct->Table->realtablename, $fieldRow['realfieldname']);
                 if ($stepSize > $count)
                     $stepSize = $count;
             }
@@ -82,18 +82,18 @@ class updateFiles
      * @throws Exception
      * @since 3.2.2
      */
-    protected static function processFiles(CT &$ct, $fieldrow, array $old_params, array $new_params): ?string
+    protected static function processFiles(CT &$ct, array $fieldRow, array $old_params, array $new_params): ?string
     {
         $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition($fieldrow->realfieldname, null, 'NOT NULL');
-        $whereClause->addCondition($fieldrow->realfieldname, '', '!=');
+        $whereClause->addCondition($fieldRow['realfieldname'], null, 'NOT NULL');
+        $whereClause->addCondition($fieldRow['realfieldname'], '', '!=');
 
         $rows = database::loadAssocList($ct->Table->realtablename, $ct->Table->selects, $whereClause);
 
         $old_FileFolder = null;
 
         foreach ($rows as $file) {
-            $field_row_old = (array)$fieldrow;
+            $field_row_old = $fieldRow;
             $field_row_old['params'] = $old_params;
 
             $field_old = new Field($ct, $field_row_old, $file);
@@ -104,7 +104,7 @@ class updateFiles
 
             $old_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $old_FileFolder);
 
-            $field_row_new = (array)$fieldrow;
+            $field_row_new = $fieldRow;
 
             $field_new = new Field($ct, $field_row_new, $file);
             $field_new->params = $new_params;
@@ -114,7 +114,7 @@ class updateFiles
 
             $new_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $new_FileFolder);
 
-            $status = updateFiles::processFile($file[$fieldrow->realfieldname], $old_FileFolder, $new_FileFolder);
+            $status = updateFiles::processFile($file[$fieldRow['realfieldname']], $old_FileFolder, $new_FileFolder);
             //if $status is null then all good, status is a text string with error message if any
             if ($status !== null)
                 return $status;

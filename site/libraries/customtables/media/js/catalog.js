@@ -39,7 +39,7 @@ function ctResetPassword(msg, listing_id, toolbarBoxId, ModuleId) {
 
 function esPrepareLink(deleteParams, addParams, custom_link) {
 
-    let link = custom_link !== '' ? custom_link : window.location.href;
+    let link = (custom_link !== '' ? custom_link : window.location.href);
 
     const pair = link.split('#');
     link = pair[0];
