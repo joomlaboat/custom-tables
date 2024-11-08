@@ -58,17 +58,19 @@ class Diagram
 
             $field_names = [];
             foreach ($fields as $field) {
-                $attr = ["name" => $field['fieldname'], "type" => $field['type']];
+                if ((int)$field['published'] === 1) {
+                    $attr = ["name" => $field['fieldname'], "type" => $field['type']];
 
-                if ($field['type'] == 'sqljoin' or $field['type'] == 'records') {
-                    $params = CTMiscHelper::csv_explode(',', $field['typeparams']);
-                    $jointable = $params[0];
-                    $attr["join"] = $jointable;
-                    $attr["joincolor"] = '';
-                    $joincount++;
+                    if ($field['type'] == 'sqljoin' or $field['type'] == 'records') {
+                        $params = CTMiscHelper::csv_explode(',', $field['typeparams']);
+                        $jointable = $params[0];
+                        $attr["join"] = $jointable;
+                        $attr["joincolor"] = '';
+                        $joincount++;
+                    }
+
+                    $field_names[] = $attr;
                 }
-
-                $field_names[] = $attr;
             }
 
             $tables[] = ['name' => $table['tablename'], 'columns' => $field_names, 'joincount' => $joincount, 'dependencies' => 0

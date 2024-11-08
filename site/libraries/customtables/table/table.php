@@ -127,7 +127,7 @@ class Table
 
         //Fields
         $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('f.published', 1);
+        //$whereClause->addCondition('f.published', 1);
         $whereClause->addCondition('f.tableid', $this->tableid);
         $this->fields = database::loadAssocList('#__customtables_fields AS f', ['*', ['REAL_FIELD_NAME', $this->fieldPrefix]], $whereClause, 'f.ordering, f.fieldname');
 

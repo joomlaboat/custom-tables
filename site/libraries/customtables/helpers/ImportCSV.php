@@ -116,18 +116,20 @@ class ImportCSV
 
             $found = false;
             foreach ($fields as $field) {
-                $clean_field_name = strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $field['fieldtitle']));
+                if ((int)$field['published'] === 1) {
+                    $clean_field_name = strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $field['fieldtitle']));
 
-                if ($fieldName_ == '#' or $fieldName_ == '') {
-                    $fieldList[] = -1;
-                    $fieldsFoundCount += 1;
-                    $found = true;
-                    break;
-                } elseif ($clean_field_name == $fieldName or (string)$field['fieldname'] == $fieldName or (string)$field['fieldtitle'] == $fieldName) {
-                    $fieldList[] = $index;
-                    $fieldsFoundCount += 1;
-                    $found = true;
-                    break;
+                    if ($fieldName_ == '#' or $fieldName_ == '') {
+                        $fieldList[] = -1;
+                        $fieldsFoundCount += 1;
+                        $found = true;
+                        break;
+                    } elseif ($clean_field_name == $fieldName or (string)$field['fieldname'] == $fieldName or (string)$field['fieldtitle'] == $fieldName) {
+                        $fieldList[] = $index;
+                        $fieldsFoundCount += 1;
+                        $found = true;
+                        break;
+                    }
                 }
                 $index++;
             }

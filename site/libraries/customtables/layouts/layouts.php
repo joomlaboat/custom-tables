@@ -568,7 +568,7 @@ class Layouts
         //Look for ordering field type
         if ($addToolbar) {
             foreach ($fields as $field) {
-                if ($field['type'] == 'ordering') {
+                if ((int)$field['published'] === 1 and $field['type'] == 'ordering') {
                     $result .= '<td style="text-align:center;">{{ ' . $field['fieldname'] . ' }}</td>' . PHP_EOL;
                 }
             }
@@ -583,19 +583,20 @@ class Layouts
         $fileBoxFound = false;
 
         foreach ($fields as $field) {
+            if ((int)$field['published'] === 1) {
+                if ($field['type'] == 'imagegallery') {
+                    $imageGalleryFound = true;
+                } elseif ($field['type'] == 'filebox') {
+                    $fileBoxFound = true;
+                } elseif ($field['type'] != 'ordering' && !in_array($field['type'], $fieldTypes_to_skip)) {
 
-            if ($field['type'] == 'imagegallery') {
-                $imageGalleryFound = true;
-            } elseif ($field['type'] == 'filebox') {
-                $fileBoxFound = true;
-            } elseif ($field['type'] != 'ordering' && !in_array($field['type'], $fieldTypes_to_skip)) {
+                    if ($field['type'] == 'url')
+                        $fieldValue = '<a href="{{ ' . $field['fieldname'] . ' }}" target="_blank">{{ ' . $field['fieldname'] . ' }}</a>';
+                    else
+                        $fieldValue = '{{ ' . $field['fieldname'] . ' }}';
 
-                if ($field['type'] == 'url')
-                    $fieldValue = '<a href="{{ ' . $field['fieldname'] . ' }}" target="_blank">{{ ' . $field['fieldname'] . ' }}</a>';
-                else
-                    $fieldValue = '{{ ' . $field['fieldname'] . ' }}';
-
-                $result .= '<td>' . $fieldValue . '</td>' . PHP_EOL;
+                    $result .= '<td>' . $fieldValue . '</td>' . PHP_EOL;
+                }
             }
         }
 
@@ -636,7 +637,7 @@ class Layouts
         //Look for ordering field type
         if ($addToolbar) {
             foreach ($fields as $field) {
-                if ($field['type'] == 'ordering')
+                if ((int)$field['published'] === 1 and $field['type'] == 'ordering')
                     $result .= '<th class="short">{{ ' . $field['fieldname'] . '.label(true) }}</th>' . PHP_EOL;
             }
         }
@@ -649,8 +650,11 @@ class Layouts
         else
             $result .= '<th class="short">{{ record.label(false) }}</th>' . PHP_EOL;
 
-        foreach ($fields as $field)
-            $result .= self::renderTableColumnHeader($field, $addToolbar, $fieldtypes_to_skip, $fieldTypesWithSearch, $fieldtypes_allowed_to_orderby);
+        foreach ($fields as $field) {
+            if ((int)$field['published'] === 1) {
+                $result .= self::renderTableColumnHeader($field, $addToolbar, $fieldtypes_to_skip, $fieldTypesWithSearch, $fieldtypes_allowed_to_orderby);
+            }
+        }
 
         if ($addToolbar)
             $result .= '<th>Action<br/>{{ html.searchbutton }}</th>' . PHP_EOL;
@@ -700,19 +704,23 @@ class Layouts
         $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];
 
         foreach ($fields as $field) {
-            if (!in_array($field['type'], $fieldTypes_to_skip)) {
-                $result .= '<div class="control-group">';
-                $result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.label }}</div><div class="controls">{{ ' . $field['fieldname'] . '.edit }}</div>';
-                $result .= '</div>';
+            if ((int)$field['published'] === 1) {
+                if (!in_array($field['type'], $fieldTypes_to_skip)) {
+                    $result .= '<div class="control-group">';
+                    $result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.label }}</div><div class="controls">{{ ' . $field['fieldname'] . '.edit }}</div>';
+                    $result .= '</div>';
+                }
             }
         }
 
         $result .= '</div>';
 
         foreach ($fields as $field) {
-            if ($field['type'] === "dummy") {
-                $result .= '<p><span style="color: #FB1E3D; ">*</span>' . ' {{ ' . $field['fieldname'] . '.title }}</p>';
-                break;
+            if ((int)$field['published'] === 1) {
+                if ($field['type'] === "dummy") {
+                    $result .= '<p><span style="color: #FB1E3D; ">*</span>' . ' {{ ' . $field['fieldname'] . '.title }}</p>';
+                    break;
+                }
             }
         }
 
@@ -738,8 +746,7 @@ class Layouts
         $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];
 
         foreach ($fields as $field) {
-
-            if (!in_array($field['type'], $fieldTypes_to_skip)) {
+            if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {
 
                 $attribute = 'for="' . $this->ct->Table->fieldInputPrefix . $field['fieldname'] . '"';
                 $label = '<th scope="row">
@@ -777,7 +784,7 @@ class Layouts
         $fieldTypes_to_skip = ['dummy'];
 
         foreach ($fields as $field) {
-            if (!in_array($field['type'], $fieldTypes_to_skip)) {
+            if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {
                 $result .= '<div class="control-group">';
 
                 //if ($field['type'] == 'creationtime' or $field['type'] == 'changetime' or $field['type'] == 'lastviewtime')
@@ -803,7 +810,7 @@ class Layouts
         $fieldTypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
 
         foreach ($fields as $field) {
-            if (!in_array($field['type'], $fieldTypes_to_skip))
+            if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1)
                 $result .= '{{ ' . $field['fieldname'] . '.title }}: {{ ' . $field['fieldname'] . ' }}<br/>';
         }
         return $result;
@@ -819,8 +826,7 @@ class Layouts
         $fieldTypes_to_pureValue = ['image', 'imagegallery', 'filebox', 'file'];
 
         foreach ($fields as $field) {
-
-            if (!in_array($field['type'], $fieldTypes_to_skip)) {
+            if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {
                 if ($result !== '')
                     $result .= ',';
 
@@ -832,8 +838,7 @@ class Layouts
 
         $firstField = true;
         foreach ($fields as $field) {
-
-            if (!in_array($field['type'], $fieldTypes_to_skip)) {
+            if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {
 
                 if (!$firstField)
                     $result .= ',';

@@ -40,8 +40,10 @@ class Twig_Fields_Tags
 
         $fields = Fields::shortFieldObjects($this->ct->Table->fields);
         $list = [];
-        foreach ($fields as $field)
-            $list[] = $field[$param];
+        foreach ($fields as $field) {
+            if ((int)$field['published'] === 1)
+                $list[] = $field[$param];
+        }
 
         return $list;
     }

@@ -153,8 +153,10 @@ class CustomtablesControllerListOfFields extends AdminController
     {
         $tableId = common::inputGetInt('tableid');
 
+        $ct = new CT();
+
         if ($tableId !== null) {
-            $ct = new CT();
+
             $ct->getTable($tableId);
 
             if ($ct->Table->tablename === null) {
@@ -173,6 +175,7 @@ class CustomtablesControllerListOfFields extends AdminController
             if ((int)$id != 0) {
                 $id = (int)$id;
                 $ok = Fields::deleteField_byID($ct, $id);
+
                 if (!$ok)
                     break;
             }

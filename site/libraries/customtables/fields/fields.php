@@ -210,7 +210,7 @@ class Fields
      * @throws Exception
      * @since 3.2.2
      */
-    public static function deleteField_byID(CT &$ct, $fieldId): bool
+    public static function deleteField_byID(CT $ct, int $fieldId): bool
     {
         if ($ct->Table->tablename === null) {
             die('deleteField_byID: Table not selected.');

@@ -37,16 +37,12 @@ class CustomtablesViewFields extends HtmlView
      */
     var CT $ct;
     var array $allTables;
-
-    var array $item;
+    var $item;
 
     public function display($tpl = null)
     {
         $version = new Version;
         $this->version = (int)$version->getShortVersion();
-
-        $model = $this->getModel();
-        $this->ct = $model->ct;
 
         // Assign the variables
         $this->form = $this->get('Form');
@@ -57,6 +53,7 @@ class CustomtablesViewFields extends HtmlView
         else
             $tableid = $this->item->tableid;
 
+        $this->ct = new CT;
         $this->ct->getTable($tableid);
 
         $this->script = $this->get('Script');
