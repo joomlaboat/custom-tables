@@ -37,12 +37,17 @@ class Twig_Record_Tags
         return $this->ct->Table->record[$this->ct->Table->realidfieldname];
     }
 
+    /**
+     * @throws Exception
+     *
+     * @since 3.2.2
+     */
     function label($allowSortBy = false)
     {
         $forms = new Forms($this->ct);
-
-        $field = ['type' => '_id', 'fieldname' => '_id', 'title' => '#', 'description' => '', 'isrequired' => false];
-        return $forms->renderFieldLabel((object)$field, $allowSortBy);
+        $fieldRow = ['id' => 0, 'type' => '_id', 'fieldname' => '_id', 'fieldtitle' => '#', 'description' => '', 'isrequired' => false, 'realfieldname' => $this->ct->Table->realidfieldname];
+        $field = new Field($this->ct, $fieldRow);
+        return $forms->renderFieldLabel($field, $allowSortBy);
     }
 
     /**
