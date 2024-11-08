@@ -47,7 +47,7 @@ class Table
      * @throws Exception
      * @since 3.2.2
      */
-    function __construct($Languages, $Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
+    function __construct($Languages, $Env, $tablename_or_id_not_sanitized, $useridfieldname = null, bool $loadAllField = true)
     {
         $this->Languages = $Languages;
         $this->Env = $Env;
@@ -88,14 +88,14 @@ class Table
         if (!isset($this->tablerow['id']))
             return;
 
-        $this->setTable($this->tablerow, $useridfieldname);
+        $this->setTable($this->tablerow, $useridfieldname, $loadAllField);
     }
 
     /**
      * @throws Exception
      * @since 3.2.2
      */
-    protected function setTable($tableRow, $useridFieldName = null): void
+    protected function setTable(array $tableRow, $useridFieldName = null, bool $loadAllField = true): void
     {
         $this->tablerow = $tableRow;
         $this->tablename = $this->tablerow['tablename'];
@@ -127,7 +127,10 @@ class Table
 
         //Fields
         $whereClause = new MySQLWhereClause();
-        //$whereClause->addCondition('f.published', 1);
+
+        if (!$loadAllField)
+            $whereClause->addCondition('f.published', 1);
+
         $whereClause->addCondition('f.tableid', $this->tableid);
         $this->fields = database::loadAssocList('#__customtables_fields AS f', ['*', ['REAL_FIELD_NAME', $this->fieldPrefix]], $whereClause, 'f.ordering, f.fieldname');
 
