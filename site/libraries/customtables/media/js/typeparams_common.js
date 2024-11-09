@@ -179,8 +179,9 @@ function renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) {
 
             for (let o = 0; o < all_tables.length; o++) {
                 let option = all_tables[o];
-                if (option[1] === vlu) {
-                    SQLJoinTableID = option[0];
+
+                if (option.tablename === vlu) {
+                    SQLJoinTableID = option.id;
                     break;
                 }
             }
@@ -955,10 +956,10 @@ function renderInput_Table(id, param, value, onchange, fieldchild) {
     for (let o = 0; o < all_tables.length; o++) {
         const option = all_tables[o];
 
-        if (option[1] === value)
-            result += '<option value="' + option[1] + '" data-tableid="' + option[0] + '" selected="selected">' + option[1] + '</option>';
+        if (option.tablename === value)
+            result += '<option value="' + option.tablename + '" data-tableid="' + option.id + '" selected="selected">' + option.tablename + '</option>';
         else
-            result += '<option value="' + option[1] + '" data-tableid="' + option[0] + '" >' + option[1] + '</option>';
+            result += '<option value="' + option.tablename + '" data-tableid="' + option.id + '" >' + option.tablename + '</option>';
     }
 
     result += '</select>';
