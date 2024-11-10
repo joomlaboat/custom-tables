@@ -785,22 +785,28 @@ function TranslateText() {
         return 'Nothing to translate';
 
     let str;
+    const key = arguments[0];
 
+    // Try Joomla first
     if (typeof Joomla !== 'undefined' && Joomla.JText && typeof Joomla.JText._ === 'function') {
-        // Joomla JText class exists
-        str = Joomla.JText._(arguments[0]);
-        // Use the JText class as needed
-    } else {
-        // Joomla JText class does not exist or is not properly loaded
-        // Handle the situation accordingly
-        str = arguments[0];
+        str = Joomla.JText._(key);
+    }
+    // Try WordPress
+    else if (typeof ctTranslationScriptObject !== 'undefined' && ctTranslationScriptObject[key]) {
+        str = ctTranslationScriptObject[key];
+    }
+    // Fallback
+    else {
+        str = key; // Return the key itself if no translation found
     }
 
+    // Handle placeholders
     if (arguments.length == 1)
         return str;
 
-    for (let i = 1; i < arguments.length; i++)
+    for (let i = 1; i < arguments.length; i++) {
         str = str.replace('%s', arguments[i]);
+    }
 
     return str;
 }
