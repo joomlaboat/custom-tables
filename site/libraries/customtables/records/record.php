@@ -223,8 +223,9 @@ class record
                 }
 
                 $fn_str = [];
-                $fn_str[] = '"comes_' . $fieldName . '"'; // this is for old layout back support
-                $fn_str[] = "'comes_" . $fieldName . "'"; // this is for old layout back support
+
+                $fn_str[] = '"' . $this->ct->Table->fieldInputPrefix . $fieldName . '"'; // this is for old layout back support
+                $fn_str[] = "'" . $this->ct->Table->fieldInputPrefix . $fieldName . "'"; // this is for old layout back support
 
                 foreach ($fn_str as $s) {
                     if (str_contains($pageLayout, $s)) {
