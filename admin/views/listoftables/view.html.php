@@ -35,7 +35,8 @@ class CustomTablesViewListOfTables extends HtmlView
     {
         // Get the model
         $model = $this->getModel();
-        
+
+
         $this->ct = $model->ct;
 
         if ($this->getLayout() !== 'modal') {

@@ -38,12 +38,12 @@ class Catalog
         if ($this->ct->Table === null) {
             $this->ct->getTable($this->ct->Params->tableName);
 
-            if ($this->ct->Table->tablename === null) {
+            if ($this->ct->Table === null) {
                 $this->ct->errors[] = 'Catalog View: Table not selected.';
                 return 'Catalog View: Table not selected.';
             }
         }
-        
+
         if ($this->ct->Env->frmt == 'html')
             common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 

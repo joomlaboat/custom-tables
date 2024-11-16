@@ -8,10 +8,6 @@
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-//const parts = location.href.split("/administrator/");
-//const websiteroot = parts[0] + "/administrator/";
-//const websiteSiteLibraries = parts[0] + "/components/com_customtables/libraries/customtables/";
-
 let field_types = [];
 let field_type_loaded = false;
 let type_obj = null;

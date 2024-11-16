@@ -949,7 +949,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
             if (typeof wrapper.dataset.addrecordmenualias !== 'undefined' && wrapper.dataset.addrecordmenualias !== '') {
                 let js = 'ctTableJoinAddRecordModalForm(\'' + control_name + '\',' + sub_index + ');';
                 let addText = TranslateText('COM_CUSTOMTABLES_ADD');
-                NoItemsText = addText + '<a href="javascript:' + js + '" className="toolbarIcons"><img src="components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="' + addText + '" title="' + addText + '"></a>';
+                NoItemsText = addText + '<a href="javascript:' + js + '" className="toolbarIcons"><img src="' + ctWebsiteRoot + 'components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="' + addText + '" title="' + addText + '"></a>';
             } else
                 NoItemsText = TranslateText('COM_CUSTOMTABLES_SELECT_NOTHING')
 
@@ -1236,7 +1236,7 @@ function ctInputBoxRecords_showMultibox(control_name, control_name_postfix) {
 
         v += '</td>';
 
-        let deleteImage = 'components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
+        let deleteImage = ctWebsiteRoot + 'components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
 
         v += '<td style="border-bottom:1px dotted grey;min-width:16px;">';
         let onClick = "ctInputBoxRecords_deleteItem('" + control_name + "','" + control_name_postfix + "'," + i + ")";
