@@ -66,8 +66,8 @@ class Value_tablejoinlist extends BaseValue
         } else
             $layoutCode = '{{ ' . $fieldName . ' }}';
 
-        if (($options[2] ?? '') != '')
-            $separatorCharacter = $options[1];
+        if (($option_list[2] ?? '') != '')
+            $separatorCharacter = $option_list[2];
         else
             $separatorCharacter = ',';
 
@@ -81,7 +81,7 @@ class Value_tablejoinlist extends BaseValue
      * @throws Exception
      * @since 3.4.5
      */
-    public static function resolveRecordTypeValue(Field   &$field, string $layoutcode, ?string $rowValue, string $showPublishedString = '',
+    public static function resolveRecordTypeValue(Field   $field, string $layoutcode, ?string $rowValue, string $showPublishedString = '',
                                                   ?string $separatorCharacter = ','): string
     {
         if ($rowValue === null)
@@ -124,9 +124,14 @@ class Value_tablejoinlist extends BaseValue
         return self::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records, $separatorCharacter);
     }
 
+    /**
+     * @throws Exception
+     *
+     * @since 3.2.2
+     */
     protected static function processRecordRecords(CT $ct, $layoutcode, ?string $rowValue, $records, string $separatorCharacter = ','): string
     {
-        $htmlresult = '';
+        $htmlResult = '';
 
         $valueArray = explode(',', $rowValue);
 
@@ -144,11 +149,11 @@ class Value_tablejoinlist extends BaseValue
 
             $twig = new TwigProcessor($ct, $layoutcode);
 
-            if ($htmlresult != '')
-                $htmlresult .= $separatorCharacter;
+            if ($htmlResult != '')
+                $htmlResult .= $separatorCharacter;
 
             try {
-                $htmlresult .= $twig->process($row);
+                $htmlResult .= $twig->process($row);
             } catch (Exception $e) {
                 return 'processRecordRecords: ' . $e->getMessage();
             }
@@ -159,6 +164,6 @@ class Value_tablejoinlist extends BaseValue
             $number++;
         }
 
-        return str_replace('{', '*', $htmlresult);
+        return str_replace('{', '*', $htmlResult);
     }
 }
