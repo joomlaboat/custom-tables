@@ -74,7 +74,7 @@ class ImportTables
                 //Next: Add/Update Fields
 
                 if ($importfields)
-                    ImportTables::processFields($table['table']['tablename'], $msg);
+                    ImportTables::processFields($table['table']['tablename'], $table['fields'], $msg);
 
                 if ($importlayouts)
                     ImportTables::processLayouts($ct, $tableid, $table['layouts'], $msg);
@@ -383,12 +383,12 @@ class ImportTables
      * @throws Exception
      * @since 3.2.2
      */
-    protected static function processFields(string $tableName, &$msg): bool
+    protected static function processFields(string $tableName, array $fields, &$msg): bool
     {
         $ct = new CT;
         $ct->getTable($tableName);
 
-        foreach ($ct->Table->fields as $field) {
+        foreach ($fields as $field) {
             $fieldid = ImportTables::processField($ct, $field);
             if ($fieldid == 0) {
                 $msg = 'Could not Add or Update field "' . $field['fieldname'] . '"';
@@ -421,6 +421,7 @@ class ImportTables
                 //Field added
                 //Lets create mysql field
                 $PureFieldType = Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
+
                 Fields::addField($ct, $ct->Table->realtablename, $ct->Table->fieldPrefix . $fieldName,
                     $PureFieldType, $field_new['fieldtitle'], $field_new);
             }
