@@ -686,7 +686,7 @@ function getLayout_Page() {
         result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
 
     result += '<div class="datagrid">\r\n';
-    result += '<div>{{ html.batch("edit","publish","unpublish","refresh","delete") }}</div>\r\n\r\n';
+    result += '<div>{{ html.batch("publish","unpublish","refresh","delete") }}</div>\r\n\r\n';
 
     result += '<table>';
 
@@ -779,7 +779,7 @@ function getLayout_SimpleCatalog() {
         result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
 
     result += '<div class="datagrid">\r\n';
-    result += '<div>{{ html.batch(\'edit\',\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
+    result += '<div>{{ html.batch(\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
     result += '\r\n';
 
     let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];

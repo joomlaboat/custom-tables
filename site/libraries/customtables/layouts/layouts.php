@@ -549,7 +549,7 @@ class Layouts
         $result .= '<div class="datagrid">' . PHP_EOL;
 
         if ($addToolbar)
-            $result .= '<div>{{ html.batch(\'edit\',\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
+            $result .= '<div>{{ html.batch(\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
 
         $result .= PHP_EOL;
 
