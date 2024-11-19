@@ -267,12 +267,7 @@ class SaveFieldQuerySet
             case 'article':
 
             case 'usergroup':
-                if (defined('_JEXEC'))
-                    $value = common::inputPostInt($this->field->comesfieldname);
-                elseif (defined('WPINC'))
-                    $value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
-                else
-                    return;
+                $value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
 
                 if (isset($value)) {
                     $this->setNewValue($value);
@@ -510,7 +505,7 @@ class SaveFieldQuerySet
                     if ($valueArray) {
                         return self::getCleanRecordValue($valueArray);
                     } else {
-                        $value_off = common::inputPostInt($field->comesfieldname . '_off');
+                        $value_off = common::inputPostInt($field->comesfieldname . '_off', null, 'create-edit-record');
                         if ($value_off) {
                             return '';
                         } else {

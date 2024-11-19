@@ -1288,9 +1288,9 @@
         </subvalueparams>
     </type>
 
-    <!-- WordPress NOT Ready 25 -->
+    <!-- WordPress Ready 25 -->
     <type ct_name="records" label="Table Join List"
-          description="Concatenated ID list referencing another table." priority="2" proversion="1" wordpress="false"
+          description="Concatenated ID list referencing another table." priority="2" proversion="1" wordpress="true"
           order="25">
         <params>
             <param name="table" label="Table" description="Type the name of the Custom Table to join/link with."
@@ -1300,11 +1300,12 @@
                    default="" type="field"/>
             <param name="selector" label="Selector" example="single" description="How to select records."
                    default="single" type="list">
-                <option value="single" label="Single Record (Dropdown List)"/>
-                <option value="multi" label="Multiple Records (Dropdown List)"/>
-                <option value="radio" label="Single Record (Radio)"/>
-                <option value="checkbox" label="Multiple Records (Checkboxes)"/>
-                <option value="multibox" label="Multiple Records (Add Record List, requires Dynamic Filter)"/>
+                <option value="single" label="Single Record (Dropdown List)" wordpress="true"/>
+                <option value="multi" label="Multiple Records (Dropdown List)" wordpress="true"/>
+                <option value="radio" label="Single Record (Radio)" wordpress="true"/>
+                <option value="checkbox" label="Multiple Records (Checkboxes)" wordpress="true"/>
+                <option value="multibox" label="Multiple Records (Add Record List, requires Dynamic Filter)"
+                        wordpress="true"/>
             </param>
             <param name="filter" label="Filter"
                    description="Limits records using filter. Example: [age>30] where age is a field in joining table"
@@ -1364,9 +1365,9 @@
                        hidden="false"
                        example="any" optional="1"
                        default="published" type="list">
-                    <option value="published" label="Only Published"/>
-                    <option value="unpublished" label="Only Unpublished"/>
-                    <option value="all" label="Show all records"/>
+                    <option value="published" label="Only Published" wordpress="true"/>
+                    <option value="unpublished" label="Only Unpublished" wordpress="true"/>
+                    <option value="all" label="Show all records" wordpress="true"/>
                 </param>
 
                 <param name="separator" label="List Separator" example="," optional="1"
@@ -1386,9 +1387,9 @@
                        hidden="false"
                        example="any" optional="1"
                        default="published" type="list">
-                    <option value="published" label="Only Published"/>
-                    <option value="unpublished" label="Only Unpublished"/>
-                    <option value="all" label="Show all records"/>
+                    <option value="published" label="Only Published" wordpress="true"/>
+                    <option value="unpublished" label="Only Unpublished" wordpress="true"/>
+                    <option value="all" label="Show all records" wordpress="true"/>
                 </param>
 
                 <param name="separator" label="List Separator" example="," optional="1"
@@ -1408,9 +1409,9 @@
                        hidden="false"
                        example="published" optional="1"
                        default="published" type="list">
-                    <option value="published" label="Only Published"/>
-                    <option value="unpublished" label="Only Unpublished"/>
-                    <option value="all" label="Show all records"/>
+                    <option value="published" label="Only Published" wordpress="true"/>
+                    <option value="unpublished" label="Only Unpublished" wordpress="true"/>
+                    <option value="all" label="Show all records" wordpress="true"/>
                 </param>
 
                 <param name="separator" label="List Separator"

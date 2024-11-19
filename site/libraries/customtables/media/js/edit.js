@@ -821,14 +821,32 @@ function SetUnsetInvalidClass(id, isValid) {
 }
 
 function CheckImageUploader(id) {
-    let objId = id.replace("ct_uploadfile_box_", ctFieldInputPrefix);
-    let obj = document.getElementById(objId);
-    if (obj.value === "") {
-        SetUnsetInvalidClass(id, false);
-        return false;
+
+    let obj1 = document.getElementById(id);
+
+    if (obj1) {
+
+        if (obj1.value === "") {
+            SetUnsetInvalidClass(id, false);
+            return false;
+        }
+        SetUnsetInvalidClass(id, true);
+        return true;
     }
-    SetUnsetInvalidClass(id, true);
-    return true;
+
+    let objId = id.replace("ct_uploadfile_box_", ctFieldInputPrefix);
+
+    let obj2 = document.getElementById(objId);
+
+    if (obj2) {
+
+        if (obj2.value === "") {
+            SetUnsetInvalidClass(id, false);
+            return false;
+        }
+        SetUnsetInvalidClass(id, true);
+        return true;
+    }
 }
 
 function CheckSQLJoinRadioSelections(id) {
