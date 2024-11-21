@@ -168,14 +168,8 @@ class Ordering
                 return '(SELECT ' . $select . ' FROM ' . $sqljoin_temp_ct->Table->realtablename
                     . ' WHERE ' . $sqljoin_temp_ct->Table->realtablename . '.' . $sqljoin_temp_ct->Table->realidfieldname . '=' . $Table->realtablename . '.' . $field->realfieldname . ')';
 
-            case 'date':
-            case 'creationtime':
-            case 'changetime':
-            case 'lastviewtime':
-                return $field->realfieldname;
-
             default:
-                return throw(new Exception('Unknown field type ' . $field->type));
+                return $field->realfieldname;
         }
     }
 

@@ -515,12 +515,25 @@ class common
             return '';
 
         foreach ($list as $l) {
-            $p = explode('=', $l);
-            $fld_name = str_replace('_t_', '', $p[0]);
-            $fld_name = str_replace('_r_', '', $fld_name); //range
 
-            if ($fld_name == $field and isset($p[1]))
-                return $p[1];
+            $p = explode('==', $l);//This is for exact text search
+            if (count($p) == 2) {
+                $fld_name = str_replace('_t_', '', $p[0]);
+                $fld_name = str_replace('_r_', '', $fld_name); //range
+                if ($fld_name == $field and isset($p[1]))
+                    return $p[1];
+
+                return '';
+            } else {
+                $p = explode('=', $l);//Contain text search
+                if (count($p) == 2) {
+                    $fld_name = str_replace('_t_', '', $p[0]);
+                    $fld_name = str_replace('_r_', '', $fld_name); //range
+                    if ($fld_name == $field and isset($p[1]))
+                        return $p[1];
+                }
+                return '';
+            }
         }
         return '';
     }
