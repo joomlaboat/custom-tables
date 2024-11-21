@@ -45,7 +45,7 @@ class Save_usergroups
             case 'multibox':
             case 'checkbox':
             case 'multi';
-                $valueArray = common::inputPost($this->field->comesfieldname, null, 'array');
+                $valueArray = common::inputPostArray($this->field->comesfieldname, null, 'create-edit-record');
 
                 if (isset($valueArray) and is_array($valueArray))
                     return ['value' => ',' . implode(',', $valueArray) . ','];

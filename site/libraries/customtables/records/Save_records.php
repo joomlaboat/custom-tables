@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTablesImageMethods;
 use Exception;
 
 class Save_records
@@ -69,7 +68,7 @@ class Save_records
 
                     //returns NULL if field parameter not found - nothing to save
                     //returns empty array if nothing selected - save empty value
-                    $valueArray = common::inputPost($this->field->comesfieldname, null, 'array');
+                    $valueArray = common::inputPostArray($this->field->comesfieldname, null, 'create-edit-record');
 
                     if ($valueArray) {
                         return self::getCleanRecordValue($valueArray);
@@ -83,7 +82,7 @@ class Save_records
                     }
 
                 case 'multibox';
-                    $valueArray = common::inputPost($this->field->comesfieldname, null, 'array');
+                    $valueArray = common::inputPostArray($this->field->comesfieldname, null, 'create-edit-record');
 
                     if (isset($valueArray)) {
                         return self::getCleanRecordValue($valueArray);

@@ -16,6 +16,9 @@ defined('_JEXEC') or die();
 use Exception;
 use CustomTables\CustomPHP;
 use CustomTables\ctProHelpers;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class record
 {
@@ -199,6 +202,13 @@ class record
         return true;
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     *
+     * @since 3.0.0
+     */
     function getFieldsToSave($row): array
     {
         $this->ct->isEditForm = true; //These changes input box prefix

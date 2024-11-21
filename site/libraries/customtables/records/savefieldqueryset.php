@@ -815,12 +815,12 @@ class SaveFieldQuerySet
 
         if ($this->ct->Params->emailSentStatusField != '') {
 
-            foreach ($this->ct->Table->fields as $fieldrow) {
-                $fieldname = $fieldrow['fieldname'];
+            foreach ($this->ct->Table->fields as $fieldRow) {
+                $fieldname = $fieldRow['fieldname'];
                 if ($this->ct->Params->emailSentStatusField == $fieldname) {
 
                     $data = [
-                        $fieldrow['realfieldname'] => $status
+                        $fieldRow['realfieldname'] => $status
                     ];
                     $whereClauseUpdate = new MySQLWhereClause();
                     $whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $listing_id);
@@ -889,12 +889,12 @@ class SaveFieldQuerySet
                 $i++;
             }
 
-            foreach ($this->ct->Table->fields as $fieldrow) {
-                if ($fieldrow['type'] == 'file') {
-                    $field = new Field($this->ct, $fieldrow, $row);
+            foreach ($this->ct->Table->fields as $fieldRow) {
+                if ($fieldRow['type'] == 'file') {
+                    $field = new Field($this->ct, $fieldRow, $row);
                     $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0]);
 
-                    $filename = $FileFolder . $this->ct->Table->record[$fieldrow['realfieldname']];
+                    $filename = $FileFolder . $this->ct->Table->record[$fieldRow['realfieldname']];
                     if (file_exists($filename))
                         $attachments[] = $filename;//TODO: Check the functionality
                 }

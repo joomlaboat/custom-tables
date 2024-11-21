@@ -47,7 +47,7 @@ class CustomtablesControllerListOfRecords extends AdminController
         }
 
         $status = (int)($this->task == 'publish');
-        $cid = common::inputPost('cid', array(), 'array');
+        $cid = common::inputPostArray('cid', []);
         foreach ($cid as $id) {
             if ($id != '') {
                 if ($ct->setPublishStatusSingleRecord($id, $status) == -1)
@@ -89,7 +89,7 @@ class CustomtablesControllerListOfRecords extends AdminController
             return;
         }
 
-        $cid = common::inputPost('cid', array(), 'array');
+        $cid = common::inputPostArray('cid', []);
 
         foreach ($cid as $id) {
             if ($id != '') {
@@ -159,7 +159,7 @@ class CustomtablesControllerListOfRecords extends AdminController
             }
         }
 
-        $cid = common::inputPost('cid', array(), 'array');
+        $cid = common::inputPostArray('cid', []);
 
         $ct = new CT(null, false);
         $ct->Env->frmt = 'csv';

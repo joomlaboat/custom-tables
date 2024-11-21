@@ -36,7 +36,7 @@ class CustomtablesControllerListOfFields extends AdminController
         $redirect = 'index.php?option=' . $this->option;
         $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
 
-        $cid = common::inputPost('cid', array(), 'array');
+        $cid = common::inputPostArray('cid', []);
         $cid = ArrayHelper::toInteger($cid);
         $count = count($cid);
 
@@ -95,7 +95,7 @@ class CustomtablesControllerListOfFields extends AdminController
             }
         }
 
-        $cid = common::inputPost('cid', array(), 'array');
+        $cid = common::inputPostArray('cid', []);
         $cid = ArrayHelper::toInteger($cid);
 
         $ok = true;
@@ -168,7 +168,7 @@ class CustomtablesControllerListOfFields extends AdminController
             return;
         }
 
-        $cid = common::inputPost('cid', array(), 'array');
+        $cid = common::inputPostArray('cid', []);
         $cid = ArrayHelper::toInteger($cid);
 
         foreach ($cid as $id) {

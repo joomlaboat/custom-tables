@@ -212,7 +212,7 @@ class CustomtablesControllerRecords extends FormController
         //To support char type record id
         $listing_id = common::inputGetCmd('id');
         if ($listing_id === null) {
-            $cid = common::inputPost('cid', array(), 'array');
+            $cid = common::inputPostArray('cid', []);
             $cid = ArrayHelper::toInteger($cid);
             $listing_id = $cid[0];
         }

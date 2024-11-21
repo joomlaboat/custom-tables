@@ -55,7 +55,7 @@ class common
                     $extension = strtolower($parts[0] . '_' . $parts[1]);
 
                 $lang = Factory::getLanguage();
-                $lang->load($extension, JPATH_SITE);//JPATH_BASE);
+                $lang->load($extension, JPATH_SITE);
 
                 if (is_null($value))
                     return Text::_($text);
@@ -206,9 +206,9 @@ class common
      * @throws Exception
      * @since 3.2.9
      */
-    public static function inputPost($parameter, $default = null, $filter = null)
+    public static function inputPostArray($parameter, ?array $default = null)
     {
-        return Factory::getApplication()->input->post->get($parameter, $default, $filter);
+        return Factory::getApplication()->input->post->get($parameter, $default, 'array');
     }
 
     /**
@@ -405,7 +405,7 @@ class common
 
     public static function curPageURL(): string
     {
-        //Uri::root() returns the string http://www.mydomain.org/mysite/ (or https if you're using SSL, etc).
+        //Uri::root() returns the string http://www.mydomain.org/mysite/ (or https if you're using SSL, etc.).
         //common::UriRoot(true) returns the string /mysite.
         $WebsiteRoot = str_replace(Uri::root(true), '', Uri::root());
         //Uri$WebsiteRoot = http://www.mydomain.org/
@@ -428,7 +428,7 @@ class common
 
     public static function UriRoot(bool $pathOnly = false, bool $addTrailingSlash = false): string
     {
-        //Uri::root() returns the string http://www.mydomain.org/mysite (or https if you're using SSL, etc).
+        //Uri::root() returns the string http://www.mydomain.org/mysite (or https if you're using SSL, etc.).
         //common::UriRoot(true) returns the string /mysite
 
         $url = Uri::root($pathOnly);
@@ -665,6 +665,11 @@ class common
         Factory::getApplication()->setRedirect($link, $msg);
     }
 
+    /**
+     * @throws \DateInvalidTimeZoneException
+     *
+     * @since 3.0.0
+     */
     public static function formatDateFromTimeStamp($timeStamp = null, ?string $format = 'Y-m-d H:i:s'): ?string
     {
         $config = Factory::getConfig();
@@ -677,6 +682,11 @@ class common
         return $date->format($format, true);
     }
 
+    /**
+     * @throws \DateInvalidTimeZoneException
+     *
+     * @since 3.0.0
+     */
     public static function formatDate(?string $dateString = null, ?string $format = 'Y-m-d H:i:s', ?string $emptyValue = 'Never'): ?string
     {
         if ($format === null)
@@ -696,6 +706,11 @@ class common
         return $date->format($format, true);
     }
 
+    /**
+     * @throws \DateInvalidTimeZoneException
+     *
+     * @since 3.0.0
+     */
     public static function currentDate(string $format = 'Y-m-d H:i:s'): string
     {
         $date = Factory::getDate();
@@ -707,6 +722,11 @@ class common
         return $date->format($format, true);
     }
 
+    /**
+     * @throws Exception
+     *
+     * @since 3.0.0
+     */
     public static function clientAdministrator(): bool
     {
         //returns true when called from the back-end / administrator

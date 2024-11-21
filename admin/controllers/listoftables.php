@@ -24,6 +24,11 @@ class CustomtablesControllerListOfTables extends AdminController
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFTABLES';
 
+    /**
+     * @throws Exception
+     *
+     * @since 3.0.0
+     */
     public function __construct($config = array())
     {
         parent::__construct($config);
@@ -40,18 +45,18 @@ class CustomtablesControllerListOfTables extends AdminController
      */
     public function export()
     {
-        $cIds = common::inputPost('cid', array(), 'array');
-        $cIds = ArrayHelper::toInteger($cIds);
+        $cid = common::inputPostArray('cid', []);
+        $cid = ArrayHelper::toInteger($cid);
 
-        $download_file = ExportTables::export($cIds, 'images');
+        $download_file = ExportTables::export($cid, 'images');
 
         if ($download_file !== null) {
             $msg = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';
 
-            if (count($cIds) == 1)
+            if (count($cid) == 1)
                 $msg .= '_1';
 
-            $msg = common::translate($msg, count($cIds));
+            $msg = common::translate($msg, count($cid));
 
             $msg .= '&nbsp;&nbsp;<a href="' . $download_file['link'] . '" title="File: ' . $download_file['filename'] . '" download="' . $download_file['filename'] . '" target="_blank">Download (Click Save Link As...)</a>';
         } else {

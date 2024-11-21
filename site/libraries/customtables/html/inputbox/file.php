@@ -106,6 +106,11 @@ class InputBox_file extends BaseInputBox
         return $result;
     }
 
+    /**
+     * @throws \Exception
+     *
+     * @since 3.0.0
+     */
     protected function renderUploader(): string
     {
         $result = '';
