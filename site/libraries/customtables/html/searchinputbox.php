@@ -32,7 +32,7 @@ class SearchInputBox
      * @since 3.2.1
      */
     function renderFieldBox(string  $prefix, string $objName, array $fieldRow, string $cssClass, $index, string $where, string $whereList,
-                            ?string $onchange, ?string $field_title = null): string
+                            ?string $onchange, ?string $field_title = null, bool $exact = false): string
     {
         $this->field = new Field($this->ct, $fieldRow);
         $place_holder = $this->field->title;
@@ -49,6 +49,9 @@ class SearchInputBox
             BaseInputBox::addCSSClass($attributes, $cssClass);
 
         $attributes['data-type'] = $this->field->type;
+
+        if ($exact)
+            $attributes['data-exact'] = 'true';
 
         if (in_array($this->field->type, ['phponchange', 'phponadd', 'multilangstring', 'text', 'multilangtext', 'string'])) {
             $length = (($this->field->params !== null and count($this->field->params) > 0) ? (int)($this->field->params[0] ?? 255) : 255);

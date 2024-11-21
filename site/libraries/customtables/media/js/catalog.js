@@ -251,11 +251,15 @@ function ctSearchBoxDo() {
         if (obj) {
             let o = obj.value;
 
+            let operator = '=';
+            if (obj.dataset.exact && obj.dataset.exact === 'true')
+                operator = '==';
+
             if (o !== "" && (o !== "0" || obj.dataset.type === 'int' || obj.dataset.type === 'float' || obj.dataset.type === 'checkbox')) {
                 if (n[2] === "") {
                     if (o.indexOf("-to-") !== -1) {
                         if (o !== "-to-") w.push(n[1] + "_r_=" + o);
-                    } else w.push(n[1] + "=" + o);
+                    } else w.push(n[1] + operator + o);
                 } else w.push(n[1] + "=" + n[2] + "." + o);//Custom Tables Structure
             }
         } else {
