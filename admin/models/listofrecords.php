@@ -53,7 +53,7 @@ class CustomtablesModelListOfRecords extends ListModel
             $this->ct->getTable($tableId);
         }
 
-        if ($this->ct->Table->tablename === null) {
+        if ($this->ct->Table === null) {
             Factory::getApplication()->enqueueMessage('Table not found and not loaded.', 'error');
             return;
         }

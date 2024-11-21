@@ -51,7 +51,7 @@ class IntegrityFieldType_Gallery extends IntegrityChecks
 
             if (!$g_found) {
                 Fields::AddMySQLFieldNotExist($gallery_table_name, $g_fieldname, 'varchar(100) null', '');
-                common::enqueueMessage("Gallery Field '" . $g_fieldname . "' added.");
+                common::enqueueMessage("Gallery Field '" . $g_fieldname . "' added.", 'notice');
             }
             $moreThanOneLanguage = true;
         }

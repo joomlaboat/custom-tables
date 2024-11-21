@@ -168,7 +168,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
 
-        if ($this->ct->Table->tablename === null) {
+        if ($this->ct->Table === null) {
             $this->ct->errors[] = 'Table not selected (61).';
             return false;
         }

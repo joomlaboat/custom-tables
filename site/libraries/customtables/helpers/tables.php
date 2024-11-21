@@ -129,11 +129,12 @@ class TableHelper
 
                     $realTableName = $dbPrefix . 'customtables_table_' . $tableName;
 
-                    if ($row2->Engine != 'InnoDB') {
-                        database::setTableInnoDBEngine($realTableName);
-                    }
+                    if ($row2->Engine !== 'VIEW' and (string)$row2->Engine !== '') {
+                        if ($row2->Engine !== 'InnoDB')
+                            database::setTableInnoDBEngine($realTableName);
 
-                    database::changeTableComment($realTableName, $tableTitle);
+                        database::changeTableComment($realTableName, $tableTitle);
+                    }
                     return false;
                 }
             }

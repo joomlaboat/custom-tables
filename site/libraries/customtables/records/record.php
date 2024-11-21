@@ -107,7 +107,7 @@ class record
                 $this->listing_id = database::insert($this->ct->Table->realtablename, $saveField->row_new);
             } catch (Exception $e) {
                 $this->ct->errors[] = $e->getMessage();
-                die($e->getMessage());
+                die('record.php:110 ' . $e->getMessage());
             }
 
         } else {

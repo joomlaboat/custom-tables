@@ -383,7 +383,7 @@ class Value_file extends BaseValue
         $this->ct = new CT;
 
         $this->ct->getTable($this->tableid);
-        if ($this->ct->Table->tablename === null) {
+        if ($this->ct->Table === null) {
             $this->ct->errors[] = 'Table not selected (79).';
             return;
         }

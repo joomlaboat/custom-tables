@@ -109,7 +109,7 @@ class Details
 
         $this->ct->getTable($this->ct->Params->tableName, $this->ct->Params->userIdField);
 
-        if ($this->ct->Table->tablename === null)
+        if ($this->ct->Table === null)
             return false;
 
         if (!is_null($this->ct->Params->alias) and $this->ct->Table->alias_fieldname != '')

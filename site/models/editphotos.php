@@ -67,7 +67,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 
         $this->ct->getTable($params->get('establename'), $this->userIdField);
 
-        if ($this->ct->Table->tablename === null) {
+        if ($this->ct->Table === null) {
             Factory::getApplication()->enqueueMessage('Table not selected (62).', 'error');
             return false;
         }

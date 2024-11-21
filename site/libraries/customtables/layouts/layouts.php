@@ -864,7 +864,7 @@ class Layouts
         if ($this->ct->Table === null) {
             $this->ct->getTable($this->ct->Params->tableName);
 
-            if ($this->ct->Table->tablename === null) {
+            if ($this->ct->Table === null) {
                 $this->ct->errors[] = 'Catalog View: Table not selected.';
                 return 'Catalog View: Table not selected.';
             }
