@@ -278,7 +278,7 @@ class SaveFieldQuerySet
 
             case 'usergroups':
 
-                require_once 'usergroups.php';
+                require_once 'Save_usergroups.php';
                 $usergroups = new Save_usergroups($this->ct, $this->field, $this->row_new);
                 $value = $usergroups->saveFieldSet();
 
@@ -304,7 +304,7 @@ class SaveFieldQuerySet
 
             case 'image':
 
-                require_once 'image.php';
+                require_once 'Save_image.php';
                 $image = new Save_image($this->ct, $this->field);
                 $value = $image->saveFieldSet($listing_id);
 
@@ -316,7 +316,7 @@ class SaveFieldQuerySet
 
             case 'blob':
 
-                require_once 'blob.php';
+                require_once 'Save_blob.php';
                 $image = new Save_blob($this->ct, $this->field, $this->row_new);
                 $value = $image->saveFieldSet($listing_id);
 
@@ -328,7 +328,7 @@ class SaveFieldQuerySet
 
             case 'file':
 
-                require_once 'file.php';
+                require_once 'Save_file.php';
 
                 $image = new Save_file($this->ct, $this->field, $this->row_new);
                 $value = $image->saveFieldSet($listing_id);
