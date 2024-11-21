@@ -1262,7 +1262,12 @@ function ctInputBoxRecords_showMultibox(control_name, control_name_postfix) {
 
         v += '</td>';
 
-        let deleteImage = ctWebsiteRoot + 'components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
+        let deleteImage;
+
+        if (window.Joomla instanceof Object)
+            deleteImage = ctWebsiteRoot + 'components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
+        else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar'))
+            deleteImage = ctWebsiteRoot + 'wp-content/plugins/customtables/libraries/customtables/media/images/icons/cancel.png';
 
         v += '<td style="border-bottom:1px dotted grey;min-width:16px;">';
         let onClick = "ctInputBoxRecords_deleteItem('" + control_name + "','" + control_name_postfix + "'," + i + ")";

@@ -64,14 +64,15 @@ class SaveFieldQuerySet
 
         switch ($this->field->type) {
             case 'records':
-                $value = self::get_record_type_value($this->field);
-                if ($value === null) {
-                    return;
-                } elseif ($value === '') {
-                    $this->setNewValue(null);
-                    return;
-                }
-                $this->setNewValue($value);
+
+                require_once 'Save_records.php';
+                $image = new Save_records($this->ct, $this->field);
+                $value = $image->saveFieldSet($listing_id);
+
+                //This way it will be clear if the value changed or not. If $this->newValue = null means that value not changed.
+                if ($value !== null and is_array($value))
+                    $this->setNewValue($value['value']);
+
                 return;
 
             case 'sqljoin':
@@ -473,66 +474,6 @@ class SaveFieldQuerySet
                     $this->setNewValue($value);
                 }
         }
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.0.0
-     */
-    public static function get_record_type_value(Field $field): ?string
-    {
-        if (count($field->params) > 2) {
-            $esr_selector = $field->params[2];
-            $selectorPair = explode(':', $esr_selector);
-
-            switch ($selectorPair[0]) {
-                case 'single';
-                    $value = common::inputPostInt($field->comesfieldname, null, 'create-edit-record');
-
-                    if (isset($value))
-                        return $value;
-
-                    break;
-
-                case 'radio':
-                case 'checkbox':
-                case 'multi':
-
-                    //returns NULL if field parameter not found - nothing to save
-                    //returns empty array if nothing selected - save empty value
-                    $valueArray = common::inputPost($field->comesfieldname, null, 'array');
-
-                    if ($valueArray) {
-                        return self::getCleanRecordValue($valueArray);
-                    } else {
-                        $value_off = common::inputPostInt($field->comesfieldname . '_off', null, 'create-edit-record');
-                        if ($value_off) {
-                            return '';
-                        } else {
-                            return null;
-                        }
-                    }
-
-                case 'multibox';
-                    $valueArray = common::inputPost($field->comesfieldname, null, 'array');
-
-                    if (isset($valueArray)) {
-                        return self::getCleanRecordValue($valueArray);
-                    }
-                    break;
-            }
-        }
-        return null;
-    }
-
-    protected static function getCleanRecordValue($array): string
-    {
-        $values = array();
-        foreach ($array as $a) {
-            if ((int)$a != 0)
-                $values[] = (int)$a;
-        }
-        return ',' . implode(',', $values) . ',';
     }
 
     function setNewValue($value): void

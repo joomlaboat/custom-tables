@@ -52,8 +52,8 @@ $response_object = [];
 $encoded_returnto = common::makeReturnToURL($this->ct->Params->returnTo);
 
 if ($listing_id == 0) {
-    $publishstatus = $this->params->get('publishstatus');
-    $response_object['published'] = (int)$publishstatus;
+    $publishStatus = $this->params->get('publishstatus');
+    $response_object['published'] = (int)$publishStatus;
 }
 
 $response_object['form'] = $form_items;

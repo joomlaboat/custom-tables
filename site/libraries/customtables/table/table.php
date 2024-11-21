@@ -95,7 +95,7 @@ class Table
      * @throws Exception
      * @since 3.2.2
      */
-    protected function setTable(array $tableRow, $useridFieldName = null, bool $loadAllField = true): void
+    protected function setTable(array $tableRow, $useridFieldName = null, bool $loadAllField = false): void
     {
         $this->tablerow = $tableRow;
         $this->tablename = $this->tablerow['tablename'];
