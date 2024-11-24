@@ -977,7 +977,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     }
 
     let result = '';
-    let cssClass = 'form-select valid form-control-success';
+    let cssClass = 'form-control form-select valid form-control-success';
     let objForm = document.getElementById(formId);
     if (objForm && objForm.dataset.version < 4)
         cssClass = 'inputbox';
@@ -1009,8 +1009,10 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     }
 
     //Add content to the element
-    if (document.getElementById(control_name + "Selector" + index + '_' + (sub_index + 1)))
-        document.getElementById(control_name + "Selector" + index + '_' + (sub_index + 1)).innerHTML = result;
+    //if (document.getElementById(control_name + "Selector" + index + '_' + (sub_index + 1)))
+    //    document.getElementById(control_name + "Selector" + index + '_' + (sub_index + 1)).innerHTML = result;
+    if (document.getElementById(control_name + "Selector" + index + '_' + (sub_index)))
+        document.getElementById(control_name + "Selector" + index + '_' + (sub_index)).innerHTML = result;
 
     if (forceValue !== null) {
         let obj = document.getElementById(current_object_id);
@@ -1048,13 +1050,21 @@ function ctTableJoinAddRecordModalForm(control_name, sub_index) {
 function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue, forceValue) {
 
     let wrapper = document.getElementById(control_name + "Wrapper");
-    let link = location.href.split('administrator/index.php?option=com_customtables');
     let url;
 
-    if (link.length === 2)//to make sure that it will work in the back-end
-        url = 'index.php?option=com_customtables&view=records&from=json&key=' + wrapper.dataset.key + '&index=' + index;
-    else
-        url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
+    if (typeof Joomla !== 'undefined') {
+        let link = location.href.split('administrator/index.php?option=com_customtables');
+
+        if (link.length === 2)//to make sure that it will work in the back-end
+            url = ctWebsiteRoot + 'administrator/index.php?option=com_customtables&view=records&frmt=json&key=' + wrapper.dataset.key + '&index=' + index;
+        else
+            url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&frmt=json&key=' + wrapper.dataset.key + '&index=' + index;
+
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+        console.error("ctUpdateTableJoinLink is not supported by WP yet.");
+        alert("ctUpdateTableJoinLink is not supported by WP yet.")
+        return;
+    }
 
     let filters = [];
     if (wrapper.dataset.valuefilters !== '') {
@@ -1103,7 +1113,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
                     valueObj.value = obj.value;
             }
 
-            if (obj.value == "") {
+            if (obj.value === "") {
                 //Empty everything after
                 document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '';//"Not selected";
                 return false;
@@ -1139,6 +1149,7 @@ function ctRenderTableJoinSelectBoxLoadRecords(url, control_name, index, execute
                     response = JSON.parse(http.response.toString());
                 } catch (e) {
                     console.log(http.response.toString());
+                    console.log(url);
                     return console.error(e);
                 }
                 ctRenderTableJoinSelectBox(control_name, response, index, execute_all, sub_index, object_id, formId, forceValue);
@@ -1690,7 +1701,21 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
     let wrapper = document.getElementById(ctFieldInputPrefix + childFieldName + 'Wrapper');
     let key = wrapper.dataset.key;
     let where = childFilterFieldName + '=' + parentValue;
-    let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);//Base64.encode
+    let url;
+
+    if (typeof Joomla !== 'undefined') {
+        let link = location.href.split('administrator/index.php?option=com_customtables');
+
+        if (link.length === 2)//to make sure that it will work in the back-end
+            url = ctWebsiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
+        else
+            url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
+
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+        console.error("updateChildTableJoinField is not supported by WP yet.");
+        alert("updateChildTableJoinField is not supported by WP yet.")
+        return;
+    }
 
     fetch(url)
 
@@ -1746,8 +1771,23 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 
     let wrapper = document.getElementById(selectorElement.dataset.wrapper);
     let key = wrapper.dataset.key;
-    let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
-    if (searchValue != "")
+    let url;
+
+    if (typeof Joomla !== 'undefined') {
+        let link = location.href.split('administrator/index.php?option=com_customtables');
+
+        if (link.length === 2)//to make sure that it will work in the back-end
+            url = ctWebsiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
+        else
+            url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
+
+    } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+        console.error("onCTVirtualSelectServerSearch is not supported by WP yet.");
+        alert("onCTVirtualSelectServerSearch is not supported by WP yet.")
+        return;
+    }
+
+    if (searchValue !== "")
         url += "&search=" + searchValue;
 
     let newList = [];

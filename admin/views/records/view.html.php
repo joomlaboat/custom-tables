@@ -14,8 +14,8 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\Inputbox;
 use CustomTables\Layouts;
+use CustomTables\ProInputBoxTableJoin;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -42,38 +42,47 @@ class CustomtablesViewRecords extends HtmlView
 
     public function display($tpl = null)
     {
-        $tableId = common::inputGetInt('tableid');
-        if ($tableId === null) {
-            $Itemid = common::inputGetInt('Itemid');
+        $key = common::inputGetCmd('key');
+        if ($key != '') {
 
-            if ($Itemid === null) {
-                Factory::getApplication()->enqueueMessage('Table not selected..', 'error');
-                return;
+            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
+
+            if (file_exists($path . 'tablejoin.php') and file_exists($path . 'tablejoinlist.php')) {
+                require_once($path . 'tablejoin.php');
+                require_once($path . 'tablejoinlist.php');
+
+                $this->ct = new CT;
+                ProInputBoxTableJoin::renderTableJoinSelectorJSON($this->ct, $key);//Inputbox
+            }
+        } else {
+            $tableId = common::inputGetInt('tableid');
+            if ($tableId === null) {
+                $Itemid = common::inputGetInt('Itemid');
+
+                if ($Itemid === null) {
+                    Factory::getApplication()->enqueueMessage('Table not selected..', 'error');
+                    return;
+                }
+
+            } else {
+                $this->tableId = $tableId;
             }
 
-        } else {
-            $this->tableId = $tableId;
-        }
+            $listing_id = common::inputGetCmd('id');
 
+            $paramsArray = array();
+            $paramsArray['tableid'] = $this->tableId;
+            $paramsArray['publishstatus'] = 1;
+            $paramsArray['listingid'] = $listing_id;
 
-        $listing_id = common::inputGetCmd('id');
+            // Assuming $paramsArray is your array of parameters
+            $this->ct = new CT;
+            $this->ct->setParams($paramsArray);
+            $this->ct->getTable($this->tableId);
+            $this->row = $this->ct->Table->loadRecord($listing_id);
 
-        $paramsArray = array();
-        $paramsArray['tableid'] = $this->tableId;
-        $paramsArray['publishstatus'] = 1;
-        $paramsArray['listingid'] = $listing_id;
-
-        // Assuming $paramsArray is your array of parameters
-        $this->ct = new CT;
-        $this->ct->setParams($paramsArray);
-        $this->ct->getTable($this->tableId);
-        $this->row = $this->ct->Table->loadRecord($listing_id);
-
-        $key = common::inputGetCmd('key');
-        if ($key != '')
-            Inputbox::renderTableJoinSelectorJSON($this->ct, $key);
-        else
             $this->renderForm($tpl);
+        }
     }
 
     protected function renderForm($tpl): bool
