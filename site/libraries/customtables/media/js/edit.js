@@ -1061,9 +1061,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
             url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&frmt=json&key=' + wrapper.dataset.key + '&index=' + index;
 
     } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
-        console.error("ctUpdateTableJoinLink is not supported by WP yet.");
-        alert("ctUpdateTableJoinLink is not supported by WP yet.")
-        return;
+        url = ctWebsiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + wrapper.dataset.key + '&index=' + index;
     }
 
     let filters = [];
@@ -1712,9 +1710,10 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
             url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
 
     } else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
-        console.error("updateChildTableJoinField is not supported by WP yet.");
-        alert("updateChildTableJoinField is not supported by WP yet.")
-        return;
+        url = ctWebsiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + key + '&index=0&where=' + encodeURIComponent(where);
+        console.error(url);
+        console.error("updateChildTableJoinField is going to be supported by WP yet.");
+        alert("updateChildTableJoinField is going to be supported by WP yet.")
     }
 
     fetch(url)
@@ -1767,8 +1766,6 @@ function refreshTableJoinField(fieldName, response) {
 async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 
     let selectorElement = document.getElementById(virtualSelect.dropboxWrapper);
-    //let fieldnameObject = document.getElementById(selectorElement.dataset.fieldname);
-
     let wrapper = document.getElementById(selectorElement.dataset.wrapper);
     let key = wrapper.dataset.key;
     let url;
