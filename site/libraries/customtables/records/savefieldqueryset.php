@@ -66,8 +66,8 @@ class SaveFieldQuerySet
             case 'records':
 
                 require_once 'Save_records.php';
-                $image = new Save_records($this->ct, $this->field);
-                $value = $image->saveFieldSet($listing_id);
+                $tableJoinList = new Save_records($this->ct, $this->field);
+                $value = $tableJoinList->saveFieldSet($listing_id);
 
                 //This way it will be clear if the value changed or not. If $this->newValue = null means that value not changed.
                 if ($value !== null and is_array($value))

@@ -1159,11 +1159,21 @@ function ctRenderTableJoinSelectBoxLoadRecords(url, control_name, index, execute
 
 // --------------------- Inputbox: Records
 
-let ctInputBoxRecords_r = [];
-let ctInputBoxRecords_v = [];
-let ctInputBoxRecords_p = [];
+//let ctInputBoxRecords_r = [];
+//let ctInputBoxRecords_v = [];
+//let ctInputBoxRecords_p = [];
 let ctInputBoxRecords_dynamic_filter = [];
 let ctInputBoxRecords_current_value = [];
+
+/*
+if (typeof ctInputBoxRecords_dynamic_filter === "undefined") {
+    var ctInputBoxRecords_dynamic_filter = {};
+}
+
+if (typeof ctInputBoxRecords_current_value === "undefined") {
+    var ctInputBoxRecords_current_value = {};
+}*/
+
 
 function ctInputBoxRecords_removeOptions(selectobj) {
     //Old calls replaced
@@ -1356,7 +1366,7 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
         l.appendChild(opt);
     }
 
-    let elements = JSON.parse(document.getElementById(control_name + control_name_postfix + '_elements').innerHTML);
+    let elements = JSON.parse(document.getElementById(control_name + control_name_postfix + '_elements').textContent);
     let elementsID = document.getElementById(control_name + control_name_postfix + '_elementsID').innerHTML.split(",");
     let elementsPublished = document.getElementById(control_name + control_name_postfix + '_elementsPublished').innerHTML.split(",");
 

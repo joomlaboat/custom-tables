@@ -302,7 +302,7 @@ class Search_tablejoin extends BaseSearch
 
     protected function renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue = false): string
     {
-        $htmlresult = '';
+        $htmlResult = '';
 
         $this->attributes['name'] = $control_name;
         $this->attributes['id'] = $control_name;
@@ -343,31 +343,36 @@ class Search_tablejoin extends BaseSearch
                 $elementsFilter[] = $list_value[3];
             }
 
-            $htmlresult .= '
-			<div id="' . $control_name . '_elements" style="display:none;">' . common::ctJsonEncode($elements) . '</div>
+            $htmlResult .= '
+<script type="application/json" id="' . $control_name . '_elements">
+    ' . common::ctJsonEncode($elements) . '
+</script>
+';
+
+            $htmlResult .= '
 			<div id="' . $control_name . '_elementsID" style="display:none;">' . implode(',', $elementsID) . '</div>
 			<div id="' . $control_name . '_elementsFilter" style="display:none;">' . implode(';', $elementsFilter) . '</div>
 			<div id="' . $control_name . '_elementsPublished" style="display:none;">' . implode(',', $elementsPublished) . '</div>
 			';
 
-            $htmlresult .= $htmlresult_select;
+            $htmlResult .= $htmlresult_select;
 
-            $htmlresult .= '
+            $htmlResult .= '
 			<script>
 				ctInputBoxRecords_current_value["' . $control_name . '"]="' . $current_value . '";
 				ctInputbox_removeEmptyParents("' . $control_name . '","");
 				ctInputbox_UpdateSQLJoinLink("' . $control_name . '","");';
 
             if (str_contains(($this->attributes['class'] ?? ''), ' ct_virtualselect_selectbox'))
-                $htmlresult .= '
+                $htmlResult .= '
                 VirtualSelect.init({ ele: "' . $control_name . '" });';
 
-            $htmlresult .= '
+            $htmlResult .= '
 			</script>
 			';
         } else {
-            $htmlresult .= $htmlresult_select;
+            $htmlResult .= $htmlresult_select;
         }
-        return $htmlresult;
+        return $htmlResult;
     }
 }

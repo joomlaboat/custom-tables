@@ -33,7 +33,7 @@ class Save_records
      */
     function saveFieldSet(?string $listing_id): ?array
     {
-        $value = $this->get_record_type_value();
+        $value = self::get_record_type_value($this->field);
 
         if ($value === null)
             return null;
@@ -47,15 +47,15 @@ class Save_records
      * @throws Exception
      * @since 3.0.0
      */
-    protected function get_record_type_value(): ?string
+    public static function get_record_type_value(Field $field): ?string
     {
-        if (count($this->field->params) > 2) {
-            $esr_selector = $this->field->params[2];
+        if (count($field->params) > 2) {
+            $esr_selector = $field->params[2];
             $selectorPair = explode(':', $esr_selector);
 
             switch ($selectorPair[0]) {
                 case 'single';
-                    $value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
+                    $value = common::inputPostInt($field->comesfieldname, null, 'create-edit-record');
 
                     if (isset($value))
                         return $value;
@@ -68,12 +68,12 @@ class Save_records
 
                     //returns NULL if field parameter not found - nothing to save
                     //returns empty array if nothing selected - save empty value
-                    $valueArray = common::inputPostArray($this->field->comesfieldname, null, 'create-edit-record');
+                    $valueArray = common::inputPostArray($field->comesfieldname, null, 'create-edit-record');
 
                     if ($valueArray) {
                         return self::getCleanRecordValue($valueArray);
                     } else {
-                        $value_off = common::inputPostInt($this->field->comesfieldname . '_off', null, 'create-edit-record');
+                        $value_off = common::inputPostInt($field->comesfieldname . '_off', null, 'create-edit-record');
                         if ($value_off) {
                             return '';
                         } else {
@@ -82,7 +82,7 @@ class Save_records
                     }
 
                 case 'multibox';
-                    $valueArray = common::inputPostArray($this->field->comesfieldname, null, 'create-edit-record');
+                    $valueArray = common::inputPostArray($field->comesfieldname, null, 'create-edit-record');
 
                     if (isset($valueArray)) {
                         return self::getCleanRecordValue($valueArray);
