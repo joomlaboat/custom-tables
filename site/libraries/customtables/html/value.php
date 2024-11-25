@@ -102,9 +102,6 @@ class Value
                 return $rowValue;
             case 'googlemapcoordinates':
 
-                if (defined('WPINC'))
-                    return 'CustomTables for WordPress: "googlemapcoordinates" field type is not available yet.';
-
                 if (count($option_list) == 0 or $option_list[0] == 'map') {
 
                     $parts = explode(',', $rowValue ?? '');
@@ -128,7 +125,14 @@ class Value
                     $boxId = 'ct' . $this->field->fieldname . '_map' . $this->row[$this->ct->Table->realidfieldname];
 
                     return '<div id="' . $boxId . '" style="width:' . $width . ';height:' . $height . '">'
-                        . '</div><script>ctValue_googlemapcoordinates("' . $boxId . '", ' . $lat . ',' . $lng . ',' . $zoom . ')</script>';
+                        . '</div>
+
+<script>
+            window.addEventListener("load", function() {
+                console.log("try to ctValue_googlemapcoordinates")
+				ctValue_googlemapcoordinates("' . $boxId . '", ' . $lat . ',' . $lng . ',' . $zoom . ');
+            });
+</script>';
 
                 } elseif ($option_list[0] == 'latitude')
                     return explode(',', $rowValue)[0];

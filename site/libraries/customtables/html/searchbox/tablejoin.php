@@ -353,23 +353,35 @@ class Search_tablejoin extends BaseSearch
 			<div id="' . $control_name . '_elementsID" style="display:none;">' . implode(',', $elementsID) . '</div>
 			<div id="' . $control_name . '_elementsFilter" style="display:none;">' . implode(';', $elementsFilter) . '</div>
 			<div id="' . $control_name . '_elementsPublished" style="display:none;">' . implode(',', $elementsPublished) . '</div>
-			';
+';
 
             $htmlResult .= $htmlresult_select;
 
             $htmlResult .= '
-			<script>
-				ctInputBoxRecords_current_value["' . $control_name . '"]="' . $current_value . '";
-				ctInputbox_removeEmptyParents("' . $control_name . '","");
-				ctInputbox_UpdateSQLJoinLink("' . $control_name . '","");';
-
-            if (str_contains(($this->attributes['class'] ?? ''), ' ct_virtualselect_selectbox'))
-                $htmlResult .= '
-                VirtualSelect.init({ ele: "' . $control_name . '" });';
+			<div id="' . $control_name . '_ctInputBoxRecords_current_value" style="display:none;">' . $current_value . '</div>
+';
 
             $htmlResult .= '
+			<script>
+				window.onload = function() {
+			    	(function checkAndRun_ctInputbox_removeEmptyParents() {
+    			    	if (typeof ctInputbox_removeEmptyParents === "function") {
+                            ctInputbox_removeEmptyParents("' . $control_name . '","");
+				            ctInputbox_UpdateSQLJoinLink("' . $control_name . '","");            
+';
+            if (str_contains(($this->attributes['class'] ?? ''), ' ct_virtualselect_selectbox'))
+                $htmlResult .= '
+                        VirtualSelect.init({ ele: "' . $control_name . '" });';
+
+            $htmlResult .= '
+					    } else {
+					        console.error("Waiting for ctInputbox_removeEmptyParents");
+						    setTimeout(checkAndRun_ctInputbox_removeEmptyParents, 100);
+					    }
+				    })();
+                };
 			</script>
-			';
+';
         } else {
             $htmlResult .= $htmlresult_select;
         }

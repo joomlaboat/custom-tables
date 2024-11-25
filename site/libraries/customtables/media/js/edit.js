@@ -1163,16 +1163,12 @@ function ctRenderTableJoinSelectBoxLoadRecords(url, control_name, index, execute
 //let ctInputBoxRecords_v = [];
 //let ctInputBoxRecords_p = [];
 let ctInputBoxRecords_dynamic_filter = [];
-let ctInputBoxRecords_current_value = [];
 
 /*
 if (typeof ctInputBoxRecords_dynamic_filter === "undefined") {
     var ctInputBoxRecords_dynamic_filter = {};
 }
-
-if (typeof ctInputBoxRecords_current_value === "undefined") {
-    var ctInputBoxRecords_current_value = {};
-}*/
+*/
 
 
 function ctInputBoxRecords_removeOptions(selectobj) {
@@ -1189,7 +1185,7 @@ function ctInputBoxRecords_addItem(control_name, control_name_postfix) {
 
     if (ctInputBoxRecords_dynamic_filter[control_name] != '') {
 
-        ctInputBoxRecords_current_value[control_name] = "";
+        document.getElementById(control_name + '_ctInputBoxRecords_current_value').innerHTML = '';
 
         let SQLJoinLink = document.getElementById(control_name + control_name_postfix + 'SQLJoinLink');
         if (SQLJoinLink)// {
@@ -1309,8 +1305,6 @@ function ctInputBoxRecords_showMultibox(control_name, control_name_postfix) {
 
 /* -------------------------- Filtering --------------------------- */
 
-let ctTranslates = [];
-
 function ctInputbox_removeEmptyParents(control_name, control_name_postfix) {
     //Old calls replaced
     let selectObj = document.getElementById(control_name + 'SQLJoinLink');
@@ -1356,13 +1350,14 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
         v = o.options[o.selectedIndex].value;
     }
 
-    let selectedValue = ctInputBoxRecords_current_value[control_name];
+    let selectedValue = document.getElementById(control_name + '_ctInputBoxRecords_current_value').innerHTML;
+
     ctInputBoxRecords_removeOptions(l);
 
     if (control_name_postfix !== '_selector') {
         let opt = document.createElement("option");
         opt.value = '0';
-        opt.innerHTML = ctTranslates["COM_CUSTOMTABLES_SELECT"];
+        opt.innerHTML = TranslateText('COM_CUSTOMTABLES_SELECT');
         l.appendChild(opt);
     }
 
@@ -1421,9 +1416,6 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
 }
 
 // ------------------------ Google Map coordinates
-
-let gmapdata = [];
-let gmapmarker = [];
 
 function ctInputbox_googlemapcoordinates(inputbox_id) {
 

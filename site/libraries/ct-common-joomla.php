@@ -621,6 +621,8 @@ class common
         $js = [];
         $js[] = 'let ctWebsiteRoot = "' . $env->WebsiteRoot . '";';
         $js[] = 'let ctFieldInputPrefix = "' . $fieldInputPrefix . '";';
+        $js[] = 'let gmapdata = [];';
+        $js[] = 'let gmapmarker = [];';
 
         if ($params->ModuleId == null)
             $js[] = 'let ctItemId = "' . $params->ItemId . '";';
