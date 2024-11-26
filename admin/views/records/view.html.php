@@ -85,6 +85,10 @@ class CustomtablesViewRecords extends HtmlView
         }
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     protected function renderForm($tpl): bool
     {
         $Layouts = new Layouts($this->ct);

@@ -220,23 +220,12 @@
 
 
 .datagrid table thead th {
-
-
-    /*background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #E0E0E0), color-stop(1, #CBCBCB) );
-    background:-moz-linear-gradient( center top, #E0E0E0 5%, #CBCBCB 100% );
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#E0E0E0', endColorstr='#CBCBCB');*/
-    background-color: #FFFFFF; /*background-color:#E0E0E0*/
+    background-color: #FFFFFF;
     color: #117CAB;
-    /*text-transform: uppercase;*/
     font-size: 15px;
     font-weight: bold;
-
 }
 
-/*
-.datagrid table thead th:first-child { border: none;text-align:left; min-width:30px !important;
-}
-*/
 .datagrid table tbody td {
     color: #545454;
     font-size: 12px;
@@ -329,8 +318,10 @@
 
 
 .esUploadFileBox {
+    /*
     border: 1px lightblue solid;
     border-radius: 3px;
+    */
     padding: 7px;
     width: 100%;
 }

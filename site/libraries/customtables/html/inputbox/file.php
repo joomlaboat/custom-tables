@@ -197,7 +197,7 @@ class InputBox_file extends BaseInputBox
 
             $result .= '<div style="vertical-align: top;">';
 
-            if ($GoogleDriveAPIKey !== '' and $GoogleDriveClientId !== '')
+            if (!empty($GoogleDriveAPIKey) and !empty($GoogleDriveClientId))
                 $result .= '<br/><button class="ajax-file-upload" data-prefix="' . $this->field->prefix . '" data-accept="' . $accepted_file_types . '" id="CustomTablesGoogleDrivePick_' . $this->field->fieldname . '">Load from Google Drive</button>';
 
             $result .= $ct_fileuploader;
@@ -205,7 +205,7 @@ class InputBox_file extends BaseInputBox
             $result .= $ct_eventsMessage;
             $result .= '<script>ct_getUploader(' . implode(',', $scriptParams) . ')</script>';
 
-            if ($GoogleDriveAPIKey !== '' and $GoogleDriveClientId !== '') {
+            if (!empty($GoogleDriveAPIKey) and !empty($GoogleDriveClientId)) {
                 $app = Factory::getApplication();
                 $document = $app->getDocument();
                 $document->addCustomTag('<script src="https://apis.google.com/js/api.js"></script>');

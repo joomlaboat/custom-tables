@@ -349,7 +349,7 @@ class CustomTablesImageMethods
             $additional_params = $params[1];
 
         if (!str_contains($pathToImageFile, DIRECTORY_SEPARATOR))//in case when other applications pass full path to the file
-            $uploadedFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $pathToImageFile;
+            $uploadedFile = CUSTOMTABLES_TEMP_PATH . $pathToImageFile;
         else
             $uploadedFile = $pathToImageFile;
 
@@ -360,7 +360,7 @@ class CustomTablesImageMethods
                 $is_base64encoded = common::inputGetCmd('base64encoded', '');
                 if ($is_base64encoded == "true") {
                     $src = $uploadedFile;
-                    $dst = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($pathToImageFile);//TODO: Check this functionality
+                    $dst = CUSTOMTABLES_TEMP_PATH . 'decoded_' . basename($pathToImageFile);//TODO: Check this functionality
                     common::base64file_decode($src, $dst);
                 }
             }

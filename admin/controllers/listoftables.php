@@ -48,7 +48,7 @@ class CustomtablesControllerListOfTables extends AdminController
         $cid = common::inputPostArray('cid', []);
         $cid = ArrayHelper::toInteger($cid);
 
-        $download_file = ExportTables::export($cid, 'images');
+        $download_file = ExportTables::export($cid, CUSTOMTABLES_ABSPATH . 'images' . DIRECTORY_SEPARATOR);
 
         if ($download_file !== null) {
             $msg = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';
@@ -57,8 +57,7 @@ class CustomtablesControllerListOfTables extends AdminController
                 $msg .= '_1';
 
             $msg = common::translate($msg, count($cid));
-
-            $msg .= '&nbsp;&nbsp;<a href="' . $download_file['link'] . '" title="File: ' . $download_file['filename'] . '" download="' . $download_file['filename'] . '" target="_blank">Download (Click Save Link As...)</a>';
+            $msg .= '&nbsp;&nbsp;<a href="' . $download_file['link'] . '" title="File: ' . $download_file['filename'] . '" download="' . $download_file['filename'] . '" data-download="' . $download_file['filename'] . '" target="_blank">Download (Click Save Link As...)</a>';
         } else {
             $msg = common::translate('COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT');
         }

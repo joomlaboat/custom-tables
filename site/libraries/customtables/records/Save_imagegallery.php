@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
 use Exception;
-use Joomla\CMS\Factory;
 
 class Save_imagegallery
 {
@@ -101,9 +100,7 @@ class Save_imagegallery
      */
     function uploadImageFile(string $fileName, string $fileTempName, ?string $listing_id): bool
     {
-        $config = Factory::getContainer()->get('config');
-        $tmpPath = $config->get('tmp_path');
-        $uploadedFile = $tmpPath . DIRECTORY_SEPARATOR . basename($fileName);
+        $uploadedFile = CUSTOMTABLES_TEMP_PATH . basename($fileName);
 
         if (!move_uploaded_file($fileTempName, $uploadedFile))
             return false;

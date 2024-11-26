@@ -46,9 +46,9 @@ class Save_file
         if (!empty($fileData) and $fileData[0] == '{') {
 
             if (defined('_JEXEC'))
-                $CompletePathToFile = $this->downloadGoogleDriveFile($fileData, CUSTOMTABLES_ABSPATH . 'tmp');
+                $CompletePathToFile = $this->downloadGoogleDriveFile($fileData, CUSTOMTABLES_TEMP_PATH);
             elseif (defined('WPINC'))
-                $CompletePathToFile = $this->downloadGoogleDriveFile(stripslashes($fileData), CUSTOMTABLES_IMAGES_PATH);
+                $CompletePathToFile = $this->downloadGoogleDriveFile(stripslashes($fileData), CUSTOMTABLES_TEMP_PATH);
 
             if ($CompletePathToFile === null)
                 return null;
@@ -58,7 +58,7 @@ class Save_file
             if (defined('_JEXEC')) {
                 $temporaryFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
                 if (!empty($temporaryFile))
-                    $CompletePathToFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $temporaryFile;
+                    $CompletePathToFile = CUSTOMTABLES_TEMP_PATH . $temporaryFile;
 
                 $fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
             } elseif (defined('WPINC')) {
@@ -95,8 +95,6 @@ class Save_file
                 }
             }
         }
-
-        echo '$CompletePathToFile:' . $CompletePathToFile . '<br/>';
 
         if ($CompletePathToFile !== null and $CompletePathToFile != '') {
             //Upload new file
@@ -275,7 +273,7 @@ class Save_file
 
                 if (defined('_JEXEC')) {
                     $file = common::inputPostString($this->field->comesfieldname, '');
-                    $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
+                    $dst = CUSTOMTABLES_TEMP_PATH . 'decoded_' . basename($file['name']);
                     common::base64file_decode($CompletePathToFile, $dst);
                     $CompletePathToFile = $dst;
                 } else {

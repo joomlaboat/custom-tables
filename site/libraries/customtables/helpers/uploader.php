@@ -20,13 +20,12 @@ class FileUploader
 {
     public static function getFileNameByID($fileId): string
     {
-        $dir = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
-        $files = scandir($dir);
+        $files = scandir(CUSTOMTABLES_TEMP_PATH);
 
         $lookFor = '_' . $fileId . '_';
         foreach ($files as $file) {
             if (str_contains($file, $lookFor))
-                return $dir . $file;
+                return CUSTOMTABLES_TEMP_PATH . $file;
         }
         return '';
     }
@@ -43,7 +42,6 @@ class FileUploader
 
         self::deleteOldFiles();
 
-        $output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
         $t = time();
         $file = self::getFileSafeMIME($fileId);
 
@@ -72,7 +70,7 @@ class FileUploader
                 if (in_array($mime, $accepted_types)) {
 
                     $fileName = self::normalizeString($file['name']);
-                    $newFileName = $output_dir . 'ct_' . $t . '_' . $fileId . '_' . $fileName;
+                    $newFileName = CUSTOMTABLES_TEMP_PATH . 'ct_' . $t . '_' . $fileId . '_' . $fileName;
 
                     if (common::inputGetCmd('task') == 'importcsv') {
                         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
@@ -275,13 +273,11 @@ class FileUploader
 
     protected static function deleteOldFiles(): void
     {
-        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp';
-
-        $oldFiles = scandir($path);
+        $oldFiles = scandir(CUSTOMTABLES_TEMP_PATH);
 
         foreach ($oldFiles as $oldFile) {
             if ($oldFile != '.' and $oldFile != '..') {
-                $filename = $path . DIRECTORY_SEPARATOR . $oldFile;
+                $filename = CUSTOMTABLES_TEMP_PATH . $oldFile;
 
                 if (!str_contains($oldFile, '.htm') and file_exists($filename)) {
                     $parts = explode('_', $oldFile);

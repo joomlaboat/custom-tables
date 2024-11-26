@@ -53,7 +53,7 @@ class Save_blob
             if (empty($temporaryFile))
                 return null;
 
-            $CompletePathToFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $temporaryFile;
+            $CompletePathToFile = CUSTOMTABLES_TEMP_PATH . $temporaryFile;
             $fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
         } elseif (defined('WPINC')) {
             //Get new image
@@ -117,7 +117,7 @@ class Save_blob
 
         if (defined('_JEXEC')) {
             $temporaryFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
-            $CompletePathToFile = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR . $temporaryFile;
+            $CompletePathToFile = CUSTOMTABLES_TEMP_PATH . $temporaryFile;
             $fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
         } elseif (defined('WPINC')) {
             //Get new image

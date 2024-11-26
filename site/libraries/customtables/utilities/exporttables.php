@@ -24,8 +24,11 @@ class ExportTables
      * @throws Exception
      * @since 3.2.2
      */
-    public static function export($table_ids, $path = 'tmp'): ?array
+    public static function export($table_ids, ?string $tmp_path = null): ?array
     {
+        if ($tmp_path === null)
+            $tmp_path = CUSTOMTABLES_TEMP_PATH;
+
         $tables = array();
         $output = array();
 
@@ -50,8 +53,6 @@ class ExportTables
         if (count($output) > 0) {
             //Prepare output string with data
             $output_str = '<customtablestableexport>' . common::ctJsonEncode($output);
-
-            $tmp_path = CUSTOMTABLES_ABSPATH . $path . DIRECTORY_SEPARATOR;
             $filename = substr(implode('_', $tables), 0, 128);
 
             $a = '';
@@ -65,16 +66,13 @@ class ExportTables
                 $a = $i . '';
             }
 
-            if ($path[0] == '/')
-                $pathLink = substr($path, 1);
-            else
-                $pathLink = $path;
-
             //Save file
-            $link = common::UriRoot(false, true);
-            $link .= $pathLink . '/' . $filename_available;
+            $webLink = str_replace(CUSTOMTABLES_ABSPATH, '', $tmp_path);
+            $webLink = str_replace(DIRECTORY_SEPARATOR, '/', $webLink);
 
+            $link = common::UriRoot(false, true) . $webLink . $filename_available;
             $msg = common::saveString2File($tmp_path . $filename_available, $output_str);
+
             if ($msg !== null) {
                 common::enqueueMessage($tmp_path . $filename_available . ': ' . $msg);
                 return null;

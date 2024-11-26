@@ -35,10 +35,8 @@ class CustomTablesViewFileUploader extends HtmlView
             $file = str_replace('..', '', $file);
             $file = str_replace('index.', '', $file);
 
-            $output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
-
-            if ($file != '' and file_exists($output_dir . $file)) {
-                unlink($output_dir . $file);
+            if ($file != '' and file_exists(CUSTOMTABLES_TEMP_PATH . $file)) {
+                unlink(CUSTOMTABLES_TEMP_PATH . $file);
                 echo common::ctJsonEncode(['status' => 'Deleted']);
             } else
                 echo common::ctJsonEncode(['error' => 'File not found. Code: FU-1']);

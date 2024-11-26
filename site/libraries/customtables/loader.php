@@ -11,6 +11,7 @@
 // If this file is called directly, abort.
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 // Define str_starts_with if it doesn't exist
@@ -50,6 +51,14 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
         if (!defined('CUSTOMTABLES_PRO_PATH'))
             define('CUSTOMTABLES_PRO_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR);
 
+        if (!defined('CUSTOMTABLES_TEMP_PATH')) {
+
+            $config = Factory::getContainer()->get('config');
+            $tmpPath = $config->get('tmp_path');
+
+            define('CUSTOMTABLES_TEMP_PATH', $tmpPath . DIRECTORY_SEPARATOR);
+        }
+
     } elseif (defined('WPINC')) {
         $libraryPath = $PLUGIN_NAME_DIR . 'libraries';
 
@@ -61,6 +70,10 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 
         if (!defined('CUSTOMTABLES_PRO_PATH'))
             define('CUSTOMTABLES_PRO_PATH', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'customtablespro' . DIRECTORY_SEPARATOR);
+
+        if (!defined('CUSTOMTABLES_TEMP_PATH')) {
+            define('CUSTOMTABLES_TEMP_PATH', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
+        }
     }
 
     if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))

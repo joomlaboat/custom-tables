@@ -63,6 +63,11 @@ class Value_imagegallery extends BaseValue
         return implode($separator, $imageTagList);
     }
 
+    /**
+     * @throws Exception
+     *
+     * @since 3.2.2
+     */
     public static function getGalleryRows($tableName, $galleryName, $listing_id)
     {
         $photoTableName = '#__customtables_gallery_' . $tableName . '_' . $galleryName;
@@ -74,7 +79,7 @@ class Value_imagegallery extends BaseValue
 
     public static function getImageGallerySRC(array $photoRows, string $imagePrefix, string $galleryName, array $params, int $tableId, bool $addFolderPath = false): array
     {
-        $list = self::getImageGallerySRCArrayWithIDs($photoRows, $imagePrefix, $galleryName, $params, $tableId, $addFolderPath);;
+        $list = self::getImageGallerySRCArrayWithIDs($photoRows, $imagePrefix, $galleryName, $params, $tableId, $addFolderPath);
         $newList = [];
         foreach ($list as $item)
             $newList[] = $item['src'];
@@ -154,6 +159,7 @@ class Value_imagegallery extends BaseValue
 
     public static function getImageGalleryTagList(array $imageSRCList): array
     {
+        //$config = Factory::getContainer()->get('config');
         $conf = Factory::getConfig();
         $siteName = $conf->get('config.sitename');
 

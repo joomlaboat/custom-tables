@@ -656,18 +656,13 @@ class CTMiscHelper
 
     public static function suggest_TempFileName(&$webFileLink, ?string $fileExtension = null): ?string
     {
-        if (defined('_JEXEC'))
-            $output_dir = CUSTOMTABLES_ABSPATH . 'tmp' . DIRECTORY_SEPARATOR;
-        elseif (defined('WPINC'))
-            $output_dir = CUSTOMTABLES_IMAGES_PATH . DIRECTORY_SEPARATOR;
-
         $webDir = common::UriRoot(true) . 'tmp/';
         $random_name = common::generateRandomString();
 
         while (1) {
 
             $fileName = $random_name . ($fileExtension !== null ? '.' . $fileExtension : '');
-            $file = $output_dir . $fileName;
+            $file = CUSTOMTABLES_TEMP_PATH . $fileName;
             if (!file_exists($file)) {
                 $webFileLink = $webDir . $fileName;
                 return $file;

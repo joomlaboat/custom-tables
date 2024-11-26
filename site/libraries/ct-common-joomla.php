@@ -523,7 +523,6 @@ class common
                 if ($fld_name == $field and isset($p[1]))
                     return $p[1];
 
-                return '';
             } else {
                 $p = explode('=', $l);//Contain text search
                 if (count($p) == 2) {
@@ -532,7 +531,6 @@ class common
                     if ($fld_name == $field and isset($p[1]))
                         return $p[1];
                 }
-                return '';
             }
         }
         return '';
