@@ -153,10 +153,7 @@ class Edit
 
         if ($addFormTag) {
 
-            if (defined('_JEXEC'))
-                $additionalParameter = '';
-            else
-                $additionalParameter = ' enctype="multipart/form-data"';
+            $additionalParameter = ' enctype="multipart/form-data"';
 
             $result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
                 . 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '

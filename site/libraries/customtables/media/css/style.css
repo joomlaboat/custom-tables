@@ -534,3 +534,45 @@
     background: none !important;
     box-shadow: none !important;
 }
+
+
+/* ------------------- GALLERY EDIT ---------------------*/
+
+
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.preview-item {
+    position: relative;
+    border: 1px solid #ddd;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.preview-image {
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.remove-btn:hover {
+    background: darkred;
+}

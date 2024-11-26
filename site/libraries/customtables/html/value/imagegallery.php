@@ -74,6 +74,16 @@ class Value_imagegallery extends BaseValue
 
     public static function getImageGallerySRC(array $photoRows, string $imagePrefix, string $galleryName, array $params, int $tableId, bool $addFolderPath = false): array
     {
+        $list = self::getImageGallerySRCArrayWithIDs($photoRows, $imagePrefix, $galleryName, $params, $tableId, $addFolderPath);;
+        $newList = [];
+        foreach ($list as $item)
+            $newList[] = $item['src'];
+
+        return $newList;
+    }
+
+    public static function getImageGallerySRCArrayWithIDs(array $photoRows, string $imagePrefix, string $galleryName, array $params, int $tableId, bool $addFolderPath = false): array
+    {
         $imageGalleryPrefix = 'g';
         $imageFolder = CustomTablesImageMethods::getImageFolder($params);
 
@@ -90,7 +100,7 @@ class Value_imagegallery extends BaseValue
                 } else
                     $imageFolderServer = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
 
-                $imageFolderWeb = $imageFolder;
+                $imageFolderWeb = common::UriRoot() . '/' . $imageFolder;
             } else {
                 $imageFolderServer = CUSTOMTABLES_ABSPATH;
                 $imageFolderWeb = '';
@@ -98,7 +108,7 @@ class Value_imagegallery extends BaseValue
         }
 
         //the returned list should be separated by ;
-        $imageSRCListArray = array();
+        $imageSRCListArray = [];
         $imgMethods = new CustomTablesImageMethods;
 
         foreach ($photoRows as $photoRow) {
@@ -110,12 +120,12 @@ class Value_imagegallery extends BaseValue
                 $imageFile = $imageFolderServer . DIRECTORY_SEPARATOR . $imageGalleryPrefix . $tableId . '_' . $galleryName . '__esthumb_' . $photoRowPhotoId . '.jpg';
 
                 if ($imageFile != '')
-                    $imageSRCListArray[] = ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '__esthumb_' . $photoRowPhotoId . '.jpg';
+                    $imageSRCListArray[] = ['id' => $photoRowPhotoId, 'src' => ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '__esthumb_' . $photoRowPhotoId . '.jpg'];
 
             } elseif ($imagePrefix == '_original') {
                 $imageName = $imageFolderServer . DIRECTORY_SEPARATOR . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId;
                 $imageFileExtension = $imgMethods->getImageExtension($imageName);
-                $imageSRCListArray[] = ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension;
+                $imageSRCListArray[] = ['id' => $photoRowPhotoId, 'src' => ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension];
 
             } else {
                 $imageSizes = $imgMethods->getCustomImageOptions($params[0]);
@@ -127,7 +137,7 @@ class Value_imagegallery extends BaseValue
                         $imageFileExtension = $imgMethods->getImageExtension($imageName);
 
                         if ($imageFileExtension != '') {
-                            $imageSRCListArray[] = ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension;
+                            $imageSRCListArray[] = ['id' => $photoRowPhotoId, 'src' => ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension];
                             $foundImageSize = true;
                             break;
                         }
@@ -135,9 +145,10 @@ class Value_imagegallery extends BaseValue
                 }
 
                 if (!$foundImageSize)
-                    $imageSRCListArray[] = 'filenotfound';
+                    $imageSRCListArray[] = ['id' => $photoRowPhotoId, 'src' => null];
             }
         }
+
         return $imageSRCListArray;
     }
 

@@ -14,43 +14,45 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CTMiscHelper;
 use CustomTables\CTUser;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
 jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditPhotos extends HtmlView
 {
-	function display($tpl = null)
-	{
-		$user = new CTUser;
-		if ($user->id === null) {
-			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-			return;
-		}
+    var array $images;
+    var $Model;
 
-		$this->Model = $this->getModel();
-		$this->Model->load();
-		$this->images = $this->Model->getPhotoList();
+    function display($tpl = null)
+    {
+        $user = new CTUser;
+        if ($user->id === null) {
+            common::enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+            return;
+        }
 
-		$this->idList = array();
+        $this->Model = $this->getModel();
+        $this->Model->load();
+        $this->images = $this->Model->imageGallery->getPhotoList($this->Model->listing_id);
 
-		foreach ($this->images as $image)
-			$this->idList[] = $image->photoid;
+        $this->idList = array();
 
-		$this->max_file_size = CTMiscHelper::file_upload_max_size();
-		$this->Listing_Title = $this->Model->Listing_Title;
-		$this->listing_id = $this->Model->listing_id;
-		$this->galleryname = $this->Model->galleryname;
+        foreach ($this->images as $image)
+            $this->idList[] = $image->photoid;
 
-		parent::display($tpl);
-	}
+        $this->max_file_size = CTMiscHelper::file_upload_max_size();
+        $this->Listing_Title = $this->Model->Listing_Title;
+        $this->listing_id = $this->Model->listing_id;
+        $this->galleryname = $this->Model->field->fieldname;
 
-	function drawPhotos()
-	{
-		if (count($this->images) == 0)
-			return '';
+        parent::display($tpl);
+    }
 
-		$htmlOut = '
+    function drawPhotos(): string
+    {
+        if (count($this->images) == 0)
+            return '';
+
+        $htmlOut = '
 
 		<h2>' . common::translate('COM_CUSTOMTABLES_LIST_OF_FOTOS') . '</h2>
 		<table>
@@ -65,18 +67,18 @@ class CustomTablesViewEditPhotos extends HtmlView
 			<tbody>
 		';
 
-		$c = 0;
-		foreach ($this->images as $image) {
-			$htmlOut .= '
+        $c = 0;
+        foreach ($this->images as $image) {
+            $htmlOut .= '
 				<tr>';
 
-			$imageFile = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix . $this->Model->ct->Table->tableid . '_'
-				. $this->Model->galleryname . '__esthumb_' . $image->photoid . '.jpg';
+            $imageFile = $this->Model->imageGallery->imageFolderWeb . '/' . $this->Model->imageGallery->imageMainPrefix . $this->Model->ct->Table->tableid . '_'
+                . $this->Model->field->fieldname . '__esthumb_' . $image->photoid . '.jpg';
 
-			$imageFileOriginal = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix
-				. $this->Model->ct->Table->tableid . '_' . $this->Model->galleryname . '__original_' . $image->photoid . '.' . $image->photo_ext;
+            $imageFileOriginal = $this->Model->imageGallery->imageFolderWeb . '/' . $this->Model->imageGallery->imageMainPrefix
+                . $this->Model->ct->Table->tableid . '_' . $this->Model->field->fieldname . '__original_' . $image->photoid . '.' . $image->photo_ext;
 
-			$htmlOut .= '
+            $htmlOut .= '
 					<td style="text-align:center;vertical-align: top;">
 						<input type="checkbox" name="esphoto' . $image->photoid . '" id="esphoto' . $image->photoid . '" style="text-align:left;vertical-align:top">
 					</td>
@@ -86,7 +88,7 @@ class CustomTablesViewEditPhotos extends HtmlView
 					</td>
 
 					<td style="text-align:left;vertical-align: top;">
-						<table border="0" cellpadding="5" style="margin-left:5px;">
+						<table style="border:none;padding:0;margin-left:5px;">
 							<tbody>
 								<tr>
 									<td>' . common::translate('COM_CUSTOMTABLES_TITLE') . ': </td>
@@ -100,17 +102,17 @@ class CustomTablesViewEditPhotos extends HtmlView
 						</table>
 					</td>';
 
-			$c++;
+            $c++;
 
-			$htmlOut .= '
+            $htmlOut .= '
 				</tr>
 				<tr><td colspan="3"><hr></td></tr>';
-		}
+        }
 
-		$htmlOut .= '
+        $htmlOut .= '
 			</tbody>
 		</table>';
 
-		return $htmlOut;
-	}
+        return $htmlOut;
+    }
 }

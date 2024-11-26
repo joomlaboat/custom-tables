@@ -700,8 +700,8 @@ class Layouts
     {
         $this->layoutType = 2;
         $result = '<legend>{{ table.title }}</legend>{{ html.goback() }}<div class="form-horizontal">';
-
-        $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];
+        //, 'imagegallery'
+        $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy', 'virtual'];
 
         foreach ($fields as $field) {
             if ((int)$field['published'] === 1) {
@@ -743,7 +743,8 @@ class Layouts
 
         $result .= '<table class="form-table" role="presentation">';
 
-        $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];
+        //, 'imagegallery'
+        $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy', 'virtual'];
 
         foreach ($fields as $field) {
             if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {

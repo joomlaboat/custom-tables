@@ -782,10 +782,10 @@
         </editparams>
     </type>
 
-    <!-- WordPress NOT Ready 18 -->
+    <!-- WordPress NOT Ready yes, but on its way 18 -->
     <type ct_name="imagegallery" label="Image Gallery" description="Provides Multiple Image Upload functionality."
           priority="3" proversion="1" link="https://joomlaboat.com/image-gallery"
-          link_title="Interactive Image Gallery examples" wordpress="false" order="18">
+          link_title="Interactive Image Gallery examples" wordpress="true" order="18">
         <params>
             <param name="sizes" example="id,100,100,,jpg" label="Image Size Options"
                    description="Specify various size options. When an image file is uploaded, Custom Tables will create modified versions of the image file based on these settings."
@@ -811,8 +811,10 @@
             <param name="additionalparams" label="Image Processing Methods"
                    description="Image processing methods to be applied to newly uploaded images. This option is available in the Pro Version only."
                    default="" type="multiselect">
+
+                <option value="" label="- Keep it as it is"/>
+
                 <!--
-                <option value="" label="- Keep it as it is" />
                 <option value="compare" label="Compare With Existing Images" description="Compares images, pixel by pixel, to avoid saving duplicates. Shortcuts will be used." hasextra="true" proversion="1">
                     <extraoptions label="Tolerance Level" >
                         <extraoption value="0" label="Identical" />

@@ -75,31 +75,27 @@ class Search_tablejoinlist extends BaseSearch
         if (is_array($value))
             $value = implode(',', $value);
 
-        if (defined('_JEXEC')) {
-            $path = CUSTOMTABLES_PRO_PATH . 'inputbox' . DIRECTORY_SEPARATOR;
+        $path = CUSTOMTABLES_PRO_PATH . 'inputbox' . DIRECTORY_SEPARATOR;
 
-            if (file_exists($path . 'tablejoin.php') and file_exists($path . 'tablejoinlist.php')) {
-                require_once($path . 'tablejoin.php');
-                require_once($path . 'tablejoinlist.php');
+        if (file_exists($path . 'tablejoin.php') and file_exists($path . 'tablejoinlist.php')) {
+            require_once($path . 'tablejoin.php');
+            require_once($path . 'tablejoinlist.php');
 
-                $inputBoxRenderer = new ProInputBoxTableJoinList($this->ct, $this->field, null, [], $this->attributes);
+            $inputBoxRenderer = new ProInputBoxTableJoinList($this->ct, $this->field, null, [], $this->attributes);
 
-                return $inputBoxRenderer->renderOld(
-                    $this->field->params,
-                    $value,
-                    $esr_table,
-                    $esr_field,
-                    'single',
-                    $esr_filter,
-                    $dynamic_filter,
-                    $sortByField
-                );
+            return $inputBoxRenderer->renderOld(
+                $this->field->params,
+                $value,
+                $esr_table,
+                $esr_field,
+                'single',
+                $esr_filter,
+                $dynamic_filter,
+                $sortByField
+            );
 
-            } else {
-                return common::translate('COM_CUSTOMTABLES_AVAILABLE');
-            }
         } else {
-            return 'Table Join List field type is not supported by WordPress version of the Custom Tables yet.';
+            return common::translate('COM_CUSTOMTABLES_AVAILABLE');
         }
     }
 }

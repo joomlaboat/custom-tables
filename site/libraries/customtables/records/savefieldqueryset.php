@@ -314,6 +314,18 @@ class SaveFieldQuerySet
 
                 return;
 
+            case 'imagegallery':
+
+                require_once 'Save_imagegallery.php';
+                $image = new Save_imagegallery($this->ct, $this->field);
+                $value = $image->saveFieldSet($listing_id);
+
+                //This way it will be clear if the value changed or not. If $this->newValue = null means that value not changed.
+                if ($value !== null and is_array($value))
+                    $this->setNewValue($value['value']);
+
+                return;
+
             case 'blob':
 
                 require_once 'Save_blob.php';

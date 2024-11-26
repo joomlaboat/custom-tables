@@ -623,6 +623,7 @@ class common
         $js[] = 'let ctFieldInputPrefix = "' . $fieldInputPrefix . '";';
         $js[] = 'let gmapdata = [];';
         $js[] = 'let gmapmarker = [];';
+        $js[] = 'const CTEditHelper = new CustomTablesEdit();';
 
         if ($params->ModuleId == null)
             $js[] = 'let ctItemId = "' . $params->ItemId . '";';

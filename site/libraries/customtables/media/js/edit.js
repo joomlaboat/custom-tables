@@ -227,7 +227,6 @@ class CustomTablesEdit {
             });
     }
 
-
     async refreshRecord(url, listing_id, successCallback, errorCallback) {
         let completeURL = url + '?tmpl=component&clean=1&task=refresh';
         if (listing_id !== undefined && listing_id !== null)
@@ -316,9 +315,84 @@ class CustomTablesEdit {
             }
         });
     }
-}
 
-const CTEditHelper = new CustomTablesEdit();
+    ImageGalleryInitImagePreviews(inputId) {
+        const input = document.getElementById(inputId);
+
+        input.onchange = function (event) {
+            const previewContainer = document.getElementById(inputId + '_preview');
+            previewContainer.innerHTML = '';
+
+            Array.from(event.target.files).forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.dataset.fileIndex = index;
+
+                    reader.onload = function (e) {
+                        div.innerHTML = `
+                        <img src="${e.target.result}" class="preview-image" />
+                        <button type="button" class="remove-btn" 
+                                onclick="CTEditHelper.ImageGalleryRemoveFile(this, '${inputId}', ${index})">×</button>
+                    `;
+                    };
+
+                    previewContainer.appendChild(div);
+                    reader.readAsDataURL(file);
+                }
+            });
+        };
+    }
+
+    ImageGalleryRemoveFile(button, inputId, fileIndex) {
+
+        if (fileIndex < 0) {
+            //mark to delete existing file
+            const input = document.getElementById(inputId + '_uploaded');
+            if (input) {
+                let files = input.value.split(',');
+                let newFiles = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    if (parseInt(files[i]) != -fileIndex)
+                        newFiles.push(files[i]);
+                    else
+                        newFiles.push(fileIndex);
+                }
+
+                input.value = newFiles.join(',');
+                const container = button.closest('.preview-item');
+                container.remove();
+            }
+        } else {
+            const input = document.getElementById(inputId);
+            const container = button.closest('.preview-item');
+
+            const dt = new DataTransfer();
+            const files = input.files;
+
+            for (let i = 0; i < files.length; i++) {
+                if (i !== fileIndex) {
+                    dt.items.add(files[i]);
+                }
+            }
+
+            input.files = dt.files;
+            container.remove();
+
+
+            // Reindex remaining previews
+            const previews = document.querySelectorAll('.preview-item');
+            previews.forEach((preview, index) => {
+                preview.dataset.fileIndex = index;
+                const removeBtn = preview.querySelector('.remove-btn');
+                removeBtn.setAttribute('onclick', `CTEditHelper.ImageGalleryRemoveFile(this, '${inputId}', ${index})`);
+            });
+        }
+
+    }
+}
 
 function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField) {
 
@@ -1812,4 +1886,6 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
         console.error("Error:", error);
     }
 }
+
+
 
