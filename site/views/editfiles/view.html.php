@@ -67,25 +67,19 @@ class CustomTablesViewEditFiles extends HtmlView
 			<tbody>
 		';
 
-
-        echo '$this->Model->fileboxfolderweb=' . $this->Model->fileBoxFolderArray['path'] . '<br/>';
-
-        $c = 0;
         foreach ($this->files as $file) {
             $HTMLOut .= '
 				<tr>';
 
             $filename = $this->Model->ct->Table->tableid . '_' . $this->fileBoxName . '_' . $file->fileid . '.' . $file->file_ext;
-            $filepath = $this->Model->fileBoxFolderArray['web'] . '/' . $filename;
 
             $HTMLOut .= '
 					<td  style="vertical-align: top; text-align: center; ">
 						<input type="checkbox" name="esfile' . $file->fileid . '" id="esfile' . $file->fileid . '" style="text-align: left;" style="vertical-align:top">
 					</td>
-					<td style="text-align: left;"><a href="' . $filepath . '" target="_blank">' . $filename . '</a></td>
+					<td style="text-align: left;"><a href="' . $this->Model->fileBoxFolderArray['web'] . '/' . $filename . '" target="_blank">' . $filename . '</a></td>
 			';
 
-            $c++;
             $HTMLOut .= '
 				</tr>';
         }

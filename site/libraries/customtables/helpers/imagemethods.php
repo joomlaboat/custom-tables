@@ -87,7 +87,7 @@ class CustomTablesImageMethods
         if (strlen($ImageFolder) > 0 and $ImageFolder[strlen($ImageFolder) - 1] == '/')
             $ImageFolder = substr($ImageFolder, 0, strlen($ImageFolder) - 1);
 
-        return ['path' => $ImageFolderPath, 'web' => $ImageFolder];
+        return ['path' => $ImageFolderPath, 'web' => common::UriRoot() . '/' . $ImageFolder];
     }
 
     public static function CheckImage($src): bool
@@ -100,8 +100,7 @@ class CustomTablesImageMethods
 
         if ($ms == 0)
             return false;
-        //if ($ms > $memoryLimit)
-        //return false;
+
         return true;
     }
 

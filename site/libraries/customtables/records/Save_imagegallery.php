@@ -47,8 +47,8 @@ class Save_imagegallery
      */
     function saveFieldSet(?string $listing_id): ?array
     {
-        $existingFilesString = common::inputPostString($this->ct->Table->fieldInputPrefix . $this->field->fieldname . '_uploaded');
-        $existingFiles = explode(',', $existingFilesString);
+        $existingFilesString = common::inputPostString($this->ct->Table->fieldInputPrefix . $this->field->fieldname . '_uploaded', null, 'create-edit-record');
+        $existingFiles = explode(',', $existingFilesString ?? '');
 
         foreach ($existingFiles as $file) {
             $photoId = intval($file);
@@ -60,10 +60,10 @@ class Save_imagegallery
             }
         }
 
-        $files = common::inputFiles($this->field->comesfieldname);
-        foreach ($files as $file) {
+        $files = common::inputFiles($this->field->comesfieldname, 'create-edit-record');
+
+        foreach ($files as $file)
             $this->uploadImageFile($file['name'], $file['tmp_name'], $listing_id);
-        }
 
         return ['value' => null]; //Nothing to save because records are saved to separate table.
     }
