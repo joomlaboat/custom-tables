@@ -852,7 +852,7 @@
             <params>
                 <param type="imagesizeselector" name="size" label="Size"
                        description="Select the image size variant. Options: _thumbnail, _original, _count, CUSTOM_NAME"
-                       example="preview"/>
+                       example="_original"/>
                 <param name="separator" label="List Separator" example=";"
                        description="Separate images with a character, e.g., `,` or `;`" default=";" type="string"/>
             </params>

@@ -613,7 +613,10 @@ function renderInput_ImageSizeList(id, param, value, attributes) {
 
 function renderInput_ImageSizeSelector(id, param, value, attributes, fieldTypeParametersList) {
 
-    let imageSizes = parseQuote(fieldTypeParametersList[0], ';', true);
+    let imageSizes = [];
+
+    if (fieldTypeParametersList.length > 0)
+        imageSizes = parseQuote(fieldTypeParametersList[0], ';', true);
 
     temp_imagesizeparams = getParamOptions(param, 'sizeparam');
 

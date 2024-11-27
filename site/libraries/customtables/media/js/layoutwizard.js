@@ -358,8 +358,6 @@ function renderFieldTags(startChar, postfix, endChar, fieldtypes_to_skip, param_
     for (let index = 0; index < l; index++) {
         const field = wizardFields[index];
 
-        console.log("field: " + JSON.stringify(field));
-
         if (fieldtypes_to_skip.indexOf(field.type) === -1) {
             let t = field.fieldname + postfix;
             let p = 0;

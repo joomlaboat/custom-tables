@@ -320,7 +320,7 @@ class CustomTablesEdit {
         const input = document.getElementById(inputId);
 
         input.onchange = function (event) {
-            const previewContainer = document.getElementById(inputId + '_preview');
+            const previewContainer = document.getElementById(inputId + '_previewNew');
             previewContainer.innerHTML = '';
 
             Array.from(event.target.files).forEach((file, index) => {
@@ -380,7 +380,6 @@ class CustomTablesEdit {
 
             input.files = dt.files;
             container.remove();
-
 
             // Reindex remaining previews
             const previews = document.querySelectorAll('.preview-item');

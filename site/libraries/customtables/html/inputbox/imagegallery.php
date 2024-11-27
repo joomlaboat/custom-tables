@@ -46,7 +46,7 @@ class InputBox_imagegallery extends BaseInputBox
             $backGround = "background-image: url('" . CUSTOMTABLES_MEDIA_WEBPATH . "images/icons/bg.png');";
             $result .= '<div style="padding:5px;width:100%;overflow:scroll;border:1px dotted grey;' . $backGround . '">
 
-		<div id="comes_Images_preview" class="image-preview-container">';
+		<div id="' . $this->ct->Table->fieldInputPrefix . $this->field->fieldname . '_preview" class="image-preview-container">';
 
             foreach ($imageSRCList as $img) {
 
@@ -125,7 +125,7 @@ class InputBox_imagegallery extends BaseInputBox
         */
         //} elseif (defined('WPINC')) {
         $result .= '<input type="file" id="' . $this->attributes['id'] . '" name="' . $this->attributes['id'] . '[]" multiple accept=".jpg,.jpeg,.png,.gif,.svg,.webp" max-size="' . $max_file_size . '" />';
-        $result .= '<div id="' . $this->attributes['id'] . '_preview" class="image-preview-container"></div>';
+        $result .= '<div id="' . $this->attributes['id'] . '_previewNew" class="image-preview-container"></div>';
 
         // Initialize for your specific input
         $result .= '
