@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
 use Exception;
-use Joomla\CMS\Factory;
 
 class Value_imagegallery extends BaseValue
 {
@@ -30,9 +29,6 @@ class Value_imagegallery extends BaseValue
      */
     function render(): ?string
     {
-        if (defined('WPINC'))
-            return 'CustomTables for WordPress: "imagegallery" field type is not available yet.';
-
         $listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname] ?? null;
         if ($listing_id === null)
             return null;
@@ -169,9 +165,7 @@ class Value_imagegallery extends BaseValue
 
     public static function getImageGalleryTagList(array $imageSRCList): array
     {
-        //$config = Factory::getContainer()->get('config');
-        $conf = Factory::getConfig();
-        $siteName = $conf->get('config.sitename');
+        $siteName = common::getSiteName();
 
         $tags = [];
         foreach ($imageSRCList as $imageSRC) {

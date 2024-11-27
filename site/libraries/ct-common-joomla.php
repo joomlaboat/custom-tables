@@ -765,4 +765,10 @@ class common
     {
         return Factory::getApplication()->getUserState($key) ?? $default;
     }
+
+    public static function getSiteName()
+    {
+        $config = Factory::getContainer()->get('config');
+        return $config->get('config.sitename');
+    }
 }

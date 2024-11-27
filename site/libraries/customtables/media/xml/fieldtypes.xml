@@ -782,7 +782,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress NOT Ready yes, but on its way 18 -->
+    <!-- WordPress Ready 18 -->
     <type ct_name="imagegallery" label="Image Gallery" description="Provides Multiple Image Upload functionality."
           priority="3" proversion="1" link="https://joomlaboat.com/image-gallery"
           link_title="Interactive Image Gallery examples" wordpress="true" order="18">
@@ -1024,7 +1024,7 @@
             <params>
                 <param name="phpcode" example="&quot;Time is &quot;.(time()+3600)" examplenoquotes="1" label="PHP Script"
                        description='Note that you cannot use single quote symbol.
-                In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
+                In addition, you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
                        default="" type="string"/>
             </params>
         </type>

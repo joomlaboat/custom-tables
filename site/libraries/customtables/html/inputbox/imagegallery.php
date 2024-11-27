@@ -13,7 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTablesImageMethods;
+use Exception;
 
 class InputBox_imagegallery extends BaseInputBox
 {
@@ -22,6 +22,10 @@ class InputBox_imagegallery extends BaseInputBox
         parent::__construct($ct, $field, $row, $option_list, $attributes);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     function render(): string
     {
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables'
@@ -51,9 +55,7 @@ class InputBox_imagegallery extends BaseInputBox
             foreach ($imageSRCList as $img) {
 
                 $index = -intval($img['id']);
-
                 $result .= '<div class="preview-item" data-file-index="' . $index . '">';
-                //<a href="' . $img . '" target="_blank"></a>
                 $result .= '<img src="' . $img['src'] . '" class="preview-image" />';
                 $result .= '<button type="button" title="' . common::translate('COM_CUSTOMTABLES_DELETE') . '" class="remove-btn" onclick="CTEditHelper.ImageGalleryRemoveFile(this, \'' . $this->attributes['id'] . '\', ' . $index . ')">×</button></div>';
             }
@@ -64,10 +66,7 @@ class InputBox_imagegallery extends BaseInputBox
         }
 
         $result .= '<div class="esUploadFileBox" style="vertical-align:top;">';
-        //$ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
-        //$image = Value_image::getImageSRC($this->row, $this->field->realfieldname, $ImageFolder);
 
-        //if ($image !== null)
         //$result .= $this->renderImageAndDeleteOption($this->field, common::UriRoot(false, true) . $image['src'], $image['shortcut']);
 
         $result .= $this->renderUploader();
@@ -136,7 +135,6 @@ class InputBox_imagegallery extends BaseInputBox
             
 </script>
 ';
-        //}
 
         return '<div style="' . $style . '"' . ($this->field->isrequired == 1 ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
             . 'data-type="' . $this->field->type . '" '

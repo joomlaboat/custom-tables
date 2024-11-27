@@ -17,7 +17,6 @@ use CustomTablesImageMethods;
 use Exception;
 use InvalidArgumentException;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 $log_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR;
@@ -170,14 +169,8 @@ class Value
                 if (defined('WPINC'))
                     return 'CustomTables for WordPress: "signature" field type is not available yet.';
 
-                $conf = Factory::getConfig();
-                $siteName = $conf->get('config.sitename');
-
+                $siteName = common::getSiteName();
                 $ImageFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params);
-
-                //$ImageFolderWeb = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder_);
-                //$ImageFolder = str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder_);
-
                 $format = $this->field->params[3] ?? 'png';
 
                 if ($format == 'jpeg')

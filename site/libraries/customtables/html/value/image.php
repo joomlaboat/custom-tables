@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
 use Exception;
-use Joomla\CMS\Factory;
 
 class Value_image extends BaseValue
 {
@@ -110,13 +109,7 @@ class Value_image extends BaseValue
         if ($rowValue !== null and $rowValue !== '' and is_numeric($rowValue) and intval($rowValue) < 0)
             $rowValue = -intval($rowValue);
 
-        $siteName = '';
-        if (defined('_JEXEC')) {
-            $conf = Factory::getConfig();
-            $siteName = $conf->get('config.sitename');
-        } elseif (defined('WPINC')) {
-            $siteName = 'WordPress Site Name';
-        }
+        $siteName = common::getSiteName();
 
         $option = $option_list[0] ?? '';
         $ImageFolderArray = CustomTablesImageMethods::getImageFolder($params);
