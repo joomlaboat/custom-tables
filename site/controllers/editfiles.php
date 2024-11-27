@@ -46,14 +46,14 @@ if (!$ct->CheckAuthorization(5)) {
                 $msg = common::translate('COM_CUSTOMTABLES_FILE_NOT_ADDED');
             }
 
-            $fileboxname = common::inputGetCmd('fileboxname');
+            $fileBoxName = common::inputGetCmd('fileboxname');
             $listing_id = common::inputGet("listing_id", 0, 'INT');
             $returntoEncoded = common::getReturnToURL(false);
             $Itemid = common::inputGet('Itemid', 0, 'INT');
 
             $link = 'index.php?option=com_customtables&view=editfiles'
 
-                . '&fileboxname=' . $fileboxname
+                . '&fileboxname=' . $fileBoxName
                 . '&listing_id=' . $listing_id
                 . '&returnto=' . $returntoEncoded //base64 encoded url in Joomla and Sessions ReturnTo variable reference in WP
                 . '&Itemid=' . $Itemid;
@@ -72,14 +72,14 @@ if (!$ct->CheckAuthorization(5)) {
                 $msg = common::translate('COM_CUSTOMTABLES_FILE_NOT_DELETED');
             }
 
-            $fileboxname = common::inputGetCmd('fileboxname');
+            $fileBoxName = common::inputGetCmd('fileboxname');
             $listing_id = common::inputGet("listing_id", 0, 'INT');
             $returnToEncoded = common::getReturnToURL(false);
             $Itemid = common::inputGet('Itemid', 0, 'INT');
 
             $link = 'index.php?option=com_customtables&view=editfiles'
 
-                . '&fileboxname=' . $fileboxname
+                . '&fileboxname=' . $fileBoxName
                 . '&listing_id=' . $listing_id
                 . '&returnto=' . $returnToEncoded
                 . '&Itemid=' . $Itemid;

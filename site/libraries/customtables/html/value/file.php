@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use CustomTablesImageMethods;
 use Exception;
 use finfo;
 use Joomla\CMS\Component\ComponentHelper;
@@ -160,20 +161,22 @@ class Value_file extends BaseValue
     public static function process(string $filename, Field $field, array $option_list, string $record_id, bool $filename_only = false, int $file_size = 0)
     {
         if ($field->type == 'filelink') {
-            $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0] ?? '');
-            $filepath = $FileFolder . '/' . $filename;
+            $FileFolderArray = CustomTablesImageMethods::getImageFolder($field->params, $field->type);
+
+            //$FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0] ?? '');
+            $filepath = $FileFolderArray['web'] . '/' . $filename;
 
         } elseif ($field->type == 'blob')
             $filepath = $filename;
         else {
+            $FileFolderArray = CustomTablesImageMethods::getImageFolder($field->params, $field->type);
+            //$FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[1] ?? '');
+            $filepath = $FileFolderArray['path'] . DIRECTORY_SEPARATOR . $filename;
+            //$filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $filepath);
 
-            $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[1] ?? '');
-            $filepath = $FileFolder . DIRECTORY_SEPARATOR . $filename;
-            $filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $filepath);
-
-            $full_filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $filepath);
-            if (file_exists($full_filepath))
-                $file_size = filesize($full_filepath);
+            //$full_filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $filepath);
+            if (file_exists($filepath))
+                $file_size = filesize($filepath);
         }
 
         if (!isset($option_list[2]))
@@ -447,11 +450,8 @@ class Value_file extends BaseValue
 
         $rowValue = $this->row[$this->field->realfieldname];
 
-        if ($this->field->type == 'filelink')
-            return FileUtils::getOrCreateDirectoryPath($this->field->params[0]) . '/' . $rowValue;
-        else
-            return FileUtils::getOrCreateDirectoryPath($this->field->params[1]) . '/' . $rowValue;
-
+        $FileFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params, $this->field->type);
+        return $FileFolderArray['path'] . DIRECTORY_SEPARATOR . $rowValue;
 
         /*
                 $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[1] ?? '');
@@ -554,12 +554,14 @@ class Value_file extends BaseValue
      * @throws Exception
      * @since 3.2.9
      */
-    function render_file_output($filepath): bool
+    function render_file_output(string $filepath): bool
     {
         if (strlen($filepath) > 8 and str_starts_with($filepath, '/images/'))
-            $file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+            $file = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
         else
-            $file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, '/images' . $filepath);
+            $file = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, '/images' . $filepath);
+
+        $file = str_replace('//', '/', $file);
 
         if (!file_exists($file)) {
             echo 'not found';

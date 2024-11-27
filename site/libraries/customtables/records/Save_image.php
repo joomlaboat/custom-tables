@@ -80,11 +80,11 @@ class Save_image
 
             if ($ExistingImage !== null and ($ExistingImage != '' or (is_numeric($ExistingImage) and $ExistingImage > 0))) {
                 $imageMethods = new CustomTablesImageMethods;
-                $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
+                $ImageFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params);
                 $fileNameType = $this->field->params[3] ?? '';
                 $imageMethods->DeleteExistingSingleImage(
                     $ExistingImage,
-                    CUSTOMTABLES_ABSPATH . $ImageFolder,
+                    $ImageFolderArray['path'],
                     $this->field->params[0] ?? '',
                     $this->field->ct->Table->realtablename,
                     $this->field->realfieldname,
@@ -104,7 +104,8 @@ class Save_image
     function get_image_type_value(?string $listing_id): ?string
     {
         $imageMethods = new CustomTablesImageMethods;
-        $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
+        $ImageFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params);
+        /*
         if ($ImageFolder == '') {
             $absoluteImageFolder = CUSTOMTABLES_ABSPATH;
         } elseif ($ImageFolder[0] == DIRECTORY_SEPARATOR) {
@@ -112,6 +113,7 @@ class Save_image
         } else {
             $absoluteImageFolder = CUSTOMTABLES_ABSPATH . $ImageFolder;
         }
+        */
 
         $pathToImageFile = null;
         $fileName = null;
@@ -129,7 +131,7 @@ class Save_image
             return null;
 
         if ($listing_id == null or $listing_id == '' or (is_numeric($listing_id) and intval($listing_id) < 0)) {
-            $value = $imageMethods->UploadSingleImage('', $pathToImageFile, $fileName, $this->field->realfieldname, $absoluteImageFolder, $this->field->params, $this->field->ct->Table->realtablename, $this->ct->Table->realidfieldname);
+            $value = $imageMethods->UploadSingleImage('', $pathToImageFile, $fileName, $this->field->realfieldname, $ImageFolderArray['path'], $this->field->params, $this->field->ct->Table->realtablename, $this->ct->Table->realidfieldname);
         } else {
             $whereClause = new MySQLWhereClause();
             $whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
@@ -141,7 +143,7 @@ class Save_image
                 $ExistingImage = $ExistingImageRows[$this->field->realfieldname] ?? null;
 
             $value = $imageMethods->UploadSingleImage($ExistingImage, $pathToImageFile, $fileName, $this->field->realfieldname,
-                $absoluteImageFolder, $this->field->params, $this->field->ct->Table->realtablename, $this->field->ct->Table->realidfieldname);
+                $ImageFolderArray['path'], $this->field->params, $this->field->ct->Table->realtablename, $this->field->ct->Table->realidfieldname);
         }
 
         if ($value == "-1" or $value == "2") {

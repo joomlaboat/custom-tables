@@ -30,6 +30,10 @@ class CustomTablesFileMethods
         return $file_ext;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     static public function getFileExtByID($tableName, $fileBoxName, $file_id): string
     {
         $fileBoxTableName = '#__customtables_filebox_' . $tableName . '_' . $fileBoxName;
@@ -44,26 +48,26 @@ class CustomTablesFileMethods
         return $rec->file_ext;
     }
 
-    static public function DeleteFileBoxFiles($fileBoxTableName, $estableid, $fileBoxName, $typeParams): void
+    static public function DeleteFileBoxFiles($fileBoxTableName, string $tableId, string $fileBoxName, array $params): void
     {
-        $fileFolder = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $typeParams);
+        $fileFolderArray = CustomTablesImageMethods::getImageFolder($params, 'filebox');
         $whereClause = new MySQLWhereClause();
         $fileRows = database::loadObjectList($fileBoxTableName, ['fileid'], $whereClause);
 
         foreach ($fileRows as $fileRow) {
             CustomTablesFileMethods::DeleteExistingFileBoxFile(
-                $fileFolder,
-                $estableid,
+                $fileFolderArray['path'],
+                $tableId,
                 $fileBoxName,
-                $fileRow->fileid,
+                (string)$fileRow->fileid,
                 $fileRow->file_ext
             );
         }
     }
 
-    static public function DeleteExistingFileBoxFile($filefolder, $estableid, $fileboxname, $fileid, $ext): void
+    static public function DeleteExistingFileBoxFile(string $fileFolder, string $tableId, string $fileBoxName, string $fileid, string $ext): void
     {
-        $filename = $filefolder . DIRECTORY_SEPARATOR . $estableid . '_' . $fileboxname . '_' . $fileid . '.' . $ext;
+        $filename = $fileFolder . DIRECTORY_SEPARATOR . $tableId . '_' . $fileBoxName . '_' . $fileid . '.' . $ext;
 
         if (file_exists($filename))
             unlink($filename);

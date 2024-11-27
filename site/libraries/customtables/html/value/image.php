@@ -25,7 +25,7 @@ class Value_image extends BaseValue
     }
 
 
-    public static function getImageSRC(?array $row, string $realFieldName, string $ImageFolder, bool $addPath = true): ?array
+    public static function getImageSRC(?array $row, string $realFieldName, array $ImageFolderArray, bool $addPath = true): ?array
     {
         $isShortcut = false;
         if (isset($row[$realFieldName]) and $row[$realFieldName] !== false and $row[$realFieldName] !== '' and $row[$realFieldName] !== '0') {
@@ -36,15 +36,15 @@ class Value_image extends BaseValue
                 $img = intval($img);
                 $isShortcut = $img < 0;
 
-                $imageFile_ = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $img;
+                $imageFile_ = $ImageFolderArray['path'] . DIRECTORY_SEPARATOR . '_esthumb_' . $img;
                 if ($addPath)
-                    $imageSrc_ = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder) . '/_esthumb_' . $img;
+                    $imageSrc_ = $ImageFolderArray['web'] . '/_esthumb_' . $img;
                 else
                     $imageSrc_ = '_esthumb_' . $img;
             } else {
-                $imageFile_ = $ImageFolder . DIRECTORY_SEPARATOR . $img;
+                $imageFile_ = $ImageFolderArray['path'] . DIRECTORY_SEPARATOR . $img;
                 if ($addPath)
-                    $imageSrc_ = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder) . '/' . $img;
+                    $imageSrc_ = $ImageFolderArray['web'] . '/' . $img;
                 else
                     $imageSrc_ = $img;
             }
@@ -70,7 +70,7 @@ class Value_image extends BaseValue
         if ($imageSrc == '')
             return null;
 
-        return ['src' => $imageSrc, 'shortcut' => $isShortcut];
+        return ['src' => $imageSrc, 'shortcut' => $isShortcut, 'path' => $imageFile];
     }
 
     /*
@@ -101,6 +101,10 @@ class Value_image extends BaseValue
         return $image['tag'];
     }
 
+    /**
+     * @throws Exception
+     * @since 3.4.5
+     */
     static public function getImageSRCLayoutView(array $option_list, ?string $rowValue, array $params): ?array
     {
         if ($rowValue !== null and $rowValue !== '' and is_numeric($rowValue) and intval($rowValue) < 0)
@@ -111,22 +115,20 @@ class Value_image extends BaseValue
             $conf = Factory::getConfig();
             $siteName = $conf->get('config.sitename');
         } elseif (defined('WPINC')) {
-            $siteName = '';
+            $siteName = 'WordPress Site Name';
         }
 
         $option = $option_list[0] ?? '';
-        $ImageFolder_ = CustomTablesImageMethods::getImageFolder($params);
-        $ImageFolderWeb = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder_);
-        $ImageFolder = str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder_);
+        $ImageFolderArray = CustomTablesImageMethods::getImageFolder($params);
 
         if ($option == '' or $option == '_esthumb' or $option == '_thumb') {
             $prefix = '_esthumb_';
 
             $imageFileExtension = 'jpg';
 
-            $imageFile = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . $rowValue . '.' . $imageFileExtension;
-            if (file_exists(CUSTOMTABLES_ABSPATH . $imageFile)) {
-                $imageSrc = $ImageFolderWeb . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
+            $imageFile = $ImageFolderArray['path'] . DIRECTORY_SEPARATOR . $prefix . $rowValue . '.' . $imageFileExtension;
+            if (file_exists($imageFile)) {
+                $imageSrc = $ImageFolderArray['web'] . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
                 $imageTag = '<img src="' . common::UriRoot(false, true) . $imageSrc . '" style="width:150px;height:150px;" alt="' . $siteName . '" title="' . $siteName . '" />';
                 return ['src' => $imageSrc, 'tag' => $imageTag];
             }
@@ -136,17 +138,17 @@ class Value_image extends BaseValue
             $fileNameType = $params[3] ?? '';
             if ($fileNameType == '') {
                 $prefix = '_original_';
-                $imageName = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . $rowValue;
+                $imageName = $ImageFolderArray['path'] . DIRECTORY_SEPARATOR . $prefix . $rowValue;
             } else {
                 $prefix = '';
-                $imageName = $ImageFolder . DIRECTORY_SEPARATOR . $rowValue;
+                $imageName = $ImageFolderArray['path'] . DIRECTORY_SEPARATOR . $rowValue;
             }
 
             $imgMethods = new CustomTablesImageMethods;
-            $imageFileExtension = $imgMethods->getImageExtension(CUSTOMTABLES_ABSPATH . $imageName);
+            $imageFileExtension = $imgMethods->getImageExtension($imageName);
 
             if ($imageFileExtension != '') {
-                $imageSrc = $ImageFolderWeb . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
+                $imageSrc = $ImageFolderArray['web'] . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
                 $imageTag = '<img src="' . common::UriRoot(false, true) . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '" />';
                 return ['src' => $imageSrc, 'tag' => $imageTag];
             }
@@ -164,10 +166,10 @@ class Value_image extends BaseValue
             if ($img[0] == $option) {
 
                 $prefix = $option;
-                $imageName = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue;
-                $imageFileExtension = $imgMethods->getImageExtension(CUSTOMTABLES_ABSPATH . $imageName);
+                $imageName = $ImageFolderArray['path'] . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue;
+                $imageFileExtension = $imgMethods->getImageExtension($imageName);
                 $imageFile = $imageName . '.' . $imageFileExtension;
-                $imageSrc = $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
+                $imageSrc = $ImageFolderArray['web'] . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
 
                 if (file_exists($imageFile)) {
                     $styles = [];

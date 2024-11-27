@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use CustomTablesImageMethods;
 use Exception;
 
 class Save_file
@@ -72,25 +73,18 @@ class Save_file
         }
 
         //Set the variable to "false" to do not delete existing file
-        $FileFolder = FileUtils::getOrCreateDirectoryPath($this->field->params[1]);
+        $FileFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params, $this->field->type);
+        //$FileFolder = FileUtils::getOrCreateDirectoryPath($this->field->params[1]);
 
         if (($CompletePathToFile !== null and $CompletePathToFile != '') or $to_delete == 'true') {
 
             $ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
 
-            $filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
-            if (substr($filepath, 0, 1) == DIRECTORY_SEPARATOR)
-                $filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $filepath);
-            else
-                $filepath = CUSTOMTABLES_ABSPATH . $filepath;
-
             if ($ExistingFile != '' and !self::checkIfTheFileBelongsToAnotherRecord($ExistingFile)) {
-                $filename_full = $filepath . DIRECTORY_SEPARATOR . $ExistingFile;
+                $filename_full = $FileFolderArray['path'] . DIRECTORY_SEPARATOR . $ExistingFile;
 
                 if (file_exists($filename_full)) {
-
                     echo 'filename exists : ' . $filename_full . '<br/>';
-
                     unlink($filename_full);
                 }
             }
@@ -100,13 +94,13 @@ class Save_file
             //Upload new file
 
             if ($listing_id == 0) {
-                $fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
-                $value = $this->UploadSingleFile(null, $CompletePathToFile, $fileName, $fileSystemFileFolder);
+                //$fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
+                $value = $this->UploadSingleFile(null, $CompletePathToFile, $fileName, $FileFolderArray['path']);
             } else {
                 $ExistingFile = $this->field->ct->Table->getRecordFieldValue($listing_id, $this->field->realfieldname);
 
-                $fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
-                $value = $this->UploadSingleFile($ExistingFile, $CompletePathToFile, $fileName, $fileSystemFileFolder);
+                //$fileSystemFileFolder = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $FileFolder);
+                $value = $this->UploadSingleFile($ExistingFile, $CompletePathToFile, $fileName, $FileFolderArray['path']);
             }
 
             //Set new image value

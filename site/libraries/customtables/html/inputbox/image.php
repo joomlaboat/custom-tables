@@ -14,6 +14,7 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
+use Exception;
 
 class InputBox_image extends BaseInputBox
 {
@@ -25,11 +26,15 @@ class InputBox_image extends BaseInputBox
             . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'image.php');
     }
 
+    /**
+     * @throws Exception
+     * @since 3.4.5
+     */
     function render(): string
     {
         $result = '<div class="esUploadFileBox" style="vertical-align:top;">';
-        $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
-        $image = Value_image::getImageSRC($this->row, $this->field->realfieldname, $ImageFolder);
+        $ImageFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params);
+        $image = Value_image::getImageSRC($this->row, $this->field->realfieldname, $ImageFolderArray);
 
         if ($image !== null)
             $result .= $this->renderImageAndDeleteOption($this->field, common::UriRoot(false, true) . $image['src'], $image['shortcut']);
@@ -55,6 +60,10 @@ class InputBox_image extends BaseInputBox
         return $result;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.4.5
+     */
     protected function renderUploader(): string
     {
         $result = '';

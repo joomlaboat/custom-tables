@@ -35,9 +35,9 @@ defined('_JEXEC') or die();
 
         if (confirm("<?php echo common::translate('COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE'); ?> " + count + " <?php
 
-			echo common::translate('COM_CUSTOMTABLES_FILE_S');
+            echo common::translate('COM_CUSTOMTABLES_FILE_S');
 
-			?>?")) {
+            ?>?")) {
 
             document.getElementById("fileedit_task").value = "delete";
             document.getElementById("fileids").value = fileids;
@@ -78,8 +78,8 @@ defined('_JEXEC') or die();
 
 <form action="index.php?Itemid=<?php echo common::inputGet('Itemid', 0, 'INT'); ?>" method="POST" name="eseditfiles"
       id="eseditfiles" enctype="multipart/form-data">
-	<?php
-	$toolbar = '
+    <?php
+    $toolbar = '
 	<div style="height:40px;">
 		<div style="float:left;">
 			<input type="button" class="button" value="' . common::translate('COM_CUSTOMTABLES_FINISH') . '" onClick=\'this.form.task.value="cancel";this.form.submit()\'>
@@ -90,9 +90,9 @@ defined('_JEXEC') or die();
 	</div>
 	';
 
-	echo $toolbar;
+    echo $toolbar;
 
-	?>
+    ?>
 
     <fieldset class="adminform">
         <legend><?php echo common::translate('COM_CUSTOMTABLES_FILE_MANAGER'); ?></legend>
@@ -110,9 +110,9 @@ defined('_JEXEC') or die();
                 </tr>
                 <tr>
                     <td colspan="2">
-						<?php echo common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($this->max_file_size); ?>
+                        <?php echo common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($this->max_file_size); ?>
                         <br/>
-						<?php echo common::translate('COM_CUSTOMTABLES_FORMATS'); ?>:
+                        <?php echo common::translate('COM_CUSTOMTABLES_FORMATS'); ?>:
                         <b><?php echo str_replace(' ', ', ', $this->allowedExtensions); ?></b>
                     </td>
                 </tr>
@@ -120,20 +120,16 @@ defined('_JEXEC') or die();
             <br/>
         </div>
 
-		<?php echo $this->drawFiles(); ?>
+        <?php echo $this->drawFiles(); ?>
 
         <input type="hidden" name="option" value="com_customtables"/>
         <input type="hidden" name="view" value="editfiles"/>
         <input type="hidden" name="Itemid" value="<?php echo common::inputGet('Itemid', 0, 'INT'); ?>"/>
         <input type="hidden" name="returnto" value="<?php echo common::inputGet('returnto', '', 'BASE64');; ?>"/>
-
         <input type="hidden" name="vlu" id="vlu" value=""/>
         <input type="hidden" name="task" id="fileedit_task" value=""/>
         <input type="hidden" name="fileids" id="fileids" value=""/>
         <input type="hidden" name="listing_id" id="listing_id" value="<?php echo $this->listing_id; ?>"/>
-
-
-        <input type="hidden" name="fileboxname" id="fileboxname" value="<?php echo $this->fileboxname; ?>"/>
-
+        <input type="hidden" name="fileboxname" id="fileboxname" value="<?php echo $this->fileBoxName; ?>"/>
     </fieldset>
 </form>

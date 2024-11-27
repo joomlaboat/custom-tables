@@ -20,7 +20,7 @@ use RuntimeException;
  * Utility class for handling file and folder operations.
  * @since 3.2.9
  */
-class FileUtils
+class FileUtils______________UNUSED
 {
     /**
      * Default folder path for Joomla.
@@ -106,10 +106,12 @@ class FileUtils
      * @throws RuntimeException If the directory cannot be created
      * @since 3.2.9
      */
+    /*
     private static function createDirectory(string $path): void
     {
         if (!file_exists($path) && !mkdir($path, 0755, true) && !is_dir($path)) {
             throw new RuntimeException(sprintf('Directory "%s" could not be created', $path));
         }
     }
+    */
 }

@@ -24,13 +24,12 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 {
     var CT $ct;
     var ?array $row;
-    var $filemethods;
-    var $fileboxname;
-    var $FileBoxTitle;
-    var $fileboxfolder;
-    var $fileboxfolderweb;
+    var CustomTablesFileMethods $filemethods;
+    var string $fileBoxName;
+    var string $FileBoxTitle;
+    var array $fileBoxFolderArray;
     var int $maxfilesize;
-    var $fileboxtablename;
+    var string $fileboxtablename;
     var string $allowedExtensions;
     var Field $field;
 
@@ -54,35 +53,35 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
         if (!common::inputGetCmd('fileboxname'))
             return false;
 
-        $this->fileboxname = common::inputGetCmd('fileboxname');
+        $this->fileBoxName = common::inputGetCmd('fileboxname');
         $this->row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
 
         if (!$this->getFileBox())
             return false;
 
-        $this->fileboxtablename = '#__customtables_filebox_' . $this->ct->Table->tablename . '_' . $this->fileboxname;
+        $this->fileboxtablename = '#__customtables_filebox_' . $this->ct->Table->tablename . '_' . $this->fileBoxName;
 
         parent::__construct();
         return true;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     function getFileBox(): bool
     {
-        $fieldRow = $this->ct->Table->getFieldByName($this->fileboxname);
+        $fieldRow = $this->ct->Table->getFieldByName($this->fileBoxName);
         $this->field = new Field($this->ct, $fieldRow, $this->row);
-
-        $this->fileboxfolderweb = 'images/' . $this->field->params[1];
-
-        $this->fileboxfolder = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $this->fileboxfolderweb);
-        //Create folder if not exists
-        if (!file_exists($this->fileboxfolder))
-            mkdir($this->fileboxfolder, 0755, true);
-
+        $this->fileBoxFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params, $this->field->type);
         $this->FileBoxTitle = $this->field->title;
-
         return true;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     function getFileList()
     {
         $whereClause = new MySQLWhereClause();
@@ -101,17 +100,20 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 
         foreach ($file_arr as $fileid) {
             if ($fileid != '') {
-                $file_ext = CustomTablesFileMethods::getFileExtByID($this->ct->Table->tablename, $this->fileboxname, $fileid);
-                CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->ct->Table->tableid, $this->fileboxname, $fileid, $file_ext);
+                $file_ext = CustomTablesFileMethods::getFileExtByID($this->ct->Table->tablename, $this->fileBoxName, $fileid);
+                CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileBoxFolderArray['path'], $this->ct->Table->tableid, $this->fileBoxName, $fileid, $file_ext);
                 database::deleteRecord($this->fileboxtablename, 'fileid', $fileid);
             }
         }
 
         $this->ct->Table->saveLog($this->ct->Params->listing_id, 9);
-
         return true;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     function add(): bool
     {
         $file = common::inputFiles('uploadedfile'); //not zip -  regular Joomla input method will be used
@@ -149,9 +151,9 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
             common::enqueueMessage('Cannot add new file record: ' . $e->getMessage());
         }
 
-        $newfilename = $this->fileboxfolder . DIRECTORY_SEPARATOR . $this->ct->Table->tableid . '_' . $this->fileboxname . '_' . $fileId . "." . $file_ext;
+        $newFileName = $this->fileBoxFolderArray['path'] . DIRECTORY_SEPARATOR . $this->ct->Table->tableid . '_' . $this->fileBoxName . '_' . $fileId . "." . $file_ext;
 
-        if (!copy($uploadedFile, $newfilename)) {
+        if (!copy($uploadedFile, $newFileName)) {
             unlink($uploadedFile);
             common::enqueueMessage('Cannot copy file');
             return false;

@@ -387,7 +387,7 @@ class CT
             $field = new Field($this, $fieldRow, $row);
 
             if ($field->type == 'image') {
-                $ImageFolder = CustomTablesImageMethods::getImageFolder($field->params);
+                $ImageFolderArray = CustomTablesImageMethods::getImageFolder($field->params);
 
                 //delete single image
                 if ($row[$field->realfieldname] !== null) {
@@ -396,7 +396,7 @@ class CT
 
                     $imageMethods->DeleteExistingSingleImage(
                         $row[$field->realfieldname],
-                        CUSTOMTABLES_ABSPATH . $ImageFolder,
+                        $ImageFolderArray['path'],
                         $field->params[0],
                         $this->Table->realtablename,
                         $field->realfieldname,
@@ -405,7 +405,7 @@ class CT
                     );
                 }
             } elseif ($field->type == 'imagegallery') {
-                $ImageFolder = CustomTablesImageMethods::getImageFolder($field->params);
+                $ImageFolderArray = CustomTablesImageMethods::getImageFolder($field->params);
 
                 //delete gallery images if exist
                 $galleryName = $field->fieldname;
@@ -419,7 +419,7 @@ class CT
 
                 foreach ($photoRows as $photoRow) {
                     $imageMethods->DeleteExistingGalleryImage(
-                        CUSTOMTABLES_ABSPATH . $ImageFolder,
+                        $ImageFolderArray['path'],
                         $imageGalleryPrefix,
                         $this->Table->tableid,
                         $galleryName,

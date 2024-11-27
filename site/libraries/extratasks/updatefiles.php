@@ -16,7 +16,6 @@ use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Field;
-use CustomTables\FileUtils;
 use CustomTables\MySQLWhereClause;
 
 class updateFiles
@@ -100,9 +99,11 @@ class updateFiles
             $field_old->params = $old_params;
             $field_old->parseParams($file, $field_old->type);
 
-            $old_FileFolder = FileUtils::getOrCreateDirectoryPath($field_old->params[1]);
+            $old_FileFolderArray = CustomTablesImageMethods::getImageFolder($field_old->params, $field_old->type);
 
-            $old_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $old_FileFolder);
+            //$old_FileFolder = FileUtils::getOrCreateDirectoryPath($field_old->params[1]);
+
+            //$old_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $old_FileFolder);
 
             $field_row_new = $fieldRow;
 
@@ -110,11 +111,12 @@ class updateFiles
             $field_new->params = $new_params;
             $field_new->parseParams($file, $field_old->type);
 
-            $new_FileFolder = FileUtils::getOrCreateDirectoryPath($field_new->params[1]);
+            $new_FileFolderArray = CustomTablesImageMethods::getImageFolder($field_new->params, $field_new->type);
+            //$new_FileFolder = FileUtils::getOrCreateDirectoryPath($field_new->params[1]);
 
-            $new_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $new_FileFolder);
+            //$new_FileFolder = str_replace('/', DIRECTORY_SEPARATOR, $new_FileFolder);
 
-            $status = updateFiles::processFile($file[$fieldRow['realfieldname']], $old_FileFolder, $new_FileFolder);
+            $status = updateFiles::processFile($file[$fieldRow['realfieldname']], $old_FileFolderArray['path'], $new_FileFolderArray['path']);
             //if $status is null then all good, status is a text string with error message if any
             if ($status !== null)
                 return $status;
@@ -124,10 +126,10 @@ class updateFiles
         return null;
     }
 
-    protected static function processFile($filename, $old_FileFolder, $new_FileFolder): ?string
+    protected static function processFile(string $filename, string $old_FileFolder, string $new_FileFolder): ?string
     {
-        $filepath_old = JPATH_SITE . $old_FileFolder . DIRECTORY_SEPARATOR . $filename;
-        $filepath_new = JPATH_SITE . $new_FileFolder . DIRECTORY_SEPARATOR . $filename;
+        $filepath_old = $old_FileFolder . DIRECTORY_SEPARATOR . $filename;
+        $filepath_new = $new_FileFolder . DIRECTORY_SEPARATOR . $filename;
 
         if (file_exists($filepath_old)) {
             if ($filepath_old != $filepath_new) {

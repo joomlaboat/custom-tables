@@ -368,8 +368,8 @@ class tagProcessor_Value
                 return true;
             else {
                 //check if file exists
-                $ImageFolder_ = CustomTablesImageMethods::getImageFolder($field->params);
-                $ImageFolder = str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder_);
+                $ImageFolderArray = CustomTablesImageMethods::getImageFolder($field->params);
+                //$ImageFolder = str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder_);
                 $image_prefix = '_esthumb';
 
                 $img = $rowValue;
@@ -377,10 +377,10 @@ class tagProcessor_Value
                     $img = str_replace('-', '', $img);
                 }
 
-                $imagefile_ext = 'jpg';
-                $imagefile = $ImageFolder . DIRECTORY_SEPARATOR . $image_prefix . '_' . $img . '.' . $imagefile_ext;
+                $imageFile_ext = 'jpg';
+                $imageFile = $ImageFolderArray['path'] . DIRECTORY_SEPARATOR . $image_prefix . '_' . $img . '.' . $imageFile_ext;
 
-                if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imagefile))
+                if (file_exists($imageFile))
                     return false;
                 else
                     return true;
@@ -398,6 +398,10 @@ class tagProcessor_Value
         }
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public static function processEditValues(CT &$ct, string &$htmlresult, ?array $row, string $tag_chars = '[]'): array
     {
         $items_to_replace = array();

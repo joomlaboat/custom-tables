@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use CustomTablesImageMethods;
 use Exception;
 use LayoutProcessor;
 use tagProcessor_General;
@@ -904,9 +905,10 @@ class SaveFieldQuerySet
             foreach ($this->ct->Table->fields as $fieldRow) {
                 if ($fieldRow['type'] == 'file') {
                     $field = new Field($this->ct, $fieldRow, $row);
-                    $FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0]);
+                    $FileFolderArray = CustomTablesImageMethods::getImageFolder($field->params, $field->type);
+                    //$FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0]);
 
-                    $filename = $FileFolder . $this->ct->Table->record[$fieldRow['realfieldname']];
+                    $filename = $FileFolderArray['path'] . DIRECTORY_SEPARATOR . $this->ct->Table->record[$fieldRow['realfieldname']];
                     if (file_exists($filename))
                         $attachments[] = $filename;//TODO: Check the functionality
                 }

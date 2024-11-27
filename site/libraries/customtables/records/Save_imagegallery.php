@@ -21,8 +21,7 @@ class Save_imagegallery
     var CT $ct;
     public Field $field;
     var ?array $row_new;
-    var string $imageFolder;
-    var string $imageFolderWeb;
+    var array $imageFolderArray;
     var string $photoTableName;
     var CustomTablesImageMethods $imageMethods;
     var string $imageMainPrefix;
@@ -36,34 +35,10 @@ class Save_imagegallery
     {
         $this->ct = &$ct;
         $this->field = $field;
-        $this->imageFolder = self::getImageGalleryFolder($this->field->params);
-        $this->imageFolderWeb = CustomTablesImageMethods::getImageFolder($this->field->params);
+        $this->imageFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params);//self::getImageGalleryFolder($this->field->params);
         $this->photoTableName = database::getDBPrefix() . 'customtables_gallery_' . $this->ct->Table->tablename . '_' . $field->fieldname;
         $this->imageMethods = new CustomTablesImageMethods;
         $this->imageMainPrefix = 'g';
-    }
-
-    /**
-     * @throws Exception
-     *
-     * @since 3.4.5
-     */
-    function getImageGalleryFolder(array $params): string
-    {
-        $imageFolderWord = CustomTablesImageMethods::getImageFolder($params);
-
-        $imageFolder = JPATH_SITE;
-        if ($imageFolder[strlen($imageFolder) - 1] != '/' and $imageFolderWord[0] != '/')
-            $imageFolder .= '/';
-
-        $imageFolder .= str_replace('/', DIRECTORY_SEPARATOR, $imageFolderWord);
-        //Create folder if not exists
-        if (!file_exists($imageFolder)) {
-            common::enqueueMessage('Path ' . $imageFolder . ' not found. Created.', 'notice');
-            mkdir($imageFolder, 0755, true);
-        }
-
-        return $imageFolder;
     }
 
     /**
@@ -78,7 +53,7 @@ class Save_imagegallery
         foreach ($existingFiles as $file) {
             $photoId = intval($file);
             if ($photoId < 0) {
-                $this->imageMethods->DeleteExistingGalleryImage($this->imageFolder, $this->imageMainPrefix, $this->ct->Table->tableid, $this->field->fieldname,
+                $this->imageMethods->DeleteExistingGalleryImage($this->imageFolderArray['path'], $this->imageMainPrefix, $this->ct->Table->tableid, $this->field->fieldname,
                     (-$photoId), (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : ''), true);
 
                 database::deleteRecord($this->photoTableName, 'photoid', (-$photoId));
@@ -131,7 +106,7 @@ class Save_imagegallery
         $isOk = true;
 
         //es Thumb
-        $newFileName = $this->imageFolder . DIRECTORY_SEPARATOR . $this->imageMainPrefix . $this->ct->Table->tableid . '_' . $this->field->fieldname . '__esthumb_' . $photoId . ".jpg";
+        $newFileName = $this->imageFolderArray['path'] . DIRECTORY_SEPARATOR . $this->imageMainPrefix . $this->ct->Table->tableid . '_' . $this->field->fieldname . '__esthumb_' . $photoId . ".jpg";
         $r = $this->imageMethods->ProportionalResize($uploadedFile, $newFileName, 150, 150, 1, -1, '');
 
         if ($r != 1)
@@ -151,7 +126,7 @@ class Save_imagegallery
             else
                 $ext = $photo_ext;
 
-            $newFileName = $this->imageFolder . DIRECTORY_SEPARATOR . $this->imageMainPrefix . $this->ct->Table->tableid . '_' . $this->field->fieldname . '_' . $prefix . '_' . $photoId . "." . $ext;
+            $newFileName = $this->imageFolderArray['path'] . DIRECTORY_SEPARATOR . $this->imageMainPrefix . $this->ct->Table->tableid . '_' . $this->field->fieldname . '_' . $prefix . '_' . $photoId . "." . $ext;
             $r = $this->imageMethods->ProportionalResize($uploadedFile, $newFileName, $width, $height, 1, $color, '');
 
             if ($r != 1)
@@ -161,7 +136,7 @@ class Save_imagegallery
         if ($isOk) {
             $originalName = $this->imageMainPrefix . $this->ct->Table->tableid . '_' . $this->field->fieldname . '__original_' . $photoId . "." . $photo_ext;
 
-            if (!copy($uploadedFile, $this->imageFolder . DIRECTORY_SEPARATOR . $originalName)) {
+            if (!copy($uploadedFile, $this->imageFolderArray['path'] . DIRECTORY_SEPARATOR . $originalName)) {
                 unlink($uploadedFile);
                 return false;
             }

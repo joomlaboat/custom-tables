@@ -240,7 +240,7 @@ class Fields
                 //Delete all files belongs to the filebox
 
                 $fileBoxTableName = '#__customtables_filebox_' . $tableRow['tablename'] . '_' . $field->fieldname;
-                CustomTablesFileMethods::DeleteFileBoxFiles($fileBoxTableName, $field->fieldrow['tableid'], $field->fieldname, $field->params);
+                CustomTablesFileMethods::DeleteFileBoxFiles($fileBoxTableName, (string)$field->fieldrow['tableid'], $field->fieldname, $field->params);
 
                 //Delete gallery table
                 database::dropTableIfExists($tableRow['tablename'] . '_' . $field->fieldname, 'filebox');

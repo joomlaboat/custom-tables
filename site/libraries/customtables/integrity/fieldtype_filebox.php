@@ -51,7 +51,7 @@ class IntegrityFieldType_FileBox extends IntegrityChecks
 
             if (!$g_found) {
                 Fields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) null', '');
-                common::enqueueMessage(sprintf("File Box Field '%s' added.", $g_fieldname));
+                common::enqueueMessage(sprintf("File Box Field '%s' added.", $g_fieldname), 'notice');
             }
             $moreThanOneLanguage = true;
         }

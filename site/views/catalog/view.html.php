@@ -26,7 +26,6 @@ class CustomTablesViewCatalog extends HtmlView
     var CT $ct;
     var string $listing_id;
     var Catalog $catalog;
-    var string $catalogTableCode;
 
     function display($tpl = null)
     {
@@ -50,6 +49,10 @@ class CustomTablesViewCatalog extends HtmlView
             $this->renderCatalog($tpl);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.
+     */
     function renderCatalog($tpl): bool
     {
         $this->catalog = new Catalog($this->ct);
@@ -88,6 +91,10 @@ class CustomTablesViewCatalog extends HtmlView
         return true;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     function SaveViewLog_CheckIfNeeded(): array
     {
         $user_groups = $this->ct->Env->user->groups;
