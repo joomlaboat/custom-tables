@@ -627,7 +627,8 @@ function FillLayout() {
     result += '<option value="800"' + (layoutType === 8 ? ' selected="selected"' : '') + '>XML File</option>';
     result += '<option value="900"' + (layoutType === 9 ? ' selected="selected"' : '') + '>CSV File</option>';
     result += '<option value="1000"' + (layoutType === 10 ? ' selected="selected"' : '') + '>JSON File</option>';
-    result += '</select><div id="layoutWizardModalGuide" style="background-color:#eeeeee;width:100%;min-height:200px;max-height:300px;overflow-y: auto;"></div><button class="btn btn-primary" onclick="layoutWizardGenerateLayout(event);">Generate</button>';
+    result += '</select><div id="layoutWizardModalGuide" style="background-color:#eeeeee;width:100%;min-height:200px;max-height:300px;overflow-y: auto;"></div>';
+    result += '<button class="btn btn-primary button button-primary" onclick="layoutWizardGenerateLayout(event);">Generate</button>';
 
     document.getElementById("layouteditor_modal_content_box").innerHTML = '<div class="dynamic_values">' + result + '</div>';
     showModal();
@@ -639,17 +640,16 @@ function FillLayout() {
 function getFieldOptions() {
     let fieldCount = wizardFields.length;
     let fieldtypes_to_skip;
-    let resultOption = '<p><span title="To reorder fields, navigate to Table - Fields and drag fields using the three-dot (⋮)">Fields:</span><br/><select class="form-select list" id="wizardGuide_fields" MULTIPLE>';
+    let resultOption = '<p><span title="To reorder fields, navigate to Table - Fields and drag fields using the three-dot (⋮)">Fields:</span><br/>';
+    resultOption += '<select class="form-select list" id="wizardGuide_fields" MULTIPLE style="width: 100%;">';
 
     fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
 
     for (let index = 0; index < fieldCount; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
+        if (fieldtypes_to_skip.indexOf(field.type) === -1)
             resultOption += '<option value="' + field.fieldname + '" selected>' + field.fieldname + '</option>';
-        }
-
     }
     resultOption += '</select></p>';
 
