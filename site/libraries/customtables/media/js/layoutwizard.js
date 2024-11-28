@@ -286,7 +286,7 @@ function renderFieldsBox() {
     }
 
     const a = [1, 3, 4, 6, 7, 8, 9, 10];//Layout Types that may have Field Values.
-    const fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy'];
+    const fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
 
     if (a.indexOf(current_layout_type) !== -1) {
         tabs.push({
@@ -318,7 +318,7 @@ function renderFieldsBox() {
     }
 
     if (current_layout_type === 2) {
-        let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy'];
+        let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
 
         let label = '<p>Dynamic Field Tags that renders an input field where the user can enter data.<span style="font-weight:bold;color:darkgreen;">(more <a href="https://joomlaboat.com/custom-tables-wiki?document=04.-Field-Types" target="_blank">here</a>)</span></p>';
         tabs.push({
@@ -610,89 +610,278 @@ function FillLayout() {
         return;
     }
 
+    let result = '<p>Select the layout type</p>';
+
+    result += '<select id="modal_layoutTypeSelector"';
+    result += ' class="form-select list_class required valid form-control-success" required="" onchange="modal_layoutTypeSelector_update();">';
+    result += '<option value="100"' + (layoutType === 1 ? ' selected="selected"' : '') + '>Simple Catalog (All Features)</option>';
+    result += '<option value="101">- Simple Catalog (No Features)</option>';
+    result += '<option value="111">- Ordered List</option>';
+    result += '<option value="112">- Unordered List</option>';
+    result += '<option value="500"' + (layoutType === 5 ? ' selected="selected"' : '') + '>Catalog Page (All Features)</option>';
+    result += '<option value="501">- Catalog Page (No Features)</option>';
+    result += '<option value="600"' + (layoutType === 6 ? ' selected="selected"' : '') + '>Catalog Item</option>';
+    result += '<option value="200"' + (layoutType === 2 ? ' selected="selected"' : '') + '>Edit form</option>';
+    result += '<option value="400"' + (layoutType === 4 ? ' selected="selected"' : '') + '>Details</option>';
+    result += '<option value="700"' + (layoutType === 7 ? ' selected="selected"' : '') + '>Email Message</option>';
+    result += '<option value="800"' + (layoutType === 8 ? ' selected="selected"' : '') + '>XML File</option>';
+    result += '<option value="900"' + (layoutType === 9 ? ' selected="selected"' : '') + '>CSV File</option>';
+    result += '<option value="1000"' + (layoutType === 10 ? ' selected="selected"' : '') + '>JSON File</option>';
+    result += '</select><div id="layoutWizardModalGuide" style="background-color:#eeeeee;width:100%;min-height:200px;max-height:300px;overflow-y: auto;"></div><button class="btn btn-primary" onclick="layoutWizardGenerateLayout(event);">Generate</button>';
+
+    document.getElementById("layouteditor_modal_content_box").innerHTML = '<div class="dynamic_values">' + result + '</div>';
+    showModal();
+
+    modal_layoutTypeSelector_update();
+
+}
+
+function getFieldOptions() {
+    let fieldCount = wizardFields.length;
+    let fieldtypes_to_skip;
+    let resultOption = '<p><span title="To reorder fields, navigate to Table - Fields and drag fields using the three-dot (⋮)">Fields:</span><br/><select class="form-select list" id="wizardGuide_fields" MULTIPLE>';
+
+    fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
+
+    for (let index = 0; index < fieldCount; index++) {
+        let field = wizardFields[index];
+
+        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
+            resultOption += '<option value="' + field.fieldname + '" selected>' + field.fieldname + '</option>';
+        }
+
+    }
+    resultOption += '</select></p>';
+
+    return resultOption;
+}
+
+function modal_layoutTypeSelector_update() {
+    let layoutTypeExtended = parseInt(document.getElementById("modal_layoutTypeSelector").value);
+
+    let resultOption = '';
+
+
+    switch (layoutTypeExtended) {
+
+        case 100:
+        case 500:
+
+            //Simple Catalog and Catalog Page
+
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_count" checked="checked" /> Add "Record Count"</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_add_record" checked="checked" /> Add "Add Record" button</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_print" checked="checked" /> Add "Print" button</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_datagrid" checked="checked" /> Add "datagrid" CSS class</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_batch_toolbar" checked="checked" /> Add Batch Toolbar</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_id" checked="checked" /> Add record ID column</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_search" checked="checked" /> Add search</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_toolbar" checked="checked" /> Add record toolbar</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_pagination" checked="checked" /> Add pagination</p>';
+            resultOption += getFieldOptions();
+            break;
+
+        case 101:
+        case 501:
+
+            //Simple Catalog and Catalog Page
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_count" /> Add "Record Count"</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_add_record" /> Add "Add Record" button</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_print" /> Add "Print" button</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_datagrid" /> Add "datagrid" CSS class</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_batch_toolbar" /> Add Batch Toolbar</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_id" /> Add record ID column</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_search" /> Add search</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_toolbar" /> Add record toolbar</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_pagination" /> Add pagination</p>';
+            resultOption += getFieldOptions();
+            break;
+
+        case 111:
+        case 112:
+            //Ordered List and Unordered List
+            resultOption += getFieldOptions();
+            break;
+
+        case 200:
+            //Edit Form
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_goback" checked="checked" /> Add "Go Back" button</p>';
+            resultOption += getFieldOptions();
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_save_button" checked="checked" /> Add "Save" button</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_saveandclose_button" checked="checked" /> Add "Save and Close" button</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_saveascopy_button" checked="checked" /> Add "Save as Copy" button</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_saveascopy_cancel" checked="checked" /> Add "Cancel" button</p>';
+            break;
+
+        case 400:
+            //Details Page
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_goback" checked="checked" /> Add "Go Back" button</p>';
+            resultOption += getFieldOptions();
+            break;
+
+        case 600:
+
+            //Catalog Item
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_batch_toolbar" checked="checked" /> Add Batch Toolbar</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_id" checked="checked" /> Add record ID column</p>';
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_toolbar" checked="checked" /> Add record toolbar</p>';
+            resultOption += getFieldOptions();
+            break;
+
+        case 700:
+            //Email Message
+            resultOption += getFieldOptions();
+            break;
+
+        case 800:
+            //XML File
+            resultOption += getFieldOptions();
+            break;
+
+        case 900:
+            //CSV File
+            resultOption += getFieldOptions();
+            break;
+
+        case 1000:
+            //JSON File
+            resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_id" checked="checked" /> Add record ID</p>';
+            resultOption += getFieldOptions();
+            break;
+    }
+
+    if (resultOption !== "")
+        resultOption = '<div style="padding:11px;">' + resultOption + '</div>';
+
+    document.getElementById("layoutWizardModalGuide").innerHTML = resultOption;
+}
+
+function layoutWizardGenerateLayout(event) {
+    event.preventDefault();
+
     let layout_obj = document.getElementById(codemirror_active_areatext_id);
+    let editor = getActiveEditor();
     layout_obj.value = editor.getValue();
 
     let v = layout_obj.value;
 
     if (v !== '') {
-        alert("Layout Content is not empty, delete it first.");
-        return;
+        if (!confirm('Layout Content is not empty. Are you sure you want to replace it?')) {
+            return;
+        }
     }
 
-    switch (layoutType) {
-        case 1:
+    let layoutTypeExtended = parseInt(document.getElementById("modal_layoutTypeSelector").value);
+    let layoutType = Math.floor(layoutTypeExtended / 100);
+    type_obj.value = layoutType + "";
+
+    updateTagsParameters();
+
+    switch (layoutTypeExtended) {
+        case 100:
+        case 101:
             layout_obj.value = getLayout_SimpleCatalog();
             break;
 
-        case 2:
+        case 110:
+            layout_obj.value = getLayout_Ordered_List();
+            break;
+
+        case 112:
+            layout_obj.value = getLayout_Unordered_List();
+            break;
+
+        case 200:
             layout_obj.value = getLayout_Edit();
             break;
 
-        case 3:
+        case 300:
             layout_obj.value = getLayout_Record();
             break;
 
-        case 4:
+        case 400:
             layout_obj.value = getLayout_Details();
             break;
 
-        case 5:
+        case 500:
+        case 501:
             layout_obj.value = getLayout_Page();
             break;
 
-        case 6:
+        case 600:
             layout_obj.value = getLayout_Item();
             break;
 
-        case 7:
+        case 700:
             layout_obj.value = getLayout_Email();
             break;
 
-        case 8:
+        case 800:
             layout_obj.value = getLayout_XML();
             break;
 
-        case 9:
+        case 900:
             layout_obj.value = getLayout_CSV();
             break;
 
-        case 10:
+        case 1000:
             layout_obj.value = getLayout_JSON();
             break;
     }
+
     editor.getDoc().setValue(layout_obj.value);
+
+    const modal = document.getElementById('layouteditor_Modal');
+    modal.style.display = "none";
 }
 
 //Only for Joomla
 function getLayout_Page() {
 
     let result = "";
-    //let l = wizardFields.length;
 
-    result += '<style>\r\n';
-    result += '.datagrid th{text-align:left;}\r\n';
-    result += '.datagrid td{text-align:left;}\r\n';
-    result += '</style>\r\n';
+    let obj;
+
+    obj = document.getElementById("wizardGuide_add_datagrid");
+    let addDatagrid = false;
+    if (!obj || obj.checked) {
+        addDatagrid = true;
+        result += '<style>\r\n.datagrid th{text-align:left;}\r\n.datagrid td{text-align:left;}\r\n</style>\r\n';
+    }
 
     result += '<legend>{{ table.title }}</legend>\r\n';
-    result += '<div style="float:right;">{{ html.recordcount }}</div>\r\n';
-    result += '<div style="float:left;">{{ html.add }}</div>\r\n';
-    result += '\r\n';
 
-    if (window.Joomla instanceof Object)
-        result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
+    obj = document.getElementById("wizardGuide_add_record_count");
+    if (!obj || obj.checked)
+        result += '<div style="float:right;">{{ html.recordcount }}</div>\r\n';
 
-    result += '<div class="datagrid">\r\n';
-    result += '<div>{{ html.batch("publish","unpublish","refresh","delete") }}</div>\r\n\r\n';
+    obj = document.getElementById("wizardGuide_add_add_record");
+    if (!obj || obj.checked) {
+        result += '<div style="float:left;">{{ html.add }}</div>\r\n';
+        result += '\r\n';
+    }
+
+    obj = document.getElementById("wizardGuide_add_print");
+    if (!obj || obj.checked) {
+        if (window.Joomla instanceof Object)
+            result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
+    }
+
+    if (addDatagrid)
+        result += '<div class="datagrid">\r\n';
+
+    obj = document.getElementById("wizardGuide_add_batch_toolbar");
+    if (!obj || obj.checked)
+        result += '<div>{{ html.batch("publish","unpublish","refresh","delete") }}</div>\r\n\r\n';
 
     result += '<table>';
 
-    let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+    let fieldtypes_to_skip = ['log', 'filebox', 'dummy'];
     let fieldtypes_withsearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
     let fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user'];
+    let fields_to_skip = getFieldsToSkip();
 
-    result += renderTableHead(fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby);
+    result += renderTableHead(fieldtypes_to_skip, fields_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby);
 
     result += '<tbody>\r\n';
 
@@ -701,10 +890,14 @@ function getLayout_Page() {
     result += '</tbody>\r\n';
     result += '</table>\r\n';
 
-    result += '</div>\r\n\r\n';
+    if (addDatagrid)
+        result += '</div>\r\n';
 
-    if (window.Joomla instanceof Object)
-        result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+    obj = document.getElementById("wizardGuide_add_pagination");
+    if (!obj || obj.checked) {
+        if (window.Joomla instanceof Object)
+            result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+    }
 
     return result;
 }
@@ -714,29 +907,37 @@ function getLayout_Item() {
     let result = "";
     let l = wizardFields.length;
 
-    let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+    let fieldtypes_to_skip = ['log', 'filebox', 'dummy'];
+    let fields_to_skip = getFieldsToSkip();
     let user_fieldtypes = ['user', 'userid'];
 
     //Look for ordering field type
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
-        if (field.type == 'ordering') {
+        if (field.type === 'ordering') {
             result += '<td style="text-align:center;">{{ ' + field.fieldname + ' }}</td>\r\n';
         }
     }
 
-    result += '<td style="text-align:center;">{{ html.toolbar("checkbox") }}</td>\r\n';
-    result += '<td style="text-align:center;"><a href="{{ record.link(true) }}">{{ record.id }}</a></td>\r\n';
+    let obj;
+
+    obj = document.getElementById("wizardGuide_add_batch_toolbar");
+    if (!obj || obj.checked)
+        result += '<td style="text-align:center;">{{ html.toolbar("checkbox") }}</td>\r\n';
+
+    obj = document.getElementById("wizardGuide_add_record_id");
+    if (!obj || obj.checked)
+        result += '<td style="text-align:center;"><a href="{{ record.link(true) }}">{{ record.id }}</a></td>\r\n';
 
     let user_field = '';
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1) {
+        if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
 
             let fieldValue = '';
-            if (field.type == 'url')
+            if (field.type === 'url')
                 fieldValue = '<a href="{{ ' + field.fieldname + ' }}" target="_blank">{{ ' + field.fieldname + ' }}</a>';
             else
                 fieldValue = '{{ ' + field.fieldname + ' }}';
@@ -749,7 +950,11 @@ function getLayout_Item() {
     }
 
     if (user_field === '') {
-        result += '<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
+
+        obj = document.getElementById("wizardGuide_add_record_toolbar");
+        if (!obj || obj.checked)
+            result += '<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
+
     } else {
         result += '<td>\r\n';
         result += '\t<!-- The "if" statement is to show the toolbar for the record\'s author only. -->\r\n';
@@ -763,30 +968,105 @@ function getLayout_Item() {
     return '<tr>\r\n' + result + '</tr>\r\n';
 }
 
+
+function getLayout_List(tag1, tag2) {
+
+    let result = "";
+    let fieldtypes_to_skip = ['log', 'filebox', 'dummy'];
+    let l = wizardFields.length;
+
+    result += tag1;
+    result += '\r\n{% block record %}';
+    result += '\r\n<li>';
+
+    let fields_to_skip = getFieldsToSkip();
+
+    let list = [];
+    for (let index = 0; index < l; index++) {
+        let field = wizardFields[index];
+
+        if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
+
+            let fieldValue = '';
+            if (field.type === 'url')
+                fieldValue = '<a href="{{ ' + field.fieldname + ' }}" target="_blank">{{ ' + field.fieldname + ' }}</a>';
+            else
+                fieldValue = '{{ ' + field.fieldname + ' }}';
+
+            list.push(fieldValue);
+        }
+    }
+
+    result += list.join(", ");
+
+    result += '</li>';
+
+    result += '\r\n{% endblock %}';
+    result += '\r\n' + tag2;
+
+    return result;
+}
+
+function getLayout_Ordered_List() {
+    return getLayout_List('<ol>', '</ol>');
+}
+
+function getLayout_Unordered_List() {
+    return getLayout_List('<ul>', '</ul>');
+}
+
 function getLayout_SimpleCatalog() {
 
     let result = "";
     let l = wizardFields.length;
 
-    result += '<style>\r\n.datagrid th{text-align:left;}\r\n.datagrid td{text-align:left;}\r\n</style>\r\n';
-    result += '<div style="float:right;">{{ html.recordcount }}</div>\r\n';
-    result += '<div style="float:left;">{{ html.add }}</div>\r\n';
-    result += '\r\n';
+    let obj;
 
-    if (window.Joomla instanceof Object)
-        result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
+    obj = document.getElementById("wizardGuide_add_datagrid");
+    let addDatagrid = false;
+    if (!obj || obj.checked) {
+        addDatagrid = true;
+        result += '<style>\r\n.datagrid th{text-align:left;}\r\n.datagrid td{text-align:left;}\r\n</style>\r\n';
+    }
 
-    result += '<div class="datagrid">\r\n';
-    result += '<div>{{ html.batch(\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
-    result += '\r\n';
+    obj = document.getElementById("wizardGuide_add_record_count");
+    if (!obj || obj.checked)
+        result += '<div style="float:right;">{{ html.recordcount }}</div>\r\n';
 
-    let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+    obj = document.getElementById("wizardGuide_add_add_record");
+    if (!obj || obj.checked) {
+        result += '<div style="float:left;">{{ html.add }}</div>\r\n';
+        result += '\r\n';
+    }
+
+    obj = document.getElementById("wizardGuide_add_print");
+    if (!obj || obj.checked) {
+        if (window.Joomla instanceof Object)
+            result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
+    }
+
+    if (addDatagrid)
+        result += '<div class="datagrid">\r\n\r\n';
+
+    obj = document.getElementById("wizardGuide_add_batch_toolbar");
+    let addBatchToolbar = true;
+    if (!obj || !obj.checked) {
+        addBatchToolbar = false;
+    }
+
+    if (addBatchToolbar) {
+        result += '<div>{{ html.batch(\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
+        result += '\r\n';
+    }
+
+    let fieldtypes_to_skip = ['log', 'filebox', 'dummy'];
     let fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
     let fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user'];
+    let fields_to_skip = getFieldsToSkip();
 
-    result += '\r\n<table>\r\n';
+    result += '<table>\r\n';
 
-    result += renderTableHead(fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby);
+    result += renderTableHead(fieldtypes_to_skip, fields_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby);
 
     result += '\r\n<tbody>';
     result += '\r\n{% block record %}';
@@ -795,21 +1075,35 @@ function getLayout_SimpleCatalog() {
     //Look for ordering field type
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
-        if (field.type == 'ordering') {
+        if (field.type === 'ordering') {
             result += '<td style="text-align:center;">{{ ' + field.fieldname + ' }}</td>\r\n';
         }
     }
 
-    result += '<td style="text-align:center;">{{ html.toolbar("checkbox") }}</td>\r\n';
-    result += '<td style="text-align:center;"><a href=\'{{ record.link(true) }}\'>{{ record.id }}</a></td>\r\n';
+    if (addBatchToolbar)
+        result += '<td style="text-align:center;">{{ html.toolbar("checkbox") }}</td>\r\n';
+
+    obj = document.getElementById("wizardGuide_add_record_id");
+    if (!obj || obj.checked)
+        result += '<td style="text-align:center;"><a href=\'{{ record.link(true) }}\'>{{ record.id }}</a></td>\r\n';
+
+    obj = document.getElementById("wizardGuide_add_search");
+    let addSearch = true;
+    if (!obj || !obj.checked)
+        addSearch = false;
+
+    obj = document.getElementById("wizardGuide_add_record_toolbar");
+    let addToolBar = true;
+    if (!obj || !obj.checked)
+        addToolBar = false;
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1) {
+        if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
 
             let fieldValue = '';
-            if (field.type == 'url')
+            if (field.type === 'url')
                 fieldValue = '<a href="{{ ' + field.fieldname + ' }}" target="_blank">{{ ' + field.fieldname + ' }}</a>';
             else
                 fieldValue = '{{ ' + field.fieldname + ' }}';
@@ -818,7 +1112,8 @@ function getLayout_SimpleCatalog() {
         }
     }
 
-    result += '<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
+    if (addSearch || addToolBar)
+        result += '<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
 
     result += '</tr>';
 
@@ -826,16 +1121,28 @@ function getLayout_SimpleCatalog() {
     result += '\r\n</tbody>';
     result += '\r\n</table>\r\n';
 
-    result += '\r\n';
-    result += '</div>\r\n';
+    if (addDatagrid) {
+        result += '\r\n';
+        result += '</div>\r\n';
+    }
 
-    if (window.Joomla instanceof Object)
-        result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+    obj = document.getElementById("wizardGuide_add_pagination");
+    if (!obj || obj.checked) {
+        if (window.Joomla instanceof Object)
+            result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+    }
 
     return result;
 }
 
-function renderTableHead(fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby) {
+function renderTableHead(fieldtypes_to_skip, fields_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby) {
+
+
+    let obj = document.getElementById("wizardGuide_add_batch_toolbar");
+    let addBatchToolbar = true;
+    if (!obj || !obj.checked) {
+        addBatchToolbar = false;
+    }
 
     let l = wizardFields.length;
     let result = '';
@@ -845,29 +1152,50 @@ function renderTableHead(fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_al
     //Look for ordering field type
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
-        if (field.type == 'ordering') {
+        if (field.type === 'ordering') {
             result += '<th class="short">{{ ' + field.fieldname + '.label(true) }}</th>\r\n';
         }
     }
 
-    result += '<th class="short">{{ html.batch("checkbox") }}</th>\r\n';
-    result += '<th class="short">{{ record.label(true) }}</th>\r\n';
+    if (addBatchToolbar)
+        result += '<th class="short">{{ html.batch("checkbox") }}</th>\r\n';
 
-    for (let index = 0; index < l; index++) {
-        result += renderTableColumnHeader(wizardFields[index], fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby);
+    obj = document.getElementById("wizardGuide_add_record_id");
+    if (!obj || obj.checked)
+        result += '<th class="short">{{ record.label(true) }}</th>\r\n';
+
+    obj = document.getElementById("wizardGuide_add_search");
+    let addSearch = true;
+    if (!obj || !obj.checked) {
+        addSearch = false;
     }
 
-    result += '<th>Action<br/>{{ html.searchbutton }}</th>\r\n';
-    result += '</tr></thead>\r\n\r\n';
+    for (let index = 0; index < l; index++) {
+        result += renderTableColumnHeader(wizardFields[index], fieldtypes_to_skip, fields_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby, addSearch);
+    }
+
+    let letColumnItems = [];
+
+    obj = document.getElementById("wizardGuide_add_record_toolbar");
+    if (!obj || obj.checked)
+        letColumnItems.push('Action')
+
+    if (addSearch)
+        letColumnItems.push('{{ html.searchbutton }}')
+
+    if (letColumnItems.length > 0)
+        result += '<th>' + letColumnItems.join('<br/>') + '</th>\r\n';
+
+    result += '</tr></thead>\r\n';
 
     return result;
 }
 
-function renderTableColumnHeader(field, fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby) {
+function renderTableColumnHeader(field, fieldtypes_to_skip, fields_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby, addSearch) {
 
     let result = '';
 
-    if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1) {
+    if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
 
         result += '<th>';
 
@@ -876,7 +1204,7 @@ function renderTableColumnHeader(field, fieldtypes_to_skip, fieldtypes_withsearc
         else
             result += '{{ ' + field.fieldname + '.title }}';
 
-        if (fieldtypes_withsearch.indexOf(field.type) !== -1) {
+        if (addSearch && fieldtypes_withsearch.indexOf(field.type) !== -1) {
 
             if (field.type == 'checkbox' || field.type == 'sqljoin' || field.type == 'records')
                 result += '<br/>{{ html.search("' + field.fieldname + '","","reload") }}';
@@ -890,20 +1218,45 @@ function renderTableColumnHeader(field, fieldtypes_to_skip, fieldtypes_withsearc
     return result;
 }
 
+function getFieldsToSkip() {
+
+    let fields_to_skip = [];
+
+    let obj = document.getElementById("wizardGuide_fields");
+    if (obj) {
+        // Loop through all options in the select
+        for (let i = 0; i < obj.options.length; i++) {
+            // If the option is not selected and not already in the array
+            if (!obj.options[i].selected && !fields_to_skip.includes(obj.options[i].value)) {
+                fields_to_skip.push(obj.options[i].value);
+            }
+        }
+    }
+
+    return fields_to_skip;
+}
+
 function getLayout_Edit() {
     let result = "";
     let l = wizardFields.length;
 
     result += '<legend>{{ table.title }}</legend>\r\n\r\n';
-    result += '{{ html.goback("Go back") }}\r\n\r\n';
-    result += '<div class="form-horizontal">';
 
-    let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy'];
+    let obj;
+
+    obj = document.getElementById("wizardGuide_add_goback");
+    if (!obj || obj.checked)
+        result += '{{ html.goback("Go back") }}\r\n\r\n';
+
+    result += '<div class="form-horizontal">\r\n\r\n';
+
+    let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
+    let fields_to_skip = getFieldsToSkip();
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
+        if (fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
             result += '\t<div class="control-group">\r\n';
             result += '\t\t<div class="control-label">{{ ' + field.fieldname + '.title }}</div><div class="controls">{{ ' + field.fieldname + '.edit }}</div>\r\n';
             result += '\t</div>\r\n\r\n';
@@ -921,7 +1274,28 @@ function getLayout_Edit() {
             break;
         }
     }
-    result += '<div style="text-align:center;">{{ html.button("save") }} {{ html.button("saveandclose") }} {{ html.button("saveascopy") }} {{ html.button("cancel") }}</div>\r\n';
+
+    let buttons = [];
+
+    obj = document.getElementById("wizardGuide_add_save_button");
+    if (!obj || obj.checked)
+        buttons.push('{{ html.button("save") }}');
+
+    obj = document.getElementById("wizardGuide_add_saveandclose_button");
+    if (!obj || obj.checked)
+        buttons.push('{{ html.button("saveandclose") }}');
+
+    obj = document.getElementById("wizardGuide_add_saveascopy_button");
+    if (!obj || obj.checked)
+        buttons.push('{{ html.button("saveascopy") }}');
+
+    obj = document.getElementById("wizardGuide_add_saveascopy_cancel");
+    if (!obj || obj.checked)
+        buttons.push('{{ html.button("cancel") }}');
+
+    if (buttons.length > 0)
+        result += '<div style="text-align:center;">' + buttons.join(" ") + '</div>\r\n';
+
     return result;
 }
 
@@ -930,15 +1304,20 @@ function getLayout_Details() {
     let l = wizardFields.length;
 
     result += '<legend>{{ table.title }}</legend>\r\n\r\n';
-    result += '{{ html.goback("Go back") }}\r\n\r\n'
+
+    let obj = document.getElementById("wizardGuide_add_goback");
+    if (!obj || obj.checked)
+        result += '{{ html.goback("Go back") }}\r\n\r\n';
+
     result += '<div class="form-horizontal">\r\n\r\n';
 
-    let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+    let fieldtypes_to_skip = ['log', 'filebox', 'dummy'];
+    let fields_to_skip = getFieldsToSkip();
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
+        if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
             result += '\t<div class="control-group">\r\n';
             result += '\t\t<div class="control-label">{{ ' + field.fieldname + '.title }}</div>';
 
@@ -962,12 +1341,13 @@ function getLayout_Email() {
     let l = wizardFields.length;
     result += '<p>New form entry registered:</p>\r\n\r\n';
 
-    let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+    let fieldtypes_to_skip = ['log', 'filebox', 'dummy'];
+    let fields_to_skip = getFieldsToSkip();
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1)
+        if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1)
             result += '\t\t<p>{{ ' + field.fieldname + '.title }}: {{ ' + field.fieldname + ' }}</p>\r\n';
     }
     return result;
@@ -977,13 +1357,14 @@ function getLayout_CSV() {
     let result = "";
     let l = wizardFields.length;
 
-    let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy', 'ordering'];
-    let fieldtypes_to_purevalue = ['image', 'imagegallery', 'filebox', 'file'];
+    let fieldtypes_to_skip = ['log', 'filebox', 'dummy', 'ordering'];
+    let fieldtypes_to_purevalue = ['image', 'filebox', 'file'];
+    let fields_to_skip = getFieldsToSkip();
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
+        if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
             if (result !== '')
                 result += ',';
 
@@ -993,13 +1374,12 @@ function getLayout_CSV() {
 
     result += '\r\n{% block record %}';
 
-    let firstfield = true;
+    let firstField = true;
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
-
-            if (!firstfield)
+        if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
+            if (!firstField)
                 result += ',';
 
             if (fieldtypes_to_purevalue.indexOf(field.type) === -1)
@@ -1007,7 +1387,7 @@ function getLayout_CSV() {
             else
                 result += '"{{ ' + field.fieldname + '.value }}"';
 
-            firstfield = false;
+            firstField = false;
         }
     }
     result += '\r\n{% endblock %}';
@@ -1019,18 +1399,22 @@ function getLayout_JSON() {
     let l = wizardFields.length;
 
     result += '[\r\n{% block record %}\r\n{';
-    result += '"id_":"{{ record.id }}",\r\n';
 
-    let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy', 'ordering'];
-    let fieldtypes_to_purevalue = ['image', 'imagegallery', 'filebox', 'file'];
-    let firstfield = true;
+    let obj = document.getElementById("wizardGuide_add_record_id");
+    if (!obj || obj.checked)
+        result += '"id_":"{{ record.id }}",\r\n';
+
+    let fieldtypes_to_skip = ['log', 'filebox', 'dummy', 'ordering'];
+    let fieldtypes_to_purevalue = ['image', 'filebox', 'file'];
+    let fields_to_skip = getFieldsToSkip();
+    let firstField = true;
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
+        if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
 
-            if (!firstfield)
+            if (!firstField)
                 result += ',\r\n';
 
             if (fieldtypes_to_purevalue.indexOf(field.type) === -1)
@@ -1038,7 +1422,7 @@ function getLayout_JSON() {
             else
                 result += '"' + field.fieldname + '":"{{ ' + field.fieldname + '.value }}"';
 
-            firstfield = false;
+            firstField = false;
         }
     }
     result += '}{% if not record.islast %},{% endif %}\r\n{% endblock %}]\r\n';
@@ -1048,28 +1432,25 @@ function getLayout_JSON() {
 function getLayout_XML() {
     let result = "";
     let l = wizardFields.length;
-    result += '<?xml version="1.0" encoding="utf-8"?>\r\n<document>\r\n{catalogtable:\r\n';
-    let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy', 'ordering'];
+    result += '<?xml version="1.0" encoding="utf-8"?>\r\n<document>\r\n';
+
+    result += '{% block record %}\r\n';
+
+    let fieldtypes_to_skip = ['log', 'filebox', 'dummy', 'ordering'];
+    let fields_to_skip = getFieldsToSkip();
+
+    result += '<record id="{{ record.id }}">\r\n';
+
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
-            let v = '\t<field name=\'' + field.fieldname + '\' label=\'{{ ' + field.fieldname + '.title }}\'>{{ ' + field.fieldname + ' }}</field>\r\n';
-
-            if (index === 0)
-                result += '"":"<record id=\'{{ record.id }}\'>\r\n' + v + '"';
-            else if (index === l - 1)
-                result += '"":"' + v + '</record>\r\n"';
-            else
-                result += '"":"' + v + '"';
-
-            if (index < l - 1)
-                result += ',';
-            else
-                result += ';';
-        }
+        if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1)
+            result += '\t<field name=\'' + field.fieldname + '\' label=\'{{ ' + field.fieldname + '.title }}\'>{{ ' + field.fieldname + ' }}</field>\r\n';
     }
-    result += '}\r\n</document>';
+
+    result += '</record>{% endblock %}\r\n';
+
+    result += '</document>';
     return result;
 }
 
@@ -1077,7 +1458,7 @@ function getLayout_Record() {
     let result = "";
     let l = wizardFields.length;
     let fieldtypes_to_skip = ['log', 'dummy'];
-    let fieldtypes_to_purevalue = ['image', 'imagegallery', 'filebox', 'file', 'ordering'];
+    let fieldtypes_to_purevalue = ['image', 'filebox', 'file', 'ordering'];
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];

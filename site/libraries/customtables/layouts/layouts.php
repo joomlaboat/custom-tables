@@ -553,7 +553,7 @@ class Layouts
 
         $result .= PHP_EOL;
 
-        $fieldTypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+        $fieldTypes_to_skip = ['log', 'filebox', 'dummy'];
         $fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox', 'radio'];
         $fieldTypes_allowed_to_orderBy = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'userid', 'user', 'virtual'];
 
@@ -584,9 +584,10 @@ class Layouts
 
         foreach ($fields as $field) {
             if ((int)$field['published'] === 1) {
-                if ($field['type'] == 'imagegallery') {
+                if ($field['type'] == 'imagegallery')
                     $imageGalleryFound = true;
-                } elseif ($field['type'] == 'filebox') {
+                    
+                if ($field['type'] == 'filebox') {
                     $fileBoxFound = true;
                 } elseif ($field['type'] != 'ordering' && !in_array($field['type'], $fieldTypes_to_skip)) {
 
@@ -808,7 +809,7 @@ class Layouts
         $this->layoutType = 4;
         $result = 'Dear ...<br/>A new records has been added to {{ table.title }} table.<br/><br/>Details below:<br/>';
 
-        $fieldTypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+        $fieldTypes_to_skip = ['log', 'filebox', 'dummy'];
 
         foreach ($fields as $field) {
             if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1)
@@ -823,8 +824,8 @@ class Layouts
 
         $result = '';
 
-        $fieldTypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy', 'ordering'];
-        $fieldTypes_to_pureValue = ['image', 'imagegallery', 'filebox', 'file'];
+        $fieldTypes_to_skip = ['log', 'filebox', 'dummy', 'ordering'];
+        $fieldTypes_to_pureValue = ['image', 'filebox', 'file'];
 
         foreach ($fields as $field) {
             if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {

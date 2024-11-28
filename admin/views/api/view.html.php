@@ -54,7 +54,7 @@ class CustomtablesViewAPI extends HtmlView
                     $ct = new CT;
                     $ct->getTable($tableId);
                     if ($ct->Table === null) {
-                        $result = array('error' => 'tableid "' . $tableId . '" set but not loaded.');
+                        $result = array('error' => 'tableid \'' . $tableId . '\' set but not loaded.');
                         break;
                     }
 
