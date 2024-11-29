@@ -73,7 +73,6 @@ class IntegrityFields extends IntegrityChecks
             $found = false;
 
             foreach ($projected_fields as $projected_field) {
-
                 $found_field = '';
 
                 if ($projected_field['realfieldname'] == $ct->Table->realidfieldname and $existingFieldName == $ct->Table->realidfieldname) {
@@ -226,7 +225,8 @@ class IntegrityFields extends IntegrityChecks
             $proj_field = $projected_field['realfieldname'];
             $fieldType = $projected_field['type'];
             if ($fieldType !== null and $projected_field['typeparams'] !== null and $fieldType != 'dummy' and !Fields::isVirtualField($projected_field)) {
-                IntegrityFields::addFieldIfNotExists($ct, $ct->Table->realtablename, $ExistingFields, $proj_field, $fieldType, $projected_field['typeparams']);
+                if (!$ct->Table->published_field_found or (isset($projected_field['published']) and $projected_field['published'] == 1))
+                    IntegrityFields::addFieldIfNotExists($ct, $ct->Table->realtablename, $ExistingFields, $proj_field, $fieldType, $projected_field['typeparams']);
             }
         }
         return $result;

@@ -150,7 +150,7 @@ class Layouts
             $this->addCSSandJSIfNeeded($row, $checkLayoutFile);
 
         $this->pageLayoutNameString = $row['layoutname'];
-        $this->pageLayoutLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
+        $this->pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
         $this->layoutCode = $layoutCode;
         return $layoutCode;
     }
@@ -586,7 +586,7 @@ class Layouts
             if ((int)$field['published'] === 1) {
                 if ($field['type'] == 'imagegallery')
                     $imageGalleryFound = true;
-                    
+
                 if ($field['type'] == 'filebox') {
                     $fileBoxFound = true;
                 } elseif ($field['type'] != 'ordering' && !in_array($field['type'], $fieldTypes_to_skip)) {

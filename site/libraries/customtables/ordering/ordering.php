@@ -85,7 +85,7 @@ class Ordering
     {
         $params = array();
         $params['class'] = 'js-draggable';
-        $params['data-url'] = common::UriRoot(true) . '/index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $tableid . '&tmpl=component&clean=1';
+        $params['data-url'] = common::UriRoot(true, true) . 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $tableid . '&tmpl=component&clean=1';
         $params['data-direction'] = 'asc';
         $params['data-nested'] = 'true';
         return self::addEditHTMLTagParams($result, 'tbody', $params);

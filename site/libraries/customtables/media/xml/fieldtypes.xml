@@ -118,7 +118,7 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready 22 -->
+    <!-- WordPress Ready 22 PRO -->
     <type ct_name="blob" label="Blob (Save file into the database)"
           description="A BLOB is a binary large object that can hold an entire file." priority="2" proversion="1"
           wordpress="true" order="22">
@@ -210,7 +210,7 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready 39 -->
+    <!-- WordPress Ready 39 PRO -->
     <type ct_name="log" label="Change Log"
           description="Logs all record modifications. User, Date/time, and IP. You can return to the previous version of the record."
           priority="3" proversion="1" wordpress="true" order="39">
@@ -382,7 +382,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready 19 -->
+    <!-- WordPress Ready 19 PRO -->
     <type ct_name="file" label="File" description="Enables file upload functionality." priority="2"
           helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types" proversion="1" wordpress="true"
           order="19">
@@ -463,7 +463,7 @@
         </valueparams>
     </type>
 
-    <!-- WordPress NOT Ready 20 -->
+    <!-- WordPress NOT Ready 20 PRO -->
     <type ct_name="filebox" label="File Box"
           description="Enables multiple file uploads and version tracking." priority="3"
           proversion="1" wordpress="false" order="20">
@@ -710,7 +710,7 @@
         </valueparams>
     </type>
 
-    <!-- WordPress Ready 17 -->
+    <!-- WordPress Ready 17 PRO -->
     <type ct_name="image" label="Image File" description="Provides Image Upload functionality." priority="2"
           proversion="1" wordpress="true" order="17">
         <params>
@@ -782,7 +782,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready 18 -->
+    <!-- WordPress Ready 18 PRO -->
     <type ct_name="imagegallery" label="Image Gallery" description="Provides Multiple Image Upload functionality."
           priority="3" proversion="1" link="https://joomlaboat.com/image-gallery"
           link_title="Interactive Image Gallery examples" wordpress="true" order="18">
@@ -887,7 +887,7 @@
         </editparams>
     </type>
 
-    <!-- WordPress Ready 33 -->
+    <!-- WordPress Ready 33 PRO -->
     <type ct_name="md5" label="MD5 Hash" description="Calculates MD5 Hash based on selected field values." priority="3"
           proversion="1" wordpress="true" order="33"><!-- pro -->
         <params>
@@ -1056,7 +1056,7 @@
         </params>
     </type>-->
 
-    <!-- WordPress Ready 7 -->
+    <!-- WordPress Ready 7 PRO -->
     <type ct_name="radio" label="Radio" description="Radio Buttons" priority="3" proversion="1"
           repetitive="1" wordpress="true" order="7"><!-- pro -->
         <params>
@@ -1188,7 +1188,7 @@
         </params>
     </type>
 
-    <!-- WordPress Ready 24 -->
+    <!-- WordPress Ready 24 PRO -->
     <type ct_name="sqljoin" label="Table Join"
           description="Left Join to another table. Finds the record to read a value of the specified field.&lt;br/&gt;&lt;br/&gt;To read any field of joined table use {{ fieldname.get('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read unprocessed value of the joined table field use this tag {{ fieldname.getvalue('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read joined table record processed using the Layout use this tag  {{ fieldname.layout('layout_name') }}."
           priority="3" proversion="1" wordpress="true" order="24">
@@ -1290,7 +1290,7 @@
         </subvalueparams>
     </type>
 
-    <!-- WordPress Ready 25 -->
+    <!-- WordPress Ready 25 PRO -->
     <type ct_name="records" label="Table Join List"
           description="Concatenated ID list referencing another table." priority="2" proversion="1" wordpress="true"
           order="25">

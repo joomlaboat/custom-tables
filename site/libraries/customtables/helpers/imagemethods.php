@@ -87,7 +87,7 @@ class CustomTablesImageMethods
         if (strlen($ImageFolder) > 0 and $ImageFolder[strlen($ImageFolder) - 1] == '/')
             $ImageFolder = substr($ImageFolder, 0, strlen($ImageFolder) - 1);
 
-        return ['path' => $ImageFolderPath, 'web' => common::UriRoot() . '/' . $ImageFolder];
+        return ['path' => $ImageFolderPath, 'web' => common::UriRoot(false, true) . $ImageFolder];
     }
 
     public static function CheckImage($src): bool

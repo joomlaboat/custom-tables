@@ -67,7 +67,7 @@ class InputBox_imagegallery extends BaseInputBox
 
         $result .= '<div class="esUploadFileBox" style="vertical-align:top;">';
 
-        //$result .= $this->renderImageAndDeleteOption($this->field, common::UriRoot(false, true) . $image['src'], $image['shortcut']);
+        //$result .= $this->renderImageAndDeleteOption($this->field, $image['src'], $image['shortcut']);
 
         $result .= $this->renderUploader();
         $result .= '</div>';
@@ -84,7 +84,7 @@ class InputBox_imagegallery extends BaseInputBox
         $style = '';//'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
         $element_id = 'ct_uploadfile_box_' . $this->field->fieldname;
         /*
-                $urlString = common::UriRoot(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname . '_fileid=' . $fileId
+                $urlString = '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname . '_fileid=' . $fileId
                     . '&Itemid=' . $this->field->ct->Params->ItemId
                     . (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
                     . '&fieldname=' . $this->field->fieldname;

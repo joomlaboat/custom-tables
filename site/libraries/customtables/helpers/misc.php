@@ -654,9 +654,9 @@ class CTMiscHelper
         return $htmlResult;
     }
 
+    //Used in custom php
     public static function suggest_TempFileName(&$webFileLink, ?string $fileExtension = null): ?string
     {
-        $webDir = common::UriRoot(true) . 'tmp/';
         $random_name = common::generateRandomString();
 
         while (1) {
@@ -664,7 +664,7 @@ class CTMiscHelper
             $fileName = $random_name . ($fileExtension !== null ? '.' . $fileExtension : '');
             $file = CUSTOMTABLES_TEMP_PATH . $fileName;
             if (!file_exists($file)) {
-                $webFileLink = $webDir . $fileName;
+                $webFileLink = CUSTOMTABLES_TEMP_PATH . $fileName;
                 return $file;
             }
         }

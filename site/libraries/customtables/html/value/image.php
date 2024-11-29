@@ -122,7 +122,7 @@ class Value_image extends BaseValue
             $imageFile = $ImageFolderArray['path'] . DIRECTORY_SEPARATOR . $prefix . $rowValue . '.' . $imageFileExtension;
             if (file_exists($imageFile)) {
                 $imageSrc = $ImageFolderArray['web'] . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
-                $imageTag = '<img src="' . common::UriRoot(false, true) . $imageSrc . '" style="width:150px;height:150px;" alt="' . $siteName . '" title="' . $siteName . '" />';
+                $imageTag = '<img src="' . $imageSrc . '" style="width:150px;height:150px;" alt="' . $siteName . '" title="' . $siteName . '" />';
                 return ['src' => $imageSrc, 'tag' => $imageTag];
             }
             return null;
@@ -142,7 +142,7 @@ class Value_image extends BaseValue
 
             if ($imageFileExtension != '') {
                 $imageSrc = $ImageFolderArray['web'] . '/' . $prefix . $rowValue . '.' . $imageFileExtension;
-                $imageTag = '<img src="' . common::UriRoot(false, true) . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '" />';
+                $imageTag = '<img src="' . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '" />';
                 return ['src' => $imageSrc, 'tag' => $imageTag];
             }
             return null;
@@ -151,7 +151,7 @@ class Value_image extends BaseValue
 
         $imgMethods = new CustomTablesImageMethods;
 
-        //--- WARNING - ERROR -- REAL EXT NEEDED - IT COMES FROM OPTIONS
+        //--- TODO: WARNING - ERROR -- REAL EXT NEEDED - IT COMES FROM OPTIONS
 
         $imageSizes = $imgMethods->getCustomImageOptions($params[0]);
 
@@ -172,10 +172,9 @@ class Value_image extends BaseValue
                     if ($img[2] > 0)
                         $styles[] = 'height:' . $img[2] . 'px;';
 
-                    $imageTag = '<img src="' . common::UriRoot(false, true) . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '"'
+                    $imageTag = '<img src="' . $imageSrc . '" alt="' . $siteName . '" title="' . $siteName . '"'
                         . (count($styles) > 0 ? ' style="' . implode(";", $styles) . '"' : '') . ' />';
 
-                    $imageSrc = $imageFile;
                     return ['src' => $imageSrc, 'tag' => $imageTag];
                 }
             }

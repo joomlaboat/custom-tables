@@ -125,7 +125,7 @@ class Catalog
             $pageLayout = $Layouts->getLayout($layoutName);
             if (isset($Layouts->layoutId)) {
                 $pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
-                $pageLayoutLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+                $pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
             } else {
                 $this->ct->errors[] = 'Layout "' . $layoutName . '" not found.';
             }
@@ -144,7 +144,7 @@ class Catalog
                     $pageLayout = $Layouts->getLayout($this->ct->Params->pageLayout);//Get Layout by name
                     if (isset($Layouts->layoutId)) {
                         $pageLayoutNameString = $this->ct->Params->pageLayout;
-                        $pageLayoutLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+                        $pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
                     } else {
                         $this->ct->errors[] = 'Layout "' . $this->ct->Params->pageLayout . '" not found.';
                         return '';

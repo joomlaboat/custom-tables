@@ -96,28 +96,6 @@ class Value_imagegallery extends BaseValue
         $imageGalleryPrefix = 'g';
         $imageFolderArray = CustomTablesImageMethods::getImageFolder($params);
 
-        //if ($imageFolder == '') {
-        //    $imageFolder = 'ct_images';
-        //    $imageFolderServer = CUSTOMTABLES_IMAGES_PATH . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
-        //    $imageFolderWeb = 'images/' . $imageFolder;
-        //} else {
-        /*
-        $f = str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
-        if (strlen($f) > 0) {
-            if ($f[0] == DIRECTORY_SEPARATOR) {
-                $imageFolderServer = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
-                $imageFolderServer = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $imageFolderServer);
-            } else
-                $imageFolderServer = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $imageFolder);
-
-            $imageFolderWeb = common::UriRoot() . '/' . $imageFolder;
-        } else {
-            $imageFolderServer = CUSTOMTABLES_ABSPATH;
-            $imageFolderWeb = '';
-        }
-        //}
-        */
-
         //the returned list should be separated by ;
         $imageSRCListArray = [];
         $imgMethods = new CustomTablesImageMethods;

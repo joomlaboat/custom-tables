@@ -76,17 +76,17 @@ class Twig_HTML_Tags
 
         if (defined('_JEXEC')) {
             if ($Alias_or_ItemId != '' and is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)
-                $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' . $Alias_or_ItemId;
+                $link = common::UriRoot(true, true) . 'index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' . $Alias_or_ItemId;
             elseif ($Alias_or_ItemId != '') {
 
-                $link = common::UriRoot(true) . '/index.php/' . $Alias_or_ItemId;
+                $link = common::UriRoot(true, true) . 'index.php/' . $Alias_or_ItemId;
                 $link = CTMiscHelper::deleteURLQueryOption($link, 'option');
                 $link = CTMiscHelper::deleteURLQueryOption($link, 'edit');
                 $link .= (str_contains($link, '?') ? '&amp;' : '?') . 'option=com_customtables';
                 $link .= '&amp;view=edititem';
 
             } else
-                $link = common::UriRoot(true) . '/index.php?option=com_customtables&amp;view=edititem&amp;returnto='
+                $link = common::UriRoot(true, true) . 'index.php?option=com_customtables&amp;view=edititem&amp;returnto='
                     . '&amp;Itemid=' . $this->ct->Params->ItemId;
 
             if ($isModal) {

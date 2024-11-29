@@ -74,20 +74,6 @@ class CustomtablesViewListOfFields extends HtmlView
         $this->isEmptyState = count($this->items ?? 0) == 0;
 
         // We don't need toolbar in the modal window.
-        /*
-        $this->ct->Table->tableid = common::inputGetInt('tableid', 0);
-
-        if ($this->ct->Table->tableid != 0) {
-            echo 'getTable<br/>';
-            $this->ct->getTable($this->ct->Table->tableid);
-            if ($this->ct->Table === null) {
-                Factory::getApplication()->enqueueMessage('Table not found', 'error');
-                $this->ct->Table->tableid = 0;
-            } else {
-                echo 'Table already set<br/>';
-            }
-        }
-        */
 
         if ($this->getLayout() !== 'modal') {
             if ($this->ct->Env->version < 4) {

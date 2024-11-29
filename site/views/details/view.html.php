@@ -23,7 +23,6 @@ class CustomTablesViewDetails extends HtmlView
     function display($tpl = null)
     {
         $this->ct = new CT(null, false);
-
         $this->details = new Details($this->ct);
 
         if ($this->ct->Env->print)

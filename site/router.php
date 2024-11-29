@@ -11,11 +11,20 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\Value_file;
+use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Component\Router\RouterInterface;
+use Joomla\CMS\Menu\AbstractMenu;
+use CustomTables\Value_file;
 
 class CustomTablesRouter implements RouterInterface
 {
+
+    public function __construct(SiteApplication $app, AbstractMenu $menu)
+    {
+        $this->app = $app;
+        $this->menu = $menu;
+    }
+
     public function build(&$query): array
     {
         $segments = [];
@@ -26,14 +35,9 @@ class CustomTablesRouter implements RouterInterface
         return $segments;
     }
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
     public function parse(&$segments): array
     {
         $vars = [];
-
         //Check if it's a file to download
 
         $libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries';
@@ -45,7 +49,7 @@ class CustomTablesRouter implements RouterInterface
         require_once($processor_file);
 
         $fileOutput = new Value_file();
-        
+
         if ($fileOutput->CheckIfFile2download($segments, $vars)) {
             //rerouted
             $vars['option'] = 'com_customtables';

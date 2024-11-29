@@ -127,7 +127,7 @@ class CT
      * @throws Exception
      * @since 3.2.3
      */
-    function getTable($tableNameOrID, $userIdFieldName = null, bool $loadAllField = true): void
+    function getTable($tableNameOrID, $userIdFieldName = null, bool $loadAllField = false): void
     {
         $this->Table = new Table($this->Languages, $this->Env, $tableNameOrID, $userIdFieldName, $loadAllField);
 
@@ -148,8 +148,11 @@ class CT
         if (is_null($this->Table->fields))
             return;
 
-        if (!str_contains($this->Env->current_url, 'option=com_customtables')) {
+        $option = common::inputGetCmd('option');
+
+        if ($option == 'com_customtables') {
             foreach ($this->Table->fields as $fld) {
+
                 if ($fld['type'] == 'alias') {
                     $this->alias_fieldname = $fld['fieldname'];
                     return;

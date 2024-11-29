@@ -149,7 +149,7 @@ class InputBox_file extends BaseInputBox
         $max_file_size = CTMiscHelper::file_upload_max_size($custom_max_size);
 
         $file_id = common::generateRandomString();
-        $URLString = common::UriRoot(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname
+        $URLString = common::UriRoot(true, true) . 'index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname
             . '_fileid=' . $file_id
             . '&Itemid=' . $this->field->ct->Params->ItemId
             . (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)

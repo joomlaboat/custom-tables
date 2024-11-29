@@ -31,7 +31,7 @@ class CustomTablesController extends BaseController
             $fileOutput->display();
 
             if (count($fileOutput->ct->errors) > 0) {
-                echo '<p>Error: ' . implode(', ', $fileOutput->ct->errors) . '</p>';
+                echo '<p>File Error: ' . implode(', ', $fileOutput->ct->errors) . '</p>';
             }
         }
 

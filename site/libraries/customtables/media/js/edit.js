@@ -1256,9 +1256,11 @@ function ctInputBoxRecords_addItem(control_name, control_name_postfix) {
     let o = document.getElementById(control_name + control_name_postfix);
     o.selectedIndex = 0;
 
-    if (ctInputBoxRecords_dynamic_filter[control_name] != '') {
+    if (ctInputBoxRecords_dynamic_filter[control_name] !== '') {
 
-        document.getElementById(control_name + '_ctInputBoxRecords_current_value').innerHTML = '';
+        let ctInputBoxRecords_current_value = document.getElementById(control_name + '_ctInputBoxRecords_current_value');
+        if (ctInputBoxRecords_current_value)
+            ctInputBoxRecords_current_value.innerHTML = '';
 
         let SQLJoinLink = document.getElementById(control_name + control_name_postfix + 'SQLJoinLink');
         if (SQLJoinLink)// {
@@ -1423,7 +1425,11 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
         v = o.options[o.selectedIndex].value;
     }
 
-    let selectedValue = document.getElementById(control_name + '_ctInputBoxRecords_current_value').innerHTML;
+    let selectedValue = null
+    let ctInputBoxRecords_current_value = document.getElementById(control_name + '_ctInputBoxRecords_current_value');
+
+    if (ctInputBoxRecords_current_value)
+        selectedValue = ctInputBoxRecords_current_value.innerHTML;
 
     ctInputBoxRecords_removeOptions(l);
 

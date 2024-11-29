@@ -158,25 +158,30 @@ class Value_file extends BaseValue
         return self::process($this->rowValue, $this->field, $this->option_list, $listing_id);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.4.5
+     */
     public static function process(string $filename, Field $field, array $option_list, string $record_id, bool $filename_only = false, int $file_size = 0)
     {
+        $fileWeb = null;
+        $filePath = null;
+
         if ($field->type == 'filelink') {
             $FileFolderArray = CustomTablesImageMethods::getImageFolder($field->params, $field->type);
+            $fileWeb = $FileFolderArray['web'] . '/' . $filename;
+            $filePath = $FileFolderArray['path'] . DIRECTORY_SEPARATOR . $filename;
 
-            //$FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[0] ?? '');
-            $filepath = $FileFolderArray['web'] . '/' . $filename;
-
-        } elseif ($field->type == 'blob')
-            $filepath = $filename;
-        else {
+        } elseif ($field->type == 'blob') {
+            $fileWeb = $filename;
+        } else {
             $FileFolderArray = CustomTablesImageMethods::getImageFolder($field->params, $field->type);
-            //$FileFolder = FileUtils::getOrCreateDirectoryPath($field->params[1] ?? '');
-            $filepath = $FileFolderArray['path'] . DIRECTORY_SEPARATOR . $filename;
-            //$filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $filepath);
+            $filePath = $FileFolderArray['path'] . DIRECTORY_SEPARATOR . $filename;
 
-            //$full_filepath = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, CUSTOMTABLES_ABSPATH . $filepath);
-            if (file_exists($filepath))
-                $file_size = filesize($filepath);
+            if (file_exists($filePath)) {
+                $file_size = filesize($filePath);
+                $fileWeb = $FileFolderArray['web'] . '/' . $filename;
+            }
         }
 
         if (!isset($option_list[2]))
@@ -190,6 +195,7 @@ class Value_file extends BaseValue
         $parts = explode('.', $filename);
         $fileExtension = end($parts);
 
+        //Get the Icon
         $icon_Name = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables'
             . DIRECTORY_SEPARATOR . 'media'
             . DIRECTORY_SEPARATOR . 'images'
@@ -204,34 +210,21 @@ class Value_file extends BaseValue
 
         $how_to_process = $option_list[0] ?? '';
 
-        if ($record_id === null) {
-            $fileWebPath = null;
-        } else {
-            if ($how_to_process != '') {
-                $fileWebPath = self::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
-            } elseif ($field->type == 'blob') {
-                $how_to_process = 'blob';//Not secure but BLOB
-                $fileWebPath = self::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
-            } else {
+        if ($how_to_process != '') {
+            $fileWeb = self::get_private_file_path($filename, $how_to_process, $filePath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+        } elseif ($field->type == 'blob') {
+            $how_to_process = 'blob';//Not secure but BLOB
+            $fileWeb = self::get_private_file_path($filename, $how_to_process, $fileWeb, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+        }
 
-                //Add host name and path to the link
-                if ($filepath !== '' and $filepath[0] == '/')
-                    $fileWebPath = substr($filepath, 1);
+        if (isset($option_list[3])) {
+            if ($option_list[3] == 'savefile') {
+                if (!str_contains($fileWeb, '?'))
+                    $fileWeb .= '?';
                 else
-                    $fileWebPath = $filepath;
+                    $fileWeb .= '&';
 
-                $fileWebPath = common::UriRoot(false, true) . $fileWebPath;
-            }
-
-            if (isset($option_list[3])) {
-                if ($option_list[3] == 'savefile') {
-                    if (!str_contains($fileWebPath, '?'))
-                        $fileWebPath .= '?';
-                    else
-                        $fileWebPath .= '&';
-
-                    $fileWebPath .= 'savefile=1'; //Will add HTTP Header: @header("Content-Disposition: attachment; filename=\"".$filename."\"");
-                }
+                $fileWeb .= 'savefile=1'; //Will add HTTP Header: @header("Content-Disposition: attachment; filename=\"".$filename."\"");
             }
         }
 
@@ -248,25 +241,25 @@ class Value_file extends BaseValue
             case '':
             case 'link':
                 //Link Only
-                return $fileWebPath;
+                return $fileWeb;
 
             case 'icon-filename-link':
                 //Clickable Icon and File Name
-                return '<a href="' . $fileWebPath . '"' . $target . '>'
+                return '<a href="' . $fileWeb . '"' . $target . '>'
                     . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '')
                     . '<span>' . $filename . '</span></a>';
 
             case 'icon-link':
                 //Clickable Icon
-                return '<a href="' . $fileWebPath . '"' . $target . '>' . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : $filename) . '</a>';//show file name if icon not available
+                return '<a href="' . $fileWeb . '"' . $target . '>' . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : $filename) . '</a>';//show file name if icon not available
 
             case 'filename-link':
                 //Clickable File Name
-                return '<a href="' . $fileWebPath . '"' . $target . '>' . $filename . '</a>';
+                return '<a href="' . $fileWeb . '"' . $target . '>' . $filename . '</a>';
 
             case 'link-anchor':
                 //Clickable Link
-                return '<a href="' . $fileWebPath . '"' . $target . '>' . $fileWebPath . '</a>';
+                return '<a href="' . $fileWeb . '"' . $target . '>' . $fileWeb . '</a>';
 
             case 'icon':
                 return ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '');//show nothing is icon not available
@@ -284,29 +277,29 @@ class Value_file extends BaseValue
                 return CTMiscHelper::formatSizeUnits($file_size);
 
             default:
-                return $fileWebPath;
+                return $fileWeb;
         }
     }
 
-    protected static function get_private_file_path(string $rowValue, string $how_to_process, string $filepath, string $listing_id, int $fieldid, int $tableid, bool $filename_only = false): ?string
+    protected static function get_private_file_path(string $rowValue, string $how_to_process, string $fileWebPath, string $listing_id, int $fieldid, int $tableid, bool $filename_only = false): ?string
     {
         $security = self::get_security_letter($how_to_process);
 
         //make the key
-        $key = self::makeTheKey($filepath, $security, $listing_id, $fieldid, $tableid);
+        $key = self::makeTheKey($fileWebPath, $security, $listing_id, $fieldid, $tableid);
 
         //prepare new file name that includes the key
         $fna = explode('.', $rowValue);
         $filetype = $fna[count($fna) - 1];
         array_splice($fna, count($fna) - 1);
-        $filename = implode('.', $fna);
-        $filepath = $filename . '_' . $key . '.' . $filetype;
+        $fileName = implode('.', $fna);
+        $filePath = $fileName . '_' . $key . '.' . $filetype;
 
         if (!$filename_only) {
             if (defined('_JEXEC'))
-                return CUSTOMTABLES_MEDIA_HOME_URL . '/index.php?option=com_customtables&file=' . $filepath;
+                return CUSTOMTABLES_MEDIA_HOME_URL . '/index.php?option=com_customtables&file=' . $filePath;
             elseif (defined('WPINC'))
-                return CUSTOMTABLES_MEDIA_HOME_URL . '/index.php?customtables=1&file=' . $filepath;
+                return CUSTOMTABLES_MEDIA_HOME_URL . '/index.php?customtables=1&file=' . $filePath;
         }
         return null;
     }
@@ -554,25 +547,18 @@ class Value_file extends BaseValue
      * @throws Exception
      * @since 3.2.9
      */
-    function render_file_output(string $filepath): bool
+    function render_file_output(string $filePath): bool
     {
-        if (strlen($filepath) > 8 and str_starts_with($filepath, '/images/'))
-            $file = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
-        else
-            $file = CUSTOMTABLES_ABSPATH . str_replace('/', DIRECTORY_SEPARATOR, '/images' . $filepath);
-
-        $file = str_replace('//', '/', $file);
-
-        if (!file_exists($file)) {
-            echo 'not found';
-            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND');
+        if (!file_exists($filePath)) {
+            $this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND') . ': \'' . $filePath . '\'';
             return false;
         }
 
-        $content = common::getStringFromFile($file);
+        $content = common::getStringFromFile($filePath);
 
-        $parts = explode('/', $file);
-        $filename = end($parts);
+        //Make a file name
+        $parts = explode(DIRECTORY_SEPARATOR, $filePath);
+        $fileName = end($parts);
 
         try {
             $content = $this->ProcessContentWithCustomPHP($content, $this->row);
@@ -583,7 +569,7 @@ class Value_file extends BaseValue
 
         if (ob_get_contents()) ob_end_clean();
 
-        $mt = mime_content_type($file);
+        $mt = mime_content_type($filePath);
 
         @header('Content-Type: ' . $mt);
         @header("Pragma: public");
@@ -592,7 +578,7 @@ class Value_file extends BaseValue
         @header("Cache-Control: public");
         @header("Content-Description: File Transfer");
         @header("Content-Transfer-Encoding: binary");
-        @header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
+        @header("Content-Disposition: attachment; filename=\"" . $fileName . "\"");
 
         echo $content;
 
