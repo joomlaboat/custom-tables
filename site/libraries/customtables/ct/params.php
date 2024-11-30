@@ -17,7 +17,6 @@ use Exception;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Version;
 use Joomla\Registry\Registry;
 
 class Params
@@ -79,7 +78,6 @@ class Params
     var ?string $recordsTable;
     var ?string $recordsUserIdField;
     var ?string $recordsField;
-    var float $version;
 
     var bool $blockExternalVars;
 

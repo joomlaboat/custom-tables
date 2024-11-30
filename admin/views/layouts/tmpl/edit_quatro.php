@@ -163,8 +163,8 @@ foreach ($this->allTables as $table) {
     <?php echo HTMLHelper::_('form.token'); ?>
 
     <div class="clearfix"></div>
-    <?php //echo JLayoutHelper::render('layouts.details_under', $this);
-    echo $this->layoutEditor->render_onPageLoads($onPageLoads, 4);
+    <?php
+    echo $this->layoutEditor->render_onPageLoads($onPageLoads);
     $this->getMenuItems();
     ?>
 

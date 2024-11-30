@@ -57,7 +57,6 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
      */
     public $prefix = null;
     protected bool $icons;
-    protected int $version;
     /**
      * View all flag
      *

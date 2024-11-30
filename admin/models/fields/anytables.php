@@ -16,16 +16,11 @@ use CustomTables\database;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Version;
-
-$versionObject = new Version;
-$version = (int)$versionObject->getShortVersion();
 
 //Returns the Options object with the list of tables (specified by table id in url)
 
-if ($version < 4) {
+if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
-    //jimport('joomla.form.helper');
     JFormHelper::loadFieldClass('list');
 
     class JFormFieldAnyTables extends JFormFieldList

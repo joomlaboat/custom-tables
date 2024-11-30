@@ -14,7 +14,6 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Version;
 
 class LayoutEditor
 {
@@ -26,15 +25,10 @@ class LayoutEditor
 
         if (defined('_JEXEC')) {
             $document = Factory::getDocument();
-
             $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
-
-            $version_object = new Version;
-            $version = (int)$version_object->getShortVersion();
-
             $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 
-            if ($version < 4)
+            if (!CUSTOMTABLES_JOOMLA_MIN_4)
                 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
             else
                 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_j4.js"></script>');
@@ -56,11 +50,10 @@ class LayoutEditor
             $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
             $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
             $document->addCustomTag('<script src="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
-
             $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/theme/' . $this->theme . '.css">');
             $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/theme/material-darker.css">');
 
-            if ($version >= 4)
+            if (CUSTOMTABLES_JOOMLA_MIN_4)
                 $document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/media/system/css/fields/switcher.css">');
         }
     }
@@ -158,7 +151,7 @@ class LayoutEditor
         return implode(',', $list);
     }
 
-    public function render_onPageLoads($onPageLoads, $version): string
+    public function render_onPageLoads($onPageLoads): string
     {
         $result = '
 <div id="layouteditor_Modal" class="layouteditor_modal">
@@ -173,9 +166,12 @@ class LayoutEditor
 </div>
 		';
 
-        $result_js = '
-	
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
+            $version = 4;
+        else
+            $version = 3;
 
+        $result_js = '
 	joomlaVersion =' . $version . ';
 	define_cmLayoutEditor();
 

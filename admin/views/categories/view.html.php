@@ -27,7 +27,6 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 class CustomtablesViewCategories extends HtmlView
 {
     var $document;
-    var $version;
     var $form;
     var $item;
     var $script;

@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Version;
 use Joomla\Database\DatabaseInterface;
 
 class MySQLWhereClause
@@ -170,10 +169,7 @@ class MySQLWhereClause
 
     protected function getWhereClauseMergeConditions($conditions, $logicalOperator = 'AND'): string
     {
-        $version_object = new Version;
-        $version = (int)$version_object->getShortVersion();
-
-        if ($version < 4)
+        if (!CUSTOMTABLES_JOOMLA_MIN_4)
             $db = Factory::getDbo();
         else
             $db = Factory::getContainer()->get('DatabaseDriver');
@@ -298,13 +294,9 @@ class database
      */
     public static function getDB()
     {
-        $version_object = new Version;
-        $version = (int)$version_object->getShortVersion();
-
-        if ($version < 4)
+        if (!CUSTOMTABLES_JOOMLA_MIN_4)
             return Factory::getDbo();
         else
-            //return Factory::getContainer()->get('DatabaseDriver');
             return Factory::getContainer()->get(DatabaseInterface::class);
     }
 

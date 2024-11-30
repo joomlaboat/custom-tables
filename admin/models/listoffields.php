@@ -17,10 +17,8 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\ListOfFields;
 use CustomTables\DataTypes;
-
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Version;
 use Joomla\CMS\MVC\Model\ListModel;
 
 /**
@@ -98,10 +96,7 @@ class CustomtablesModelListOfFields extends ListModel
      */
     protected function populateState($ordering = 'a.id', $direction = 'asc')
     {
-        $version_object = new Version;
-        $version = (int)$version_object->getShortVersion();
-
-        if ($version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
             $this->setState('filter.search', $search);
 
@@ -116,7 +111,7 @@ class CustomtablesModelListOfFields extends ListModel
 
         parent::populateState($ordering, $direction);
 
-        if ($version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             $ordering = $this->state->get('list.ordering');
             $direction = strtoupper($this->state->get('list.direction'));
             $app = Factory::getApplication();

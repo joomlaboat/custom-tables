@@ -14,14 +14,10 @@ defined('_JEXEC') or die();
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Version;
 use CustomTables\common;
 use CustomTables\database;
 
-$versionObject = new Version;
-$version = (int)$versionObject->getShortVersion();
-
-if ($version < 4) {
+if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
     JFormHelper::loadFieldClass('list');
 

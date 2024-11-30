@@ -13,8 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use Joomla\CMS\Version;
-
 class Documentation
 {
     var bool $internal_use = false;

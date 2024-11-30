@@ -34,7 +34,7 @@ class CustomtablesViewDocumentation extends HtmlView
      *
      * @since 3.0.0
      */
-    var float $version;
+
     var ?\CustomTables\Documentation $documentation;
 
     public function display($tpl = null)

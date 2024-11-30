@@ -59,10 +59,8 @@ class com_customtablesInstallerScript
     public function preflight($type, $parent): bool
     {
         if ($type == 'uninstall') {
-            $version_object = new Version;
-            $version = (int)$version_object->getShortVersion();
 
-            if ($version < 4)
+            if (!CUSTOMTABLES_JOOMLA_MIN_4)
                 $db = Factory::getDbo();
             else
                 $db = Factory::getContainer()->get(DatabaseInterface::class);
@@ -94,10 +92,7 @@ class com_customtablesInstallerScript
             }
 
             //Temporary change component_id of custom back-end menu items
-            $version_object = new Version;
-            $version = (int)$version_object->getShortVersion();
-
-            if ($version < 4)
+            if (!CUSTOMTABLES_JOOMLA_MIN_4)
                 $db = Factory::getDbo();
             else
                 $db = Factory::getContainer()->get(DatabaseInterface::class);
@@ -183,11 +178,7 @@ class com_customtablesInstallerScript
         }
 
         if ($type == 'update') {
-
-            $version_object = new Version;
-            $version = (int)$version_object->getShortVersion();
-
-            if ($version < 4)
+            if (!CUSTOMTABLES_JOOMLA_MIN_4)
                 $db = Factory::getDbo();
             else
                 $db = Factory::getContainer()->get(DatabaseInterface::class);

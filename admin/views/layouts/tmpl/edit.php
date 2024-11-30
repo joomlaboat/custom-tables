@@ -160,7 +160,7 @@ foreach ($this->allTables as $table) {
     echo HTMLHelper::_('bootstrap.endTab');
     echo HTMLHelper::_('bootstrap.endTabSet');
     echo HTMLHelper::_('form.token');
-    echo $this->layoutEditor->render_onPageLoads($onPageLoads, 3);
+    echo $this->layoutEditor->render_onPageLoads($onPageLoads);
 
     $this->getMenuItems();
     ?>

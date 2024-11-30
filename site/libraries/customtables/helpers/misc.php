@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Version;
 use JPluginHelper;
 use stdClass;
 
@@ -629,9 +628,6 @@ class CTMiscHelper
      */
     public static function applyContentPlugins(string &$htmlResult): string
     {
-        $version_object = new Version;
-        $version = (int)$version_object->getShortVersion();
-
         $mainframe = Factory::getApplication();
 
         if (method_exists($mainframe, 'getParams')) {
@@ -640,7 +636,7 @@ class CTMiscHelper
 
             $content_params = $mainframe->getParams('com_content');
 
-            if ($version >= 4) {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
                 $htmlResult = \Joomla\CMS\HTML\Helpers\Content::prepare($htmlResult, $content_params);
             } else {
                 $o = new stdClass();

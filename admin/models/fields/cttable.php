@@ -16,12 +16,8 @@ use CustomTables\database;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Version;
 
-$versionObject = new Version;
-$version = (int)$versionObject->getShortVersion();
-
-if ($version < 4) {
+if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
     JFormHelper::loadFieldClass('list');
 
