@@ -18,7 +18,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
 
 /**
  * CustomTables View class
@@ -35,9 +34,6 @@ class CustomTablesViewCustomTables extends HtmlView
      */
     function display($tpl = null): void
     {
-        $version = new Version;
-        $this->version = (int)$version->getShortVersion();
-
         // Assign data to the view
         $this->icons = $this->get('Icons');
         $this->contributors = CustomtablesHelper::getContributors();

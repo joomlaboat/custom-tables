@@ -18,20 +18,12 @@ jimport('joomla.application.component.view');
 use CustomTables\common;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
 
 class CustomTablesViewImportTables extends HtmlView
 {
-	var $catalogview;
-	var $version;
-
-	function display($tpl = null)
-	{
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
-
-		ToolbarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
-
-		parent::display($tpl);
-	}
+    function display($tpl = null)
+    {
+        ToolbarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
+        parent::display($tpl);
+    }
 }

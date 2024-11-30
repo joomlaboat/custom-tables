@@ -76,68 +76,21 @@ class CustomtablesViewListOfFields extends HtmlView
         // We don't need toolbar in the modal window.
 
         if ($this->getLayout() !== 'modal') {
-            if ($this->ct->Env->version < 4) {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
+                $this->addToolbar_4();
+            } else {
                 $this->addToolbar_3();
                 $this->sidebar = JHtmlSidebar::render();
-            } else
-                $this->addToolbar_4();
-
-            // load the batch html
-            if ($this->canCreate && $this->canEdit && $this->canState) {
-                //$this->batchDisplay = JHtmlBatch_::render();
             }
         }
 
         $this->languages = $this->ct->Languages->LanguageList;
 
         // Display the template
-        if ($this->ct->Env->version < 4)
-            parent::display($tpl);
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             parent::display('quatro');
-    }
-
-    protected function addToolBar_3()
-    {
-        if ($this->ct->Table->tableid != 0) {
-            ToolbarHelper::title('Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
-        } else
-            ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
-
-        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
-
-        if ($this->canCreate) {
-            ToolbarHelper::addNew('fields.add');
-        }
-
-        // Only load if there are items
-        if (CustomtablesHelper::checkArray($this->items)) {
-            if ($this->canEdit) {
-                ToolbarHelper::editList('fields.edit');
-            }
-
-            if ($this->canState) {
-                ToolbarHelper::publishList('listoffields.publish');
-                ToolbarHelper::unpublishList('listoffields.unpublish');
-            }
-
-            if ($this->canDo->get('core.admin')) {
-                ToolbarHelper::checkin('listoffields.checkin');
-            }
-
-            if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
-                ToolbarHelper::deleteList('', 'listoffields.delete', 'JTOOLBAR_EMPTY_TRASH');
-            } elseif ($this->canState && $this->canDelete) {
-                ToolbarHelper::trash('listoffields.trash');
-            }
-        }
-
-        // add the options comp button
-        if ($this->canDo->get('core.admin') || $this->canDo->get('core.options')) {
-            ToolbarHelper::preferences('com_customtables');
-        }
-
-        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid);
+        else
+            parent::display($tpl);
     }
 
     protected function addToolbar_4()
@@ -190,5 +143,48 @@ class CustomtablesViewListOfFields extends HtmlView
                     ->listCheck(true);
             }
         }
+    }
+
+    protected function addToolBar_3()
+    {
+        if ($this->ct->Table->tableid != 0) {
+            ToolbarHelper::title('Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+        } else
+            ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+
+        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+
+        if ($this->canCreate) {
+            ToolbarHelper::addNew('fields.add');
+        }
+
+        // Only load if there are items
+        if (CustomtablesHelper::checkArray($this->items)) {
+            if ($this->canEdit) {
+                ToolbarHelper::editList('fields.edit');
+            }
+
+            if ($this->canState) {
+                ToolbarHelper::publishList('listoffields.publish');
+                ToolbarHelper::unpublishList('listoffields.unpublish');
+            }
+
+            if ($this->canDo->get('core.admin')) {
+                ToolbarHelper::checkin('listoffields.checkin');
+            }
+
+            if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
+                ToolbarHelper::deleteList('', 'listoffields.delete', 'JTOOLBAR_EMPTY_TRASH');
+            } elseif ($this->canState && $this->canDelete) {
+                ToolbarHelper::trash('listoffields.trash');
+            }
+        }
+
+        // add the options comp button
+        if ($this->canDo->get('core.admin') || $this->canDo->get('core.options')) {
+            ToolbarHelper::preferences('com_customtables');
+        }
+
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid);
     }
 }

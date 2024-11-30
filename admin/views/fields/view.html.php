@@ -20,7 +20,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
 
 /**
  * Fields View class
@@ -41,9 +40,6 @@ class CustomtablesViewFields extends HtmlView
 
     public function display($tpl = null)
     {
-        $version = new Version;
-        $this->version = (int)$version->getShortVersion();
-
         // Assign the variables
         $this->form = $this->get('Form');
         $this->item = $this->get('Item');
@@ -94,10 +90,10 @@ class CustomtablesViewFields extends HtmlView
         $this->setDocument($this->document);
 
         // Display the template
-        if ($this->version < 4)
-            parent::display($tpl);
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             parent::display('quatro');
+        else
+            parent::display($tpl);
     }
 
     /**

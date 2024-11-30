@@ -21,7 +21,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
-use Joomla\CMS\Version;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
@@ -46,21 +45,16 @@ class CustomtablesViewDataBaseCheck extends HtmlView
 
     public function display($tpl = null)
     {
-        $version = new Version;
-        $this->version = (int)$version->getShortVersion();
         $this->ct = new CT;
         $this->state = $this->get('State');
 
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-diagram.php');
-        if ($this->version < 4)
-            $this->diagram = new Diagram($this->state->get('filter.tablecategory'));
-        else
-            $this->diagram = new Diagram($this->state->get('list.tablecategory'));
-
         if (CUSTOMTABLES_JOOMLA_MIN_4) {
+            $this->diagram = new Diagram($this->state->get('list.tablecategory'));
             $this->filterForm = $this->get('FilterForm');
             $this->activeFilters = $this->get('ActiveFilters');
-        }
+        } else
+            $this->diagram = new Diagram($this->state->get('filter.tablecategory'));
 
         if ($this->getLayout() !== 'modal') {
             // Include helper submenu
@@ -93,7 +87,6 @@ class CustomtablesViewDataBaseCheck extends HtmlView
     protected function addToolbar_4()
     {
         // Get the toolbar object instance
-        $toolbar = Toolbar::getInstance('toolbar');
         ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
     }
 

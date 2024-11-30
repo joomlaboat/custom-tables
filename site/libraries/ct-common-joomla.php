@@ -16,7 +16,6 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-
 use Joomla\CMS\Uri\Uri;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -581,12 +580,12 @@ class common
 
         if ($params->ModuleId === null or (int)$params->ModuleId == 0) {
             //JQuery and Bootstrap
-            if ($env->version < 4) {
-                $document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/jquery.min.js"></script>');
-                $document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/bootstrap.min.js"></script>');
-            } else {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
                 HTMLHelper::_('jquery.framework');
                 $document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/media/system/css/fields/switcher.css">');
+            } else {
+                $document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/jquery.min.js"></script>');
+                $document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/bootstrap.min.js"></script>');
             }
         }
 

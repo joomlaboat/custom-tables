@@ -12,14 +12,12 @@
 // No direct access to this file
 defined('_JEXEC') or die();
 
-// import Joomla view library
 use CustomTables\common;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
 
 /**
  * Categories View class
@@ -45,9 +43,6 @@ class CustomtablesViewCategories extends HtmlView
 
     public function display($tpl = null)
     {
-        $version = new Version;
-        $this->version = (int)$version->getShortVersion();
-
         // Assign the variables
         $this->form = $this->get('Form');
         $this->item = $this->get('Item');
@@ -91,6 +86,7 @@ class CustomtablesViewCategories extends HtmlView
 
     /**
      * Setting the toolbar
+     * @since 1.0.0
      */
     protected function addToolBar()
     {
@@ -157,7 +153,7 @@ class CustomtablesViewCategories extends HtmlView
             $isNew = ($this->item->id < 1);
             $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
 
-            if ($this->version < 4)
+            if (!CUSTOMTABLES_JOOMLA_MIN_4)
                 $document->addCustomTag('<script src=' . common::UriRoot(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
         }
     }

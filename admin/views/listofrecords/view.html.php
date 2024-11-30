@@ -80,83 +80,19 @@ class CustomtablesViewListOfRecords extends HtmlView
             $this->isEmptyState = count($this->items ?? 0) == 0;
 
         if ($this->getLayout() !== 'modal') {
-            if ($this->ct->Env->version < 4) {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
+                $this->addToolbar_4();
+            } else {
                 $this->addToolbar_3();
                 $this->sidebar = JHtmlSidebar::render();
-            } else
-                $this->addToolbar_4();
+            }
         }
 
         // Display the template
-        if ($this->ct->Env->version < 4)
-            parent::display($tpl);
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             parent::display('quatro');
-    }
-
-    protected function addToolBar_3()
-    {
-        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
-
-        if ($this->ct->Table->tableid != 0) {
-            ToolbarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
-        } else
-            ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
-
-        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
-        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
-
-        if ($this->canCreate) {
-            ToolbarHelper::addNew('records.add');
-        }
-
-        // Only load if there are items
-        if (CustomtablesHelper::checkArray($this->items)) {
-            if ($this->canEdit) {
-                ToolbarHelper::editList('records.edit');
-            }
-
-            if ($this->canState) {
-                ToolbarHelper::publishList('listofrecords.publish');
-                ToolbarHelper::unpublishList('listofrecords.unpublish');
-            }
-
-            if ($this->canDelete) {
-                ToolbarHelper::deleteList('', 'listofrecords.delete', 'JTOOLBAR_DELETE');
-            }
-        }
-
-        ToolbarHelper::custom('listofrecords.importcsv', 'upload.png', '', 'Import CSV');
-
-        if ($this->canState) {
-            // Build the active state filter options.
-            /*
-            $options = array();
-            $options[] = HTMLHelper::_('select.option', '1', 'COM_CUSTOMTABLES_PUBLISHED');
-            $options[] = HTMLHelper::_('select.option', '0', 'COM_CUSTOMTABLES_UNPUBLISHED');
-            $options[] = HTMLHelper::_('select.option', '*', 'COM_CUSTOMTABLES_ALL');
-
-
-            JHtmlSidebar::addFilter(
-                common::translate('JOPTION_SELECT_PUBLISHED'),
-                'filter_published',
-                HTMLHelper::_('select.options', $options, 'value', 'text', $this->state->get('filter.published'), true)
-            );
-            */
-            // only load if batch allowed
-        }
-
-        // Set Tableid Selection
-        /*
-        $CTTable = JFormHelper::loadFieldType('CTTable', false);
-        $CTTableOptions=$CTTable->getOptions(false); // works only if you set your field getOptions on public!!
-
-        JHtmlSidebar::addFilter(
-        common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
-        'filter_tableid',
-        HTMLHelper::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
-        );
-        */
+        else
+            parent::display($tpl);
     }
 
     /**
@@ -175,15 +111,6 @@ class CustomtablesViewListOfRecords extends HtmlView
             ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
             return;
         }
-
-        // Example sidebar link
-        //$link = 'index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid;
-        //$isActive = true;//$this->getActive() === 'com_customtables';
-
-        //echo HTMLHelper::_('sidebar.link', $link, 'List of Records', true);
-
-        //JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
-        //JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
 
         ToolbarHelper::back('COM_CUSTOMTABLES_BUTTON_BACK2TABLES', 'index.php?option=com_customtables&view=listoftables');
 
@@ -221,5 +148,40 @@ class CustomtablesViewListOfRecords extends HtmlView
         }
 
         //ToolbarHelper::custom('listofrecords.import', 'upload.png', '', 'Import CSV');
+    }
+
+    protected function addToolBar_3()
+    {
+        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+
+        if ($this->ct->Table->tableid != 0) {
+            ToolbarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . common::translate('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+        } else
+            ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
+        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
+
+        if ($this->canCreate) {
+            ToolbarHelper::addNew('records.add');
+        }
+
+        // Only load if there are items
+        if (CustomtablesHelper::checkArray($this->items)) {
+            if ($this->canEdit) {
+                ToolbarHelper::editList('records.edit');
+            }
+
+            if ($this->canState) {
+                ToolbarHelper::publishList('listofrecords.publish');
+                ToolbarHelper::unpublishList('listofrecords.unpublish');
+            }
+
+            if ($this->canDelete) {
+                ToolbarHelper::deleteList('', 'listofrecords.delete', 'JTOOLBAR_DELETE');
+            }
+        }
+
+        ToolbarHelper::custom('listofrecords.importcsv', 'upload.png', '', 'Import CSV');
     }
 }

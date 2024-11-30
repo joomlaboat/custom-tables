@@ -15,7 +15,6 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\database;
-
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -23,7 +22,7 @@ use Joomla\CMS\MVC\Model\ListModel;
 /**
  * ListOfRecords Model
  *
- * @since 1.0.09
+ * @since 1.0.0
  */
 class CustomtablesModelListOfRecords extends ListModel
 {
@@ -78,6 +77,8 @@ class CustomtablesModelListOfRecords extends ListModel
      * Method to get an array of data items.
      *
      * @return  mixed  An array of data items on success, false on failure.
+     *
+     * @since 1.0.0
      */
 
     public function getItems()
@@ -90,13 +91,16 @@ class CustomtablesModelListOfRecords extends ListModel
      * Method to autopopulate the model state.
      *
      * @return void
+     *
+     * @throws Exception
+     * @since 1.0.0
      */
     protected function populateState($ordering = null, $direction = 'asc')
     {
         if ($this->ordering_realfieldname != '' and $ordering === null)
             $ordering = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
 
-        if ($this->ct->Env->version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
             $this->setState('filter.search', $search);
 
@@ -109,7 +113,7 @@ class CustomtablesModelListOfRecords extends ListModel
         // List state information.
         parent::populateState($ordering, $direction);
 
-        if ($this->ct->Env->version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             $ordering = $this->state->get('list.ordering');
             $direction = strtoupper($this->state->get('list.direction'));
             $app = Factory::getApplication();
@@ -161,7 +165,7 @@ class CustomtablesModelListOfRecords extends ListModel
         $order_by_Col = $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname;
         $orderDirection = $this->state->get('list.direction', 'asc');
 
-        if ($this->ct->Env->version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             if ($this->ordering_realfieldname != '')
                 $order_by_Col = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
         } else {

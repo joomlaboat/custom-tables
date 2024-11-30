@@ -13,7 +13,6 @@
 defined('_JEXEC') or die();
 
 use CustomTables\CT;
-
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\MVC\Model\ListModel;
 
@@ -34,7 +33,6 @@ class CustomtablesModelDatabasecheck extends ListModel
         }
 
         parent::__construct($config);
-
         $this->ct = new CT;
     }
 
@@ -42,18 +40,18 @@ class CustomtablesModelDatabasecheck extends ListModel
      * Method to get an array of data items.
      *
      * @return  mixed  An array of data items on success, false on failure.
+     *
+     * @since 1.0.0
      */
     public function getItems()
     {
         // load parent items
-        $items = parent::getItems();
-
-        return $items;
+        return parent::getItems();
     }
 
     protected function populateState($ordering = 'a.id', $direction = 'asc')
     {
-        if ($this->ct->Env->version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             $category = $this->getUserStateFromRequest($this->context . '.filter.tablecategory', 'filter_tablecategory');
             $this->setState('filter.tablecategory', $category);
         }

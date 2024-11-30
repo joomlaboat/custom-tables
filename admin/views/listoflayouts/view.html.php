@@ -52,17 +52,12 @@ class CustomtablesViewListoflayouts extends HtmlView
 
         // We don't need toolbar in the modal window.
         if ($this->getLayout() !== 'modal') {
-            if ($this->ct->Env->version < 4) {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
+                $this->addToolbar_4();
+            } else {
                 $this->addToolbar_3();
                 $this->sidebar = JHtmlSidebar::render();
-            } else
-                $this->addToolbar_4();
-
-            // load the batch html
-            //if ($this->canCreate && $this->canEdit && $this->canState)
-            //{
-            //$this->batchDisplay = JHtmlBatch_::render();
-            //}
+            }
         }
 
         // Check for errors.
@@ -71,85 +66,10 @@ class CustomtablesViewListoflayouts extends HtmlView
         }
 
         // Display the template
-        if ($this->ct->Env->version < 4)
-            parent::display($tpl);
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             parent::display('quatro');
-    }
-
-    protected function addToolBar_3()
-    {
-        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
-
-        if ($this->canCreate) {
-            ToolbarHelper::addNew('layouts.add');
-        }
-
-        // Only load if there are items
-        if (CustomtablesHelper::checkArray($this->items)) {
-            if ($this->canEdit) {
-                ToolbarHelper::editList('layouts.edit');
-            }
-
-            if ($this->canState) {
-                ToolbarHelper::publishList('listoflayouts.publish');
-                ToolbarHelper::unpublishList('listoflayouts.unpublish');
-            }
-
-            if ($this->canDo->get('core.admin')) {
-                ToolbarHelper::checkin('listoflayouts.checkin');
-            }
-
-            if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
-                ToolbarHelper::deleteList('', 'listoflayouts.delete', 'JTOOLBAR_EMPTY_TRASH');
-            } elseif ($this->canState && $this->canDelete) {
-                ToolbarHelper::trash('listoflayouts.trash');
-            }
-        }
-
-        if ($this->canState) {
-            /*
-                        $options = HtmlHelper::_('jgrid.publishedOptions');
-                        $newOptions = [];
-                        foreach ($options as $option) {
-
-                            if ($option->value != 2)
-                              $newOptions[] = $option;
-                        }
-
-                        /*
-                        JHtmlSidebar::addFilter(
-                            common::translate('JOPTION_SELECT_PUBLISHED'),
-                            'filter_published',
-                            HTMLHelper::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
-                        );
-                        */
-        }
-        /*
-                $CTLayoutType = JFormHelper::loadFieldType('CTLayoutType', false);
-                $CTLayoutTypeOptions = $CTLayoutType->getOptions(); // works only if you set your field getOptions on public!!
-
-                JHtmlSidebar::addFilter(
-                    common::translate('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
-                    'filter_layouttype',
-                    HTMLHelper::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
-                );
-        */
-        // Set Tableid Selection
-
-        /*
-        $CTTable = JFormHelper::loadFieldType('CTTable', false);
-        $CTTableOptions = $CTTable->getOptions(false); // works only if you set your field getOptions on public!!
-
-        JHtmlSidebar::addFilter(
-            common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
-            'filter_tableid',
-            HTMLHelper::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
-        );
-
-        */
-
-        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoflayouts');
+        else
+            parent::display($tpl);
     }
 
     protected function addToolbar_4()
@@ -192,6 +112,39 @@ class CustomtablesViewListoflayouts extends HtmlView
                     ->listCheck(true);
             }
         }
+    }
+
+    protected function addToolBar_3()
+    {
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
+
+        if ($this->canCreate) {
+            ToolbarHelper::addNew('layouts.add');
+        }
+
+        // Only load if there are items
+        if (CustomtablesHelper::checkArray($this->items)) {
+            if ($this->canEdit) {
+                ToolbarHelper::editList('layouts.edit');
+            }
+
+            if ($this->canState) {
+                ToolbarHelper::publishList('listoflayouts.publish');
+                ToolbarHelper::unpublishList('listoflayouts.unpublish');
+            }
+
+            if ($this->canDo->get('core.admin')) {
+                ToolbarHelper::checkin('listoflayouts.checkin');
+            }
+
+            if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
+                ToolbarHelper::deleteList('', 'listoflayouts.delete', 'JTOOLBAR_EMPTY_TRASH');
+            } elseif ($this->canState && $this->canDelete) {
+                ToolbarHelper::trash('listoflayouts.trash');
+            }
+        }
+
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoflayouts');
     }
 
     /**

@@ -73,10 +73,10 @@ if ($this->ct->Env->frmt == 'html') {
         if ($isEditable) {
 
             $saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component&clean=1';
-            if ($this->ct->Env->version < 4) {
-                HTMLHelper::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid, 'asc', $saveOrderingUrl);
-            } else {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
                 HTMLHelper::_('draggablelist.draggable');
+            } else {
+                HTMLHelper::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid, 'asc', $saveOrderingUrl);
             }
         }
     }

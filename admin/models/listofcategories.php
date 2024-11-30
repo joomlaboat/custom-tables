@@ -12,11 +12,9 @@
 defined('_JEXEC') or die();
 
 use CustomTables\CT;
-
 use CustomTables\database;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-
 use Joomla\CMS\MVC\Model\ListModel;
 
 /**
@@ -65,7 +63,7 @@ class CustomtablesModelListOfCategories extends ListModel
      */
     protected function populateState($ordering = null, $direction = null)
     {
-        if ($this->ct->Env->version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
             $this->setState('filter.search', $search);
 
@@ -78,7 +76,7 @@ class CustomtablesModelListOfCategories extends ListModel
         // List state information.
         parent::populateState($ordering, $direction);
 
-        if ($this->ct->Env->version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             $ordering = $this->state->get('list.ordering');
             $direction = strtoupper($this->state->get('list.direction'));
             $app = Factory::getApplication();

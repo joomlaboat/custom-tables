@@ -19,7 +19,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
 
 /**
  * Menus View class
@@ -29,7 +28,6 @@ use Joomla\CMS\Version;
 class CustomtablesViewMenus extends HtmlView
 {
     var $document;
-    var $version;
     var $form;
     var $item;
     var $script;
@@ -46,9 +44,6 @@ class CustomtablesViewMenus extends HtmlView
 
     public function display($tpl = null)
     {
-        $version = new Version;
-        $this->version = (int)$version->getShortVersion();
-
         $this->categoryId = common::inputGetInt('categoryid');
 
         // Assign the variables
@@ -163,7 +158,7 @@ class CustomtablesViewMenus extends HtmlView
             $isNew = ($this->item->id < 1);
             $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_MENUS_NEW' : 'COM_CUSTOMTABLES_MENUS_EDIT'));
 
-            if ($this->version < 4)
+            if (!CUSTOMTABLES_JOOMLA_MIN_4)
                 $document->addCustomTag('<script src=' . common::UriRoot(true) . '/administrator/components/com_customtables/views/menus/submitbutton.js"></script>');
         }
     }

@@ -12,12 +12,10 @@
 // No direct access to this file
 defined('_JEXEC') or die();
 
-// import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
 use CustomTables\CT;
 use CustomTables\ListOfLayouts;
-
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -84,9 +82,6 @@ class CustomtablesModelListOfLayouts extends ListModel
         $tableid = $this->getState('filter.tableid');
         $orderCol = $this->state->get('list.ordering', 'a.id');
         $orderDirection = $this->state->get('list.direction', 'asc');
-        //$limit = $this->state->get('list.limit', 20);
-        //$start = $this->state->get('list.start', 0);
-
         return $this->helperListOfLayout->getListQuery($published, $search, $layoutType, $tableid, $orderCol, $orderDirection, null, null, true);
     }
 
@@ -96,7 +91,7 @@ class CustomtablesModelListOfLayouts extends ListModel
      */
     protected function populateState($ordering = null, $direction = null)
     {
-        if ($this->ct->Env->version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             $layoutType = $this->getUserStateFromRequest($this->context . '.filter.layouttype', 'filter_layouttype');
             $this->setState('filter.layouttype', $layoutType);
 
@@ -114,7 +109,7 @@ class CustomtablesModelListOfLayouts extends ListModel
 
         // List state information.
         parent::populateState($ordering, $direction);
-        if ($this->ct->Env->version < 4) {
+        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
             $ordering = $this->state->get('list.ordering');
             $direction = strtoupper($this->state->get('list.direction'));
             $app = Factory::getApplication();

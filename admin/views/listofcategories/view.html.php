@@ -15,7 +15,6 @@ defined('_JEXEC') or die;
 use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Helper\ContentHelper;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -72,11 +71,12 @@ class CustomtablesViewListofcategories extends HtmlView
 
         // We don't need toolbar in the modal window.
         if ($this->getLayout() !== 'modal') {
-            if ($this->ct->Env->version < 4) {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
+                $this->addToolbar_4();
+            } else {
                 $this->addToolbar_3();
                 $this->sidebar = JHtmlSidebar::render();
-            } else
-                $this->addToolbar_4();
+            }
         }
 
         // Check for errors.
@@ -85,61 +85,10 @@ class CustomtablesViewListofcategories extends HtmlView
         }
 
         // Display the template
-        if ($this->ct->Env->version < 4)
-            parent::display($tpl);
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             parent::display('quatro');
-    }
-
-    protected function addToolBar_3()
-    {
-        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
-        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
-        //JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
-
-        if ($this->canCreate)
-            ToolbarHelper::addNew('categories.add');
-
-        // Only load if there are items
-        if (CustomtablesHelper::checkArray($this->items)) {
-            if ($this->canEdit) {
-                ToolbarHelper::editList('categories.edit');
-            }
-
-            if ($this->canState) {
-                ToolbarHelper::publishList('listofcategories.publish');
-                ToolbarHelper::unpublishList('listofcategories.unpublish');
-            }
-
-            if ($this->canDo->get('core.admin')) {
-                ToolbarHelper::checkin('listofcategories.checkin');
-            }
-
-            if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
-                ToolbarHelper::deleteList('', 'listofcategories.delete', 'JTOOLBAR_EMPTY_TRASH');
-            } elseif ($this->canState && $this->canDelete) {
-                ToolbarHelper::trash('listofcategories.trash');
-            }
-        }
-
-        if ($this->canState) {
-
-            $options = HtmlHelper::_('jgrid.publishedOptions');
-            $newOptions = [];
-            foreach ($options as $option) {
-
-                if ($option->value != 2)
-                    $newOptions[] = $option;
-            }
-
-            /*
-            JHtmlSidebar::addFilter(
-                common::translate('JOPTION_SELECT_PUBLISHED'),
-                'filter_published',
-                HTMLHelper::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
-            );
-            */
-        }
+        else
+            parent::display($tpl);
     }
 
     protected function addToolbar_4()
@@ -180,6 +129,37 @@ class CustomtablesViewListofcategories extends HtmlView
                     ->text('JTOOLBAR_EMPTY_TRASH')
                     ->message('JGLOBAL_CONFIRM_DELETE')
                     ->listCheck(true);
+            }
+        }
+    }
+
+    protected function addToolBar_3()
+    {
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
+
+        if ($this->canCreate)
+            ToolbarHelper::addNew('categories.add');
+
+        // Only load if there are items
+        if (CustomtablesHelper::checkArray($this->items)) {
+            if ($this->canEdit) {
+                ToolbarHelper::editList('categories.edit');
+            }
+
+            if ($this->canState) {
+                ToolbarHelper::publishList('listofcategories.publish');
+                ToolbarHelper::unpublishList('listofcategories.unpublish');
+            }
+
+            if ($this->canDo->get('core.admin')) {
+                ToolbarHelper::checkin('listofcategories.checkin');
+            }
+
+            if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
+                ToolbarHelper::deleteList('', 'listofcategories.delete', 'JTOOLBAR_EMPTY_TRASH');
+            } elseif ($this->canState && $this->canDelete) {
+                ToolbarHelper::trash('listofcategories.trash');
             }
         }
     }

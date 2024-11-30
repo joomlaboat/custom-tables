@@ -19,7 +19,6 @@ use CustomTables\Documentation;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-documentation.php');
 
@@ -40,8 +39,6 @@ class CustomtablesViewDocumentation extends HtmlView
 
     public function display($tpl = null)
     {
-        $version = new Version;
-        $this->version = (float)$version->getShortVersion();
         $this->documentation = new Documentation();
         $this->documentation->internal_use = true;
 

@@ -124,10 +124,10 @@ class CustomtablesViewLayouts extends HtmlView
         $this->setDocument($this->document);
 
         // Display the template
-        if ($this->ct->Env->version < 4)
-            parent::display($tpl);
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             parent::display('quatro');
+        else
+            parent::display($tpl);
     }
 
     /**
