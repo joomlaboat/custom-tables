@@ -81,7 +81,7 @@ class tagProcessor_Value
                         $getGalleryRows[$fieldname] = $r;
                     }
 
-                    if (isset($isGalleryLoaded[$fieldname]) and count($getGalleryRows[$fieldname]) == 0)
+                    if (count($getGalleryRows[$fieldname]) == 0)
                         $isEmpty = true;
                     else
                         $isEmpty = false;
@@ -93,7 +93,7 @@ class tagProcessor_Value
                     $isFileBoxLoaded[$fieldname] = true;
                     $getFileBoxRows[$fieldname] = InputBox_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
 
-                    if (isset($isFileBoxLoaded[$fieldname]) and count($getFileBoxRows[$fieldname]) == 0)
+                    if (count($getFileBoxRows[$fieldname]) == 0)
                         $isEmpty = true;
                     else
                         $isEmpty = false;
@@ -402,11 +402,11 @@ class tagProcessor_Value
      * @throws Exception
      * @since 3.2.2
      */
-    public static function processEditValues(CT &$ct, string &$htmlresult, ?array $row, string $tag_chars = '[]'): array
+    public static function processEditValues(CT &$ct, string &$htmlResult, ?array $row, string $tag_chars = '[]'): array
     {
         $items_to_replace = array();
         $pureValueOptions = array();
-        $pureValueList = CTMiscHelper::getListToReplace('_edit', $pureValueOptions, $htmlresult, $tag_chars);
+        $pureValueList = CTMiscHelper::getListToReplace('_edit', $pureValueOptions, $htmlResult, $tag_chars);
 
         if (count($pureValueList) > 0) {
             require_once(JPATH_SITE
@@ -487,7 +487,7 @@ class tagProcessor_Value
                     }
 
                     $items_to_replace[] = array($newReplaceItCode, $vlu);
-                    $htmlresult = str_replace($pureValueList[$p], $newReplaceItCode, $htmlresult);
+                    $htmlResult = str_replace($pureValueList[$p], $newReplaceItCode, $htmlResult);
                 }
                 $i++;
             }

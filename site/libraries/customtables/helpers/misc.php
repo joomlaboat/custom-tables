@@ -73,7 +73,7 @@ class CTMiscHelper
     protected static function parse_size(string $size): int
     {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
-        $size = preg_replace('/[^\d\.]/', '', $size); // Remove the non-numeric characters from the size.
+        $size = preg_replace('/[^\d.]/', '', $size); // Remove the non-numeric characters from the size.
 
         if ($unit) {
             // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
@@ -337,6 +337,10 @@ class CTMiscHelper
         return $fList;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public static function getListToReplaceAdvanced($beginning_tag, $ending_tag, &$options, $text, $sub_beginning_tag = ''): array
     {
         $fList = array();
@@ -619,6 +623,10 @@ class CTMiscHelper
         return $rows[0];
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     public static function applyContentPlugins(string &$htmlResult): string
     {
         $version_object = new Version;
@@ -703,6 +711,10 @@ class CTMiscHelper
         return $resArr;
     }
 
+    /**
+     * @throws Exception
+     * @since 3.2.2
+     */
     static public function getXMLData(string $file, string $path = '')
     {
         if ($path == '')
@@ -1041,5 +1053,25 @@ class CTMiscHelper
             }
         }
         return $items;
+    }
+
+    public static function checkEmail($email): bool
+    {
+        if (preg_match("/^([a-zA-Z\d])+([a-zA-Z\d._-])*@([a-zA-Z\d_-])+([a-zA-Z\d._-]+)+$/", $email)) {
+            if (self::domain_exists($email))
+                return true;
+            else
+                return false;
+        }
+        return false;
+    }
+
+    protected static function domain_exists($email, $record = 'MX'): bool
+    {
+        $pair = explode('@', $email);
+        if (count($pair) == 1)
+            return false;
+
+        return checkdnsrr(end($pair), $record);
     }
 }

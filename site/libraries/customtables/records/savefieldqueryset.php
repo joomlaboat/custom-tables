@@ -365,7 +365,7 @@ class SaveFieldQuerySet
 
                 if ($value !== null) {
                     $value = trim($value);
-                    if (Email::checkEmail($value))
+                    if (CTMiscHelper::checkEmail($value))
                         $this->setNewValue($value);
                     else
                         $this->setNewValue(null);
@@ -914,7 +914,7 @@ class SaveFieldQuerySet
                 }
             }
 
-            $sent = Email::sendEmail($EmailTo, $Subject, $note_final, true, $attachments);
+            $sent = common::sendEmail($EmailTo, $Subject, $note_final, true, $attachments);
 
             if ($sent !== true) {
                 //Something went wrong. Email not sent.

@@ -157,7 +157,7 @@ class CustomtablesModelFields extends AdminModel
         }
 
         foreach ($pks as $fieldid) {
-            Fields::deleteField_byID($ct, $fieldid);
+            Fields::deleteField_byID($this->ct, $fieldid);
         }
 
         return true;

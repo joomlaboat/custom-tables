@@ -178,7 +178,7 @@ class CustomtablesModelCategories extends AdminModel
         $whereClause->addCondition('link', 'index.php?option=com_customtables&view=adminmenu&category=', 'INSTR');
 
         try {
-            $menu_rows = database::loadObjectList('#__menu', ['id', 'alias'], $whereClause, null, null);
+            $menu_rows = database::loadObjectList('#__menu', ['id', 'alias'], $whereClause);
         } catch (Exception $e) {
             $this->ct->errors[] = $e->getMessage();
             return false;
@@ -189,7 +189,7 @@ class CustomtablesModelCategories extends AdminModel
         $whereClause->addCondition('admin_menu', 1);
 
         try {
-            $category_rows = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, null, null);
+            $category_rows = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause);
         } catch (Exception $e) {
             $this->ct->errors[] = $e->getMessage();
             return false;

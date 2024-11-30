@@ -149,6 +149,7 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
             $fileId = $this->addFileRecord($file_ext, $title);
         } catch (Exception $e) {
             common::enqueueMessage('Cannot add new file record: ' . $e->getMessage());
+            return false;
         }
 
         $newFileName = $this->fileBoxFolderArray['path'] . DIRECTORY_SEPARATOR . $this->ct->Table->tableid . '_' . $this->fileBoxName . '_' . $fileId . "." . $file_ext;

@@ -18,6 +18,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Version;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -27,15 +28,6 @@ class common
     public static function convertClassString(string $class_string): string
     {
         return $class_string;
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.2.9
-     */
-    public static function enqueueMessage($text, string $type = 'error'): void
-    {
-        Factory::getApplication()->enqueueMessage($text, $type);
     }
 
     public static function translate(string $text, $value = null): string
@@ -302,7 +294,7 @@ class common
             $decoded = html_entity_decode($encoded, ENT_COMPAT, $charset);
 
             // Remove any potential scripting or dangerous content
-            $string = common::ctStripTags($decoded);
+            $string = self::ctStripTags($decoded);
 
             if ($shorten) {
                 return self::shorten($string, $length);
@@ -365,7 +357,7 @@ class common
      */
     public static function getReturnToURL(bool $decode = true): ?string
     {
-        $returnto = common::inputGet('returnto', null, 'BASE64');
+        $returnto = self::inputGet('returnto', null, 'BASE64');
 
         if ($returnto === null)
             return null;
@@ -394,22 +386,23 @@ class common
         return Factory::getApplication()->input->get($parameter, $default, $filter);
     }
 
-    //Returns base64 encoded/decoded url in Joomla and Sessions ReturnTo variable reference in WP or reference converted to URL
     public static function makeReturnToURL(string $currentURL = null): ?string
     {
         if ($currentURL === null)
-            $currentURL = common::curPageURL();
+            $currentURL = self::curPageURL();
 
         return base64_encode($currentURL);
     }
 
+    //Returns base64 encoded/decoded url in Joomla and Sessions ReturnTo variable reference in WP or reference converted to URL
+
     public static function curPageURL(): string
     {
         //Uri::root() returns the string http://www.mydomain.org/mysite/ (or https if you're using SSL, etc.).
-        //common::UriRoot(true) returns the string /mysite.
+        //self::UriRoot(true) returns the string /mysite.
         $WebsiteRoot = str_replace(Uri::root(true), '', Uri::root());
         //Uri$WebsiteRoot = http://www.mydomain.org/
-        $RequestURL = common::getServerParam("REQUEST_URI");
+        $RequestURL = self::getServerParam("REQUEST_URI");
 
         if ($WebsiteRoot != '' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/') {
             if ($RequestURL != '' and $RequestURL[0] == '/') {
@@ -429,7 +422,7 @@ class common
     public static function UriRoot(bool $pathOnly = false, bool $addTrailingSlash = false): string
     {
         //Uri::root() returns the string http://www.mydomain.org/mysite (or https if you're using SSL, etc.).
-        //common::UriRoot(true) returns the string /mysite
+        //self::UriRoot(true) returns the string /mysite
 
         $url = Uri::root($pathOnly);
         if (strlen($url) > 0 and $url[strlen($url) - 1] == '/')
@@ -542,7 +535,7 @@ class common
      */
     protected static function getWhereParameters(): ?array
     {
-        $value = common::inputGetString('where');
+        $value = self::inputGetString('where');
         if ($value !== null) {
             $b = urldecode($value);//base64_decode
             $b = str_replace(' or ', ' and ', $b);
@@ -686,11 +679,18 @@ class common
      */
     public static function formatDateFromTimeStamp($timeStamp = null, ?string $format = 'Y-m-d H:i:s'): ?string
     {
-        $config = Factory::getConfig();
+        // Get Joomla version
+        $version = new Version();
+
+        // Check if version is 4.0 or higher
+        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+            $config = Factory::getContainer()->get('config');
+        } else {
+            $config = Factory::getConfig();
+        }
+
         $timezone = new DateTimeZone($config->get('offset'));
-
         $date = Factory::getDate($timeStamp, $timezone);
-
         $date->setTimezone($timezone);
 
         return $date->format($format, true);
@@ -709,7 +709,7 @@ class common
         if ($dateString === null or $dateString == '0000-00-00 00:00:00')
             return $emptyValue;
 
-        $config = Factory::getConfig();
+        $config = Factory::getContainer()->get('config');
         $timezone = new DateTimeZone($config->get('offset'));
         $date = Factory::getDate($dateString, $timezone);
 
@@ -728,7 +728,7 @@ class common
     public static function currentDate(string $format = 'Y-m-d H:i:s'): string
     {
         $date = Factory::getDate();
-        $config = Factory::getConfig();
+        $config = Factory::getContainer()->get('config');
         $timezone = new DateTimeZone($config->get('offset'));
         $date->setTimezone($timezone);
 
@@ -768,7 +768,99 @@ class common
 
     public static function getSiteName()
     {
-        $config = Factory::getContainer()->get('config');
+        // Get Joomla version
+        $version = new Version();
+
+        // Check if version is 4.0 or higher
+        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+            $config = Factory::getContainer()->get('config');
+        } else {
+            $config = Factory::getConfig();
+        }
+
         return $config->get('config.sitename');
+    }
+
+    /**
+     * @throws \PHPMailer\PHPMailer\Exception
+     * @since 3.4.6
+     */
+    static public function sendEmail($email, $emailSubject, $emailBody, $isHTML = true, $attachments = array()): bool
+    {
+        $version = new Version();
+        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+            $mailer = Factory::getContainer()->get('mailer');
+        } else {
+            $mailer = Factory::getMailer();
+        }
+
+        $sender = array(
+            self::getMailFrom(),
+            self::getEmailFromName()
+        );
+
+        $mailer->setSender($sender);
+        $mailer->addRecipient($email);
+        $mailer->setSubject($emailSubject);
+        $mailer->setBody($emailBody);
+        $mailer->isHTML($isHTML);
+
+        foreach ($attachments as $attachment)
+            $mailer->addAttachment($attachment);
+
+        try {
+            $send = @$mailer->Send();
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+            self::enqueueMessage($msg);
+            return false;
+        }
+
+        if ($send !== true)
+            return false;
+
+        return true;
+    }
+
+    public static function getMailFrom()
+    {
+        // Get Joomla version
+        $version = new Version();
+
+        // Check if version is 4.0 or higher
+        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+            $config = Factory::getContainer()->get('config');
+        } else {
+            $config = Factory::getConfig();
+        }
+
+        return $config->get('mailfrom');
+    }
+
+    public static function getEmailFromName()
+    {
+        // Get Joomla version
+        $version = new Version();
+
+        // Check if version is 4.0 or higher
+        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+            $config = Factory::getContainer()->get('config');
+        } else {
+            $config = Factory::getConfig();
+        }
+
+        return $config->get('fromname');
+    }
+
+    /**
+     * @since 3.2.9
+     */
+    public static function enqueueMessage($text, string $type = 'error'): void
+    {
+        try {
+            Factory::getApplication()->enqueueMessage($text, $type);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
     }
 }

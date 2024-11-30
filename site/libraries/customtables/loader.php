@@ -13,6 +13,7 @@ defined('_JEXEC') or die();
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Version;
 
 // Define str_starts_with if it doesn't exist
 if (!function_exists('str_starts_with')) {
@@ -35,6 +36,8 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
     if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
         return;
 
+    $libraryPath = null;
+
     if (defined('_JEXEC')) {
 
         if ($componentName == 'com_extensiontranslator')
@@ -53,7 +56,16 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 
         if (!defined('CUSTOMTABLES_TEMP_PATH')) {
 
-            $config = Factory::getContainer()->get('config');
+            // Get Joomla version
+            $version = new Version();
+
+            // Check if version is 4.0 or higher
+            if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+                $config = Factory::getContainer()->get('config');
+            } else {
+                $config = Factory::getConfig();
+            }
+
             $tmpPath = $config->get('tmp_path');
 
             define('CUSTOMTABLES_TEMP_PATH', $tmpPath . DIRECTORY_SEPARATOR);
@@ -114,11 +126,8 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
     $path_helpers = $path . 'helpers' . DIRECTORY_SEPARATOR;
 
     require_once($path_helpers . 'imagemethods.php');
-    require_once($path_helpers . 'email.php');
     require_once($path_helpers . 'user.php');
     require_once($path_helpers . 'misc.php');
-    //require_once($path_helpers . 'fileutils.php');
-
 
     if (defined('_JEXEC')) {
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');

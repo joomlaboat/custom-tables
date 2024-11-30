@@ -120,13 +120,10 @@ class CTUser
         }
 
         $password = strtolower(JUserHelper::genRandomPassword());
-
         $realUserId = $ct->Table->record[$ct->Table->useridrealfieldname];
         $realUserId = CTUser::SetUserPassword($realUserId, $password);
         $userRow = CTUser::GetUserRow($realUserId);
-
-        $config = Factory::getConfig();//For older Joomla versions
-        $sitename = $config->get('sitename');
+        $sitename = common::getSiteName();
 
         if ($userRow !== null) {
             $user_full_name = ucwords(strtolower($userRow['name']));
@@ -156,7 +153,7 @@ class CTUser
         if ($ct->Env->clean)
             die;//Clean Exit
 
-        if (Email::sendEmail($user_email, $subject, $messageBody)) {
+        if (common::sendEmail($user_email, $subject, $messageBody)) {
             //clean exit
             common::enqueueMessage(sprintf("User password has been reset and sent to the email '%s'", $user_email));
             return true;
@@ -267,7 +264,7 @@ class CTUser
         $msg = '';
         $password = strtolower(JUserHelper::genRandomPassword());
 
-        if (!@Email::checkEmail($email)) {
+        if (!@CTMiscHelper::checkEmail($email)) {
             common::enqueueMessage(common::translate('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"');
             return false;
         }
@@ -308,8 +305,6 @@ class CTUser
 
         //Creates active user
         $userActivation = 0;//already activated
-
-        $config = Factory::getConfig();//For older Joomla versions
 
         // Initialise the table with JUser.
         $version_object = new Version;
@@ -373,9 +368,9 @@ class CTUser
 
         // Compile the notification mail values.
         $data = $user->getProperties();
-        $data['fromname'] = $config->get('fromname');
-        $data['mailfrom'] = $config->get('mailfrom');
-        $data['sitename'] = $config->get('sitename');
+        $data['fromname'] = common::getEmailFromName();
+        $data['mailfrom'] = common::getMailFrom();
+        $data['sitename'] = common::getSiteName();
 
         $uri = URI::getInstance();
         $base = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port')) . '/';
@@ -389,8 +384,7 @@ class CTUser
             $data['activate'] = $base . 'index.php?option=com_users&task=registration.activate&token=' . $data['activation'];
         }
 
-        $config = Factory::getConfig();//For older Joomla versions
-        $siteName = $config->get('sitename');
+        $siteName = common::getSiteName();
         $subject = common::translate('COM_USERS_EMAIL_ACCOUNT_DETAILS');
         $emailSubject = str_replace('{NAME}', $fullName, $subject);
         $emailSubject = str_replace('{SITENAME}', $siteName, $emailSubject);
@@ -405,7 +399,7 @@ class CTUser
         $emailBody = str_replace('{PASSWORD_CLEAR}', $password, $emailBody);
         $emailBody = str_replace("\n", '<br/>', $emailBody);
 
-        Email::sendEmail($email, $emailSubject, $emailBody);
+        common::sendEmail($email, $emailSubject, $emailBody);
         return $user->id;
     }
 

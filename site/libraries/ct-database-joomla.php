@@ -590,9 +590,18 @@ class database
 
     public static function getTableStatus(string $tablename, string $type = 'table')
     {
-        $conf = Factory::getConfig();
-        $database = $conf->get('db');
-        $dbPrefix = $conf->get('dbprefix');
+        // Get Joomla version
+        $version = new Version();
+
+        // Check if version is 4.0 or higher
+        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+            $config = Factory::getContainer()->get('config');
+        } else {
+            $config = Factory::getConfig();
+        }
+
+        $database = $config->get('db');
+        $dbPrefix = $config->get('dbprefix');
 
         $db = self::getDB();
 
@@ -768,8 +777,17 @@ class database
 
     public static function getDataBaseName(): ?string
     {
-        $conf = Factory::getConfig();
-        return $conf->get('db');
+        // Get Joomla version
+        $version = new Version();
+
+        // Check if version is 4.0 or higher
+        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+            $config = Factory::getContainer()->get('config');
+        } else {
+            $config = Factory::getConfig();
+        }
+
+        return $config->get('db');
     }
 
     public static function dropForeignKey(string $realTableName, string $constrance): void
@@ -980,8 +998,17 @@ class database
 
     public static function getDBPrefix(): ?string
     {
-        $conf = Factory::getConfig();
-        return $conf->get('dbprefix');
+        // Get Joomla version
+        $version = new Version();
+
+        // Check if version is 4.0 or higher
+        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+            $config = Factory::getContainer()->get('config');
+        } else {
+            $config = Factory::getConfig();
+        }
+
+        return $config->get('dbprefix');
     }
 
     public static function getExistingFields(string $tablename, $add_table_prefix = true): array
