@@ -15,7 +15,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 ?>
 
-<?php if ($this->version < 4): ?>
+<?php if (!CUSTOMTABLES_JOOMLA_MIN_4): ?>
     <div id="j-sidebar-container" class="span2">
         <?php echo $this->sidebar; ?>
     </div>
