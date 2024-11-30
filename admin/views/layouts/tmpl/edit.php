@@ -27,7 +27,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
 
-if ($this->ct->Env->version >= 4) {
+if (CUSTOMTABLES_JOOMLA_MIN_4) {
     $wa = $this->document->getWebAssetManager();
     $wa->useScript('keepalive')->useScript('form.validate');
 } else {
@@ -87,7 +87,6 @@ foreach ($this->allTables as $table) {
     <?php echo HTMLHelper::_('bootstrap.endTab');
 
     echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'layoutcode-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_HTML'));
-
 
     $layoutCode = $this->item->layoutcode;
     if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {

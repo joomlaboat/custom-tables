@@ -56,7 +56,7 @@ class Inputbox
 
         //Set CSS classes
         if ($this->field->type != "records" and $this->field->type != "radio")
-            BaseInputBox::addCSSClass($this->attributes, ($this->ct->Env->version < 4 ? 'inputbox' : 'form-control'));
+            BaseInputBox::addCSSClass($this->attributes, (CUSTOMTABLES_JOOMLA_MIN_4 ? 'form-control' : 'inputbox'));
 
         //Add attributes
         $this->option_list = $option_list;
@@ -343,20 +343,20 @@ abstract class BaseInputBox
         }
     }
 
-    public static function selectBoxAddCSSClass(&$attributes, $joomlaVersion): void
+    public static function selectBoxAddCSSClass(&$attributes): void
     {
-        if ($joomlaVersion < 4)
-            self::addCSSClass($attributes, 'inputbox');
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             self::addCSSClass($attributes, 'form-select');
+        else
+            self::addCSSClass($attributes, 'inputbox');
     }
 
-    public static function inputBoxAddCSSClass(&$attributes, $joomlaVersion): void
+    public static function inputBoxAddCSSClass(&$attributes): void
     {
-        if ($joomlaVersion < 4)
-            self::addCSSClass($attributes, 'inputbox');
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             self::addCSSClass($attributes, 'form-control');
+        else
+            self::addCSSClass($attributes, 'inputbox');
     }
 
     function renderSelect(string $value, array $options): string

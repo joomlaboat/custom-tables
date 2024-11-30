@@ -33,7 +33,7 @@ class InputBox_language extends BaseInputBox
             }
         }
 
-        self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        self::selectBoxAddCSSClass($this->attributes);
         $lang = new Languages();
 
         // Start building the select element with attributes

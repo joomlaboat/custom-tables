@@ -18,7 +18,7 @@ class InputBox_alias extends BaseInputBox
     function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
     {
         parent::__construct($ct, $field, $row, $option_list, $attributes);
-        self::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        self::inputBoxAddCSSClass($this->attributes);
     }
 
     function render(?string $value, ?string $defaultValue): string

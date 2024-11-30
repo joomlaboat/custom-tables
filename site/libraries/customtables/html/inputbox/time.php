@@ -170,7 +170,7 @@ class InputBox_time extends BaseInputBox
                 $value = $defaultValue;
         }
 
-        self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        self::selectBoxAddCSSClass($this->attributes);
 
         try {
             return $this->do_render((int)$value);

@@ -40,6 +40,19 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 
     if (defined('_JEXEC')) {
 
+        if (!defined('CUSTOMTABLES_JOOMLA_VERSION')) {
+            // Get Joomla version
+            $version = new Version();
+            define('CUSTOMTABLES_JOOMLA_VERSION', $version->getShortVersion());
+
+            if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
+                if (version_compare(CUSTOMTABLES_JOOMLA_VERSION, '4.0', '>='))
+                    define('CUSTOMTABLES_JOOMLA_MIN_4', true);
+                else
+                    define('CUSTOMTABLES_JOOMLA_MIN_4', false);
+            }
+        }
+
         if ($componentName == 'com_extensiontranslator')
             $libraryPath = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'libraries';
         else
@@ -56,15 +69,11 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 
         if (!defined('CUSTOMTABLES_TEMP_PATH')) {
 
-            // Get Joomla version
-            $version = new Version();
-
             // Check if version is 4.0 or higher
-            if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+            if (CUSTOMTABLES_JOOMLA_MIN_4)
                 $config = Factory::getContainer()->get('config');
-            } else {
+            else
                 $config = Factory::getConfig();
-            }
 
             $tmpPath = $config->get('tmp_path');
 
@@ -72,6 +81,16 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
         }
 
     } elseif (defined('WPINC')) {
+
+
+        if (!defined('CUSTOMTABLES_JOOMLA_VERSION')) {
+            define('CUSTOMTABLES_JOOMLA_VERSION', 0);
+
+            if (!defined('CUSTOMTABLES_JOOMLA_MIN_4'))
+                define('CUSTOMTABLES_JOOMLA_MIN_4', false);
+        }
+
+
         $libraryPath = $PLUGIN_NAME_DIR . 'libraries';
 
         if (!defined('CUSTOMTABLES_ABSPATH'))

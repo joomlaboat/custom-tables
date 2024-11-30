@@ -157,11 +157,11 @@ class Edit
 
             $result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
                 . 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
-                . 'data-version=' . $this->ct->Env->version . $additionalParameter . '>';
+                . 'data-version=' . CUSTOMTABLES_JOOMLA_VERSION . $additionalParameter . '>';
         }
 
         if (defined('_JEXEC'))
-            $result .= ($this->ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
+            $result .= (CUSTOMTABLES_JOOMLA_MIN_4 ? '<fieldset class="options-form">' : '<fieldset>');
 
         //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 

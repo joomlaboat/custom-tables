@@ -1052,8 +1052,13 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     let result = '';
     let cssClass = 'form-control form-select valid form-control-success';
     let objForm = document.getElementById(formId);
-    if (objForm && objForm.dataset.version < 4)
-        cssClass = 'inputbox';
+
+    if (objForm) {
+        let v1 = objForm.dataset.version.split('.');
+        let version = parseInt(v1[0]);
+        if (version < 4)
+            cssClass = 'inputbox';
+    }
 
     //Add select box
     let current_object_id = control_name + index + (Array.isArray(filters[index]) ? '_' + sub_index : '');

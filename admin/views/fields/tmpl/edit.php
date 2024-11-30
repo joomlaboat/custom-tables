@@ -29,7 +29,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typep
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
-if ($this->version >= 4) {
+if (CUSTOMTABLES_JOOMLA_MIN_4) {
     $wa = $this->document->getWebAssetManager();
     $wa->useScript('keepalive')->useScript('form.validate');
 } else {

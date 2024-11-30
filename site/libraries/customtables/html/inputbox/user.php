@@ -37,7 +37,7 @@ class InputBox_user extends BaseInputBox
                 $value = $defaultValue;
         }
 
-        self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        self::selectBoxAddCSSClass($this->attributes);
 
         try {
             $options = $this->buildQuery($showUserWithRecords);

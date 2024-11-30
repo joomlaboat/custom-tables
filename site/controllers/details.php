@@ -22,119 +22,118 @@ $task = common::inputGetCmd('task', '');
 
 $ct = null;
 if ($task != '')
-	$ct = new CT;
+    $ct = new CT;
 
 $user = new CTUser();
 
 switch ($task) {
-	case 'publish':
+    case 'publish':
 
-		$model = $this->getModel('edititem');
-		if (!$ct->CheckAuthorization(2)) {
-			$returnToEncoded = common::makeReturnToURL();
-			$link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
-			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
-		} else {
-			$app = Factory::getApplication();
+        $model = $this->getModel('edititem');
+        if (!$ct->CheckAuthorization(2)) {
+            $returnToEncoded = common::makeReturnToURL();
+            $link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
+            $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+        } else {
+            $app = Factory::getApplication();
 
-			$model->load($ct);
-			$count = $model->setPublishStatus(1);
-			$link = common::curPageURL();
-			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
+            $model->load($ct);
+            $count = $model->setPublishStatus(1);
+            $link = common::curPageURL();
+            $link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
-			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED');
-			if ($count == 1)
-				$msg .= '_1';
+            $msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED');
+            if ($count == 1)
+                $msg .= '_1';
 
-			$this->setRedirect($link, common::translate($msg, abs($count)));
-		}
+            $this->setRedirect($link, common::translate($msg, abs($count)));
+        }
 
-		break;
+        break;
 
-	case 'unpublish':
+    case 'unpublish':
 
-		$model = $this->getModel('edititem');
-		if (!$ct->CheckAuthorization(2)) {
-			$returnToEncoded = common::makeReturnToURL();
-			if ($ct->Env->version != 1.5) $link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
-			else $link = Route::_('index.php?option=com_user&view=login&return=' . $returnToEncoded);
-			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
-		} else {
-			$model->load($ct);
-			$count = $model->setPublishStatus(0);
-			$link = common::curPageURL();
-			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
+        $model = $this->getModel('edititem');
+        if (!$ct->CheckAuthorization(2)) {
+            $returnToEncoded = common::makeReturnToURL();
+            $link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
+            $this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+        } else {
+            $model->load($ct);
+            $count = $model->setPublishStatus(0);
+            $link = common::curPageURL();
+            $link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
-			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED');
-			if ($count == 1)
-				$msg .= '_1';
+            $msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED');
+            if ($count == 1)
+                $msg .= '_1';
 
-			$this->setRedirect($link, common::translate($msg, abs($count)));
-		}
-		break;
+            $this->setRedirect($link, common::translate($msg, abs($count)));
+        }
+        break;
 
-	default:
+    default:
 
-		if ($task == 'cart_addtocart' or $task == 'cart_form_addtocart' or $task == 'cart_setitemcount' or $task == 'cart_deleteitem' or $task == 'cart_emptycart') {
-			$model = $this->getModel('catalog');
-			$app = Factory::getApplication();
-			$model->load($ct);
-			if ($ct->Params->cartReturnTo) {
-				$link = $ct->Params->cartReturnTo;
-			} else {
-				$theLink = common::curPageURL();
-				$pair = explode('?', $theLink);
-				if (isset($pair[1])) {
-					$pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'task');
-					$pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'cartprefix');
-				}
-				$link = implode('?', $pair); //'index.php?option=com_customtables&view=catalog&Itemid='.common::inputGetInt(
-			}
+        if ($task == 'cart_addtocart' or $task == 'cart_form_addtocart' or $task == 'cart_setitemcount' or $task == 'cart_deleteitem' or $task == 'cart_emptycart') {
+            $model = $this->getModel('catalog');
+            $app = Factory::getApplication();
+            $model->load($ct);
+            if ($ct->Params->cartReturnTo) {
+                $link = $ct->Params->cartReturnTo;
+            } else {
+                $theLink = common::curPageURL();
+                $pair = explode('?', $theLink);
+                if (isset($pair[1])) {
+                    $pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'task');
+                    $pair[1] = CTMiscHelper::deleteURLQueryOption($pair[1], 'cartprefix');
+                }
+                $link = implode('?', $pair); //'index.php?option=com_customtables&view=catalog&Itemid='.common::inputGetInt(
+            }
 
-			$param_msg = '';
-			$result = '';
+            $param_msg = '';
+            $result = '';
 
-			switch ($task) {
-				case 'cart_addtocart':
-					$result = $model->cart_addtocart();
-					if ($ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
-					break;
+            switch ($task) {
+                case 'cart_addtocart':
+                    $result = $model->cart_addtocart();
+                    if ($ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
+                    break;
 
-				case 'cart_form_addtocart':
-					$result = $model->cart_form_addtocart();
-					if ($ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
-					break;
+                case 'cart_form_addtocart':
+                    $result = $model->cart_form_addtocart();
+                    if ($ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
+                    break;
 
-				case 'cart_setitemcount':
-					$result = $model->cart_setitemcount();
-					if ($ct->Params->cartMsgItemUpdated) $param_msg = $ct->Params->cartMsgItemUpdated;
-					break;
+                case 'cart_setitemcount':
+                    $result = $model->cart_setitemcount();
+                    if ($ct->Params->cartMsgItemUpdated) $param_msg = $ct->Params->cartMsgItemUpdated;
+                    break;
 
-				case 'cart_deleteitem':
-					$result = $model->cart_deleteitem();
-					if ($ct->Params->cartMsgItemDeleted) $param_msg = $ct->Params->cartMsgItemDeleted;
-					break;
+                case 'cart_deleteitem':
+                    $result = $model->cart_deleteitem();
+                    if ($ct->Params->cartMsgItemDeleted) $param_msg = $ct->Params->cartMsgItemDeleted;
+                    break;
 
-				case 'cart_emptycart':
-					$result = $model->cart_emptycart();
-					if ($ct->Params->cartMsgItemUpdated) $param_msg = $ct->Params->cartMsgItemUpdated;
-					break;
-			}
+                case 'cart_emptycart':
+                    $result = $model->cart_emptycart();
+                    if ($ct->Params->cartMsgItemUpdated) $param_msg = $ct->Params->cartMsgItemUpdated;
+                    break;
+            }
 
-			if ($result) {
-				if (common::inputPostString('msg', null, 'create-edit-record'))
-					$msg = common::inputPostString('msg', null, 'create-edit-record');
-				elseif ($param_msg != '')
-					$msg = $param_msg;
-				else
-					$msg = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED');
+            if ($result) {
+                if (common::inputPostString('msg', null, 'create-edit-record'))
+                    $msg = common::inputPostString('msg', null, 'create-edit-record');
+                elseif ($param_msg != '')
+                    $msg = $param_msg;
+                else
+                    $msg = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED');
 
-				$this->setRedirect($link, $msg);
-			} else {
-				$msg = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED');
-				$this->setRedirect($link, $msg, 'error');
-			}
-		} else {
-			parent::display();
-		}
+                $this->setRedirect($link, $msg);
+            } else {
+                $msg = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED');
+                $this->setRedirect($link, $msg, 'error');
+            }
+        } else {
+            parent::display();
+        }
 }

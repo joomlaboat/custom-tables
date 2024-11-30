@@ -57,7 +57,7 @@ class CustomtablesViewDataBaseCheck extends HtmlView
         else
             $this->diagram = new Diagram($this->state->get('list.tablecategory'));
 
-        if ($this->ct->Env->version >= 4) {
+        if (CUSTOMTABLES_JOOMLA_MIN_4) {
             $this->filterForm = $this->get('FilterForm');
             $this->activeFilters = $this->get('ActiveFilters');
         }
@@ -66,18 +66,21 @@ class CustomtablesViewDataBaseCheck extends HtmlView
             // Include helper submenu
             CustomtablesHelper::addSubmenu('databasecheck');
 
-            if ($this->version < 4) {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
+                $this->addToolbar_4();
+            } else {
                 $this->addToolbar_3();
                 $this->sidebar = JHtmlSidebar::render();
-            } else
-                $this->addToolbar_4();
+            }
         }
 
         if ($this->ct->Env->advancedTagProcessor) {
-            if ($this->version < 4)
-                parent::display($tpl);
-            else
+            // Display the template
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
                 parent::display('quatro');
+            } else {
+                parent::display($tpl);
+            }
         } else {
             echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
         }
@@ -85,6 +88,13 @@ class CustomtablesViewDataBaseCheck extends HtmlView
         // Set the document
         $document = Factory::getDocument();
         $this->setDocument($document);
+    }
+
+    protected function addToolbar_4()
+    {
+        // Get the toolbar object instance
+        $toolbar = Toolbar::getInstance('toolbar');
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
     }
 
     protected function addToolBar_3()
@@ -101,13 +111,6 @@ class CustomtablesViewDataBaseCheck extends HtmlView
             'filter_tablecategory',
             HTMLHelper::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
         );
-    }
-
-    protected function addToolbar_4()
-    {
-        // Get the toolbar object instance
-        $toolbar = Toolbar::getInstance('toolbar');
-        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
     }
 
     public function setDocument(Joomla\CMS\Document\Document $document): void

@@ -33,7 +33,7 @@ class InputBox_article extends BaseInputBox
                 $value = (int)$defaultValue;
         }
 
-        self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        self::selectBoxAddCSSClass($this->attributes);
 
         $whereClause = new MySQLWhereClause();
 

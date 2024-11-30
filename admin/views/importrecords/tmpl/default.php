@@ -17,14 +17,14 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 // load tooltip behavior
-if ($this->version < 4) {
+if (!CUSTOMTABLES_JOOMLA_MIN_4) {
     HTMLHelper::_('behavior.tooltip');
 }
 
 HTMLHelper::_('behavior.formvalidator');
 $document = Factory::getDocument();
 
-if ($this->version >= 4) {
+if (CUSTOMTABLES_JOOMLA_MIN_4) {
     $document->addCustomTag('<script src="' . common::UriRoot(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
 }
 

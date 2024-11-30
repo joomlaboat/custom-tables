@@ -20,7 +20,9 @@ let custom_fields = [];
 
 //Used in layouteditor.php
 function loadLayout(version) {
-    joomlaVersion = version;
+    const v1 = version.split('.');
+    
+    joomlaVersion = parseInt(v1[0]);
     let obj = document.getElementById("allLayoutRaw");
 
     if (obj)

@@ -21,7 +21,6 @@ use Joomla\CMS\Component\ComponentHelper;
 
 class Environment
 {
-    var float $version;
     var string $current_url;
     var string $current_sef_url;
     var string $encoded_current_url;
@@ -61,12 +60,6 @@ class Environment
             }
         }
 
-        if (defined('_JEXEC')) {
-            $version_object = new Version;
-            $this->version = (int)$version_object->getShortVersion();
-        } else
-            $this->version = 6;
-
         $this->current_url = common::curPageURL();
 
         if (!str_contains($this->current_url, 'option=com_customtables')) {
@@ -100,16 +93,16 @@ class Environment
 
         if (defined('_JEXEC')) {
 
-            if ($this->version < 4) {
-                $mainframe = Factory::getApplication();
-                $sef = $mainframe->getCfg('sef');
-            } else {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
                 try {
                     $sef = Factory::getApplication()->get('sef');
                 } catch (Exception $e) {
                     // Handle error if needed
                     $sef = false;
                 }
+            } else {
+                $mainframe = Factory::getApplication();
+                $sef = $mainframe->getCfg('sef');
             }
 
             if ($sef) {

@@ -20,7 +20,7 @@ class Search_tablejoinlist extends BaseSearch
     function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
     {
         parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
-        BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        BaseInputBox::selectBoxAddCSSClass($this->attributes);
     }
 
     /**

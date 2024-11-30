@@ -52,11 +52,12 @@ class CustomtablesViewDocumentation extends HtmlView
             // Include helper submenu
             CustomtablesHelper::addSubmenu('documentation');
 
-            if ($this->version < 4) {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
+                $this->addToolbar_4();
+            } else {
                 $this->addToolbar_3();
                 $this->sidebar = JHtmlSidebar::render();
-            } else
-                $this->addToolbar_4();
+            }
         }
 
         parent::display($tpl);
@@ -66,16 +67,15 @@ class CustomtablesViewDocumentation extends HtmlView
         $this->setDocument($document);
     }
 
+    protected function addToolBar_4()
+    {
+        ToolbarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
+    }
+
     protected function addToolBar_3()
     {
         ToolbarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
-    }
-
-    protected function addToolBar_4()
-    {
-        ToolbarHelper::title(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
-        //JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
     }
 
     public function setDocument(Joomla\CMS\Document\Document $document): void

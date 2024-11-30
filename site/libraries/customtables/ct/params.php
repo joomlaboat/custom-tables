@@ -356,10 +356,7 @@ class Params
         if (!$blockExternalVars and common::inputGetCmd('returnto'))
             $this->returnTo = common::getReturnToURL();
         else {
-            //$this->returnTo = JRoute::_(Joomla\CMS\Router\Route::_('index.php?Itemid=' . $this->ItemId));
-            $version_object = new Version;
-            $this->version = (int)$version_object->getShortVersion();
-            if ($this->version >= 4)
+            if (CUSTOMTABLES_JOOMLA_MIN_4)
                 $this->returnTo = $menu_params['returnto'] ?? Route::_(sprintf('index.php/?option=com_customtables&Itemid=%d', $this->ItemId));
             else
                 $this->returnTo = $menu_params['returnto'] ?? null;

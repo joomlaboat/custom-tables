@@ -195,17 +195,17 @@ class Twig_HTML_Tags
             return '';
 
         if (defined('_JEXEC')) {
-            $pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '', $this->ct->Env->version, $show_arrow_icons);
+            $pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '', $show_arrow_icons);
         } elseif (defined('WPINC')) {
             return '{{ html.pagination }} not supported in WordPress version';
         } else {
             return '{{ html.pagination }} not supported in this type of CMS';
         }
 
-        if ($this->ct->Env->version < 4)
-            return '<div class="pagination">' . $pagination->getPagesLinks() . '</div>';
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             return '<div style="display:inline-block;">' . $pagination->getPagesLinks() . '</div>';
+        else
+            return '<div class="pagination">' . $pagination->getPagesLinks() . '</div>';
     }
 
     function limit($the_step = 5): string
@@ -219,7 +219,7 @@ class Twig_HTML_Tags
         if (!is_null($this->ct->Params->ModuleId))
             return '';
 
-        $pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '', $this->ct->Env->version);
+        $pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '');
         return common::translate('COM_CUSTOMTABLES_SHOW') . ': ' . $pagination->getLimitBox($the_step);
     }
 

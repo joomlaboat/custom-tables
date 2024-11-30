@@ -54,10 +54,10 @@ class CustomTablesViewCustomTables extends HtmlView
         }
 
         // Display the template
-        if ($this->version < 4)
-            parent::display($tpl);
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             parent::display('quatro');
+        else
+            parent::display($tpl);
 
         // Set the document
         $document = Factory::getDocument();

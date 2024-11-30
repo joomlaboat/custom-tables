@@ -42,7 +42,7 @@ class InputBox_usergroups extends BaseInputBox
         }
 
         $valueArray = explode(',', $value ?? '');
-        self::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        self::selectBoxAddCSSClass($this->attributes);
 
         $availableUserGroups = $this->field->params[1] ?? '';
         $availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', strtolower(trim($availableUserGroups))));

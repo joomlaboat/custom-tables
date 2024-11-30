@@ -18,7 +18,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Version;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -680,14 +679,10 @@ class common
     public static function formatDateFromTimeStamp($timeStamp = null, ?string $format = 'Y-m-d H:i:s'): ?string
     {
         // Get Joomla version
-        $version = new Version();
-
-        // Check if version is 4.0 or higher
-        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $config = Factory::getContainer()->get('config');
-        } else {
+        else
             $config = Factory::getConfig();
-        }
 
         $timezone = new DateTimeZone($config->get('offset'));
         $date = Factory::getDate($timeStamp, $timezone);
@@ -768,15 +763,10 @@ class common
 
     public static function getSiteName()
     {
-        // Get Joomla version
-        $version = new Version();
-
-        // Check if version is 4.0 or higher
-        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $config = Factory::getContainer()->get('config');
-        } else {
+        else
             $config = Factory::getConfig();
-        }
 
         return $config->get('config.sitename');
     }
@@ -787,12 +777,10 @@ class common
      */
     static public function sendEmail($email, $emailSubject, $emailBody, $isHTML = true, $attachments = array()): bool
     {
-        $version = new Version();
-        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $mailer = Factory::getContainer()->get('mailer');
-        } else {
+        else
             $mailer = Factory::getMailer();
-        }
 
         $sender = array(
             self::getMailFrom(),
@@ -824,30 +812,20 @@ class common
 
     public static function getMailFrom()
     {
-        // Get Joomla version
-        $version = new Version();
-
-        // Check if version is 4.0 or higher
-        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $config = Factory::getContainer()->get('config');
-        } else {
+        else
             $config = Factory::getConfig();
-        }
 
         return $config->get('mailfrom');
     }
 
     public static function getEmailFromName()
     {
-        // Get Joomla version
-        $version = new Version();
-
-        // Check if version is 4.0 or higher
-        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $config = Factory::getContainer()->get('config');
-        } else {
+        else
             $config = Factory::getConfig();
-        }
 
         return $config->get('fromname');
     }

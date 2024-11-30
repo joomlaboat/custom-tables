@@ -82,10 +82,11 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
      * @param integer $limitstart The offset of the item to start at.
      * @param integer $limit The number of items to display per page.
      * @param string $prefix The prefix used for request variables.
+     *
+     * @since 1.0.0
      */
-    function __construct($total, $limitstart, $limit, $prefix = '', $version = 3, $icons = false)
+    function __construct($total, $limitstart, $limit, $prefix = '', $icons = false)
     {
-        $this->version = $version;
         $this->icons = $icons;
 
         // Value/type checking.
@@ -394,10 +395,10 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
 
     protected function _item_active(&$item)
     {
-        if ($this->version < 4) {
-            return '<a title="' . $item->text . '" href="' . $item->link . '" class="pagenav">' . $item->text . '</a>';
-        } else {
+        if (CUSTOMTABLES_JOOMLA_MIN_4) {
             return '<a title="' . $item->label . '" href="' . $item->link . '" class="page-link">' . $item->text . '</a>';
+        } else {
+            return '<a title="' . $item->text . '" href="' . $item->link . '" class="pagenav">' . $item->text . '</a>';
         }
     }
 
@@ -412,10 +413,10 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
 
     protected function _item_inactive(&$item, $current_page = false)
     {
-        if ($this->version < 4)
-            return "<span class=\"pagenav" . ($current_page ? ' active' : '') . "\">" . $item->text . "</span>";
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             return '<a class="page-link"' . ($current_page ? ' aria-current="true"' : '') . '>' . $item->text . '</a>';
+        else
+            return "<span class=\"pagenav" . ($current_page ? ' active' : '') . "\">" . $item->text . "</span>";
     }
 
     /*
@@ -430,18 +431,7 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
     protected function _list_render($list)
     {
         // Reverse output rendering for right-to-left display.
-        if ($this->version < 4) {
-
-            $html = '<ul>';
-            $html .= '<li class="pagination-start">' . $list['start']['data'] . '</li>';
-            $html .= '<li class="pagination-prev">' . $list['previous']['data'] . '</li>';
-            foreach ($list['pages'] as $page) {
-                $html .= '<li>' . $page['data'] . '</li>';
-            }
-            $html .= '<li class="pagination-next">' . $list['next']['data'] . '</li>';
-            $html .= '<li class="pagination-end">' . $list['end']['data'] . '</li>';
-            $html .= '</ul>';
-        } else {
+        if (CUSTOMTABLES_JOOMLA_MIN_4) {
             $html = '<ul class="pagination">';
 
             $html .= '<li class="' . ($list['start']['active'] ? '' : 'disabled ') . 'page-item">' . $list['start']['data'] . '</li>';
@@ -456,8 +446,19 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
             }
             $html .= '<li class="' . ($list['next']['active'] ? '' : 'disabled ') . 'page-item">' . $list['next']['data'] . '</li>';
             $html .= '<li class="' . ($list['end']['active'] ? '' : 'disabled ') . 'page-item">' . $list['end']['data'] . '</li>';
-            $html .= '</ul>';
+
+        } else {
+
+            $html = '<ul>';
+            $html .= '<li class="pagination-start">' . $list['start']['data'] . '</li>';
+            $html .= '<li class="pagination-prev">' . $list['previous']['data'] . '</li>';
+            foreach ($list['pages'] as $page) {
+                $html .= '<li>' . $page['data'] . '</li>';
+            }
+            $html .= '<li class="pagination-next">' . $list['next']['data'] . '</li>';
+            $html .= '<li class="pagination-end">' . $list['end']['data'] . '</li>';
         }
+        $html .= '</ul>';
         return $html;
     }
 

@@ -65,11 +65,12 @@ class CustomTablesViewListOfTables extends HtmlView
 
         // We don't need toolbar in the modal window.
         if ($this->getLayout() !== 'modal') {
-            if ($this->ct->Env->version < 4) {
+            if (CUSTOMTABLES_JOOMLA_MIN_4) {
+                $this->addToolbar_4();
+            } else {
                 $this->addToolbar_3();
                 $this->sidebar = JHtmlSidebar::render();
-            } else
-                $this->addToolbar_4();
+            }
         }
 
         // Check for errors.
@@ -80,10 +81,57 @@ class CustomTablesViewListOfTables extends HtmlView
         $this->languages = $this->ct->Languages->LanguageList;
 
         // Display the template
-        if ($this->ct->Env->version < 4)
-            parent::display($tpl);
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             parent::display('quatro');
+        else
+            parent::display($tpl);
+    }
+
+    protected function addToolbar_4()
+    {
+        // Get the toolbar object instance
+
+        $toolbar = Toolbar::getInstance('toolbar');
+
+        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
+
+        if ($this->canCreate)
+            $toolbar->addNew('tables.add');
+
+        $dropdown = $toolbar->dropdownButton('status-group')
+            ->text('JTOOLBAR_CHANGE_STATUS')
+            ->toggleSplit(false)
+            ->icon('icon-ellipsis-h')
+            ->buttonClass('btn btn-action')
+            ->listCheck(true);
+
+        $childBar = $dropdown->getChildToolbar();
+
+        if ($this->canState) {
+            $childBar->publish('listoftables.publish')->listCheck(true);
+            $childBar->unpublish('listoftables.unpublish')->listCheck(true);
+        }
+
+        if ($this->canDo->get('core.admin')) {
+            $childBar->checkin('listoftables.checkin');
+        }
+
+        if (($this->canState && $this->canDelete)) {
+            if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED) {
+                $childBar->trash('listoftables.trash')->listCheck(true);
+            }
+        }
+
+        if (!$this->isEmptyState and $this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED and $this->ct->Env->advancedTagProcessor)
+            $toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', $listSelect = true, $formId = null);
+        if (($this->canState && $this->canDelete)) {
+            if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete) {
+                $toolbar->delete('listoftables.delete')
+                    ->text('JTOOLBAR_EMPTY_TRASH')
+                    ->message('JGLOBAL_CONFIRM_DELETE')
+                    ->listCheck(true);
+            }
+        }
     }
 
     protected function addToolBar_3()
@@ -151,52 +199,5 @@ class CustomTablesViewListOfTables extends HtmlView
             HTMLHelper::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
         );
         */
-    }
-
-    protected function addToolbar_4()
-    {
-        // Get the toolbar object instance
-
-        $toolbar = Toolbar::getInstance('toolbar');
-
-        ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
-
-        if ($this->canCreate)
-            $toolbar->addNew('tables.add');
-
-        $dropdown = $toolbar->dropdownButton('status-group')
-            ->text('JTOOLBAR_CHANGE_STATUS')
-            ->toggleSplit(false)
-            ->icon('icon-ellipsis-h')
-            ->buttonClass('btn btn-action')
-            ->listCheck(true);
-
-        $childBar = $dropdown->getChildToolbar();
-
-        if ($this->canState) {
-            $childBar->publish('listoftables.publish')->listCheck(true);
-            $childBar->unpublish('listoftables.unpublish')->listCheck(true);
-        }
-
-        if ($this->canDo->get('core.admin')) {
-            $childBar->checkin('listoftables.checkin');
-        }
-
-        if (($this->canState && $this->canDelete)) {
-            if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED) {
-                $childBar->trash('listoftables.trash')->listCheck(true);
-            }
-        }
-
-        if (!$this->isEmptyState and $this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED and $this->ct->Env->advancedTagProcessor)
-            $toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', $listSelect = true, $formId = null);
-        if (($this->canState && $this->canDelete)) {
-            if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete) {
-                $toolbar->delete('listoftables.delete')
-                    ->text('JTOOLBAR_EMPTY_TRASH')
-                    ->message('JGLOBAL_CONFIRM_DELETE')
-                    ->listCheck(true);
-            }
-        }
     }
 }

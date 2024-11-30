@@ -590,15 +590,10 @@ class database
 
     public static function getTableStatus(string $tablename, string $type = 'table')
     {
-        // Get Joomla version
-        $version = new Version();
-
-        // Check if version is 4.0 or higher
-        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $config = Factory::getContainer()->get('config');
-        } else {
+        else
             $config = Factory::getConfig();
-        }
 
         $database = $config->get('db');
         $dbPrefix = $config->get('dbprefix');
@@ -777,15 +772,10 @@ class database
 
     public static function getDataBaseName(): ?string
     {
-        // Get Joomla version
-        $version = new Version();
-
-        // Check if version is 4.0 or higher
-        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $config = Factory::getContainer()->get('config');
-        } else {
+        else
             $config = Factory::getConfig();
-        }
 
         return $config->get('db');
     }
@@ -998,15 +988,10 @@ class database
 
     public static function getDBPrefix(): ?string
     {
-        // Get Joomla version
-        $version = new Version();
-
-        // Check if version is 4.0 or higher
-        if (version_compare($version->getShortVersion(), '4.0', '>=')) {
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $config = Factory::getContainer()->get('config');
-        } else {
+        else
             $config = Factory::getConfig();
-        }
 
         return $config->get('dbprefix');
     }

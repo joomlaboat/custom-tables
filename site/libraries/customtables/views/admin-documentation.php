@@ -18,18 +18,11 @@ use Joomla\CMS\Version;
 class Documentation
 {
     var bool $internal_use = false;
-    var float $version;
     var bool $onlyWordpress;
     var bool $hideProVersion;
 
     function __construct(bool $onlyWordpress = false, bool $hideProVersion = false)
     {
-        if (defined('_JEXEC')) {
-            $version = new Version;
-            $this->version = (float)$version->getShortVersion();
-        } else
-            $this->version = 6;
-
         $this->internal_use = true;
         $this->onlyWordpress = $onlyWordpress;
         $this->hideProVersion = $hideProVersion;

@@ -17,7 +17,7 @@ use CustomTables\Edit;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
-if ($this->ct->Env->version >= 4) {
+if (CUSTOMTABLES_JOOMLA_MIN_4) {
     $wa = $this->document->getWebAssetManager();
     $wa->useScript('keepalive')->useScript('form.validate');
 } else {

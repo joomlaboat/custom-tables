@@ -22,8 +22,8 @@ class Search_range extends BaseSearch
     function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
     {
         parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
-        BaseInputBox::selectBoxAddCSSClass($this->attributes, $this->ct->Env->version);
-        BaseInputBox::inputBoxAddCSSClass($this->attributes, $this->ct->Env->version);
+        BaseInputBox::selectBoxAddCSSClass($this->attributes);
+        BaseInputBox::inputBoxAddCSSClass($this->attributes);
     }
 
     function render($value): string
@@ -34,10 +34,10 @@ class Search_range extends BaseSearch
 
         $result = '';
 
-        if ($this->ct->Env->version < 4)
-            $default_class = 'inputbox';
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $default_class = 'form-control';
+        else
+            $default_class = 'inputbox';
 
         //$value_min = ''; //TODO: Check this
         $value_max = '';

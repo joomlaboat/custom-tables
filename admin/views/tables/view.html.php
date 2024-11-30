@@ -19,14 +19,13 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Version;
 
 /**
  * Tables View class
  *
  * @since 3.0.0
  */
-class CustomtablesViewTables extends HtmlView//JViewLegacy
+class CustomtablesViewTables extends HtmlView
 {
     var CT $ct;
     var $state;
@@ -44,9 +43,6 @@ class CustomtablesViewTables extends HtmlView//JViewLegacy
      */
     public function display($tpl = null)
     {
-        $version = new Version;
-        $this->version = (int)$version->getShortVersion();
-
         $model = $this->getModel();
         $this->ct = $model->ct;
 

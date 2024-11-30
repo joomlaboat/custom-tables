@@ -291,17 +291,17 @@ class Value
         else
             $iconClass = ' inactive tip-top hasTooltip" title="' . HTMLHelper::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
 
-        if ($this->ct->Env->version < 4)
-            $result = '<span class="sortable-handler' . $iconClass . '"><i class="ctIconOrdering"></i></span>';
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $result = '<span class="sortable-handler' . $iconClass . '"><span class="icon-ellipsis-v" aria-hidden="true"></span></span>';
+        else
+            $result = '<span class="sortable-handler' . $iconClass . '"><i class="ctIconOrdering"></i></span>';
 
         if ($orderByPair[0] == $this->field->realfieldname) {
 
-            if ($this->ct->Env->version < 4)
-                $result .= '<input type="text" style="display:none" name="order[]" size="5" value="' . htmlspecialchars($value ?? '') . '" class="width-20 text-area-order " />';
-            else
+            if (CUSTOMTABLES_JOOMLA_MIN_4)
                 $result .= '<input type="text" name="order[]" size="5" value="' . htmlspecialchars($value ?? '') . '" class="width-20 text-area-order hidden" />';
+            else
+                $result .= '<input type="text" style="display:none" name="order[]" size="5" value="' . htmlspecialchars($value ?? '') . '" class="width-20 text-area-order " />';
 
             $result .= '<input type="checkbox" style="display:none" name="cid[]" value="' . $this->row[$this->ct->Table->realidfieldname] . '" class="width-20 text-area-order " />';
 

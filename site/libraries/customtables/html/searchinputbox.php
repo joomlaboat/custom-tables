@@ -77,10 +77,10 @@ class SearchInputBox
 
         $objName_ = $prefix . $objName;
 
-        if ($this->ct->Env->version < 4)
-            $default_class = 'inputbox';
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             $default_class = 'form-control';
+        else
+            $default_class = 'inputbox';
 
         //Try to instantiate a class dynamically
         $aliasMap = [

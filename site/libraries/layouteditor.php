@@ -68,14 +68,17 @@ class LayoutEditor
     public function renderEditor(string $textAreaCode, string $textAreaId, string $typeBoxId, string $textAreaTabId, array &$onPageLoads, string $mode = 'layouteditor'): string
     {
         $ct = new CT;
-
         $index = count($onPageLoads);
         $result = '<div class="customlayoutform layouteditorbox">' . $textAreaCode . '</div><div id="' . $textAreaTabId . '"></div>';
-
         $code = '';
 
         if (count($onPageLoads) == 0) {
-            $code .= PHP_EOL . 'joomlaVersion = ' . $ct->Env->version . ';//layouteditor.php:77' . PHP_EOL;
+
+            if (CUSTOMTABLES_JOOMLA_MIN_4)
+                $code .= PHP_EOL . 'joomlaVersion = 4;//layouteditor.php:80' . PHP_EOL;
+            else
+                $code .= PHP_EOL . 'joomlaVersion = 3;//layouteditor.php:82' . PHP_EOL;
+
             $languages = $this->getKnownLanguages();
             $code .= PHP_EOL . 'languages=[' . $languages . '];' . PHP_EOL;
 
@@ -112,7 +115,7 @@ class LayoutEditor
 ';
         if (count($onPageLoads) == 0) {
             $code .= PHP_EOL . 'loadFields("jform_tableid","fieldWizardBox","Joomla");'
-                . PHP_EOL . 'loadLayout(' . $ct->Env->version . ');'
+                . PHP_EOL . 'loadLayout(' . CUSTOMTABLES_JOOMLA_VERSION . ');'
                 . PHP_EOL . 'addExtraEvents();' . PHP_EOL;
         }
         $onPageLoads[] = $code;

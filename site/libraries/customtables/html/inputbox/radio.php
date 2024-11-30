@@ -28,49 +28,10 @@ class InputBox_radio extends BaseInputBox
      */
     function render(?string $value, ?string $defaultValue): string
     {
-        if ($this->ct->Env->version < 4)
-            return $this->render_joomla3($value, $defaultValue);
-        else
+        if (CUSTOMTABLES_JOOMLA_MIN_4)
             return $this->render_joomla4($value, $defaultValue);
-    }
-
-    /**
-     * @throws Exception
-     * @since 3.3.5
-     */
-    function render_joomla3(?string $value, ?string $defaultValue): string
-    {
-        $result = '<ul class="' . (empty($this->attributes['class']) ? 'list-unstyled' : $this->attributes['class']) . '">';
-        $i = 0;
-
-        if ($value === null) {
-            $value = common::inputGetString($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
-            $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
-            if ($value == '')
-                $value = $defaultValue;
-        }
-
-        $element_id = $this->attributes['id'];
-
-        $this->attributes['type'] = 'radio';
-
-        foreach ($this->field->params as $radioValue) {
-            $v = trim($radioValue);
-
-            $attributes = $this->attributes;
-            $attributes['value'] = $v;
-
-            if ($value == $v)
-                $attributes['checked'] = 'checked';
-
-            $result .= '<li><input id="' . $element_id . '_' . $i . '" ' . self::attributes2String($attributes) . ' />'
-                . '<label for="' . $element_id . '_' . $i . '">' . $v . '</label></li>';
-
-            $i++;
-        }
-        $result .= '</ul>';
-
-        return $result;
+        else
+            return $this->render_joomla3($value, $defaultValue);
     }
 
     /**
@@ -111,6 +72,45 @@ class InputBox_radio extends BaseInputBox
             $i++;
         }
         $result .= '</div>';
+
+        return $result;
+    }
+
+    /**
+     * @throws Exception
+     * @since 3.3.5
+     */
+    function render_joomla3(?string $value, ?string $defaultValue): string
+    {
+        $result = '<ul class="' . (empty($this->attributes['class']) ? 'list-unstyled' : $this->attributes['class']) . '">';
+        $i = 0;
+
+        if ($value === null) {
+            $value = common::inputGetString($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
+            $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
+            if ($value == '')
+                $value = $defaultValue;
+        }
+
+        $element_id = $this->attributes['id'];
+
+        $this->attributes['type'] = 'radio';
+
+        foreach ($this->field->params as $radioValue) {
+            $v = trim($radioValue);
+
+            $attributes = $this->attributes;
+            $attributes['value'] = $v;
+
+            if ($value == $v)
+                $attributes['checked'] = 'checked';
+
+            $result .= '<li><input id="' . $element_id . '_' . $i . '" ' . self::attributes2String($attributes) . ' />'
+                . '<label for="' . $element_id . '_' . $i . '">' . $v . '</label></li>';
+
+            $i++;
+        }
+        $result .= '</ul>';
 
         return $result;
     }
