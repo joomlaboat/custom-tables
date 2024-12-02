@@ -53,7 +53,7 @@ class updateImages
         } else {
             $count = 0;
             if ($startIndex == 0) {
-                $count = self::countImages($ct->Table->realtablename);
+                $count = self::countImages($ct->Table->realtablename, $fieldRow['realfieldname']);
                 if ($stepSize > $count)
                     $stepSize = $count;
             }
@@ -67,10 +67,10 @@ class updateImages
      * @throws Exception
      * @since 3.2.2
      */
-    public static function countImages(string $realtablename): int
+    public static function countImages(string $realtablename, string $realfieldname): int
     {
         $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('$realfieldname', null, 'NOT NULL');
+        $whereClause->addCondition($realfieldname, null, 'NOT NULL');
 
         $rows = database::loadAssocList($realtablename, ['COUNT_ROWS'], $whereClause);
         return (int)$rows[0]['record_count'];

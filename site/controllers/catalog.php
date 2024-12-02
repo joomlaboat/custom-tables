@@ -237,7 +237,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
         case 'createuser':
 
             $ct->getTable($ct->Params->tableName);
-            if ($ct->Table->tablename === null) {
+            if ($ct->Table === null) {
                 return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
             }
 
@@ -265,7 +265,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
         case 'resetpassword':
 
             $ct->getTable($ct->Params->tableName);
-            if ($ct->Table->tablename === null)
+            if ($ct->Table === null)
                 return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
 
             $listing_id = common::inputGetInt("listing_id");
@@ -338,7 +338,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
             $tableid = common::inputGetInt('tableid');
             $ct->getTable($tableid);
 
-            if ($ct->Table->tablename === null) {
+            if ($ct->Table === null) {
                 header("HTTP/1.1 500 Internal Server Error");
                 die('Table not selected.');
             }

@@ -128,7 +128,7 @@ class CustomtablesControllerListOfRecords extends AdminController
         $tableid = common::inputGetInt('tableid');
         $ct->getTable($tableid);
 
-        if ($ct->Table->tablename === null) {
+        if ($ct->Table === null) {
             header("HTTP/1.1 500 Internal Server Error");
             die('Table not selected.');
         }
@@ -165,7 +165,7 @@ class CustomtablesControllerListOfRecords extends AdminController
         $ct->Env->frmt = 'csv';
 
         $ct->getTable($tableid);
-        if ($ct->Table->tablename === null) {
+        if ($ct->Table === null) {
             $ct->errors[] = 'Export to CSV: Table not selected.';
             return false;
         }

@@ -50,7 +50,7 @@ class updateFileBox
         } else {
             $count = 0;
             if ($startIndex == 0)
-                $count = updateImages::countImages($ct->Table->realtablename);
+                $count = updateImages::countImages($ct->Table->realtablename, $fieldRow['realfieldname']);
 
             $status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params);
             return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);

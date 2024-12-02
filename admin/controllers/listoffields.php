@@ -159,7 +159,7 @@ class CustomtablesControllerListOfFields extends AdminController
 
             $ct->getTable($tableId);
 
-            if ($ct->Table->tablename === null) {
+            if ($ct->Table === null) {
                 Factory::getApplication()->enqueueMessage('Table not found', 'error');
                 return;
             }

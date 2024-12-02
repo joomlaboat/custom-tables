@@ -58,6 +58,14 @@ class com_customtablesInstallerScript
      */
     public function preflight($type, $parent): bool
     {
+        $version = new Version();
+        if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
+            if (version_compare($version->getShortVersion(), '4.0', '>='))
+                define('CUSTOMTABLES_JOOMLA_MIN_4', true);
+            else
+                define('CUSTOMTABLES_JOOMLA_MIN_4', false);
+        }
+
         if ($type == 'uninstall') {
 
             if (!CUSTOMTABLES_JOOMLA_MIN_4)

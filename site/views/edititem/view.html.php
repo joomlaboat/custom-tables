@@ -40,7 +40,7 @@ class CustomTablesViewEditItem extends HtmlView
             return false;
         }
 
-        if (empty($this->ct->Table->tablename)) {
+        if (empty($this->ct->Table)) {
             common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'));
             echo common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED');
             return false;

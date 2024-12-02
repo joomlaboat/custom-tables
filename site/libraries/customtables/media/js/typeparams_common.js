@@ -665,9 +665,6 @@ function BuildImageSizeTable() {
     //if (value.indexOf('****semicolon****') !== -1)
     value = value.replaceAll('****semicolon****', ';');
 
-
-    console.log("value:888:" + value);
-
     const value_array = value.split(";");
     let result = '';
     let i;
