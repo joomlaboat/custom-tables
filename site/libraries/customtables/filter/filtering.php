@@ -610,7 +610,11 @@ class Filtering
                             $whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], (int)$vL, $comparison_operator);
                         }
 
-                        $filterTitle = Value_user::renderUserValue($vL);
+                        if ($vL === null)
+                            $filterTitle = null;
+                        else
+                            $filterTitle = Value_user::renderUserValue((int)$vL);
+
                         $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
                     }
                 }
@@ -1134,7 +1138,7 @@ class LinkJoinFilters
         $result .= '
 			<div id="' . $control_name . '_ctInputBoxRecords_current_value" style="display:none;"></div>
 ';
-        
+
         $result .= '<select id="' . $control_name . 'SQLJoinLink" class="' . common::convertClassString('form-select') . '" onchange="ctInputbox_UpdateSQLJoinLink(\'' . $control_name . '\',\'' . $control_name_postfix . '\')">';
         $result .= '<option value="">- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 

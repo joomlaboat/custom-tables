@@ -807,11 +807,11 @@
 
         <tag name="usergroups" label="User Groups" startchar="{" endchar="}"
              description="Returns an array of User Group names. Use |join(',') filter to return a string" proversion="1"
-             twigclass="user" wordpress="true">
+             twigclass="user" wordpress="true" example="{{ user.usergroups|join(',') }}">
             <params>
                 <param name="userid" label="User ID"
                        description="Specify the User Id or leave it blank to get the Current User's User Groups Names."
-                       hidden="false" default="" type="string"/>
+                       hidden="false" default="" type="string" example="5"/>
             </params>
         </tag>
 

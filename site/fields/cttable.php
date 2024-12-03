@@ -17,9 +17,18 @@ use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Version;
 
 if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
     define('CUSTOMTABLES_LIBRARIES_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries');
+
+$version = new Version();
+if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
+    if (version_compare($version->getShortVersion(), '4.0', '>='))
+        define('CUSTOMTABLES_JOOMLA_MIN_4', true);
+    else
+        define('CUSTOMTABLES_JOOMLA_MIN_4', false);
+}
 
 trait JFormFieldCTTableCommon
 {

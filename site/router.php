@@ -18,12 +18,13 @@ use CustomTables\Value_file;
 
 class CustomTablesRouter implements RouterInterface
 {
-
-    public function __construct(SiteApplication $app, AbstractMenu $menu)
-    {
-        $this->app = $app;
-        $this->menu = $menu;
-    }
+    /*
+        public function __construct(SiteApplication $app, AbstractMenu $menu)
+        {
+            $this->app = $app;
+            $this->menu = $menu;
+        }
+        */
 
     public function build(&$query): array
     {

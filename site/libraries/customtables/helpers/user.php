@@ -639,7 +639,7 @@ class CTUser
      */
     public function showUserGroups(?string $valueArrayString): string
     {
-        if ($valueArrayString == '')
+        if (empty($valueArrayString))
             return '';
 
         if (defined('_JEXEC')) {
@@ -659,12 +659,19 @@ class CTUser
     {
         $whereClause = new MySQLWhereClause();
 
+        if (empty($valueArrayString))
+            return '';
+
         $valueArray = explode(',', $valueArrayString);
         foreach ($valueArray as $value) {
             if ($value != '') {
                 $whereClause->addOrCondition('id', (int)$value);
             }
         }
+
+        if (!$whereClause->hasConditions())
+            return '';
+
         $options = database::loadAssocList('#__usergroups', ['title'], $whereClause, 'title');
 
         if (count($options) == 0)

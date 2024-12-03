@@ -16,6 +16,15 @@ use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Version;
+
+$version = new Version();
+if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
+    if (version_compare($version->getShortVersion(), '4.0', '>='))
+        define('CUSTOMTABLES_JOOMLA_MIN_4', true);
+    else
+        define('CUSTOMTABLES_JOOMLA_MIN_4', false);
+}
 
 trait JFormFieldCTEditLayoutCommon
 {

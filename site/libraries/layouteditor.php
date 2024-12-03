@@ -108,7 +108,7 @@ class LayoutEditor
 ';
         if (count($onPageLoads) == 0) {
             $code .= PHP_EOL . 'loadFields("jform_tableid","fieldWizardBox","Joomla");'
-                . PHP_EOL . 'loadLayout(' . CUSTOMTABLES_JOOMLA_VERSION . ');'
+                . PHP_EOL . 'loadLayout(' . (CUSTOMTABLES_JOOMLA_MIN_4 ? '4.0' : '3.0') . ');'
                 . PHP_EOL . 'addExtraEvents();' . PHP_EOL;
         }
         $onPageLoads[] = $code;
