@@ -516,6 +516,17 @@ class Layouts
                 common::redirect($link, common::translate('COM_CUSTOMTABLES_EDIT_CANCELED'));
             }
 
+
+            if ($this->ct->Table->record === null) {
+                if ($this->ct->Params->listing_id !== null)
+                    $listing_id = $this->ct->Params->listing_id;
+                else
+                    $listing_id = common::inputGetCmd('listing_id');
+
+                if ($listing_id !== null)
+                    $this->ct->Table->loadRecord($listing_id);
+            }
+
             $output['html'] = $this->renderEditForm();
 
             if ($this->ct->LayoutVariables['captcha'])
@@ -972,21 +983,18 @@ class Layouts
      */
     protected function renderEditForm(): string
     {
-        $recordRow = null;
-
-        if ($this->ct->Table !== null) {
-            $listing_id = common::inputGetCmd('listing_id');
-
-            if ($listing_id !== null) {
-                $recordRow = $this->ct->Table->loadRecord($listing_id);
-            }
-        }
+        if ($this->ct->Table->record === null)
+            return 'Record not loaded!';
 
         $formLink = common::curPageURL();
+        $row = $this->ct->Table->record;
+
+        if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+            $row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
 
         $editForm = new Edit($this->ct);
         $editForm->layoutContent = $this->layoutCode;
-        return $editForm->render($recordRow, $formLink, 'ctEditForm');
+        return $editForm->render($row, $formLink, 'ctEditForm');
     }
 
     /**
@@ -995,52 +1003,25 @@ class Layouts
      */
     protected function renderDetails(): string
     {
-        if ($this->ct->Table->record === null) {
+        if ($this->ct->Table->record === null)
             return 'Record not loaded!';
-        }
-        /*
-        if ($this->ct->Table !== null) {
-            $listing_id = common::inputGetCmd('listing_id');
 
-            if ($listing_id !== null) {
-                $row = $this->ct->Table->loadRecord($listing_id);
-            } else
-                return 'Record not loaded (listing_id parameter not specified)';
-        } else
-            return 'Table not selected';
+        $row = $this->ct->Table->record;
 
-
-        */
+        if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+            $row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
 
         $details = new Details($this->ct);
         $details->layoutDetailsContent = $this->layoutCode;
         $details->pageLayoutNameString = $this->pageLayoutNameString;
         $details->pageLayoutLink = $this->pageLayoutLink;
-
-        $row = $this->ct->Table->record;
-        //if (isset($this->ct->Table->record)) {
-        if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-            $row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
-        //}
-
         $details->row = $row;
-
-        /*
-        if ($details->load()) {
-            if ($details->layoutType == 8)
-                $this->ct->Env->frmt = 'xml';
-            elseif ($details->layoutType == 9)
-                $this->ct->Env->frmt = 'csv';
-            elseif ($details->layoutType == 10)
-                $this->ct->Env->frmt = 'json';
-        }*/
 
         if (!is_null($row)) {
             //Save view log
             $details->SaveViewLogForRecord($row);
             //$this->UpdatePHPOnView();
         }
-
         return $details->render();
     }
 
