@@ -415,7 +415,7 @@ class Layouts
 
         } else {
 
-            if ($this->ct->Table->fields === null)
+            if ($this->ct->Table === null)
                 return ['html' => 'CustomTable: Table not selected'];
 
             if ($layoutType == 1 or $layoutType == 5)
@@ -529,7 +529,7 @@ class Layouts
 
             $output['html'] = $this->renderEditForm();
 
-            if ($this->ct->LayoutVariables['captcha'])
+            if (isset($this->ct->LayoutVariables['captcha']) and $this->ct->LayoutVariables['captcha'])
                 $output['captcha'] = true;
 
             $output['fieldtypes'] = $this->ct->editFieldTypes;
@@ -983,14 +983,15 @@ class Layouts
      */
     protected function renderEditForm(): string
     {
-        if ($this->ct->Table->record === null)
-            return 'Record not loaded!';
-
         $formLink = common::curPageURL();
-        $row = $this->ct->Table->record;
 
-        if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-            $row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
+        if ($this->ct->Table->record !== null) {
+            if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+                $row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
+            else
+                $row = $this->ct->Table->record;
+        } else
+            $row = null;
 
         $editForm = new Edit($this->ct);
         $editForm->layoutContent = $this->layoutCode;
