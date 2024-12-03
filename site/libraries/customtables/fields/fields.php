@@ -212,7 +212,7 @@ class Fields
      */
     public static function deleteField_byID(CT $ct, int $fieldId): bool
     {
-        if ($ct->Table->tablename === null) {
+        if ($ct->Table === null) {
             die('deleteField_byID: Table not selected.');
         }
 

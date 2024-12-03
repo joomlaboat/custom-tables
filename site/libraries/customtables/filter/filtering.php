@@ -610,11 +610,7 @@ class Filtering
                             $whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], (int)$vL, $comparison_operator);
                         }
 
-                        if ($vL === null)
-                            $filterTitle = null;
-                        else
-                            $filterTitle = Value_user::renderUserValue((int)$vL);
-
+                        $filterTitle = Value_user::renderUserValue((int)$vL);
                         $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
                     }
                 }

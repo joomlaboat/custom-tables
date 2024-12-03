@@ -120,6 +120,10 @@ class Layouts
 
         $row = $rows[0];
         $this->tableId = (int)$row['tableid'];
+
+        if ($this->ct->Table === null)
+            $this->ct->getTable($this->tableId);
+
         $this->layoutId = (int)$row['id'];
         $this->layoutType = (int)$row['layouttype'];
 
@@ -399,17 +403,21 @@ class Layouts
      * @throws Exception
      * @since 3.2.2
      */
-    function renderMixedLayout(int $layoutId, int $layoutType = null): array
+    function renderMixedLayout($layoutId, ?int $layoutType = null): array
     {
-        if ($this->ct->Table->fields === null)
-            return ['html' => 'CustomTable: Table not selected'];
-
-        if ($layoutId !== 0) {
+        if (!empty($layoutId)) {
             $this->getLayout($layoutId);
             if ($this->layoutType === null)
                 return ['html' => 'CustomTable: Layout "' . $layoutId . '" not found'];
 
+            if ($this->ct->Table->fields === null)
+                return ['html' => 'CustomTable: Table not selected or not found'];
+
         } else {
+
+            if ($this->ct->Table->fields === null)
+                return ['html' => 'CustomTable: Table not selected'];
+
             if ($layoutType == 1 or $layoutType == 5)
                 $this->layoutCode = $this->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
             elseif ($layoutType == 2) {
@@ -518,7 +526,11 @@ class Layouts
         } elseif ($this->layoutType == 4 or $this->layoutType == 6) {
             //Details or Catalog Item
             if ($this->ct->Table->record === null) {
-                $listing_id = common::inputGetCmd('listing_id');
+                if ($this->ct->Params->listing_id !== null)
+                    $listing_id = $this->ct->Params->listing_id;
+                else
+                    $listing_id = common::inputGetCmd('listing_id');
+
                 if ($listing_id !== null)
                     $this->ct->Table->loadRecord($listing_id);
             }
@@ -962,7 +974,7 @@ class Layouts
     {
         $recordRow = null;
 
-        if ($this->ct->Table->tablename !== null) {
+        if ($this->ct->Table !== null) {
             $listing_id = common::inputGetCmd('listing_id');
 
             if ($listing_id !== null) {
@@ -983,8 +995,11 @@ class Layouts
      */
     protected function renderDetails(): string
     {
-
-        if ($this->ct->Table->tablename !== null) {
+        if ($this->ct->Table->record === null) {
+            return 'Record not loaded!';
+        }
+        /*
+        if ($this->ct->Table !== null) {
             $listing_id = common::inputGetCmd('listing_id');
 
             if ($listing_id !== null) {
@@ -994,19 +1009,19 @@ class Layouts
         } else
             return 'Table not selected';
 
-        if ($this->ct->Table->record === null) {
-            return 'Record not loaded!';
-        }
+
+        */
 
         $details = new Details($this->ct);
         $details->layoutDetailsContent = $this->layoutCode;
         $details->pageLayoutNameString = $this->pageLayoutNameString;
         $details->pageLayoutLink = $this->pageLayoutLink;
 
-        if (isset($row)) {
-            if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-                $row = ctProHelpers::getSpecificVersionIfSet($this->ct, $row);
-        }
+        $row = $this->ct->Table->record;
+        //if (isset($this->ct->Table->record)) {
+        if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+            $row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
+        //}
 
         $details->row = $row;
 
