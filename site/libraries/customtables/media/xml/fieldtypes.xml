@@ -1017,45 +1017,6 @@
 		  ct_alias="ordering" disabled="false" ct_special="false" priority="3" wordpress="false" order="40"
 		  image="https://joomlaboat.com/images/components/ct/field-types/ordering-catalog.png"/>
 
-	<!--
-		<type ct_name="phponadd" label="PHP On Add"
-			  description="Executes PHP script after record has been added saves the return value." rawquotes="0"
-			  priority="3" proversion="1" depricated="1">
-			<params>
-				<param name="phpcode" example="&quot;Time is &quot;.(time()+3600)" examplenoquotes="1" label="PHP Script"
-					   description='Note that you cannot use single quote symbol.
-				In addition, you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
-					   default="" type="string"/>
-			</params>
-		</type>
-   -->
-	<!--
-		<type ct_name="phponchange" label="PHP On Change"
-			  description="Executes PHP script after record has been changed saves the return value." rawquotes="0"
-			  priority="3" proversion="1" depricated="1">
-			<params>
-				<param name="phpcode" label="PHP Script" example="&quot;[firstname]&quot;.&quot;[lastname]&quot;"
-					   examplenoquotes="1"
-					   description='Note that you cannot use single quote symbol. In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
-					   default="" type="string"/>
-			</params>
-		</type>
-   -->
-	<!--
-	<type ct_name="phponview" label="PHP On View" description="Executes PHP script on record view event." rawquotes="0"
-		  priority="3" proversion="1" depricated="1">
-		<params>
-			<param name="phpcode" label="PHP Script" example="&quot;Time is &quot;.(time()+3600)" examplenoquotes="1"
-				   description='Note that you cannot use single quote symbol. In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.'
-				   default="" type="string"/>
-			<param name="storevalue" example="" label="Store in database"
-				   description="Store the field value in the database." default="" type="list">
-				<option value="" label="Store Value"/>
-				<option value="dynamic" label="Do not store value"/>
-			</param>
-		</params>
-	</type>-->
-
 	<!-- WordPress Ready 7 PRO -->
 	<type ct_name="radio" label="Radio" description="Radio Buttons" priority="3" proversion="1"
 		  repetitive="1" wordpress="true" order="7"><!-- pro -->
@@ -1072,89 +1033,123 @@
 		</editparams>
 	</type>
 
-	<!-- WordPress NOT Ready 31 -->
+	<!-- WordPress Ready 31 -->
 	<type ct_name="server" label="Server Info"
 		  description="Server and execution environment variables. See: https://php.net/manual/en/reserved.variables.server.php"
-		  priority="3" proversion="1" wordpress="false" order="31"><!-- pro -->
+		  priority="3" proversion="1" wordpress="true" order="31"><!-- pro -->
 		<params>
 			<param name="option" label="Option" type="list" description="Select what information to save.">
 				<option value="REMOTE_ADDR" label="REMOTE_ADDR"
-						description="The IP address from which the user is viewing the current page."/>
+						description="The IP address from which the user is viewing the current page." wordpress="true"/>
 				<option value="HTTP_REFERER" label="HTTP_REFERER"
-						description="The address of the page (if any) which referred the user agent to the current page. This is set by the user agent. Not all user agents will set this, and some provide the ability to modify HTTP_REFERER as a feature. In short, it cannot really be trusted."/>
+						description="The address of the page (if any) which referred the user agent to the current page. This is set by the user agent. Not all user agents will set this, and some provide the ability to modify HTTP_REFERER as a feature. In short, it cannot really be trusted."
+						wordpress="true"/>
 
 				<option value="REMOTE_HOST" label="REMOTE_HOST"
-						description="The Host name from which the user is viewing the current page. The reverse DNS lookup is based off the REMOTE_ADDR of the user."/>
+						description="The Host name from which the user is viewing the current page. The reverse DNS lookup is based off the REMOTE_ADDR of the user."
+						wordpress="true"/>
 				<option value="REMOTE_PORT" label="REMOTE_PORT"
-						description="The port being used on the user's machine to communicate with the web server."/>
-				<option value="REMOTE_USER" label="REMOTE_USER" description="The authenticated user."/>
+						description="The port being used on the user's machine to communicate with the web server."
+						wordpress="true"/>
+				<option value="REMOTE_USER" label="REMOTE_USER" description="The authenticated user." wordpress="true"/>
 
 				<option value="PHP_SELF" label="PHP_SELF"
-						description="The filename of the currently executing script, relative to the document root."/>
+						description="The filename of the currently executing script, relative to the document root."
+						wordpress="true"/>
 				<option value="GATEWAY_INTERFACE" label="GATEWAY_INTERFACE"
-						description="Revision of the CGI specification the server is using; i.e. 'CGI/1.1'"/>
+						description="Revision of the CGI specification the server is using; i.e. 'CGI/1.1'"
+						wordpress="true"/>
 				<option value="SERVER_ADDR" label="SERVER_ADDR"
-						description="The IP address of the server under which the current script is executing."/>
+						description="The IP address of the server under which the current script is executing."
+						wordpress="true"/>
 				<option value="SERVER_NAME" label="SERVER_NAME"
-						description="The name of the server host under which the current script is executing. If the script is running on a virtual host, this will be the value defined for that virtual host."/>
+						description="The name of the server host under which the current script is executing. If the script is running on a virtual host, this will be the value defined for that virtual host."
+						wordpress="true"/>
 				<option value="SERVER_SOFTWARE" label="SERVER_SOFTWARE"
-						description="Server identification string, given in the headers when responding to requests."/>
+						description="Server identification string, given in the headers when responding to requests."
+						wordpress="true"/>
 				<option value="SERVER_PROTOCOL" label="SERVER_PROTOCOL"
-						description="Name and revision of the information protocol via which the page was requested; i.e. 'HTTP/1.0'"/>
+						description="Name and revision of the information protocol via which the page was requested; i.e. 'HTTP/1.0'"
+						wordpress="true"/>
 				<option value="REQUEST_METHOD" label="REQUEST_METHOD"
-						description="Which request method was used to access the page; i.e. 'GET', 'HEAD', 'POST', 'PUT'."/>
+						description="Which request method was used to access the page; i.e. 'GET', 'HEAD', 'POST', 'PUT'."
+						wordpress="true"/>
 				<option value="REQUEST_TIME" label="REQUEST_TIME"
-						description="The timestamp of the start of the request. Available since PHP 5.1.0."/>
+						description="The timestamp of the start of the request. Available since PHP 5.1.0."
+						wordpress="true"/>
 				<option value="REQUEST_TIME_FLOAT" label="REQUEST_TIME_FLOAT"
-						description="The timestamp of the start of the request, with microsecond precision. Available since PHP 5.4.0."/>
+						description="The timestamp of the start of the request, with microsecond precision. Available since PHP 5.4.0."
+						wordpress="true"/>
 				<option value="QUERY_STRING" label="QUERY_STRING"
-						description="The query string, if any, via which the page was accessed."/>
+						description="The query string, if any, via which the page was accessed."
+						wordpress="true"/>
 				<option value="DOCUMENT_ROOT" label="DOCUMENT_ROOT"
-						description="The document root directory under which the current script is executing, as defined in the server's configuration file."/>
+						description="The document root directory under which the current script is executing, as defined in the server's configuration file."
+						wordpress="true"/>
 				<option value="HTTP_ACCEPT" label="HTTP_ACCEPT"
-						description="Contents of the Accept: header from the current request, if there is one."/>
+						description="Contents of the Accept: header from the current request, if there is one."
+						wordpress="true"/>
 				<option value="HTTP_ACCEPT_CHARSET" label="HTTP_ACCEPT_CHARSET"
-						description="Contents of the Accept-Charset: header from the current request, if there is one. Example: 'iso-8859-1,*,utf-8'."/>
+						description="Contents of the Accept-Charset: header from the current request, if there is one. Example: 'iso-8859-1,*,utf-8'."
+						wordpress="true"/>
 				<option value="HTTP_ACCEPT_ENCODING" label="HTTP_ACCEPT_ENCODING"
-						description="Contents of the Accept-Encoding: header from the current request, if there is one. Example: 'gzip'."/>
+						description="Contents of the Accept-Encoding: header from the current request, if there is one. Example: 'gzip'."
+						wordpress="true"/>
 				<option value="HTTP_ACCEPT_LANGUAGE" label="HTTP_ACCEPT_LANGUAGE"
-						description="Contents of the Accept-Language: header from the current request, if there is one. Example: 'en'."/>
+						description="Contents of the Accept-Language: header from the current request, if there is one. Example: 'en'."
+						wordpress="true"/>
 				<option value="HTTP_CONNECTION" label="HTTP_CONNECTION"
-						description="Contents of the Connection: header from the current request, if there is one. Example: 'Keep-Alive'."/>
+						description="Contents of the Connection: header from the current request, if there is one. Example: 'Keep-Alive'."
+						wordpress="true"/>
 				<option value="HTTP_HOST" label="HTTP_HOST"
-						description="Contents of the Host: header from the current request, if there is one."/>
+						description="Contents of the Host: header from the current request, if there is one."
+						wordpress="true"/>
 				<option value="HTTP_USER_AGENT" label="HTTP_USER_AGENT"
-						description="Contents of the User-Agent: header from the current request, if there is one. This is a string denoting the user agent which is accessing the page."/>
+						description="Contents of the User-Agent: header from the current request, if there is one. This is a string denoting the user agent which is accessing the page."
+						wordpress="true"/>
 				<option value="HTTPS" label="HTTPS"
-						description="Set to a non-empty value if the script was queried through the HTTPS protocol."/>
+						description="Set to a non-empty value if the script was queried through the HTTPS protocol."
+						wordpress="true"/>
 				<option value="REDIRECT_REMOTE_USER" label="REDIRECT_REMOTE_USER"
-						description="The authenticated user if the request is internally redirected."/>
+						description="The authenticated user if the request is internally redirected."
+						wordpress="true"/>
 				<option value="SCRIPT_FILENAME" label="SCRIPT_FILENAME"
-						description="The absolute pathname of the currently executing script."/>
+						description="The absolute pathname of the currently executing script."
+						wordpress="true"/>
 				<option value="SERVER_ADMIN" label="SERVER_ADMIN"
-						description="The value given to the SERVER_ADMIN (for Apache) directive in the web server configuration file. If the script is running on a virtual host, this will be the value defined for that virtual host."/>
+						description="The value given to the SERVER_ADMIN (for Apache) directive in the web server configuration file. If the script is running on a virtual host, this will be the value defined for that virtual host."
+						wordpress="true"/>
 				<option value="SERVER_PORT" label="SERVER_PORT"
-						description="The port on the server machine being used by the web server for communication. For default setups, this will be '80'; using SSL, for instance, will change this to whatever your defined secure HTTP port is."/>
+						description="The port on the server machine being used by the web server for communication. For default setups, this will be '80'; using SSL, for instance, will change this to whatever your defined secure HTTP port is."
+						wordpress="true"/>
 				<option value="SERVER_SIGNATURE" label="SERVER_SIGNATURE"
-						description="String containing the server version and virtual host name which are added to server-generated pages, if enabled."/>
+						description="String containing the server version and virtual host name which are added to server-generated pages, if enabled."
+						wordpress="true"/>
 				<option value="PATH_TRANSLATED" label="PATH_TRANSLATED"
-						description="Filesystem- (not document root-) based path to the current script, after the server has done any virtual-to-real mapping."/>
+						description="Filesystem- (not document root-) based path to the current script, after the server has done any virtual-to-real mapping."
+						wordpress="true"/>
 				<option value="SCRIPT_NAME" label="SCRIPT_NAME"
-						description="Contains the current script's path."/>
+						description="Contains the current script's path." wordpress="true"/>
 				<option value="REQUEST_URI" label="REQUEST_URI"
-						description="The URI which was given in order to access this page."/>
+						description="The URI which was given in order to access this page." wordpress="true"/>
 				<option value="PHP_AUTH_DIGEST" label="PHP_AUTH_DIGEST"
-						description="When doing Digest HTTP authentication, this variable is set to the 'Authorization' header sent by the client."/>
+						description="When doing Digest HTTP authentication, this variable is set to the 'Authorization' header sent by the client."
+						wordpress="true"/>
 				<option value="PHP_AUTH_USER" label="PHP_AUTH_USER"
-						description="When doing HTTP authentication, this variable is set to the username provided by the user."/>
+						description="When doing HTTP authentication, this variable is set to the username provided by the user."
+						wordpress="true"/>
 				<option value="PHP_AUTH_PW" label="PHP_AUTH_PW"
-						description="When doing HTTP authentication, this variable is set to the password provided by the user."/>
+						description="When doing HTTP authentication, this variable is set to the password provided by the user."
+						wordpress="true"/>
 				<option value="AUTH_TYPE" label="AUTH_TYPE"
-						description="When doing HTTP authentication, this variable is set to the authentication type."/>
+						description="When doing HTTP authentication, this variable is set to the authentication type."
+						wordpress="true"/>
 				<option value="PATH_INFO" label="PATH_INFO"
-						description="Contains any client-provided pathname information trailing the actual script filename but preceding the query string, if available."/>
+						description="Contains any client-provided pathname information trailing the actual script filename but preceding the query string, if available."
+						wordpress="true"/>
 				<option value="ORIG_PATH_INFO" label="ORIG_PATH_INFO"
-						description="Original version of 'PATH_INFO' before processed by PHP."/>
+						description="Original version of 'PATH_INFO' before processed by PHP."
+						wordpress="true"/>
 			</param>
 		</params>
 		<editparams name="server" label="Input Element Parameters" description="">

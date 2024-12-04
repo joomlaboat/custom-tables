@@ -22,7 +22,6 @@ use RecursiveIteratorIterator;
 
 class common
 {
-
 	public static function convertClassString(string $class_string): string
 	{
 		return $class_string;
