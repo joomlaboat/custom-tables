@@ -1439,24 +1439,30 @@
 		</subvalueparams>
 	</type>
 
-	<!-- WordPress NOT ready 4 -->
+	<!-- WordPress Ready 4 -->
 	<type ct_name="text" name="text" label="Text Area (Multiple Lines)"
-		  description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false"
+		  description="Provides a multi-line text area for data entry, with customizable text editors, spell checking, and text output processing options."
+		  ct_alias="text" disabled="false" ct_special="false"
 		  priority="1" wordpress="true" order="4">
 		<params>
-			<param name="texteditor" label="Text Editor" description="" hidden="false" default=""
+			<param name="texteditor" label="Text Editor"
+				   description="Choose the type of editor to use for the text area. Options include no editor or a rich text editor."
+				   hidden="false" default=""
 				   type="list">
 				<option value="" label="No Editor" wordpress="true"/>
 				<option value="rich" label="Rich Text Editor" wordpress="false"/>
 				<!--<option value="codemirror" label="Code Mirror (Code Editor)" />-->
 			</param>
-			<param name="spellcheck" label="Spell Checker" description="" wordpress="false" default="" type="list">
+			<param name="spellcheck" label="Spell Checker"
+				   description="Enable or disable spell checking for this text area field." wordpress="false" default=""
+				   type="list">
 				<option value="" wordpress="true" label="No"/>
 				<option value="spellcheck" label="Yes" wordpress="false"/>
 			</param>
 
 			<param name="type" label="Maximum length" example="medium"
-				   description="Maximum length of value to be held. The effective maximum length is less. The Joomla default utf8mb4 Character Set (4-Byte UTF-8 Unicode Encoding)."
+				   description="
+				   Defines the maximum length of the text. Actual limits depend on the selected text type and the Joomla/WordPress default utf8mb4 character set (4-byte UTF-8 encoding)."
 				   default="" type="list" wordpress="false">
 				<option value="tiny" wordpress="true"
 						label="Up to 255 Bytes - 63 characters (TINYTEXT)"
@@ -1474,20 +1480,25 @@
 					 description="This dictates how to process the text value of the field.">
 			<params>
 				<param name="limit" label="Limit Output" type="list" example="50"
-					   description="Limits returning output text, first number of characters or first number of words.">
-					<option value="" label="Returns as it is"/>
+					   description="Limit the output of the text field to the specified number of characters or words, or retrieve specific elements like the first image.">
+					<option value="" label="Returns as is"/>
 					<option value="chars"
-							label="Returns first number of characters from text that was trimmed, sanitized and HTML tags stripped."/>
+							label="First X characters"
+							description="Returns the first number of characters after trimming and removing HTML tags."/>
 					<option value="words"
-							label="Returns first number of words from text that was trimmed, sanitized and HTML tags stripped."/>
-					<option value="firstimage" label="Returns the link to a first image found in the text."/>
+							label="First X words"
+							description="Returns the first number of words after trimming and removing HTML tags."/>
+					<option value="firstimage"
+							label="First image"
+							description="Returns the URL of the first image found in the text."/>
 				</param>
 				<param name="length" label="Length" description="Number of characters or words." hidden="false"
 					   default="" type="number" min="1" max="1024"/>
 				<param name="cleanbraces" label="Clean Braces"
-					   description="Deletes all braces from the text. (i.e. to avoid Content Plugins running.)"
+					   description="Remove all braces ({ and }) from the text to prevent content plugins from running."
 					   default="" type="radio" options="|No,true|Yes"/>
-				<param name="cleanquotes" label="Clean Quotes" description="Deletes all quotes from the text."
+				<param name="cleanquotes" label="Clean Quotes"
+					   description="Remove all quotation marks from the text."
 					   default="" type="radio" options="|No,true|Yes"/>
 			</params>
 		</valueparams>
