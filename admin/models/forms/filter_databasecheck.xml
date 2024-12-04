@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-    <fields name="filter">
-        <field
-                name="search"
-                type="text"
-                inputmode="search"
-                label="COM_CUSTOMTABLES_TABLES_SEARCH_TABLE_NAME"
-                description="COM_CUSTOMTABLES_TABLES_SEARCH_TABLE_NAME_DESC"
-                hint="JSEARCH_FILTER"
-        />
+	<fields name="filter">
+		<field
+				name="search"
+				type="text"
+				inputmode="search"
+				label="COM_CUSTOMTABLES_TABLES_SEARCH_TABLE_NAME"
+				description="COM_CUSTOMTABLES_TABLES_SEARCH_TABLE_NAME_DESC"
+				hint="JSEARCH_FILTER"
+		/>
 
-    </fields>
+	</fields>
 </form>

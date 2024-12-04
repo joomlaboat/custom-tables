@@ -1,171 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fieldtypes>
 
-    <type ct_name="article" label="Artikel" description="Artikelbox auswählen.">
-        <params>
-            <param type="int" name="categoryid" label="Kategorie-ID"
-                   description="Kategorie-ID, um nur aus dieser Kategorie auswählen zu können."/>
-        </params>
+	<type ct_name="article" label="Artikel" description="Artikelbox auswählen.">
+		<params>
+			<param type="int" name="categoryid" label="Kategorie-ID"
+				   description="Kategorie-ID, um nur aus dieser Kategorie auswählen zu können."/>
+		</params>
 
-        <editparams name="article" label="Parameter des Eingabeelements" description="">
-            <params>
-                <param type="string" name="cssclass" label="CSS-Klasse"
-                       description="Name oder Namen der CSS-Klasse(n)."/>
-                <param name="attributes" label="Attribute"
-                       description="Optionale Attribute wie: disabled, onclick, onchange etc."/>
-            </params>
-        </editparams>
-    </type>
+		<editparams name="article" label="Parameter des Eingabeelements" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS-Klasse"
+					   description="Name oder Namen der CSS-Klasse(n)."/>
+				<param name="attributes" label="Attribute"
+					   description="Optionale Attribute wie: disabled, onclick, onchange etc."/>
+			</params>
+		</editparams>
+	</type>
 
-    <type ct_name="userid" label="Autor-Benutzer"
-          description="Speichert die ID des Benutzers, der den Datensatz erstellt hat.">
-        <editparams name="userid" label="Parameter des Eingabeelements" description="">
-            <params>
-                <param type="string" name="cssclass" label="CSS-Klasse"
-                       description="Name oder Namen der CSS-Klasse(n)."/>
-                <param name="attributes" label="Attribute"
-                       description="Optionale Attribute wie: disabled, onclick, onchange etc."/>
-            </params>
-        </editparams>
+	<type ct_name="userid" label="Autor-Benutzer"
+		  description="Speichert die ID des Benutzers, der den Datensatz erstellt hat.">
+		<editparams name="userid" label="Parameter des Eingabeelements" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS-Klasse"
+					   description="Name oder Namen der CSS-Klasse(n)."/>
+				<param name="attributes" label="Attribute"
+					   description="Optionale Attribute wie: disabled, onclick, onchange etc."/>
+			</params>
+		</editparams>
 
-        <valueparams name="userid" label="Format der Benutzerdetails"
-                     description="Welche Informationen über den Benutzer angezeigt werden sollen."
-                     example="registerdate">
-            <params>
-                <param type="list" name="userAccountField" default="name"
-                       label="Welche Informationen über den Benutzer angezeigt werden sollen."
-                       description="Welche Informationen über den Benutzer angezeigt werden sollen.">
-                    <option value="id" label="Benutzer-ID"/>
-                    <option value="name" label="Benutzername"/>
-                    <option value="username" label="Login-Name (Benutzername)"/>
-                    <option value="email" label="E-Mail"/>
-                    <option value="registerdate" label="Registrierungsdatum"/>
-                    <option value="lastvisitdate" label="Datum des letzten Besuchs"/>
-                    <option value="online" label="Ist jetzt online"
-                            description="Die Funktion gibt 1 zurück, wenn der angegebene Wert anzeigt, dass der Benutzer online ist, 0, wenn der Wert anzeigt, dass der Benutzer offline ist, und NULL, wenn der angegebene Wert leer oder ungültig ist."/>
-                </param>
-                <param name="format" example="Y-m-d" label="Format" type="string"
-                       description="PHP-Datumsformat z.B. 'h:i:s'"/>
-            </params>
-        </valueparams>
-    </type>
+		<valueparams name="userid" label="Format der Benutzerdetails"
+					 description="Welche Informationen über den Benutzer angezeigt werden sollen."
+					 example="registerdate">
+			<params>
+				<param type="list" name="userAccountField" default="name"
+					   label="Welche Informationen über den Benutzer angezeigt werden sollen."
+					   description="Welche Informationen über den Benutzer angezeigt werden sollen.">
+					<option value="id" label="Benutzer-ID"/>
+					<option value="name" label="Benutzername"/>
+					<option value="username" label="Login-Name (Benutzername)"/>
+					<option value="email" label="E-Mail"/>
+					<option value="registerdate" label="Registrierungsdatum"/>
+					<option value="lastvisitdate" label="Datum des letzten Besuchs"/>
+					<option value="online" label="Ist jetzt online"
+							description="Die Funktion gibt 1 zurück, wenn der angegebene Wert anzeigt, dass der Benutzer online ist, 0, wenn der Wert anzeigt, dass der Benutzer offline ist, und NULL, wenn der angegebene Wert leer oder ungültig ist."/>
+				</param>
+				<param name="format" example="Y-m-d" label="Format" type="string"
+					   description="PHP-Datumsformat z.B. 'h:i:s'"/>
+			</params>
+		</valueparams>
+	</type>
 
-    <type ct_name="blob" label="Blob (Datei in der Datenbank speichern)"
-          description="Ein BLOB ist ein binäres großes Objekt, das eine ganze Datei enthalten kann.">
-        <params>
-            <param name="type" label="Maximale Länge" example="medium"
-                   description="Maximale Länge des zu speichernden Werts"
-                   default="" type="list">
-                <option value="tiny"
-                        label="255 Bytes (TINYBLOB)"
-                        description="Eine binäre große Objektspalte mit einer maximalen Länge von 255 (2^8 - 1) Bytes. Jeder TINYBLOB-Wert wird mit einem Längenprefix von einem Byte gespeichert, der die Anzahl der Bytes im Wert angibt."/>
-                <option value="" label="64KB (BLOB)"
-                        description="Eine binäre große Objektspalte mit einer maximalen Länge von 65535 (2^16 - 1) Bytes oder 64KB Speicherplatz. Jeder BLOB-Wert wird mit einem Längenprefix von zwei Bytes gespeichert, der die Anzahl der Bytes im Wert angibt."/>
-                <option value="medium" label="16MB (MEDIUMBLOB)"
-                        description="Eine binäre große Objektspalte mit einer maximalen Länge von 16777215 (2^24 - 1) Bytes oder 16MB Speicherplatz. Jeder MEDIUMBLOB-Wert wird mit einem Längenprefix von drei Bytes gespeichert, der die Anzahl der Bytes im Wert angibt."/>
-                <option value="long" label="4GB (LONGBLOB)"
-                        description="Eine binäre große Objektspalte mit einer maximalen Länge von 4294967295 (2^32 - 1) Bytes oder 4GB Speicherplatz. Jeder LONGBLOB-Wert wird mit einem Längenprefix von vier Bytes gespeichert, der die Anzahl der Bytes im Wert angibt."/>
-            </param>
+	<type ct_name="blob" label="Blob (Datei in der Datenbank speichern)"
+		  description="Ein BLOB ist ein binäres großes Objekt, das eine ganze Datei enthalten kann.">
+		<params>
+			<param name="type" label="Maximale Länge" example="medium"
+				   description="Maximale Länge des zu speichernden Werts"
+				   default="" type="list">
+				<option value="tiny"
+						label="255 Bytes (TINYBLOB)"
+						description="Eine binäre große Objektspalte mit einer maximalen Länge von 255 (2^8 - 1) Bytes. Jeder TINYBLOB-Wert wird mit einem Längenprefix von einem Byte gespeichert, der die Anzahl der Bytes im Wert angibt."/>
+				<option value="" label="64KB (BLOB)"
+						description="Eine binäre große Objektspalte mit einer maximalen Länge von 65535 (2^16 - 1) Bytes oder 64KB Speicherplatz. Jeder BLOB-Wert wird mit einem Längenprefix von zwei Bytes gespeichert, der die Anzahl der Bytes im Wert angibt."/>
+				<option value="medium" label="16MB (MEDIUMBLOB)"
+						description="Eine binäre große Objektspalte mit einer maximalen Länge von 16777215 (2^24 - 1) Bytes oder 16MB Speicherplatz. Jeder MEDIUMBLOB-Wert wird mit einem Längenprefix von drei Bytes gespeichert, der die Anzahl der Bytes im Wert angibt."/>
+				<option value="long" label="4GB (LONGBLOB)"
+						description="Eine binäre große Objektspalte mit einer maximalen Länge von 4294967295 (2^32 - 1) Bytes oder 4GB Speicherplatz. Jeder LONGBLOB-Wert wird mit einem Längenprefix von vier Bytes gespeichert, der die Anzahl der Bytes im Wert angibt."/>
+			</param>
 
-            <param name="filetypes" label="Dateitypen" example="doc docx"
-                   description="Liste der akzeptierten Dateitypen (durch Leerzeichen getrennt)"
-                   default="doc docx xls xlsx pdf pages ppt pptx" type="string"/>
-            <param name="filenamefield" label="Feld zum Abrufen/Speichern des Dateinamens"
-                   description="Geben Sie den Namen des Felds an, in dem der ursprüngliche Dateiname gespeichert werden soll. Standardmäßig wird der Dateiname der aktuelle Zeitstempel und die erraten Dateiendung sein."/>
-            <param type="string" name="customphp" label="Benutzerdefiniertes PHP"
-                   description="PHP-Datei/-Funktion, die den Dateiinhalt vor dem Herunterladen durch den Benutzer verarbeitet. Die Datei muss sich unter /components/com_customtables/customphp befinden."/>
-        </params>
+			<param name="filetypes" label="Dateitypen" example="doc docx"
+				   description="Liste der akzeptierten Dateitypen (durch Leerzeichen getrennt)"
+				   default="doc docx xls xlsx pdf pages ppt pptx" type="string"/>
+			<param name="filenamefield" label="Feld zum Abrufen/Speichern des Dateinamens"
+				   description="Geben Sie den Namen des Felds an, in dem der ursprüngliche Dateiname gespeichert werden soll. Standardmäßig wird der Dateiname der aktuelle Zeitstempel und die erraten Dateiendung sein."/>
+			<param type="string" name="customphp" label="Benutzerdefiniertes PHP"
+				   description="PHP-Datei/-Funktion, die den Dateiinhalt vor dem Herunterladen durch den Benutzer verarbeitet. Die Datei muss sich unter /components/com_customtables/customphp befinden."/>
+		</params>
 
-        <editparams name="file" label="Parameter des Eingabeelements" description="">
-            <params>
-                <param type="string" name="cssclass" label="CSS-Klasse"
-                       description="Name oder Namen der CSS-Klasse(n)."/>
-                <param name="attributes" label="Attribute"
-                       description="Optionale Attribute wie: disabled, onclick, onchange etc."/>
-            </params>
-        </editparams>
+		<editparams name="file" label="Parameter des Eingabeelements" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS-Klasse"
+					   description="Name oder Namen der CSS-Klasse(n)."/>
+				<param name="attributes" label="Attribute"
+					   description="Optionale Attribute wie: disabled, onclick, onchange etc."/>
+			</params>
+		</editparams>
 
-        <valueparams label="Dateilink-Format" description="">
-            <params>
-                <param name="private" label="Sicherheit" example="timelimited"
-                       description="Verschlüsselt den Link zur Datei und begrenzt die Zugriffsdauer." default=""
-                       type="list">
-                    <option value="" label="Öffentlich. Direkter Link zur Datei."/>
-                    <option value="timelimited" label="Zeitlich begrenzt (8-24 Minuten)" code="d"/>
-                    <option value="timelimited_longterm" label="Zeitlich begrenzt (1,5 - 4 Stunden)" code="e"/>
-                    <option value="hostlimited" label="Zeit-/Hostbegrenzt (8-24 Minuten)" code="f"/>
-                    <option value="hostlimited_longterm" label="Zeit-/Hostbegrenzt (1,5 - 4 Stunden)" code="g"/>
-                    <option value="private" label="Zeit-/Host-/Benutzerbegrenzt (8-24 Minuten)" code="h"/>
-                    <option value="private_longterm" label="Zeit-/Host-/Benutzerbegrenzt (1,5 - 4 Stunden)" code="i"/>
-                </param>
+		<valueparams label="Dateilink-Format" description="">
+			<params>
+				<param name="private" label="Sicherheit" example="timelimited"
+					   description="Verschlüsselt den Link zur Datei und begrenzt die Zugriffsdauer." default=""
+					   type="list">
+					<option value="" label="Öffentlich. Direkter Link zur Datei."/>
+					<option value="timelimited" label="Zeitlich begrenzt (8-24 Minuten)" code="d"/>
+					<option value="timelimited_longterm" label="Zeitlich begrenzt (1,5 - 4 Stunden)" code="e"/>
+					<option value="hostlimited" label="Zeit-/Hostbegrenzt (8-24 Minuten)" code="f"/>
+					<option value="hostlimited_longterm" label="Zeit-/Hostbegrenzt (1,5 - 4 Stunden)" code="g"/>
+					<option value="private" label="Zeit-/Host-/Benutzerbegrenzt (8-24 Minuten)" code="h"/>
+					<option value="private_longterm" label="Zeit-/Host-/Benutzerbegrenzt (1,5 - 4 Stunden)" code="i"/>
+				</param>
 
-                <param name="format" label="Link" example="filename-link"
-                       description="Wie der Link gerendert werden soll"
-                       default="icon-filename-link" type="list">
-                    <option value="icon-filename-link" label="Klickbares Icon und Dateiname"/>
-                    <option value="icon-link" label="Klickbares Icon"/>
-                    <option value="filename-link" label="Klickbarer Dateiname"/>
-                    <option value="link-anchor" label="Klickbarer Link"/>
-                    <option value="icon" label="Icon (IMG-Tag)"/>
-                    <option value="" label="Nur Link"/>
-                    <option value="filename" label="Dateiname"/>
-                    <option value="link-to-icon" label="Link zur Icon-Datei"/>
-                    <option value="extension" label="Erweiterung"/>
-                    <option value="file-size" label="Dateigröße"/>
-                </param>
+				<param name="format" label="Link" example="filename-link"
+					   description="Wie der Link gerendert werden soll"
+					   default="icon-filename-link" type="list">
+					<option value="icon-filename-link" label="Klickbares Icon und Dateiname"/>
+					<option value="icon-link" label="Klickbares Icon"/>
+					<option value="filename-link" label="Klickbarer Dateiname"/>
+					<option value="link-anchor" label="Klickbarer Link"/>
+					<option value="icon" label="Icon (IMG-Tag)"/>
+					<option value="" label="Nur Link"/>
+					<option value="filename" label="Dateiname"/>
+					<option value="link-to-icon" label="Link zur Icon-Datei"/>
+					<option value="extension" label="Erweiterung"/>
+					<option value="file-size" label="Dateigröße"/>
+				</param>
 
-                <param name="icon" label="Icon" example="32" description="Icongrößeauswählen" default="32"
-                       type="list">
-                    <option value="16" label="16px X 16px Icon"/>
-                    <option value="32" label="32px X 32px Icon"/>
-                    <option value="48" label="48px X 48px Icon"/>
-                </param>
+				<param name="icon" label="Icon" example="32" description="Icongrößeauswählen" default="32"
+					   type="list">
+					<option value="16" label="16px X 16px Icon"/>
+					<option value="32" label="32px X 32px Icon"/>
+					<option value="48" label="48px X 48px Icon"/>
+				</param>
 
-                <param name="target" label="Zielfenster" example="parent"
-                       description="Zielfenster des Browsers beim Öffnen des Links" default="" type="list">
-                    <option value="" label="Übergeordnet"/>
-                    <option value="_blank" label="Neues Fenster mit Navigation"/>
-                    <option value="savefile" label="Öffne Datei speichern unter Dialog"/>
-                </param>
+				<param name="target" label="Zielfenster" example="parent"
+					   description="Zielfenster des Browsers beim Öffnen des Links" default="" type="list">
+					<option value="" label="Übergeordnet"/>
+					<option value="_blank" label="Neues Fenster mit Navigation"/>
+					<option value="savefile" label="Öffne Datei speichern unter Dialog"/>
+				</param>
 
-            </params>
-        </valueparams>
-    </type>
+			</params>
+		</valueparams>
+	</type>
 
-    <type ct_name="log" label="Änderungsprotokoll"
-          description="Protokolliert alle Datensatzänderungen. Benutzer, Datum/Uhrzeit, IP. Sie können zur vorherigen Version des Datensatzes zurückkehren."
-          priority="3" proversion="1">
-        <editparams name="log" label="Parameter des Eingabeelements" description="">
-            <params>
-                <param type="string" name="cssclass" label="CSS-Klasse"
-                       description="Name oder Namen der CSS-Klasse(n)."/>
-                <param name="attributes" label="Attribute"
-                       description="Optionale Attribute wie: disabled, onclick, onchange etc." default=""
-                       type="string"/>
-            </params>
-        </editparams>
+	<type ct_name="log" label="Änderungsprotokoll"
+		  description="Protokolliert alle Datensatzänderungen. Benutzer, Datum/Uhrzeit, IP. Sie können zur vorherigen Version des Datensatzes zurückkehren."
+		  priority="3" proversion="1">
+		<editparams name="log" label="Parameter des Eingabeelements" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS-Klasse"
+					   description="Name oder Namen der CSS-Klasse(n)."/>
+				<param name="attributes" label="Attribute"
+					   description="Optionale Attribute wie: disabled, onclick, onchange etc." default=""
+					   type="string"/>
+			</params>
+		</editparams>
 
-    </type>
+	</type>
 
-    <type ct_name="changetime" label="Änderungszeit"
-          description="Speichert Datum/Uhrzeit der letzten Änderung des Datensatzes." priority="2">
+	<type ct_name="changetime" label="Änderungszeit"
+		  description="Speichert Datum/Uhrzeit der letzten Änderung des Datensatzes." priority="2">
 
-        <valueparams name="changetime" label="Datumsformat"
-                     description="Hiermit wird festgelegt, wie das Datumswert des Felds formatiert werden soll.">
-            <params>
-                <param name="format" label="Format" example="Y-m-d" type="string"
-                       description="PHP Datumsformat z.B. 'Y-m-d' oder Joomla definiertes Format (sprachabhängig), wenn leer gelassen. 'timestamp' um das Datum/Uhrzeit im UNIX Zeitstempel-Format zurückzugeben."/>
-            </params>
-        </valueparams>
-        <editparams name="changetime" label="Parameter des Eingabeelements" description="">
-            <params>
-                <param type="string" name="cssclass" label="CSS-Klasse"
-                       description="Name oder Namen der CSS-Klasse(n)."/>
-                <param name="attributes" label="Attribute"
-                       description="Optionale Attribute wie: disabled, onclick, onchange etc." default=""
-                       type="string"/>
-            </params>
-        </editparams>
-    </type>
+		<valueparams name="changetime" label="Datumsformat"
+					 description="Hiermit wird festgelegt, wie das Datumswert des Felds formatiert werden soll.">
+			<params>
+				<param name="format" label="Format" example="Y-m-d" type="string"
+					   description="PHP Datumsformat z.B. 'Y-m-d' oder Joomla definiertes Format (sprachabhängig), wenn leer gelassen. 'timestamp' um das Datum/Uhrzeit im UNIX Zeitstempel-Format zurückzugeben."/>
+			</params>
+		</valueparams>
+		<editparams name="changetime" label="Parameter des Eingabeelements" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS-Klasse"
+					   description="Name oder Namen der CSS-Klasse(n)."/>
+				<param name="attributes" label="Attribute"
+					   description="Optionale Attribute wie: disabled, onclick, onchange etc." default=""
+					   type="string"/>
+			</params>
+		</editparams>
+	</type>
 
 </fieldtypes>

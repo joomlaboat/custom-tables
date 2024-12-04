@@ -1,64 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-    <fields name="filter">
-        <field
-                name="search"
-                type="text"
-                inputmode="search"
-                label="COM_CUSTOMTABLES_TABLES_SEARCH_TABLE_NAME"
-                description="COM_CUSTOMTABLES_TABLES_SEARCH_TABLE_NAME_DESC"
-                hint="JSEARCH_FILTER"
-        />
+	<fields name="filter">
+		<field
+				name="search"
+				type="text"
+				inputmode="search"
+				label="COM_CUSTOMTABLES_TABLES_SEARCH_TABLE_NAME"
+				description="COM_CUSTOMTABLES_TABLES_SEARCH_TABLE_NAME_DESC"
+				hint="JSEARCH_FILTER"
+		/>
 
-        <field
-                name="tablecategory"
-                type="ctcategory"
-                label="JOPTION_SELECT_CATEGORY"
-                onchange="this.form.submit();"
-                extension="com_customtables"
-        >
-        </field>
+		<field
+				name="tablecategory"
+				type="ctcategory"
+				label="JOPTION_SELECT_CATEGORY"
+				onchange="this.form.submit();"
+				extension="com_customtables"
+		>
+		</field>
 
-        <field
-                name="published"
-                type="list"
-                label="JOPTION_SELECT_PUBLISHED"
-                onchange="this.form.submit();"
-                extension="com_customtables"
-        >
-            <option value="">JOPTION_SELECT_PUBLISHED</option>
-            <option value="1">JPUBLISHED</option>
-            <option value="0">JUNPUBLISHED</option>
-            <option value="-2">JTRASHED</option>
-            <option value="*">JALL</option>
-        </field>
+		<field
+				name="published"
+				type="list"
+				label="JOPTION_SELECT_PUBLISHED"
+				onchange="this.form.submit();"
+				extension="com_customtables"
+		>
+			<option value="">JOPTION_SELECT_PUBLISHED</option>
+			<option value="1">JPUBLISHED</option>
+			<option value="0">JUNPUBLISHED</option>
+			<option value="-2">JTRASHED</option>
+			<option value="*">JALL</option>
+		</field>
 
-    </fields>
-    <fields name="list">
-        <field
-                name="fullordering"
-                type="list"
-                label="JGLOBAL_SORT_BY"
-                onchange="this.form.submit();"
-                default="a.tablename asc"
-                validate="options"
-        >
-            <option value="">JGLOBAL_SORT_BY</option>
-            <option value="a.tablename ASC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_ASC</option>
-            <option value="a.tablename DESC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_DESC</option>
-            <option value="a.tablecategory ASC">COM_CUSTOMTABLES_TABLES_CATEGORY_ASC</option>
-            <option value="a.tablecategory DESC">COM_CUSTOMTABLES_TABLES_CATEGORY_DESC</option>
-            <option value="a.published ASC">COM_CUSTOMTABLES_TABLES_STATE_ASC</option>
-            <option value="a.published DESC">COM_CUSTOMTABLES_TABLES_STATE_DESC</option>
-            <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
-            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
-        </field>
-        <field
-                name="limit"
-                type="limitbox"
-                label="JGLOBAL_LIST_LIMIT"
-                default="25"
-                onchange="this.form.submit();"
-        />
-    </fields>
+	</fields>
+	<fields name="list">
+		<field
+				name="fullordering"
+				type="list"
+				label="JGLOBAL_SORT_BY"
+				onchange="this.form.submit();"
+				default="a.tablename asc"
+				validate="options"
+		>
+			<option value="">JGLOBAL_SORT_BY</option>
+			<option value="a.tablename ASC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_ASC</option>
+			<option value="a.tablename DESC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_DESC</option>
+			<option value="a.tablecategory ASC">COM_CUSTOMTABLES_TABLES_CATEGORY_ASC</option>
+			<option value="a.tablecategory DESC">COM_CUSTOMTABLES_TABLES_CATEGORY_DESC</option>
+			<option value="a.published ASC">COM_CUSTOMTABLES_TABLES_STATE_ASC</option>
+			<option value="a.published DESC">COM_CUSTOMTABLES_TABLES_STATE_DESC</option>
+			<option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
+			<option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+		</field>
+		<field
+				name="limit"
+				type="limitbox"
+				label="JGLOBAL_LIST_LIMIT"
+				default="25"
+				onchange="this.form.submit();"
+		/>
+	</fields>
 </form>

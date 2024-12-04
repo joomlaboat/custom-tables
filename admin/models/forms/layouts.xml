@@ -1,145 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form
-        addrulepath="/administrator/components/com_customtables/models/rules"
-        addfieldpath="/administrator/components/com_customtables/models/fields"
+		addrulepath="/administrator/components/com_customtables/models/rules"
+		addfieldpath="/administrator/components/com_customtables/models/fields"
 >
-    <fieldset name="details">
-        <!-- Default Fields.-->
-        <!-- Id Field. Type: Text (joomla)-->
-        <field name="id"
-               type="text"
-               class="readonly"
-               label="JGLOBAL_FIELD_ID_LABEL"
-               description="JGLOBAL_FIELD_ID_DESC"
-               size="10"
-               default="0"/>
-        <!-- Date Created Field. Type: Calendar (joomla)-->
-        <field name="created"
-               type="calendar"
-               label="COM_CUSTOMTABLES_LAYOUTS_CREATED_DATE_LABEL"
-               description="COM_CUSTOMTABLES_LAYOUTS_CREATED_DATE_DESC"
-               size="22"
-               format="%Y-%m-%d %H:%M:%S"
-               filter="user_utc"/>
-        <!-- User Created Field. Type: User (joomla)-->
-        <field name="created_by"
-               type="user"
-               label="COM_CUSTOMTABLES_LAYOUTS_CREATED_BY_LABEL"
-               description="COM_CUSTOMTABLES_LAYOUTS_CREATED_BY_DESC"/>
-        <!-- Published Field. Type: List (joomla)-->
-        <field name="published"
-               type="list"
-               label="JSTATUS">
-            <option value="1">JPUBLISHED</option>
-            <option value="0">JUNPUBLISHED</option>
-            <option value="2">JARCHIVED</option>
-            <option value="-2">JTRASHED</option>
-        </field>
-        <!-- Date Modified Field. Type: Calendar (joomla)-->
-        <field name="modified"
-               type="calendar"
-               class="readonly"
-               label="COM_CUSTOMTABLES_LAYOUTS_MODIFIED_DATE_LABEL"
-               description="COM_CUSTOMTABLES_LAYOUTS_MODIFIED_DATE_DESC"
-               size="22"
-               readonly="true"
-               format="%Y-%m-%d %H:%M:%S"
-               filter="user_utc"/>
-        <!-- User Modified Field. Type: User (joomla)-->
-        <field name="modified_by"
-               type="user"
-               label="COM_CUSTOMTABLES_LAYOUTS_MODIFIED_BY_LABEL"
-               description="COM_CUSTOMTABLES_LAYOUTS_MODIFIED_BY_DESC"
-               class="readonly"
-               readonly="true"
-               filter="unset"/>
-        <!-- Ordering Field. Type: Numbers (joomla)-->
-        <field name="ordering"
-               type="number"
-               class="inputbox validate-ordering"
-               label="COM_CUSTOMTABLES_LAYOUTS_ORDERING_LABEL"
-               description=""
-               default="0"
-               size="6"
-               required="false"/>
+	<fieldset name="details">
+		<!-- Default Fields.-->
+		<!-- Id Field. Type: Text (joomla)-->
+		<field name="id"
+			   type="text"
+			   class="readonly"
+			   label="JGLOBAL_FIELD_ID_LABEL"
+			   description="JGLOBAL_FIELD_ID_DESC"
+			   size="10"
+			   default="0"/>
+		<!-- Date Created Field. Type: Calendar (joomla)-->
+		<field name="created"
+			   type="calendar"
+			   label="COM_CUSTOMTABLES_LAYOUTS_CREATED_DATE_LABEL"
+			   description="COM_CUSTOMTABLES_LAYOUTS_CREATED_DATE_DESC"
+			   size="22"
+			   format="%Y-%m-%d %H:%M:%S"
+			   filter="user_utc"/>
+		<!-- User Created Field. Type: User (joomla)-->
+		<field name="created_by"
+			   type="user"
+			   label="COM_CUSTOMTABLES_LAYOUTS_CREATED_BY_LABEL"
+			   description="COM_CUSTOMTABLES_LAYOUTS_CREATED_BY_DESC"/>
+		<!-- Published Field. Type: List (joomla)-->
+		<field name="published"
+			   type="list"
+			   label="JSTATUS">
+			<option value="1">JPUBLISHED</option>
+			<option value="0">JUNPUBLISHED</option>
+			<option value="2">JARCHIVED</option>
+			<option value="-2">JTRASHED</option>
+		</field>
+		<!-- Date Modified Field. Type: Calendar (joomla)-->
+		<field name="modified"
+			   type="calendar"
+			   class="readonly"
+			   label="COM_CUSTOMTABLES_LAYOUTS_MODIFIED_DATE_LABEL"
+			   description="COM_CUSTOMTABLES_LAYOUTS_MODIFIED_DATE_DESC"
+			   size="22"
+			   readonly="true"
+			   format="%Y-%m-%d %H:%M:%S"
+			   filter="user_utc"/>
+		<!-- User Modified Field. Type: User (joomla)-->
+		<field name="modified_by"
+			   type="user"
+			   label="COM_CUSTOMTABLES_LAYOUTS_MODIFIED_BY_LABEL"
+			   description="COM_CUSTOMTABLES_LAYOUTS_MODIFIED_BY_DESC"
+			   class="readonly"
+			   readonly="true"
+			   filter="unset"/>
+		<!-- Ordering Field. Type: Numbers (joomla)-->
+		<field name="ordering"
+			   type="number"
+			   class="inputbox validate-ordering"
+			   label="COM_CUSTOMTABLES_LAYOUTS_ORDERING_LABEL"
+			   description=""
+			   default="0"
+			   size="6"
+			   required="false"/>
 
-        <field type="cttable"
-               name="tableid"
-               label="COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL"
+		<field type="cttable"
+			   name="tableid"
+			   label="COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL"
 
-               default="0"
-               required="true"
-               description="COM_CUSTOMTABLES_LAYOUTS_TABLEID_DESCRIPTION"
-               onchange="loadFieldsUpdate('Joomla');"
-        >
+			   default="0"
+			   required="true"
+			   description="COM_CUSTOMTABLES_LAYOUTS_TABLEID_DESCRIPTION"
+			   onchange="loadFieldsUpdate('Joomla');"
+		>
 
 
-            <!-- No Manual Options Were Added In Field Settings.-->
-        </field>
-        <!-- Layoutname Field. Type: Text. (joomla)-->
-        <field type="text"
-               name="layoutname"
-               label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL"
-               maxlength="255"
-               description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_DESCRIPTION"
-               class="text_area"
-               message="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_MESSAGE"
-               hint="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_HINT"
-               required="true"/>
+			<!-- No Manual Options Were Added In Field Settings.-->
+		</field>
+		<!-- Layoutname Field. Type: Text. (joomla)-->
+		<field type="text"
+			   name="layoutname"
+			   label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL"
+			   maxlength="255"
+			   description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_DESCRIPTION"
+			   class="text_area"
+			   message="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_MESSAGE"
+			   hint="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_HINT"
+			   required="true"/>
 
-        <!-- Layouttype Field. Type: List. (joomla)-->
-        <field type="list"
-               name="layouttype"
-               label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL"
-               description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_DESCRIPTION"
-               class="list_class"
-               multiple="false"
-               required="true"
-               onchange="updateTagsParameters();"
-        >
-            <!-- Option Set.-->
-            <option value="1">COM_CUSTOMTABLES_LAYOUTS_SIMPLE_CATALOG</option>
-            <option value="5">COM_CUSTOMTABLES_LAYOUTS_CATALOG_PAGE</option>
-            <option value="6">COM_CUSTOMTABLES_LAYOUTS_CATALOG_ITEM</option>
-            <option value="2">COM_CUSTOMTABLES_LAYOUTS_EDIT_FORM</option>
-            <option value="4">COM_CUSTOMTABLES_LAYOUTS_DETAILS</option>
-            <option value="7">COM_CUSTOMTABLES_LAYOUTS_EMAIL_MESSAGE</option>
-            <option value="8">COM_CUSTOMTABLES_LAYOUTS_XML</option>
-            <option value="9">COM_CUSTOMTABLES_LAYOUTS_CSV</option>
-            <option value="10">COM_CUSTOMTABLES_LAYOUTS_JSON</option>
+		<!-- Layouttype Field. Type: List. (joomla)-->
+		<field type="list"
+			   name="layouttype"
+			   label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL"
+			   description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_DESCRIPTION"
+			   class="list_class"
+			   multiple="false"
+			   required="true"
+			   onchange="updateTagsParameters();"
+		>
+			<!-- Option Set.-->
+			<option value="1">COM_CUSTOMTABLES_LAYOUTS_SIMPLE_CATALOG</option>
+			<option value="5">COM_CUSTOMTABLES_LAYOUTS_CATALOG_PAGE</option>
+			<option value="6">COM_CUSTOMTABLES_LAYOUTS_CATALOG_ITEM</option>
+			<option value="2">COM_CUSTOMTABLES_LAYOUTS_EDIT_FORM</option>
+			<option value="4">COM_CUSTOMTABLES_LAYOUTS_DETAILS</option>
+			<option value="7">COM_CUSTOMTABLES_LAYOUTS_EMAIL_MESSAGE</option>
+			<option value="8">COM_CUSTOMTABLES_LAYOUTS_XML</option>
+			<option value="9">COM_CUSTOMTABLES_LAYOUTS_CSV</option>
+			<option value="10">COM_CUSTOMTABLES_LAYOUTS_JSON</option>
 
-        </field>
-        <!-- Layoutcode Field. Type: Textarea. (joomla)-->
-        <field type="textarea"
-               name="layoutcode"
-               label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCODE_LABEL"
-               description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCODE_DESCRIPTION"
-               class="text_area text_area_full"
-               filter="raw"
-               required="false"/>
+		</field>
+		<!-- Layoutcode Field. Type: Textarea. (joomla)-->
+		<field type="textarea"
+			   name="layoutcode"
+			   label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCODE_LABEL"
+			   description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCODE_DESCRIPTION"
+			   class="text_area text_area_full"
+			   filter="raw"
+			   required="false"/>
 
-        <field type="textarea"
-               name="layoutmobile"
-               label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTMOBILE_LABEL"
-               description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTMOBILE_DESCRIPTION"
-               class="text_area text_area_full"
-               filter="raw"
-               required="false"/>
+		<field type="textarea"
+			   name="layoutmobile"
+			   label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTMOBILE_LABEL"
+			   description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTMOBILE_DESCRIPTION"
+			   class="text_area text_area_full"
+			   filter="raw"
+			   required="false"/>
 
-        <field type="textarea"
-               name="layoutcss"
-               label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCSS_LABEL"
-               description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCSS_DESCRIPTION"
-               class="text_area text_area_full"
-               filter="raw"
-               required="false"/>
+		<field type="textarea"
+			   name="layoutcss"
+			   label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCSS_LABEL"
+			   description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCSS_DESCRIPTION"
+			   class="text_area text_area_full"
+			   filter="raw"
+			   required="false"/>
 
-        <field type="textarea"
-               name="layoutjs"
-               label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTJS_LABEL"
-               description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTJS_DESCRIPTION"
-               class="text_area text_area_full"
-               filter="raw"
-               required="false"/>
-    </fieldset>
+		<field type="textarea"
+			   name="layoutjs"
+			   label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTJS_LABEL"
+			   description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTJS_DESCRIPTION"
+			   class="text_area text_area_full"
+			   filter="raw"
+			   required="false"/>
+	</fieldset>
 </form>

@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-    <fields name="filter">
-        <field
-                name="search"
-                type="text"
-                inputmode="search"
-                label="COM_CUSTOMTABLES_SEARCH_RECORD_TEXT"
-                description="COM_CUSTOMTABLES_SEARCH_RECORD_TEXT_DESC"
-                hint="JSEARCH_FILTER"
-        />
+	<fields name="filter">
+		<field
+				name="search"
+				type="text"
+				inputmode="search"
+				label="COM_CUSTOMTABLES_SEARCH_RECORD_TEXT"
+				description="COM_CUSTOMTABLES_SEARCH_RECORD_TEXT_DESC"
+				hint="JSEARCH_FILTER"
+		/>
 
-        <field
-                name="published"
-                type="ctj3statusrecord"
-                label="JOPTION_SELECT_PUBLISHED"
-                onchange="this.form.submit();"
-                extension="com_customtables"
-        >
-        </field>
-    </fields>
-    <fields name="list">
-        <field
-                name="fullordering"
-                type="list"
-                label="JGLOBAL_SORT_BY"
-                onchange="this.form.submit();"
-                default="id asc"
-                validate="options"
-        >
-            <option value="">JGLOBAL_SORT_BY</option>
-            <option value="published ASC">COM_CUSTOMTABLES_RECORD_HEADING_STATE_ASC</option>
-            <option value="published DESC">COM_CUSTOMTABLES_RECORD_HEADING_STATE_DESC</option>
-            <option value="id ASC">JGRID_HEADING_ID_ASC</option>
-            <option value="id DESC">JGRID_HEADING_ID_DESC</option>
-            <option value="custom ASC">COM_CUSTOMTABLES_HEADING_CUSTOM_ASC</option>
-            <option value="custom DESC">COM_CUSTOMTABLES_HEADING_CUSTOM_DESC</option>
-        </field>
-        <field
-                name="limit"
-                type="limitbox"
-                label="JGLOBAL_LIST_LIMIT"
-                default="25"
-                onchange="this.form.submit();"
-        />
-    </fields>
+		<field
+				name="published"
+				type="ctj3statusrecord"
+				label="JOPTION_SELECT_PUBLISHED"
+				onchange="this.form.submit();"
+				extension="com_customtables"
+		>
+		</field>
+	</fields>
+	<fields name="list">
+		<field
+				name="fullordering"
+				type="list"
+				label="JGLOBAL_SORT_BY"
+				onchange="this.form.submit();"
+				default="id asc"
+				validate="options"
+		>
+			<option value="">JGLOBAL_SORT_BY</option>
+			<option value="published ASC">COM_CUSTOMTABLES_RECORD_HEADING_STATE_ASC</option>
+			<option value="published DESC">COM_CUSTOMTABLES_RECORD_HEADING_STATE_DESC</option>
+			<option value="id ASC">JGRID_HEADING_ID_ASC</option>
+			<option value="id DESC">JGRID_HEADING_ID_DESC</option>
+			<option value="custom ASC">COM_CUSTOMTABLES_HEADING_CUSTOM_ASC</option>
+			<option value="custom DESC">COM_CUSTOMTABLES_HEADING_CUSTOM_DESC</option>
+		</field>
+		<field
+				name="limit"
+				type="limitbox"
+				label="JGLOBAL_LIST_LIMIT"
+				default="25"
+				onchange="this.form.submit();"
+		/>
+	</fields>
 </form>
