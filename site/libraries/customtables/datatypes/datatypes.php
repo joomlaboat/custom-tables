@@ -65,7 +65,6 @@ class DataTypes
 			'blob' => 'COM_CUSTOMTABLES_FIELDS_BLOB',
 			'language' => 'COM_CUSTOMTABLES_FIELDS_LANGUAGE'
 		);
-
 		return $typeArray;
 	}
 

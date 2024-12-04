@@ -7,107 +7,101 @@
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 function ctResizeModalBox() {
-    setTimeout(
-        function () {
+	setTimeout(
+		function () {
 
-            let modal = document.getElementById('ctModal_box');
+			let modal = document.getElementById('ctModal_box');
 
-            let h = window.innerHeight;
-            let rect = modal.getBoundingClientRect();
+			let h = window.innerHeight;
+			let rect = modal.getBoundingClientRect();
 
-            //let content_height;
-            let modalBoxHeightChanged = false;
-            if (rect.bottom > h - 100) {
-                let content_height = h - 150;
-                modal.style.top = "50px";
-                modal.style.height = content_height + "px";
+			//let content_height;
+			let modalBoxHeightChanged = false;
+			if (rect.bottom > h - 100) {
+				let content_height = h - 150;
+				modal.style.top = "50px";
+				modal.style.height = content_height + "px";
 
-                modalBoxHeightChanged = true;
-            }
-            //else
-            //content_height=rect.bottom-rect.top;
+				modalBoxHeightChanged = true;
+			}
 
-            if (modalBoxHeightChanged) {
+			if (modalBoxHeightChanged) {
 
-            }
+			}
 
-            let box = document.getElementById("ctModal_box");
-            box.style.visibility = "visible";
+			let box = document.getElementById("ctModal_box");
+			box.style.visibility = "visible";
 
-        }, 100);
+		}, 100);
 
-    return true;
+	return true;
 }
 
 function ctShowModal(showCloseButton) {
-    // Get the modal
+	// Get the modal
 
-    let modal = document.getElementById('ctModal');
+	let modal = document.getElementById('ctModal');
 
-    if (showCloseButton) {
-        // Get the <span> element that closes the modal
-        let span = document.getElementsByClassName("ctModal_close")[0];
+	if (showCloseButton) {
+		// Get the <span> element that closes the modal
+		let span = document.getElementsByClassName("ctModal_close")[0];
 
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            modal.style.display = "none";
-            //let cm=codemirror_editors[0];
-            //cm.focus();
-        };
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function () {
+			modal.style.display = "none";
+		};
 
-        // When the user clicks anywhere outside the modal, close it
-        window.onclick = function (event) {
-            if (event.target === modal) {
-                modal.style.display = "none";
-                //let cm=codemirror_editors[0];
-                //cm.focus();
-            }
-        };
-    }
+		// When the user clicks anywhere outside the modal, close it
+		window.onclick = function (event) {
+			if (event.target === modal) {
+				modal.style.display = "none";
+			}
+		};
+	}
 
-    let box = document.getElementById("ctModal_box");
-    box.style.visibility = "hidden";
-    box.style.height = "auto";
+	let box = document.getElementById("ctModal_box");
+	box.style.visibility = "hidden";
+	box.style.height = "auto";
 
-    modal.style.display = "block";
-    let e = document.documentElement;
+	modal.style.display = "block";
+	let e = document.documentElement;
 
-    let doc_w = e.clientWidth;
-    let doc_h = e.clientHeight;
+	let doc_w = e.clientWidth;
+	let doc_h = e.clientHeight;
 
-    let w = box.offsetWidth;
-    let h = box.offsetHeight;
+	let w = box.offsetWidth;
+	let h = box.offsetHeight;
 
-    //let x=left-w/2;
-    let x = (doc_w / 2) - w / 2;
-    if (x < 10)
-        x = 10;
+	//let x=left-w/2;
+	let x = (doc_w / 2) - w / 2;
+	if (x < 10)
+		x = 10;
 
-    if (x + w + 10 > doc_w)
-        x = doc_w - w - 10;
+	if (x + w + 10 > doc_w)
+		x = doc_w - w - 10;
 
-    //let y=top-h/2;
-    let y = (doc_h / 2) - h / 2;
+	//let y=top-h/2;
+	let y = (doc_h / 2) - h / 2;
 
 
-    if (y < 50)
-        y = 50;
+	if (y < 50)
+		y = 50;
 
-    if (y + h + 50 > doc_h) {
-        y = doc_h - h - 50;
-    }
+	if (y + h + 50 > doc_h) {
+		y = doc_h - h - 50;
+	}
 
-    box.style.left = x + 'px';
-    box.style.top = y + 'px';
+	box.style.left = x + 'px';
+	box.style.top = y + 'px';
 
-    ctResizeModalBox();
+	ctResizeModalBox();
 }
 
 function ctShowPopUp(content_html, showCloseButton) {
 
-    // Check if the modal already exists, if not, insert it
-    if (!document.getElementById("ctModal")) {
-        let modalHTML = `
+	// Check if the modal already exists, if not, insert it
+	if (!document.getElementById("ctModal")) {
+		let modalHTML = `
             <div id="ctModal" class="ctModal">
                 <div id="ctModal_box" class="ctModal_content">
                     <span id="ctModal_close" class="ctModal_close">&times;</span>
@@ -115,55 +109,55 @@ function ctShowPopUp(content_html, showCloseButton) {
                 </div>
             </div>`;
 
-        document.body.insertAdjacentHTML('beforeend', modalHTML);  // Insert before </body>
-    }
+		document.body.insertAdjacentHTML('beforeend', modalHTML);  // Insert before </body>
+	}
 
-    // Now proceed with the rest of the modal handling logic
-    let ctModal_close = document.getElementById("ctModal_close");
+	// Now proceed with the rest of the modal handling logic
+	let ctModal_close = document.getElementById("ctModal_close");
 
-    if (showCloseButton)
-        ctModal_close.style.display = "block";
-    else
-        ctModal_close.style.display = "none";
+	if (showCloseButton)
+		ctModal_close.style.display = "block";
+	else
+		ctModal_close.style.display = "none";
 
-    let ctModal_content = document.getElementById("ctModal_content");
-    ctModal_content.innerHTML = content_html;
+	let ctModal_content = document.getElementById("ctModal_content");
+	ctModal_content.innerHTML = content_html;
 
-    insertAndExecuteScripts("ctModal_content");
+	insertAndExecuteScripts("ctModal_content");
 
-    setTimeout(function () {
-        insertAndExecute("ctModal_content");
-    }, 300);
+	setTimeout(function () {
+		insertAndExecute("ctModal_content");
+	}, 300);
 
-    ctShowModal(showCloseButton);
+	ctShowModal(showCloseButton);
 }
 
 function insertAndExecuteScripts(id) {
-    const scripts = Array.prototype.slice.call(document.getElementById(id).getElementsByTagName("script"));
-    for (let i = 0; i < scripts.length; i++) {
-        if (scripts[i].src !== "") {
-            const tag = document.createElement("script");
-            tag.src = scripts[i].src;
-            document.getElementsByTagName("head")[0].appendChild(tag);
-        }
-    }
+	const scripts = Array.prototype.slice.call(document.getElementById(id).getElementsByTagName("script"));
+	for (let i = 0; i < scripts.length; i++) {
+		if (scripts[i].src !== "") {
+			const tag = document.createElement("script");
+			tag.src = scripts[i].src;
+			document.getElementsByTagName("head")[0].appendChild(tag);
+		}
+	}
 }
 
 function insertAndExecute(id) {
-    const scripts = Array.prototype.slice.call(document.getElementById(id).getElementsByTagName("script"));
-    for (let i = 0; i < scripts.length; i++) {
-        if (scripts[i].src === "") {
-            eval(scripts[i].innerHTML);
-        }
-    }
+	const scripts = Array.prototype.slice.call(document.getElementById(id).getElementsByTagName("script"));
+	for (let i = 0; i < scripts.length; i++) {
+		if (scripts[i].src === "") {
+			eval(scripts[i].innerHTML);
+		}
+	}
 }
 
 
 function ctHidePopUp() {
-    // Get the modal
+	// Get the modal
 
-    let modal = document.getElementById('ctModal');
-    modal.style.display = "none";
+	let modal = document.getElementById('ctModal');
+	modal.style.display = "none";
 }
 
 
