@@ -14,6 +14,7 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
+use DateInvalidTimeZoneException;
 use Exception;
 use InvalidArgumentException;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -347,6 +348,11 @@ class Value
 			return "#" . $value;
 	}
 
+	/**
+	 * @throws DateInvalidTimeZoneException
+	 *
+	 * @since 3.4.5
+	 */
 	protected function dataProcess($rowValue, array $option_list): string
 	{
 		if ($rowValue == '' or $rowValue == '0000-00-00' or $rowValue == '0000-00-00 00:00:00')
@@ -373,7 +379,7 @@ class Value
 	 *
 	 * @return string The formatted date/time string or Unix timestamp.
 	 *
-	 * @throws InvalidArgumentException If the options are invalid.
+	 * @throws InvalidArgumentException|DateInvalidTimeZoneException If the options are invalid.
 	 *
 	 * @since 3.2.9
 	 */

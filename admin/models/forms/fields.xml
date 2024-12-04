@@ -142,7 +142,6 @@
 			<option value="" disabled="disabled">_____ Table Joins _____</option>
 			<option value="sqljoin">COM_CUSTOMTABLES_FIELDS_TABLE_JOIN</option>
 			<option value="records">COM_CUSTOMTABLES_FIELDS_TABLE_JOIN_LIST</option>
-			<!--<option value="customtables">COM_CUSTOMTABLES_FIELDS_EXTRA_SEARCH</option>-->
 
 			<option value="" disabled="disabled">_____ Automatic Values _____</option>
 			<option value="creationtime">COM_CUSTOMTABLES_FIELDS_AUTO_CREATION_DATE_TIME</option>

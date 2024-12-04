@@ -8,7 +8,6 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-
 // no direct access
 defined('_JEXEC') or die();
 
@@ -29,26 +28,6 @@ if ($this->ct->Env->frmt == 'html') {
 		}
 	}
 }
-/*
-if ($this->ct->Env->frmt == 'json') {
-    if (ob_get_contents()) ob_end_clean();
-
-    $filename = $this->ct->Params->pageTitle;
-    if (is_null($filename))
-        $filename = 'ct';
-
-    $filename = CTMiscHelper::makeNewFileName($filename, 'json');
-
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    header('Content-Type: application/json; charset=utf-8');
-    header("Pragma: no-cache");
-    header("Expires: 0");
-
-    $pageLayoutContent = $this->catalog->render();
-
-    die($pageLayoutContent);
-}
-*/
 
 try {
 	echo $this->catalog->render();
@@ -85,10 +64,10 @@ if ($this->ct->Env->frmt == 'html') {
 	{
 		echo '<!-- Modal content -->
 <div id="ctModal" class="ctModal">
-    <div id="ctModal_box" class="ctModal_content">
-        <span id="ctModal_close" class="ctModal_close">&times;</span>
-        <div id="ctModal_content"></div>
-    </div>
+	<div id="ctModal_box" class="ctModal_content">
+		<span id="ctModal_close" class="ctModal_close">&times;</span>
+		<div id="ctModal_content"></div>
+		</div>
 </div>
 <!-- end of the modal -->';
 	} else {

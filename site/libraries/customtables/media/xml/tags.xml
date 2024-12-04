@@ -1329,18 +1329,6 @@
 					   type="string" default=""/>
 			</params>
 		</tag>
-
-		<!-- <tag name="php" label="Execute PHP" startchar="{" endchar="}" hidedefaultexample="1" -->
-		<!--   description="Executes PHP script and returns the result." proversion="1"> -->
-		<!--  <params> -->
-		<!--      <param name="script" label="PHP Script" type="code" examplenoquotes="1" example="strtolower(&quot;[producttitle]&quot;)" -->
-		<!--             description="PHP script will be executed and the value returned. Note that you cannot use ' (single quote) character. Also, you may have «return» in your script. Example: -->
-		<!--             $a=&quot;[producttitle]&quot; -->
-		<!--             $b=strtolower($a); -->
-		<!--             return $b; -->
-		<!--             "/> -->
-		<!--  </params> -->
-		<!-- </tag> -->
 	</tagset>
 
 	<tagset name="filters" label="Filters" description="Extended Twig Filters. {{ value | filter }}" priority="3"
