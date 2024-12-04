@@ -1,128 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-    <fieldset
-            addrulepath="/administrator/components/com_customtables/models/rules"
-            addfieldpath="/administrator/components/com_customtables/models/fields"
-            name="global_config"
-            label="COM_CUSTOMTABLES_CONFIG_GLOBAL_LABEL"
-            description="COM_CUSTOMTABLES_CONFIG_GLOBAL_DESC">
+	<fieldset
+			addrulepath="/administrator/components/com_customtables/models/rules"
+			addfieldpath="/administrator/components/com_customtables/models/fields"
+			name="global_config"
+			label="COM_CUSTOMTABLES_CONFIG_GLOBAL_LABEL"
+			description="COM_CUSTOMTABLES_CONFIG_GLOBAL_DESC">
 
-        <field
-                name="loadTwig"
-                type="list"
-                label="Load Twig"
-                default="1"
-                description="Controls whether Custom Tables should load the Twig templating engine. Disable this if your template already includes Twig to prevent conflicts. Most templates work fine with Twig enabled, but some specialized templates may require disabling it."
-        >
-            <option value="1">Load Twig</option>
-            <option value="0">Do not load Twig</option>
-        </field>
+		<field
+				name="loadTwig"
+				type="list"
+				label="Load Twig"
+				default="1"
+				description="Controls whether Custom Tables should load the Twig templating engine. Disable this if your template already includes Twig to prevent conflicts. Most templates work fine with Twig enabled, but some specialized templates may require disabling it."
+		>
+			<option value="1">Load Twig</option>
+			<option value="0">Do not load Twig</option>
+		</field>
 
-        <field
-                name="fieldPrefix"
-                type="text"
-                label="Field Name Prefix"
-                default="ct_"
-                description="Specifies the prefix added to all table field names (e.g., 'ct_FieldName'). This prefix helps prevent conflicts with MySQL reserved words and ensures database compatibility. Only modify this if you have a specific reason to use a different prefix scheme. Type NO-PREFIX to have field names without a prefix. Changing the prefix doesnt automatically renames fields. You will have to do it manually."
-        />
+		<field
+				name="fieldPrefix"
+				type="text"
+				label="Field Name Prefix"
+				default="ct_"
+				description="Specifies the prefix added to all table field names (e.g., 'ct_FieldName'). This prefix helps prevent conflicts with MySQL reserved words and ensures database compatibility. Only modify this if you have a specific reason to use a different prefix scheme. Type NO-PREFIX to have field names without a prefix. Changing the prefix doesnt automatically renames fields. You will have to do it manually."
+		/>
 
-        <field
-                name="googlemapapikey"
-                type="text"
-                label="Google Map API Key"
-                default=""
-                description="Enter your Google Maps API key to enable map functionality. Required for displaying maps and using location-based features in your tables."
-        />
+		<field
+				name="googlemapapikey"
+				type="text"
+				label="Google Map API Key"
+				default=""
+				description="Enter your Google Maps API key to enable map functionality. Required for displaying maps and using location-based features in your tables."
+		/>
 
-        <field
-                name="GoogleDriveAPIKey"
-                type="text"
-                label="Google Drive API Developer Key"
-                default=""
-                description="Enter your Google Drive API Developer Key to enable integration with Google Drive services. Required for accessing and managing files stored in Google Drive."
-        />
+		<field
+				name="GoogleDriveAPIKey"
+				type="text"
+				label="Google Drive API Developer Key"
+				default=""
+				description="Enter your Google Drive API Developer Key to enable integration with Google Drive services. Required for accessing and managing files stored in Google Drive."
+		/>
 
-        <field
-                name="GoogleDriveClientId"
-                type="text"
-                label="Google Drive API ClientID"
-                default=""
-                description="Enter your Google Drive API Client ID for authentication. This is required alongside the API Key for secure access to Google Drive services."
-        />
+		<field
+				name="GoogleDriveClientId"
+				type="text"
+				label="Google Drive API ClientID"
+				default=""
+				description="Enter your Google Drive API Client ID for authentication. This is required alongside the API Key for secure access to Google Drive services."
+		/>
 
-        <field
-                name="chatgptapikey"
-                type="text"
-                label="ChatGPT API Key"
-                default=""
-                description="Enter your OpenAI API key to enable ChatGPT integration. This key is required to use AI-powered features within the Custom Tables ChatGPT module, such as content generation and data analysis."
-        />
+		<field
+				name="chatgptapikey"
+				type="text"
+				label="ChatGPT API Key"
+				default=""
+				description="Enter your OpenAI API key to enable ChatGPT integration. This key is required to use AI-powered features within the Custom Tables ChatGPT module, such as content generation and data analysis."
+		/>
 
-        <field
-                name="toolbaricons"
-                type="list"
-                label="Toolbar Icons"
-                default=""
-                description="Choose the icon style for your toolbar interface. Image Icons use traditional PNG/JPG files, while Font Awesome provides scalable vector icons that load faster and look crisp at any size. Font Awesome Solid is the recommended modern option."
-        >
-            <option value="">Image Icons</option>
-            <option value="fas">Font Awesome - Solid</option>
-        </field>
+		<field
+				name="toolbaricons"
+				type="list"
+				label="Toolbar Icons"
+				default=""
+				description="Choose the icon style for your toolbar interface. Image Icons use traditional PNG/JPG files, while Font Awesome provides scalable vector icons that load faster and look crisp at any size. Font Awesome Solid is the recommended modern option."
+		>
+			<option value="">Image Icons</option>
+			<option value="fas">Font Awesome - Solid</option>
+		</field>
 
-        <field
-                name="legacysupport"
-                type="list"
-                label="Legacy Support"
-                default="puretwig"
-                description="Determines whether to support legacy layout syntax alongside modern Twig templates. 'Pure Twig' is recommended for new installations, offering cleaner syntax and better performance. Choose 'Twig and Legacy' only if you're maintaining older layouts that use *fieldname*, [fieldname], or similar syntax."
-        >
-            <option value="legacy">Twig and Legacy</option>
-            <option value="puretwig">Pure Twig</option>
-        </field>
+		<field
+				name="legacysupport"
+				type="list"
+				label="Legacy Support"
+				default="puretwig"
+				description="Determines whether to support legacy layout syntax alongside modern Twig templates. 'Pure Twig' is recommended for new installations, offering cleaner syntax and better performance. Choose 'Twig and Legacy' only if you're maintaining older layouts that use *fieldname*, [fieldname], or similar syntax."
+		>
+			<option value="legacy">Twig and Legacy</option>
+			<option value="puretwig">Pure Twig</option>
+		</field>
 
-        <field
-                name="folderToSaveLayouts"
-                type="text"
-                label="Folder where to save Layouts (Optional)"
-                default=""
-                description="Specify a folder path where layout files should be stored on the server. This allows you to version control your layouts and edit them directly using your preferred text editor. Leave empty to store layouts in the database."
-        />
+		<field
+				name="folderToSaveLayouts"
+				type="text"
+				label="Folder where to save Layouts (Optional)"
+				default=""
+				description="Specify a folder path where layout files should be stored on the server. This allows you to version control your layouts and edit them directly using your preferred text editor. Leave empty to store layouts in the database."
+		/>
 
-        <field name="authorName"
-               type="text"
-               label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"
-               description="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_DESC"
-               size="60"
-               default="Ivan Komlev"
-               readonly="true"
-               class="readonly"
-        />
+		<field name="authorName"
+			   type="text"
+			   label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"
+			   description="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_DESC"
+			   size="60"
+			   default="Ivan Komlev"
+			   readonly="true"
+			   class="readonly"
+		/>
 
-        <field name="authorEmail"
-               type="email"
-               label="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_LABEL"
-               description="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_DESC"
-               size="60"
-               default="support@joomlaboat.com"
-               readonly="true"
-               class="readonly"
-        />
+		<field name="authorEmail"
+			   type="email"
+			   label="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_LABEL"
+			   description="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_DESC"
+			   size="60"
+			   default="support@joomlaboat.com"
+			   readonly="true"
+			   class="readonly"
+		/>
 
-    </fieldset>
-    <fieldset
-            name="permissions"
-            label="JCONFIG_PERMISSIONS_LABEL"
-            description="JCONFIG_PERMISSIONS_DESC">
+	</fieldset>
+	<fieldset
+			name="permissions"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			description="JCONFIG_PERMISSIONS_DESC">
 
-        <field
-                name="rules"
-                type="rules"
-                label="JCONFIG_PERMISSIONS_LABEL"
-                class="inputbox"
-                filter="rules"
-                validate="rules"
-                component="com_customtables"
-                section="component"
-        />
-    </fieldset>
+		<field
+				name="rules"
+				type="rules"
+				label="JCONFIG_PERMISSIONS_LABEL"
+				class="inputbox"
+				filter="rules"
+				validate="rules"
+				component="com_customtables"
+				section="component"
+		/>
+	</fieldset>
 </config>

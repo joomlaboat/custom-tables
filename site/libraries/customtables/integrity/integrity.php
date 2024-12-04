@@ -19,20 +19,20 @@ use Exception;
 
 class IntegrityChecks
 {
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    public static function check(CT &$ct, $check_core_tables = true, $check_custom_tables = true): array
-    {
-        $result = []; //Status array
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function check(CT &$ct, $check_core_tables = true, $check_custom_tables = true): array
+	{
+		$result = []; //Status array
 
-        if ($check_core_tables)
-            IntegrityCoreTables::checkCoreTables($ct);
+		if ($check_core_tables)
+			IntegrityCoreTables::checkCoreTables($ct);
 
-        if ($check_custom_tables)
-            $result = IntegrityTables::checkTables($ct);
+		if ($check_custom_tables)
+			$result = IntegrityTables::checkTables($ct);
 
-        return $result;
-    }
+		return $result;
+	}
 }

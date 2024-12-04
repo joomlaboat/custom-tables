@@ -23,35 +23,35 @@ use Joomla\CMS\MVC\View\HtmlView;
  */
 class CustomTablesViewAdminMenu extends HtmlView
 {
-    /**
-     * View display method
-     * @param null $tpl
-     * @return void
-     * @throws Exception
-     * @since 3.6.7
-     */
-    function display($tpl = null): void
-    {
-        parent::display($tpl);
+	/**
+	 * View display method
+	 * @param null $tpl
+	 * @return void
+	 * @throws Exception
+	 * @since 3.6.7
+	 */
+	function display($tpl = null): void
+	{
+		parent::display($tpl);
 
-        // Set the document
-        $document = Factory::getDocument();
-        $this->setDocument($document);
-    }
+		// Set the document
+		$document = Factory::getDocument();
+		$this->setDocument($document);
+	}
 
-    /**
-     * Method to set up the document properties
-     *
-     * @param Document $document
-     * @return void
-     * @since 3.2.9
-     */
-    public function setDocument(Joomla\CMS\Document\Document $document): void
-    {
-        // add dashboard style sheets
-        $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
+	/**
+	 * Method to set up the document properties
+	 *
+	 * @param Document $document
+	 * @return void
+	 * @since 3.2.9
+	 */
+	public function setDocument(Joomla\CMS\Document\Document $document): void
+	{
+		// add dashboard style sheets
+		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
 
-        // set page title
-        $document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
-    }
+		// set page title
+		$document->setTitle(common::translate('COM_CUSTOMTABLES_DASHBOARD'));
+	}
 }

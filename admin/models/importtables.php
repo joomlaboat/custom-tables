@@ -23,47 +23,47 @@ use Joomla\CMS\MVC\Model\ListModel;
 
 class CustomTablesModelImportTables extends ListModel
 {
-    var CT $ct;
+	var CT $ct;
 
-    function __construct()
-    {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
+	function __construct()
+	{
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
 
-        parent::__construct();
-    }
+		parent::__construct();
+	}
 
-    /**
-     * @throws Exception
-     * @since 3.3.4
-     */
-    function importTables(&$msg): bool
-    {
-        $fileId = common::inputGetCmd('fileid', '');
-        $filename = FileUploader::getFileNameByID($fileId);
-        $menuType = 'Custom Tables Import Menu';
+	/**
+	 * @throws Exception
+	 * @since 3.3.4
+	 */
+	function importTables(&$msg): bool
+	{
+		$fileId = common::inputGetCmd('fileid', '');
+		$filename = FileUploader::getFileNameByID($fileId);
+		$menuType = 'Custom Tables Import Menu';
 
-        $importFields = common::inputGetInt('importfields', 0);
-        $importLayouts = common::inputGetInt('importlayouts', 0);
-        $importMenu = common::inputGetInt('importmenu', 0);
+		$importFields = common::inputGetInt('importfields', 0);
+		$importLayouts = common::inputGetInt('importlayouts', 0);
+		$importMenu = common::inputGetInt('importmenu', 0);
 
-        $category = '';
-        return ImportTables::processFile($filename, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu);
-    }
+		$category = '';
+		return ImportTables::processFile($filename, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu);
+	}
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    function getLanguageByCODE($code): int
-    {
-        //Example: $code='en-GB';
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('language', $code);
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function getLanguageByCODE($code): int
+	{
+		//Example: $code='en-GB';
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('language', $code);
 
-        $rows = database::loadObjectList('#__customtables_languages', ['id'], $whereClause, null, null, 1);
-        if (count($rows) != 1)
-            return -1;
+		$rows = database::loadObjectList('#__customtables_languages', ['id'], $whereClause, null, null, 1);
+		if (count($rows) != 1)
+			return -1;
 
-        return $rows[0]->id;
-    }
+		return $rows[0]->id;
+	}
 }

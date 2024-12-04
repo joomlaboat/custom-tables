@@ -18,11 +18,11 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 if (CUSTOMTABLES_JOOMLA_MIN_4) {
-    $wa = $this->document->getWebAssetManager();
-    $wa->useScript('keepalive')->useScript('form.validate');
+	$wa = $this->document->getWebAssetManager();
+	$wa->useScript('keepalive')->useScript('form.validate');
 } else {
-    HTMLHelper::_('behavior.formvalidation');
-    HTMLHelper::_('behavior.keepalive');
+	HTMLHelper::_('behavior.formvalidation');
+	HTMLHelper::_('behavior.keepalive');
 }
 
 $document = Factory::getDocument();

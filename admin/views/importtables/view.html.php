@@ -21,9 +21,9 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 
 class CustomTablesViewImportTables extends HtmlView
 {
-    function display($tpl = null)
-    {
-        ToolbarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
-        parent::display($tpl);
-    }
+	function display($tpl = null)
+	{
+		ToolbarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
+		parent::display($tpl);
+	}
 }

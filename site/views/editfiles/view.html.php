@@ -20,40 +20,40 @@ use Joomla\CMS\MVC\View\HtmlView;
 jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditFiles extends HtmlView
 {
-    var int $max_file_size;
-    var $FileBoxTitle;
-    var $listing_id;
-    var $fileBoxName;
-    var $allowedExtensions;
+	var int $max_file_size;
+	var $FileBoxTitle;
+	var $listing_id;
+	var $fileBoxName;
+	var $allowedExtensions;
 
-    function display($tpl = null)
-    {
-        $user = new CTUser();
+	function display($tpl = null)
+	{
+		$user = new CTUser();
 
-        if ($user->id === null) {
-            Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-            return;
-        }
+		if ($user->id === null) {
+			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			return;
+		}
 
-        $this->Model = $this->getModel();
-        $this->files = $this->Model->getFileList();
+		$this->Model = $this->getModel();
+		$this->files = $this->Model->getFileList();
 
-        $this->idList = array();
+		$this->idList = array();
 
-        foreach ($this->files as $file)
-            $this->idList[] = $file->fileid;
+		foreach ($this->files as $file)
+			$this->idList[] = $file->fileid;
 
-        $this->max_file_size = CTMiscHelper::file_upload_max_size();
-        $this->FileBoxTitle = $this->Model->FileBoxTitle;
-        $this->listing_id = $this->Model->ct->Params->listing_id;
-        $this->fileBoxName = $this->Model->fileBoxName;
-        $this->allowedExtensions = $this->Model->allowedExtensions;
-        parent::display($tpl);
-    }
+		$this->max_file_size = CTMiscHelper::file_upload_max_size();
+		$this->FileBoxTitle = $this->Model->FileBoxTitle;
+		$this->listing_id = $this->Model->ct->Params->listing_id;
+		$this->fileBoxName = $this->Model->fileBoxName;
+		$this->allowedExtensions = $this->Model->allowedExtensions;
+		parent::display($tpl);
+	}
 
-    function drawFiles(): string
-    {
-        $HTMLOut = '
+	function drawFiles(): string
+	{
+		$HTMLOut = '
 		
 		<h2>' . common::translate('COM_CUSTOMTABLES_FILE_LIST_OF_FILES') . '</h2>
 		<table style="width:100%;border:none;">
@@ -67,28 +67,28 @@ class CustomTablesViewEditFiles extends HtmlView
 			<tbody>
 		';
 
-        foreach ($this->files as $file) {
-            $HTMLOut .= '
+		foreach ($this->files as $file) {
+			$HTMLOut .= '
 				<tr>';
 
-            $filename = $this->Model->ct->Table->tableid . '_' . $this->fileBoxName . '_' . $file->fileid . '.' . $file->file_ext;
+			$filename = $this->Model->ct->Table->tableid . '_' . $this->fileBoxName . '_' . $file->fileid . '.' . $file->file_ext;
 
-            $HTMLOut .= '
+			$HTMLOut .= '
 					<td  style="vertical-align: top; text-align: center; ">
 						<input type="checkbox" name="esfile' . $file->fileid . '" id="esfile' . $file->fileid . '" style="text-align: left;" style="vertical-align:top">
 					</td>
 					<td style="text-align: left;"><a href="' . $this->Model->fileBoxFolderArray['web'] . '/' . $filename . '" target="_blank">' . $filename . '</a></td>
 			';
 
-            $HTMLOut .= '
+			$HTMLOut .= '
 				</tr>';
-        }
+		}
 
-        $HTMLOut .= '
+		$HTMLOut .= '
 			</tbody>
 		</table>
 		';
 
-        return $HTMLOut;
-    }
+		return $HTMLOut;
+	}
 }

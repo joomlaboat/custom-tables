@@ -17,43 +17,43 @@ use CustomTables\CTMiscHelper;
 
 class updateImageGallery
 {
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    public static function process(int $tableId): array
-    {
-        $stepSize = common::inputGetInt('stepsize', 10);
-        $startIndex = common::inputGetInt('startindex', 0);
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function process(int $tableId): array
+	{
+		$stepSize = common::inputGetInt('stepsize', 10);
+		$startIndex = common::inputGetInt('startindex', 0);
 
-        $old_typeparams = base64_decode(common::inputGetBase64('old_typeparams', ''));
-        if ($old_typeparams == '')
-            return array('error' => 'old_typeparams not set');
+		$old_typeparams = base64_decode(common::inputGetBase64('old_typeparams', ''));
+		if ($old_typeparams == '')
+			return array('error' => 'old_typeparams not set');
 
-        $old_params = CTMiscHelper::csv_explode(',', $old_typeparams);
+		$old_params = CTMiscHelper::csv_explode(',', $old_typeparams);
 
-        $new_typeparams = base64_decode(common::inputGetBase64('new_typeparams', ''));
-        if ($new_typeparams == '')
-            return array('error' => 'new_typeparams not set');
+		$new_typeparams = base64_decode(common::inputGetBase64('new_typeparams', ''));
+		if ($new_typeparams == '')
+			return array('error' => 'new_typeparams not set');
 
-        $new_params = CTMiscHelper::csv_explode(',', $new_typeparams);
+		$new_params = CTMiscHelper::csv_explode(',', $new_typeparams);
 
-        $fieldid = common::inputGetInt('fieldid', 0);
-        if ($fieldid == 0)
-            return array('error' => 'fieldid not set');
+		$fieldid = common::inputGetInt('fieldid', 0);
+		if ($fieldid == 0)
+			return array('error' => 'fieldid not set');
 
-        $ct = new CT;
-        $ct->getTable($tableId);
-        $fieldRow = $ct->Table->getFieldById($fieldid);
-        if ($fieldRow === null) {
-            return array('error' => 'field id set but field not found');
-        } else {
-            $count = 0;
-            if ($startIndex == 0)
-                $count = updateImages::countImages($ct->Table->realtablename, $fieldRow['realfieldname']);
+		$ct = new CT;
+		$ct->getTable($tableId);
+		$fieldRow = $ct->Table->getFieldById($fieldid);
+		if ($fieldRow === null) {
+			return array('error' => 'field id set but field not found');
+		} else {
+			$count = 0;
+			if ($startIndex == 0)
+				$count = updateImages::countImages($ct->Table->realtablename, $fieldRow['realfieldname']);
 
-            $status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params);
-            return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);
-        }
-    }
+			$status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params);
+			return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);
+		}
+	}
 }

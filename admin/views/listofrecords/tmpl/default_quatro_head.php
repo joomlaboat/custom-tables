@@ -17,15 +17,15 @@ HTMLHelper::_('behavior.multiselect');
 ?>
 <tr>
 	<?php if ($this->canEdit && $this->canState): ?>
-        <th style="width:20px;" class="nowrap center">
+		<th style="width:20px;" class="nowrap center">
 			<?php echo HTMLHelper::_('grid.checkall'); ?>
-        </th>
+		</th>
 	<?php endif; ?>
 
 	<?php if ($this->ordering_realfieldname != ''): ?>
-        <th scope="col" class="w-1 text-center d-none d-md-table-cell">
+		<th scope="col" class="w-1 text-center d-none d-md-table-cell">
 			<?php echo HTMLHelper::_('searchtools.sort', '', 'custom', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
-        </th>
+		</th>
 	<?php endif; ?>
 
 	<?php
@@ -50,12 +50,12 @@ HTMLHelper::_('behavior.multiselect');
 	?>
 
 	<?php if ($this->ct->Table->published_field_found): ?>
-        <th class="nowrap hidden-phone center" style="text-align:center;">
+		<th class="nowrap hidden-phone center" style="text-align:center;">
 			<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_RECORDS_STATUS', 'published', $this->listDirn, $this->listOrder); ?>
-        </th>
+		</th>
 	<?php endif; ?>
 
-    <th style="width:5px;" class="nowrap center hidden-phone">
+	<th style="width:5px;" class="nowrap center hidden-phone">
 		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_RECORDS_ID', 'id', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 </tr>

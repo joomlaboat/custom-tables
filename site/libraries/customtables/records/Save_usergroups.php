@@ -17,42 +17,42 @@ use Exception;
 
 class Save_usergroups
 {
-    var CT $ct;
-    public Field $field;
-    var ?array $row_new;
+	var CT $ct;
+	public Field $field;
+	var ?array $row_new;
 
-    function __construct(CT &$ct, Field $field, ?array $row_new)
-    {
-        $this->ct = &$ct;
-        $this->field = $field;
-        $this->row_new = $row_new;
-    }
+	function __construct(CT &$ct, Field $field, ?array $row_new)
+	{
+		$this->ct = &$ct;
+		$this->field = $field;
+		$this->row_new = $row_new;
+	}
 
-    /**
-     * @throws Exception
-     * @since 3.3.3
-     */
-    function saveFieldSet(): ?array
-    {
-        switch (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] : '') {
-            case 'radio':
-            case 'single';
-                $value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
-                if (isset($value))
-                    return ['value' => ',' . $value . ','];
+	/**
+	 * @throws Exception
+	 * @since 3.3.3
+	 */
+	function saveFieldSet(): ?array
+	{
+		switch (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] : '') {
+			case 'radio':
+			case 'single';
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+				if (isset($value))
+					return ['value' => ',' . $value . ','];
 
-                break;
-            case 'multibox':
-            case 'checkbox':
-            case 'multi';
-                $valueArray = common::inputPostArray($this->field->comesfieldname, null, 'create-edit-record');
+				break;
+			case 'multibox':
+			case 'checkbox':
+			case 'multi';
+				$valueArray = common::inputPostArray($this->field->comesfieldname, null, 'create-edit-record');
 
-                if (isset($valueArray) and is_array($valueArray))
-                    return ['value' => ',' . implode(',', $valueArray) . ','];
-                else {
-                    return ['value' => null];
-                }
-        }
-        return null;
-    }
+				if (isset($valueArray) and is_array($valueArray))
+					return ['value' => ',' . implode(',', $valueArray) . ','];
+				else {
+					return ['value' => null];
+				}
+		}
+		return null;
+	}
 }

@@ -27,126 +27,126 @@ use Joomla\CMS\MVC\Model\ListModel;
  */
 class CustomtablesModelListOfTables extends ListModel
 {
-    var CT $ct;
-    var ListOfTables $helperListOfTables;
+	var CT $ct;
+	var ListOfTables $helperListOfTables;
 
-    public function __construct($config = array())
-    {
-        if (empty($config['filter_fields'])) {
-            $config['filter_fields'] = array(
-                'a.id', 'id',
-                'a.published', 'published',
-                'a.ordering', 'ordering',
-                'a.tablecategory', 'tablecategory',
-                'a.tablename', 'tablename'
-            );
-        }
+	public function __construct($config = array())
+	{
+		if (empty($config['filter_fields'])) {
+			$config['filter_fields'] = array(
+				'a.id', 'id',
+				'a.published', 'published',
+				'a.ordering', 'ordering',
+				'a.tablecategory', 'tablecategory',
+				'a.tablename', 'tablename'
+			);
+		}
 
-        parent::__construct($config);
+		parent::__construct($config);
 
-        $this->ct = new CT;
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoftables.php');
-        $this->helperListOfTables = new listOfTables($this->ct);
-    }
+		$this->ct = new CT;
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoftables.php');
+		$this->helperListOfTables = new listOfTables($this->ct);
+	}
 
-    /**
-     * Method to get an array of data items.
-     *
-     * @return  array  An array of data items on success, false on failure.
-     *
-     * @since 1.0.0
-     */
-    public function getItems(): array
-    {
-        $items = parent::getItems();
+	/**
+	 * Method to get an array of data items.
+	 *
+	 * @return  array  An array of data items on success, false on failure.
+	 *
+	 * @since 1.0.0
+	 */
+	public function getItems(): array
+	{
+		$items = parent::getItems();
 
-        if (is_array($items))
-            return $items;
-        else
-            return [];
-    }
+		if (is_array($items))
+			return $items;
+		else
+			return [];
+	}
 
-    /**
-     * Method to autopopulate the model state.
-     *
-     * @return  void
-     *
-     * @throws Exception
-     * @since 1.0.0
-     */
-    protected function populateState($ordering = 'a.id', $direction = 'asc')
-    {
-        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
-            $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-            $this->setState('filter.search', $search);
+	/**
+	 * Method to autopopulate the model state.
+	 *
+	 * @return  void
+	 *
+	 * @throws Exception
+	 * @since 1.0.0
+	 */
+	protected function populateState($ordering = 'a.id', $direction = 'asc')
+	{
+		if (!CUSTOMTABLES_JOOMLA_MIN_4) {
+			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+			$this->setState('filter.search', $search);
 
-            $category = $this->getUserStateFromRequest($this->context . '.filter.tablecategory', 'filter_tablecategory');
-            $this->setState('filter.tablecategory', $category);
+			$category = $this->getUserStateFromRequest($this->context . '.filter.tablecategory', 'filter_tablecategory');
+			$this->setState('filter.tablecategory', $category);
 
-            $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-            $this->setState('filter.published', $published);
-        }
+			$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+			$this->setState('filter.published', $published);
+		}
 
-        $category_id = common::inputGetInt('categoryid');
+		$category_id = common::inputGetInt('categoryid');
 
-        if ($category_id !== null)
-            $this->setState('.filter.tablecategory', $category_id);
+		if ($category_id !== null)
+			$this->setState('.filter.tablecategory', $category_id);
 
-        // Load the parameters.
-        $this->setState('params', ComponentHelper::getParams('com_customtables'));
+		// Load the parameters.
+		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
-        // List state information.
-        parent::populateState($ordering, $direction);
+		// List state information.
+		parent::populateState($ordering, $direction);
 
-        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
-            $ordering = $this->state->get('list.ordering');
-            $direction = strtoupper($this->state->get('list.direction'));
-            $app = Factory::getApplication();
-            $app->setUserState($this->context . '.list.fullordering', $ordering . ' ' . $direction);
-        }
-    }
+		if (!CUSTOMTABLES_JOOMLA_MIN_4) {
+			$ordering = $this->state->get('list.ordering');
+			$direction = strtoupper($this->state->get('list.direction'));
+			$app = Factory::getApplication();
+			$app->setUserState($this->context . '.list.fullordering', $ordering . ' ' . $direction);
+		}
+	}
 
-    /**
-     * Method to build an SQL query to load the list data.
-     *
-     * @return    string    An SQL query
-     *
-     * @throws Exception
-     * @since 1.0.0
-     */
-    protected function getListQuery(): string
-    {
-        $published = $this->getState('filter.published');
-        $search = $this->getState('filter.search');
+	/**
+	 * Method to build an SQL query to load the list data.
+	 *
+	 * @return    string    An SQL query
+	 *
+	 * @throws Exception
+	 * @since 1.0.0
+	 */
+	protected function getListQuery(): string
+	{
+		$published = $this->getState('filter.published');
+		$search = $this->getState('filter.search');
 
-        $category_id = common::inputGetInt('categoryid');
-        if ($category_id !== null) {
-            $this->state->set('filter.tablecategory', $category_id);
-            $this->setState('filter.tablecategory', $category_id);
-        }
+		$category_id = common::inputGetInt('categoryid');
+		if ($category_id !== null) {
+			$this->state->set('filter.tablecategory', $category_id);
+			$this->setState('filter.tablecategory', $category_id);
+		}
 
-        $category = $this->getState('filter.tablecategory');
-        $orderCol = $this->state->get('list.ordering', 'a.id');
-        $orderDirection = $this->state->get('list.direction', 'asc');
-        return $this->helperListOfTables->getListQuery($published, $search, $category, $orderCol, $orderDirection, null, null, true);
-    }
+		$category = $this->getState('filter.tablecategory');
+		$orderCol = $this->state->get('list.ordering', 'a.id');
+		$orderDirection = $this->state->get('list.direction', 'asc');
+		return $this->helperListOfTables->getListQuery($published, $search, $category, $orderCol, $orderDirection, null, null, true);
+	}
 
-    /**
-     * Method to get a store id based on model configuration state.
-     *
-     * @return  string  A store id.
-     *
-     * @since 1.0.0
-     */
-    protected function getStoreId($id = ''): string
-    {
-        // Compile the store id.
-        $id .= ':' . $this->getState('filter.id');
-        $id .= ':' . $this->getState('filter.search');
-        $id .= ':' . $this->getState('filter.published');
-        $id .= ':' . $this->getState('filter.tablename');
-        $id .= ':' . $this->getState('filter.tablecategory');
+	/**
+	 * Method to get a store id based on model configuration state.
+	 *
+	 * @return  string  A store id.
+	 *
+	 * @since 1.0.0
+	 */
+	protected function getStoreId($id = ''): string
+	{
+		// Compile the store id.
+		$id .= ':' . $this->getState('filter.id');
+		$id .= ':' . $this->getState('filter.search');
+		$id .= ':' . $this->getState('filter.published');
+		$id .= ':' . $this->getState('filter.tablename');
+		$id .= ':' . $this->getState('filter.tablecategory');
 
-        return parent::getStoreId($id);
-    }
+		return parent::getStoreId($id);
+	}
 }

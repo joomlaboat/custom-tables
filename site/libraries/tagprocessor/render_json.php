@@ -18,63 +18,63 @@ use CustomTables\TwigProcessor;
 
 trait render_json
 {
-    static public function get_CatalogTable_singleline_JSON(CT &$ct, int $layoutType, string $layout): string //TO DO
-    {
-        if (ob_get_contents())
-            ob_clean();
+	static public function get_CatalogTable_singleline_JSON(CT &$ct, int $layoutType, string $layout): string //TO DO
+	{
+		if (ob_get_contents())
+			ob_clean();
 
-        //Prepare line layout
+		//Prepare line layout
 
-        $layout = str_replace("\n", '', $layout);
-        $layout = str_replace("\r", '', $layout);
+		$layout = str_replace("\n", '', $layout);
+		$layout = str_replace("\r", '', $layout);
 
-        $twig = new TwigProcessor($ct, $layout);
+		$twig = new TwigProcessor($ct, $layout);
 
-        $records = [];
+		$records = [];
 
-        foreach ($ct->Records as $row)
-            $records[] = trim(common::ctStripTags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row)));
+		foreach ($ct->Records as $row)
+			$records[] = trim(common::ctStripTags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row)));
 
-        return implode(',', $records);
-    }
+		return implode(',', $records);
+	}
 
-    protected static function get_CatalogTable_JSON(CT &$ct, $fields): string
-    {
-        $header_fields = [];
-        $line_fields = [];
-        $fields = str_replace("\n", '', $fields);
-        $fields = str_replace("\r", '', $fields);
-        $fieldArray = CTMiscHelper::csv_explode(',', $fields, '"', true);
-        foreach ($fieldArray as $field) {
-            $fieldPair = CTMiscHelper::csv_explode(':', $field);
-            $header_fields[] = $fieldPair[0];
+	protected static function get_CatalogTable_JSON(CT &$ct, $fields): string
+	{
+		$header_fields = [];
+		$line_fields = [];
+		$fields = str_replace("\n", '', $fields);
+		$fields = str_replace("\r", '', $fields);
+		$fieldArray = CTMiscHelper::csv_explode(',', $fields, '"', true);
+		foreach ($fieldArray as $field) {
+			$fieldPair = CTMiscHelper::csv_explode(':', $field);
+			$header_fields[] = $fieldPair[0];
 
-            $vlu = $fieldPair[1] ?? "";
+			$vlu = $fieldPair[1] ?? "";
 
-            $line_fields[] = $vlu;//content
-        }
+			$line_fields[] = $vlu;//content
+		}
 
-        $number = 1 + $ct->LimitStart; //table row number, it maybe uses in the layout as {number}
-        $records = array();
+		$number = 1 + $ct->LimitStart; //table row number, it maybe uses in the layout as {number}
+		$records = array();
 
-        $LayoutProc = new LayoutProcessor($ct);
+		$LayoutProc = new LayoutProcessor($ct);
 
-        foreach ($ct->Records as $row) {
-            $row['_number'] = $number;
-            $row['_islast'] = $number == count($ct->Records);
-            $i = 0;
-            $vlu2 = array();
-            foreach ($header_fields as $header_field) {
-                $LayoutProc->layout = $line_fields[$i];
-                $vlu2[$header_field] = $LayoutProc->fillLayout($row);
-                $i++;
-            }
+		foreach ($ct->Records as $row) {
+			$row['_number'] = $number;
+			$row['_islast'] = $number == count($ct->Records);
+			$i = 0;
+			$vlu2 = array();
+			foreach ($header_fields as $header_field) {
+				$LayoutProc->layout = $line_fields[$i];
+				$vlu2[$header_field] = $LayoutProc->fillLayout($row);
+				$i++;
+			}
 
-            $records[] = $vlu2;
-            $number++;
-        }
+			$records[] = $vlu2;
+			$number++;
+		}
 
-        return common::ctJsonEncode($records);
-    }
+		return common::ctJsonEncode($records);
+	}
 
 }

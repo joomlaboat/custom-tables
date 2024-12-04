@@ -21,19 +21,19 @@ use Joomla\CMS\Table\Table;
  */
 class CustomtablesTableCategories extends Table
 {
-    var $id = null;
-    var ?string $categoryname = null;
-    var ?int $admin_menu = null;
+	var $id = null;
+	var ?string $categoryname = null;
+	var ?int $admin_menu = null;
 
-    /**
-     * Constructor
-     *
-     * @param object Database connector object
-     *
-     * @since 1.0.0
-     */
-    function __construct(&$db)
-    {
-        parent::__construct('#__customtables_categories', 'id', $db);
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param object Database connector object
+	 *
+	 * @since 1.0.0
+	 */
+	function __construct(&$db)
+	{
+		parent::__construct('#__customtables_categories', 'id', $db);
+	}
 }

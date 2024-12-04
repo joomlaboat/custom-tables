@@ -31,50 +31,50 @@ $document->addCustomTag('<style>
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"
-      name="adminForm" id="adminForm">
+	  name="adminForm" id="adminForm">
 
 
-    <div class="row">
-        <div class="col-md-12">
-            <div id="j-main-container" class="j-main-container">
+	<div class="row">
+		<div class="col-md-12">
+			<div id="j-main-container" class="j-main-container">
 
-                <?php
-                //$this->filterForm = $this->get('FilterForm');
-                //echo $this->filterForm->renderField('tablecategory'); ?>
+				<?php
+				//$this->filterForm = $this->get('FilterForm');
+				//echo $this->filterForm->renderField('tablecategory'); ?>
 
-                <?php echo HTMLHelper::_('uitab.startTabSet', 'schemaTab', ['active' => 'diagram', 'recall' => true, 'breakpoint' => 768]); ?>
+				<?php echo HTMLHelper::_('uitab.startTabSet', 'schemaTab', ['active' => 'diagram', 'recall' => true, 'breakpoint' => 768]); ?>
 
-                <?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM')); ?>
+				<?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'diagram', common::translate('COM_CUSTOMTABLES_TABLES_DIAGRAM')); ?>
 
-                <div id="canvas_container"></div>
+				<div id="canvas_container"></div>
 
-                <?php echo HTMLHelper::_('uitab.endTab'); ?>
+				<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-                <?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS')); ?>
+				<?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS')); ?>
 
-                <?php
-                $result = IntegrityChecks::check($this->ct);
+				<?php
+				$result = IntegrityChecks::check($this->ct);
 
-                if (count($result) > 0)
-                    echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
-                else
-                    echo '<p>Database table structure is up-to-date.</p>';
+				if (count($result) > 0)
+					echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
+				else
+					echo '<p>Database table structure is up-to-date.</p>';
 
-                ?>
+				?>
 
-                <?php echo HTMLHelper::_('uitab.endTab'); ?>
-                <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
+				<?php echo HTMLHelper::_('uitab.endTab'); ?>
+				<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
-                <script>
+				<script>
 
-                    TableCategoryID = <?php echo (int)$this->state->get('list.tablecategory'); ?>;
-                    AllTables = <?php echo common::ctJsonEncode($this->diagram->tables); ?>;
+					TableCategoryID = <?php echo (int)$this->state->get('list.tablecategory'); ?>;
+					AllTables = <?php echo common::ctJsonEncode($this->diagram->tables); ?>;
 
-                </script>
+				</script>
 
-                <input type="hidden" name="task" value=""/>
-                <?php echo HTMLHelper::_('form.token'); ?>
-            </div>
-        </div>
-    </div>
+				<input type="hidden" name="task" value=""/>
+				<?php echo HTMLHelper::_('form.token'); ?>
+			</div>
+		</div>
+	</div>
 </form>

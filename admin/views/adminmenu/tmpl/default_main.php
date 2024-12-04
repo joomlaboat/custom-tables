@@ -16,14 +16,14 @@ defined('_JEXEC') or die();
 ?>
 
 <?php foreach ($this->icons['main'] as $icon): ?>
-    <div class="dashboard-wraper">
-        <div class="dashboard-content">
-            <a class="icon" href="<?php echo $icon->url; ?>">
-                <img alt="<?php echo $icon->alt; ?>"
-                     src="<?php echo common::UriRoot(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/icons/<?php echo $icon->image; ?>">
-                <span class="dashboard-title"><?php echo common::translate($icon->name); ?></span>
-            </a>
-        </div>
-    </div>
+	<div class="dashboard-wraper">
+		<div class="dashboard-content">
+			<a class="icon" href="<?php echo $icon->url; ?>">
+				<img alt="<?php echo $icon->alt; ?>"
+					 src="<?php echo common::UriRoot(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/icons/<?php echo $icon->image; ?>">
+				<span class="dashboard-title"><?php echo common::translate($icon->name); ?></span>
+			</a>
+		</div>
+	</div>
 <?php endforeach; ?>
 <div class="clearfix"></div>

@@ -21,25 +21,25 @@ JFormHelper::loadFieldClass('list');
 
 class JFormFieldAnyTableFields extends JFormFieldList
 {
-    protected $type = 'anytablefields';
+	protected $type = 'anytablefields';
 
-    //Returns the Options object with the list of any table (specified by table id in url)
+	//Returns the Options object with the list of any table (specified by table id in url)
 
-    protected function getOptions()
-    {
-        $options = array();
-        $options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
-        $tableid = common::inputGetInt('tableid', 0);
-        if ($tableid != 0) {
-            $table_row = TableHelper::getTableRowByID($tableid);
-            if ($table_row->customtablename != '') {
-                $fields = database::getExistingFields($table_row->customtablename, false);
+	protected function getOptions()
+	{
+		$options = array();
+		$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
+		$tableid = common::inputGetInt('tableid', 0);
+		if ($tableid != 0) {
+			$table_row = TableHelper::getTableRowByID($tableid);
+			if ($table_row->customtablename != '') {
+				$fields = database::getExistingFields($table_row->customtablename, false);
 
-                foreach ($fields as $field) {
-                    $options[] = HTMLHelper::_('select.option', $field['column_name'], $field['column_name'] . ' (' . $field['data_type'] . ')');
-                }
-            }
-        }
-        return $options;
-    }
+				foreach ($fields as $field) {
+					$options[] = HTMLHelper::_('select.option', $field['column_name'], $field['column_name'] . ' (' . $field['data_type'] . ')');
+				}
+			}
+		}
+		return $options;
+	}
 }

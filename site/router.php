@@ -18,58 +18,58 @@ use CustomTables\Value_file;
 
 class CustomTablesRouter implements RouterInterface
 {
-    /*
-        public function __construct(SiteApplication $app, AbstractMenu $menu)
-        {
-            $this->app = $app;
-            $this->menu = $menu;
-        }
-        */
+	/*
+		public function __construct(SiteApplication $app, AbstractMenu $menu)
+		{
+			$this->app = $app;
+			$this->menu = $menu;
+		}
+		*/
 
-    public function build(&$query): array
-    {
-        $segments = [];
-        if (isset($query['alias'])) {
-            $segments[] = $query['alias'];
-            unset($query['alias']);
-        }
-        return $segments;
-    }
+	public function build(&$query): array
+	{
+		$segments = [];
+		if (isset($query['alias'])) {
+			$segments[] = $query['alias'];
+			unset($query['alias']);
+		}
+		return $segments;
+	}
 
-    public function parse(&$segments): array
-    {
-        $vars = [];
-        //Check if it's a file to download
+	public function parse(&$segments): array
+	{
+		$vars = [];
+		//Check if it's a file to download
 
-        $libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries';
-        if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
-            define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);
+		$libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries';
+		if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
+			define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);
 
-        $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
-            . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
-        require_once($processor_file);
+		$processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+			. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
+		require_once($processor_file);
 
-        $fileOutput = new Value_file();
+		$fileOutput = new Value_file();
 
-        if ($fileOutput->CheckIfFile2download($segments, $vars)) {
-            //rerouted
-            $vars['option'] = 'com_customtables';
-            $segments[0] = null;
-            return $vars;
-        }
+		if ($fileOutput->CheckIfFile2download($segments, $vars)) {
+			//rerouted
+			$vars['option'] = 'com_customtables';
+			$segments[0] = null;
+			return $vars;
+		}
 
-        if (isset($segments[0])) {
+		if (isset($segments[0])) {
 
-            $vars['option'] = 'com_customtables';
-            $vars['view'] = 'details';
-            $vars['alias'] = $segments[0];
-            $segments[0] = null;
-        }
-        return $vars;
-    }
+			$vars['option'] = 'com_customtables';
+			$vars['view'] = 'details';
+			$vars['alias'] = $segments[0];
+			$segments[0] = null;
+		}
+		return $vars;
+	}
 
-    public function preprocess($query): array
-    {
-        return $query;
-    }
+	public function preprocess($query): array
+	{
+		return $query;
+	}
 }

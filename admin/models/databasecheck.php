@@ -22,58 +22,58 @@ use Joomla\CMS\MVC\Model\ListModel;
  */
 class CustomtablesModelDatabasecheck extends ListModel
 {
-    var CT $ct;
+	var CT $ct;
 
-    public function __construct($config = array())
-    {
-        if (empty($config['filter_fields'])) {
-            $config['filter_fields'] = array(
-                'a.tablecategory', 'tablecategory'
-            );
-        }
+	public function __construct($config = array())
+	{
+		if (empty($config['filter_fields'])) {
+			$config['filter_fields'] = array(
+				'a.tablecategory', 'tablecategory'
+			);
+		}
 
-        parent::__construct($config);
-        $this->ct = new CT;
-    }
+		parent::__construct($config);
+		$this->ct = new CT;
+	}
 
-    /**
-     * Method to get an array of data items.
-     *
-     * @return  mixed  An array of data items on success, false on failure.
-     *
-     * @since 1.0.0
-     */
-    public function getItems()
-    {
-        // load parent items
-        return parent::getItems();
-    }
+	/**
+	 * Method to get an array of data items.
+	 *
+	 * @return  mixed  An array of data items on success, false on failure.
+	 *
+	 * @since 1.0.0
+	 */
+	public function getItems()
+	{
+		// load parent items
+		return parent::getItems();
+	}
 
-    protected function populateState($ordering = 'a.id', $direction = 'asc')
-    {
-        if (!CUSTOMTABLES_JOOMLA_MIN_4) {
-            $category = $this->getUserStateFromRequest($this->context . '.filter.tablecategory', 'filter_tablecategory');
-            $this->setState('filter.tablecategory', $category);
-        }
+	protected function populateState($ordering = 'a.id', $direction = 'asc')
+	{
+		if (!CUSTOMTABLES_JOOMLA_MIN_4) {
+			$category = $this->getUserStateFromRequest($this->context . '.filter.tablecategory', 'filter_tablecategory');
+			$this->setState('filter.tablecategory', $category);
+		}
 
-        // Load the parameters.
-        $this->setState('params', ComponentHelper::getParams('com_customtables'));
+		// Load the parameters.
+		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
-        // List state information.
-        parent::populateState($ordering, $direction);
-    }
+		// List state information.
+		parent::populateState($ordering, $direction);
+	}
 
-    /**
-     * Method to get a store id based on model configuration state.
-     *
-     * @return  string  A store id.
-     *
-     */
-    protected function getStoreId($id = '')
-    {
-        // Compile the store id.
-        $id .= ':' . $this->getState('filter.tablecategory');
+	/**
+	 * Method to get a store id based on model configuration state.
+	 *
+	 * @return  string  A store id.
+	 *
+	 */
+	protected function getStoreId($id = '')
+	{
+		// Compile the store id.
+		$id .= ':' . $this->getState('filter.tablecategory');
 
-        return parent::getStoreId($id);
-    }
+		return parent::getStoreId($id);
+	}
 }

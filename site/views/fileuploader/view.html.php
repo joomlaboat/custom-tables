@@ -20,29 +20,29 @@ jimport('joomla.application.component.view');
 
 class CustomTablesViewFileUploader extends HtmlView
 {
-    function display($tpl = null)
-    {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
+	function display($tpl = null)
+	{
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
 
-        if (ob_get_contents()) ob_end_clean();
+		if (ob_get_contents()) ob_end_clean();
 
-        $fieldname = common::inputGetCmd('fieldname', '');
-        $fileid = common::inputGetCmd($fieldname . '_fileid', '');
-        $task = common::inputGetCmd('op', '');
+		$fieldname = common::inputGetCmd('fieldname', '');
+		$fileid = common::inputGetCmd($fieldname . '_fileid', '');
+		$task = common::inputGetCmd('op', '');
 
-        if ($task == 'delete') {
-            $file = str_replace('/', '', common::inputPostString('name', '', 'create-edit-record'));
-            $file = str_replace('..', '', $file);
-            $file = str_replace('index.', '', $file);
+		if ($task == 'delete') {
+			$file = str_replace('/', '', common::inputPostString('name', '', 'create-edit-record'));
+			$file = str_replace('..', '', $file);
+			$file = str_replace('index.', '', $file);
 
-            if ($file != '' and file_exists(CUSTOMTABLES_TEMP_PATH . $file)) {
-                unlink(CUSTOMTABLES_TEMP_PATH . $file);
-                echo common::ctJsonEncode(['status' => 'Deleted']);
-            } else
-                echo common::ctJsonEncode(['error' => 'File not found. Code: FU-1']);
-        } else
-            echo FileUploader::uploadFile($fileid);
+			if ($file != '' and file_exists(CUSTOMTABLES_TEMP_PATH . $file)) {
+				unlink(CUSTOMTABLES_TEMP_PATH . $file);
+				echo common::ctJsonEncode(['status' => 'Deleted']);
+			} else
+				echo common::ctJsonEncode(['error' => 'File not found. Code: FU-1']);
+		} else
+			echo FileUploader::uploadFile($fileid);
 
-        die; //to stop rendering template and staff
-    }
+		die; //to stop rendering template and staff
+	}
 }

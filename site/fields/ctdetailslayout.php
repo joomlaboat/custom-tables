@@ -20,66 +20,66 @@ use Joomla\CMS\Version;
 
 $version = new Version();
 if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
-    if (version_compare($version->getShortVersion(), '4.0', '>='))
-        define('CUSTOMTABLES_JOOMLA_MIN_4', true);
-    else
-        define('CUSTOMTABLES_JOOMLA_MIN_4', false);
+	if (version_compare($version->getShortVersion(), '4.0', '>='))
+		define('CUSTOMTABLES_JOOMLA_MIN_4', true);
+	else
+		define('CUSTOMTABLES_JOOMLA_MIN_4', false);
 }
 
 trait JFormFieldCTDetailsLayoutCommon
 {
-    protected static function getOptionList(): array
-    {
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
-        $whereClause = new MySQLWhereClause();
-        $whereClause->addCondition('published', 1);
-        $whereClause->addOrCondition('layouttype', 4);
-        $whereClause->addOrCondition('layouttype', 8);
-        $whereClause->addOrCondition('layouttype', 9);
-        $whereClause->addOrCondition('layouttype', 10);
+	protected static function getOptionList(): array
+	{
+		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addOrCondition('layouttype', 4);
+		$whereClause->addOrCondition('layouttype', 8);
+		$whereClause->addOrCondition('layouttype', 9);
+		$whereClause->addOrCondition('layouttype', 10);
 
-        $layouts = database::loadObjectList('#__customtables_layouts AS a',
-            ['id', 'layoutname', 'TABLE_NAME'], $whereClause, 'TABLE_NAME, layoutname');
+		$layouts = database::loadObjectList('#__customtables_layouts AS a',
+			['id', 'layoutname', 'TABLE_NAME'], $whereClause, 'TABLE_NAME, layoutname');
 
-        $options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_DEFAULT')];
+		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_DEFAULT')];
 
-        if ($layouts) {
-            foreach ($layouts as $layout)
-                $options[] = HTMLHelper::_('select.option', $layout->layoutname, $layout->TABLE_NAME . ' - ' . $layout->layoutname);
-        }
-        return $options;
-    }
+		if ($layouts) {
+			foreach ($layouts as $layout)
+				$options[] = HTMLHelper::_('select.option', $layout->layoutname, $layout->TABLE_NAME . ' - ' . $layout->layoutname);
+		}
+		return $options;
+	}
 }
 
 if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
-    JFormHelper::loadFieldClass('list');
+	JFormHelper::loadFieldClass('list');
 
-    class JFormFieldCTDetailsLayoutLayout extends JFormFieldList
-    {
-        use JFormFieldCTDetailsLayoutCommon;
+	class JFormFieldCTDetailsLayoutLayout extends JFormFieldList
+	{
+		use JFormFieldCTDetailsLayoutCommon;
 
-        protected $type = 'CTDetailsLayout';
+		protected $type = 'CTDetailsLayout';
 
-        protected function getOptions(): array
-        {
-            return self::getOptionList();
-        }
-    }
+		protected function getOptions(): array
+		{
+			return self::getOptionList();
+		}
+	}
 } else {
 
-    class JFormFieldCTDetailsLayout extends FormField
-    {
-        use JFormFieldCTDetailsLayoutCommon;
+	class JFormFieldCTDetailsLayout extends FormField
+	{
+		use JFormFieldCTDetailsLayoutCommon;
 
-        protected $type = 'esdetailslayout';
-        protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
+		protected $type = 'esdetailslayout';
+		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
 
-        protected function getInput()
-        {
-            $data = $this->getLayoutData();
-            $data['options'] = self::getOptionList();
-            return $this->getRenderer($this->layout)->render($data);
-        }
-    }
+		protected function getInput()
+		{
+			$data = $this->getLayoutData();
+			$data['options'] = self::getOptionList();
+			return $this->getRenderer($this->layout)->render($data);
+		}
+	}
 }

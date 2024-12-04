@@ -17,217 +17,217 @@ use Joomla\CMS\Version;
 
 // Define str_starts_with if it doesn't exist
 if (!function_exists('str_starts_with')) {
-    function str_starts_with(string $haystack, string $needle): bool
-    {
-        return substr($haystack, 0, strlen($needle)) === $needle;
-    }
+	function str_starts_with(string $haystack, string $needle): bool
+	{
+		return substr($haystack, 0, strlen($needle)) === $needle;
+	}
 }
 
 // Define str_contains if it doesn't exist
 if (!function_exists('str_contains')) {
-    function str_contains(string $haystack, string $needle): bool
-    {
-        return $needle === '' || strpos($haystack, $needle) !== false;
-    }
+	function str_contains(string $haystack, string $needle): bool
+	{
+		return $needle === '' || strpos($haystack, $needle) !== false;
+	}
 }
 
 function CustomTablesLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', bool $loadTwig = true): void
 {
-    if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
-        return;
+	if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
+		return;
 
-    $libraryPath = null;
+	$libraryPath = null;
 
-    if (defined('_JEXEC')) {
+	if (defined('_JEXEC')) {
 
-        if (!defined('CUSTOMTABLES_JOOMLA_VERSION')) {
-            // Get Joomla version
-            $version = new Version();
-            define('CUSTOMTABLES_JOOMLA_VERSION', $version->getShortVersion());
+		if (!defined('CUSTOMTABLES_JOOMLA_VERSION')) {
+			// Get Joomla version
+			$version = new Version();
+			define('CUSTOMTABLES_JOOMLA_VERSION', $version->getShortVersion());
 
-            if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
-                if (version_compare(CUSTOMTABLES_JOOMLA_VERSION, '4.0', '>='))
-                    define('CUSTOMTABLES_JOOMLA_MIN_4', true);
-                else
-                    define('CUSTOMTABLES_JOOMLA_MIN_4', false);
-            }
-        }
+			if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
+				if (version_compare(CUSTOMTABLES_JOOMLA_VERSION, '4.0', '>='))
+					define('CUSTOMTABLES_JOOMLA_MIN_4', true);
+				else
+					define('CUSTOMTABLES_JOOMLA_MIN_4', false);
+			}
+		}
 
-        if ($componentName == 'com_extensiontranslator')
-            $libraryPath = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'libraries';
-        else
-            $libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'libraries';
+		if ($componentName == 'com_extensiontranslator')
+			$libraryPath = JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'libraries';
+		else
+			$libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'libraries';
 
-        if (!defined('CUSTOMTABLES_ABSPATH'))
-            define('CUSTOMTABLES_ABSPATH', JPATH_SITE . DIRECTORY_SEPARATOR);
+		if (!defined('CUSTOMTABLES_ABSPATH'))
+			define('CUSTOMTABLES_ABSPATH', JPATH_SITE . DIRECTORY_SEPARATOR);
 
-        if (!defined('CUSTOMTABLES_IMAGES_PATH'))
-            define('CUSTOMTABLES_IMAGES_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'images');
+		if (!defined('CUSTOMTABLES_IMAGES_PATH'))
+			define('CUSTOMTABLES_IMAGES_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'images');
 
-        if (!defined('CUSTOMTABLES_PRO_PATH'))
-            define('CUSTOMTABLES_PRO_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR);
+		if (!defined('CUSTOMTABLES_PRO_PATH'))
+			define('CUSTOMTABLES_PRO_PATH', JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR);
 
-        if (!defined('CUSTOMTABLES_TEMP_PATH')) {
+		if (!defined('CUSTOMTABLES_TEMP_PATH')) {
 
-            // Check if version is 4.0 or higher
-            if (CUSTOMTABLES_JOOMLA_MIN_4)
-                $config = Factory::getContainer()->get('config');
-            else
-                $config = Factory::getConfig();
+			// Check if version is 4.0 or higher
+			if (CUSTOMTABLES_JOOMLA_MIN_4)
+				$config = Factory::getContainer()->get('config');
+			else
+				$config = Factory::getConfig();
 
-            $tmpPath = $config->get('tmp_path');
+			$tmpPath = $config->get('tmp_path');
 
-            define('CUSTOMTABLES_TEMP_PATH', $tmpPath . DIRECTORY_SEPARATOR);
-        }
+			define('CUSTOMTABLES_TEMP_PATH', $tmpPath . DIRECTORY_SEPARATOR);
+		}
 
-    } elseif (defined('WPINC')) {
-
-
-        if (!defined('CUSTOMTABLES_JOOMLA_VERSION')) {
-            define('CUSTOMTABLES_JOOMLA_VERSION', 0);
-
-            if (!defined('CUSTOMTABLES_JOOMLA_MIN_4'))
-                define('CUSTOMTABLES_JOOMLA_MIN_4', false);
-        }
+	} elseif (defined('WPINC')) {
 
 
-        $libraryPath = $PLUGIN_NAME_DIR . 'libraries';
+		if (!defined('CUSTOMTABLES_JOOMLA_VERSION')) {
+			define('CUSTOMTABLES_JOOMLA_VERSION', 0);
 
-        if (!defined('CUSTOMTABLES_ABSPATH'))
-            define('CUSTOMTABLES_ABSPATH', ABSPATH);
+			if (!defined('CUSTOMTABLES_JOOMLA_MIN_4'))
+				define('CUSTOMTABLES_JOOMLA_MIN_4', false);
+		}
 
-        if (!defined('CUSTOMTABLES_IMAGES_PATH'))
-            define('CUSTOMTABLES_IMAGES_PATH', ABSPATH . 'wp-content' . DIRECTORY_SEPARATOR . 'uploads');
 
-        if (!defined('CUSTOMTABLES_PRO_PATH'))
-            define('CUSTOMTABLES_PRO_PATH', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'customtablespro' . DIRECTORY_SEPARATOR);
+		$libraryPath = $PLUGIN_NAME_DIR . 'libraries';
 
-        if (!defined('CUSTOMTABLES_TEMP_PATH')) {
-            define('CUSTOMTABLES_TEMP_PATH', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
-        }
-    }
+		if (!defined('CUSTOMTABLES_ABSPATH'))
+			define('CUSTOMTABLES_ABSPATH', ABSPATH);
 
-    if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
-        define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);
+		if (!defined('CUSTOMTABLES_IMAGES_PATH'))
+			define('CUSTOMTABLES_IMAGES_PATH', ABSPATH . 'wp-content' . DIRECTORY_SEPARATOR . 'uploads');
 
-    if (defined('_JEXEC')) {
-        define('CUSTOMTABLES_MEDIA_WEBPATH', URI::root(false) . 'components/com_customtables/libraries/customtables/media/');
-        define('CUSTOMTABLES_LIBRARIES_WEBPATH', URI::root(false) . 'components/com_customtables/libraries/');
+		if (!defined('CUSTOMTABLES_PRO_PATH'))
+			define('CUSTOMTABLES_PRO_PATH', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'customtablespro' . DIRECTORY_SEPARATOR);
 
-        define('CUSTOMTABLES_PLUGIN_WEBPATH', URI::root(false) . 'plugins/content/customtables/');
+		if (!defined('CUSTOMTABLES_TEMP_PATH')) {
+			define('CUSTOMTABLES_TEMP_PATH', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
+		}
+	}
 
-        $url = URI::root(false);
-        if (strlen($url) > 0 and $url[strlen($url) - 1] == '/')
-            $url = substr($url, 0, strlen($url) - 1);
+	if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
+		define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);
 
-        define('CUSTOMTABLES_MEDIA_HOME_URL', $url);
-    } elseif (defined('WPINC')) {
-        define('CUSTOMTABLES_MEDIA_WEBPATH', home_url() . '/wp-content/plugins/customtables/libraries/customtables/media/');
-        define('CUSTOMTABLES_MEDIA_HOME_URL', home_url());
-    }
+	if (defined('_JEXEC')) {
+		define('CUSTOMTABLES_MEDIA_WEBPATH', URI::root(false) . 'components/com_customtables/libraries/customtables/media/');
+		define('CUSTOMTABLES_LIBRARIES_WEBPATH', URI::root(false) . 'components/com_customtables/libraries/');
 
-    if ((!defined('_JEXEC') or ($loadTwig === null or $loadTwig)) and !class_exists('Twig')) {
+		define('CUSTOMTABLES_PLUGIN_WEBPATH', URI::root(false) . 'plugins/content/customtables/');
 
-        if ($componentName == 'com_customtables' or $componentName == 'com_extensiontranslator') {
-            $twig_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-            require_once($twig_file);
-        }
-    }
+		$url = URI::root(false);
+		if (strlen($url) > 0 and $url[strlen($url) - 1] == '/')
+			$url = substr($url, 0, strlen($url) - 1);
 
-    $path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-    $pathIntegrity = $path . 'integrity' . DIRECTORY_SEPARATOR;
+		define('CUSTOMTABLES_MEDIA_HOME_URL', $url);
+	} elseif (defined('WPINC')) {
+		define('CUSTOMTABLES_MEDIA_WEBPATH', home_url() . '/wp-content/plugins/customtables/libraries/customtables/media/');
+		define('CUSTOMTABLES_MEDIA_HOME_URL', home_url());
+	}
 
-    require_once($pathIntegrity . 'integrity.php');
-    require_once($pathIntegrity . 'fields.php');
-    require_once($pathIntegrity . 'coretables.php');
-    require_once($pathIntegrity . 'tables.php');
+	if ((!defined('_JEXEC') or ($loadTwig === null or $loadTwig)) and !class_exists('Twig')) {
 
-    $path_helpers = $path . 'helpers' . DIRECTORY_SEPARATOR;
+		if ($componentName == 'com_customtables' or $componentName == 'com_extensiontranslator') {
+			$twig_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+			require_once($twig_file);
+		}
+	}
 
-    require_once($path_helpers . 'imagemethods.php');
-    require_once($path_helpers . 'user.php');
-    require_once($path_helpers . 'misc.php');
+	$path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+	$pathIntegrity = $path . 'integrity' . DIRECTORY_SEPARATOR;
 
-    if (defined('_JEXEC')) {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
-        if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'pagination.php'))
-            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'pagination.php');
-    } elseif (defined('WPINC')) {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-wp.php');
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-wp.php');
-    }
+	require_once($pathIntegrity . 'integrity.php');
+	require_once($pathIntegrity . 'fields.php');
+	require_once($pathIntegrity . 'coretables.php');
+	require_once($pathIntegrity . 'tables.php');
 
-    require_once($path_helpers . 'tables.php');
-    require_once($path_helpers . 'compareimages.php');
-    require_once($path_helpers . 'findsimilarimage.php');
+	$path_helpers = $path . 'helpers' . DIRECTORY_SEPARATOR;
 
-    if ($include_utilities) {
-        $path_utilities = $path . 'utilities' . DIRECTORY_SEPARATOR;
-        require_once($path_utilities . 'importtables.php');
-        require_once($path_utilities . 'exporttables.php');
-    }
+	require_once($path_helpers . 'imagemethods.php');
+	require_once($path_helpers . 'user.php');
+	require_once($path_helpers . 'misc.php');
 
-    $pathDataTypes = $path . 'ct' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'ct.php');
-    require_once($pathDataTypes . 'environment.php');
-    require_once($pathDataTypes . 'params.php');
+	if (defined('_JEXEC')) {
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
+		if (file_exists(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'pagination.php'))
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'pagination.php');
+	} elseif (defined('WPINC')) {
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-wp.php');
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-wp.php');
+	}
 
-    $pathDataTypes = $path . 'datatypes' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'datatypes.php');
-    require_once($pathDataTypes . 'filemethods.php');
+	require_once($path_helpers . 'tables.php');
+	require_once($path_helpers . 'compareimages.php');
+	require_once($path_helpers . 'findsimilarimage.php');
 
-    $pathDataTypes = $path . 'layouts' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'layouts.php');
+	if ($include_utilities) {
+		$path_utilities = $path . 'utilities' . DIRECTORY_SEPARATOR;
+		require_once($path_utilities . 'importtables.php');
+		require_once($path_utilities . 'exporttables.php');
+	}
 
-    require_once($pathDataTypes . 'twig.php');
-    require_once($pathDataTypes . 'Twig_Fields_Tags.php');
-    require_once($pathDataTypes . 'record_tags.php');
-    require_once($pathDataTypes . 'Twig_Tables_Tags.php');
-    require_once($pathDataTypes . 'Twig_HTML_Tags.php');
-    require_once($pathDataTypes . 'Twig_User_Tags.php');
-    require_once($pathDataTypes . 'Twig_Document_Tags.php');
-    require_once($pathDataTypes . 'Twig_URL_Tags.php');
+	$pathDataTypes = $path . 'ct' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'ct.php');
+	require_once($pathDataTypes . 'environment.php');
+	require_once($pathDataTypes . 'params.php');
 
-    $pathDataTypes = $path . 'logs' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'logs.php');
+	$pathDataTypes = $path . 'datatypes' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'datatypes.php');
+	require_once($pathDataTypes . 'filemethods.php');
 
-    $pathDataTypes = $path . 'ordering' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'ordering.php');
+	$pathDataTypes = $path . 'layouts' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'layouts.php');
 
-    if ($include_html) {
-        $pathDataTypes = $path . 'ordering' . DIRECTORY_SEPARATOR;
-        require_once($pathDataTypes . 'html.php');
-    }
+	require_once($pathDataTypes . 'twig.php');
+	require_once($pathDataTypes . 'Twig_Fields_Tags.php');
+	require_once($pathDataTypes . 'record_tags.php');
+	require_once($pathDataTypes . 'Twig_Tables_Tags.php');
+	require_once($pathDataTypes . 'Twig_HTML_Tags.php');
+	require_once($pathDataTypes . 'Twig_User_Tags.php');
+	require_once($pathDataTypes . 'Twig_Document_Tags.php');
+	require_once($pathDataTypes . 'Twig_URL_Tags.php');
 
-    $pathDataTypes = $path . 'records' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'savefieldqueryset.php');
-    require_once($pathDataTypes . 'record.php');
+	$pathDataTypes = $path . 'logs' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'logs.php');
 
-    $pathDataTypes = $path . 'table' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'table.php');
+	$pathDataTypes = $path . 'ordering' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'ordering.php');
 
-    $pathDataTypes = $path . 'html' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'toolbar.php');
-    require_once($pathDataTypes . 'forms.php');
-    require_once($pathDataTypes . 'inputbox.php');
-    require_once($pathDataTypes . 'value.php');
+	if ($include_html) {
+		$pathDataTypes = $path . 'ordering' . DIRECTORY_SEPARATOR;
+		require_once($pathDataTypes . 'html.php');
+	}
 
-    $pathDataTypes = $path . 'fields' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'fields.php');
+	$pathDataTypes = $path . 'records' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'savefieldqueryset.php');
+	require_once($pathDataTypes . 'record.php');
 
-    $pathDataTypes = $path . 'languages' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'languages.php');
+	$pathDataTypes = $path . 'table' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'table.php');
 
-    $pathDataTypes = $path . 'filter' . DIRECTORY_SEPARATOR;
-    require_once($pathDataTypes . 'filtering.php');
+	$pathDataTypes = $path . 'html' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'toolbar.php');
+	require_once($pathDataTypes . 'forms.php');
+	require_once($pathDataTypes . 'inputbox.php');
+	require_once($pathDataTypes . 'value.php');
 
-    //$path_datatypes = $path . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
-    //require_once($path_datatypes.'Logs.php');
+	$pathDataTypes = $path . 'fields' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'fields.php');
 
-    $pathViews = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+	$pathDataTypes = $path . 'languages' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'languages.php');
 
-    require_once($pathViews . 'edit.php');
-    require_once($pathViews . 'catalog.php');
-    require_once($pathViews . 'details.php');
+	$pathDataTypes = $path . 'filter' . DIRECTORY_SEPARATOR;
+	require_once($pathDataTypes . 'filtering.php');
+
+	//$path_datatypes = $path . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
+	//require_once($path_datatypes.'Logs.php');
+
+	$pathViews = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+
+	require_once($pathViews . 'edit.php');
+	require_once($pathViews . 'catalog.php');
+	require_once($pathViews . 'details.php');
 }

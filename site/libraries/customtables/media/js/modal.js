@@ -1,7 +1,7 @@
 /**
  * CustomTables Joomla! 3.x/4.x/5.x Component and WordPress 6.x Plugin
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
  * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html

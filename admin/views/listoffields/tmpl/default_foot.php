@@ -16,5 +16,5 @@ $colspan = 9 + count($this->languages);
 
 ?>
 <tr>
-    <td colspan="<?php echo $colspan; ?>"><?php echo $this->pagination->getListFooter(); ?></td>
+	<td colspan="<?php echo $colspan; ?>"><?php echo $this->pagination->getListFooter(); ?></td>
 </tr>

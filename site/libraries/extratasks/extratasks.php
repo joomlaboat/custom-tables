@@ -17,41 +17,41 @@ use Joomla\CMS\Factory;
 
 class extraTasks
 {
-    /**
-     * @throws Exception
-     *
-     * @since 3.0.0
-     */
-    public static function prepareJS(Table $table)
-    {
-        $fieldId = common::inputGetInt('fieldid', 0);
-        if ($fieldId == 0)
-            return;
+	/**
+	 * @throws Exception
+	 *
+	 * @since 3.0.0
+	 */
+	public static function prepareJS(Table $table)
+	{
+		$fieldId = common::inputGetInt('fieldid', 0);
+		if ($fieldId == 0)
+			return;
 
-        $field_row = $table->getFieldById($fieldId);
+		$field_row = $table->getFieldById($fieldId);
 
-        $document = Factory::getDocument();
-        $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/extratasks.js"></script>');
-        $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/modal.js"></script>');
-        $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base64.js"></script>');
-        $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/modal.css" rel="stylesheet">');
+		$document = Factory::getDocument();
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/extratasks.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/modal.js"></script>');
+		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base64.js"></script>');
+		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/modal.css" rel="stylesheet">');
 
-        $extraTask = common::inputGetCmd('extratask', '');
-        $stepSize = common::inputGetInt('stepsize', 10);
+		$extraTask = common::inputGetCmd('extratask', '');
+		$stepSize = common::inputGetInt('stepsize', 10);
 
-        if ($extraTask != '') {
-            $extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . common::inputGetBase64('old_typeparams', '') . '","'
-                . common::inputGetBase64('new_typeparams', '') . '",' . $table->tableid . ',' . (int)$fieldId . ',"' . $table->tabletitle . '","'
-                . $field_row['fieldtitle'] . '",' . $stepSize . ');';
+		if ($extraTask != '') {
+			$extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . common::inputGetBase64('old_typeparams', '') . '","'
+				. common::inputGetBase64('new_typeparams', '') . '",' . $table->tableid . ',' . (int)$fieldId . ',"' . $table->tabletitle . '","'
+				. $field_row['fieldtitle'] . '",' . $stepSize . ');';
 
-            $js = '
+			$js = '
 		<script>
 		window.addEventListener( "load", function( event ) {
 		' . $extraTasksUpdate . '
 	});
 		</script>
 ';
-            $document->addCustomTag($js);
-        }
-    }
+			$document->addCustomTag($js);
+		}
+	}
 }

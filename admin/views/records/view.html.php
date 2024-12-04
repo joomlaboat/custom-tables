@@ -28,150 +28,150 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class CustomtablesViewRecords extends HtmlView
 {
-    var CT $ct;
-    var int $tableId;
-    var string $pageLayout;
-    var ?array $row;
-    var $canDo;
-    var bool $canCreate;
-    var bool $canEdit;
-    var int $refId;
-    var string $referral;
-    var string $formLink;
-    var $document;
+	var CT $ct;
+	var int $tableId;
+	var string $pageLayout;
+	var ?array $row;
+	var $canDo;
+	var bool $canCreate;
+	var bool $canEdit;
+	var int $refId;
+	var string $referral;
+	var string $formLink;
+	var $document;
 
-    public function display($tpl = null)
-    {
-        $key = common::inputGetCmd('key');
-        if ($key != '') {
+	public function display($tpl = null)
+	{
+		$key = common::inputGetCmd('key');
+		if ($key != '') {
 
-            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
+			$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
 
-            if (file_exists($path . 'tablejoin.php') and file_exists($path . 'tablejoinlist.php')) {
-                require_once($path . 'tablejoin.php');
-                require_once($path . 'tablejoinlist.php');
+			if (file_exists($path . 'tablejoin.php') and file_exists($path . 'tablejoinlist.php')) {
+				require_once($path . 'tablejoin.php');
+				require_once($path . 'tablejoinlist.php');
 
-                $this->ct = new CT;
-                ProInputBoxTableJoin::renderTableJoinSelectorJSON($this->ct, $key);//Inputbox
-            }
-        } else {
-            $tableId = common::inputGetInt('tableid');
-            if ($tableId === null) {
-                $Itemid = common::inputGetInt('Itemid');
+				$this->ct = new CT;
+				ProInputBoxTableJoin::renderTableJoinSelectorJSON($this->ct, $key);//Inputbox
+			}
+		} else {
+			$tableId = common::inputGetInt('tableid');
+			if ($tableId === null) {
+				$Itemid = common::inputGetInt('Itemid');
 
-                if ($Itemid === null) {
-                    Factory::getApplication()->enqueueMessage('Table not selected..', 'error');
-                    return;
-                }
+				if ($Itemid === null) {
+					Factory::getApplication()->enqueueMessage('Table not selected..', 'error');
+					return;
+				}
 
-            } else {
-                $this->tableId = $tableId;
-            }
+			} else {
+				$this->tableId = $tableId;
+			}
 
-            $listing_id = common::inputGetCmd('id');
+			$listing_id = common::inputGetCmd('id');
 
-            $paramsArray = array();
-            $paramsArray['tableid'] = $this->tableId;
-            $paramsArray['publishstatus'] = 1;
-            $paramsArray['listingid'] = $listing_id;
+			$paramsArray = array();
+			$paramsArray['tableid'] = $this->tableId;
+			$paramsArray['publishstatus'] = 1;
+			$paramsArray['listingid'] = $listing_id;
 
-            // Assuming $paramsArray is your array of parameters
-            $this->ct = new CT;
-            $this->ct->setParams($paramsArray);
-            $this->ct->getTable($this->tableId);
-            $this->row = $this->ct->Table->loadRecord($listing_id);
+			// Assuming $paramsArray is your array of parameters
+			$this->ct = new CT;
+			$this->ct->setParams($paramsArray);
+			$this->ct->getTable($this->tableId);
+			$this->row = $this->ct->Table->loadRecord($listing_id);
 
-            $this->renderForm($tpl);
-        }
-    }
+			$this->renderForm($tpl);
+		}
+	}
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    protected function renderForm($tpl): bool
-    {
-        $Layouts = new Layouts($this->ct);
-        $this->ct->LayoutVariables['layout_type'] = 2;
-        $this->pageLayout = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, false);
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function renderForm($tpl): bool
+	{
+		$Layouts = new Layouts($this->ct);
+		$this->ct->LayoutVariables['layout_type'] = 2;
+		$this->pageLayout = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, false);
 
-        // get action permissions
-        $this->canDo = ContentHelper::getActions('com_customtables', 'tables');
-        $this->canCreate = $this->canDo->get('tables.edit');
-        $this->canEdit = $this->canDo->get('tables.edit');
+		// get action permissions
+		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
+		$this->canCreate = $this->canDo->get('tables.edit');
+		$this->canEdit = $this->canDo->get('tables.edit');
 
-        // get input
-        $this->ref = common::inputGet('ref', 0, 'word');
-        $this->refId = common::inputGet('refid', 0, 'int');
-        $this->referral = '';
-        if ($this->refId) {
-            // return to the item that referred to this item
-            $this->referral = '&ref=' . $this->ref . '&refid=' . (int)$this->refId;
-        } elseif ($this->ref) {
-            // return to the list view that referred to this item
-            $this->referral = '&ref=' . $this->ref;
-        }
+		// get input
+		$this->ref = common::inputGet('ref', 0, 'word');
+		$this->refId = common::inputGet('refid', 0, 'int');
+		$this->referral = '';
+		if ($this->refId) {
+			// return to the item that referred to this item
+			$this->referral = '&ref=' . $this->ref . '&refid=' . (int)$this->refId;
+		} elseif ($this->ref) {
+			// return to the list view that referred to this item
+			$this->referral = '&ref=' . $this->ref;
+		}
 
-        // Set the toolbar
-        $this->addToolBar();
+		// Set the toolbar
+		$this->addToolBar();
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors), 500);
-        }
+		// Check for errors.
+		if (count($errors = $this->get('Errors'))) {
+			throw new Exception(implode("\n", $errors), 500);
+		}
 
-        // Display the template
-        $this->formLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableId . '&id=' . $this->ct->Params->listing_id;
+		// Display the template
+		$this->formLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableId . '&id=' . $this->ct->Params->listing_id;
 
-        // Set the document
-        $this->document = Factory::getDocument();
-        $this->setDocument($this->document);
+		// Set the document
+		$this->document = Factory::getDocument();
+		$this->setDocument($this->document);
 
-        parent::display($tpl);
-        return true;
-    }
+		parent::display($tpl);
+		return true;
+	}
 
-    protected function addToolBar()
-    {
-        common::inputSet('hidemainmenu', true);
-        $isNew = $this->ct->Params->listing_id == 0;
+	protected function addToolBar()
+	{
+		common::inputSet('hidemainmenu', true);
+		$isNew = $this->ct->Params->listing_id == 0;
 
-        ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'), 'pencil-2 article-add');
+		ToolbarHelper::title(common::translate($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'), 'pencil-2 article-add');
 
-        if ($isNew) {
-            // For new records, check the create permission.
-            if ($this->canCreate) {
-                ToolbarHelper::apply('records.apply', 'JTOOLBAR_APPLY');
-                ToolbarHelper::save('records.save', 'JTOOLBAR_SAVE');
-                ToolbarHelper::custom('records.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-            }
-            ToolbarHelper::cancel('records.cancel', 'JTOOLBAR_CANCEL');
-        } else {
-            if ($this->canEdit) {
-                // We can save the new record
-                ToolbarHelper::apply('records.apply', 'JTOOLBAR_APPLY');
-                ToolbarHelper::save('records.save', 'JTOOLBAR_SAVE');
-                // We can save this record, but check the create permission to see
-                // if we can return to make a new one.
+		if ($isNew) {
+			// For new records, check the create permission.
+			if ($this->canCreate) {
+				ToolbarHelper::apply('records.apply', 'JTOOLBAR_APPLY');
+				ToolbarHelper::save('records.save', 'JTOOLBAR_SAVE');
+				ToolbarHelper::custom('records.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+			}
+			ToolbarHelper::cancel('records.cancel', 'JTOOLBAR_CANCEL');
+		} else {
+			if ($this->canEdit) {
+				// We can save the new record
+				ToolbarHelper::apply('records.apply', 'JTOOLBAR_APPLY');
+				ToolbarHelper::save('records.save', 'JTOOLBAR_SAVE');
+				// We can save this record, but check the create permission to see
+				// if we can return to make a new one.
 
-                if ($this->canCreate) {
-                    ToolbarHelper::custom('records.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
-                }
+				if ($this->canCreate) {
+					ToolbarHelper::custom('records.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
+				}
 
-            }
-            if ($this->canCreate) {
-                ToolbarHelper::custom('records.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
-            }
-            ToolbarHelper::cancel('records.cancel', 'JTOOLBAR_CLOSE');
-        }
-        ToolbarHelper::divider();
-    }
+			}
+			if ($this->canCreate) {
+				ToolbarHelper::custom('records.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
+			}
+			ToolbarHelper::cancel('records.cancel', 'JTOOLBAR_CLOSE');
+		}
+		ToolbarHelper::divider();
+	}
 
-    public function setDocument(Joomla\CMS\Document\Document $document): void
-    {
-        if (isset($this->ct) and $this->ct !== null) {
-            $isNew = $this->ct->Params->listing_id == 0;
-            $document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
-        }
-    }
+	public function setDocument(Joomla\CMS\Document\Document $document): void
+	{
+		if (isset($this->ct) and $this->ct !== null) {
+			$isNew = $this->ct->Params->listing_id == 0;
+			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
+		}
+	}
 }

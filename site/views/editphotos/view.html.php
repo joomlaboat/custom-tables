@@ -19,40 +19,40 @@ use Joomla\CMS\MVC\View\HtmlView;
 jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditPhotos extends HtmlView
 {
-    var array $images;
-    var $Model;
+	var array $images;
+	var $Model;
 
-    function display($tpl = null)
-    {
-        $user = new CTUser;
-        if ($user->id === null) {
-            common::enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
-            return;
-        }
+	function display($tpl = null)
+	{
+		$user = new CTUser;
+		if ($user->id === null) {
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+			return;
+		}
 
-        $this->Model = $this->getModel();
-        $this->Model->load();
-        $this->images = $this->Model->imageGallery->getPhotoList($this->Model->listing_id);
+		$this->Model = $this->getModel();
+		$this->Model->load();
+		$this->images = $this->Model->imageGallery->getPhotoList($this->Model->listing_id);
 
-        $this->idList = array();
+		$this->idList = array();
 
-        foreach ($this->images as $image)
-            $this->idList[] = $image->photoid;
+		foreach ($this->images as $image)
+			$this->idList[] = $image->photoid;
 
-        $this->max_file_size = CTMiscHelper::file_upload_max_size();
-        $this->Listing_Title = $this->Model->Listing_Title;
-        $this->listing_id = $this->Model->listing_id;
-        $this->galleryname = $this->Model->field->fieldname;
+		$this->max_file_size = CTMiscHelper::file_upload_max_size();
+		$this->Listing_Title = $this->Model->Listing_Title;
+		$this->listing_id = $this->Model->listing_id;
+		$this->galleryname = $this->Model->field->fieldname;
 
-        parent::display($tpl);
-    }
+		parent::display($tpl);
+	}
 
-    function drawPhotos(): string
-    {
-        if (count($this->images) == 0)
-            return '';
+	function drawPhotos(): string
+	{
+		if (count($this->images) == 0)
+			return '';
 
-        $htmlOut = '
+		$htmlOut = '
 
 		<h2>' . common::translate('COM_CUSTOMTABLES_LIST_OF_FOTOS') . '</h2>
 		<table>
@@ -67,18 +67,18 @@ class CustomTablesViewEditPhotos extends HtmlView
 			<tbody>
 		';
 
-        $c = 0;
-        foreach ($this->images as $image) {
-            $htmlOut .= '
+		$c = 0;
+		foreach ($this->images as $image) {
+			$htmlOut .= '
 				<tr>';
 
-            $imageFile = $this->Model->imageGallery->imageFolderWeb . '/' . $this->Model->imageGallery->imageMainPrefix . $this->Model->ct->Table->tableid . '_'
-                . $this->Model->field->fieldname . '__esthumb_' . $image->photoid . '.jpg';
+			$imageFile = $this->Model->imageGallery->imageFolderWeb . '/' . $this->Model->imageGallery->imageMainPrefix . $this->Model->ct->Table->tableid . '_'
+				. $this->Model->field->fieldname . '__esthumb_' . $image->photoid . '.jpg';
 
-            $imageFileOriginal = $this->Model->imageGallery->imageFolderWeb . '/' . $this->Model->imageGallery->imageMainPrefix
-                . $this->Model->ct->Table->tableid . '_' . $this->Model->field->fieldname . '__original_' . $image->photoid . '.' . $image->photo_ext;
+			$imageFileOriginal = $this->Model->imageGallery->imageFolderWeb . '/' . $this->Model->imageGallery->imageMainPrefix
+				. $this->Model->ct->Table->tableid . '_' . $this->Model->field->fieldname . '__original_' . $image->photoid . '.' . $image->photo_ext;
 
-            $htmlOut .= '
+			$htmlOut .= '
 					<td style="text-align:center;vertical-align: top;">
 						<input type="checkbox" name="esphoto' . $image->photoid . '" id="esphoto' . $image->photoid . '" style="text-align:left;vertical-align:top">
 					</td>
@@ -102,17 +102,17 @@ class CustomTablesViewEditPhotos extends HtmlView
 						</table>
 					</td>';
 
-            $c++;
+			$c++;
 
-            $htmlOut .= '
+			$htmlOut .= '
 				</tr>
 				<tr><td colspan="3"><hr></td></tr>';
-        }
+		}
 
-        $htmlOut .= '
+		$htmlOut .= '
 			</tbody>
 		</table>';
 
-        return $htmlOut;
-    }
+		return $htmlOut;
+	}
 }

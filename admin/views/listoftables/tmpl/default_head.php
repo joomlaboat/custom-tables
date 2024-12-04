@@ -17,35 +17,35 @@ defined('_JEXEC') or die();
 ?>
 <tr>
 	<?php if ($this->canEdit && $this->canState): ?>
-        <th style="width:20px;" class="nowrap center">
+		<th style="width:20px;" class="nowrap center">
 			<?php echo HtmlHelper::_('grid.checkall'); ?>
-        </th>
+		</th>
 	<?php endif; ?>
 
-    <th class="nowrap hidden-phone">
+	<th class="nowrap hidden-phone">
 		<?php echo HtmlHelper::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL', 'a.tablename', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 
-    <th class="nowrap">
+	<th class="nowrap">
 		<?php echo common::translate('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
-    </th>
+	</th>
 
-    <th class="nowrap hidden-phone">
+	<th class="nowrap hidden-phone">
 		<?php echo common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
-    </th>
-    <th class="nowrap hidden-phone">
+	</th>
+	<th class="nowrap hidden-phone">
 		<?php echo common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
-    </th>
+	</th>
 
-    <th class="nowrap hidden-phone">
+	<th class="nowrap hidden-phone">
 		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL', 'a.tablecategory', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 
-    <th style="width:10px;" class="nowrap center">
+	<th style="width:10px;" class="nowrap center">
 		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 
-    <th style="width:5px;" class="nowrap center hidden-phone">
+	<th style="width:5px;" class="nowrap center hidden-phone">
 		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 </tr>

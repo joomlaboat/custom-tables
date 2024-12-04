@@ -19,65 +19,65 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
-    JFormHelper::loadFieldClass('list');
+	JFormHelper::loadFieldClass('list');
 
-    class JFormFieldCTTable extends JFormFieldList
-    {
-        public $type = 'cttable';
+	class JFormFieldCTTable extends JFormFieldList
+	{
+		public $type = 'cttable';
 
-        public function getOptions($add_empty_option = true)
-        {
-            $whereClause = new MySQLWhereClause();
-            $whereClause->addCondition('published', 1);
-            $records = database::loadObjectList('#__customtables_tables', ['id', 'tabletitle'], $whereClause, 'tabletitle');
+		public function getOptions($add_empty_option = true)
+		{
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('published', 1);
+			$records = database::loadObjectList('#__customtables_tables', ['id', 'tabletitle'], $whereClause, 'tabletitle');
 
-            $options = ['' => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
+			$options = ['' => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
 
-            if ($records) {
-                if ($add_empty_option)
-                    $options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
+			if ($records) {
+				if ($add_empty_option)
+					$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
 
-                foreach ($records as $rec)
-                    $options[] = HTMLHelper::_('select.option', $rec->id, $rec->tabletitle);
-            }
-            return $options;
-        }
-    }
+				foreach ($records as $rec)
+					$options[] = HTMLHelper::_('select.option', $rec->id, $rec->tabletitle);
+			}
+			return $options;
+		}
+	}
 
 } else {
 
-    class JFormFieldCTTable extends FormField
-    {
-        public $type = 'cttable';
-        protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
+	class JFormFieldCTTable extends FormField
+	{
+		public $type = 'cttable';
+		protected $layout = 'joomla.form.field.list'; //Needed for Joomla 5
 
-        protected function getInput()
-        {
-            $data = $this->getLayoutData();
-            $data['options'] = $this->getOptions();
-            return $this->getRenderer($this->layout)->render($data);
-        }
+		protected function getInput()
+		{
+			$data = $this->getLayoutData();
+			$data['options'] = $this->getOptions();
+			return $this->getRenderer($this->layout)->render($data);
+		}
 
-        public function getOptions($add_empty_option = true)
-        {
-            $whereClause = new MySQLWhereClause();
-            $whereClause->addCondition('published', 1);
+		public function getOptions($add_empty_option = true)
+		{
+			$whereClause = new MySQLWhereClause();
+			$whereClause->addCondition('published', 1);
 
-            $categoryId = common::inputGetInt('categoryid');
-            if ($categoryId !== null)
-                $whereClause->addCondition('tablecategory', $categoryId);
+			$categoryId = common::inputGetInt('categoryid');
+			if ($categoryId !== null)
+				$whereClause->addCondition('tablecategory', $categoryId);
 
-            $records = database::loadObjectList('#__customtables_tables', ['id', 'tabletitle'], $whereClause, 'tabletitle');
+			$records = database::loadObjectList('#__customtables_tables', ['id', 'tabletitle'], $whereClause, 'tabletitle');
 
-            $options = array();
-            if ($records) {
-                if ($add_empty_option)
-                    $options[] = ['value' => '', 'text' => common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT')];
+			$options = array();
+			if ($records) {
+				if ($add_empty_option)
+					$options[] = ['value' => '', 'text' => common::translate('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT')];
 
-                foreach ($records as $rec)
-                    $options[] = ['value' => $rec->id, 'text' => $rec->tabletitle];
-            }
-            return $options;
-        }
-    }
+				foreach ($records as $rec)
+					$options[] = ['value' => $rec->id, 'text' => $rec->tabletitle];
+			}
+			return $options;
+		}
+	}
 }

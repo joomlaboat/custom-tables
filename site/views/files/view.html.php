@@ -17,12 +17,12 @@ use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewFiles extends HtmlView
 {
-    function display($tpl = null)
-    {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
-            . DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php');
+	function display($tpl = null)
+	{
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+			. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php');
 
-        $fileOutput = new Value_file();
-        $fileOutput->display();
-    }
+		$fileOutput = new Value_file();
+		$fileOutput->display();
+	}
 }

@@ -27,41 +27,41 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
 <script>
 
-    function ctLogAddParams(action, user, table) {
-        let params = [];
-        let paramsString = "<?php echo $cleanURL; ?>";
+	function ctLogAddParams(action, user, table) {
+		let params = [];
+		let paramsString = "<?php echo $cleanURL; ?>";
 
-        if (action !== 0)
-            params.push("action=" + action);
+		if (action !== 0)
+			params.push("action=" + action);
 
-        if (user !== 0)
-            params.push("user=" + user);
+		if (user !== 0)
+			params.push("user=" + user);
 
-        if (table !== 0)
-            params.push("table=" + table);
+		if (table !== 0)
+			params.push("table=" + table);
 
-        for (let i = 0; i < params.length; i++) {
-            if (paramsString.indexOf("?") === -1)
-                paramsString += "?";
-            else
-                paramsString += "&";
+		for (let i = 0; i < params.length; i++) {
+			if (paramsString.indexOf("?") === -1)
+				paramsString += "?";
+			else
+				paramsString += "&";
 
-            paramsString += params[i];
-        }
-        return paramsString;
-    }
+			paramsString += params[i];
+		}
+		return paramsString;
+	}
 
-    function ActionFilterChanged(o) {
-        location.href = ctLogAddParams(parseInt(o.value), <?php echo (int)$this->userid;?>, <?php echo (int)$this->tableId;?>);
-    }
+	function ActionFilterChanged(o) {
+		location.href = ctLogAddParams(parseInt(o.value), <?php echo (int)$this->userid;?>, <?php echo (int)$this->tableId;?>);
+	}
 
-    function UserFilterChanged(o) {
-        location.href = ctLogAddParams(<?php echo (int)$this->action;?>, parseInt(o.value), <?php echo (int)$this->tableId;?>);
-    }
+	function UserFilterChanged(o) {
+		location.href = ctLogAddParams(<?php echo (int)$this->action;?>, parseInt(o.value), <?php echo (int)$this->tableId;?>);
+	}
 
-    function TableFilterChanged(o) {
-        location.href = ctLogAddParams(<?php echo (int)$this->action;?>, <?php echo (int)$this->userid;?>, parseInt(o.value));
-    }
+	function TableFilterChanged(o) {
+		location.href = ctLogAddParams(<?php echo (int)$this->action;?>, <?php echo (int)$this->userid;?>, parseInt(o.value));
+	}
 </script>
 
 <?php
@@ -70,24 +70,24 @@ echo $this->userSelector;
 echo $this->tableSelector;
 ?>
 <div class="datagrid">
-    <table>
-        <thead>
-        <tr>
-            <th>A</th>
-            <th style="text-align:left;">User</th>
-            <th style="text-align:left;">Time</th>
-            <th style="text-align:left;">Table</th>
-            <th style="text-align:left;">Record</th>
-            <th style="text-align:left;">Action</th>
-        </tr>
-        </thead>
-        <tbody>
+	<table>
+		<thead>
+		<tr>
+			<th>A</th>
+			<th style="text-align:left;">User</th>
+			<th style="text-align:left;">Time</th>
+			<th style="text-align:left;">Table</th>
+			<th style="text-align:left;">Record</th>
+			<th style="text-align:left;">Action</th>
+		</tr>
+		</thead>
+		<tbody>
 		<?php
 		//Content
 		foreach ($this->records as $rec) {
 			echo $this->renderLogLine($rec);
 		}
 		?>
-        </tbody>
-    </table>
+		</tbody>
+	</table>
 </div>

@@ -15,10 +15,10 @@ use Joomla\CMS\MVC\Controller\AdminController;
 
 class CustomtablesControllerListOfMenus extends AdminController
 {
-    protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFMENUS';
+	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFMENUS';
 
-    public function getModel($name = 'Menus', $prefix = 'CustomtablesModel', $config = array())
-    {
-        return parent::getModel($name, $prefix, array('ignore_request' => true));
-    }
+	public function getModel($name = 'Menus', $prefix = 'CustomtablesModel', $config = array())
+	{
+		return parent::getModel($name, $prefix, array('ignore_request' => true));
+	}
 }

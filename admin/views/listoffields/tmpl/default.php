@@ -22,54 +22,54 @@ HTMLHelper::_('formbehavior.chosen', 'select');
 HTMLHelper::_('dropdown.init');
 
 if ($this->saveOrder && !empty($this->items)) {
-    $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
-    HTMLHelper::_('sortablelist.sortable', 'fieldList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
+	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
+	HTMLHelper::_('sortablelist.sortable', 'fieldList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
 }
 
 if (common::inputGetCmd('extratask', '') == 'updateimages') {
-    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
-    extraTasks::prepareJS($this->ct->Table);
+	require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
+	extraTasks::prepareJS($this->ct->Table);
 }
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid); ?>"
-      method="post" name="adminForm" id="adminForm">
-    <?php if (!empty($this->sidebar)): ?>
-    <div id="j-sidebar-container" class="span2">
-        <?php echo $this->sidebar; ?>
-    </div>
-    <div id="j-main-container" class="span10">
-        <?php else : ?>
-        <div id="j-main-container">
-            <?php endif; ?>
+	  method="post" name="adminForm" id="adminForm">
+	<?php if (!empty($this->sidebar)): ?>
+	<div id="j-sidebar-container" class="span2">
+		<?php echo $this->sidebar; ?>
+	</div>
+	<div id="j-main-container" class="span10">
+		<?php else : ?>
+		<div id="j-main-container">
+			<?php endif; ?>
 
-            <?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
-            <div class="clearfix"></div>
+			<?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+			<div class="clearfix"></div>
 
-            <?php if (empty($this->items)): ?>
-                <div class="alert alert-no-items">
-                    <?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
-                </div>
-            <?php else: ?>
+			<?php if (empty($this->items)): ?>
+				<div class="alert alert-no-items">
+					<?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+				</div>
+			<?php else: ?>
 
-                <?php
-                if ($this->ct->Table->tableid != 0) {
-                    $link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid;
-                    echo IntegrityFields::checkFields($this->ct, $link);
-                }
-                //table-bordered
-                ?>
-                <table class="table table-striped table-hover" id="fieldList" style="position: relative;">
-                    <thead><?php echo $this->loadTemplate('head'); ?></thead>
-                    <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
-                    <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
-                </table>
-            <?php endif; ?>
-        </div>
+				<?php
+				if ($this->ct->Table->tableid != 0) {
+					$link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid;
+					echo IntegrityFields::checkFields($this->ct, $link);
+				}
+				//table-bordered
+				?>
+				<table class="table table-striped table-hover" id="fieldList" style="position: relative;">
+					<thead><?php echo $this->loadTemplate('head'); ?></thead>
+					<tbody><?php echo $this->loadTemplate('body'); ?></tbody>
+					<tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
+				</table>
+			<?php endif; ?>
+		</div>
 
-        <input type="hidden" name="filter_order" value=""/>
-        <input type="hidden" name="filter_order_Dir" value=""/>
-        <input type="hidden" name="task" value=""/>
-        <input type="hidden" name="boxchecked" value="0"/>
-        <?php echo HTMLHelper::_('form.token'); ?>
+		<input type="hidden" name="filter_order" value=""/>
+		<input type="hidden" name="filter_order_Dir" value=""/>
+		<input type="hidden" name="task" value=""/>
+		<input type="hidden" name="boxchecked" value="0"/>
+		<?php echo HTMLHelper::_('form.token'); ?>
 </form>

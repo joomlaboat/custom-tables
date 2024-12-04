@@ -18,34 +18,34 @@ use CustomTables\Field;
 
 class tagProcessor_Field
 {
-    /**
-     * @throws Exception
-     * @since 3.0.0
-     */
-    public static function process(CT &$ct, &$pageLayout, bool $add_label = false)
-    {
-        if (is_null($ct->Table->fields))
-            return $pageLayout;
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
+	public static function process(CT &$ct, &$pageLayout, bool $add_label = false)
+	{
+		if (is_null($ct->Table->fields))
+			return $pageLayout;
 
-        //field title
-        if ($add_label) {
-            foreach ($ct->Table->fields as $fieldRow) {
-                $forms = new Forms($ct);
-                $field = new Field($ct, $fieldRow);
-                $field_label = $forms->renderFieldLabel($field);
+		//field title
+		if ($add_label) {
+			foreach ($ct->Table->fields as $fieldRow) {
+				$forms = new Forms($ct);
+				$field = new Field($ct, $fieldRow);
+				$field_label = $forms->renderFieldLabel($field);
 
-                $pageLayout = str_replace('*' . $field->fieldname . '*', $field_label, $pageLayout);
-            }
-        } else {
-            foreach ($ct->Table->fields as $fieldRow) {
-                if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldRow)) {
-                    common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'));
-                    $pageLayout = str_replace('*' . $fieldRow['fieldname'] . '*', '*fieldtitle' . $ct->Languages->Postfix . ' - not found*', $pageLayout);
-                } else {
-                    $pageLayout = str_replace('*' . $fieldRow['fieldname'] . '*', $fieldRow['fieldtitle' . $ct->Languages->Postfix] ?? '', $pageLayout);
-                }
-            }
-        }
-        return $pageLayout;
-    }
+				$pageLayout = str_replace('*' . $field->fieldname . '*', $field_label, $pageLayout);
+			}
+		} else {
+			foreach ($ct->Table->fields as $fieldRow) {
+				if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldRow)) {
+					common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'));
+					$pageLayout = str_replace('*' . $fieldRow['fieldname'] . '*', '*fieldtitle' . $ct->Languages->Postfix . ' - not found*', $pageLayout);
+				} else {
+					$pageLayout = str_replace('*' . $fieldRow['fieldname'] . '*', $fieldRow['fieldtitle' . $ct->Languages->Postfix] ?? '', $pageLayout);
+				}
+			}
+		}
+		return $pageLayout;
+	}
 }

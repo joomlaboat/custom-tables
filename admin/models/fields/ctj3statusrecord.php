@@ -17,42 +17,42 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
-    JFormHelper::loadFieldClass('list');
+	JFormHelper::loadFieldClass('list');
 
-    class JFormFieldctj3statusrecord extends JFormFieldList
-    {
-        public $type = 'ctj3statusrecord';
+	class JFormFieldctj3statusrecord extends JFormFieldList
+	{
+		public $type = 'ctj3statusrecord';
 
-        public function getOptions()
-        {
-            $options = [];
-            $options[] = HTMLHelper::_('select.option', '', common::translate('JOPTION_SELECT_PUBLISHED'));
-            $options[] = HTMLHelper::_('select.option', 1, common::translate('COM_CUSTOMTABLES_PUBLISHED'));
-            $options[] = HTMLHelper::_('select.option', 0, common::translate('COM_CUSTOMTABLES_UNPUBLISHED'));
-            return $options;
-        }
-    }
+		public function getOptions()
+		{
+			$options = [];
+			$options[] = HTMLHelper::_('select.option', '', common::translate('JOPTION_SELECT_PUBLISHED'));
+			$options[] = HTMLHelper::_('select.option', 1, common::translate('COM_CUSTOMTABLES_PUBLISHED'));
+			$options[] = HTMLHelper::_('select.option', 0, common::translate('COM_CUSTOMTABLES_UNPUBLISHED'));
+			return $options;
+		}
+	}
 
 } else {
-    class JFormFieldctj3statusrecord extends FormField
-    {
-        public $type = 'ctj3statusrecord';
-        protected $layout = 'joomla.form.field.list';
+	class JFormFieldctj3statusrecord extends FormField
+	{
+		public $type = 'ctj3statusrecord';
+		protected $layout = 'joomla.form.field.list';
 
-        protected function getInput()
-        {
-            $data = $this->getLayoutData();
-            $data['options'] = $this->getOptions();
-            return $this->getRenderer($this->layout)->render($data);
-        }
+		protected function getInput()
+		{
+			$data = $this->getLayoutData();
+			$data['options'] = $this->getOptions();
+			return $this->getRenderer($this->layout)->render($data);
+		}
 
-        public function getOptions()
-        {
-            $options = [];
-            $options[] = ['value' => '', 'text' => common::translate('JOPTION_SELECT_PUBLISHED')];
-            $options[] = ['value' => '1', 'text' => common::translate('COM_CUSTOMTABLES_PUBLISHED')];
-            $options[] = ['value' => '0', 'text' => common::translate('COM_CUSTOMTABLES_UNPUBLISHED')];
-            return $options;
-        }
-    }
+		public function getOptions()
+		{
+			$options = [];
+			$options[] = ['value' => '', 'text' => common::translate('JOPTION_SELECT_PUBLISHED')];
+			$options[] = ['value' => '1', 'text' => common::translate('COM_CUSTOMTABLES_PUBLISHED')];
+			$options[] = ['value' => '0', 'text' => common::translate('COM_CUSTOMTABLES_UNPUBLISHED')];
+			return $options;
+		}
+	}
 }

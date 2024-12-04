@@ -9,320 +9,320 @@
  **/
 
 #modalParamList {
-    overflow-y: auto;
-    overflow-x: hidden;
-    min-height: 100px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	min-height: 100px;
 
 }
 
 .layouteditor_modal-content .tab-content {
 
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 100%;
 }
 
 .button-wizzardbutton span:before {
-    content: "A";
-    color: transparent;
+	content: "A";
+	color: transparent;
 }
 
 .icon-wizzardbutton {
-    background-image: url('../images/controlpanel/wizard.png');
-    background-position: center;
-    background-repeat: no-repeat;
-    color: transparent;
+	background-image: url('../images/controlpanel/wizard.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	color: transparent;
 }
 
 .button-fieldtagbutton span:before {
-    content: "A";
-    color: transparent;
+	content: "A";
+	color: transparent;
 }
 
 .icon-fieldtagbutton {
-    background-image: url('../images/controlpanel/fieldtag.png');
-    background-position: center;
-    background-repeat: no-repeat;
-    color: transparent;
+	background-image: url('../images/controlpanel/fieldtag.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	color: transparent;
 }
 
 
 .button-layouttagbutton span:before {
-    content: "A";
-    color: transparent;
+	content: "A";
+	color: transparent;
 }
 
 .icon-layouttagbutton {
-    background-image: url('../images/controlpanel/layouttag.png');
-    background-position: center;
-    background-repeat: no-repeat;
-    color: transparent;
+	background-image: url('../images/controlpanel/layouttag.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	color: transparent;
 }
 
 
 .button-dependencies span:before {
-    content: "A";
-    color: transparent;
+	content: "A";
+	color: transparent;
 }
 
 .icon-dependencies {
-    background-image: url('../images/controlpanel/dependencies.png');
-    background-position: center;
-    background-repeat: no-repeat;
-    color: rgba(0, 0, 0, 0);
-    color: transparent;
+	background-image: url('../images/controlpanel/dependencies.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	color: rgba(0, 0, 0, 0);
+	color: transparent;
 }
 
 @keyframes myAnimation {
-    0% {
-        opacity: 1;
-        transform: rotateX(90deg);
-    }
-    5% {
-        opacity: 1;
-        transform: rotateX(0deg);
-    }
+	0% {
+		opacity: 1;
+		transform: rotateX(90deg);
+	}
+	5% {
+		opacity: 1;
+		transform: rotateX(0deg);
+	}
 
-    80% {
-        opacity: 1;
-        transform: rotateX(0deg);
-    }
-    100% {
-        display: none;
-        opacity: 1;
-        transform: rotateX(90deg);
-    }
+	80% {
+		opacity: 1;
+		transform: rotateX(0deg);
+	}
+	100% {
+		display: none;
+		opacity: 1;
+		transform: rotateX(90deg);
+	}
 }
 
 .CodeMirror {
-    /* Set height, width, borders, and global font properties here */
-    font-family: consolas, monospace;
-    font-size: 15px;
-    height: auto;
-    color: black;
-    min-height: 150px !important;
+	/* Set height, width, borders, and global font properties here */
+	font-family: consolas, monospace;
+	font-size: 15px;
+	height: auto;
+	color: black;
+	min-height: 150px !important;
 }
 
 .container-main, #system-debug {
-    padding-bottom: 0 !important;
+	padding-bottom: 0 !important;
 }
 
 .ct_tip {
-    position: fixed;
-    right: 100px;
-    top: 100px;
-    z-index: 32000;
-    border: 1px solid grey;
-    background: #e7f29e;
-    color: #000000;
-    border-radius: 10px;
-    padding: 30px;
+	position: fixed;
+	right: 100px;
+	top: 100px;
+	z-index: 32000;
+	border: 1px solid grey;
+	background: #e7f29e;
+	color: #000000;
+	border-radius: 10px;
+	padding: 30px;
 
-    -webkit-box-shadow: 10px 13px 83px 10px rgba(0, 0, 0, 0.75);
-    -moz-box-shadow: 10px 13px 83px 10px rgba(0, 0, 0, 0.75);
-    box-shadow: 10px 13px 83px 10px rgba(0, 0, 0, 0.75);
+	-webkit-box-shadow: 10px 13px 83px 10px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: 10px 13px 83px 10px rgba(0, 0, 0, 0.75);
+	box-shadow: 10px 13px 83px 10px rgba(0, 0, 0, 0.75);
 
-    animation-name: myAnimation;
-    animation-duration: 6000ms;
-    animation-fill-mode: forwards;
+	animation-name: myAnimation;
+	animation-duration: 6000ms;
+	animation-fill-mode: forwards;
 }
 
 @media (prefers-color-scheme: dark) {
-    /* Styles for dark mode */
-    .ct_tip {
-        background: #303409;
-        color: #FFFFFF;
-    }
+	/* Styles for dark mode */
+	.ct_tip {
+		background: #303409;
+		color: #FFFFFF;
+	}
 }
 
 .FieldTagWizard {
-    width: 100%;
-    display: inline-block;
-    vertical-align: top;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+	width: 100%;
+	display: inline-block;
+	vertical-align: top;
+	padding-top: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 .CodeMirror {
-    border: 1px solid #d6d6d9;
-    border-radius: 3px;
+	border: 1px solid #d6d6d9;
+	border-radius: 3px;
 }
 
 .cm-ct_tag {
-    border: 2px solid #ffac63;
-    border-radius: 3px;
-    color: #f44700;
+	border: 2px solid #ffac63;
+	border-radius: 3px;
+	color: #f44700;
 }
 
 .cm-ct_tag_withparams {
-    border: 2px solid #ffac63;
-    border-radius: 3px;
-    color: #f44700;
-    font-weight: bold;
+	border: 2px solid #ffac63;
+	border-radius: 3px;
+	color: #f44700;
+	font-weight: bold;
 }
 
 .cm-ct_curvy_tag {
-    border: 2px solid #ffbfec;
-    border-radius: 3px;
-    color: #FF00D0;
+	border: 2px solid #ffbfec;
+	border-radius: 3px;
+	color: #FF00D0;
 }
 
 .cm-ct_curvy_tag_withparams {
-    border: 2px solid #d6d6d9;
-    border-radius: 3px;
-    color: #FF00D0;
-    font-weight: bold;
+	border: 2px solid #d6d6d9;
+	border-radius: 3px;
+	color: #FF00D0;
+	font-weight: bold;
 
 }
 
 .cm-ct_tag_params {
-    font-style: italic;
-    font-weight: normal;
-    color: #54c700;
+	font-style: italic;
+	font-weight: normal;
+	color: #54c700;
 }
 
 .layouteditorbox {
-    width: 100%;
+	width: 100%;
 }
 
 .CodeMirror.cm-s-default {
-    border: 1px solid #aaaaaa;
-    border-radius: 3px;
+	border: 1px solid #aaaaaa;
+	border-radius: 3px;
 }
 
 .dynamic_values_list {
-    overflow-y: scroll;
-    overflow-x: hidden;
-    height: 100%;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	height: 100%;
 }
 
 .customlayoutform {
-    width: 100%;
-    /*margin-top: 10px;*/
+	width: 100%;
+	/*margin-top: 10px;*/
 }
 
 #layoutcode-tab, #layoutmobile-tab, #layoutcss-tab, #layoutjs-tab {
-    padding: 0 !important;
+	padding: 0 !important;
 }
 
 
 .layoutFilePath {
-    color: gray;
-    padding-left: 5px;
-    background-color: #f7f7f7;
-    font-style: italic;
-    font-size: 0.8em;
+	color: gray;
+	padding-left: 5px;
+	background-color: #f7f7f7;
+	font-style: italic;
+	font-size: 0.8em;
 }
 
 .customlayoutform td {
-    vertical-align: top;
-    padding: 10px;
+	vertical-align: top;
+	padding: 10px;
 }
 
 .dynamic_values {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding-left: 12px;
-    color: #D05;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding-left: 12px;
+	color: #D05;
 }
 
 .dynamic_values code {
-    font-family: Consolas, monospace, serif;
+	font-family: Consolas, monospace, serif;
 }
 
 .dynamic_values_label {
-    color: darkgrey !important;
+	color: darkgrey !important;
 }
 
 .dynamic_values div span {
-    font-style: italic;
-    font-weight: normal;
-    color: #54c700;
+	font-style: italic;
+	font-weight: normal;
+	color: #54c700;
 }
 
 .dynamic_values span {
-    display: inline-block;
-    margin-right: 0;
-    font-style: italic;
-    font-weight: normal;
-    color: #54c700;
+	display: inline-block;
+	margin-right: 0;
+	font-style: italic;
+	font-weight: normal;
+	color: #54c700;
 }
 
 .dynamic_values div {
-    margin: 2px 10px 10px 0;
+	margin: 2px 10px 10px 0;
 }
 
 .dynamic_values a {
-    padding: 6px;
+	padding: 6px;
 }
 
 /* --------------------------------------------------------- */
 /* The Modal (background) */
 .layouteditor_modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 32000; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 32000; /* Sit on top */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
 
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0); /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0, 0, 0); /* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 
 
 }
 
 /* Modal Content */
 .layouteditor_modal-content {
-    background-color: #fefefe;
-    position: fixed; /* Stay in place */
-    top: 0;
-    left: 0;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 800px;
+	background-color: #fefefe;
+	position: fixed; /* Stay in place */
+	top: 0;
+	left: 0;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+	max-width: 800px;
 }
 
 @media (prefers-color-scheme: dark) {
-    /* Styles for dark mode */
-    .layouteditor_modal-content {
-        background-color: var(--body-bg);
-    }
+	/* Styles for dark mode */
+	.layouteditor_modal-content {
+		background-color: var(--body-bg);
+	}
 }
 
 /* The Close Button */
 .layouteditor_close {
-    color: #aaaaaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+	color: #aaaaaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
 }
 
 .layouteditor_close:hover,
 .layouteditor_close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
 }
 
 .text_error {
-    color: white !important;
-    background-color: red;
-    padding: 2px;
-    font-style: normal;
+	color: white !important;
+	background-color: red;
+	padding: 2px;
+	font-style: normal;
 
 }
 
 .msg_error {
-    line-height: 24px;
-    color: white;
-    background-color: red;
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid darkred;
-    display: inline-block;
+	line-height: 24px;
+	color: white;
+	background-color: red;
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid darkred;
+	display: inline-block;
 }

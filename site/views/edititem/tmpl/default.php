@@ -12,16 +12,16 @@
 defined('_JEXEC') or die();
 
 if ($this->ct->Env->isModal) {
-    echo $this->editForm->render($this->row, $this->formLink, 'ctEditModalForm');
-    die;//Modal Edit Form
+	echo $this->editForm->render($this->row, $this->formLink, 'ctEditModalForm');
+	die;//Modal Edit Form
 } else
-    echo $this->editForm->render($this->row, $this->formLink, 'ctEditForm');
+	echo $this->editForm->render($this->row, $this->formLink, 'ctEditForm');
 ?>
 <!-- Modal content -->
 <div id="ctModal" class="ctModal">
-    <div id="ctModal_box" class="ctModal_content">
-        <span id="ctModal_close" class="ctModal_close">&times;</span>
-        <div id="ctModal_content"></div>
-    </div>
+	<div id="ctModal_box" class="ctModal_content">
+		<span id="ctModal_close" class="ctModal_close">&times;</span>
+		<div id="ctModal_content"></div>
+	</div>
 </div>
 <!-- end of the modal -->

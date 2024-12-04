@@ -19,46 +19,46 @@ HTMLHelper::_('behavior.multiselect');
 <tr>
 
 	<?php if ($this->canState && $this->canDelete): ?>
-        <th class="w-1 text-center">
+		<th class="w-1 text-center">
 			<?php echo HTMLHelper::_('grid.checkall'); ?>
-        </th>
+		</th>
 	<?php endif; ?>
 
 	<?php if ($this->canEdit): ?>
-        <th scope="col" class="w-1 text-center d-none d-md-table-cell">
+		<th scope="col" class="w-1 text-center d-none d-md-table-cell">
 			<?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
-        </th>
+		</th>
 	<?php endif; ?>
 
 
-    <th scope="col">
+	<th scope="col">
 		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL', 'a.fieldname', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 
-    <th scope="col">
+	<th scope="col">
 		<?php echo common::translate('COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL'); ?>
-    </th>
+	</th>
 
-    <th scope="col">
+	<th scope="col">
 		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_FIELDS_TYPE_LABEL', 'a.type', $this->listDirn, $this->listOrder); ?>
-    </th>
-    <th scope="col">
+	</th>
+	<th scope="col">
 		<?php echo common::translate('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL'); ?>
-    </th>
+	</th>
 
-    <th scope="col">
+	<th scope="col">
 		<?php echo common::translate('COM_CUSTOMTABLES_FIELDS_ISREQUIRED_LABEL'); ?>
-    </th>
+	</th>
 
-    <th scope="col">
+	<th scope="col">
 		<?php echo common::translate('COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL'); ?>
-    </th>
+	</th>
 
-    <th scope="col" class="text-center d-none d-md-table-cell">
+	<th scope="col" class="text-center d-none d-md-table-cell">
 		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 
-    <th scope="col" class="w-12 d-none d-xl-table-cell">
+	<th scope="col" class="w-12 d-none d-xl-table-cell">
 		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 </tr>

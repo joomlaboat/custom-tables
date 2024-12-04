@@ -22,36 +22,36 @@ JFormHelper::loadFieldClass('list');
 //https://docs.joomla.org/Creating_a_custom_form_field_type
 class JFormFieldCTField extends JFormFieldList
 {
-    /**
-     * Element name
-     *
-     * @access    public
-     * @var        string
-     *
-     * @since 1.0.0
-     *
-     */
-    public $type = 'ctfield';
+	/**
+	 * Element name
+	 *
+	 * @access    public
+	 * @var        string
+	 *
+	 * @since 1.0.0
+	 *
+	 */
+	public $type = 'ctfield';
 
-    public function getOptions($add_empty_option = true)
-    {
-        $whereClause = new MySQLWhereClause();
-        $results = database::loadColumn('#__customtables_fields', ['type'], $whereClause, 'type');
+	public function getOptions($add_empty_option = true)
+	{
+		$whereClause = new MySQLWhereClause();
+		$results = database::loadColumn('#__customtables_fields', ['type'], $whereClause, 'type');
 
-        $translations = DataTypes::fieldTypeTranslation();
-        $_filter = array();
+		$translations = DataTypes::fieldTypeTranslation();
+		$_filter = array();
 
-        if ($results) {
-            // get model
-            $results = array_unique($results);
+		if ($results) {
+			// get model
+			$results = array_unique($results);
 
-            foreach ($results as $type) {
-                // Translate the type selection
-                $text = $translations[$type];
-                // Now add the type and its text to the options array
-                $_filter[] = HTMLHelper::_('select.option', $type, common::translate($text));
-            }
-        }
-        return $_filter;
-    }
+			foreach ($results as $type) {
+				// Translate the type selection
+				$text = $translations[$type];
+				// Now add the type and its text to the options array
+				$_filter[] = HTMLHelper::_('select.option', $type, common::translate($text));
+			}
+		}
+		return $_filter;
+	}
 }

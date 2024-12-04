@@ -17,27 +17,27 @@ use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewDetails extends HtmlView
 {
-    var CT $ct;
-    var Details $details;
+	var CT $ct;
+	var Details $details;
 
-    function display($tpl = null)
-    {
-        $this->ct = new CT(null, false);
-        $this->details = new Details($this->ct);
+	function display($tpl = null)
+	{
+		$this->ct = new CT(null, false);
+		$this->details = new Details($this->ct);
 
-        if ($this->ct->Env->print)
-            $this->ct->document->setMetaData('robots', 'noindex, nofollow');
+		if ($this->ct->Env->print)
+			$this->ct->document->setMetaData('robots', 'noindex, nofollow');
 
-        if ($this->details->load()) {
+		if ($this->details->load()) {
 
-            if ($this->details->layoutType == 8)
-                $this->ct->Env->frmt = 'xml';
-            elseif ($this->details->layoutType == 9)
-                $this->ct->Env->frmt = 'csv';
-            elseif ($this->details->layoutType == 10)
-                $this->ct->Env->frmt = 'json';
+			if ($this->details->layoutType == 8)
+				$this->ct->Env->frmt = 'xml';
+			elseif ($this->details->layoutType == 9)
+				$this->ct->Env->frmt = 'csv';
+			elseif ($this->details->layoutType == 10)
+				$this->ct->Env->frmt = 'json';
 
-            parent::display($tpl);
-        }
-    }
+			parent::display($tpl);
+		}
+	}
 }

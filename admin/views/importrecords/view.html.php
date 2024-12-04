@@ -21,11 +21,11 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 
 class CustomTablesViewImportRecords extends HtmlView
 {
-    function display($tpl = null)
-    {
-        ToolbarHelper::title(common::translate('Custom Tables - Import Records'), 'joomla');
-        $tableId = common::inputGetInt('tableid', 0);
-        ToolbarHelper::back('Back to Records', 'index.php?option=com_customtables&view=listofrecords&tableid=' . $tableId);
-        parent::display($tpl);
-    }
+	function display($tpl = null)
+	{
+		ToolbarHelper::title(common::translate('Custom Tables - Import Records'), 'joomla');
+		$tableId = common::inputGetInt('tableid', 0);
+		ToolbarHelper::back('Back to Records', 'index.php?option=com_customtables&view=listofrecords&tableid=' . $tableId);
+		parent::display($tpl);
+	}
 }

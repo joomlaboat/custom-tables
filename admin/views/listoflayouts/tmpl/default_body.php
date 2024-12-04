@@ -24,41 +24,41 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 	$canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || $item->checked_out == 0;
 	$userChkOut = new CTUser($item->checked_out);
 	?>
-    <tr class="row<?php echo $i % 2; ?>">
+	<tr class="row<?php echo $i % 2; ?>">
 
 		<?php if ($this->canState or $this->canDelete): ?>
-            <td class="nowrap center">
+			<td class="nowrap center">
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
 					<?php else: ?>
-                        &#9633;
+						&#9633;
 					<?php endif; ?>
 				<?php else: ?>
 					<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
 				<?php endif; ?>
-            </td>
+			</td>
 		<?php endif; ?>
 
-        <td class="nowrap">
-            <div class="name">
+		<td class="nowrap">
+			<div class="name">
 				<?php if ($this->canEdit): ?>
-                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->layoutname); ?></a>
+					<a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->layoutname); ?></a>
 					<?php if ($item->checked_out): ?>
 						<?php echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoflayouts.', $canCheckin); ?>
 					<?php endif; ?>
 				<?php else: ?>
 					<?php echo common::escape($item->layoutname); ?>
 				<?php endif; ?>
-            </div>
-        </td>
-        <td class="hidden-phone">
+			</div>
+		</td>
+		<td class="hidden-phone">
 			<?php echo common::translate($item->layouttype); ?>
-        </td>
-        <td class="hidden-phone">
+		</td>
+		<td class="hidden-phone">
 			<?php echo $item->tabletitle; ?>
-        </td>
-        <td class="center">
+		</td>
+		<td class="center">
 			<?php if ($this->canState) : ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
@@ -72,29 +72,29 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			<?php else: ?>
 				<?php echo HtmlHelper::_('jgrid.published', $item->published, $i, 'listoflayouts.', false, 'cb'); ?>
 			<?php endif; ?>
-        </td>
-        <td class="nowrap center hidden-phone">
+		</td>
+		<td class="nowrap center hidden-phone">
 			<?php echo $item->id; ?>
-        </td>
+		</td>
 
-        <td class="nowrap center hidden-phone">
+		<td class="nowrap center hidden-phone">
 			<?php
 			echo number_format(strlen($item->layoutcode));
 			?>
-        </td>
+		</td>
 
-        <td class="nowrap center hidden-phone">
+		<td class="nowrap center hidden-phone">
 			<?php echo $item->modifiedby; ?>
-        </td>
-        <td class="nowrap center hidden-phone">
+		</td>
+		<td class="nowrap center hidden-phone">
 			<?php
 
 			if ($item->modified !== null and $item->modified != '0000-00-00 00:00:00')
 				echo common::formatDate($item->modified);
 			?>
-        </td>
+		</td>
 
-        <td class="nowrap center hidden-phone" style="text-align:center;">
+		<td class="nowrap center hidden-phone" style="text-align:center;">
 			<?php
 
 			$engine = (object)$this->isTwig($item);
@@ -109,6 +109,6 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			echo implode(' ', $engines);
 
 			?>
-        </td>
-    </tr>
+		</td>
+	</tr>
 <?php endforeach; ?>

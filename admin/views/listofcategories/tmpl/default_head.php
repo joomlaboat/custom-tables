@@ -17,30 +17,30 @@ defined('_JEXEC') or die();
 ?>
 <tr>
 	<?php if ($this->canEdit && $this->canState): ?>
-        <th style="width:20px;" class="nowrap center">
+		<th style="width:20px;" class="nowrap center">
 			<?php echo HTMLHelper::_('grid.checkall'); ?>
-        </th>
+		</th>
 	<?php else: ?>
-        <th style="width:20px;" class="nowrap center hidden-phone">
-            &#9662;
-        </th>
-        <th style="width:20px;" class="nowrap center">
-            &#9632;
-        </th>
+		<th style="width:20px;" class="nowrap center hidden-phone">
+			&#9662;
+		</th>
+		<th style="width:20px;" class="nowrap center">
+			&#9632;
+		</th>
 	<?php endif; ?>
-    <th class="nowrap">
+	<th class="nowrap">
 		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL', 'a.categoryname', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 	<?php if ($this->canState): ?>
-        <th style="width:10px;" class="nowrap center">
+		<th style="width:10px;" class="nowrap center">
 			<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
-        </th>
+		</th>
 	<?php else: ?>
-        <th style="width:10px;" class="nowrap center">
+		<th style="width:10px;" class="nowrap center">
 			<?php echo common::translate('COM_CUSTOMTABLES_CATEGORIES_STATUS'); ?>
-        </th>
+		</th>
 	<?php endif; ?>
-    <th style="width:5px;" class="nowrap center hidden-phone">
+	<th style="width:5px;" class="nowrap center hidden-phone">
 		<?php echo HTMLHelper::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
-    </th>
+	</th>
 </tr>

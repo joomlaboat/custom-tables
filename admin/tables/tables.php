@@ -20,34 +20,34 @@ use Joomla\CMS\Table\Table;
  */
 class CustomtablesTableTables extends Table
 {
-    var $id = null;
-    var $customphp = null;
-    var $description = null;
-    var $tablecategory = null;
-    var $tablename = null;
-    var $tabletitle = null;
-    var $published = null;
-    var $created_by = null;
-    var $modified_by = null;
-    var $created = null;
-    var $modified = null;
-    var $checked_out = null;
-    var $checked_out_time = null;
-    var $allowimportcontent = null;
-    var $customtablename = null;
-    var $customidfield = null;
-    var $customidfieldtype = null;
-    var $customfieldprefix = null;
+	var $id = null;
+	var $customphp = null;
+	var $description = null;
+	var $tablecategory = null;
+	var $tablename = null;
+	var $tabletitle = null;
+	var $published = null;
+	var $created_by = null;
+	var $modified_by = null;
+	var $created = null;
+	var $modified = null;
+	var $checked_out = null;
+	var $checked_out_time = null;
+	var $allowimportcontent = null;
+	var $customtablename = null;
+	var $customidfield = null;
+	var $customidfieldtype = null;
+	var $customfieldprefix = null;
 
-    /**
-     * Constructor
-     *
-     * @param object $db Database connector object
-     *
-     * @since 1.0.0
-     */
-    function __construct(&$db)
-    {
-        parent::__construct('#__customtables_tables', 'id', $db);
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param object $db Database connector object
+	 *
+	 * @since 1.0.0
+	 */
+	function __construct(&$db)
+	{
+		parent::__construct('#__customtables_tables', 'id', $db);
+	}
 }

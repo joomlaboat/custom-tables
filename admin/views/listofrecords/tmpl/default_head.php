@@ -16,15 +16,15 @@ defined('_JEXEC') or die();
 
 ?>
 <tr>
-    <th style="width:20px;" class="nowrap center">
+	<th style="width:20px;" class="nowrap center">
 		<?php echo HTMLHelper::_('grid.checkall'); ?>
-    </th>
+	</th>
 
 	<?php if ($this->ordering_realfieldname != ''): ?>
 
-        <th style="width:1%;" class="nowrap center hidden-phone">
-            <i class="icon-menu-2"></i>
-        </th>
+		<th style="width:1%;" class="nowrap center hidden-phone">
+			<i class="icon-menu-2"></i>
+		</th>
 
 	<?php endif; ?>
 
@@ -50,13 +50,13 @@ defined('_JEXEC') or die();
 	?>
 
 	<?php if ($this->ct->Table->published_field_found): ?>
-        <th class="nowrap hidden-phone center">
+		<th class="nowrap hidden-phone center">
 			<?php echo common::translate('COM_CUSTOMTABLES_RECORDS_STATUS'); ?>
-        </th>
+		</th>
 	<?php endif; ?>
 
-    <th style="width:5px;" class="nowrap center hidden-phone">
+	<th style="width:5px;" class="nowrap center hidden-phone">
 		<?php echo common::translate('COM_CUSTOMTABLES_RECORDS_ID'); ?>
-    </th>
+	</th>
 
 </tr>

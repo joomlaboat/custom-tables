@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
-    <name>COM_CUSTOMTABLES</name>
-    <creationDate>November 2024</creationDate>
-    <author>JoomlaBoat.com</author>
-    <authorEmail>support@joomlaboat.com</authorEmail>
-    <authorUrl>https://joomlaboat.com</authorUrl>
-    <copyright>Copyright (C) 2018-2024 Ivan Komlev</copyright>
-    <license>GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html</license>
-    <version>3.4.6</version>
-    <description><![CDATA[
+	<name>COM_CUSTOMTABLES</name>
+	<creationDate>November 2024</creationDate>
+	<author>JoomlaBoat.com</author>
+	<authorEmail>support@joomlaboat.com</authorEmail>
+	<authorUrl>https://joomlaboat.com</authorUrl>
+	<copyright>Copyright (C) 2018-2024 Ivan Komlev</copyright>
+	<license>GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html</license>
+	<version>3.4.6</version>
+	<description><![CDATA[
 		<h1>Custom Tables</h1>
 		<div style="clear: both;"></div>
 		<p>Personalized Database Tables for Joomla! This component creates custom tables with custom fields and shows it in front-end in following formats: Catalog, Detailed page, Edit form.</p>
@@ -18,120 +18,120 @@
 		</p>
 	]]></description>
 
-    <scriptfile>script.php</scriptfile>
+	<scriptfile>script.php</scriptfile>
 
-    <files folder="site">
-        <filename>controller.php</filename>
-        <filename>index.html</filename>
-        <filename>router.php</filename>
-        <filename>customtables.php</filename>
+	<files folder="site">
+		<filename>controller.php</filename>
+		<filename>index.html</filename>
+		<filename>router.php</filename>
+		<filename>customtables.php</filename>
 
-        <folder>controllers</folder>
-        <folder>customphp</folder>
-        <folder>fields</folder>
-        <folder>libraries</folder>
-        <folder>models</folder>
-        <folder>views</folder>
-    </files>
+		<folder>controllers</folder>
+		<folder>customphp</folder>
+		<folder>fields</folder>
+		<folder>libraries</folder>
+		<folder>models</folder>
+		<folder>views</folder>
+	</files>
 
-    <languages folder="site">
-        <language tag="cs-CZ">language/cs-CZ/cs-CZ.com_customtables.ini</language>
-        <language tag="de-DE">language/de-DE/de-DE.com_customtables.ini</language>
-        <language tag="de-LU">language/de-LU/de-LU.com_customtables.ini</language>
-        <language tag="el-GR">language/el-GR/el-GR.com_customtables.ini</language>
-        <language tag="en-GB">language/en-GB/en-GB.com_customtables.ini</language>
-        <language tag="es-ES">language/es-ES/es-ES.com_customtables.ini</language>
-        <language tag="fr-FR">language/fr-FR/fr-FR.com_customtables.ini</language>
-        <language tag="it-IT">language/it-IT/it-IT.com_customtables.ini</language>
-        <language tag="nl-NL">language/nl-NL/nl-NL.com_customtables.ini</language>
-        <language tag="pt-BR">language/pt-BR/pt-BR.com_customtables.ini</language>
-        <language tag="pt-PT">language/pt-PT/pt-PT.com_customtables.ini</language>
-        <language tag="ru-RU">language/ru-RU/ru-RU.com_customtables.ini</language>
-        <language tag="sk-SK">language/sk-SK/sk-SK.com_customtables.ini</language>
-        <language tag="sl-SI">language/sl-SI/sl-SI.com_customtables.ini</language>
-        <language tag="uk-UA">language/uk-UA/uk-UA.com_customtables.ini</language>
-    </languages>
+	<languages folder="site">
+		<language tag="cs-CZ">language/cs-CZ/cs-CZ.com_customtables.ini</language>
+		<language tag="de-DE">language/de-DE/de-DE.com_customtables.ini</language>
+		<language tag="de-LU">language/de-LU/de-LU.com_customtables.ini</language>
+		<language tag="el-GR">language/el-GR/el-GR.com_customtables.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.com_customtables.ini</language>
+		<language tag="es-ES">language/es-ES/es-ES.com_customtables.ini</language>
+		<language tag="fr-FR">language/fr-FR/fr-FR.com_customtables.ini</language>
+		<language tag="it-IT">language/it-IT/it-IT.com_customtables.ini</language>
+		<language tag="nl-NL">language/nl-NL/nl-NL.com_customtables.ini</language>
+		<language tag="pt-BR">language/pt-BR/pt-BR.com_customtables.ini</language>
+		<language tag="pt-PT">language/pt-PT/pt-PT.com_customtables.ini</language>
+		<language tag="ru-RU">language/ru-RU/ru-RU.com_customtables.ini</language>
+		<language tag="sk-SK">language/sk-SK/sk-SK.com_customtables.ini</language>
+		<language tag="sl-SI">language/sl-SI/sl-SI.com_customtables.ini</language>
+		<language tag="uk-UA">language/uk-UA/uk-UA.com_customtables.ini</language>
+	</languages>
 
-    <administration>
-        <menu>COM_CUSTOMTABLES_MENU</menu>
-        <submenu>
-            <!-- Instead of link you can specify individual link attributes -->
-            <menu option="com_customtables" view="customtables">COM_CUSTOMTABLES_SUBMENU_DASHBOARD</menu>
-            <menu option="com_customtables" view="listoftables">COM_CUSTOMTABLES_SUBMENU_LISTOFTABLES</menu>
-            <menu option="com_customtables" view="listoflayouts">COM_CUSTOMTABLES_SUBMENU_LISTOFLAYOUTS</menu>
-            <menu option="com_customtables" view="listofcategories">COM_CUSTOMTABLES_SUBMENU_LISTOFCATEGORIES</menu>
-            <!--<menu option="com_customtables" view="listofoptions">COM_CUSTOMTABLES_SUBMENU_LISTOFOPTIONS</menu>-->
-            <menu option="com_customtables" view="databasecheck">COM_CUSTOMTABLES_SUBMENU_DATABASECHECK</menu>
-            <menu option="com_customtables" view="documentation">COM_CUSTOMTABLES_SUBMENU_DOCUMENTATION</menu>
-        </submenu>
-        <files folder="admin">
-            <filename>access.xml</filename>
-            <filename>config.xml</filename>
-            <filename>controller.php</filename>
-            <filename>index.html</filename>
-            <filename>customtables.php</filename>
-            <folder>controllers</folder>
-            <folder>helpers</folder>
-            <folder>layouts</folder>
-            <folder>models</folder>
-            <folder>tables</folder>
-            <folder>views</folder>
-        </files>
+	<administration>
+		<menu>COM_CUSTOMTABLES_MENU</menu>
+		<submenu>
+			<!-- Instead of link you can specify individual link attributes -->
+			<menu option="com_customtables" view="customtables">COM_CUSTOMTABLES_SUBMENU_DASHBOARD</menu>
+			<menu option="com_customtables" view="listoftables">COM_CUSTOMTABLES_SUBMENU_LISTOFTABLES</menu>
+			<menu option="com_customtables" view="listoflayouts">COM_CUSTOMTABLES_SUBMENU_LISTOFLAYOUTS</menu>
+			<menu option="com_customtables" view="listofcategories">COM_CUSTOMTABLES_SUBMENU_LISTOFCATEGORIES</menu>
+			<!--<menu option="com_customtables" view="listofoptions">COM_CUSTOMTABLES_SUBMENU_LISTOFOPTIONS</menu>-->
+			<menu option="com_customtables" view="databasecheck">COM_CUSTOMTABLES_SUBMENU_DATABASECHECK</menu>
+			<menu option="com_customtables" view="documentation">COM_CUSTOMTABLES_SUBMENU_DOCUMENTATION</menu>
+		</submenu>
+		<files folder="admin">
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+			<filename>index.html</filename>
+			<filename>customtables.php</filename>
+			<folder>controllers</folder>
+			<folder>helpers</folder>
+			<folder>layouts</folder>
+			<folder>models</folder>
+			<folder>tables</folder>
+			<folder>views</folder>
+		</files>
 
-        <languages folder="admin">
+		<languages folder="admin">
 
-            <language tag="cs-CZ">language/cs-CZ/cs-CZ.com_customtables.ini</language>
-            <language tag="cs-CZ">language/cs-CZ/cs-CZ.com_customtables.sys.ini</language>
+			<language tag="cs-CZ">language/cs-CZ/cs-CZ.com_customtables.ini</language>
+			<language tag="cs-CZ">language/cs-CZ/cs-CZ.com_customtables.sys.ini</language>
 
-            <language tag="de-DE">language/de-DE/de-DE.com_customtables.ini</language>
-            <language tag="de-DE">language/de-DE/de-DE.com_customtables.sys.ini</language>
+			<language tag="de-DE">language/de-DE/de-DE.com_customtables.ini</language>
+			<language tag="de-DE">language/de-DE/de-DE.com_customtables.sys.ini</language>
 
-            <language tag="de-LU">language/de-LU/de-LU.com_customtables.ini</language>
-            <language tag="de-LU">language/de-LU/de-LU.com_customtables.sys.ini</language>
+			<language tag="de-LU">language/de-LU/de-LU.com_customtables.ini</language>
+			<language tag="de-LU">language/de-LU/de-LU.com_customtables.sys.ini</language>
 
-            <language tag="el-GR">language/el-GR/el-GR.com_customtables.ini</language>
-            <language tag="el-GR">language/el-GR/el-GR.com_customtables.sys.ini</language>
+			<language tag="el-GR">language/el-GR/el-GR.com_customtables.ini</language>
+			<language tag="el-GR">language/el-GR/el-GR.com_customtables.sys.ini</language>
 
-            <language tag="en-GB">language/en-GB/en-GB.com_customtables.ini</language>
-            <language tag="en-GB">language/en-GB/en-GB.com_customtables.sys.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_customtables.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_customtables.sys.ini</language>
 
-            <language tag="es-ES">language/es-ES/es-ES.com_customtables.ini</language>
-            <language tag="es-ES">language/es-ES/es-ES.com_customtables.sys.ini</language>
+			<language tag="es-ES">language/es-ES/es-ES.com_customtables.ini</language>
+			<language tag="es-ES">language/es-ES/es-ES.com_customtables.sys.ini</language>
 
-            <language tag="fr-FR">language/fr-FR/fr-FR.com_customtables.ini</language>
-            <language tag="fr-FR">language/fr-FR/fr-FR.com_customtables.sys.ini</language>
+			<language tag="fr-FR">language/fr-FR/fr-FR.com_customtables.ini</language>
+			<language tag="fr-FR">language/fr-FR/fr-FR.com_customtables.sys.ini</language>
 
-            <language tag="it-IT">language/it-IT/it-IT.com_customtables.ini</language>
-            <language tag="it-IT">language/it-IT/it-IT.com_customtables.sys.ini</language>
+			<language tag="it-IT">language/it-IT/it-IT.com_customtables.ini</language>
+			<language tag="it-IT">language/it-IT/it-IT.com_customtables.sys.ini</language>
 
-            <language tag="nl-NL">language/nl-NL/nl-NL.com_customtables.ini</language>
-            <language tag="nl-NL">language/nl-NL/nl-NL.com_customtables.sys.ini</language>
+			<language tag="nl-NL">language/nl-NL/nl-NL.com_customtables.ini</language>
+			<language tag="nl-NL">language/nl-NL/nl-NL.com_customtables.sys.ini</language>
 
-            <language tag="pt-BR">language/pt-BR/pt-BR.com_customtables.ini</language>
-            <language tag="pt-BR">language/pt-BR/pt-BR.com_customtables.sys.ini</language>
+			<language tag="pt-BR">language/pt-BR/pt-BR.com_customtables.ini</language>
+			<language tag="pt-BR">language/pt-BR/pt-BR.com_customtables.sys.ini</language>
 
-            <language tag="pt-PT">language/pt-PT/pt-PT.com_customtables.ini</language>
-            <language tag="pt-PT">language/pt-PT/pt-PT.com_customtables.sys.ini</language>
+			<language tag="pt-PT">language/pt-PT/pt-PT.com_customtables.ini</language>
+			<language tag="pt-PT">language/pt-PT/pt-PT.com_customtables.sys.ini</language>
 
-            <language tag="ru-RU">language/ru-RU/ru-RU.com_customtables.ini</language>
-            <language tag="ru-RU">language/ru-RU/ru-RU.com_customtables.sys.ini</language>
+			<language tag="ru-RU">language/ru-RU/ru-RU.com_customtables.ini</language>
+			<language tag="ru-RU">language/ru-RU/ru-RU.com_customtables.sys.ini</language>
 
-            <language tag="sk-SK">language/sk-SK/sk-SK.com_customtables.ini</language>
-            <language tag="sk-SK">language/sk-SK/sk-SK.com_customtables.sys.ini</language>
+			<language tag="sk-SK">language/sk-SK/sk-SK.com_customtables.ini</language>
+			<language tag="sk-SK">language/sk-SK/sk-SK.com_customtables.sys.ini</language>
 
-            <language tag="sl-SI">language/sl-SI/sl-SI.com_customtables.ini</language>
-            <language tag="sl-SI">language/sl-SI/sl-SI.com_customtables.sys.ini</language>
+			<language tag="sl-SI">language/sl-SI/sl-SI.com_customtables.ini</language>
+			<language tag="sl-SI">language/sl-SI/sl-SI.com_customtables.sys.ini</language>
 
-            <language tag="uk-UA">language/uk-UA/uk-UA.com_customtables.ini</language>
-            <language tag="uk-UA">language/uk-UA/uk-UA.com_customtables.sys.ini</language>
-        </languages>
+			<language tag="uk-UA">language/uk-UA/uk-UA.com_customtables.ini</language>
+			<language tag="uk-UA">language/uk-UA/uk-UA.com_customtables.sys.ini</language>
+		</languages>
 
-    </administration>
+	</administration>
 
-    <updateservers>
-        <server type="extension" enabled="1" element="com_customtables" priority="2" name="Custom Tables">
-            https://joomlaboat.com/free-update/custom-tables
-        </server>
-    </updateservers>
+	<updateservers>
+		<server type="extension" enabled="1" element="com_customtables" priority="2" name="Custom Tables">
+			https://joomlaboat.com/free-update/custom-tables
+		</server>
+	</updateservers>
 
 </extension>

@@ -20,32 +20,32 @@ use Joomla\CMS\MVC\Model\ListModel;
 
 class CustomTablesModelImportRecords extends ListModel
 {
-    var CT $ct;
+	var CT $ct;
 
-    function __construct()
-    {
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
+	function __construct()
+	{
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
 
-        parent::__construct();
-    }
+		parent::__construct();
+	}
 
-    /**
-     * @throws Exception
-     * @since 3.3.4
-     */
-    function importRecords(&$msg): bool
-    {
-        $fileId = common::inputGetCmd('fileid', '');
-        $filename = FileUploader::getFileNameByID($fileId);
+	/**
+	 * @throws Exception
+	 * @since 3.3.4
+	 */
+	function importRecords(&$msg): bool
+	{
+		$fileId = common::inputGetCmd('fileid', '');
+		$filename = FileUploader::getFileNameByID($fileId);
 
-        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
-            . 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+			. 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
 
-        $tableId = common::inputGetInt('tableid', 0);
+		$tableId = common::inputGetInt('tableid', 0);
 
-        $msg = ImportCSV::importCSVFile($filename, $tableId);
-        unlink($filename);
+		$msg = ImportCSV::importCSVFile($filename, $tableId);
+		unlink($filename);
 
-        return true;
-    }
+		return true;
+	}
 }

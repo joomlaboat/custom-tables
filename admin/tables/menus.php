@@ -21,20 +21,20 @@ use Joomla\CMS\Table\Table;
  */
 class CustomtablesTableMenus extends Table
 {
-    var ?int $id = null;
-    var ?string $title = null;
-    var ?string $alias = null;
-    var ?string $link = null;
+	var ?int $id = null;
+	var ?string $title = null;
+	var ?string $alias = null;
+	var ?string $link = null;
 
-    /**
-     * Constructor
-     *
-     * @param object $db Database connector object
-     *
-     * @since 1.0.0
-     */
-    function __construct($db)
-    {
-        parent::__construct('#__menu', 'id', $db);
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param object $db Database connector object
+	 *
+	 * @since 1.0.0
+	 */
+	function __construct($db)
+	{
+		parent::__construct('#__menu', 'id', $db);
+	}
 }

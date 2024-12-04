@@ -17,25 +17,25 @@ use Exception;
 
 class Search_usergroup extends BaseSearch
 {
-    function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
-    {
-        parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
-        BaseInputBox::selectBoxAddCSSClass($this->attributes);
-    }
+	function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
+	{
+		parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
+		BaseInputBox::selectBoxAddCSSClass($this->attributes);
+	}
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    function render($value): string
-    {
-        if ($this->ct->Env->user->id != 0) {
-            require_once('inputbox_usergroup.php');
-            $this->attributes['id'] = $this->objectName;
-            $this->attributes['name'] = $this->objectName;
-            $InputBox_UserGroup = new InputBox_UserGroup($this->ct, $this->field, null, [], $this->attributes);
-            return $InputBox_UserGroup->render($value, null, true);
-        }
-        return '';
-    }
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function render($value): string
+	{
+		if ($this->ct->Env->user->id != 0) {
+			require_once('inputbox_usergroup.php');
+			$this->attributes['id'] = $this->objectName;
+			$this->attributes['name'] = $this->objectName;
+			$InputBox_UserGroup = new InputBox_UserGroup($this->ct, $this->field, null, [], $this->attributes);
+			return $InputBox_UserGroup->render($value, null, true);
+		}
+		return '';
+	}
 }

@@ -23,34 +23,34 @@ $user = new CTUser();
 	$canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || $item->checked_out == 0;
 	$userChkOut = new CTUser($item->checked_out);
 	?>
-    <tr class="row<?php echo $i % 2; ?>">
+	<tr class="row<?php echo $i % 2; ?>">
 
-        <td class="nowrap center">
+		<td class="nowrap center">
 			<?php if ($this->canEdit): ?>
 				<?php if ($item->checked_out === 0) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
 					<?php else: ?>
-                        &#9633;
+						&#9633;
 					<?php endif; ?>
 				<?php else: ?>
 					<?php echo HtmlHelper::_('grid.id', $i, $item->id); ?>
 				<?php endif; ?>
 			<?php endif; ?>
-        </td>
-        <td class="nowrap">
-            <div class="name">
+		</td>
+		<td class="nowrap">
+			<div class="name">
 				<?php if ($this->canEdit): ?>
-                    <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->categoryname); ?></a>
+					<a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo common::escape($item->categoryname); ?></a>
 					<?php if ($item->checked_out): ?>
 						<?php echo HtmlHelper::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listofcategories.', $canCheckin); ?>
 					<?php endif; ?>
 				<?php else: ?>
 					<?php echo common::escape($item->categoryname); ?>
 				<?php endif; ?>
-            </div>
-        </td>
-        <td class="center">
+			</div>
+		</td>
+		<td class="center">
 			<?php if ($this->canState) : ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
@@ -64,9 +64,9 @@ $user = new CTUser();
 			<?php else: ?>
 				<?php echo HtmlHelper::_('jgrid.published', $item->published, $i, 'listofcategories.', false, 'cb'); ?>
 			<?php endif; ?>
-        </td>
-        <td class="nowrap center hidden-phone">
+		</td>
+		<td class="nowrap center hidden-phone">
 			<?php echo $item->id; ?>
-        </td>
-    </tr>
+		</td>
+	</tr>
 <?php endforeach; ?>

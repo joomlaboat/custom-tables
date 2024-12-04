@@ -17,43 +17,43 @@ use Joomla\CMS\Factory;
 
 class InputBox_color extends BaseInputBox
 {
-    function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
-    {
-        parent::__construct($ct, $field, $row, $option_list, $attributes);
-    }
+	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
+	{
+		parent::__construct($ct, $field, $row, $option_list, $attributes);
+	}
 
-    function render(?string $value, ?string $defaultValue): string
-    {
-        if ($value === null) {
-            $value = common::inputGetAlnum($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
-            if ($value == '')
-                $value = $defaultValue;
-        }
+	function render(?string $value, ?string $defaultValue): string
+	{
+		if ($value === null) {
+			$value = common::inputGetAlnum($this->ct->Table->fieldPrefix . $this->field->fieldname, '');
+			if ($value == '')
+				$value = $defaultValue;
+		}
 
-        $showAlpha = ($this->option_list[0] ?? '') == 'transparent';
+		$showAlpha = ($this->option_list[0] ?? '') == 'transparent';
 
-        if (isset($this->option_list[1]) and $this->option_list[1] != "")
-            $palette = explode(',', $this->option_list[1]);
-        else
-            $palette = null;
+		if (isset($this->option_list[1]) and $this->option_list[1] != "")
+			$palette = explode(',', $this->option_list[1]);
+		else
+			$palette = null;
 
-        // Create the color picker field
-        $elementId = $this->attributes['id'];
+		// Create the color picker field
+		$elementId = $this->attributes['id'];
 
-        // Include necessary CSS and JavaScript files for Spectrum Color Picker
+		// Include necessary CSS and JavaScript files for Spectrum Color Picker
 
-        if (defined('_JEXEC')) {
-            $app = Factory::getApplication();
-            $document = $app->getDocument();
+		if (defined('_JEXEC')) {
+			$app = Factory::getApplication();
+			$document = $app->getDocument();
 
-            $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/spectrum.js"></script>');
-            $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/spectrum.css" type="text/css" rel="stylesheet" >');
-        }
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/spectrum.js"></script>');
+			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/spectrum.css" type="text/css" rel="stylesheet" >');
+		}
 
-        // JavaScript code to initialize Spectrum Color Picker
-        //palette: [ ['#ff0000', '#00ff00', '#0000ff'],['#ffff00', '#ff00ff', '#00ffff'] ]
+		// JavaScript code to initialize Spectrum Color Picker
+		//palette: [ ['#ff0000', '#00ff00', '#0000ff'],['#ffff00', '#ff00ff', '#00ffff'] ]
 
-        $js = '
+		$js = '
         <script>
         
         jQuery(document).ready(function($) {
@@ -74,10 +74,10 @@ class InputBox_color extends BaseInputBox
         });
     </script>';
 
-        self::addCSSClass($this->attributes, 'color-picker-class');
+		self::addCSSClass($this->attributes, 'color-picker-class');
 
-        $this->attributes['type'] = 'text';
-        $this->attributes['value'] = $value;
-        return '<input ' . self::attributes2String($this->attributes) . ' />' . $js;
-    }
+		$this->attributes['type'] = 'text';
+		$this->attributes['value'] = $value;
+		return '<input ' . self::attributes2String($this->attributes) . ' />' . $js;
+	}
 }

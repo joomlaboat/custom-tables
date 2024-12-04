@@ -23,214 +23,214 @@ use Twig\Error\SyntaxError;
 
 class Edit
 {
-    var CT $ct;
-    var string $layoutContent;
-    var ?array $row;
-    var int $layoutType;
-    var ?string $pageLayoutNameString;
-    var ?string $pageLayoutLink;
+	var CT $ct;
+	var string $layoutContent;
+	var ?array $row;
+	var int $layoutType;
+	var ?string $pageLayoutNameString;
+	var ?string $pageLayoutLink;
 
-    function __construct(CT &$ct)
-    {
-        $this->ct = &$ct;
-        $this->row = null;
-        $this->layoutType = 0;
-        $this->layoutContent = '';
-        $this->pageLayoutNameString = null;
-        $this->pageLayoutLink = null;
-    }
+	function __construct(CT &$ct)
+	{
+		$this->ct = &$ct;
+		$this->row = null;
+		$this->layoutType = 0;
+		$this->layoutContent = '';
+		$this->pageLayoutNameString = null;
+		$this->pageLayoutLink = null;
+	}
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    function load(): bool
-    {
-        if ($this->ct->Params->editLayout != '') {
-            $Layouts = new Layouts($this->ct);
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function load(): bool
+	{
+		if ($this->ct->Params->editLayout != '') {
+			$Layouts = new Layouts($this->ct);
 
-            if (empty($this->ct->Params->editLayout)) {
-                $this->ct->errors[] = 'Edit Layout not selected.';
-                return false;
-            }
+			if (empty($this->ct->Params->editLayout)) {
+				$this->ct->errors[] = 'Edit Layout not selected.';
+				return false;
+			}
 
-            $this->layoutContent = $Layouts->getLayout($this->ct->Params->editLayout);
-            if (isset($Layouts->layoutId)) {
-                $this->layoutType = $Layouts->layoutType;
-                $this->pageLayoutNameString = $this->ct->Params->editLayout;
-            } else {
-                $this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found.';
-                return false;
-            }
+			$this->layoutContent = $Layouts->getLayout($this->ct->Params->editLayout);
+			if (isset($Layouts->layoutId)) {
+				$this->layoutType = $Layouts->layoutType;
+				$this->pageLayoutNameString = $this->ct->Params->editLayout;
+			} else {
+				$this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found.';
+				return false;
+			}
 
-            $this->pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+			$this->pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
-            if ($Layouts->layoutType === null) {
-                $this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found or the type is not set.';
-                return false;
-            }
+			if ($Layouts->layoutType === null) {
+				$this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found or the type is not set.';
+				return false;
+			}
 
-        } else {
-            $Layouts = new Layouts($this->ct);
-            $this->layoutContent = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields);
-            $this->pageLayoutNameString = 'Default Edit Layout';
-            $this->pageLayoutLink = null;
-        }
-        $this->ct->LayoutVariables['layout_type'] = $this->layoutType;
-        return true;
-    }
+		} else {
+			$Layouts = new Layouts($this->ct);
+			$this->layoutContent = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields);
+			$this->pageLayoutNameString = 'Default Edit Layout';
+			$this->pageLayoutLink = null;
+		}
+		$this->ct->LayoutVariables['layout_type'] = $this->layoutType;
+		return true;
+	}
 
-    /**
-     * @throws SyntaxError
-     * @throws RuntimeError
-     * @throws LoaderError
-     * @throws Exception
-     * @since 3.2.2
-     */
-    public function processLayout(?array $row = null): string
-    {
-        if ($row !== null)
-            $this->row = $row;
+	/**
+	 * @throws SyntaxError
+	 * @throws RuntimeError
+	 * @throws LoaderError
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public function processLayout(?array $row = null): string
+	{
+		if ($row !== null)
+			$this->row = $row;
 
-        if ($this->ct->Env->legacySupport) {
-            $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-            require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
-            require_once($path . 'layout.php');
+		if ($this->ct->Env->legacySupport) {
+			$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
+			require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
+			require_once($path . 'layout.php');
 
-            $LayoutProc = new LayoutProcessor($this->ct, $this->layoutContent);
-            $this->layoutContent = $LayoutProc->fillLayout(null, null, '||', false, true);
-            tagProcessor_Edit::process($this->ct, $this->layoutContent, $row, true);
-        }
+			$LayoutProc = new LayoutProcessor($this->ct, $this->layoutContent);
+			$this->layoutContent = $LayoutProc->fillLayout(null, null, '||', false, true);
+			tagProcessor_Edit::process($this->ct, $this->layoutContent, $row, true);
+		}
 
-        $twig = new TwigProcessor($this->ct, $this->layoutContent, true);
-        $result = $twig->process($this->row);
+		$twig = new TwigProcessor($this->ct, $this->layoutContent, true);
+		$result = $twig->process($this->row);
 
-        if ($twig->errorMessage !== null)
-            $this->ct->errors[] = $twig->errorMessage;
+		if ($twig->errorMessage !== null)
+			$this->ct->errors[] = $twig->errorMessage;
 
-        return $result;
-    }
+		return $result;
+	}
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    function render(?array $row, $formLink, string $formName, bool $addFormTag = true): string
-    {
-        $result = '';
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function render(?array $row, $formLink, string $formName, bool $addFormTag = true): string
+	{
+		$result = '';
 
-        if ($row !== null)
-            $this->row = $row;
+		if ($row !== null)
+			$this->row = $row;
 
-        if (!is_null($this->ct->Params->ModuleId))
-            $formName .= $this->ct->Params->ModuleId;
+		if (!is_null($this->ct->Params->ModuleId))
+			$formName .= $this->ct->Params->ModuleId;
 
-        if (defined('_JEXEC')) {
-            if ($this->ct->Env->legacySupport) {
-                $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-                require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
-                require_once($path . 'layout.php');
-            }
-            if ($this->ct->Params->ModuleId === null or $this->ct->Params->ModuleId == 0) {
-                HTMLHelper::_('jquery.framework');
-                jimport('joomla.html.html.bootstrap');
-            }
-        }
+		if (defined('_JEXEC')) {
+			if ($this->ct->Env->legacySupport) {
+				$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
+				require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
+				require_once($path . 'layout.php');
+			}
+			if ($this->ct->Params->ModuleId === null or $this->ct->Params->ModuleId == 0) {
+				HTMLHelper::_('jquery.framework');
+				jimport('joomla.html.html.bootstrap');
+			}
+		}
 
-        common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+		common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
-        if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
+		if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
 
-            if (defined('_JEXEC'))
-                $result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
-                    . common::translate($this->ct->Params->pageTitle) . '</h2></div>';
-            else
-                $result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
-                    . $this->ct->Params->pageTitle . '</h2></div>';
-        }
+			if (defined('_JEXEC'))
+				$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
+					. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
+			else
+				$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
+					. $this->ct->Params->pageTitle . '</h2></div>';
+		}
 
-        $listing_id = $this->row[$this->ct->Table->realidfieldname] ?? 0;
+		$listing_id = $this->row[$this->ct->Table->realidfieldname] ?? 0;
 
-        if ($addFormTag) {
+		if ($addFormTag) {
 
-            $additionalParameter = ' enctype="multipart/form-data"';
+			$additionalParameter = ' enctype="multipart/form-data"';
 
-            $result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
-                . 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
-                . 'data-version=' . CUSTOMTABLES_JOOMLA_VERSION . $additionalParameter . '>';
-        }
+			$result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
+				. 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
+				. 'data-version=' . CUSTOMTABLES_JOOMLA_VERSION . $additionalParameter . '>';
+		}
 
-        if (defined('_JEXEC'))
-            $result .= (CUSTOMTABLES_JOOMLA_MIN_4 ? '<fieldset class="options-form">' : '<fieldset>');
+		if (defined('_JEXEC'))
+			$result .= (CUSTOMTABLES_JOOMLA_MIN_4 ? '<fieldset class="options-form">' : '<fieldset>');
 
-        //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
+		//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 
-        $this->ct->isEditForm = true; //These changes input box prefix
+		$this->ct->isEditForm = true; //These changes input box prefix
 
-        if ($this->ct->Env->legacySupport) {
-            $LayoutProc = new LayoutProcessor($this->ct, $this->layoutContent);
+		if ($this->ct->Env->legacySupport) {
+			$LayoutProc = new LayoutProcessor($this->ct, $this->layoutContent);
 
-            //Better to run tag processor before rendering form edit elements because of IF statements that can exclude the part of the layout that contains form fields.
-            $pageLayout = $LayoutProc->fillLayout($this->row, null, '||', false, true);
-            tagProcessor_Edit::process($this->ct, $pageLayout, $this->row);
-        } else
-            $pageLayout = $this->layoutContent;
+			//Better to run tag processor before rendering form edit elements because of IF statements that can exclude the part of the layout that contains form fields.
+			$pageLayout = $LayoutProc->fillLayout($this->row, null, '||', false, true);
+			tagProcessor_Edit::process($this->ct, $pageLayout, $this->row);
+		} else
+			$pageLayout = $this->layoutContent;
 
-        $twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
+		$twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
 
-        try {
-            $pageLayout = @$twig->process($this->row);
-        } catch (Exception $e) {
-            return 'Caught exception: ' . $e->getMessage();
-        }
+		try {
+			$pageLayout = @$twig->process($this->row);
+		} catch (Exception $e) {
+			return 'Caught exception: ' . $e->getMessage();
+		}
 
-        if ($twig->errorMessage !== null) {
-            if (defined('_JEXEC')) {
-                $this->ct->errors[] = $twig->errorMessage;
-            } else {
-                return $twig->errorMessage;
-            }
-        }
+		if ($twig->errorMessage !== null) {
+			if (defined('_JEXEC')) {
+				$this->ct->errors[] = $twig->errorMessage;
+			} else {
+				return $twig->errorMessage;
+			}
+		}
 
-        if ($this->ct->Params->allowContentPlugins)
-            $pageLayout = CTMiscHelper::applyContentPlugins($pageLayout);
+		if ($this->ct->Params->allowContentPlugins)
+			$pageLayout = CTMiscHelper::applyContentPlugins($pageLayout);
 
-        $result .= $pageLayout;
+		$result .= $pageLayout;
 
-        $returnTo = '';
+		$returnTo = '';
 
-        if (common::inputGetBase64('returnto'))
-            $returnTo = common::getReturnToURL();
-        elseif ($this->ct->Params->returnTo)
-            $returnTo = $this->ct->Params->returnTo;
+		if (common::inputGetBase64('returnto'))
+			$returnTo = common::getReturnToURL();
+		elseif ($this->ct->Params->returnTo)
+			$returnTo = $this->ct->Params->returnTo;
 
-        $encodedReturnTo = common::makeReturnToURL($returnTo);
+		$encodedReturnTo = common::makeReturnToURL($returnTo);
 
-        if ($listing_id == 0) {
-            $result .= '<input type="hidden" name="published" value="' . (int)$this->ct->Params->publishStatus . '" />';
-        }
+		if ($listing_id == 0) {
+			$result .= '<input type="hidden" name="published" value="' . (int)$this->ct->Params->publishStatus . '" />';
+		}
 
-        $result .= '<input type="hidden" name="task" id="task" value="save" />'
-            . '<input type="hidden" name="returnto" id="returnto" value="' . $encodedReturnTo . '" />'
-            . '<input type="hidden" name="listing_id" id="listing_id" value="' . $listing_id . '" />';
+		$result .= '<input type="hidden" name="task" id="task" value="save" />'
+			. '<input type="hidden" name="returnto" id="returnto" value="' . $encodedReturnTo . '" />'
+			. '<input type="hidden" name="listing_id" id="listing_id" value="' . $listing_id . '" />';
 
-        if (!is_null($this->ct->Params->ModuleId))
-            $result .= '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $this->ct->Params->ModuleId . '" />';
+		if (!is_null($this->ct->Params->ModuleId))
+			$result .= '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $this->ct->Params->ModuleId . '" />';
 
-        if (defined('_JEXEC')) {
-            $result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '');
-            $result .= HTMLHelper::_('form.token');
+		if (defined('_JEXEC')) {
+			$result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '');
+			$result .= HTMLHelper::_('form.token');
 
-        } elseif (defined('WPINC')) {
-            $result .= '<!-- token -->';
-        }
+		} elseif (defined('WPINC')) {
+			$result .= '<!-- token -->';
+		}
 
-        if (defined('_JEXEC'))
-            $result .= '</fieldset>';
+		if (defined('_JEXEC'))
+			$result .= '</fieldset>';
 
-        if ($addFormTag)
-            $result .= '</form>';
+		if ($addFormTag)
+			$result .= '</form>';
 
-        return $result;
-    }
+		return $result;
+	}
 }

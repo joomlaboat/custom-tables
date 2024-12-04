@@ -15,23 +15,23 @@ use CustomTables\Inputbox;
 
 class ESInputBox
 {
-    var string $requiredLabel = '';
-    var CustomTables\CT $ct;
+	var string $requiredLabel = '';
+	var CustomTables\CT $ct;
 
-    function __construct(CustomTables\CT &$ct)
-    {
-        $this->ct = &$ct;
-        $this->requiredLabel = 'COM_CUSTOMTABLES_REQUIREDLABEL';
-    }
+	function __construct(CustomTables\CT &$ct)
+	{
+		$this->ct = &$ct;
+		$this->requiredLabel = 'COM_CUSTOMTABLES_REQUIREDLABEL';
+	}
 
-    /**
-     * @throws Exception
-     * @since 3.2.2
-     */
-    function renderFieldBox(array $fieldRow, ?array $row, array $option_list, string $onchange = ''): ?string
-    {
-        $Inputbox = new Inputbox($this->ct, $fieldRow, $option_list, false, $onchange);
-        $value = $Inputbox->getDefaultValueIfNeeded($row);
-        return $Inputbox->render($value, $row);
-    }
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function renderFieldBox(array $fieldRow, ?array $row, array $option_list, string $onchange = ''): ?string
+	{
+		$Inputbox = new Inputbox($this->ct, $fieldRow, $option_list, false, $onchange);
+		$value = $Inputbox->getDefaultValueIfNeeded($row);
+		return $Inputbox->render($value, $row);
+	}
 }
