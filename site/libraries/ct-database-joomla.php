@@ -420,7 +420,7 @@ class database
 		try {
 			$db->setQuery($query);
 		} catch (Exception $e) {
-			echo 'Query error: ' . $query . ', Message: ' . $e->getMessage();
+			throw new Exception($e->getMessage());
 		}
 
 		if ($output_type == 'OBJECT')

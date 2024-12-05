@@ -1270,6 +1270,19 @@
 			</params>
 		</tag>
 
+		<tag name="config" label="Get Custom Tables Configuration Parameter" startchar="{" endchar="}"
+			 twigclass="document"
+			 description="Retrieves Custom Tables Global Configuration parameter value."
+			 proversion="1" wordpress="true">
+			<params>
+				<param name="parameter" label="Parameter" type="list">
+					<option value="googlemapapikey" label="Google Map API Key"/>
+					<option value="fieldprefix" label="Field Name Prefix"/>
+					<option value="foldertosavelayouts" label="Folder where to save Layouts"/>
+				</param>
+			</params>
+		</tag>
+
 	</tagset>
 
 	<!-- Available in PRO version and anywhere -->

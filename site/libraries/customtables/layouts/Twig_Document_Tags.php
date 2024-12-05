@@ -12,6 +12,7 @@ namespace CustomTables;
 
 // no direct access
 use Exception;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use LayoutProcessor;
 
@@ -222,6 +223,22 @@ class Twig_Document_Tags
 	public function set(string $variable, $value)
 	{
 		$this->ct->LayoutVariables['globalVariables'][$variable] = $value;
+	}
+
+	public function config(string $parameter)
+	{
+		if ($parameter == 'googlemapapikey') {
+			$joomla_params = ComponentHelper::getParams('com_customtables');
+			return $joomla_params->get('googlemapapikey');
+		} elseif ($parameter == 'fieldprefix') {
+			$joomla_params = ComponentHelper::getParams('com_customtables');
+			return $joomla_params->get('fieldPrefix');
+		} elseif ($parameter == 'foldertosavelayouts') {
+			$joomla_params = ComponentHelper::getParams('com_customtables');
+			return $joomla_params->get('folderToSaveLayouts');
+		} else {
+			return 'Unknown parameter in document.config(parameter)';
+		}
 	}
 
 }

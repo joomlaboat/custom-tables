@@ -35,8 +35,6 @@ class CustomTablesViewListOfTables extends HtmlView
 	{
 		// Get the model
 		$model = $this->getModel();
-
-
 		$this->ct = $model->ct;
 
 		if ($this->getLayout() !== 'modal') {
@@ -46,7 +44,6 @@ class CustomTablesViewListOfTables extends HtmlView
 
 		// Assign data to the view
 		$this->items = $this->get('Items');
-
 		$this->state = $this->get('State');
 		$this->listOrder = $this->state->get('list.ordering');
 		$this->listDirn = common::escape($this->state->get('list.direction'));
@@ -170,34 +167,6 @@ class CustomTablesViewListOfTables extends HtmlView
 			if (!$this->isEmptyState and $this->state->get('filter.published') != -2 and $this->ct->Env->advancedTagProcessor)
 				ToolbarHelper::custom('listoftables.export', 'download.png', '', 'Export');
 
-		if ($this->canState) {
-			/*
-						$options = HtmlHelper::_('jgrid.publishedOptions');
-						$newOptions = [];
-						foreach ($options as $option) {
 
-							if ($option->value != 2)
-							  $newOptions[] = $option;
-						}
-
-						/*
-						JHtmlSidebar::addFilter(
-							common::translate('JOPTION_SELECT_PUBLISHED'),
-							'filter_published',
-							HTMLHelper::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
-						);
-						*/
-		}
-
-		/*
-		$CTCategory = JFormHelper::loadFieldType('CTCategory', false);
-		$CTCategoryOptions = $CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
-
-		JHtmlSidebar::addFilter(
-			common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
-			'filter_tablecategory',
-			HTMLHelper::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
-		);
-		*/
 	}
 }

@@ -152,9 +152,9 @@ foreach ($this->items as $i => $item): ?>
 					<a href="<?php
 					$categoryTables = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoftables&categoryid=' . $item->tablecategory;
 					echo $categoryTables; ?>">
-						<?php echo common::escape($item->categoryname); ?></a>
+						<?php echo common::escape($item->categoryname ?? ''); ?></a>
 				<?php else: ?>
-					<?php echo common::escape($item->categoryname); ?>
+					<?php echo common::escape($item->categoryname ?? ''); ?>
 				<?php endif; ?>
 			</div>
 		</td>

@@ -974,9 +974,7 @@ class CTMiscHelper
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('context', 'com_users.user');
 		$whereClause->addCondition('name', $fieldName);
-
 		$select = ['CUSTOM_FIELD', '', '', 'value', $userId];//'(SELECT value FROM #__fields_values WHERE #__fields_values.field_id=a.asset_id AND item_id=' . $variable . ') AS ' . $asValue;
-
 		$values = database::loadObjectList('#__fields', [$select], $whereClause, null, null, 1);
 
 		if (count($values) == 0)

@@ -604,7 +604,8 @@ class common
 		$googleMapAPIKey = $joomla_params->get('googlemapapikey');
 
 		if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
-			$document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
+			$document->addCustomTag('<script async defer src="https://maps.google.com/maps/api/js?key='
+				. $googleMapAPIKey . '&loading=async"></script>');//&sensor=false.&callback=initMap
 
 		$js = [];
 		$js[] = 'let ctWebsiteRoot = "' . $env->WebsiteRoot . '";';

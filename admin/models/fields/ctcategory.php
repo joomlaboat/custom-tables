@@ -37,7 +37,11 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 			$whereClause = new MySQLWhereClause();
 			$whereClause->addCondition('published', 1);
 
-			$records = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, 'categoryname');
+			try {
+				$records = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, 'categoryname');
+			} catch (Exception $e) {
+				$records = [];
+			}
 
 			$options = array();
 			if ($records) {
@@ -82,7 +86,12 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 		{
 			$whereClause = new MySQLWhereClause();
 			$whereClause->addCondition('published', 1);
-			$records = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, 'categoryname');
+
+			try {
+				$records = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause, 'categoryname');
+			} catch (Exception $e) {
+				$records = [];
+			}
 
 			$options = array();
 			if ($add_empty_option)

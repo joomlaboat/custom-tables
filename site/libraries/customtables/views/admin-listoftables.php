@@ -53,11 +53,14 @@ class ListOfTables
 	{
 		$selects = TableHelper::getTableRowSelectArray();
 
-		if (defined('_JEXEC'))
+		//Check if table exists
+		$rows = database::getTableStatus('categories');
+		$tableExists = !(count($rows) == 0);
+
+		if ($tableExists)
 			$selects[] = 'CATEGORY_NAME';
 
 		$selects[] = 'FIELD_COUNT';
-
 		$selects[] = 'tablecategory';
 
 		$whereClause = new MySQLWhereClause();
@@ -91,6 +94,8 @@ class ListOfTables
 		if ($category !== null and $category != '' and (int)$category != 0) {
 			$whereClause->addCondition('a.tablecategory', (int)$category);
 		}
+
+
 		return database::loadAssocList('#__customtables_tables AS a', $selects, $whereClause, $orderCol, $orderDirection, $limit, $start, null, $returnQueryString);
 	}
 

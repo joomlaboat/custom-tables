@@ -7,6 +7,7 @@
  * @copyright (C) 2018-2024. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
+
 // No direct access to this file access');
 defined('_JEXEC') or die();
 
@@ -26,8 +27,6 @@ HTMLHelper::_('behavior.multiselect');
 			<div id="j-main-container" class="j-main-container">
 				<?php
 				// Search tools bar
-
-
 				echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this));
 				?>
 				<?php if (empty($this->items)) : ?>
