@@ -60,7 +60,7 @@ if ($this->ct->Env->frmt == 'html') {
 		}
 	}
 
-	if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
+	if (empty($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
 	{
 		echo '<!-- Modal content -->
 <div id="ctModal" class="ctModal">
@@ -71,6 +71,6 @@ if ($this->ct->Env->frmt == 'html') {
 </div>
 <!-- end of the modal -->';
 	} else {
-		//die;//Not sure why is it here
+		die;//Render single record only
 	}
 }

@@ -138,6 +138,7 @@ class Details
 		} else
 			$this->row = $this->getDataById($this->ct->Params->listing_id);
 
+		$this->ct->Table->record = $this->row;
 		return true;
 	}
 
