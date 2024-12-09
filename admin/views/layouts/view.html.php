@@ -226,10 +226,7 @@ class CustomtablesViewLayouts extends HtmlView
 	public function renderTextArea($value, $id, $typeBoxId, &$onPageLoads, string $mode = 'layouteditor'): string
 	{
 		$result = '<div style="width: 100%;position: relative;">';
-
-		if ($value != "")
-			$result .= '<div class="ct_tip">TIP: Double-Click on a Layout Tag to edit parameters.</div>';
-
+		$result .= '<div class="ct_tip">TIP: Double-Click on a Layout Tag to see parameters.</div>';
 		$result .= '</div>';
 
 		$textAreaId = 'jform_' . $id;

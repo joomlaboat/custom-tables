@@ -216,7 +216,7 @@ function renderTabsJoomla(tabSetId, tabs) {
 
 function replaceOldFieldTitleTagsWithTwigStyle() {
 
-	let editor = getActiveEditor();
+	let editor = getActiveEditor(-1);
 	let documentText = editor.getValue();
 	let count = 0;
 	let changesMade = false;
@@ -523,7 +523,7 @@ function showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left
 
 		let result = '{{ ' + tag + postfix + ' }}';
 
-		let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
+		let editor = getActiveEditor(-1);
 		let doc = editor.getDoc();
 		doc.replaceRange(result, cursor_from, cursor_to, "");
 		return;
@@ -565,7 +565,7 @@ function showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left
 //Used in generated html link
 function addFieldTag(tagStartChar, postfix, tagEndChar, tag, param_count) {
 
-	let cm = getActiveEditor();
+	let cm = getActiveEditor(-1);
 
 	if (param_count > 0) {
 		const cr = cm.getCursor();
@@ -585,7 +585,7 @@ function addFieldTag(tagStartChar, postfix, tagEndChar, tag, param_count) {
 }
 
 function FillLayout() {
-	let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
+	let editor = getActiveEditor(-1);//codemirror_editors[codemirror_active_index];
 
 	let layoutType;
 	let tableId;
@@ -625,6 +625,7 @@ function FillLayout() {
 	result += '<option value="101">- Simple Catalog (No Features)</option>';
 	result += '<option value="111">- Ordered List</option>';
 	result += '<option value="112">- Unordered List</option>';
+	result += '<option value="120">- Map With Markers</option>';
 	result += '<option value="500"' + (layoutType === 5 ? ' selected="selected"' : '') + '>Catalog Page (All Features)</option>';
 	result += '<option value="501">- Catalog Page (No Features)</option>';
 	result += '<option value="600"' + (layoutType === 6 ? ' selected="selected"' : '') + '>Catalog Item</option>';
@@ -639,18 +640,45 @@ function FillLayout() {
 
 	document.getElementById("layouteditor_modal_content_box").innerHTML = '<div class="dynamic_values">' + result + '</div>';
 	showModal();
-
 	modal_layoutTypeSelector_update();
+}
 
+function getFieldSelector(id, searchByField) {
+	let fieldCount = wizardFields.length;
+	let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
+
+	let result = '<select id="' + id + '"';
+	result += ' class="form-select list_class required valid form-control-success" required=""">';
+
+	if (searchByField) {
+		fieldtypes_to_skip.push('googlemapcoordinates');
+		result += '<option value=""> - Select</option>';
+	}
+
+	for (let index = 0; index < fieldCount; index++) {
+		let field = wizardFields[index];
+
+		if (fieldtypes_to_skip.indexOf(field.type) === -1) {
+
+			if (field.type === 'googlemapcoordinates') {
+				result += '<option value="' + field.fieldname + '.latitude">' + field.fieldname + '("latitude")</option>';
+				result += '<option value="' + field.fieldname + '.longitude">' + field.fieldname + '("longitude")</option>';
+			} else {
+				result += '<option value="' + field.fieldname + '">' + field.fieldname + '</option>';
+			}
+		}
+	}
+	result += '</select>';
+	return result;
 }
 
 function getFieldOptions() {
 	let fieldCount = wizardFields.length;
-	let fieldtypes_to_skip;
+
 	let resultOption = '<p><span title="To reorder fields, navigate to Table - Fields and drag fields using the three-dot (⋮)">Fields:</span><br/>';
 	resultOption += '<select class="form-select list" id="wizardGuide_fields" MULTIPLE style="width: 100%;">';
 
-	fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
+	let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
 
 	for (let index = 0; index < fieldCount; index++) {
 		let field = wizardFields[index];
@@ -665,9 +693,7 @@ function getFieldOptions() {
 
 function modal_layoutTypeSelector_update() {
 	let layoutTypeExtended = parseInt(document.getElementById("modal_layoutTypeSelector").value);
-
 	let resultOption = '';
-
 
 	switch (layoutTypeExtended) {
 
@@ -708,6 +734,18 @@ function modal_layoutTypeSelector_update() {
 		case 112:
 			//Ordered List and Unordered List
 			resultOption += getFieldOptions();
+			break;
+
+		case 120:
+			//Map With Markers
+			resultOption += '<p>Add search by field<br/>' + getFieldSelector('wizardGuide_add_search_field') + '</p>';
+			resultOption += '<p>Latitude field:<br/>' + getFieldSelector('wizardGuide_latitude') + '</p>';
+			resultOption += '<p>Longitute field:<br/>' + getFieldSelector('wizardGuide_longitude') + '</p>';
+
+			resultOption += '<p><input type="checkbox" id="wizardGuide_add_record_count" /> Add "Record Count"</p>';
+			resultOption += '<p><input type="checkbox" id="wizardGuide_add_add_record" /> Add "Add Record" button</p>';
+			resultOption += '<p><input type="checkbox" id="wizardGuide_add_print" /> Add "Print" button</p>';
+
 			break;
 
 		case 200:
@@ -767,7 +805,7 @@ function layoutWizardGenerateLayout(event) {
 	event.preventDefault();
 
 	let layout_obj = document.getElementById(codemirror_active_areatext_id);
-	let editor = getActiveEditor();
+	let editor = getActiveEditor(-1);
 	layout_obj.value = editor.getValue();
 
 	let v = layout_obj.value;
@@ -796,6 +834,46 @@ function layoutWizardGenerateLayout(event) {
 
 		case 112:
 			layout_obj.value = getLayout_Unordered_List();
+			break;
+
+		case 120:
+			let result = getLayout_MapWithMarkers();
+			layout_obj.value = result.html;
+
+			let css_layout_obj = document.getElementById('jform_layoutcss');
+			if (css_layout_obj) {
+				let css_editor = getActiveEditor(2);//JS Layout tab
+				css_layout_obj.value = css_editor.getValue();
+				if (css_layout_obj.value !== '') {
+					if (!confirm('CSS Layout Content is not empty. Are you sure you want to replace it?')) {
+						return;
+					}
+				}
+
+				css_layout_obj.value = result.css;
+				css_editor.getDoc().setValue(result.css);
+			} else {
+				alert('This layout requires the CSS code to be inserted into CSS Tab.')
+				return;
+			}
+
+			let js_layout_obj = document.getElementById('jform_layoutjs');
+			if (js_layout_obj) {
+				let js_editor = getActiveEditor(3);//JS Layout tab
+				js_layout_obj.value = js_editor.getValue();
+				if (js_layout_obj.value !== '') {
+					if (!confirm('JavaScript Layout Content is not empty. Are you sure you want to replace it?')) {
+						return;
+					}
+				}
+
+				js_layout_obj.value = result.js;
+				js_editor.getDoc().setValue(result.js);
+			} else {
+				alert('This layout requires the JavaScript code to be inserted into JavaScript Tab.')
+				return;
+			}
+
 			break;
 
 		case 200:
@@ -1142,8 +1220,158 @@ function getLayout_SimpleCatalog() {
 	return result;
 }
 
-function renderTableHead(fieldtypes_to_skip, fields_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby) {
+function getLayout_MapWithMarkers() {
 
+	let result = "";
+	let obj;
+
+	obj = document.getElementById("wizardGuide_add_record_count");
+	if (!obj || obj.checked)
+		result += '<div style="float:right;">{{ html.recordcount }}</div>\r\n';
+
+	obj = document.getElementById("wizardGuide_add_add_record");
+	if (!obj || obj.checked) {
+		result += '<div style="float:left;">{{ html.add }}</div>\r\n';
+		result += '\r\n';
+	}
+
+	obj = document.getElementById("wizardGuide_add_print");
+	if (!obj || obj.checked) {
+		if (window.Joomla instanceof Object)
+			result += '<div style="text-align:center;">{{ html.print }}</div>\r\n';
+	}
+
+	obj = document.getElementById("wizardGuide_add_search_field");
+	if (!obj || !obj.value !== "") {
+		result += '{{ html.search("' + obj.value + '") }}\r\n';
+		result += '{{ html.searchbutton }}\r\n\r\n';
+	}
+
+	let latitudeField = '';
+	let longitudeField = '';
+
+	obj = document.getElementById("wizardGuide_latitude");
+	if (!obj || !obj.value !== "") {
+		latitudeField = obj.value;
+
+		if (latitudeField.indexOf('.') !== -1) {
+			let parts = latitudeField.split('.');
+			latitudeField = parts[0] + '("' + parts[1] + '")';
+		}
+
+	} else {
+		alert("Latitude field is required");
+		return;
+	}
+
+	obj = document.getElementById("wizardGuide_longitude");
+	if (!obj || !obj.value !== "") {
+		longitudeField = obj.value;
+
+		if (longitudeField.indexOf('.') !== -1) {
+			let parts = longitudeField.split('.');
+			longitudeField = parts[0] + '("' + parts[1] + '")';
+		}
+
+	} else {
+		alert("Longitude field is required");
+		return;
+	}
+
+	result += '<div id="map">The map will be here.</div>\r\n';
+	result += '<script>\r\n';
+	result += 'let list_of_{{ table.name }} = [\r\n';
+	result += '{% block record %}\r\n';
+	result += '{% if ' + latitudeField + ' != "" and ' + longitudeField + ' != "" %}\r\n';
+	result += '{\r\n';
+	result += '"id_":"{{ record.id }}",\r\n';
+	result += '"latitude":"{{ ' + latitudeField + ' }}",\r\n';
+	result += '"longitude":"{{ ' + longitudeField + ' }}",\r\n';
+	result += '}{% if not record.islast %},{% endif %}\r\n';
+	result += '{% endif %}\r\n';
+	result += '{% endblock %}\r\n';
+	result += ']\r\n';
+	result += '</script>\r\n';
+
+	let css = '';
+	css += '@media screen and (max-width: 600px) {\r\n';
+	css += '\t#map {\r\n';
+	css += '\t\twidth: 100%;\r\n';
+	css += '\t\theight: 100%;\r\n';
+	css += '\t\t}\r\n';
+	css += '}\r\n';
+	css += '@media screen and (min-width: 601px) {\r\n';
+	css += '\t#map {\r\n';
+	css += '\t\twidth: 100%;\r\n';
+	css += '\t\theight: 400px;\r\n';
+	css += '\t}\r\n';
+	css += '}\r\n';
+
+	let js = '';
+	js += 'let checkGoogleMaps_{{ table.name }} = null;\r\n';
+	js += 'window.initMap_{{ table.name }} = function() {\r\n';
+	js += '\tmap = new google.maps.Map(document.getElementById(\'map\'));\r\n';
+	js += '\taddMarkers_{{ table.name }}(list_of_{{ table.name }});\r\n';
+	js += '}\r\n';
+	js += '\r\n';
+	js += 'window.addEventListener(\'load\', function () {\r\n';
+	js += '\t// More thorough check for Google Maps API\r\n';
+	js += '\tcheckGoogleMaps_{{ table.name }} = setInterval(function () {\r\n';
+	js += '\t\tif (typeof google !== \'undefined\' && typeof google.maps !== \'undefined\' && typeof google.maps.Map === \'function\') {\r\n';
+	js += '\t\t\tinitMap_{{ table.name }}();\r\n';
+	js += '\t\t\tclearInterval(checkGoogleMaps_{{ table.name }});\r\n';
+	js += '\t\t}\r\n';
+	js += '\t}, 300);//Wait a little to make sure that Google Map is loaded.\r\n';
+	js += '});\r\n';
+
+	js += 'function addMarkers_{{ table.name }}(items) {\r\n';
+	js += '\tif (!items || items.length === 0) return;\r\n';
+	js += '\t// Create bounds object to track marker positions\r\n';
+	js += '\tconst bounds = new google.maps.LatLngBounds();\r\n';
+	js += '\tconst markers = [];\r\n';
+	js += '\titems.forEach((data, index) => {\r\n';
+	js += '\tconst position = {lat: parseFloat(data.latitude), lng: parseFloat(data.longitude)};\r\n';
+	js += '\t// Extend bounds with each marker position\r\n';
+	js += '\tbounds.extend(position);\r\n';
+	js += '\t// Create the marker with a specific color based on activity status\r\n';
+	js += '\tconst marker = new google.maps.Marker({\r\n';
+	js += '\tposition: position,\r\n';
+	js += '\tmap: map,\r\n';
+	js += '\ttitle: data.name,\r\n';
+	js += '\ticon: {\r\n';
+	js += '\tpath: google.maps.SymbolPath.CIRCLE,\r\n';
+	js += '\tscale: 10, // Adjust size here\r\n';
+	js += '\tfillColor: \'red\',\r\n';
+	js += '\tfillOpacity: 1,\r\n';
+	js += '\tstrokeWeight: 1,\r\n';
+	js += '\tstrokeColor: \'black\' // Marker border color\r\n';
+	js += '\t}\r\n';
+	js += '\t});\r\n';
+	js += '\tmarkers.push(marker);\r\n';
+	js += '\t});\r\n';
+	js += '\r\n';
+	js += '\t// Fit the map to the bounds and adjust zoom\r\n';
+	js += '\tmap.fitBounds(bounds);\r\n';
+	js += '\r\n';
+	js += '\t// Add a listener for when the zoom_changed event fires\r\n';
+	js += '\tgoogle.maps.event.addListenerOnce(map, \'bounds_changed\', function () {\r\n';
+	js += '\t// Get the current zoom level\r\n';
+	js += '\tlet currentZoom = map.getZoom();\r\n';
+	js += '\t// If markers are too close together, prevent excessive zoom\r\n';
+	js += '\tif (currentZoom > 15) {\r\n';
+	js += '\tmap.setZoom(15);\r\n';
+	js += '\t}\r\n';
+	js += '\t// If markers are too far apart, set minimum zoom\r\n';
+	js += '\tif (currentZoom < 3) {\r\n';
+	js += '\tmap.setZoom(3);\r\n';
+	js += '\t}\r\n';
+	js += '\t});\r\n';
+	js += '}\r\n';
+
+	return {"html": result, "css": css, "js": js};
+}
+
+function renderTableHead(fieldtypes_to_skip, fields_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby) {
 
 	let obj = document.getElementById("wizardGuide_add_batch_toolbar");
 	let addBatchToolbar = true;
@@ -1479,12 +1707,16 @@ function getLayout_Record() {
 	return result;
 }
 
-function getActiveEditor() {
+function getActiveEditor(index) {
+
+	if (index === -1)
+		index = codemirror_active_index;
+
 	let cm;
 	if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar'))
-		cm = codemirror_editors[codemirror_active_index].codemirror;
+		cm = codemirror_editors[index].codemirror;
 	else if (typeof Joomla !== 'undefined')
-		cm = codemirror_editors[codemirror_active_index];
+		cm = codemirror_editors[index];
 
 	return cm;
 }

@@ -185,7 +185,7 @@ function showModal() {
 	// When the user clicks on <span> (x), close the modal
 	span.onclick = function () {
 		modal.style.display = "none";
-		let cm = getActiveEditor();
+		let cm = getActiveEditor(-1);
 		cm.focus();
 	};
 
@@ -193,7 +193,7 @@ function showModal() {
 	window.onclick = function (event) {
 		if (event.target === modal) {
 			modal.style.display = "none";
-			const cm = getActiveEditor();
+			const cm = getActiveEditor(-1);
 			cm.focus();
 		}
 	};
@@ -339,7 +339,7 @@ function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, lin
 		if (typeof (param_att.twigsimplereplacement) !== "undefined" && param_att.twigsimplereplacement !== "") {
 			let cursor_from = {line: line, ch: positions[0]};
 			let cursor_to = {line: line, ch: positions[1]};
-			let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
+			let editor = getActiveEditor(-1);
 			let doc = editor.getDoc();
 			doc.replaceRange(param_att.twigsimplereplacement, cursor_from, cursor_to, "");
 			return true;
@@ -351,7 +351,7 @@ function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, lin
 			paramValueString = safeOld2NewParamConversion(paramValueString);
 
 			let result = param_att.twigreplacestartchar + paramValueString + param_att.twigreplaceendchar;
-			let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
+			let editor = getActiveEditor(-1);
 			let doc = editor.getDoc();
 			doc.replaceRange(result, cursor_from, cursor_to, "");
 			return true;
@@ -404,14 +404,14 @@ function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, lin
 			let cursor_from = {line: line, ch: positions[0]};
 			let cursor_to = {line: line, ch: positions[1]};
 			let result = param_att.twigreplacestartchar + paramValueString + param_att.twigreplaceendchar;
-			let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
+			let editor = getActiveEditor(-1);
 			let doc = editor.getDoc();
 			doc.replaceRange(result, cursor_from, cursor_to, "");
 			return true;
 		} else if (typeof (param_att.twigsimplereplacement) !== "undefined" && param_att.twigsimplereplacement !== "") {
 			let cursor_from = {line: line, ch: positions[0]};
 			let cursor_to = {line: line, ch: positions[1]};
-			let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
+			let editor = getActiveEditor(-1);
 			let doc = editor.getDoc();
 			doc.replaceRange(param_att.twigsimplereplacement, cursor_from, cursor_to, "");
 			return true;
@@ -450,7 +450,7 @@ function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, lin
 function addTag(tagstartchar, tagendchar, tag, param_count) {
 
 	let postfix = '';
-	let cm = getActiveEditor();//codemirror_editors[0];
+	let cm = getActiveEditor(-1);//codemirror_editors[0];
 
 	if (param_count > 0) {
 
@@ -467,7 +467,7 @@ function addTag(tagstartchar, tagendchar, tag, param_count) {
 }
 
 function updateCodeMirror(text) {
-	let cm = getActiveEditor();
+	let cm = getActiveEditor(-1);
 	const doc = cm.getDoc();
 	const cursor = cm.getCursor();
 	doc.replaceRange(text, cursor);
@@ -755,7 +755,7 @@ function saveParams(e, countParams, line_number, pos1, pos2, isNew, tagStartChar
 
 	let cursor_from = {line: line_number, ch: pos1};
 	let cursor_to = {line: line_number, ch: pos2};
-	let editor = getActiveEditor();
+	let editor = getActiveEditor(-1);
 	let doc = editor.getDoc();
 	doc.replaceRange(result, cursor_from, cursor_to, "");
 	document.getElementById('layouteditor_Modal').style.display = "none";
@@ -767,7 +767,7 @@ function closeModal(e) {
 	e.preventDefault();
 
 	document.getElementById('layouteditor_Modal').style.display = "none";
-	const cm = getActiveEditor();//codemirror_editors[0];
+	const cm = getActiveEditor(-1);//codemirror_editors[0];
 	cm.focus();
 	return false;
 }
@@ -965,7 +965,7 @@ function addTabExtraEvents3() {
 				setTimeout(function () {
 					codemirror_active_index = index;
 					codemirror_active_areatext_id = 'jform_' + code;
-					let cm = getActiveEditor();//codemirror_editors[index];
+					let cm = getActiveEditor(-1);
 					cm.refresh();
 					adjustEditorHeight();
 				}, 100);
@@ -984,7 +984,7 @@ function addTabExtraEvent4(id) {
 			setTimeout(function () {
 				codemirror_active_index = index;
 				codemirror_active_areatext_id = 'jform_' + id;
-				let cm = getActiveEditor();//codemirror_editors[index];
+				let cm = getActiveEditor(-1);
 				cm.refresh();
 				adjustEditorHeight();
 			}, 100);
@@ -1015,7 +1015,7 @@ function addTabExtraEvents() {
 	let index = 0;
 	codemirror_active_index = index;
 	codemirror_active_areatext_id = 'jform_' + tabs[0];
-	let cm = getActiveEditor();//codemirror_editors[index];
+	let cm = getActiveEditor(-1);
 
 	if (typeof (cm) == "undefined")
 		return;
@@ -1078,7 +1078,7 @@ function doExtraCodeMirrorEvent(ch, lineString, lineNumber, mousePos) {
 
 		showModalForm(startChar, postfix, endChar, tag, mousePos.top, mousePos.left, lineNumber, positions, 0);
 	} else {
-		let cm = getActiveEditor();
+		let cm = getActiveEditor(-1);
 		let cr = cm.getCursor();
 		let positionsRange = findTagInMultiline(cm, cr.ch, cr.line);
 		if (positionsRange !== null) {

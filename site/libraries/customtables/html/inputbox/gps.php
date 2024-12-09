@@ -30,9 +30,6 @@ class InputBox_gps extends BaseInputBox
 				$value = $defaultValue;
 		}
 
-		if ($value === null)
-			return '';
-
 		$html = [];
 		$html[] = '<div class="input-group has-success">';
 		$html[] = '<input type="text" class="form-control valid form-control-success" id="' . $elementId . '" name="' . $elementId . '" value="' . htmlspecialchars($value ?? '') . '" />';
