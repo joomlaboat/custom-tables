@@ -728,7 +728,7 @@ function getParamEditForm(tagObject, line_number, positions, isNew, countParams,
 	result += '<div style="text-align:center;">';
 
 	let postfixClean = postfix.replaceAll('"', '****quote****');
-	result += '<button id="clsave" onclick=\'return saveParams(event,' + countParams + ',' + line_number + ',' + positions[0] + ',' + positions[1] + ',' + isNew + ',"' + tagStartChar + '","' + tagEndChar + '","' + postfixClean + '");\' class="btn btn-small button-apply btn-success">Save</button>';
+	result += '<button id="clsave" onclick=\'return saveParams(event,' + countParams + ',' + line_number + ',' + positions[0] + ',' + positions[1] + ',' + isNew + ',"' + tagStartChar + '","' + tagEndChar + '","' + postfixClean + '");\' class="btn btn-small button-apply btn-success button button-primary">Save</button>';
 	result += ' <button id="clclose" onclick=\'return closeModal(event);\' class="btn btn-small button-cancel btn-danger">Cancel</button>';
 	result += '</div>';
 	return result;

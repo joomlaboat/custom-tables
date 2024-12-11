@@ -227,18 +227,53 @@ class Twig_Document_Tags
 
 	public function config(string $parameter)
 	{
-		if ($parameter == 'googlemapapikey') {
-			$joomla_params = ComponentHelper::getParams('com_customtables');
-			return $joomla_params->get('googlemapapikey');
-		} elseif ($parameter == 'fieldprefix') {
-			$joomla_params = ComponentHelper::getParams('com_customtables');
-			return $joomla_params->get('fieldPrefix');
-		} elseif ($parameter == 'foldertosavelayouts') {
-			$joomla_params = ComponentHelper::getParams('com_customtables');
-			return $joomla_params->get('folderToSaveLayouts');
+		if (defined('_JEXEC')) {
+			if ($parameter == 'googlemapapikey') {
+				$joomla_params = ComponentHelper::getParams('com_customtables');
+				return $joomla_params->get('googlemapapikey');
+			} elseif ($parameter == 'fieldprefix') {
+
+				if ($this->ct->Table !== null)
+					return $this->ct->Table->fieldPrefix;
+
+				$prefix = ComponentHelper::getParams('com_customtables');
+				if (empty($prefix))
+					$prefix = 'ct_';
+
+				if ($prefix == 'NO-PREFIX')
+					$prefix = '';
+
+				return $prefix;
+			} elseif ($parameter == 'foldertosavelayouts') {
+				$joomla_params = ComponentHelper::getParams('com_customtables');
+				return $joomla_params->get('folderToSaveLayouts');
+			} else {
+				return 'Unknown parameter in document.config(parameter)';
+			}
+		} elseif (defined('WPINC')) {
+
+			if ($parameter == 'googlemapapikey') {
+				return get_option('customtables-googlemapapikey');
+			} elseif ($parameter == 'fieldprefix') {
+				if ($this->ct->Table !== null)
+					return $this->ct->Table->fieldPrefix;
+
+				$prefix = get_option('customtables-fieldprefix');
+				if (empty($prefix))
+					$prefix = 'ct_';
+
+				if ($prefix == 'NO-PREFIX')
+					$prefix = '';
+
+				return $prefix;
+
+			} elseif ($parameter == 'foldertosavelayouts') {
+				return 'WP: "foldertosavelayouts" unsupported parameter in this version of the Custom Tables.';
+			} else {
+				return 'Unknown parameter in document.config(parameter)';
+			}
 		} else {
-			return 'Unknown parameter in document.config(parameter)';
+			return 'Unknown parameter in document.config()';
 		}
 	}
-
 }

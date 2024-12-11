@@ -1276,9 +1276,9 @@
 			 proversion="1" wordpress="true">
 			<params>
 				<param name="parameter" label="Parameter" type="list">
-					<option value="googlemapapikey" label="Google Map API Key"/>
-					<option value="fieldprefix" label="Field Name Prefix"/>
-					<option value="foldertosavelayouts" label="Folder where to save Layouts"/>
+					<option value="googlemapapikey" label="Google Map API Key" wordpress="true"/>
+					<option value="fieldprefix" label="Field Name Prefix" wordpress="true"/>
+					<option value="foldertosavelayouts" label="Folder where to save Layouts" wordpress="true"/>
 				</param>
 			</params>
 		</tag>
