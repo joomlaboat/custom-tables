@@ -1,569 +1,536 @@
 .required .star {
-    color: red;
+	color: red;
 }
 
 .ctFormLabel {
-    display: inline-block !important; /*Somehow doesnt work*/
+	display: inline-block !important; /*Somehow doesnt work*/
 }
 
 .multilangtext {
-    position: relative;
-    margin-top: 10px;
-    margin-bottom: 60px;
+	position: relative;
+	margin-top: 10px;
+	margin-bottom: 60px;
 }
 
 .multilangtext textarea {
-    width: 100%;
-    padding-top: 0;
-    padding-bottom: 20px;
+	width: 100%;
+	padding-top: 0;
+	padding-bottom: 20px;
 }
 
 .multilangtext .language_label {
-    display: block;
-    position: absolute;
-    color: white;
-    background: #5bb75baa;
-    top: 0;
-    right: 0;
-    padding: 3px;
-    /*border-top-left-radius: 3px;*/
-    /*border-top-right-radius: 3px;*/
-    border-bottom-left-radius: 3px;
-    /*margin-top: -5px;*/
-    overflow: hidden;
+	display: block;
+	position: absolute;
+	color: white;
+	background: #5bb75baa;
+	top: 0;
+	right: 0;
+	padding: 3px;
+	/*border-top-left-radius: 3px;*/
+	/*border-top-right-radius: 3px;*/
+	border-bottom-left-radius: 3px;
+	/*margin-top: -5px;*/
+	overflow: hidden;
 }
 
 .multilangtext .language_label_rich {
-    display: block;
+	display: block;
 
-    color: white;
-    background: #5bb75b;
+	color: white;
+	background: #5bb75b;
 
-    padding: 3px;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 0;
-    margin-bottom: 0;
-    margin-top: 10px;
+	padding: 3px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 0;
+	margin-bottom: 0;
+	margin-top: 10px;
 
 }
 
 .ct_goback div {
-    background-image: url('../images/icons/arrow_rtl.png');
-    background-position: left;
-    background-repeat: no-repeat;
-    padding-left: 20px;
+	background-image: url('../images/icons/arrow_rtl.png');
+	background-position: left;
+	background-repeat: no-repeat;
+	padding-left: 20px;
 }
 
 #eseditForm input {
-    display: inline-block;
+	display: inline-block;
 }
 
 #eseditForm select {
-    display: inline-block;
+	display: inline-block;
 }
 
 
 #eseditForm table {
-    width: 100%;
+	width: 100%;
 }
 
 #eseditForm {
-    width: 100%;
+	width: 100%;
 }
 
 #eseditForm td {
-    padding: 4px;
-    border-bottom: 1px dotted lightgrey;
+	padding: 4px;
+	border-bottom: 1px dotted lightgrey;
 }
 
 .dtllin {
-    line-height: 24px;
+	line-height: 24px;
 }
 
 .dtlerror {
-    line-height: 24px;
-    color: black;
-    background-color: pink;
-    padding: 10px;
-    border-radius: 10px;
-    font-weight: bold;
+	line-height: 24px;
+	color: black;
+	background-color: pink;
+	padding: 10px;
+	border-radius: 10px;
+	font-weight: bold;
 
 
 }
 
 .ct_pro {
-    border: 1px solid #ff9999;
-    padding: 5px;
-    border-radius: 5px;
+	border: 1px solid #ff9999;
+	padding: 5px;
+	border-radius: 5px;
 }
 
 .tablesorter td {
 
-    /*border:1px dotted grey;*/
-    padding: 3px;
+	/*border:1px dotted grey;*/
+	padding: 3px;
 
 }
 
 /* -- GAP colors - habits/skils etc */
 .SelectBox1 {
-    color: blue;
-    font-weight: bold;
-    background-color: white;
+	color: blue;
+	font-weight: bold;
+	background-color: white;
 }
 
 .SelectBox2 {
-    color: green;
-    font-weight: bold;
-    background-color: white;
+	color: green;
+	font-weight: bold;
+	background-color: white;
 }
 
 .SelectBox3 {
-    color: red;
-    font-weight: bold;
-    background-color: white;
+	color: red;
+	font-weight: bold;
+	background-color: white;
 }
 
 .SelectBox8 {
-    color: purple;
-    font-weight: bold;
-    background-color: white;
+	color: purple;
+	font-weight: bold;
+	background-color: white;
 }
 
 .SelectBox9 {
-    color: white;
-    background-color: red;
-    font-weight: bold;
+	color: white;
+	background-color: red;
+	font-weight: bold;
 }
 
 /* table */
 
-/*
-.datagrid input, .datagrid select {
-    width: 100%;
-    max-width: 250px;
-}
-*/
-
 .datagrid {
-    width: 100% !important;
-    overflow: visible;
-    background-color: white;
-    position: relative;
-    /*z-index:32000;*/
-    display: table;
-    /* box-shadow: 5px 5px 5px #555555;*/
+	width: 100% !important;
+	overflow: visible;
+	background-color: white;
+	position: relative;
+	/*z-index:32000;*/
+	display: table;
+	/* box-shadow: 5px 5px 5px #555555;*/
 }
-
 
 .datagrid table {
-    border-collapse: collapse;
-    /*    text-align: left;*/
-    width: 100%;
+	border-collapse: collapse;
+	/*    text-align: left;*/
+	width: 100%;
 }
 
 .datagrid table tbody tr:nth-child(odd) {
-    background: #fafbfc;
-    border-bottom: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+	background: #fafbfc;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
 }
 
 .datagrid table tbody tr:nth-child(even) {
-    background: #ffffff;
-    border-bottom: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+	background: #ffffff;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
 }
 
 .datagrid table tbody tr:nth-child(odd) td {
-    border-right: 1px solid #f0f6fc;
+	border-right: 1px solid #f0f6fc;
 }
 
 .datagrid table tbody tr:nth-child(even) td {
-    border-right: 1px solid #f0f6fc;
+	border-right: 1px solid #f0f6fc;
 }
 
 .datagrid {
-    font: normal 12px/150% Arial, Helvetica, sans-serif;
-    background: #fff;
-    overflow: hidden;
-    border: 2px solid #FFFFFF;
+	font: normal 12px/150% Arial, Helvetica, sans-serif;
+	background: #fff;
+	overflow: hidden;
+	border: 2px solid #FFFFFF;
 }
 
-/*.datagrid tbody tr td:first-child*/
 .datagrid thead tr th:first-child {
-    width: 30px;
-    text-align: center;
-    vertical-align: middle;
+	width: 30px;
+	text-align: center;
+	vertical-align: middle;
 }
 
-
-/*.datagrid table td:not(:first-child):not(.short),*/
 .datagrid table th:not(:first-child):not(.short) {
 
-    min-width: 100px;
-    padding: 5px 1px 5px 3px !important;
-    border-left: 0 solid #FFFFFF;
-    vertical-align: bottom;
+	min-width: 100px;
+	padding: 5px 1px 5px 3px !important;
+	border-left: 0 solid #FFFFFF;
+	vertical-align: bottom;
 }
 
 .datagrid table tr .short {
-    width: 30px;
-    min-width: 30px;
-    text-align: center;
-    vertical-align: middle;
+	width: 30px;
+	min-width: 30px;
+	text-align: center;
+	vertical-align: middle;
 }
 
 .datagrid thead tr th:last-child,
 .datagrid tbody tr td:last-child {
-    text-align: center;
+	text-align: center;
 }
 
 
 .datagrid table thead th {
-    background-color: #FFFFFF;
-    color: #117CAB;
-    font-size: 15px;
-    font-weight: bold;
+	background-color: #FFFFFF;
+	color: #117CAB;
+	font-size: 15px;
+	font-weight: bold;
 }
 
 .datagrid table tbody td {
-    color: #545454;
-    font-size: 12px;
-    font-weight: normal;
-    /*border-left: 2px solid #FFFFFF;*/
-    /* Non standard for webkit */
-    word-break: break-word;
+	color: #545454;
+	font-size: 12px;
+	font-weight: normal;
+	/*border-left: 2px solid #FFFFFF;*/
+	/* Non standard for webkit */
+	word-break: break-word;
 
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-    hyphens: auto;
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	-ms-hyphens: auto;
+	hyphens: auto;
 
 }
-
-/*.datagrid table tbody .alt td { background: #F2F2F2; color: #545454; }*/
-/*
-.datagrid table tbody td:first-child {
-    border-left: none;
-    min-width: 30px !important;
-}
-*/
 
 .datagrid table tbody tr:last-child td {
-    border-bottom: none;
+	border-bottom: none;
 }
 
 /* ---------------------------------------------------------------------------------------------------------------------------------- */
 .toolbarIcons {
-    display: inline-block;
-    margin: 0 2px 0 2px;
+	display: inline-block;
+	margin: 0 2px 0 2px;
 }
 
 .estableTitle {
-    border: 1px solid #000000;
-    padding: 0;
-    margin: 0;
+	border: 1px solid #000000;
+	padding: 0;
+	margin: 0;
 }
 
 .estableTitle th {
 
-    background-color: #F11E28;
-    color: #ffffff;
-    font-weight: bold;
+	background-color: #F11E28;
+	color: #ffffff;
+	font-weight: bold;
 
 }
 
 .estableTitle td {
-    border: 1px solid #000000;
-    padding: 3px;
-    margin: 0;
+	border: 1px solid #000000;
+	padding: 3px;
+	margin: 0;
 }
 
 
 .estableSmallFont {
-    font-size: 12px;
-    border: 1px solid #000000;
-    padding: 0;
-    margin: 0;
+	font-size: 12px;
+	border: 1px solid #000000;
+	padding: 0;
+	margin: 0;
 }
 
 .estableSmallFont th {
 
-    background-color: #F11E28;
-    color: #ffffff;
-    font-weight: bold;
+	background-color: #F11E28;
+	color: #ffffff;
+	font-weight: bold;
 
 }
 
 .estableSmallFont td {
-    border: 1px solid #000000;
-    padding: 3px;
-    margin: 0;
+	border: 1px solid #000000;
+	padding: 3px;
+	margin: 0;
 }
 
-
 .esTableDescription {
-    border: 1px lightblue solid;
-    border-radius: 3px;
-    padding: 7px;
-    color: #3c626e;
-    margin-bottom: 10px;
-    background-color: #d6f5ff;
+	border: 1px lightblue solid;
+	border-radius: 3px;
+	padding: 7px;
+	color: #3c626e;
+	margin-bottom: 10px;
+	background-color: #d6f5ff;
 }
 
 .field-calendar {
-    display: inline-block;
-    margin-right: 60px;
+	display: inline-block;
+	margin-right: 60px;
 }
 
-
 .esUploadFileBox {
-    /*
-    border: 1px lightblue solid;
-    border-radius: 3px;
-    */
-    padding: 7px;
-    width: 100%;
+	/*
+	border: 1px lightblue solid;
+	border-radius: 3px;
+	*/
+	padding: 7px;
+	width: 100%;
 }
 
 .esUploadFileBox table {
-    border: none !important;
-    width: 100%;
+	border: none !important;
+	width: 100%;
 }
 
 
 /* ------------------- loader -------------- */
-/*
-.ct_dynamic_saveIcon{
- position: relative;
- width: auto !important;
-}
-*/
 
 .ct_loader input {
-    margin: 0 !important;
+	margin: 0 !important;
 }
 
 .ct_loader {
-    /*width: auto;*/
-    margin: -2px 0 0 -2px;
-    padding: 2px;
-    border-radius: 5px;
+	/*width: auto;*/
+	margin: -2px 0 0 -2px;
+	padding: 2px;
+	border-radius: 5px;
 
-    /* Single pixel data uri image http://jsfiddle.net/LPxrT/
-    /* background-image: green one pixel GIF */
-    background-image: url('data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///1q0Wv///yH5BAEAAAMALAAAAAABAAEAAAICVAEAOw=='),
-    url('data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///1q0Wv///yH5BAEAAAMALAAAAAABAAEAAAICVAEAOw=='),
-    url('data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///1q0Wv///yH5BAEAAAMALAAAAAABAAEAAAICVAEAOw=='),
-    url('data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///1q0Wv///yH5BAEAAAMALAAAAAABAAEAAAICVAEAOw==');
+	/* Single pixel data uri image http://jsfiddle.net/LPxrT/
+	/* background-image: green one pixel GIF */
+	background-image: url('data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///1q0Wv///yH5BAEAAAMALAAAAAABAAEAAAICVAEAOw=='),
+	url('data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///1q0Wv///yH5BAEAAAMALAAAAAABAAEAAAICVAEAOw=='),
+	url('data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///1q0Wv///yH5BAEAAAMALAAAAAABAAEAAAICVAEAOw=='),
+	url('data:image/gif;base64,R0lGODlhAQABAJEAAAAAAP///1q0Wv///yH5BAEAAAMALAAAAAABAAEAAAICVAEAOw==');
 
-    background-repeat: no-repeat;
-    background-size: 0 2px, 2px 0, 0 2px, 2px 0;
+	background-repeat: no-repeat;
+	background-size: 0 2px, 2px 0, 0 2px, 2px 0;
 
-    background-position: top left, top right, bottom right, bottom left;
-    -webkit-animation: ct_loader_border 2s linear infinite;
+	background-position: top left, top right, bottom right, bottom left;
+	-webkit-animation: ct_loader_border 2s linear infinite;
 }
 
 /* Chrome, Safari, Opera */
 @-webkit-keyframes ct_loader_border {
 
-    0% {
-        background-position: top left, top right, bottom right, bottom left;
-        background-size: 0 2px, 2px 0, 0 2px, 2px 0;
-    }
+	0% {
+		background-position: top left, top right, bottom right, bottom left;
+		background-size: 0 2px, 2px 0, 0 2px, 2px 0;
+	}
 
 
-    20% {
-        background-position: top left, top right, bottom right, bottom left;
-        background-size: 100% 2px, 2px 0, 0 2px, 2px 0;
-    }
+	20% {
+		background-position: top left, top right, bottom right, bottom left;
+		background-size: 100% 2px, 2px 0, 0 2px, 2px 0;
+	}
 
-    25% {
-        background-position: top left, top right, bottom right, bottom left;
-        background-size: 100% 2px, 2px 100%, 0 2px, 2px 0;
-    }
-
-
-    45% {
-        background-position: top left, top right, bottom right, bottom left;
-        background-size: 100% 2px, 2px 100%, 100% 2px, 2px 0;
-    }
-
-    50% {
-        background-position: top left, top right, bottom right, bottom left;
-        background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%;
-    }
-
-    51% {
-
-        background-position: top right, bottom right, bottom left, top left;
-        background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%;
-    }
+	25% {
+		background-position: top left, top right, bottom right, bottom left;
+		background-size: 100% 2px, 2px 100%, 0 2px, 2px 0;
+	}
 
 
-    70% {
-        background-position: top right, bottom right, bottom left, top left;
-        background-size: 0 2px, 2px 100%, 100% 2px, 2px 100%;
-    }
+	45% {
+		background-position: top left, top right, bottom right, bottom left;
+		background-size: 100% 2px, 2px 100%, 100% 2px, 2px 0;
+	}
 
-    75% {
-        background-position: top right, bottom right, bottom left, top left;
-        background-size: 0 2px, 2px 0, 100% 2px, 2px 100%;
-    }
+	50% {
+		background-position: top left, top right, bottom right, bottom left;
+		background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%;
+	}
 
-    95% {
-        background-position: top right, bottom right, bottom left, top left;
-        background-size: 0 2px, 2px 0, 0 2px, 2px 100%;
-    }
+	51% {
 
-    100% {
-        background-position: top right, bottom right, bottom left, top left;
-        background-size: 0 2px, 2px 0, 0 2px, 2px 0;
-    }
+		background-position: top right, bottom right, bottom left, top left;
+		background-size: 100% 2px, 2px 100%, 100% 2px, 2px 100%;
+	}
+
+
+	70% {
+		background-position: top right, bottom right, bottom left, top left;
+		background-size: 0 2px, 2px 100%, 100% 2px, 2px 100%;
+	}
+
+	75% {
+		background-position: top right, bottom right, bottom left, top left;
+		background-size: 0 2px, 2px 0, 100% 2px, 2px 100%;
+	}
+
+	95% {
+		background-position: top right, bottom right, bottom left, top left;
+		background-size: 0 2px, 2px 0, 0 2px, 2px 100%;
+	}
+
+	100% {
+		background-position: top right, bottom right, bottom left, top left;
+		background-size: 0 2px, 2px 0, 0 2px, 2px 0;
+	}
 }
-
 
 @-webkit-keyframes ct_hide_border {
 
-    0% {
-        border: 2px solid #5ab45a;
-    }
-    100% {
-        border: 2px solid rgba(0, 0, 0, 0);
-    }
+	0% {
+		border: 2px solid #5ab45a;
+	}
+	100% {
+		border: 2px solid rgba(0, 0, 0, 0);
+	}
 }
 
 @-webkit-keyframes ct_error_border {
 
-    0% {
-        border: 2px solid red;
-    }
-    100% {
-        border: 2px solid rgba(255, 0, 0, 0.1);
-    }
+	0% {
+		border: 2px solid red;
+	}
+	100% {
+		border: 2px solid rgba(255, 0, 0, 0.1);
+	}
 }
 
 .ct_checkmark_hidden {
-    -webkit-animation: ct_hide_border 2s linear 1;
+	-webkit-animation: ct_hide_border 2s linear 1;
 }
 
 .ct_checkmark {
-    /*width: auto;*/
-    margin: -2px 0 0 -2px;
-    padding: 2px;
-    border-radius: 5px;
+	margin: -2px 0 0 -2px;
+	padding: 2px;
+	border-radius: 5px;
 }
 
 .ct_checkmark_err {
-    width: auto;
-    margin: -2px 0 0 -2px;
-    padding: 2px;
-    border-radius: 5px;
-    -webkit-animation: ct_error_border 1s infinite alternate;
+	width: auto;
+	margin: -2px 0 0 -2px;
+	padding: 2px;
+	border-radius: 5px;
+	-webkit-animation: ct_error_border 1s infinite alternate;
 }
 
 .ct_checkmark input {
-    margin: 0 !important;
+	margin: 0 !important;
 }
 
 .ct_checkmark_err input {
-    margin: 0 !important;
+	margin: 0 !important;
 }
 
 .ctSignature_flexrow {
-    display: flex;
-    /*padding:0;
-    width:400px;height:200px;*/
+	display: flex;
 }
 
 .ctSignature_flexrow canvas {
-    cursor: crosshair;
-    padding: 0;
-    /*width:400px;height:200px;*/
+	cursor: crosshair;
+	padding: 0;
 }
 
 .ctSignature_clear {
-    position: absolute;
-    right: 5px;
-    top: 0;
+	position: absolute;
+	right: 5px;
+	top: 0;
 }
 
 .ctSignature_download {
-    position: absolute;
-    right: 5px;
-    bottom: 0;
-    font-size: 10px;
-    color: #aaaaaa;
+	position: absolute;
+	right: 5px;
+	bottom: 0;
+	font-size: 10px;
+	color: #aaaaaa;
 }
 
 .ctProgressBar {
-    background-color: #457d54;
+	background-color: #457d54;
 }
 
 /* ------------------------------------- ordering field type ------------------------------- */
 
 .sortable-handler {
-    cursor: move;
-    width: 8px;
-    height: 24px;
+	cursor: move;
+	width: 8px;
+	height: 24px;
 }
 
 .ctIconOrdering:before {
-    height: 24px;
-    content: url('data:image/svg+xml;base64,PHN2ZyB4PSIwIiB5PSIwIiB2aWV3Qm94PSIwIDAgNCAxNiIgd2lkdGg9IjRweCIgaGVpZ2h0PSIxNnB4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBzdHlsZT0iZmlsbDpyZ2IoNTEsNTEsNTEpO3N0cm9rZS13aWR0aDowO3N0cm9rZTpyZ2IoMCwwLDApIiB4PSIwIiB5PSIwIiAvPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBzdHlsZT0iZmlsbDpyZ2IoNTEsNTEsNTEpO3N0cm9rZS13aWR0aDowO3N0cm9rZTpyZ2IoMCwwLDApIiB4PSIwIiB5PSI2IiAvPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBzdHlsZT0iZmlsbDpyZ2IoNTEsNTEsNTEpO3N0cm9rZS13aWR0aDowO3N0cm9rZTpyZ2IoMCwwLDApIiB4PSIwIiB5PSIxMiIgLz4KPC9zdmc+');
+	height: 24px;
+	content: url('data:image/svg+xml;base64,PHN2ZyB4PSIwIiB5PSIwIiB2aWV3Qm94PSIwIDAgNCAxNiIgd2lkdGg9IjRweCIgaGVpZ2h0PSIxNnB4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBzdHlsZT0iZmlsbDpyZ2IoNTEsNTEsNTEpO3N0cm9rZS13aWR0aDowO3N0cm9rZTpyZ2IoMCwwLDApIiB4PSIwIiB5PSIwIiAvPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBzdHlsZT0iZmlsbDpyZ2IoNTEsNTEsNTEpO3N0cm9rZS13aWR0aDowO3N0cm9rZTpyZ2IoMCwwLDApIiB4PSIwIiB5PSI2IiAvPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBzdHlsZT0iZmlsbDpyZ2IoNTEsNTEsNTEpO3N0cm9rZS13aWR0aDowO3N0cm9rZTpyZ2IoMCwwLDApIiB4PSIwIiB5PSIxMiIgLz4KPC9zdmc+');
 }
 
 .sortable-handler.inactive {
-    opacity: 0.3;
-    filter: alpha(opacity=30);
+	opacity: 0.3;
+	filter: alpha(opacity=30);
 }
 
 /* ------------------ Virtual Select --------------- */
 .vscomp-search-input {
-    padding: 0 !important;
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
+	padding: 0 !important;
+	border: none !important;
+	background: none !important;
+	box-shadow: none !important;
 }
 
 
 /* ------------------- GALLERY EDIT ---------------------*/
 
-
 .image-preview-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 10px;
 }
 
 .preview-item {
-    position: relative;
-    border: 1px solid #ddd;
-    padding: 5px;
-    border-radius: 4px;
+	position: relative;
+	border: 1px solid #ddd;
+	padding: 5px;
+	border-radius: 4px;
 }
 
 .preview-image {
-    max-width: 150px;
-    max-height: 150px;
-    object-fit: cover;
-    display: block;
+	max-width: 150px;
+	max-height: 150px;
+	object-fit: cover;
+	display: block;
 }
 
 .remove-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: red;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: red;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
 }
 
 .remove-btn:hover {
-    background: darkred;
+	background: darkred;
 }

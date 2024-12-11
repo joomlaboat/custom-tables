@@ -11,21 +11,11 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Component\Router\RouterInterface;
-use Joomla\CMS\Menu\AbstractMenu;
 use CustomTables\Value_file;
 
 class CustomTablesRouter implements RouterInterface
 {
-	/*
-		public function __construct(SiteApplication $app, AbstractMenu $menu)
-		{
-			$this->app = $app;
-			$this->menu = $menu;
-		}
-		*/
-
 	public function build(&$query): array
 	{
 		$segments = [];

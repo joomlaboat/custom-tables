@@ -137,7 +137,7 @@ class CustomTablesEdit {
 				}
 
 				let fileSize = CTEditHelper.formatFileSize(file.size);
-				let content = '<div class="ajax-file-upload-statusbar" style="width: 400px;"><div class="ajax-file-upload-filename">1). ' + file.name + ' (' + fileSize + ')</div></div>';
+				let content = '<div class="ajax-file-upload-statusbar"><div class="ajax-file-upload-filename">1). ' + file.name + ' (' + fileSize + ')</div></div>';
 				document.getElementById("ct_eventsmessage_" + fieldName).innerHTML = content;
 				document.getElementById(prefix + fieldName + '_filename').value = file.name;
 

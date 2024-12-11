@@ -34,8 +34,8 @@ class Value_image extends BaseValue
 
 				$img = intval($img);
 				$isShortcut = $img < 0;
-
 				$imageFile_ = $ImageFolderArray['path'] . DIRECTORY_SEPARATOR . '_esthumb_' . $img;
+
 				if ($addPath)
 					$imageSrc_ = $ImageFolderArray['web'] . '/_esthumb_' . $img;
 				else
@@ -52,13 +52,13 @@ class Value_image extends BaseValue
 			$imageSrc_ = '';
 		}
 
-		if (file_exists(CUSTOMTABLES_ABSPATH . $imageFile_ . '.jpg')) {
+		if (file_exists($imageFile_ . '.jpg')) {
 			$imageFile = $imageFile_ . '.jpg';
 			$imageSrc = $imageSrc_ . '.jpg';
-		} elseif (file_exists(CUSTOMTABLES_ABSPATH . $imageFile_ . '.png')) {
+		} elseif (file_exists($imageFile_ . '.png')) {
 			$imageFile = $imageFile_ . '.png';
 			$imageSrc = $imageSrc_ . '.png';
-		} elseif (file_exists(CUSTOMTABLES_ABSPATH . $imageFile_ . '.webp')) {
+		} elseif (file_exists($imageFile_ . '.webp')) {
 			$imageFile = $imageFile_ . '.webp';
 			$imageSrc = $imageSrc_ . '.webp';
 		} else {
