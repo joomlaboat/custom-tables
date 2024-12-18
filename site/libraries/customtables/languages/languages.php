@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use Exception;
 use Joomla\CMS\Factory;
 
 class Languages
@@ -89,24 +90,38 @@ class Languages
 
 	function getLangPostfix(): string
 	{
+		$language = '';
+
+		// Joomla detection
 		if (defined('_JEXEC')) {
-			$langObj = Factory::getLanguage();
-			$nowLang = $langObj->getTag();
-			$index = 0;
-			foreach ($this->LanguageList as $lang) {
-				if ($lang->language == $nowLang) {
-
-					$this->tag = $lang->sef;
-
-					if ($index == 0)
-						return '';
-					else
-						return '_' . $lang->sef;
+			try {
+				if (CUSTOMTABLES_JOOMLA_MIN_4) {
+					// Joomla 4+ method
+					$language = Factory::getContainer()->get('language')->getTag();
+				} else {
+					// Joomla 3 method
+					$language = Factory::getLanguage()->getTag();
 				}
-
-				$index++;
+			} catch (Exception $e) {
+				// Fallback if language detection fails
+				$language = 'en-GB';
 			}
+		} // WordPress detection
+		elseif (defined('WPINC')) {
+			// Get WordPress locale (e.g., 'en_US', 'sk_SK')
+			$language = get_locale();
 		}
+
+		// Process language list
+		$index = 0;
+		foreach ($this->LanguageList as $lang) {
+			if ($lang->language == $language) {
+				$this->tag = $lang->sef;
+				return ($index == 0) ? '' : '_' . $lang->sef;
+			}
+			$index++;
+		}
+
 		return '';
 	}
 

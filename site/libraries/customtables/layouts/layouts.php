@@ -191,7 +191,7 @@ class Layouts
 				$content = common::getStringFromFile($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
 
 				$data = [
-					$fieldName => addslashes($content),
+					$fieldName => $content,
 					'modified' => common::formatDateFromTimeStamp($file_ts)
 				];
 
