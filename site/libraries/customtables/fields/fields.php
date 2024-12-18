@@ -63,7 +63,9 @@ class Field
 			$this->fieldrow = $fieldRow;
 			$this->layout = $fieldRow['layout'] ?? null; //rendering layout
 
-			if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldRow)) {
+			if ($fieldRow['type'] == '_id') {
+				$this->title = '#';
+			} elseif (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldRow)) {
 				$this->title = 'fieldtitle' . $ct->Languages->Postfix . ' - not found';
 			} else {
 				$vlu = $fieldRow['fieldtitle' . $ct->Languages->Postfix];

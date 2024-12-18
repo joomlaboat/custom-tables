@@ -72,7 +72,7 @@ function esEditObject(objId, toolbarBoxId, Itemid, tmpl, returnto) {
 	window.location.href = link;
 }
 
-function runTheTask(task, tableid, recordId, url, responses, last) {
+function runTheTask(task, tableid, recordId, url, responses, last, reload) {
 
 	let params = "";
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
@@ -82,6 +82,7 @@ function runTheTask(task, tableid, recordId, url, responses, last) {
 		http.open("GET", url, true);
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		http.onreadystatechange = function () {
+
 			if (http.readyState === 4) {
 				let res = http.response.replace(/(\r\n|\n|\r)/gm, "");
 
@@ -92,8 +93,12 @@ function runTheTask(task, tableid, recordId, url, responses, last) {
 					let table_object = document.getElementById("ctTable_" + tableid);
 					if (table_object) {
 						let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
-
-						if (task === 'delete') document.getElementById("ctTable_" + tableid).deleteRow(index); else ctCatalogUpdate(tableid, recordId, index);
+						if (task === 'delete')
+							document.getElementById(table_object).deleteRow(index);
+						else
+							ctCatalogUpdate(tableid, recordId, index);
+					} else if (reload) {
+						window.location.reload();
 					}
 
 					ctLinkLoading = false;
@@ -101,7 +106,6 @@ function runTheTask(task, tableid, recordId, url, responses, last) {
 					if (last) {
 						let toolbarBoxId = 'esToolBar_' + task + '_box_' + tableid;
 						let toolbarBoxIdObject = document.getElementById(toolbarBoxId);
-
 						if (toolbarBoxIdObject) toolbarBoxIdObject.style.visibility = 'visible';
 					}
 
@@ -127,7 +131,7 @@ function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 	let tr_object = document.getElementById(element_tableid_tr);
 	if (tr_object) {
 		let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordId, 'clean=1', 'tmpl=component'], link);
-		runTheTask('refresh', tableid, recordId, url, ['refreshed'], false);
+		runTheTask('refresh', tableid, recordId, url, ['refreshed'], false, false);
 	} else {
 		let returnto = btoa(window.location.href);
 
@@ -166,7 +170,7 @@ function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
 
 	if (tr_object) {
 		let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordId, 'clean=1', 'tmpl=component'], link);
-		runTheTask((publish === 0 ? 'unpublish' : 'publish'), tableid, recordId, url, ['published', 'unpublished'], false);
+		runTheTask((publish === 0 ? 'unpublish' : 'publish'), tableid, recordId, url, ['published', 'unpublished'], false, false);
 	} else {
 		let returnto = Base64.encode(window.location.href);
 
@@ -212,22 +216,22 @@ function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
 
 		let tr_object = document.getElementById(element_tableid_tr);
 
-		//WordPress version does not support dynamic record deletion yet. TODO: Add this functionality
-		if (typeof wp === 'undefined' && tr_object) {
 
-			link = esPrepareLink([], ['clean=1', 'tmpl=component'], link);
-			runTheTask('delete', tableid, recordId, link, ['deleted'], false);
-		} else {
+		if (typeof wp === 'undefined') {
+			if (tr_object) {
+				link = esPrepareLink([], ['clean=1', 'tmpl=component'], link);
+				runTheTask('delete', tableid, recordId, link, ['deleted'], false, false);
+			} else {
+				if (typeof ModuleId !== 'undefined' && ModuleId !== 0)
+					link = esPrepareLink(['option', 'view', 'ModuleId'], ['option=com_customtables', 'view=catalog', 'ModuleId=' + ModuleId], link);
 
-			if (typeof wp === 'undefined') {
-				let returnto = btoa(window.location.href);
-				link = esPrepareLink([], ['returnto=' + returnto], link);
+				window.location.href = link;
 			}
-
-			if (typeof ModuleId !== 'undefined' && ModuleId !== 0) link = esPrepareLink(['option', 'view', 'ModuleId'], ['option=com_customtables', 'view=catalog', 'ModuleId=' + ModuleId], link);
-
-			window.location.href = link;
+		} else {
+			link = esPrepareLink([], ['clean=1'], link);
+			runTheTask('delete', tableid, recordId, link, ['deleted'], false, !tr_object);
 		}
+
 	} else ctLinkLoading = false;
 }
 
@@ -370,7 +374,7 @@ function ctToolBarDO(task, tableid) {
 			if (task === 'refresh') accept_responses = ['refreshed']; else if (task === 'publish' || task === 'unpublish') accept_responses = ['published', 'unpublished']; else if (task === 'delete') accept_responses = ['published', 'deleted'];
 
 			let last = i === elements.length - 1;
-			runTheTask(task, tableid, listing_id, url, accept_responses, last);
+			runTheTask(task, tableid, listing_id, url, accept_responses, last, false);
 		}
 	} else {
 		let returnto = btoa(window.location.href);
