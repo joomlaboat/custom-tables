@@ -358,12 +358,14 @@
 			</params>
 		</valueparams>
 
-		<editparams name="date" label="Input Element Parameters" description="">
+		<editparams name="date" label="Input Element Parameters"
+					description="Adds a date input field that allows users to select dates using a calendar picker. The date can be formatted according to specified date format patterns.">
 			<params>
-				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."
+					   example="inputbox"/>
 				<param name="attributes" label="Attributes"
 					   description="Optional attributes like: disabled, onclick, onchange, etc." default=""
-					   type="string"/>
+					   type="string" example="onclick='alert(1)'"/>
 				<param name="format" example="Y-m-d" label="Format" type="string"
 					   description="PHP date format, e.g., 'Y-m-d H:i:s'"/>
 			</params>
