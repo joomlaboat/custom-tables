@@ -54,7 +54,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 		</td>
 
 		<td>
-			<?php echo common::translate($item->layouttype); ?>
+			<?php echo common::translate($item->layouttype_translation); ?>
 		</td>
 
 		<td>
@@ -103,14 +103,17 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			<?php
 
 			$engine = $this->isTwig($item);
-			$engines = [];
+			$messages = [];
 			if ($engine['twig'] > 0)
-				$engines[] = '<span style="border-radius:10px;padding:7px;background:#5b8127;color:white">Twig (' . $engine['twig'] . ')</span>';
+				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#5b8127;color:white">Twig (' . $engine['twig'] . ' tags)</div>';
 
 			if ($engine['original'] > 0)
-				$engines[] = '<span style="border-radius:10px;padding:7px;background:#373737;color:white">Original (' . $engine['original'] . ')</span>';
+				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#373737;color:white">Original (' . $engine['original'] . ' tags)</div>';
 
-			echo implode(' ', $engines);
+			if (count($engine['errors']) > 0)
+				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#ff0000;color:white">' . implode('</div><div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#ff0000;color:white">', $engine['errors']) . '</div>';
+
+			echo implode('', $messages);
 
 			?>
 		</td>

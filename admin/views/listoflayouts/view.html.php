@@ -154,6 +154,8 @@ class CustomtablesViewListoflayouts extends HtmlView
 	 */
 	function isTwig($row): array
 	{
+		$errors = [];
+
 		$original_ct_tags_q = ['currenturl', 'currentuserid', 'currentusertype', 'date', 'gobackbutton', 'description', 'format', 'Itemid', 'returnto',
 			'server', 'tabledescription', 'tabletitle', 'table', 'today', 'user', 'websiteroot', 'layout', 'if', 'headtag', 'metakeywords', 'metadescription',
 			'pagetitle', 'php', 'php_a', 'php_b', 'php_c', 'catalogtable', 'catalog', 'recordlist', 'page', 'add', 'count', 'navigation', 'batchtoolbar',
@@ -162,15 +164,36 @@ class CustomtablesViewListoflayouts extends HtmlView
 
 		$original_ct_tags_s = ['_if', '_endif', '_value', '_edit'];
 
-		$twig_tags = ['fields.list', 'fields.count', 'fields.json', 'user.name', 'user.username', 'user.email', 'user.id', 'user.lastvisitdate', 'user.registerdate',
-			'user.usergroups', 'url.link', 'url.format', 'url.base64', 'url.root', 'url.getint', 'url.getstring', 'url.getuint', 'url.getfloat', 'url.getword',
-			'url.getalnum', 'url.getcmd', 'url.getstringandencode', 'url.getstringanddecode', 'url.itemid', 'url.set', 'url.server', 'html.add', 'html.batch',
-			'html.button', 'html.captcha', 'html.goback', 'html.importcsv', 'html.tablehead', 'html.limit', 'html.message', 'html.navigation', 'html.orderby',
-			'html.pagination', 'html.print', 'html.recordcount', 'html.recordlist', 'html.search', 'html.searchbutton', 'html.toolbar', 'html.base64encode',
-			'document.setmetakeywords', 'document.setmetadescription', 'document.setpagetitle', 'document.setheadtag', 'document.layout', 'document.sitename',
-			'document.languagepostfi', 'record.advancedjoin', 'record.joincount', 'record.joinavg', 'record.joinmin', 'record.joinmax', 'record.joinvalue',
-			'record.jointable', 'record.id', 'record.number', 'record.published', 'table.id', 'table.name', 'table.title', 'table.description', 'table.records',
-			'table.fields', 'tables.getvalue', 'tables.getrecor', 'tables.getrecords'];
+		$twig_tags = [
+			'fields.list', 'fields.count', 'fields.json',
+			'user.name', 'user.username', 'user.email', 'user.id',
+			'user.lastvisitdate', 'user.registerdate', 'user.usergroups', 'user.customfield',
+
+			'url.link', 'url.format', 'url.itemid', 'url.getint', 'url.getstring', 'url.getuint', 'url.getword', 'url.getfloat',
+			'url.getalnum', 'url.getcmd', 'url.getstringandencode', 'url.getstringanddecode', 'url.base64', 'url.root', 'url.set', 'url.server',
+
+			'html.add', 'html.recordcount', 'html.checkboxcount', 'html.print', 'html.goback', 'html.navigation', 'html.batch', 'html.search',
+			'html.searchbutton', 'html.searchreset', 'html.toolbar', 'html.pagination', 'html.orderby', 'html.limit', 'html.button', 'html.captcha',
+			'html.message', 'html.recordlist', 'html.importcsv', 'html.tablehead', 'html.base64encode',
+
+			'document.setpagetitle', 'document.setheadtag', 'document.script', 'document.style', 'document.jslibrary', 'document.setmetakeywords',
+			'document.setmetadescription', 'document.layout', 'document.languagepostfix', 'document.attachment', 'document.sitename',
+			'document.set', 'document.get', 'document.config',
+
+			'record.id', 'record.number', 'record.published', 'record.advancedjoin',
+			'record.link', 'record.count', 'record.avg', 'record.min', 'record.max', 'record.sum', 'record.', 'record.',
+			'record.joincount', 'record.joinavg', 'record.joinmin', 'record.joinmax', 'record.joinvalue', 'record.jointable',
+			'record.advancedjoin', 'record.missingfields', 'record.missingfieldslist', 'record.islast',
+
+			'tables.getvalue', 'tables.getrecord', 'tables.getrecords',
+
+			'table.records', 'table.recordstotal', 'table.recordpagestart', 'table.recordsperpage', 'table.title', 'table.description',
+			'table.name', 'table.id', 'table.fields',
+
+			'document.config'];
+
+		$twig_catalog_tags = ['html.add', 'html.batch', 'html.recordcount', 'html.checkboxcount', 'html.batch', 'html.search', 'html.searchbutton', 'html.searchreset',
+			'html.toolbar', 'html.pagination', 'html.orderby', 'html.limit', 'html.recordlist', 'html.importcsv'];
 
 		$ct = new CT;
 		$ct->getTable($row->tableid);
@@ -214,13 +237,31 @@ class CustomtablesViewListoflayouts extends HtmlView
 
 		// ------------------------ Twig
 		$twig_matches = 0;
+		$twigTagFound = false;
+
+		if (in_array((int)$row->layouttype, [2, 4, 6, 7])) {
+			if (str_contains($row->layoutcode, '{% block record %}'))
+				$errors [] = 'Remove {% block record %} tag';
+		}
 
 		foreach ($twig_tags as $tag) {
 			if (str_contains($row->layoutcode, '{{ ' . $tag . '('))
-				$twig_matches += 1;
+				$twigTagFound = true;
 
 			if (str_contains($row->layoutcode, '{{ ' . $tag . ' }}'))
+				$twigTagFound = true;
+
+			if ($twigTagFound) {
 				$twig_matches += 1;
+				$twigTagFound = false;
+
+
+				if (in_array((int)$row->layouttype, [2, 4, 6, 7])) {
+					//Edit for or single item type layout
+					if (in_array($tag, $twig_catalog_tags))
+						$errors [] = 'Remove {{ ' . $tag . ' }} tag';
+				}
+			}
 		}
 
 		if ($ct->Table !== null) {
@@ -238,7 +279,7 @@ class CustomtablesViewListoflayouts extends HtmlView
 			}
 		}
 
-		return ['original' => $original_ct_matches, 'twig' => $twig_matches];
+		return ['original' => $original_ct_matches, 'twig' => $twig_matches, 'errors' => $errors];
 	}
 
 }

@@ -53,7 +53,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			</div>
 		</td>
 		<td class="hidden-phone">
-			<?php echo common::translate($item->layouttype); ?>
+			<?php echo common::translate($item->layouttype_translation); ?>
 		</td>
 		<td class="hidden-phone">
 			<?php echo $item->tabletitle; ?>
@@ -97,16 +97,18 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 		<td class="nowrap center hidden-phone" style="text-align:center;">
 			<?php
 
-			$engine = (object)$this->isTwig($item);
+			$engine = $this->isTwig($item);
+			$messages = [];
+			if ($engine['twig'] > 0)
+				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#5b8127;color:white">Twig (' . $engine['twig'] . ' tags)</div>';
 
-			$engines = [];
-			if ($engine->twig > 0)
-				$engines[] = '<span style="border-radius:10px;padding:7px;background:#5b8127;color:white">Twig (' . $engine->twig . ')</span>';
+			if ($engine['original'] > 0)
+				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#373737;color:white">Original (' . $engine['original'] . ' tags)</div>';
 
-			if ($engine->original > 0)
-				$engines[] = '<span style="border-radius:10px;padding:7px;background:#373737;color:white">Original (' . $engine->original . ')</span>';
+			if (count($engine['errors']) > 0)
+				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#ff0000;color:white">' . implode('</div><div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#ff0000;color:white">', $engine['errors']) . '</div>';
 
-			echo implode(' ', $engines);
+			echo implode('', $messages);
 
 			?>
 		</td>

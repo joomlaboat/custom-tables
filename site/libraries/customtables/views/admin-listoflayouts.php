@@ -118,9 +118,9 @@ class ListOfLayouts
 		foreach ($items as $item) {
 			// convert layoutType
 			if (isset($translations[$item->layouttype])) {
-				$item->layouttype = $translations[$item->layouttype];
+				$item->layouttype_translation = $translations[$item->layouttype];
 			} else {
-				$item->layouttype = '<span style="color:red;">NOT SELECTED</span>';
+				$item->layouttype_translation = '<span style="color:red;">NOT SELECTED</span>';
 			}
 		}
 		return $items;

@@ -1237,17 +1237,6 @@
 			 description="Return the Site Name set in the configuration." proversion="1" twigclass="document"
 			 wordpress="true"/>
 
-		<!-- Deprecated -->
-
-		<tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" deprecated="1"
-			 twigreplacement="document.setpagetitle" layouttypes="1,2,4,5,6"/>
-		<tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" deprecated="1"
-			 twigreplacement="document.setheadtag" layouttypes="1,2,4,5,6"/>
-		<tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" deprecated="1"
-			 twigreplacement="document.setmetakeywords" layouttypes="1,2,4,5,6"/>
-		<tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" deprecated="1"
-			 twigreplacement="document.setmetadescription" layouttypes="1,2,4,5,6"/>
-
 		<tag name="set" label="Set Variable Value" startchar="{" endchar="}" twigclass="document"
 			 description="Sets a global variable value that can be accessed in included layouts."
 			 proversion="1" wordpress="true">
@@ -1283,6 +1272,16 @@
 			</params>
 		</tag>
 
+		<!-- Deprecated -->
+
+		<tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" deprecated="1"
+			 twigreplacement="document.setpagetitle" layouttypes="1,2,4,5,6"/>
+		<tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" deprecated="1"
+			 twigreplacement="document.setheadtag" layouttypes="1,2,4,5,6"/>
+		<tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" deprecated="1"
+			 twigreplacement="document.setmetakeywords" layouttypes="1,2,4,5,6"/>
+		<tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" deprecated="1"
+			 twigreplacement="document.setmetadescription" layouttypes="1,2,4,5,6"/>
 	</tagset>
 
 	<!-- Available in PRO version and anywhere -->
