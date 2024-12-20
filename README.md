@@ -28,7 +28,7 @@ Help & User guide
 ------------
 
 - Documentation: [https://joomlaboat.com/custom-tables-wiki](https://joomlaboat.com/custom-tables-wiki)
-- Youtube Playlist: [https://www.youtube.com/user/Ivan Komlev/videos](https://www.youtube.com/user/Ivan Komlev/videos)
+- YouTube Playlist: [https://www.youtube.com/@JoomlaBoat/videos](https://www.youtube.com/@JoomlaBoat/videos)
 
 Bug Tracker
 ------------
