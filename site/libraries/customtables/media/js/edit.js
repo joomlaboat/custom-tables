@@ -389,7 +389,170 @@ class CustomTablesEdit {
 				removeBtn.setAttribute('onclick', `CTEditHelper.ImageGalleryRemoveFile(this, '${inputId}', ${index})`);
 			});
 		}
+	}
 
+	checkRequiredFields(formObject) {
+		if (!checkFilters())
+			return false;
+
+		if (ct_signaturePad_fields.length > 0) {
+			if (!ctInputbox_signature_apply()) {
+				event.preventDefault();
+				return false;
+			}
+		}
+
+		let requiredFields = formObject.getElementsByClassName("required");
+		let label = "One field";
+
+		for (let i = 0; i < requiredFields.length; i++) {
+			if (typeof requiredFields[i].id != "undefined") {
+				if (requiredFields[i].id.indexOf("sqljoin_table_" + ctFieldInputPrefix) !== -1) {
+					if (!CheckSQLJoinRadioSelections(requiredFields[i].id))
+						return false;
+				}
+				if (requiredFields[i].id.indexOf("ct_uploadfile_box_") !== -1) {
+					if (!CheckImageUploader(requiredFields[i].id)) {
+						let d = requiredFields[i].dataset;
+						if (d.label)
+							label = d.label;
+						else
+							label = "Unlabeled field";
+
+						let imageObjectName = requiredFields[i].id + '_image';
+						let imageObject = document.getElementById(imageObjectName);
+
+						if (imageObject)
+							return true;
+
+						alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
+						return false;
+					}
+				}
+			}
+
+			if (typeof requiredFields[i].name != "undefined") {
+				let n = requiredFields[i].name.toString();
+
+				if (n.indexOf(ctFieldInputPrefix) !== -1) {
+
+					let objName = n.replace('_selector', '');
+
+					let d = requiredFields[i].dataset;
+					if (d.label)
+						label = d.label
+					else
+						label = "Unlabeled field";
+
+					if (d.type === 'sqljoin') {
+						if (requiredFields[i].type === "hidden") {
+							let obj = document.getElementById(objName);
+
+							if (obj.value === '') {
+								alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
+								return false;
+							}
+						}
+
+					} else if (requiredFields[i].type === "text") {
+						let obj = document.getElementById(objName);
+						if (obj.value === '') {
+							alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
+							return false;
+						}
+					} else if (requiredFields[i].type === "select-one") {
+						let obj = document.getElementById(objName);
+
+						if (obj.value === null || obj.value === '') {
+							alert(TranslateText('COM_CUSTOMTABLES_NOT_SELECTED', label));
+							return false;
+						}
+					} else if (requiredFields[i].type === "select-multiple") {
+						let count_multiple_obj = document.getElementById(lbln);
+						let options = count_multiple_obj.options;
+						let count_multiple = 0;
+
+						for (let i2 = 0; i2 < options.length; i2++) {
+							if (options[i2].selected)
+								count_multiple++;
+						}
+
+						if (count_multiple === 0) {
+							alert(TranslateText('COM_CUSTOMTABLES_NOT_SELECTED', label));
+							return false;
+						}
+					} else if (d.selector == 'switcher') {
+						//Checkbox element with Yes/No visual effect
+						if (d.label)
+							label = d.label;
+						else
+							label = "Unlabeled field";
+
+						if (requiredFields[i].value === "1") {
+
+							if (d.valuerulecaption && d.valuerulecaption !== "")
+								alert(d.valuerulecaption);
+							else
+								alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
+							return false;
+						}
+					} else if (d.type == 'checkbox') {
+						//Simple HTML Checkbox element
+						if (d.label)
+							label = d.label;
+						else
+							label = "Unlabeled field";
+
+						if (!requiredFields[i].checked) {
+							if (d.valuerulecaption && d.valuerulecaption !== "")
+								alert(d.valuerulecaption);
+							else
+								alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	convertDateTypeValues(elements) {
+		console.warn("convertDateTypeValues")
+		for (let i = 0; i < elements.length; i++) {
+			console.warn("a")
+			if (elements[i].name && elements[i].name !== '' && elements[i].name !== 'returnto') {
+
+				if (elements[i].dataset.type === "date") {
+					console.warn("type", elements[i].dataset.type);
+					console.warn("format", elements[i].dataset.format);
+
+					if (elements[i].dataset.format !== "%Y-%m-%d") {
+						//convert date to %Y-%m-%d
+						let dateValue = elements[i].value;
+						if (dateValue) {
+							// Parse the format string
+							let format = elements[i].dataset.format;
+							let day, month, year;
+
+							// Convert Joomla's format to parts
+							let parts = dateValue.split(/[-/.]/);
+							let formatParts = format.split(/[-/.]/);
+
+							// Map the parts to corresponding values
+							formatParts.forEach((part, index) => {
+								if (part === '%d') day = parts[index];
+								else if (part === '%m') month = parts[index];
+								else if (part === '%Y') year = parts[index];
+							});
+
+							// Create standardized date string
+							elements[i].value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -419,17 +582,24 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
 					hideModelOnSave = false;
 
 				if (tasks_with_validation.includes(task)) {
-					if (checkRequiredFields(objForm))
+					if (CTEditHelper.checkRequiredFields(objForm)) {
+						CTEditHelper.convertDateTypeValues(objForm.elements);
 						submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
-				} else
+					}
+				} else {
+					CTEditHelper.convertDateTypeValues(objForm.elements);
 					submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
+				}
 
 				return false;
 			} else {
 				if (tasks_with_validation.includes(task)) {
-					if (checkRequiredFields(objForm))
+					if (CTEditHelper.checkRequiredFields(objForm)) {
+						CTEditHelper.convertDateTypeValues(objForm.elements);
 						objForm.submit();
+					}
 				} else {
+					CTEditHelper.convertDateTypeValues(objForm.elements);
 					objForm.submit();
 				}
 			}
@@ -727,131 +897,6 @@ function doSanitanization(obj, sanitizers_string) {
 	obj.value = value;
 }
 
-function checkRequiredFields(formObject) {
-	if (!checkFilters())
-		return false;
-
-	if (ct_signaturePad_fields.length > 0) {
-		if (!ctInputbox_signature_apply()) {
-			event.preventDefault();
-			return false;
-		}
-	}
-
-	let requiredFields = formObject.getElementsByClassName("required");
-	let label = "One field";
-
-	for (let i = 0; i < requiredFields.length; i++) {
-		if (typeof requiredFields[i].id != "undefined") {
-			if (requiredFields[i].id.indexOf("sqljoin_table_" + ctFieldInputPrefix) !== -1) {
-				if (!CheckSQLJoinRadioSelections(requiredFields[i].id))
-					return false;
-			}
-			if (requiredFields[i].id.indexOf("ct_uploadfile_box_") !== -1) {
-				if (!CheckImageUploader(requiredFields[i].id)) {
-					let d = requiredFields[i].dataset;
-					if (d.label)
-						label = d.label;
-					else
-						label = "Unlabeled field";
-
-					let imageObjectName = requiredFields[i].id + '_image';
-					let imageObject = document.getElementById(imageObjectName);
-
-					if (imageObject)
-						return true;
-
-					alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
-					return false;
-				}
-			}
-		}
-
-		if (typeof requiredFields[i].name != "undefined") {
-			let n = requiredFields[i].name.toString();
-
-			if (n.indexOf(ctFieldInputPrefix) !== -1) {
-
-				let objName = n.replace('_selector', '');
-
-				let d = requiredFields[i].dataset;
-				if (d.label)
-					label = d.label
-				else
-					label = "Unlabeled field";
-
-				if (d.type === 'sqljoin') {
-					if (requiredFields[i].type === "hidden") {
-						let obj = document.getElementById(objName);
-
-						if (obj.value === '') {
-							alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
-							return false;
-						}
-					}
-
-				} else if (requiredFields[i].type === "text") {
-					let obj = document.getElementById(objName);
-					if (obj.value === '') {
-						alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
-						return false;
-					}
-				} else if (requiredFields[i].type === "select-one") {
-					let obj = document.getElementById(objName);
-
-					if (obj.value === null || obj.value === '') {
-						alert(TranslateText('COM_CUSTOMTABLES_NOT_SELECTED', label));
-						return false;
-					}
-				} else if (requiredFields[i].type === "select-multiple") {
-					let count_multiple_obj = document.getElementById(lbln);
-					let options = count_multiple_obj.options;
-					let count_multiple = 0;
-
-					for (let i2 = 0; i2 < options.length; i2++) {
-						if (options[i2].selected)
-							count_multiple++;
-					}
-
-					if (count_multiple === 0) {
-						alert(TranslateText('COM_CUSTOMTABLES_NOT_SELECTED', label));
-						return false;
-					}
-				} else if (d.selector == 'switcher') {
-					//Checkbox element with Yes/No visual effect
-					if (d.label)
-						label = d.label;
-					else
-						label = "Unlabeled field";
-
-					if (requiredFields[i].value === "1") {
-
-						if (d.valuerulecaption && d.valuerulecaption !== "")
-							alert(d.valuerulecaption);
-						else
-							alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
-						return false;
-					}
-				} else if (d.type == 'checkbox') {
-					//Simple HTML Checkbox element
-					if (d.label)
-						label = d.label;
-					else
-						label = "Unlabeled field";
-
-					if (!requiredFields[i].checked) {
-						if (d.valuerulecaption && d.valuerulecaption !== "")
-							alert(d.valuerulecaption);
-						else
-							alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
-						return false;
-					}
-				}
-			}
-		}
-	}
-	return true;
-}
 
 function TranslateText() {
 	if (arguments.length == 0)

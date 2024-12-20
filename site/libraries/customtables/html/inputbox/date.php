@@ -56,7 +56,11 @@ class InputBox_date extends BaseInputBox
 		}
 
 		if (defined('_JEXEC')) {
-			return HTMLHelper::calendar($value, $this->attributes['name'], $this->attributes['id'], $format, $this->attributes);
+			return HTMLHelper::calendar($value, $this->attributes['name'], $this->attributes['id'], $format, $this->attributes)
+				. '<script>'
+				. 'document.getElementById("' . $this->attributes['id'] . '").dataset.type = "date";'
+				. 'document.getElementById("' . $this->attributes['id'] . '").dataset.format = "' . $format . '";'
+				. '</script>';
 		} elseif (defined('WPINC')) {
 
 			$datePickerParams = [
@@ -71,8 +75,15 @@ class InputBox_date extends BaseInputBox
 				$datePickerParams[] = 'timepicker: false';
 
 			}
-			return '<input type="text" id="' . sanitize_title($this->attributes['id']) . '" name="' . sanitize_title($this->attributes['id']) . '" value="' . $value . '">'
+
+			$this->attributes['type'] = 'text';
+			$this->attributes['value'] = htmlspecialchars($value ?? '');
+
+			return '<input ' . self::attributes2String($this->attributes) . ' />'
 				. '<script>jQuery(function($){ $("#' . sanitize_title($this->attributes['id']) . '").datetimepicker({ ' . implode(',', $datePickerParams) . ' }); });</script>';
+
+			//return '<input type="text" id="' . sanitize_title($this->attributes['id']) . '" name="' . sanitize_title($this->attributes['id']) . '" value="' . $value . '">'
+			//. '<script>jQuery(function($){ $("#' . sanitize_title($this->attributes['id']) . '").datetimepicker({ ' . implode(',', $datePickerParams) . ' }); });</script>';
 		} else {
 			return 'Date Field Types is not supported.';
 		}
