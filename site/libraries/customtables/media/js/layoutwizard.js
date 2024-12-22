@@ -1633,14 +1633,29 @@ function getLayout_JSON() {
 	let result = "";
 	let l = wizardFields.length;
 
+	let idFieldNameFound = false;
+	for (let index = 0; index < l; index++) {
+		let field = wizardFields[index];
+		if (field.fieldname === 'id') {
+			idFieldNameFound = true;
+			break;
+		}
+	}
+
 	result += '[\r\n{% block record %}\r\n{';
 
 	let obj = document.getElementById("wizardGuide_add_record_id");
-	if (!obj || obj.checked)
-		result += '"id_":"{{ record.id }}",\r\n';
+	if (!obj || obj.checked) {
+		if (idFieldNameFound)
+			result += '"_id":{{ record.id }},\r\n';
+		else
+			result += '"id":{{ record.id }},\r\n';
+	}
 
 	let fieldtypes_to_skip = ['log', 'filebox', 'dummy', 'ordering'];
-	let fieldtypes_to_purevalue = ['image', 'filebox', 'file'];
+	let fieldtypes_to_purevalue = ['image', 'filebox', 'file', 'article', 'imagegallery'];
+
+	let fieldtypes_numbers = ['int', 'ordering', 'time', 'float', 'viewcount', 'imagegallery', 'id', 'filebox', 'checkbox', 'userid', 'article'];
 	let fields_to_skip = getFieldsToSkip();
 	let firstField = true;
 
@@ -1652,9 +1667,19 @@ function getLayout_JSON() {
 			if (!firstField)
 				result += ',\r\n';
 
-			if (fieldtypes_to_purevalue.indexOf(field.type) === -1)
-				result += '"' + field.fieldname + '":"{{ ' + field.fieldname + ' }}"';
-			else
+			if (fieldtypes_to_purevalue.indexOf(field.type) === -1) {
+
+				if (field.type === "usergroup") {
+					if (typeof wp === 'undefined')
+						result += '"' + field.fieldname + '":{{ ' + field.fieldname + ' }}';
+					else
+						result += '"' + field.fieldname + '":"{{ ' + field.fieldname + ' }}"';
+
+				} else if (fieldtypes_numbers.indexOf(field.type) !== -1) {
+					result += '"' + field.fieldname + '":{{ ' + field.fieldname + ' }}';
+				} else
+					result += '"' + field.fieldname + '":"{{ ' + field.fieldname + ' }}"';
+			} else
 				result += '"' + field.fieldname + '":"{{ ' + field.fieldname + '.value }}"';
 
 			firstField = false;
