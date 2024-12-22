@@ -300,6 +300,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		$layouts_projected_fields[] = ['name' => 'layoutcss', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
 		$layouts_projected_fields[] = ['name' => 'layoutjs', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
 		$layouts_projected_fields[] = ['name' => 'changetimestamp', 'ct_fieldtype' => '', 'mysql_type' => 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP', 'postgresql_type' => 'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$layouts_projected_fields[] = ['name' => 'params', 'ct_fieldtype' => 'text', 'mysql_type' => 'MEDIUMTEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL'];
 
 		$layouts_projected_fields[] = $fieldTypes['created_by'];
 		$layouts_projected_fields[] = $fieldTypes['modified_by'];

@@ -64,17 +64,29 @@ foreach ($this->allTables as $table) {
 
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('layoutname'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('layoutname'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('layoutname'); ?>
+					<p class="field-description">
+						<?php echo JText::_($this->form->getField('layoutname')->description); ?>
+					</p>
+				</div>
 			</div>
 
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('layouttype'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('layouttype'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('layouttype'); ?>
+					<p class="field-description">
+						<?php echo JText::_($this->form->getField('layouttype')->description); ?>
+					</p>
+				</div>
 			</div>
 
 			<div class="control-group">
 				<div class="control-label"><?php echo $this->form->getLabel('tableid'); ?></div>
-				<div class="controls"><?php echo $this->form->getInput('tableid'); ?></div>
+				<div class="controls"><?php echo $this->form->getInput('tableid'); ?>
+					<p class="field-description">
+						<?php echo JText::_($this->form->getField('tableid')->description); ?>
+					</p>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -156,6 +168,33 @@ foreach ($this->allTables as $table) {
 		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
 	?>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+	<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'params-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_PARAMS')); ?>
+	<?php
+	if ($this->ct->Env->advancedTagProcessor) {
+		?>
+		<div class="row-fluid form-horizontal-desktop">
+			<div class="span12">
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('filter'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('filter'); ?>
+						<p class="field-description">
+							<?php echo JText::_($this->form->getField('filter')->description); ?>
+						</p>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+		<?php
+	} else
+		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
+	?>
+	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+
 
 	<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 

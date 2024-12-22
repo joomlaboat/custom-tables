@@ -117,6 +117,8 @@ class CustomtablesModelLayouts extends AdminModel
 				$form->setValue($redirectedField, null, $redirectedValue);
 			}
 		}
+
+
 		return $form;
 	}
 
@@ -540,6 +542,10 @@ class CustomtablesModelLayouts extends AdminModel
 		$Layouts = new Layouts($this->ct);
 		$Layouts->storeAsFile($data);
 
+		$params = [];
+		$params['filter'] = $data['filter'];
+		$data['params'] = json_encode($params);
+
 		if (parent::save($data)) {
 			return true;
 		}
@@ -653,6 +659,13 @@ class CustomtablesModelLayouts extends AdminModel
 		if (empty($data)) {
 			$data = $this->getItem();
 		}
+
+		if (isset($data->params)) {
+			if (isset($data->params['filter'])) {
+				$data->filter = $data->params['filter'];
+			}
+		}
+
 		return $data;
 	}
 }

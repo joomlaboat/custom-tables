@@ -32,6 +32,7 @@ class Layouts
 	var ?string $layoutCode;
 	var ?string $layoutCodeCSS;
 	var ?string $layoutCodeJS;
+	var ?array $params;
 
 	function __construct(&$ct)
 	{
@@ -111,7 +112,8 @@ class Layouts
 			'layoutcss',
 			'layoutjs',
 			'layouttype',
-			'MODIFIED_TIMESTAMP'
+			'MODIFIED_TIMESTAMP',
+			'params'
 		];
 
 		$rows = database::loadAssocList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
@@ -126,6 +128,16 @@ class Layouts
 
 		$this->layoutId = (int)$row['id'];
 		$this->layoutType = (int)$row['layouttype'];
+
+		if ($row['params'] === null) {
+			$this->params = null;
+		} else {
+			try {
+				$this->params = json_decode($row['params'], true);
+			} catch (Exception $e) {
+				$this->params = null; //If there is some JSON syntax error for some reason, it impossible but just in case, set null.
+			}
+		}
 
 		if ($this->ct->Env->isMobile and trim($row['layoutmobile']) != '') {
 			$layoutCode = $row['layoutmobile'];

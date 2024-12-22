@@ -33,6 +33,9 @@ class Catalog
 	 */
 	function render($layoutName = null, $limit = 0): string
 	{
+		// --------------------- Filter
+		$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
+
 		// --------------------- Layouts
 		$Layouts = new Layouts($this->ct);
 		$Layouts->layoutType = 0;
@@ -49,6 +52,10 @@ class Catalog
 			if (isset($Layouts->layoutId)) {
 				$pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
 				$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+
+				$filter = $Layouts->params['filter'] ?? null;
+				if ($filter !== null)
+					$this->ct->Filter->addWhereExpression($filter);
 			} else {
 				throw new Exception('Layout "' . $layoutName . '" not found.');
 				//$this->ct->errors[] = 'Layout "' . $layoutName . '" not found.';
@@ -56,7 +63,6 @@ class Catalog
 		}
 
 		// -------------------- Table
-
 		if ($this->ct->Table === null) {
 			$this->ct->getTable($this->ct->Params->tableName);
 
@@ -85,10 +91,6 @@ class Catalog
 				return 'Catalog Renderer. Legacy Support processing error: ' . $e->getMessage();
 			}
 		}
-
-		// --------------------- Filter
-
-		$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 
 		if (!$this->ct->Params->blockExternalVars) {
 			if (common::inputGetString('filter', '') and is_string(common::inputGetString('filter', '')))

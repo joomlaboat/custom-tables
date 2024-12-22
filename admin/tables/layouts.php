@@ -37,8 +37,7 @@ class CustomtablesTableLayouts extends Table
 	var $modified = null;
 	var $checked_out = null;
 	var $checked_out_time = null;
-
-	//protected $_jsonEncode = array('params', 'metadata');
+	var $params = null;
 
 	/**
 	 * Constructor
