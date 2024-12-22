@@ -221,6 +221,7 @@ class CT
 						$this->LimitStart = 0;
 
 					try {
+						//$this->Limit = $the_limit;
 						$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
 							(count($ordering) > 0 ? implode(',', $ordering) : null), null, $the_limit, $this->LimitStart, $this->GroupBy);
 					} catch (Exception $e) {

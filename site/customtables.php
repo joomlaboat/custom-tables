@@ -25,7 +25,7 @@ require_once($path);
 $params = ComponentHelper::getParams('com_customtables');
 $loadTwig = $params->get('loadTwig') ?? true;
 
-CustomTablesLoader(false, $include_html = true, null, 'com_customtables', $loadTwig);
+CustomTablesLoader(false, true, null, 'com_customtables', $loadTwig);
 
 // Require the base controller
 require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'

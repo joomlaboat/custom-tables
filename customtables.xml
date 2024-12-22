@@ -134,4 +134,13 @@
 		</server>
 	</updateservers>
 
+	<api>
+		<files folder="api">
+			<filename>index.html</filename>
+			<filename>customtables.php</filename>
+			<folder>Controller</folder>
+			<folder>Helpers</folder>
+		</files>
+	</api>
+
 </extension>

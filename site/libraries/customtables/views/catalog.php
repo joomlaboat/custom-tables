@@ -33,18 +33,41 @@ class Catalog
 	 */
 	function render($layoutName = null, $limit = 0): string
 	{
+		// --------------------- Layouts
+		$Layouts = new Layouts($this->ct);
+		$Layouts->layoutType = 0;
+		$itemLayout = '';
+		$pageLayoutNameString = null;
+		$pageLayoutLink = null;
+		$itemLayoutNameString = null;
+
+		if ($layoutName === '')
+			$layoutName = null;
+
+		if ($layoutName !== null) {
+			$pageLayout = $Layouts->getLayout($layoutName);
+			if (isset($Layouts->layoutId)) {
+				$pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
+				$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+			} else {
+				throw new Exception('Layout "' . $layoutName . '" not found.');
+				//$this->ct->errors[] = 'Layout "' . $layoutName . '" not found.';
+			}
+		}
+
 		// -------------------- Table
 
 		if ($this->ct->Table === null) {
 			$this->ct->getTable($this->ct->Params->tableName);
 
 			if ($this->ct->Table === null) {
-				$this->ct->errors[] = 'Catalog View: Table not selected.';
-				return 'Catalog View: Table not selected.';
+				throw new Exception('Catalog View: Table not selected.');
+				//$this->ct->errors[] = 'Catalog View: Table not selected.';
+				//return 'Catalog View: Table not selected.';
 			}
 		}
 
-		if ($this->ct->Env->frmt == 'html')
+		if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
 			common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 		if ($this->ct->Env->legacySupport) {
@@ -110,26 +133,8 @@ class Catalog
 		else
 			$this->ct->applyLimits($limit);
 
-// --------------------- Layouts
-		$Layouts = new Layouts($this->ct);
-		$Layouts->layoutType = 0;
-		$itemLayout = '';
-		$pageLayoutNameString = null;
-		$pageLayoutLink = null;
-		$itemLayoutNameString = null;
-
-		if ($layoutName === '')
-			$layoutName = null;
-
-		if ($layoutName !== null) {
-			$pageLayout = $Layouts->getLayout($layoutName);
-			if (isset($Layouts->layoutId)) {
-				$pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
-				$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
-			} else {
-				$this->ct->errors[] = 'Layout "' . $layoutName . '" not found.';
-			}
-		} else {
+		// --------------------- Layouts
+		if ($layoutName === null) {
 			if ($this->ct->Env->frmt == 'csv') {
 				$pageLayout = $Layouts->createDefaultLayout_CSV($this->ct->Table->fields);
 			} else {
@@ -182,8 +187,7 @@ class Catalog
 			return 'CustomTables: Records not loaded.';
 		}
 
-// -------------------- Parse Layouts
-
+		// -------------------- Parse Layouts
 		if ($this->ct->Env->legacySupport) {
 
 			if ($this->ct->Env->frmt == 'json') {
