@@ -73,6 +73,12 @@ class SearchInputBox
 			$value = common::getWhereParameter($f);
 		}
 
+		if ($matchType == 'startwith' and $value != '' and $value[strlen($value) - 1] == '%') {
+			$value = substr($value, 0, strlen($value) - 1);
+		} else if ($matchType == 'endwith' and $value != '' and $value[0] == '%') {
+			$value = substr($value, 1, strlen($value) - 1);
+		}
+
 		$objName_ = $prefix . $objName;
 
 		if (CUSTOMTABLES_JOOMLA_MIN_4)
