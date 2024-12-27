@@ -96,36 +96,45 @@
 		</tag>
 
 		<tag name="search" label="Search Box" startchar="{" endchar="}"
-			 description="Provides an input or select box to specify search parameters." twigclass="html"
+			 description="Creates an input or select box that allows users to filter table data based on specified search parameters."
+			 twigclass="html"
+
 			 image="https://joomlaboat.com/images/components/ct/tags/search-box.png" wordpress="true">
 			<params>
 				<param type="field" name="field" label="Field(s)"
-					   description="Specify the table field(s) to search in. For multiple fields, separate names with a comma (e.g., {{ html.search('firstname,lastname') }}). For 'Table Join' and 'Table Join List' field types, a rendering layout can be used (e.g., {{ html.search('fieldname:layoutname') }})."
+					   description="Specify which table field(s) to search. For multiple fields, use comma separation (e.g., {{ html.search('firstname,lastname') }}).
+					   When using 'Table Join (Lookup Table)' or 'Table Join List' fields, you can specify a rendering layout (e.g., {{ html.search('fieldname:layoutname') }})."
 					   repetitive="0"/>
 
 				<param type="string" name="cssclass" label="CSS Class"
-					   description="Enter one or more CSS class names separated by spaces."/>
+					   description="Add custom styling by specifying one or more CSS class names, separated by spaces (e.g., 'search-input highlighted')"/>
 
 				<param name="reload" label="On Change"
-					   description="Determines whether the page should reload when a value is selected. Applicable only to select boxes."
+					   description="For select boxes only: Choose whether to automatically reload the page when a new option is selected."
 					   type="radio"
 					   default="" example="reload"
 					   options="|Do nothing,reload|Reload Page"/>
 
 				<param name="improved" label="Enhanced Select Box"
-					   description="Enhances the select box to include an in-list search feature." type="radio"
+					   description="Enable an advanced select box interface with built-in search functionality for easier option finding."
+					   type="radio"
 					   default=""
 					   example="reload"
 					   options="|Standard,improved|Improved"/>
 
-				<param name="exact" label="Exact Match"
-					   description="Specifies whether the search should match the text exactly or check if the record contains the search text."
-					   type="radio" default=""
+				<param name="match" label="Exact Match"
+					   description="Define how the search term should match against field values:"
+					   type="list" default=""
 					   example="exact"
-					   options="|Contains,exact|Exact Match"/>
+					   options="|Contains,exact|Exact Match">
+
+					<option value="" label="Contains - Match if field contains the search term"/>
+					<option value="exact" label="Exact Match - Field must match the search term precisely"/>
+					<option value="startwith" label="Start With - Field must begin with the search term"/>
+					<option value="endwith" label="End With - Field must end with the search term"/>
+				</param>
 			</params>
 		</tag>
-
 
 		<tag name="searchbutton" label="Search Button" startchar="{" endchar="}" description="Renders a Search Button"
 			 twigclass="html" image="https://joomlaboat.com/images/components/ct/tags/search-button.png"

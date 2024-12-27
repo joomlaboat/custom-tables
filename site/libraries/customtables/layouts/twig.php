@@ -528,10 +528,10 @@ class fieldObject
 	public function options(): ?array
 	{
 		if (!isset($this->field->fieldrow))
-			return 'Fields not found';
+			return [];
 
 		if (Fields::isVirtualField($this->field->fieldrow))
-			return $this->value();
+			return [];
 
 		$args = [];
 
@@ -542,7 +542,7 @@ class fieldObject
 		if (!in_array($this->field->type, $this->ct->editFieldTypes))
 			$this->ct->editFieldTypes[] = $this->field->type;
 
-		return ['v' => '123'];//$Inputbox->getOptions();
+		return $Inputbox->getOptions($this->ct->Table->record);
 	}
 
 	/**

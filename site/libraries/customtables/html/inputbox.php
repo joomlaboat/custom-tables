@@ -80,8 +80,10 @@ class Inputbox
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function getOptions(): ?array
+	function getOptions(?array $row): ?array
 	{
+		$this->row = $row;
+
 		switch ($this->field->type) {
 			case 'alias':
 			case 'blob':
@@ -112,7 +114,17 @@ class Inputbox
 				return [["value" => 0, "label" => "No"], ["value" => 1, "label" => "Yes"]];
 
 			case 'article':
+				return null;
+
 			case 'language':
+
+				$inputBoxRenderer = $this->loadClassByFieldType();
+
+				if ($inputBoxRenderer === null)
+					return null;
+
+				return $inputBoxRenderer->getOptions();
+
 			case 'radio':
 			case 'usergroup':
 			case 'usergroups':
@@ -121,6 +133,35 @@ class Inputbox
 			case 'sqljoin':
 			case 'records':
 				return null;
+		}
+		return null;
+	}
+
+	protected function loadClassByFieldType()
+	{
+		//Try to instantiate a class dynamically
+		$aliasMap = [
+			'blob' => 'file',
+			'userid' => 'user',
+			'ordering' => 'int',
+			'googlemapcoordinates' => 'gps',
+			'multilangstring' => 'multilingualstring',
+			'multilangtext' => 'multilingualtext',
+			'sqljoin' => 'tablejoin',
+			'records' => 'tablejoinlist'
+		];
+
+		$fieldTypeShort = str_replace('_', '', $this->field->type);
+		if (key_exists($fieldTypeShort, $aliasMap))
+			$fieldTypeShort = $aliasMap[$fieldTypeShort];
+
+		$additionalFile = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+			. DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . $fieldTypeShort . '.php';
+
+		if (file_exists($additionalFile)) {
+			require_once($additionalFile);
+			$className = '\CustomTables\InputBox_' . $fieldTypeShort;
+			return new $className($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
 		}
 		return null;
 	}
@@ -145,32 +186,6 @@ class Inputbox
 			$this->defaultValue = $twig->process($this->row);
 		} else
 			$this->defaultValue = null;
-
-
-		//Try to instantiate a class dynamically
-		$aliasMap = [
-			'blob' => 'file',
-			'userid' => 'user',
-			'ordering' => 'int',
-			'googlemapcoordinates' => 'gps',
-			'multilangstring' => 'multilingualstring',
-			'multilangtext' => 'multilingualtext',
-			'sqljoin' => 'tablejoin',
-			'records' => 'tablejoinlist'
-		];
-
-		$fieldTypeShort = str_replace('_', '', $this->field->type);
-		if (key_exists($fieldTypeShort, $aliasMap))
-			$fieldTypeShort = $aliasMap[$fieldTypeShort];
-
-		$additionalFile = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
-			. DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . $fieldTypeShort . '.php';
-
-		if (file_exists($additionalFile)) {
-			require_once($additionalFile);
-			$className = '\CustomTables\InputBox_' . $fieldTypeShort;
-			$inputBoxRenderer = new $className($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
-		}
 
 		switch ($this->field->type) {
 
@@ -203,6 +218,11 @@ class Inputbox
 			case 'userid':
 			case 'usergroup':
 			case 'usergroups':
+
+				$inputBoxRenderer = $this->loadClassByFieldType();
+				if ($inputBoxRenderer === null)
+					return null;
+
 				return $inputBoxRenderer->render($value, $this->defaultValue);
 
 			case 'sqljoin':

@@ -33,7 +33,6 @@ function ctResetPassword(msg, listing_id, toolbarBoxId, ModuleId) {
 		if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], ''); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + listing_id, 'returnto=' + returnto], '');
 
 		window.location.href = link;
-
 	}
 }
 
@@ -253,18 +252,25 @@ function ctSearchBoxDo() {
 		let obj = document.getElementById(elementId);
 
 		if (obj) {
-			let o = obj.value;
-
+			let objValue = obj.value;
 			let operator = '=';
-			if (obj.dataset.exact && obj.dataset.exact === 'true')
-				operator = '==';
 
-			if (o !== "" && (o !== "0" || obj.dataset.type === 'int' || obj.dataset.type === 'float' || obj.dataset.type === 'checkbox')) {
+			if (objValue !== "" && (objValue !== "0" || obj.dataset.type === 'int' || obj.dataset.type === 'float' || obj.dataset.type === 'checkbox')) {
 				if (n[2] === "") {
-					if (o.indexOf("-to-") !== -1) {
-						if (o !== "-to-") w.push(n[1] + "_r_=" + o);
-					} else w.push(n[1] + operator + o);
-				} else w.push(n[1] + "=" + n[2] + "." + o);//Custom Tables Structure
+					if (objValue.indexOf("-to-") !== -1) {
+						if (objValue !== "-to-") w.push(n[1] + "_r_=" + objValue);
+					} else {
+						//string search
+						if (obj.dataset.match === 'exact')
+							w.push(n[1] + '==' + objValue);
+						else if (obj.dataset.match === 'startwith')
+							w.push(n[1] + '==' + objValue + '%');
+						else if (obj.dataset.match === 'endwith')
+							w.push(n[1] + '==%' + objValue);
+						else
+							w.push(n[1] + operator + objValue);
+					}
+				} else w.push(n[1] + "=" + n[2] + "." + objValue);//Custom Tables Structure
 			}
 		} else {
 			alert('Element "' + elementId + '" not found.');

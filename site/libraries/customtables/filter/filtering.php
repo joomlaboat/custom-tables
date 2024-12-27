@@ -818,7 +818,12 @@ class Filtering
 				$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, null, 'NOT NULL');
 				$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, '', '!=');
 			} else {
-				$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, $v, $comparison_operator);
+
+				if ($comparison_operator == '=' and str_contains($v, '%')) {
+					$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, $v, 'LIKE');
+				} else {
+					$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, $v, $comparison_operator);
+				}
 			}
 
 			$opt_title = ' ' . $comparison_operator;
