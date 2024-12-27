@@ -61,6 +61,7 @@ class LoginController
 				])
 				->where($db->quoteName('session_id') . ' = ' . $db->quote($sessionId));
 
+
 			$db->setQuery($query);
 			$result = $db->execute();
 
@@ -79,26 +80,35 @@ class LoginController
 				$db->insertObject('#__session', $data);
 			}
 
-			// Generate and store API token
+
+			// Generate unique series identifier (prefix API_ followed by random string)
+			$series = 'API_' . UserHelper::genRandomPassword(16);
+
+// Generate token
 			$token = UserHelper::genRandomPassword(32);
 
-			// Store token in #__user_keys
+// Delete any existing tokens for this user (using user_id index)
 			$query = $db->getQuery(true)
 				->delete($db->quoteName('#__user_keys'))
 				->where($db->quoteName('user_id') . ' = ' . $db->quote($user->id))
-				->where($db->quoteName('series') . ' = ' . $db->quote('API'));
+				->where($db->quoteName('series') . ' LIKE ' . $db->quote('API_%'));
 			$db->setQuery($query)->execute();
 
+// Store new token
 			$data = (object)[
 				'id' => null,
 				'user_id' => $user->id,
 				'token' => $token,
-				'series' => 'API',
+				'series' => $series,  // Using our unique series
 				'time' => Factory::getDate()->toSql(),
 				'uastring' => 'API Access'
 			];
 
-			$db->insertObject('#__user_keys', $data);
+			try {
+				$db->insertObject('#__user_keys', $data);
+			} catch (Exception $e) {
+				echo $e->getMessage();
+			}
 
 			$app->setHeader('status', 200);
 			$app->sendHeaders();
@@ -141,4 +151,4 @@ class LoginController
 		}
 	}
 }
-//curl -X POST http://localhost/j/api/index.php/v1/customtables/login
+//curl -X GET http://localhost/j/api/index.php/v1/customtables/login -H 'Content-Type: application/json' -d '{ "username": "Cat",  "password": "KhLrhXgrmLWzsssJTXpRjb"}' -H 'X-API-Key: tyhryt'

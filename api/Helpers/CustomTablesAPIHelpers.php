@@ -8,16 +8,12 @@ class CustomTablesAPIHelpers
 	static public function checkToken(): int
 	{
 		$app = Factory::getApplication();
+		$db = Factory::getDbo();
 
-
-		//try {
 		// Get token from Authorization header
 		$headers = getallheaders();
 		$authHeader = $headers['Authorization'] ?? '';
-
 		if (!$authHeader) {
-			//throw new Exception('No token provided');
-
 			echo json_encode([
 				'success' => false,
 				'data' => null,
@@ -37,13 +33,13 @@ class CustomTablesAPIHelpers
 		$token = str_replace('Bearer ', '', $authHeader);
 
 		// Check token in database
-		$db = Factory::getDbo();
 		$query = $db->getQuery(true)
 			->select(['*'])
 			->from($db->quoteName('#__user_keys'))
-			->where($db->quoteName('token') . ' = ' . $db->quote($token))
-			->where($db->quoteName('series') . ' = ' . $db->quote('API'));
-
+			->where([
+				$db->quoteName('token') . ' = ' . $db->quote($token),
+				$db->quoteName('series') . ' LIKE ' . $db->quote('API_%')
+			]);
 		$db->setQuery($query);
 		$result = $db->loadObject();
 
@@ -65,10 +61,9 @@ class CustomTablesAPIHelpers
 		}
 
 		// Check if token is expired
-		$lifetime = Factory::getApplication()->get('lifetime', 15); // minutes
+		$lifetime = $app->get('lifetime', 150); // minutes
 		$expires = new DateTime($result->time);
 		$expires->modify('+' . $lifetime . ' minutes');
-
 		if ($expires < new DateTime()) {
 			$app->setHeader('status', 401);
 			echo json_encode([
@@ -86,13 +81,15 @@ class CustomTablesAPIHelpers
 			die;
 		}
 
+		// Update the token's last used time
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__user_keys'))
+			->set($db->quoteName('time') . ' = ' . $db->quote((new DateTime())->format('Y-m-d H:i:s')))
+			->where($db->quoteName('token') . ' = ' . $db->quote($token));
+		$db->setQuery($query);
+		$db->execute();
+
 		$user = Factory::getUser($result->user_id);
-
-		// Create a new session if needed
-		$session = Factory::getSession();
-		$session->set('user', $user);
-
-		// Set the user identity properly
 		$app->loadIdentity($user);
 
 		return $result->user_id;

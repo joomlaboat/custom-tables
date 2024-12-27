@@ -508,9 +508,41 @@ class fieldObject
 		return $this->field->type;
 	}
 
+	public function required()
+	{
+		$args = func_get_args();
+
+		if (count($args) == 2)
+			$options = $args;
+		else
+			$options = ['true', 'false'];
+
+		return $this->field->isrequired ? $options[0] : $options[1];
+	}
+
 	public function params(): ?array
 	{
 		return $this->field->params;
+	}
+
+	public function options(): ?array
+	{
+		if (!isset($this->field->fieldrow))
+			return 'Fields not found';
+
+		if (Fields::isVirtualField($this->field->fieldrow))
+			return $this->value();
+
+		$args = [];
+
+		$Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
+
+		$this->ct->editFields[] = $this->field->fieldname;
+
+		if (!in_array($this->field->type, $this->ct->editFieldTypes))
+			$this->ct->editFieldTypes[] = $this->field->type;
+
+		return ['v' => '123'];//$Inputbox->getOptions();
 	}
 
 	/**

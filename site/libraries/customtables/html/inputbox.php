@@ -80,6 +80,55 @@ class Inputbox
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
+	function getOptions(): ?array
+	{
+		switch ($this->field->type) {
+			case 'alias':
+			case 'blob':
+			case 'color':
+			case 'date':
+			case 'email':
+			case 'file':
+			case 'filebox':
+			case 'filelink':
+			case 'float':
+			case 'googlemapcoordinates':
+			case 'int':
+			case 'image':
+			case 'imagegallery':
+			case 'multilangstring':
+			case 'multilangtext':
+			case 'ordering':
+			case 'signature':
+			case 'string':
+			case 'text':
+			case 'time':
+			case 'url':
+			case 'user':
+			case 'userid':
+				return null;
+
+			case 'checkbox':
+				return [["value" => 0, "label" => "No"], ["value" => 1, "label" => "Yes"]];
+
+			case 'article':
+			case 'language':
+			case 'radio':
+			case 'usergroup':
+			case 'usergroups':
+				return null;
+
+			case 'sqljoin':
+			case 'records':
+				return null;
+		}
+		return null;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function render(?string $value, ?array $row): ?string
 	{
 		$this->row = $row;

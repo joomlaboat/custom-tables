@@ -7,6 +7,8 @@ class UserEmailController
 	function execute()
 	{
 		$app = Factory::getApplication();
+		$app->getSession()->close();
+
 		$userId = CustomTablesAPIHelpers::checkToken();
 
 		if (!$userId)

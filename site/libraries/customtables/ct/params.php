@@ -255,7 +255,7 @@ class Params
 		if ($this->tableName === null) {
 			$this->tableName = $menu_params['establename'] ?? null; //Table name or id not sanitized
 			if ($this->tableName === null)
-				$this->tableName = $menu_params['tableid']; //Used in the back-end
+				$this->tableName = $menu_params['tableid'] ?? null; //Used in the back-end
 		}
 
 		//Filter
@@ -304,13 +304,13 @@ class Params
 
 		//Shopping Cart
 
-		if (isset($menu_params['showcartitemsonly']) and $menu_params['showcartitemsonly'] != '')
+		if (!empty($menu_params['showcartitemsonly']))
 			$this->showCartItemsOnly = (bool)(int)$menu_params['showcartitemsonly'];
 		else
 			$this->showCartItemsOnly = false;
 
 		$this->showCartItemsPrefix = 'customtables_';
-		if (isset($menu_params['showcartitemsprefix']) and $menu_params['showcartitemsprefix'] != '')
+		if (!empty($menu_params['showcartitemsprefix']))
 			$this->showCartItemsPrefix = $menu_params['showcartitemsprefix'];
 
 		$this->cartReturnTo = $menu_params['cart_returnto'] ?? null;
@@ -354,7 +354,7 @@ class Params
 		if (!$blockExternalVars and common::inputGetCmd('returnto'))
 			$this->returnTo = common::getReturnToURL();
 		else {
-			if (CUSTOMTABLES_JOOMLA_MIN_4)
+			if (CUSTOMTABLES_JOOMLA_MIN_4 and !empty($this->ItemId))
 				$this->returnTo = $menu_params['returnto'] ?? Route::_(sprintf('index.php/?option=com_customtables&Itemid=%d', $this->ItemId));
 			else
 				$this->returnTo = $menu_params['returnto'] ?? null;
