@@ -24,6 +24,77 @@ class InputBox_usergroup extends BaseInputBox
 
 	/**
 	 * @throws Exception
+	 *
+	 * @since 3.4.8
+	 */
+	function getOptions(?string $value, bool $showUserGroupsWithRecords = false): array
+	{
+		$options = [];
+
+		$availableUserGroups = $this->field->params[0] ?? '';
+		$availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', strtolower(trim($availableUserGroups))));
+
+		if ($showUserGroupsWithRecords)
+			$innerJoin = ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
+		else
+			$innerJoin = null;
+
+		try {
+			$records = $this->ct->Env->user->getUserGroupArray($availableUserGroupList, $innerJoin);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+
+		if (defined('_JEXEC')) {
+			// Optional default option
+
+			$option = ["value" => "", "label" => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
+
+			if (0 === (int)$value)
+				$option['selected'] = true;
+
+			$options[] = $option;
+
+			// Generate options for each file in the folder
+			foreach ($records as $record) {
+
+				$option = ["value" => $record['id'], "label" => $record['name']];
+
+				if ($record['id'] === (int)$value)
+					$option['selected'] = true;
+
+				$options[] = $option;
+			}
+
+		} elseif (defined('WPINC')) {
+
+			$value = trim($value);
+
+			$option = ["value" => "", "label" => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
+
+			if ("" === $value)
+				$option['selected'] = true;
+
+			$options[] = $option;
+
+			// Generate options for each file in the folder
+			foreach ($records as $record) {
+
+				$option = ["value" => $record['id'], "label" => $record['name']];
+
+				if ($record['id'] === $value)
+					$option['selected'] = true;
+
+				$options[] = $option;
+			}
+		}
+
+		return $options;
+	}
+
+
+	/**
+	 * @throws Exception
 	 * @since 3.2.0
 	 */
 	function render(?string $value, ?string $defaultValue, bool $showUserWithRecords = false): string

@@ -78,12 +78,177 @@ class Inputbox
 
 	/**
 	 * @throws Exception
-	 * @since 3.2.2
+	 * @since 3.4.8
 	 */
-	function getOptions(?array $row): ?array
+	function getTypeDetails(?string $value, ?array $row): ?array
 	{
 		$this->row = $row;
 
+		$input = [];
+
+		$input["type"] = $this->field->type;
+		$input["required"] = (bool)$this->field->isrequired;
+
+		switch ($this->field->type) {
+			case 'alias':
+			case 'filelink':
+			case 'email':
+			case 'string':
+				$input["renderAs"] = "text";
+				$input['value'] = $value;
+				break;
+
+			case 'color':
+				$input["renderAs"] = "color";
+				$input['value'] = $value;
+				break;
+
+			case 'blob':
+				$input['value'] = $value;
+				break;
+
+			case 'date':
+				$input["renderAs"] = "date";
+				$input['value'] = $value;
+				break;
+
+			case 'file':
+				$input["renderAs"] = "file";
+				$input['value'] = $value;
+				break;
+
+			case 'filebox':
+				$input["renderAs"] = "file";
+				$input["multiple"] = true;
+				$input['value'] = $value;
+				break;
+
+			case 'float':
+				$input["renderAs"] = "number";
+				$input['value'] = (float)$value;
+				break;
+
+			case 'googlemapcoordinates':
+				$input["renderAs"] = "text";
+				$input["comment"] = "latitude,longitude";
+				$valueArray = explode(',', $value);
+				$input['value'] = array_map('floatval', $valueArray);
+				break;
+
+			case 'int':
+				$input["renderAs"] = "number";
+				$input['value'] = (int)$value;
+				break;
+
+			case 'image':
+				$input["renderAs"] = "file";
+				$input['value'] = $value;
+				break;
+
+			case 'imagegallery':
+				$input["renderAs"] = "file";
+				$input["multiple"] = true;
+				$input['value'] = $value;
+				break;
+
+			case 'multilangstring':
+				$input["renderAs"] = "text";
+				$input["multiple"] = true;
+				$input['value'] = $value;
+				break;
+
+			case 'multilangstring':
+				$input["renderAs"] = "textarea";
+				$input["multiple"] = true;
+				$input['value'] = $value;
+				break;
+
+			case 'ordering':
+				$input["renderAs"] = "number";
+				$input['value'] = (int)$value;
+				break;
+
+			case 'text':
+				$input["renderAs"] = "textarea";
+				$input['value'] = $value;
+				break;
+
+			case 'url':
+				$input["renderAs"] = "url";
+				$input['value'] = $value;
+				break;
+
+			case 'signature':
+			case 'time':
+				$input['value'] = $value;
+				break;
+
+			case 'user':
+			case 'userid':
+				$input["renderAs"] = "select";
+				$input['value'] = (int)$value;
+				break;
+
+			case 'checkbox':
+				$input["renderAs"] = "checkbox";
+				$input['value'] = (bool)$value;
+				break;
+
+			case 'language':
+				$input["renderAs"] = "select";
+				$input['value'] = $value;
+				break;
+
+			case 'article':
+				$input["renderAs"] = "select";
+				$input['value'] = (int)$value;
+				break;
+
+			case 'radio':
+				$input["renderAs"] = "radio";
+				$input['value'] = $value;
+				break;
+
+			case 'usergroup':
+				$input["renderAs"] = "select";
+				$input['value'] = (int)$value;
+				break;
+
+			case 'usergroups':
+				$input["renderAs"] = "select";
+				$valueArray = CTMiscHelper::csv_explode(',', $value, '"', false, true);
+				$input['value'] = array_map('intval', $valueArray);
+				break;
+
+			case 'sqljoin':
+				$input["type"] = 'lookuptable';
+				$input["renderAs"] = "select";
+				$input['value'] = is_numeric($value) ? (int)$value : $value;
+				break;
+
+			case 'records':
+				$input["type"] = 'lookuptable';
+				$input["multiple"] = true;
+				$input["renderAs"] = "select";
+				$valueArray = CTMiscHelper::csv_explode(',', $value, '"', false, true);
+				$input['value'] = array_map('intval', $valueArray);
+				break;
+		}
+
+		$options = $this->getOptions($value);
+		if ($options !== null)
+			$input['options'] = $options;
+
+
+		return $input;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function getOptions(?string $value): ?array
+	{
 		switch ($this->field->type) {
 			case 'alias':
 			case 'blob':
@@ -114,21 +279,16 @@ class Inputbox
 				return [["value" => 0, "label" => "No"], ["value" => 1, "label" => "Yes"]];
 
 			case 'article':
-				return null;
-
+			case 'radio':
 			case 'language':
-
+			case 'usergroup':
+			case 'usergroups':
 				$inputBoxRenderer = $this->loadClassByFieldType();
 
 				if ($inputBoxRenderer === null)
 					return null;
 
-				return $inputBoxRenderer->getOptions();
-
-			case 'radio':
-			case 'usergroup':
-			case 'usergroups':
-				return null;
+				return $inputBoxRenderer->getOptions($value);
 
 			case 'sqljoin':
 			case 'records':

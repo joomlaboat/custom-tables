@@ -24,6 +24,73 @@ class InputBox_usergroups extends BaseInputBox
 
 	/**
 	 * @throws Exception
+	 *
+	 * @since 3.4.8
+	 */
+	function getOptions(?string $value): array
+	{
+		$options = [];
+
+		$availableUserGroups = $this->field->params[1] ?? '';
+		$availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', strtolower(trim($availableUserGroups))));
+
+		try {
+			$records = $this->ct->Env->user->getUserGroupArray($availableUserGroupList);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+
+		$valueArray = CTMiscHelper::csv_explode(',', $value, '"', false, true);
+
+		if (defined('_JEXEC')) {
+			// Optional default option
+
+			$option = ["value" => "", "label" => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
+
+			if (count($valueArray) === 0)
+				$option['selected'] = true;
+
+			$options[] = $option;
+
+			// Generate options for each file in the folder
+			foreach ($records as $record) {
+
+				$option = ["value" => $record['id'], "label" => $record['name']];
+
+				if (in_array($record['id'], $valueArray))
+					$option['selected'] = true;
+
+				$options[] = $option;
+			}
+
+		} elseif (defined('WPINC')) {
+
+			$value = trim($value);
+
+			$option = ["value" => "", "label" => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
+
+			if ("" === $value)
+				$option['selected'] = true;
+
+			$options[] = $option;
+
+			// Generate options for each file in the folder
+			foreach ($records as $record) {
+
+				$option = ["value" => $record['id'], "label" => $record['name']];
+
+				if (in_array($record['id'], $valueArray))
+					$option['selected'] = true;
+
+				$options[] = $option;
+			}
+		}
+
+		return $options;
+	}
+
+	/**
+	 * @throws Exception
 	 * @since 3.2.0
 	 */
 	function render(?string $value, ?string $defaultValue): string
@@ -66,7 +133,6 @@ class InputBox_usergroups extends BaseInputBox
 				return '<p>Incorrect selector</p>';
 		}
 	}
-
 
 	protected function getSelect(array $records, array $valueArray, bool $multiple = false, ?string $customElementId = null): string
 	{

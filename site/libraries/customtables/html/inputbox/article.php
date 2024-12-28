@@ -22,6 +22,46 @@ class InputBox_article extends BaseInputBox
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
+	/**
+	 * @throws Exception
+	 *
+	 * @since 3.4.8
+	 */
+	function getOptions(?string $value): array
+	{
+		$options = [];
+		$whereClause = new MySQLWhereClause();
+
+		$catId = (int)((count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params : 0);
+
+		if ($catId != 0)
+			$whereClause->addCondition('catid', $catId);
+
+		try {
+			$articles = database::loadObjectList('#__content', ['id', 'title AS name'], $whereClause, 'title');
+		} catch (Exception $e) {
+			throw new Exception('Cannot load a list of articles. Details: ' . $e->getMessage());
+		}
+
+		$option = ["value" => 0, "label" => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
+		if (0 === (int)$value)
+			$option['selected'] = true;
+
+		$options[] = $option;
+
+		foreach ($articles as $article) {
+
+			$option = ["value" => $article->id, "label" => $article->name];
+
+			if ($article->id === (int)$value)
+				$option['selected'] = true;
+
+			$options[] = $option;
+		}
+
+		return $options;
+	}
+
 	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($value == '')

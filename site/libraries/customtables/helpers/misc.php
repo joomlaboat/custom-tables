@@ -687,24 +687,36 @@ class CTMiscHelper
 		return $result;
 	}
 
-	public static function csv_explode(string $separator, string $string, string $enclosure = '"', bool $preserve = false): array
+	public static function csv_explode(string $separator, string $string, string $enclosure = '"', bool $preserve = false, bool $removeEmpty = false): array
 	{
-		if (!$preserve and strlen($separator) == 1)
-			return str_getcsv($string, $separator, $enclosure, "\\");
-
-		$resArr = array();
-		$n = 0;
-		$expEncArr = explode($enclosure, $string);
-		foreach ($expEncArr as $EncItem) {
-			if ($n++ % 2) {
-				$resArr[] = array_pop($resArr) . ($preserve ? $enclosure : '') . $EncItem . ($preserve ? $enclosure : '');
-			} else {
-				$expDelArr = explode($separator, $EncItem);
-				$resArr[] = array_pop($resArr) . array_shift($expDelArr);
-				$resArr = array_merge($resArr, $expDelArr);
+		if (!$preserve and strlen($separator) == 1) {
+			$resArr = str_getcsv($string, $separator, $enclosure, "\\");
+		} else {
+			$resArr = [];
+			$n = 0;
+			$expEncArr = explode($enclosure, $string);
+			foreach ($expEncArr as $EncItem) {
+				if ($n++ % 2) {
+					$resArr[] = array_pop($resArr) . ($preserve ? $enclosure : '') . $EncItem . ($preserve ? $enclosure : '');
+				} else {
+					$expDelArr = explode($separator, $EncItem);
+					$resArr[] = array_pop($resArr) . array_shift($expDelArr);
+					$resArr = array_merge($resArr, $expDelArr);
+				}
 			}
 		}
-		return $resArr;
+
+		if ($removeEmpty) {
+			$newItems = [];
+
+			foreach ($resArr as $item) {
+				if ($item != '')
+					$newItems[] = $item;
+			}
+
+			return $newItems;
+		} else
+			return $resArr;
 	}
 
 	/**

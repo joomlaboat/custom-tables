@@ -1508,11 +1508,12 @@ function getLayout_Edit_REST_API() {
 		result += '\t  \t  {\n';
 		result += '\t  \t  \t  "fieldname": "' + field.fieldname + '",\r\n';
 		result += '\t  \t  \t  "label": "{{ ' + field.fieldname + '.title }}",\r\n';
-		result += '\t  \t  \t  "type": "{{ ' + field.fieldname + '.type }}",\r\n';
-		result += '\t  \t  \t  "params": "{{ ' + field.fieldname + '.params | join(",") }}",\r\n';
-		result += '\t  \t  \t  "options": {{ ' + field.fieldname + '.options | json_encode }},\r\n';
-		result += '\t  \t  \t  "required": {{ ' + field.fieldname + '.required }},\r\n';
-		result += '\t  \t  \t  "value": "{{ ' + field.fieldname + '.value }}"\r\n';
+		//result += '\t  \t  \t  "type": "{{ ' + field.fieldname + '.type }}",\r\n';
+		//result += '\t  \t  \t  "params": "{{ ' + field.fieldname + '.params | join(",") }}",\r\n';
+		//result += '\t  \t  \t  "options": {{ ' + field.fieldname + '.options | json_encode }},\r\n';
+		//result += '\t  \t  \t  "required": {{ ' + field.fieldname + '.required }},\r\n';
+		//result += '\t  \t  \t  "value": {{ ' + field.fieldname + '.value | json_encode }},\r\n';
+		result += '\t  \t  \t  "input": {{ ' + field.fieldname + '.input | json_encode }}\r\n';
 		result += '\t  \t  }' + (index < fields.length - 1 ? ',' : '') + '\n';
 	}
 

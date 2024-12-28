@@ -22,6 +22,22 @@ class InputBox_radio extends BaseInputBox
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
+	function getOptions(?string $value): array
+	{
+		$options = [];
+
+		foreach ($this->field->params as $radioValue) {
+			$v = trim($radioValue);
+			$option = ["value" => $v, "label" => $v];
+
+			if ($v === $value)
+				$option['selected'] = true;
+
+			$options[] = $option;
+		}
+		return $options;
+	}
+
 	/**
 	 * @throws Exception
 	 * @since 3.3.5

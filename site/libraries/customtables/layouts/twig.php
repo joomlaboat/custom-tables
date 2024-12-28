@@ -445,9 +445,13 @@ class fieldObject
 				$vlu = $this->escapeJsonCharacters($vlu);
 
 			return $vlu;
+		} elseif ($this->field->type == 'usergroups' or $this->field->type == 'records') {
+			$valueArray = CTMiscHelper::csv_explode(',', $this->ct->Table->record[$rfn], '"', false, true);
+			$vlu = implode(',', $valueArray);
 		} else {
 			$vlu = $this->ct->Table->record[$rfn];
 		}
+
 
 		if ($this->DoHTMLSpecialChars)
 			$vlu = $this->escapeJsonCharacters($vlu);
@@ -525,6 +529,27 @@ class fieldObject
 		return $this->field->params;
 	}
 
+	public function input(): ?array
+	{
+		if (!isset($this->field->fieldrow))
+			return [];
+
+		if (Fields::isVirtualField($this->field->fieldrow))
+			return [];
+
+		$args = [];
+		$Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
+
+		$this->ct->editFields[] = $this->field->fieldname;
+
+		if (!in_array($this->field->type, $this->ct->editFieldTypes))
+			$this->ct->editFieldTypes[] = $this->field->type;
+
+		$value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
+		return $Inputbox->getTypeDetails($value, $this->ct->Table->record);
+	}
+
+	/*
 	public function options(): ?array
 	{
 		if (!isset($this->field->fieldrow))
@@ -542,8 +567,10 @@ class fieldObject
 		if (!in_array($this->field->type, $this->ct->editFieldTypes))
 			$this->ct->editFieldTypes[] = $this->field->type;
 
-		return $Inputbox->getOptions($this->ct->Table->record);
+		$value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
+		return $Inputbox->getOptions($value, $this->ct->Table->record);
 	}
+	*/
 
 	/**
 	 * @throws Exception
