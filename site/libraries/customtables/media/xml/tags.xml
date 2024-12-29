@@ -133,6 +133,9 @@
 					<option value="startwith" label="Start With - Field must begin with the search term"/>
 					<option value="endwith" label="End With - Field must end with the search term"/>
 				</param>
+
+				<param type="number" name="length" label="Min Search String Length"
+					   description="Minimum number of characters required in the search term. Searches with fewer characters will not be executed."/>
 			</params>
 		</tag>
 

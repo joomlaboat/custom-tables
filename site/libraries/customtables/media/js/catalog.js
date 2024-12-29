@@ -253,6 +253,19 @@ function ctSearchBoxDo() {
 
 		if (obj) {
 			let objValue = obj.value;
+
+			if (obj.dataset.minlength) {
+				let l = parseInt(obj.dataset.minlength);
+
+				if (l > 0) {
+					if (objValue.length < l) {
+						alert("Please enter at least " + l + " characters to perform a search");
+						ctLinkLoading = false;
+						return;
+					}
+				}
+			}
+
 			let operator = '=';
 
 			if (objValue !== "" && (objValue !== "0" || obj.dataset.type === 'int' || obj.dataset.type === 'float' || obj.dataset.type === 'checkbox')) {

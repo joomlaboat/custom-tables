@@ -32,7 +32,7 @@ class SearchInputBox
 	 * @since 3.2.1
 	 */
 	function renderFieldBox(string  $prefix, string $objName, array $fieldRow, string $cssClass, $index, string $where, string $whereList,
-							?string $onchange, ?string $field_title = null, string $matchType = ""): string
+							?string $onchange, ?string $field_title = null, string $matchType = "", string $stringLength = ""): string
 	{
 		$this->field = new Field($this->ct, $fieldRow);
 		$place_holder = $this->field->title;
@@ -50,6 +50,7 @@ class SearchInputBox
 
 		$attributes['data-type'] = $this->field->type;
 		$attributes['data-match'] = $matchType;
+		$attributes['data-minlength'] = $stringLength;
 
 		if (in_array($this->field->type, ['phponchange', 'phponadd', 'multilangstring', 'text', 'multilangtext', 'string'])) {
 			$length = (($this->field->params !== null and count($this->field->params) > 0) ? (int)($this->field->params[0] ?? 255) : 255);
