@@ -8,6 +8,8 @@ class CustomTablesAPIHelpers
 {
 	static public function checkToken(): int
 	{
+		self::loadCT();
+
 		$app = Factory::getApplication();
 		$db = Factory::getDbo();
 
@@ -109,6 +111,21 @@ class CustomTablesAPIHelpers
 		$app->loadIdentity($user);
 
 		return $result->user_id;
+	}
+
+	static protected function loadCT()
+	{
+		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
+			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
+
+		if (!file_exists($path))
+			die('CT Loader not found.');
+
+		require_once($path);
+
+		$loadTwig = true;
+
+		CustomTablesLoader(false, false, null, 'com_customtables', $loadTwig);
 	}
 }
 

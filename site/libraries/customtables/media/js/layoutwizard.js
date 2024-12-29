@@ -632,6 +632,7 @@ function FillLayout() {
 	result += '<option value="200"' + (layoutType === 2 ? ' selected="selected"' : '') + '>Edit form</option>';
 	result += '<option value="210">- Edit form (REST API)</option>';
 	result += '<option value="400"' + (layoutType === 4 ? ' selected="selected"' : '') + '>Details</option>';
+	result += '<option value="410">- Details (REST API)</option>';
 	result += '<option value="700"' + (layoutType === 7 ? ' selected="selected"' : '') + '>Email Message</option>';
 	result += '<option value="800"' + (layoutType === 8 ? ' selected="selected"' : '') + '>XML File</option>';
 	result += '<option value="900"' + (layoutType === 9 ? ' selected="selected"' : '') + '>CSV File</option>';
@@ -770,6 +771,11 @@ function modal_layoutTypeSelector_update() {
 			resultOption += getFieldOptions();
 			break;
 
+		case 410:
+			//Details Page - REST API for dynamic form generation.
+			resultOption += getFieldOptions();
+			break;
+
 		case 600:
 
 			//Catalog Item
@@ -896,6 +902,10 @@ function layoutWizardGenerateLayout(event) {
 
 		case 400:
 			layout_obj.value = getLayout_Details();
+			break;
+
+		case 410:
+			layout_obj.value = getLayout_Details_REST_API();
 			break;
 
 		case 500:
@@ -1479,6 +1489,44 @@ function getFieldsToSkip() {
 	}
 
 	return fields_to_skip;
+}
+
+function getLayout_Details_REST_API() {
+	let result = "";
+	let l = wizardFields.length;
+
+	result += '{\n';
+	result += '\t  "table": "{{ table.name }}",\r\n';
+	result += '\t  "tablelabel": "{{ table.title }}",\r\n';
+	result += '\t  "fields": [\r\n';
+
+	let fieldtypes_to_skip = ['log', 'filebox', 'imagegallery', 'dummy'];
+	let fields_to_skip = getFieldsToSkip();
+
+	let fields = [];
+	for (let index = 0; index < l; index++) {
+		let field = wizardFields[index];
+
+		if (fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
+			fields.push(field);
+		}
+	}
+
+	for (let index = 0; index < fields.length; index++) {
+		let field = fields[index];
+
+		result += '\t  \t  {\n';
+		result += '\t  \t  \t  "fieldname": "' + field.fieldname + '",\r\n';
+		result += '\t  \t  \t  "label": "{{ ' + field.fieldname + '.title }}",\r\n';
+		result += '\t  \t  \t  "value": "{{ ' + field.fieldname + '.value }}",\r\n';
+		result += '\t  \t  \t  "processedValue": "{{ ' + field.fieldname + ' }}"\r\n';
+		result += '\t  \t  }' + (index < fields.length - 1 ? ',' : '') + '\n';
+	}
+
+	result += '\t  ]\r\n';
+	result += '}';
+
+	return result;
 }
 
 function getLayout_Edit_REST_API() {

@@ -589,8 +589,26 @@ class Layouts
 				else
 					$listing_id = common::inputGetCmd('listing_id');
 
+
+				$filter = null;
+				if ($this->ct->Params->filter !== null)
+					$filter = $this->ct->Params->filter;
+
+				$this->ct->setFilter($filter);
+
 				if ($listing_id !== null)
-					$this->ct->Table->loadRecord($listing_id);
+					$this->ct->Filter->whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
+
+				if ($this->ct->getRecords(false, 1)) {
+					if (count($this->ct->Records) > 0) {
+						$this->ct->Table->record = $this->ct->Records[0];
+						$this->ct->Params->listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
+					}
+				}
+
+
+				//if ($listing_id !== null)
+				//	$this->ct->Table->loadRecord($listing_id);
 			}
 			$output['html'] = $this->renderDetails();
 		} else
@@ -599,8 +617,9 @@ class Layouts
 		$output['scripts'] = $this->ct->LayoutVariables['scripts'] ?? null;
 		$output['styles'] = $this->ct->LayoutVariables['styles'] ?? null;
 		$output['jslibrary'] = $this->ct->LayoutVariables['jslibrary'] ?? null;
-		$output['task'] = $task;
 
+		$output['success'] = true;
+		
 		return $output;
 	}
 

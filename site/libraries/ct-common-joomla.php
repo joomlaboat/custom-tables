@@ -78,7 +78,7 @@ class common
 
 			$contentType === 'applicationjson' ||         // Joomla's modified version
 			$contentType === 'application/json' ||        // Standard version
-			strpos($contentType, 'application/json') !== false  // Partial match for safety
+			strpos(($contentType ?? ''), 'application/json') !== false  // Partial match for safety
 
 		) {
 			// Handle JSON data

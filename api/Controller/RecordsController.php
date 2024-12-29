@@ -3,7 +3,6 @@
 use CustomTables\Catalog;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Response\JsonResponse;
 
 class RecordsController
 {
@@ -31,7 +30,7 @@ class RecordsController
 
 		$ct = new CT(null, false);
 		$ct->Env->clean = true;
-		$ct->Params->blockExternalVars = true;
+		$ct->Params->blockExternalVars = false;
 
 		$limit = Factory::getApplication()->input->getInt('limit');
 		if ($limit)
