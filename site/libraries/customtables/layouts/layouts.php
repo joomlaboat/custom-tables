@@ -447,6 +447,9 @@ class Layouts
 			elseif ($layoutType == 9)
 				$this->layoutCode = $this->createDefaultLayout_CSV($this->ct->Table->fields);
 		}
+
+		if ($this->params !== null)
+			$this->ct->Params->setParams($this->params);
 		/*
 		 * <option value="1">Simple Catalog</option>
 				<option value="5">Catalog Page</option>
@@ -584,11 +587,11 @@ class Layouts
 		} elseif ($this->layoutType == 4 or $this->layoutType == 6) {
 			//Details or Catalog Item
 			if ($this->ct->Table->record === null) {
+
 				if ($this->ct->Params->listing_id !== null)
 					$listing_id = $this->ct->Params->listing_id;
 				else
 					$listing_id = common::inputGetCmd('listing_id');
-
 
 				$filter = null;
 				if ($this->ct->Params->filter !== null)
@@ -605,11 +608,8 @@ class Layouts
 						$this->ct->Params->listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
 					}
 				}
-
-
-				//if ($listing_id !== null)
-				//	$this->ct->Table->loadRecord($listing_id);
 			}
+
 			$output['html'] = $this->renderDetails();
 		} else
 			$output['html'] = 'CustomTable: Unknown Layout Type';
@@ -619,7 +619,7 @@ class Layouts
 		$output['jslibrary'] = $this->ct->LayoutVariables['jslibrary'] ?? null;
 
 		$output['success'] = true;
-		
+
 		return $output;
 	}
 
