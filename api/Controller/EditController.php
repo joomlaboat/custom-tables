@@ -84,12 +84,37 @@ class EditController
 		$app = Factory::getApplication();
 
 		$layoutName = common::inputGetCmd('layout');
+		$listing_id = common::inputPostCmd('id');
+
 		$task = common::inputPostCmd('task');
 
 		$params = null;
 		$ct = @ new CT($params, false);
 		$ct->Env->clean = true;
 		$ct->Params->blockExternalVars = false;
+
+		$layout = new Layouts($ct);
+		$layout->getLayout($layoutName);
+
+		$filter = $layout->params['filter'] ?? null;
+		if ($filter !== null)
+			$ct->setParams($layout->params);
+
+		$filter = null;
+		if ($ct->Params->filter !== null)
+			$filter = $ct->Params->filter;
+
+		$ct->setFilter($filter);
+
+		if ($listing_id !== null)
+			$ct->Filter->whereClause->addCondition($ct->Table->realidfieldname, $listing_id);
+
+		if ($ct->getRecords(false, 1)) {
+			if (count($ct->Records) > 0) {
+				$ct->Table->record = $ct->Records[0];
+				$ct->Params->listing_id = $ct->Table->record[$ct->Table->realidfieldname];
+			}
+		}
 
 		$layout = new Layouts($ct);
 		$result = $layout->renderMixedLayout($layoutName, null, 1, $task);
@@ -116,9 +141,6 @@ class EditController
 		$app->sendHeaders();
 
 		echo json_encode([
-
-			'$ct->Env->user->id' => $ct->Env->user->id,
-			'postData' => $postData,
 			'success' => true,
 			'data' => null,
 			'message' => $result['message'] ?? 'Done'
@@ -131,7 +153,7 @@ class EditController
 		$app = Factory::getApplication();
 
 		$layoutName = Factory::getApplication()->input->get('layout');
-		$listing_id = Factory::getApplication()->input->get('listing_id');
+		$listing_id = Factory::getApplication()->input->get('id');
 
 		try {
 			$params['listingid'] = $listing_id;
@@ -148,16 +170,18 @@ class EditController
 		$editForm = new Edit($ct);
 		$editForm->load();
 
-		if ($ct->Params->filter !== null) {
-			$ct->setFilter($ct->Params->filter);
+		$filter = null;
+		if ($ct->Params->filter !== null)
+			$filter = $ct->Params->filter;
 
-			if ($ct->Params->listing_id !== null)
-				$ct->Filter->whereClause->addCondition($ct->Table->realidfieldname, $ct->Params->listing_id);
+		$ct->setFilter($filter);
 
-			if ($ct->getRecords(false, 1)) {
-				if (count($ct->Records) > 0)
-					$ct->Table->record = $ct->Records[0];
-			}
+		if ($ct->Params->listing_id !== null)
+			$ct->Filter->whereClause->addCondition($ct->Table->realidfieldname, $ct->Params->listing_id);
+
+		if ($ct->getRecords(false, 1)) {
+			if (count($ct->Records) > 0)
+				$ct->Table->record = $ct->Records[0];
 		}
 
 		$result = $editForm->processLayout();
@@ -171,12 +195,18 @@ class EditController
 		$app->setHeader('status', 200);
 		$app->sendHeaders();
 
+		$listing_id = null;
+		if (isset($ct->Table->record) and isset($ct->Table->record[$ct->Table->realidfieldname])) {
+			$listing_id = $ct->Table->record[$ct->Table->realidfieldname];
+		}
+
 		echo json_encode([
 			'success' => true,
 			'data' => $j,
 			'message' => 'Edit form fields',
 			'form_token' => $this->generateFormToken(), // Add token to response
-			'input_prefix' => $ct->Table->fieldInputPrefix
+			'input_prefix' => $ct->Table->fieldInputPrefix,
+			'id' => $listing_id
 		], JSON_PRETTY_PRINT);
 
 		die;
