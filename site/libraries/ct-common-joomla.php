@@ -62,7 +62,31 @@ class common
 	 */
 	public static function inputPostString($parameter, $default = null): ?string
 	{
-		return Factory::getApplication()->input->post->getString($parameter, $default);
+		$input = self::inputPostVariable();
+		return $input->getString($parameter, $default);
+	}
+
+	protected static function inputPostVariable()
+	{
+		$app = Factory::getApplication();
+		$input = $app->input;
+
+		// Check content type
+		$contentType = $app->input->server->get('CONTENT_TYPE');
+
+		if (
+
+			$contentType === 'applicationjson' ||         // Joomla's modified version
+			$contentType === 'application/json' ||        // Standard version
+			strpos($contentType, 'application/json') !== false  // Partial match for safety
+
+		) {
+			// Handle JSON data
+			return $input->json;
+		} else {
+			// Handle regular form data
+			return $input->post;
+		}
 	}
 
 	/**
@@ -71,7 +95,8 @@ class common
 	 */
 	public static function inputPostFloat($parameter, $default = null): ?float
 	{
-		return Factory::getApplication()->input->getFloat($parameter, $default);
+		$input = self::inputPostVariable();
+		return $input->getFloat($parameter, $default);
 	}
 
 	/**
@@ -89,7 +114,8 @@ class common
 	 */
 	public static function inputPostInt(string $parameter, ?int $default = null): ?int
 	{
-		return Factory::getApplication()->input->getInt($parameter, $default);
+		$input = self::inputPostVariable();
+		return $input->getInt($parameter, $default);
 	}
 
 	/**
@@ -107,7 +133,8 @@ class common
 	 */
 	public static function inputPostUInt($parameter, $default = null): ?int
 	{
-		return Factory::getApplication()->input->getInt($parameter, $default);
+		$input = self::inputPostVariable();
+		return $input->getInt($parameter, $default);
 	}
 
 	/**
@@ -125,7 +152,8 @@ class common
 	 */
 	public static function inputPostCmd(string $parameter, $default = null): ?string
 	{
-		return Factory::getApplication()->input->getCmd($parameter, $default);
+		$input = self::inputPostVariable();
+		return $input->getCmd($parameter, $default);
 	}
 
 	/**
@@ -161,7 +189,8 @@ class common
 	 */
 	public static function inputPostBase64(string $parameter, $default = null)
 	{
-		return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
+		$input = self::inputPostVariable();
+		return $input->get($parameter, $default, 'BASE64');
 	}
 
 	/**
@@ -179,7 +208,8 @@ class common
 	 */
 	public static function inputPostAlnum(string $parameter, $default = null)
 	{
-		return Factory::getApplication()->input->get($parameter, $default, 'ALNUM');
+		$input = self::inputPostVariable();
+		return $input->get($parameter, $default, 'ALNUM');
 	}
 
 	/**
@@ -197,7 +227,8 @@ class common
 	 */
 	public static function inputPostArray($parameter, ?array $default = null)
 	{
-		return Factory::getApplication()->input->post->get($parameter, $default, 'array');
+		$input = self::inputPostVariable();
+		return $input->get($parameter, $default, 'array');
 	}
 
 	/**

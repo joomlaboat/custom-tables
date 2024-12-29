@@ -81,12 +81,17 @@ class Params
 
 	var bool $blockExternalVars;
 
+	var ?array $params;
+
+
 	/**
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
 	function __construct(?array $menu_params = null, $blockExternalVars = false, ?string $ModuleId = null)
 	{
+		$this->params = $menu_params;
+
 		$this->ModuleId = null;
 		$this->blockExternalVars = $blockExternalVars;
 		$this->sortBy = null;
@@ -196,11 +201,16 @@ class Params
 	 */
 	function setParams(?array $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
 	{
+		if ($this->params !== null)
+			$this->params = array_merge($this->params, $menu_params);
+		else
+			$this->params = $menu_params;
+
 		if (defined('_JEXEC'))
-			$this->setJoomlaParams($menu_params, $blockExternalVars, $ModuleId);
+			$this->setJoomlaParams($this->params, $blockExternalVars, $ModuleId);
 		else {
 			$this->setDefault();
-			$this->setWPParams($menu_params, $blockExternalVars, $ModuleId);
+			$this->setWPParams($this->params, $blockExternalVars, $ModuleId);
 		}
 	}
 

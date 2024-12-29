@@ -110,13 +110,14 @@ class RegisterController
 
 			// Generate API token for immediate login
 			$token = UserHelper::genRandomPassword(32);
+			$series = 'API_' . UserHelper::genRandomPassword(16);
 
 			// Store token in #__user_keys
 			$tokenData = (object)[
 				'id' => null,
 				'user_id' => $user->id,
 				'token' => $token,
-				'series' => 'API',
+				'series' => $series,
 				'time' => Factory::getDate()->toSql(),
 				'uastring' => 'API Access'
 			];

@@ -1080,4 +1080,74 @@ class CTMiscHelper
 
 		return checkdnsrr(end($pair), $record);
 	}
+
+	public static function updateSessionData($sessionId, $key, $value)
+	{
+		$db = Factory::getDbo();
+
+		// First get existing data
+		$query = $db->getQuery(true)
+			->select($db->quoteName('data'))
+			->from($db->quoteName('#__session'))
+			->where($db->quoteName('session_id') . ' = ' . $db->quote($sessionId));
+
+		$db->setQuery($query);
+		$existingDataSerialized = $db->loadResult();
+
+		// Initialize or unserialize existing data
+		$sessionData = [];
+		if (!empty($existingDataSerialized)) {
+			$sessionData = unserialize($existingDataSerialized);
+		}
+
+		// Add/Update our key
+		$sessionData[$key] = $value;
+
+		// Serialize back
+		$newData = serialize($sessionData);
+		$user = new CTUser();
+
+		// Update the session table
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__session'))
+			->set($db->quoteName('data') . ' = ' . $db->quote($newData))
+			->set($db->quoteName('userid') . ' = ' . $db->quote($user->id))
+			->set($db->quoteName('username') . ' = ' . $db->quote($user->username))
+			->where($db->quoteName('session_id') . ' = ' . $db->quote($sessionId));
+
+		$db->setQuery($query);
+
+
+		try {
+			$db->execute();
+			return true;
+		} catch (Exception $e) {
+			return false;
+		}
+	}
+
+	static public function getSessionData($sessionId, $key)
+	{
+		$db = Factory::getDbo();
+
+		// Get session data
+		$query = $db->getQuery(true)
+			->select($db->quoteName('data'))
+			->from($db->quoteName('#__session'))
+			->where($db->quoteName('session_id') . ' = ' . $db->quote($sessionId));
+
+		$db->setQuery($query);
+		$existingDataSerialized = $db->loadResult();
+
+		// Check if we have data
+		if (empty($existingDataSerialized)) {
+			return null;
+		}
+
+		// Unserialize data
+		$sessionData = unserialize($existingDataSerialized);
+
+		// Return specific key value if it exists
+		return isset($sessionData[$key]) ? $sessionData[$key] : null;
+	}
 }

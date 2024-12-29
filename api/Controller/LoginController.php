@@ -81,8 +81,14 @@ class LoginController
 			}
 
 
-			// Generate unique series identifier (prefix API_ followed by random string)
-			$series = 'API_' . UserHelper::genRandomPassword(16);
+			// Prevent session auto-start for API requests
+			if ($app->getSession()->isActive()) {
+				$series = 'API_' . $app->getSession()->getId();
+			} else {
+				// Generate unique series identifier (prefix API_ followed by random string)
+				$series = 'API_NEW_' . UserHelper::genRandomPassword(16);
+			}
+
 
 // Generate token
 			$token = UserHelper::genRandomPassword(32);

@@ -30,9 +30,9 @@ class Edit
 	var ?string $pageLayoutNameString;
 	var ?string $pageLayoutLink;
 
-	function __construct(CT &$ct)
+	function __construct(CT $ct)
 	{
-		$this->ct = &$ct;
+		$this->ct = $ct;
 		$this->row = null;
 		$this->layoutType = 0;
 		$this->layoutContent = '';
@@ -77,6 +77,11 @@ class Edit
 			$this->pageLayoutLink = null;
 		}
 		$this->ct->LayoutVariables['layout_type'] = $this->layoutType;
+
+		$filter = $Layouts->params['filter'] ?? null;
+		if ($filter !== null)
+			$this->ct->setParams($Layouts->params);
+
 		return true;
 	}
 
@@ -137,7 +142,8 @@ class Edit
 			}
 		}
 
-		common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+		if ($this->ct->Env->clean == 0)
+			common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 		if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
 

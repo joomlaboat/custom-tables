@@ -1,6 +1,7 @@
 <?php
 defined('_JEXEC') or die;
 
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 
 class CustomTablesAPIHelpers
@@ -79,6 +80,21 @@ class CustomTablesAPIHelpers
 				'message' => 'Token expired'
 			]);
 			die;
+		}
+
+		$series = $result->series;
+		$seriesParts = explode('_', $series);
+
+		if (count($seriesParts) == 2) {
+			$sessionId = $seriesParts[1];
+
+			if (!class_exists(CTMiscHelper::class)) {
+				echo 'CTMiscHelper not installed' . PHP_EOL;
+				die;
+			}
+
+			$session = $app->getSession();
+			$session->setId($sessionId);
 		}
 
 		// Update the token's last used time

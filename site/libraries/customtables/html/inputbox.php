@@ -236,9 +236,31 @@ class Inputbox
 		}
 
 		$options = $this->getOptions($value);
-		if ($options !== null)
-			$input['options'] = $options;
+		if ($options !== null) {
+			if ($this->field->type === 'sqljoin' or $this->field->type === 'records') {
+				if (count($options) === 1)
+					$input['options'] = $options;
+				else {
 
+					$newOptions = [];
+					$level = 1;
+					foreach ($options as $option) {
+						$newOption = [
+							"level" => $level,
+							"table" => $option["table"],
+							"field" => $option["field"],
+							"options" => $option["options"]
+						];
+
+						$newOptions[] = $newOption;
+						$level += 1;
+					}
+					$input['cascade'] = $newOptions;
+				}
+			} else {
+				$input['options'] = $options;
+			}
+		}
 
 		return $input;
 	}
@@ -291,8 +313,20 @@ class Inputbox
 				return $inputBoxRenderer->getOptions($value);
 
 			case 'sqljoin':
+
+				$path = CUSTOMTABLES_PRO_PATH . 'inputbox' . DIRECTORY_SEPARATOR;
+
+				if (file_exists($path . 'tablejoin.php')) {
+					require_once($path . 'tablejoin.php');
+
+					$inputBoxRenderer = new ProInputBoxTableJoin($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
+					return $inputBoxRenderer->getOptions($value);
+				} else {
+					return ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_AVAILABLE')];
+				}
+
 			case 'records':
-				return null;
+				return ['success' => false, 'message' => 'Unsupported'];
 		}
 		return null;
 	}

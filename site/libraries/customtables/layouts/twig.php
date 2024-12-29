@@ -406,15 +406,15 @@ class fieldObject
 				return null;
 
 			return $image['src'];
-
-		} elseif ($this->field->type == 'records') {
-			$a = explode(",", $this->ct->Table->record[$rfn]);
-			$b = array();
-			foreach ($a as $c) {
-				if ($c != "")
-					$b[] = $c;
-			}
-			$vlu = implode(',', $b);
+			/*
+					} elseif ($this->field->type == 'records') {
+						$a = explode(",", $this->ct->Table->record[$rfn]);
+						$b = array();
+						foreach ($a as $c) {
+							if ($c != "")
+								$b[] = $c;
+						}
+						$vlu = implode(',', $b);*/
 		} elseif ($this->field->type == 'imagegallery') {
 
 			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR

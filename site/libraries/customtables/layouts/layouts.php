@@ -162,7 +162,7 @@ class Layouts
 		if ($processLayoutTag)
 			$this->processLayoutTag($layoutCode);
 
-		if ($addHeaderCode and $this->ct->Env->advancedTagProcessor)
+		if ($addHeaderCode and $this->ct->Env->advancedTagProcessor and $this->ct->Env->clean == 0)
 			$this->addCSSandJSIfNeeded($row, $checkLayoutFile);
 
 		$this->pageLayoutNameString = $row['layoutname'];
@@ -415,8 +415,11 @@ class Layouts
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function renderMixedLayout($layoutId, ?int $layoutType = null): array
+	function renderMixedLayout($layoutId, ?int $layoutType = null, ?int $clean = null, bool $mustReturn = false, ?string $task = null): array
 	{
+		if ($clean === null)
+			$clean = common::inputGetInt('clean', 0);
+
 		if (!empty($layoutId)) {
 			$this->getLayout($layoutId);
 			if ($this->layoutType === null)
@@ -457,30 +460,38 @@ class Layouts
 				<option value="10">JSON File</option>
 		 */
 
-		$task = common::inputPostCmd('task', null, 'create-edit-record');
+		$output = ['style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
+
+		if ($task === null)
+			$task = common::inputPostCmd('task', null, 'create-edit-record');
+
 		if ($task === null)
 			$task = common::inputGetCmd('task');
-
-		$output = ['style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
 
 		if (in_array($this->layoutType, [1, 5, 8, 9, 10])) {
 			//Simple Catalog or Catalog Page
 			if ($task == 'delete') {
 
-				$clean = common::inputGetInt('clean', 0);
-
 				$listing_id = common::inputGetCmd('listing_id', 0);
 				if (!empty($listing_id)) {
 					if ($this->ct->deleteSingleRecord($listing_id) === 1) {
 
-						if ($clean == 1)
-							die('deleted');
-						else
+						if ($clean == 1) {
+							if ($mustReturn) {
+								return ['success' => true, 'message' => common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED_1'), 'short' => 'deleted'];
+							} else {
+								die('deleted');
+							}
+						} else
 							common::enqueueMessage(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED_1'), 'notice');
 					} else {
-						if ($clean == 1)
-							die('error');
-						else
+						if ($clean == 1) {
+							if ($mustReturn) {
+								return ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED_1'), 'short' => 'error'];
+							} else {
+								die('error');
+							}
+						} else
 							common::enqueueMessage(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED_1'));
 					}
 				}
@@ -507,9 +518,24 @@ class Layouts
 						}
 					}
 
-					common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'notice');
+					if ($clean == 1) {
+						if ($mustReturn) {
+							return ['success' => true, 'message' => common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'short' => 'updated'];
+						} else {
+							die('updated');
+						}
+					} else
+						common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'notice');
 				} else {
-					common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'));
+
+					if ($clean == 1) {
+						if ($mustReturn) {
+							return ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'), 'short' => 'error'];
+						} else {
+							die('error');
+						}
+					} else
+						common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'));
 
 					if ($record->ct->Params !== null and $record->ct->Params->msgItemIsSaved !== null)
 						common::enqueueMessage($record->ct->Params->msgItemIsSaved);
@@ -573,6 +599,8 @@ class Layouts
 		$output['scripts'] = $this->ct->LayoutVariables['scripts'] ?? null;
 		$output['styles'] = $this->ct->LayoutVariables['styles'] ?? null;
 		$output['jslibrary'] = $this->ct->LayoutVariables['jslibrary'] ?? null;
+		$output['task'] = $task;
+
 		return $output;
 	}
 
@@ -916,7 +944,7 @@ class Layouts
 			}
 		}
 
-		if ($this->ct->Env->frmt == 'html')
+		if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
 			common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 		// --------------------- Filter
