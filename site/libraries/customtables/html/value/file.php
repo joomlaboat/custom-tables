@@ -397,7 +397,8 @@ class Value_file extends BaseValue
 			return;
 		}
 
-		$this->row = $this->ct->Table->loadRecord($this->listing_id);
+		$this->ct->getRecord($this->listing_id);
+		$this->row = $this->ct->Table->record;
 		$this->field = new Field($this->ct, $fieldRow, $this->row);
 
 		if ($this->field->type == 'blob') {

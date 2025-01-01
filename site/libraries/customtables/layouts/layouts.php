@@ -574,7 +574,7 @@ class Layouts
 					$listing_id = common::inputGetCmd('listing_id');
 
 				if ($listing_id !== null)
-					$this->ct->Table->loadRecord($listing_id);
+					$this->ct->getRecord($listing_id);
 			}
 
 			$output['html'] = $this->renderEditForm();

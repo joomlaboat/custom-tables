@@ -62,7 +62,8 @@ class record
 
 		if ($listing_id !== null) {
 			$this->listing_id = $listing_id;
-			$this->row_old = $this->ct->Table->loadRecord($this->listing_id);
+			$this->ct->getRecord($this->listing_id);
+			$this->row_old = $this->ct->Table->record;
 		} else
 			$this->row_old[$this->ct->Table->realidfieldname] = '';// Why?
 
@@ -132,7 +133,8 @@ class record
 
 		if ($this->isItNewRecord) {
 			if ($this->listing_id !== null) {
-				$this->row_new = $this->ct->Table->loadRecord($this->listing_id);
+				$this->ct->getRecord($this->listing_id);
+				$this->row_new = $this->ct->Table->record;
 
 				if ($this->row_new !== null) {
 
@@ -159,19 +161,21 @@ class record
 				$this->ct->errors[] = $e->getMessage();
 			}
 
-			$this->row_new = $this->ct->Table->loadRecord($this->listing_id);
-			if ($this->row_new !== null) {
+			if ($this->ct->getRecord($this->listing_id)) {
+				$this->row_new = $this->ct->Table->record;
 
 				if (defined('_JEXEC')) {
-					common::inputSet("listing_id", $this->row_new[$this->ct->Table->realidfieldname]);
+					common::inputSet("listing_id", $this->ct->Table->record[$this->ct->Table->realidfieldname]);
 
 					if ($this->ct->Env->advancedTagProcessor) {
 						if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
-							CustomPHP::doPHPonChange($this->ct, $this->row_new);
+							CustomPHP::doPHPonChange($this->ct, $this->ct->Table->record);
 						if ($phpOnAddFound and $isCopy)
-							CustomPHP::doPHPonAdd($this->ct, $this->row_new);
+							CustomPHP::doPHPonAdd($this->ct, $this->ct->Table->record);
 					}
 				}
+			} else {
+				$this->row_new = null;
 			}
 		}
 

@@ -199,7 +199,7 @@ class CustomTablesViewLog extends HtmlView
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function getRecordValue($tableId, $listing_id, $Itemid, $FieldName): string
+	protected function getRecordValue($tableId, $listing_id, $Itemid, $FieldName): string
 	{
 		if (!isset($FieldName) or $FieldName == '')
 			return "Table/Field not found.";
@@ -222,7 +222,11 @@ class CustomTablesViewLog extends HtmlView
 		$layoutContent = '{{ ' . $FieldName . ' }}';
 		$twig = new TwigProcessor($ct, $layoutContent);
 
-		$row = $ct->Table->loadRecord($listing_id);
+		if ($ct->getRecord($listing_id)) {
+			$row = $ct->Table->record;
+		} else
+			$row = null;
+
 		if ($twig->errorMessage !== null) {
 			$ct->errors[] = $twig->errorMessage;
 			return '';

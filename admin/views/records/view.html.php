@@ -79,8 +79,8 @@ class CustomtablesViewRecords extends HtmlView
 			$this->ct = new CT;
 			$this->ct->setParams($paramsArray);
 			$this->ct->getTable($this->tableId);
-			$this->row = $this->ct->Table->loadRecord($listing_id);
-
+			$this->ct->getRecord($listing_id);
+			$this->row = $this->ct->Table->record;
 			$this->renderForm($tpl);
 		}
 	}

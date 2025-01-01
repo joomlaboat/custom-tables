@@ -54,7 +54,9 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 			return false;
 
 		$this->fileBoxName = common::inputGetCmd('fileboxname');
-		$this->row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
+
+		$this->ct->getRecord($this->ct->Params->listing_id);
+		$this->row = $this->ct->Table->record;
 
 		if (!$this->getFileBox())
 			return false;

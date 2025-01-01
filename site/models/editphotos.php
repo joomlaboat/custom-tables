@@ -86,8 +86,9 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	 */
 	function getObject(): bool
 	{
-		$this->row = $this->ct->Table->loadRecord($this->listing_id);
-		if ($this->row === null)
+		if ($this->ct->getRecord($this->listing_id)) {
+			$this->row = $this->ct->Table->record;
+		} else
 			return false;
 
 		$this->Listing_Title = '';

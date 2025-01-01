@@ -48,9 +48,10 @@ class Twig_Tables_Tags
 
 		if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
 			try {
-				$row = $join_ct->Table->loadRecord($record_id_or_filter);
-				if ($row === null)
+				if (!$join_ct->getRecord($record_id_or_filter))
 					return '';
+
+				$row = $join_ct->Table->record;
 			} catch (Exception $e) {
 				$join_ct->errors[] = $e->getMessage();
 				return '';
@@ -113,6 +114,63 @@ class Twig_Tables_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
+	function getrecord($layoutname = '', $record_id_or_filter = '', $orderby = ''): string
+	{
+		if ($layoutname == '') {
+			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout name not specified.';
+			return '';
+		}
+
+		if ($record_id_or_filter == '') {
+			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Record id or filter not set.';
+			return '';
+		}
+
+		$join_ct = new CT;
+		$layouts = new Layouts($join_ct);
+
+		$pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
+
+		if ($layouts->tableId === null) {
+			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.';
+			return '';
+		}
+
+		$join_ct->getTable($layouts->tableId);
+		if ($join_ct->Table === null) {
+			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.';
+			return '';
+		}
+
+		if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
+			if (!$join_ct->getRecord($record_id_or_filter))
+				return '';
+
+			$row = $join_ct->Table->record;
+		} else {
+			$join_ct->setFilter($record_id_or_filter, 2);
+			if ($join_ct->getRecords(false, 1, $orderby)) {
+				if (count($join_ct->Records) > 0)
+					$row = $join_ct->Records[0];
+				else
+					return '';
+			} else
+				return '';
+		}
+
+		$twig = new TwigProcessor($join_ct, $pageLayout);
+
+		$value = $twig->process($row);
+		if ($twig->errorMessage !== null)
+			$join_ct->errors[] = $twig->errorMessage;
+
+		return $value;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getrecords($layoutname = '', $filter = '', $orderby = '', $limit = 0, $groupby = ''): string
 	{
 		//Example {{ html.records("InvoicesPage","firstname=john","lastname",10,"country") }}
@@ -161,62 +219,5 @@ class Twig_Tables_Tags
 
 		$this->ct->errors[] = '{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.';
 		return '';
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	function getrecord($layoutname = '', $record_id_or_filter = '', $orderby = ''): string
-	{
-		if ($layoutname == '') {
-			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout name not specified.';
-			return '';
-		}
-
-		if ($record_id_or_filter == '') {
-			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Record id or filter not set.';
-			return '';
-		}
-
-		$join_ct = new CT;
-		$layouts = new Layouts($join_ct);
-
-		$pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
-
-		if ($layouts->tableId === null) {
-			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.';
-			return '';
-		}
-
-		$join_ct->getTable($layouts->tableId);
-		if ($join_ct->Table === null) {
-			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.';
-			return '';
-		}
-
-		if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
-			$row = $join_ct->Table->loadRecord($record_id_or_filter);
-
-			if ($row === null)
-				return '';
-		} else {
-			$join_ct->setFilter($record_id_or_filter, 2);
-			if ($join_ct->getRecords(false, 1, $orderby)) {
-				if (count($join_ct->Records) > 0)
-					$row = $join_ct->Records[0];
-				else
-					return '';
-			} else
-				return '';
-		}
-
-		$twig = new TwigProcessor($join_ct, $pageLayout);
-
-		$value = $twig->process($row);
-		if ($twig->errorMessage !== null)
-			$join_ct->errors[] = $twig->errorMessage;
-
-		return $value;
 	}
 }
