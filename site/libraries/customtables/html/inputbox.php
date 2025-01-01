@@ -238,9 +238,9 @@ class Inputbox
 		$options = $this->getOptions($value);
 		if ($options !== null) {
 			if ($this->field->type === 'sqljoin' or $this->field->type === 'records') {
-				if (count($options) === 1)
-					$input['options'] = $options;
-				else {
+				if (count($options) === 1) {
+					$input['options'] = $options[0]['options'];
+				} else {
 
 					$newOptions = [];
 					$level = 1;

@@ -71,15 +71,14 @@ class CustomTablesViewEditItem extends HtmlView
 				return false;
 			}
 
-			if (!empty($this->ct->Params->listing_id))
-				$this->row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
-			else
+			if ($this->ct->getRecord($this->ct->Params->listing_id)) {
+				$this->row = $this->ct->Table->record;
+
+				if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+					$this->row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->row);
+			} else
 				$this->row = null;
 
-			if (isset($row)) {
-				if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-					$this->row = ctProHelpers::getSpecificVersionIfSet($this->ct, $row);
-			}
 			parent::display($tpl);
 		}
 		return true;

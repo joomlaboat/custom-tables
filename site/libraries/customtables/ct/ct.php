@@ -162,6 +162,40 @@ class CT
 		$this->alias_fieldname = null;
 	}
 
+
+	function getRecord(?string $listing_id = null): bool
+	{
+		$selects = $this->Table->selects;
+
+		if ($this->Filter === null)
+			$this->setFilter($this->Params->filter, $this->Params->showPublished);
+
+		if ($listing_id !== null)
+			$this->Filter->whereClause->addCondition($this->Table->realidfieldname, $listing_id);
+
+		$records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
+			null, null, 1);
+
+		if (count($records) < 1) {
+			$this->Table->record = null;
+			return false;
+		}
+
+		$this->Table->record = $records[0];
+		return true;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
+	function setFilter(?string $filter_string = null, int $showpublished = 0): void
+	{
+		$this->Filter = new Filtering($this, $showpublished);
+		if ($filter_string != '')
+			$this->Filter->addWhereExpression($filter_string);
+	}
+
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
@@ -257,17 +291,6 @@ class CT
 			$this->Table->recordcount = intval($rows[0]->record_count);
 
 		return $this->Table->recordcount;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.3
-	 */
-	function setFilter(?string $filter_string = null, int $showpublished = 0): void
-	{
-		$this->Filter = new Filtering($this, $showpublished);
-		if ($filter_string != '')
-			$this->Filter->addWhereExpression($filter_string);
 	}
 
 	/**
