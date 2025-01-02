@@ -282,7 +282,7 @@ class Params
 			$this->filter = $menu_params['filter'] ?? null;
 		}
 
-		$this->showPublished = (int)($menu_params['showpublished'] ?? 1);
+		$this->showPublished = (int)($menu_params['showpublished'] ?? CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY);
 
 		//Group BY
 		$this->groupBy = $menu_params['groupby'] ?? null;
@@ -496,7 +496,8 @@ class Params
 			$this->filter = $menu_params['filter'] ?? null;
 		}
 
-		$this->showPublished = (int)($menu_params['showpublished'] ?? 1);
+
+		$this->showPublished = (int)($menu_params['showpublished'] ?? CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY);
 
 		//Group BY
 		$this->groupBy = $menu_params['groupby'] ?? null;

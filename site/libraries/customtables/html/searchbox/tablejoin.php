@@ -161,9 +161,9 @@ class Search_tablejoin extends BaseSearch
 		$paramsArray['limit'] = 0;
 		$paramsArray['establename'] = $tableName;
 		if ($allowUnpublished)
-			$paramsArray['showpublished'] = 2;//0 - published only; 1 - hidden only; 2 - Any
+			$paramsArray['showpublished'] = CUSTOMTABLES_SHOWPUBLISHED_ANY;//0 - published only; 1 - hidden only; 2 - Any
 		else
-			$paramsArray['showpublished'] = 0;//0 - published only; 1 - hidden only; 2 - Any
+			$paramsArray['showpublished'] = CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY;//0 - published only; 1 - hidden only; 2 - Any
 
 		$paramsArray['groupby'] = '';
 

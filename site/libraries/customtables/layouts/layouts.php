@@ -588,11 +588,18 @@ class Layouts
 			//Details or Catalog Item
 			if ($this->ct->Table->record === null) {
 
+				//if ($this->ct->Params->listing_id !== null)
+				//	$listing_id = $this->ct->Params->listing_id;
+				//else
+				//$listing_id = common::inputGetCmd('listing_id');
 				if ($this->ct->Params->listing_id !== null)
 					$listing_id = $this->ct->Params->listing_id;
 				else
 					$listing_id = common::inputGetCmd('listing_id');
 
+				$this->ct->getRecord($listing_id);
+
+				/*
 				$filter = null;
 				if ($this->ct->Params->filter !== null)
 					$filter = $this->ct->Params->filter;
@@ -608,9 +615,17 @@ class Layouts
 						$this->ct->Params->listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
 					}
 				}
+				*/
 			}
 
-			$output['html'] = $this->renderDetails();
+			$details = new Details($this->ct);
+			$details->layoutDetailsContent = $this->layoutCode;
+			$details->pageLayoutNameString = $this->pageLayoutNameString;
+			$details->pageLayoutLink = $this->pageLayoutLink;
+
+			$output['html'] = $details->render();
+
+			//$output['html'] = $this->renderDetails();
 		} else
 			$output['html'] = 'CustomTable: Unknown Layout Type';
 
@@ -1064,34 +1079,6 @@ class Layouts
 		$editForm = new Edit($this->ct);
 		$editForm->layoutContent = $this->layoutCode;
 		return $editForm->render($row, $formLink, 'ctEditForm');
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.8
-	 */
-	protected function renderDetails(): string
-	{
-		if ($this->ct->Table->record === null)
-			return 'Record not loaded!';
-
-		$row = $this->ct->Table->record;
-
-		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-			$row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
-
-		$details = new Details($this->ct);
-		$details->layoutDetailsContent = $this->layoutCode;
-		$details->pageLayoutNameString = $this->pageLayoutNameString;
-		$details->pageLayoutLink = $this->pageLayoutLink;
-		$details->row = $row;
-
-		if (!is_null($row)) {
-			//Save view log
-			$details->SaveViewLogForRecord($row);
-			//$this->UpdatePHPOnView();
-		}
-		return $details->render();
 	}
 
 	/**

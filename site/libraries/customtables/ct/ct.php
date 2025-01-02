@@ -125,6 +125,110 @@ class CT
 
 	/**
 	 * @throws Exception
+	 * @since 3.4.9
+	 */
+	function getRecord(?string $listing_id = null): bool
+	{
+		if (is_null($this->Table))
+			return false;
+
+		if (is_null($this->Table->tablerow))
+			return false;
+
+		$ordering = $this->GroupBy !== null ? [$this->GroupBy] : [];
+
+		$this->Ordering = new Ordering($this->Table, $this->Params);
+
+		$selects = $this->Table->selects;
+
+		if ($this->Filter === null)
+			$this->setFilter($this->Params->filter, $this->Params->showPublished);
+		else
+			$this->setFilter(null, $this->Params->showPublished);
+
+		if (!is_null($this->Params->alias) and $this->Table->alias_fieldname != '')
+			$this->Filter->addWhereExpression($this->Table->alias_fieldname . '="' . $this->Params->alias . '"');
+
+		if ($listing_id !== null)
+			$this->Filter->whereClause->addCondition($this->Table->realidfieldname, $listing_id);
+
+		//Get order by fields from menu parameters
+		$this->Ordering->parseOrderByParam();
+		//Process the string to get the orderby
+		$this->Ordering->parseOrderByString();
+
+
+		if ($this->Ordering->orderby !== null) {
+			if ($this->Ordering->selects !== null)
+				$selects[] = $this->Ordering->selects;
+
+			$ordering[] = $this->Ordering->orderby;
+		}
+
+		$records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
+			(count($ordering) > 0 ? implode(',', $ordering) : null), 1, null,
+			null, $this->Table->realtablename . '.' . $this->Table->realidfieldname
+		);
+
+		if (count($records) < 1) {
+			$this->Table->record = null;
+			return false;
+		}
+
+		if (!$this->Params->blockExternalVars and $this->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+			$this->Table->record = ctProHelpers::getSpecificVersionIfSet($this, $records[0]);
+		else
+			$this->Table->record = $records[0];
+
+
+		if (!is_null($this->Params->recordsTable) and !is_null($this->Params->recordsUserIdField) and !is_null($this->Params->recordsField)) {
+			if (!$this->checkRecordUserJoin($this->Params->recordsTable, $this->Params->recordsUserIdField, $this->Params->recordsField, $this->Params->listing_id)) {
+				//YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE;
+				throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.3
+	 */
+	function setFilter(?string $filter_string = null, int $showpublished = CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY): void
+	{
+		$this->Filter = new Filtering($this, $showpublished);
+		if ($filter_string != '')
+			$this->Filter->addWhereExpression($filter_string);
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function checkRecordUserJoin(string $recordsTable, $recordsUserIdField, $recordsField, $listing_id): bool
+	{
+		$ct = new CT;
+		$ct->getTable($recordsTable);
+		if ($ct->Table === null) {
+			return false;    // Exit if table to connect with not found
+		}
+
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition($ct->Table->fieldPrefix . $recordsUserIdField, $this->Env->user->id);
+		$whereClause->addCondition($ct->Table->fieldPrefix . $recordsField, ',' . $listing_id . ',', 'INSTR');
+
+		$rows = database::loadAssocList($ct->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
+		$num_rows = $rows[0]['record_count'];
+
+		if ($num_rows == 0)
+			return false;
+
+		return true;
+	}
+
+	/**
+	 * @throws Exception
 	 * @since 3.2.3
 	 */
 	function getTable($tableNameOrID, $userIdFieldName = null, bool $loadAllField = false): void
@@ -160,40 +264,6 @@ class CT
 			}
 		}
 		$this->alias_fieldname = null;
-	}
-
-
-	function getRecord(?string $listing_id = null): bool
-	{
-		$selects = $this->Table->selects;
-
-		if ($this->Filter === null)
-			$this->setFilter($this->Params->filter, $this->Params->showPublished);
-
-		if ($listing_id !== null)
-			$this->Filter->whereClause->addCondition($this->Table->realidfieldname, $listing_id);
-
-		$records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-			null, null, 1);
-
-		if (count($records) < 1) {
-			$this->Table->record = null;
-			return false;
-		}
-
-		$this->Table->record = $records[0];
-		return true;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.3
-	 */
-	function setFilter(?string $filter_string = null, int $showpublished = 0): void
-	{
-		$this->Filter = new Filtering($this, $showpublished);
-		if ($filter_string != '')
-			$this->Filter->addWhereExpression($filter_string);
 	}
 
 	/**

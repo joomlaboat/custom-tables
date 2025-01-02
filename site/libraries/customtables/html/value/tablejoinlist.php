@@ -98,19 +98,19 @@ class Value_tablejoinlist extends BaseValue
 
 		$filter = $field->params[3] ?? '';
 
-		//showpublished = 0 - show published
-		//showpublished = 1 - show unpublished
-		//showpublished = 2 - show any
+		//showpublished = 0 - CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY
+		//showpublished = 1 - CUSTOMTABLES_SHOWPUBLISHED_UNPUBLISHED_ONLY
+		//showpublished = 2 - CUSTOMTABLES_SHOWPUBLISHED_ANY
 
 		if (($showPublishedString === null or $showPublishedString == '') and isset($field->params[6]))
 			$showPublishedString = $field->params[6];
 
 		if ($showPublishedString == 'published')
-			$showpublished = 0;
+			$showpublished = CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY;
 		elseif ($showPublishedString == 'unpublished')
-			$showpublished = 1;
+			$showpublished = CUSTOMTABLES_SHOWPUBLISHED_UNPUBLISHED_ONLY;
 		else
-			$showpublished = 2;
+			$showpublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
 
 		//this is important because it has been selected somehow.
 		$ct->setFilter($filter, $showpublished);

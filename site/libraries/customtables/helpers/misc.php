@@ -628,6 +628,9 @@ class CTMiscHelper
 	 */
 	public static function applyContentPlugins(string &$htmlResult): string
 	{
+		if (!defined('_JEXEC'))
+			return $htmlResult;
+
 		$mainframe = Factory::getApplication();
 
 		if (method_exists($mainframe, 'getParams')) {
@@ -651,8 +654,7 @@ class CTMiscHelper
 				$htmlResult = $o->text;
 			}
 
-			if (defined('_JEXEC'))
-				$myDoc->setTitle(common::translate($pageTitle)); //because content plugins may overwrite the title
+			$myDoc->setTitle(common::translate($pageTitle)); //because content plugins may overwrite the title
 
 		}
 		return $htmlResult;

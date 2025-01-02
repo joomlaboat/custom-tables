@@ -36,6 +36,15 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
 		return;
 
+	if (!defined('CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY'))
+		define('CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY', 0);
+
+	if (!defined('CUSTOMTABLES_SHOWPUBLISHED_UNPUBLISHED_ONLY'))
+		define('CUSTOMTABLES_SHOWPUBLISHED_UNPUBLISHED_ONLY', 1);
+
+	if (!defined('CUSTOMTABLES_SHOWPUBLISHED_ANY'))
+		define('CUSTOMTABLES_SHOWPUBLISHED_ANY', 2);
+
 	$libraryPath = null;
 
 	if (defined('_JEXEC')) {

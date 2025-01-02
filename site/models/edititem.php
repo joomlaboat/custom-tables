@@ -446,12 +446,9 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 		$this->ct->getRecord($from_listing_id);
 		$from_row = $this->ct->Table->record;
-		
+
 		$this->ct->getRecord($to_listing_id);
 		$to_row = $this->ct->Table->record;
-
-		//$from_row = $this->ct->Table->loadRecord($from_listing_id);
-		//$to_row = $this->ct->Table->loadRecord($to_listing_id);
 
 		$f = $from_field['type'];
 		$t = $to_field['type'];

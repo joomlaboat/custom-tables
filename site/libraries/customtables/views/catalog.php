@@ -33,8 +33,6 @@ class Catalog
 	 */
 	function render($layoutName = null, $limit = 0): string
 	{
-		// --------------------- Filter
-		$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 
 		// --------------------- Layouts
 		$Layouts = new Layouts($this->ct);
@@ -53,6 +51,7 @@ class Catalog
 				$pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
 				$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
+				$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 				$filter = $Layouts->params['filter'] ?? null;
 				if ($filter !== null)
 					$this->ct->Filter->addWhereExpression($filter);
@@ -71,6 +70,11 @@ class Catalog
 				//$this->ct->errors[] = 'Catalog View: Table not selected.';
 				//return 'Catalog View: Table not selected.';
 			}
+		}
+
+		if ($this->ct->Filter === null) {
+			// --------------------- Filter
+			$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 		}
 
 		if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)

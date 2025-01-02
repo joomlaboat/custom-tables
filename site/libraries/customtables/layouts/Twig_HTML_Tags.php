@@ -69,8 +69,6 @@ class Twig_HTML_Tags
 
 		$add_userGroup = (int)$this->ct->Params->addUserGroups;
 
-		//echo '$add_userGroup=' . $add_userGroup . '*<br/>';
-
 		if (!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup, $userGroups))
 			return '2'; //Not permitted
 
