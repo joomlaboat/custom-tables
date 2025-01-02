@@ -246,7 +246,10 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 			}
 
 			$listing_id = common::inputGetInt("listing_id");
-			$ct->getRecord($listing_id);
+
+			if ($listing_id !== null)
+				$ct->getRecord($listing_id);
+
 			if ($ct->Table->record === null) {
 				$ct->errors[] = 'User record ID: "' . $listing_id . '" not found.';
 				return (object)array('link' => $link, 'msg' => 'User record ID: "' . $listing_id . '" not found.', 'status' => 'error');

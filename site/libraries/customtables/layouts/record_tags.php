@@ -515,7 +515,7 @@ class Twig_Record_Tags
 			return '';
 		}
 
-		$join_ct->setFilter($complete_filter, 2);
+		$join_ct->setFilter($complete_filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
 		if ($join_ct->getRecords(false, $limit, $orderby)) {
 			$twig = new TwigProcessor($join_ct, $pageLayout);
 

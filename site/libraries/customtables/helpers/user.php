@@ -109,7 +109,8 @@ class CTUser
 			return false;
 		}
 
-		$ct->getRecord($listing_id);
+		if ($listing_id !== null)
+			$ct->getRecord($listing_id);
 
 		if ($ct->Table->record === null) {
 			common::enqueueMessage('User record ID: "' . $listing_id . '" not found.');

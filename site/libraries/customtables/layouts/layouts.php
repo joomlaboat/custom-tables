@@ -588,34 +588,13 @@ class Layouts
 			//Details or Catalog Item
 			if ($this->ct->Table->record === null) {
 
-				//if ($this->ct->Params->listing_id !== null)
-				//	$listing_id = $this->ct->Params->listing_id;
-				//else
-				//$listing_id = common::inputGetCmd('listing_id');
 				if ($this->ct->Params->listing_id !== null)
 					$listing_id = $this->ct->Params->listing_id;
 				else
 					$listing_id = common::inputGetCmd('listing_id');
 
-				$this->ct->getRecord($listing_id);
-
-				/*
-				$filter = null;
-				if ($this->ct->Params->filter !== null)
-					$filter = $this->ct->Params->filter;
-
-				$this->ct->setFilter($filter);
-
 				if ($listing_id !== null)
-					$this->ct->Filter->whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
-
-				if ($this->ct->getRecords(false, 1)) {
-					if (count($this->ct->Records) > 0) {
-						$this->ct->Table->record = $this->ct->Records[0];
-						$this->ct->Params->listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
-					}
-				}
-				*/
+					$this->ct->getRecord($listing_id);
 			}
 
 			$details = new Details($this->ct);

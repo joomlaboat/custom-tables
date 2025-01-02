@@ -23,7 +23,6 @@ jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditItem extends HtmlView
 {
 	var CT $ct;
-	var ?array $row;
 	var string $formLink;
 	var Edit $editForm;
 
@@ -71,13 +70,8 @@ class CustomTablesViewEditItem extends HtmlView
 				return false;
 			}
 
-			if ($this->ct->getRecord($this->ct->Params->listing_id)) {
-				$this->row = $this->ct->Table->record;
-
-				if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-					$this->row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->row);
-			} else
-				$this->row = null;
+			if ($this->ct->Params->listing_id !== null)
+				$this->ct->getRecord($this->ct->Params->listing_id);
 
 			parent::display($tpl);
 		}

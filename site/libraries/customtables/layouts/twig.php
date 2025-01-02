@@ -446,8 +446,13 @@ class fieldObject
 
 			return $vlu;
 		} elseif ($this->field->type == 'usergroups' or $this->field->type == 'records') {
-			$valueArray = CTMiscHelper::csv_explode(',', $this->ct->Table->record[$rfn], '"', false, true);
-			$vlu = implode(',', $valueArray);
+
+			if ($this->ct->Table->record[$rfn] !== null) {
+				$valueArray = CTMiscHelper::csv_explode(',', $this->ct->Table->record[$rfn], '"', false, true);
+				$vlu = implode(',', $valueArray);
+			} else {
+				$vlu = null;
+			}
 		} else {
 			$vlu = $this->ct->Table->record[$rfn];
 		}

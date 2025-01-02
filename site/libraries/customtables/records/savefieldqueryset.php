@@ -796,7 +796,9 @@ class SaveFieldQuerySet
 		if ($condition == '')
 			return true; //if no conditions
 
-		$this->ct->getRecord($listing_id);
+		if ($listing_id !== null)
+			$this->ct->getRecord($listing_id);
+
 		$Layouts = new Layouts($this->ct);
 		$parsed_condition = $Layouts->parseRawLayoutContent($condition);
 		$parsed_condition = '(' . $parsed_condition . ' ? 1 : 0)';
@@ -850,7 +852,8 @@ class SaveFieldQuerySet
 	 */
 	function sendEmailNote(string $listing_id, string $listOfEmailsString, array $row): int
 	{
-		$this->ct->getRecord($listing_id);
+		if ($listing_id !== null)
+			$this->ct->getRecord($listing_id);
 
 		//Prepare Email List
 		$emails_raw = CTMiscHelper::csv_explode(',', $listOfEmailsString, '"', true);

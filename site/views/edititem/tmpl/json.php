@@ -31,8 +31,8 @@ if (ob_get_contents())
 
 //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 
-if (isset($this->row[$this->ct->Table->realidfieldname]))
-	$listing_id = (int)$this->row[$this->ct->Table->realidfieldname];
+if (isset($this->ct->Table->record[$this->ct->Table->realidfieldname]))
+	$listing_id = (int)$this->ct->Table->record[$this->ct->Table->realidfieldname];
 else
 	$listing_id = 0;
 
@@ -41,11 +41,11 @@ if ($this->ct->Env->legacySupport) {
 	$LayoutProc = new LayoutProcessor($this->ct, $this->pageLayout);
 
 	//Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
-	$this->pageLayout = $LayoutProc->fillLayout($this->row, null, '||', false, true);
+	$this->pageLayout = $LayoutProc->fillLayout($this->ct->Table->record, null, '||', false, true);
 }
 
 
-$form_items = tagProcessor_Edit::process($this->ct, $this->pageLayout, $this->row, true);
+$form_items = tagProcessor_Edit::process($this->ct, $this->pageLayout, $this->ct->Table->record, true);
 
 $response_object = [];
 

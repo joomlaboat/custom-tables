@@ -397,7 +397,9 @@ class Value_file extends BaseValue
 			return;
 		}
 
-		$this->ct->getRecord($this->listing_id);
+		if ($this->listing_id !== null)
+			$this->ct->getRecord($this->listing_id);
+
 		$this->row = $this->ct->Table->record;
 		$this->field = new Field($this->ct, $fieldRow, $this->row);
 

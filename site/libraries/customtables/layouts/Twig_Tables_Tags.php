@@ -47,6 +47,7 @@ class Twig_Tables_Tags
 		$join_table_fields = $join_ct->Table->fields;
 
 		if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
+
 			try {
 				if (!$join_ct->getRecord($record_id_or_filter))
 					return '';
@@ -58,14 +59,13 @@ class Twig_Tables_Tags
 			}
 		} else {
 			try {
-				$join_ct->setFilter($record_id_or_filter, 2);
-				if ($join_ct->getRecords(false, 1, $orderby)) {
-					if (count($join_ct->Records) > 0) {
-						$row = $join_ct->Records[0];
-					} else
-						return '';
-				} else
+				$join_ct->setFilter($record_id_or_filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
+
+				if (!$join_ct->getRecord())
 					return '';
+
+				$row = $join_ct->Table->record;
+
 			} catch (Exception $e) {
 				$join_ct->errors[] = $e->getMessage();
 				return '';
@@ -148,7 +148,7 @@ class Twig_Tables_Tags
 
 			$row = $join_ct->Table->record;
 		} else {
-			$join_ct->setFilter($record_id_or_filter, 2);
+			$join_ct->setFilter($record_id_or_filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
 			if ($join_ct->getRecords(false, 1, $orderby)) {
 				if (count($join_ct->Records) > 0)
 					$row = $join_ct->Records[0];
@@ -195,7 +195,7 @@ class Twig_Tables_Tags
 		}
 
 		try {
-			$join_ct->setFilter($filter, 2);
+			$join_ct->setFilter($filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
 			if ($join_ct->getRecords(false, $limit, $orderby, $groupby)) {
 
 				if ($join_ct->Env->legacySupport) {
