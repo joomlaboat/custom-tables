@@ -145,7 +145,7 @@ class Search_tablejoin extends BaseSearch
 		$list_values = $this->get_List_Values($ct, $value_field, $dynamic_filter);
 
 		$htmlResult = self::renderDynamicFilter($ct, $value, $dynamic_filter, $control_name);
-		$htmlResult .= self::renderDropdownSelector_Box($list_values, (string)$value, $control_name, $dynamic_filter, $addNoValue) . 'last';
+		$htmlResult .= self::renderDropdownSelector_Box($list_values, (string)$value, $control_name, $dynamic_filter, $addNoValue);
 
 		return $htmlResult;
 	}
@@ -358,10 +358,7 @@ class Search_tablejoin extends BaseSearch
 ';
 
 			$htmlResult .= $htmlResult_select;
-
-			$htmlResult .= '
-			CCVV::' . $current_value . '<div id="' . $control_name . '_ctInputBoxRecords_current_value" style="display:non;">' . $current_value . '</div>
-';
+			$htmlResult .= '<div id="' . $control_name . '_ctInputBoxRecords_current_value" style="display:none;">' . $current_value . '</div>';
 
 			$htmlResult .= '
 			<script>
