@@ -235,30 +235,6 @@ class Table
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function loadRecord(?string $listing_id): ?array
-	{
-		if ($this->selects === null)
-			throw new Exception('Table::loadRecord - Table not set.');
-
-		$whereClause = new MySQLWhereClause();
-		if (empty($listing_id)) {
-			$this->record = null;
-			return null;
-		}
-
-		$whereClause->addCondition($this->realidfieldname, $listing_id);
-		$rows = database::loadAssocList($this->realtablename, $this->selects, $whereClause, null, null, 1);
-
-		if (count($rows) < 1) return $this->record = null;
-
-		$this->record = $rows[0];
-		return $rows[0];
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
 	function isRecordExists($listing_id): bool
 	{
 		if ($listing_id === null or $listing_id === '' or (is_numeric($listing_id) and $listing_id === 0))

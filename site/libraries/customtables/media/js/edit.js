@@ -1238,7 +1238,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
 				//Empty everything after
 				document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '';//"Not selected";
 				return false;
-			} else if (obj.value == "%addRecord%") {
+			} else if (obj.value === "%addRecord%") {
 				ctTableJoinAddRecordModalForm(control_name, sub_index);
 			}
 		}
@@ -1479,7 +1479,7 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
 	let ctInputBoxRecords_current_value = document.getElementById(control_name + '_ctInputBoxRecords_current_value');
 
 	if (ctInputBoxRecords_current_value)
-		selectedValue = ctInputBoxRecords_current_value.innerHTML;
+		selectedValue = String(ctInputBoxRecords_current_value.innerHTML);
 
 	ctInputBoxRecords_removeOptions(l);
 
@@ -1504,7 +1504,7 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
 
 		if (elements[i] !== "") {
 
-			let eid = elementsID[i];
+			let eid = String(elementsID[i]);
 			if (selectedControlElements.indexOf(eid) === -1) {
 
 				let published = parseInt(elementsPublished[i]);

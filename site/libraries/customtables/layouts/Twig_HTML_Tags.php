@@ -570,7 +570,7 @@ class Twig_HTML_Tags
 		if (count($first_fld) == 0)
 			return 'Unsupported field type or field not found.';
 
-		$vlu = $SearchBox->renderFieldBox('es_search_box_', $objectName, $first_fld,
+		$vlu = $SearchBox->renderFieldBox($this->ct->Table->fieldInputPrefix . 'search_box_', $objectName, $first_fld,
 			$cssClass, '0',
 			'', '', $onchange, $field_title, $matchType, $stringLength);//action should be a space not empty or
 		//0 because it's not an edit box, and we pass onChange value even " " is the value;
@@ -608,9 +608,9 @@ class Twig_HTML_Tags
 	protected function prepareSearchElement($fld): string
 	{
 		if (isset($fld['fields']) and count($fld['fields']) > 0) {
-			return 'es_search_box_' . $fld['fieldname'] . ':' . implode(';', $fld['fields']) . ':';
+			return $this->ct->Table->fieldInputPrefix . 'search_box_' . $fld['fieldname'] . ':' . implode(';', $fld['fields']) . ':';
 		} else {
-			return 'es_search_box_' . $fld['fieldname'] . ':' . $fld['fieldname'] . ':';
+			return $this->ct->Table->fieldInputPrefix . 'search_box_' . $fld['fieldname'] . ':' . $fld['fieldname'] . ':';
 		}
 	}
 

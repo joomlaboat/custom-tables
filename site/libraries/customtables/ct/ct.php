@@ -149,8 +149,12 @@ class CT
 		if (!is_null($this->Params->alias) and $this->Table->alias_fieldname != '')
 			$this->Filter->addWhereExpression($this->Table->alias_fieldname . '="' . $this->Params->alias . '"');
 
-		if ($listing_id !== null)
+		if ($listing_id !== null) {
 			$this->Filter->whereClause->addCondition($this->Table->realidfieldname, $listing_id);
+		} else {
+			if ($this->Params->listing_id !== null)
+				$this->Filter->whereClause->addCondition($this->Table->realidfieldname, $this->Params->listing_id);
+		}
 
 		//Get order by fields from menu parameters
 		$this->Ordering->parseOrderByParam();
