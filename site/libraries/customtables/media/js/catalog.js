@@ -277,9 +277,9 @@ function ctSearchBoxDo() {
 						if (obj.dataset.match === 'exact')
 							w.push(n[1] + '==' + objValue);
 						else if (obj.dataset.match === 'startwith')
-							w.push(n[1] + '==' + objValue + '%');
+							w.push(n[1] + '==' + objValue + '*');
 						else if (obj.dataset.match === 'endwith')
-							w.push(n[1] + '==%' + objValue);
+							w.push(n[1] + '==*' + objValue);
 						else
 							w.push(n[1] + operator + objValue);
 					}

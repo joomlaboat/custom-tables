@@ -61,7 +61,7 @@ class Filtering
 	 */
 	function addQueryWhereFilter(): void
 	{
-		if (common::inputGetBase64('where')) {
+		if (common::inputGetString('where')) {
 			$decodedURL = common::inputGetString('where', '');
 			$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));//base64_decode
 
@@ -94,7 +94,7 @@ class Filtering
 
 		//This is old and probably not needed any more because we use MySQLWhereClause class that sanitize individual values.
 		//I leave it here just in case
-		$paramWhere = str_ireplace('*', '=', $paramWhere);
+		$paramWhere = str_ireplace('*', '%', $paramWhere);
 		$paramWhere = str_ireplace('\\', '', $paramWhere);
 		$paramWhere = str_ireplace('drop ', '', $paramWhere);
 		$paramWhere = str_ireplace('select ', '', $paramWhere);
