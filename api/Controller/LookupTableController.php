@@ -9,16 +9,6 @@ class LookupTableController
 {
 	function execute()
 	{
-		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
-			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
-
-		if (!file_exists($path))
-			die('CT Loader not found.');
-
-		require_once($path);
-		$loadTwig = true;
-		CustomTablesLoader(false, false, null, 'com_customtables', $loadTwig);
-
 		$userId = CustomTablesAPIHelpers::checkToken();
 		$key = common::inputGetCmd('key');
 		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;

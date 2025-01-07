@@ -15,6 +15,23 @@ if (!$user->authorise('core.manage', 'com_customtables')) {
 */
 // Get the application
 $app = Factory::getApplication();
+
+// Check if site is offline
+if ($app->get('offline') == '1') {
+	echo json_encode([
+		'success' => false,
+		'data' => null,
+		'errors' => [
+			[
+				'code' => 401,
+				'title' => 'offline'
+			]
+		],
+		'message' => $app->get('offline_message', 'Site is offline for maintenance')
+	]);
+	die;
+}
+
 $controller = $app->input->get('controller');
 
 require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR

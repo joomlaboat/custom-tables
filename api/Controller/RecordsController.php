@@ -1,6 +1,7 @@
 <?php
 
 use CustomTables\Catalog;
+use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 
@@ -15,18 +16,6 @@ class RecordsController
 			die;
 
 		$layoutName = Factory::getApplication()->input->get('layout');
-
-		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
-			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
-
-		if (!file_exists($path))
-			die('CT Loader not found.');
-
-		require_once($path);
-
-		$loadTwig = true;
-
-		CustomTablesLoader(false, false, null, 'com_customtables', $loadTwig);
 
 		$ct = new CT(null, false);
 		$ct->Env->clean = true;

@@ -12,16 +12,6 @@ class EditController
 {
 	function execute()
 	{
-		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
-			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
-
-		if (!file_exists($path))
-			die('CT Loader not found.');
-
-		require_once($path);
-		$loadTwig = true;
-		CustomTablesLoader(false, false, null, 'com_customtables', $loadTwig);
-
 		$userId = CustomTablesAPIHelpers::checkToken();
 
 		if (!$userId)
@@ -170,18 +160,16 @@ class EditController
 		$editForm = new Edit($ct);
 		$editForm->load();
 
-		$filter = null;
-		if ($ct->Params->filter !== null)
-			$filter = $ct->Params->filter;
+		if (!empty($ct->Params->filter)) {
+			$ct->setFilter($ct->Params->filter);
 
-		$ct->setFilter($filter);
-
-		if ($ct->Params->listing_id !== null)
-			$ct->Filter->whereClause->addCondition($ct->Table->realidfieldname, $ct->Params->listing_id);
-
-		if ($ct->getRecords(false, 1)) {
-			if (count($ct->Records) > 0)
-				$ct->Table->record = $ct->Records[0];
+			if ($ct->Params->listing_id !== null)
+				$ct->getRecord($ct->Params->listing_id);
+			else
+				$ct->getRecord();
+		} else {
+			if ($ct->Params->listing_id !== null)
+				$ct->getRecord($ct->Params->listing_id);
 		}
 
 		$result = $editForm->processLayout();
@@ -189,7 +177,7 @@ class EditController
 		try {
 			$j = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
 		} catch (Exception $e) {
-			$j = ['error' => $e->getMessage()];
+			$j = ['error' => $e->getMessage(), 'result' => $result];
 		}
 
 		$app->setHeader('status', 200);

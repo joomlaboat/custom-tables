@@ -138,10 +138,31 @@ class LoginController
 				],
 				'message' => 'Authentication successful'
 			]);
-
 		} else {
 			$app->setHeader('status', 401);
 			$app->sendHeaders();
+
+			$message = 'Authentication failed';
+
+			// Check authentication status
+			switch ($response->status) {
+				case Authentication::STATUS_FAILURE:
+					$message = 'Invalid credentials';
+					break;
+
+				case Authentication::STATUS_EXPIRED:
+					$message = 'Account expired';
+					break;
+
+				case Authentication::STATUS_DENIED:
+					$message = 'Account denied/blocked';
+					break;
+
+				case Authentication::STATUS_UNKNOWN:
+					$message = 'Unknown error during authentication';
+					break;
+			}
+
 			echo json_encode([
 				'success' => false,
 				'data' => null,
@@ -149,7 +170,7 @@ class LoginController
 					[
 						'code' => 401,
 						'title' => 'Unauthorized',
-						'detail' => 'Invalid credentials provided'
+						'detail' => $message
 					]
 				],
 				'message' => 'Authentication failed'
@@ -157,4 +178,3 @@ class LoginController
 		}
 	}
 }
-//curl -X GET http://localhost/j/api/index.php/v1/customtables/login -H 'Content-Type: application/json' -d '{ "username": "Cat",  "password": "KhLrhXgrmLWzsssJTXpRjb"}' -H 'X-API-Key: tyhryt'
