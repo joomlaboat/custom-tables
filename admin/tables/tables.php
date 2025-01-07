@@ -37,6 +37,7 @@ class CustomtablesTableTables extends Table
 	var $customtablename = null;
 	var $customidfield = null;
 	var $customidfieldtype = null;
+	var $primarykeypattern = null;
 	var $customfieldprefix = null;
 
 	/**

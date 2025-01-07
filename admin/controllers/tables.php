@@ -25,6 +25,9 @@ use Joomla\CMS\Router\Route;
  **/
 class CustomtablesControllerTables extends FormController
 {
+	var string $ref;
+	var int $refid;
+
 	/**
 	 * Current or most recently performed task.
 	 *

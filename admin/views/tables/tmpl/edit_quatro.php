@@ -40,7 +40,9 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
 				<div class="control-group">
 					<div class="control-label"><?php echo $this->form->getLabel('tablename'); ?></div>
-					<div class="controls"><?php echo $this->form->getInput('tablename'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('tablename'); ?>
+						<p><?php echo common::translate($this->form->getField('tablename')->description); ?></p>
+					</div>
 				</div>
 
 				<hr/>
@@ -90,7 +92,9 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 					<hr/>
 					<div class="control-group">
 						<div class="control-label"><?php echo $this->form->getLabel('tablecategory'); ?></div>
-						<div class="controls"><?php echo $this->form->getInput('tablecategory'); ?></div>
+						<div class="controls"><?php echo $this->form->getInput('tablecategory'); ?>
+							<p><?php echo common::translate($this->form->getField('tablecategory')->description); ?></p>
+						</div>
 					</div>
 				<?php endif; ?>
 
@@ -147,8 +151,8 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
 						else
 							echo $this->form->getInput('customphp');
-
 						?>
+						<p><?php echo common::translate($this->form->getField('customphp')->description); ?></p>
 					</div>
 				</div>
 
@@ -160,6 +164,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 						else
 							echo $this->form->getInput('allowimportcontent');
 						?>
+						<p><?php echo common::translate($this->form->getField('allowimportcontent')->description); ?></p>
 					</div>
 				</div>
 
@@ -171,6 +176,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 						else
 							echo $this->form->getInput('customtablename');
 						?>
+						<p><?php echo common::translate($this->form->getField('customtablename')->description); ?></p>
 					</div>
 				</div>
 
@@ -179,14 +185,25 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 						<div class="control-label"><?php echo $this->form->getLabel('customidfield'); ?></div>
 						<div class="controls">
 							<?php echo $this->form->getInput('customidfield'); ?>
+							<p><?php echo common::translate($this->form->getField('customidfield')->description); ?></p>
 						</div>
 					</div>
 					<div class="control-group">
 						<div class="control-label"><?php echo $this->form->getLabel('customidfieldtype'); ?></div>
 						<div class="controls">
 							<?php echo $this->form->getInput('customidfieldtype'); ?>
+							<p><?php echo common::translate($this->form->getField('customidfieldtype')->description); ?></p>
 						</div>
 					</div>
+
+					<div class="control-group">
+						<div class="control-label"><?php echo $this->form->getLabel('primarykeypattern'); ?></div>
+						<div class="controls">
+							<?php echo $this->form->getInput('primarykeypattern'); ?>
+							<p><?php echo common::translate($this->form->getField('primarykeypattern')->description); ?></p>
+						</div>
+					</div>
+
 					<div class="control-group">
 						<div class="control-label"><?php echo $this->form->getLabel('customfieldprefix'); ?></div>
 						<div class="controls">
@@ -201,6 +218,8 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 							<input type="text" name="jform[customfieldprefix]" id="jform_customfieldprefix"
 								   value="<?php echo $vlu; ?>" class="form-control valid form-control-success"
 								   placeholder="<?php echo $this->ct->Env->field_prefix; ?>" maxlength="50"/>
+
+							<p><?php echo common::translate($this->form->getField('customfieldprefix')->description); ?></p>
 						</div>
 					</div>
 				<?php endif; ?>
@@ -249,6 +268,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 			disableProField("jform_customtablename");
 			disableProField("jform_customidfield");
 			disableProField("jform_customidfieldtype");
+			disableProField("jform_primarykeypattern");
 			disableProField("jform_customfieldprefix");
 		</script>
 	<?php endif; ?>

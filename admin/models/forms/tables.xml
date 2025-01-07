@@ -146,35 +146,21 @@
 			   hint=""/>
 
 		<field type="text"
+			   name="primarykeypattern"
+			   label="Primary Key Generation Pattern"
+			   description="Define how primary keys are generated for new records. Use AUTO_INCREMENT for automatic numbering, or create custom patterns using Twig syntax. Examples: AUTO_INCREMENT, PROJECT-{{ random(1000,9999) }}, {{ 'prefix-' ~ now|date('Y-m-d H:i:s.u')|md5 }}, PRJ-{{ (now|date('Y-m-d H:i:s.u')|md5)|slice(0,10) }}-{{ random(1000,9999) }}"
+			   required="false"
+			   filter="STRING"
+			   default="AUTO_INCREMENT"
+			   hint="Examples: AUTO_INCREMENT, PROJECT-{{ random(1000,9999) }}, {{ 'prefix-' ~ now|date('Y-m-d H:i:s.u')|md5 }}"/>
+
+		<field type="text"
 			   name="customfieldprefix"
 			   label="Field Name Prefix"
-			   description="Field name prefix. Example by default: es_phone. Type - to save fields without prefix, be careful because MySQL has many registered names like, 'group', 'select', 'where' etc. If you change the filed prefix then you will have to manually change all the field prefixes."
+			   description="Field name prefix. Example by default: es_phone. Type '-' to save fields without prefix, be careful because MySQL has many registered names like, 'group', 'select', 'where' etc. If you change the filed prefix then you will have to manually change all the field prefixes."
 			   required="false"
 			   filter="CMD"
 			   default=""
 			   hint=""/>
-	</fieldset>
-
-	<!-- Access Control Fields. -->
-	<fieldset name="accesscontrol">
-		<!-- Asset Id Field. Type: Hidden (joomla) -->
-		<field
-				name="asset_id"
-				type="hidden"
-				filter="unset"
-				ajaxuri="bugaba"
-		/>
-		<!-- Rules Field. Type: Rules (joomla) -->
-		<field
-				name="rules"
-				type="rules"
-				label="Permissions in relation to this tables"
-				translate_label="false"
-				filter="rules"
-				validate="rules"
-				class="inputbox"
-				component="com_customtables"
-				section="tables"
-		/>
 	</fieldset>
 </form>

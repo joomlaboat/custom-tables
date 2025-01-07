@@ -98,17 +98,30 @@ class record
 		}
 
 		if (empty($this->listing_id)) {
-
 			$this->isItNewRecord = true;
 
 			if ($this->ct->Table->published_field_found)
 				$saveField->row_new['published'] = $this->ct->Params->publishStatus;
 
-			try {
-				$this->listing_id = database::insert($this->ct->Table->realtablename, $saveField->row_new);
-			} catch (Exception $e) {
-				$this->ct->errors[] = $e->getMessage();
-				die('record.php:110 ' . $e->getMessage());
+			if (!empty($this->ct->Table->tablerow['primarykeypattern']) and $this->ct->Table->tablerow['primarykeypattern'] != 'AUTO_INCREMENT') {
+
+				$twig = new TwigProcessor($this->ct, $this->ct->Table->tablerow['primarykeypattern']);
+				$this->listing_id = $twig->process($saveField->row_new);
+				$saveField->row_new[$this->ct->Table->realidfieldname] = $this->listing_id;
+
+				try {
+					database::insert($this->ct->Table->realtablename, $saveField->row_new);
+				} catch (Exception $e) {
+					$this->ct->errors[] = $e->getMessage();
+					die('record.php:116 ' . $e->getMessage());
+				}
+			} else {
+				try {
+					$this->listing_id = database::insert($this->ct->Table->realtablename, $saveField->row_new);
+				} catch (Exception $e) {
+					$this->ct->errors[] = $e->getMessage();
+					die('record.php:124 ' . $e->getMessage());
+				}
 			}
 
 		} else {

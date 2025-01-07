@@ -223,8 +223,8 @@ class IntegrityCoreTables extends IntegrityChecks
 		$tables_projected_fields[] = $fieldTypes['checked_out'];
 		$tables_projected_fields[] = $fieldTypes['checked_out_time'];
 
-		// int UNSIGNED NOT NULL AUTO_INCREMENT
-		$tables_projected_fields[] = ['name' => 'customidfieldtype', 'ct_fieldtype' => 'string', 'ct_typeparams' => 127, 'mysql_type' => 'VARCHAR(255) NULL DEFAULT "int UNSIGNED NOT NULL AUTO_INCREMENT"', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT "int UNSIGNED NOT NULL AUTO_INCREMENT"'];
+		$tables_projected_fields[] = ['name' => 'customidfieldtype', 'ct_fieldtype' => 'string', 'ct_typeparams' => 127, 'mysql_type' => 'VARCHAR(127) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(127) NULL DEFAULT NULL'];
+		$tables_projected_fields[] = ['name' => 'primarykeypattern', 'ct_fieldtype' => 'string', 'ct_typeparams' => 1024, 'mysql_type' => 'VARCHAR(1024) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(1024) NULL DEFAULT NULL'];
 		$tables_projected_fields[] = ['name' => 'customfieldprefix', 'ct_fieldtype' => 'string', 'ct_typeparams' => 50, 'mysql_type' => 'VARCHAR(50) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(50) NULL DEFAULT NULL'];
 
 		$tables_projected_indexes = [];
