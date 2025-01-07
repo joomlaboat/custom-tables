@@ -219,14 +219,15 @@ class TwigProcessor
 				try {
 					$result = @$this->twig->render($this->pageLayoutName, $this->variables);
 				} catch (Exception $e) {
-					$msg = $e->getMessage() . $e->getFile() . $e->getLine() . $e->getTraceAsString();
+					$msg = $e->getMessage();// . $e->getFile() . $e->getLine();// . $e->getTraceAsString();
 					$this->errorMessage = $msg;
 					$this->ct->errors[] = $msg;
 
 					if ($this->pageLayoutLink !== null)
 						$msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
 
-					return 'Error: ' . $msg;
+					throw new Exception($msg);
+					//return 'Error: ' . $msg;
 				}
 			}
 		}
@@ -797,34 +798,29 @@ class fieldObject
 		if ($showPublishedString === null)
 			$showPublishedString = '';
 
-		if ($this->field->type != 'sqljoin' and $this->field->type != 'records') {
-			$this->ct->errors[] = '{{ ' . $this->field->fieldname . '.layout() }}. Wrong field type "' . $this->field->type . '". ".layout()" method is only available for Table Join and Records filed types.';
-			return '';
-		}
+		if ($this->field->type != 'sqljoin' and $this->field->type != 'records')
+			throw new Exception('{{ ' . $this->field->fieldname . '.layout() }}. Wrong field type "' . $this->field->type . '". ".layout()" method is only available for Table Join and Records filed types.');
 
 		if ($this->ct->isRecordNull($this->ct->Table->record) or count($this->ct->Table->record) < 2)
 			return '';
 
-		$Layouts = new Layouts($this->ct);
+		$join_ct = new CT;
+		$Layouts = new Layouts($join_ct);
 		$layoutCode = $Layouts->getLayout($layoutName);
 
-		if ($layoutCode == '') {
-			$this->ct->errors[] = '{{ ' . $this->field->fieldname . '.layout("' . $layoutName . '") }} Layout "' . $layoutName . '" not found or is empty.';
-			return '';
-		}
+		if ($layoutCode == '')
+			throw new Exception('{{ ' . $this->field->fieldname . '.layout("' . $layoutName . '") }} Layout "' . $layoutName . '" not found or is empty.');
 
 		if ($this->field->type == 'sqljoin') {
 			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
 				. DIRECTORY_SEPARATOR . 'tablejoin.php');
 
 			return Value_tablejoin::renderTableJoinValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname]);
-		} elseif ($this->field->type == 'records') {
-
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
-				. DIRECTORY_SEPARATOR . 'tablejoinlist.php');
-
-			return Value_tablejoinlist::resolveRecordTypeValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
 		}
-		return 'impossible';
+
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'value'
+			. DIRECTORY_SEPARATOR . 'tablejoinlist.php');
+
+		return Value_tablejoinlist::resolveRecordTypeValue($this->field, $layoutCode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
 	}
 }

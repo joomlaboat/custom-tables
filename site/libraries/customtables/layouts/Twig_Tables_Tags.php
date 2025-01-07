@@ -32,30 +32,24 @@ class Twig_Tables_Tags
 	function getvalue($table = '', $fieldname = '', $record_id_or_filter = '', $orderby = '')
 	{
 		$tag = 'tables.getvalue';
-		if ($table == '') {
-			$this->ct->errors[] = '{{ ' . $tag . '("' . $table . '",value_field_name) }} - Table not specified.';
-			return '';
-		}
+		if ($table == '')
+			throw new Exception('{{ ' . $tag . '("' . $table . '",value_field_name) }} - Table not specified.');
 
-		if ($fieldname == '') {
-			$this->ct->errors[] = '{{ ' . $tag . '("' . $table . '",field_name) }} - Value field not specified.';
-			return '';
-		}
+		if ($fieldname == '')
+			throw new Exception('{{ ' . $tag . '("' . $table . '",field_name) }} - Value field not specified.');
 
 		$join_ct = new CT;
 		$join_ct->getTable($table);
+		$join_ct->Params->forceSortBy = $orderby;
 		$join_table_fields = $join_ct->Table->fields;
 
 		if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
-
 			try {
 				if (!$join_ct->getRecord($record_id_or_filter))
 					return '';
 
-				$row = $join_ct->Table->record;
 			} catch (Exception $e) {
-				$join_ct->errors[] = $e->getMessage();
-				return '';
+				throw new Exception($e->getMessage());
 			}
 		} else {
 			try {
@@ -64,18 +58,15 @@ class Twig_Tables_Tags
 				if (!$join_ct->getRecord())
 					return '';
 
-				$row = $join_ct->Table->record;
-
 			} catch (Exception $e) {
-				$join_ct->errors[] = $e->getMessage();
-				return '';
+				throw new Exception($e->getMessage());
 			}
 		}
 
 		if (Layouts::isLayoutContent($fieldname)) {
 
 			$twig = new TwigProcessor($join_ct, $fieldname);
-			$value = $twig->process($row);
+			$value = $twig->process($join_ct->Table->record);
 
 			if ($twig->errorMessage !== null)
 				$join_ct->errors[] = $twig->errorMessage;
@@ -90,8 +81,7 @@ class Twig_Tables_Tags
 				if ($join_ct->Table->published_field_found) {
 					$value_realfieldname = 'listing_published';
 				} else {
-					$this->ct->errors[] = '{{ ' . $tag . '("' . $table . '","published") }} - "published" does not exist in the table.';
-					return '';
+					throw new Exception('{{ ' . $tag . '("' . $table . '","published") }} - "published" does not exist in the table.');
 				}
 			else {
 				foreach ($join_table_fields as $join_table_field) {
@@ -102,11 +92,10 @@ class Twig_Tables_Tags
 				}
 			}
 
-			if ($value_realfieldname == '') {
-				$this->ct->errors[] = '{{ ' . $tag . '("' . $table . '","' . $fieldname . '") }} - Value field "' . $fieldname . '" not found.';
-				return '';
-			}
-			return $row[$value_realfieldname];
+			if ($value_realfieldname == '')
+				throw new Exception('{{ ' . $tag . '("' . $table . '","' . $fieldname . '") }} - Value field "' . $fieldname . '" not found.');
+
+			return $join_ct->Table->record[$value_realfieldname];
 		}
 	}
 
@@ -116,53 +105,37 @@ class Twig_Tables_Tags
 	 */
 	function getrecord($layoutname = '', $record_id_or_filter = '', $orderby = ''): string
 	{
-		if ($layoutname == '') {
-			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout name not specified.';
-			return '';
-		}
-
-		if ($record_id_or_filter == '') {
-			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Record id or filter not set.';
-			return '';
-		}
+		if ($layoutname == '')
+			throw new Exception('{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout name not specified.');
 
 		$join_ct = new CT;
 		$layouts = new Layouts($join_ct);
 
 		$pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
 
-		if ($layouts->tableId === null) {
-			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.';
-			return '';
-		}
+		if ($layouts->tableId === null)
+			throw new Exception('{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.');
 
-		$join_ct->getTable($layouts->tableId);
-		if ($join_ct->Table === null) {
-			$this->ct->errors[] = '{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.';
-			return '';
-		}
+		if ($join_ct->Table === null)
+			throw new Exception('{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.');
+
+		$join_ct->Params->forceSortBy = $orderby;
 
 		if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
 			if (!$join_ct->getRecord($record_id_or_filter))
 				return '';
 
-			$row = $join_ct->Table->record;
 		} else {
 			$join_ct->setFilter($record_id_or_filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
-			if ($join_ct->getRecords(false, 1, $orderby)) {
-				if (count($join_ct->Records) > 0)
-					$row = $join_ct->Records[0];
-				else
-					return '';
-			} else
+
+			if (!$join_ct->getRecord())
 				return '';
 		}
 
 		$twig = new TwigProcessor($join_ct, $pageLayout);
-
-		$value = $twig->process($row);
+		$value = $twig->process($join_ct->Table->record);
 		if ($twig->errorMessage !== null)
-			$join_ct->errors[] = $twig->errorMessage;
+			throw new Exception($twig->errorMessage);
 
 		return $value;
 	}
@@ -175,24 +148,18 @@ class Twig_Tables_Tags
 	{
 		//Example {{ html.records("InvoicesPage","firstname=john","lastname",10,"country") }}
 
-		if ($layoutname == '') {
-			$this->ct->errors[] = '{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout name not specified.';
-			return '';
-		}
+		if ($layoutname == '')
+			throw new Exception('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout name not specified.');
 
 		$join_ct = new CT;
 		$layouts = new Layouts($join_ct);
 		$pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
-		if ($layouts->tableId === null) {
-			$this->ct->errors[] = '{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.';
-			return '';
-		}
+		if ($layouts->tableId === null)
+			throw new Exception('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.');
 
 		$join_ct->getTable($layouts->tableId);
-		if ($join_ct->Table === null) {
-			$this->ct->errors[] = '{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.';
-			return '';
-		}
+		if ($join_ct->Table === null)
+			throw new Exception('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.');
 
 		try {
 			$join_ct->setFilter($filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
@@ -205,7 +172,6 @@ class Twig_Tables_Tags
 				}
 
 				$twig = new TwigProcessor($join_ct, $pageLayout);
-
 				$value = $twig->process();
 
 				if ($twig->errorMessage !== null)
@@ -214,10 +180,9 @@ class Twig_Tables_Tags
 				return $value;
 			}
 		} catch (Exception $e) {
-			return 'Error: ' . $e->getMessage();
+			throw new Exception($e->getMessage());
 		}
 
-		$this->ct->errors[] = '{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.';
-		return '';
+		throw new Exception('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.');
 	}
 }
