@@ -28,23 +28,6 @@ class RecordController
 
 		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false or !isset($result['html'])) {
 			CustomTablesAPIHelpers::fireError($result['message'] ?? 'Error');
-			// Handle invalid request method
-			/*
-			$app = Factory::getApplication();
-			$app->setHeader('status', 500);
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 500,
-						'title' => $result['message'] ?? 'Error'
-					]
-				],
-				'message' => $result['message'] ?? 'Error'
-			]);
-			die;
-			*/
 		}
 
 		/*
@@ -59,16 +42,5 @@ class RecordController
 		*/
 
 		CustomTablesAPIHelpers::fireSuccess(null, $result['html'], $result['message'] ?? 'Details page ready');
-		/*
-		$app->setHeader('status', 200);
-		$app->sendHeaders();
-
-		echo json_encode([
-			'success' => true,
-			'data' => $j,
-			'message' => $result['message'] ?? 'Details page ready'
-		], JSON_PRETTY_PRINT);
-		die;
-		*/
 	}
 }

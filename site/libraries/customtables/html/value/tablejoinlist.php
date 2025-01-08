@@ -164,6 +164,6 @@ class Value_tablejoinlist extends BaseValue
 			$number++;
 		}
 
-		return str_replace('{', '*', $htmlResult);
+		return $htmlResult;
 	}
 }
