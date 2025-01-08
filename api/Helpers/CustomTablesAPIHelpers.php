@@ -6,7 +6,7 @@ use Joomla\CMS\Factory;
 
 class CustomTablesAPIHelpers
 {
-	static public function fireSuccess(?string $id = null, $dataVariable = null, ?string $message = null): void
+	static public function fireSuccess(?string $id = null, $dataVariable = null, ?string $message = null, ?array $metadata = null): void
 	{
 		if (is_array($dataVariable)) {
 			$data = $dataVariable;
@@ -24,6 +24,7 @@ class CustomTablesAPIHelpers
 
 		$app = Factory::getApplication();
 		$app->setHeader('status', 200);
+		$app->setHeader('Content-Type', 'application/vnd.api+json');
 		$app->sendHeaders();
 
 		$result = [
@@ -35,30 +36,10 @@ class CustomTablesAPIHelpers
 		if ($id !== null)
 			$result['id'] = $id;
 
+		if ($metadata !== null)
+			$result['metadata'] = $metadata;
+		
 		die(json_encode($result, JSON_PRETTY_PRINT));
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.4.8
-	 */
-	static public function fireError(?string $message = null): void
-	{
-		$app = Factory::getApplication();
-		// Handle invalid request method
-		$app->setHeader('status', 500);
-		echo json_encode([
-			'success' => false,
-			'data' => null,
-			'errors' => [
-				[
-					'code' => 500,
-					'title' => $message ?? 'Error'
-				]
-			],
-			'message' => $message ?? 'Error'
-		], JSON_PRETTY_PRINT);
-		die;
 	}
 
 	/**
@@ -75,21 +56,8 @@ class CustomTablesAPIHelpers
 		// Get token from Authorization header
 		$headers = getallheaders();
 		$authHeader = $headers['Authorization'] ?? '';
-		if (!$authHeader) {
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 401,
-						'title' => 'No token provided',
-						'detail' => 'Token not found'
-					]
-				],
-				'message' => 'Invalid token'
-			]);
-			die;
-		}
+		if (!$authHeader)
+			CustomTablesAPIHelpers::fireError(401, 'No token provided or Token not found', 'Invalid token');
 
 		// Extract token from "Bearer <token>"
 		$token = str_replace('Bearer ', '', $authHeader);
@@ -105,43 +73,15 @@ class CustomTablesAPIHelpers
 		$db->setQuery($query);
 		$result = $db->loadObject();
 
-		if (!$result) {
-			$app->setHeader('status', 401);
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 401,
-						'title' => 'Invalid Token',
-						'detail' => 'Token not found'
-					]
-				],
-				'message' => 'Invalid token'
-			], JSON_PRETTY_PRINT);
-			die;
-		}
+		if (!$result)
+			CustomTablesAPIHelpers::fireError(401, 'Token not found', 'Invalid token');
 
 		// Check if token is expired
 		$lifetime = $app->get('lifetime', 150); // minutes
 		$expires = new DateTime($result->time);
 		$expires->modify('+' . $lifetime . ' minutes');
-		if ($expires < new DateTime()) {
-			$app->setHeader('status', 401);
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 401,
-						'title' => 'Token Expired',
-						'detail' => 'Token has expired'
-					]
-				],
-				'message' => 'Token expired'
-			]);
-			die;
-		}
+		if ($expires < new DateTime())
+			CustomTablesAPIHelpers::fireError(401, 'Token Expired', 'Invalid token');
 
 		$series = $result->series;
 		$seriesParts = explode('_', $series);
@@ -149,10 +89,8 @@ class CustomTablesAPIHelpers
 		if (count($seriesParts) == 2) {
 			$sessionId = $seriesParts[1];
 
-			if (!class_exists(CTMiscHelper::class)) {
-				echo 'CTMiscHelper not installed' . PHP_EOL;
-				die;
-			}
+			if (!class_exists(CTMiscHelper::class))
+				CustomTablesAPIHelpers::fireError(500, 'CTMiscHelper not installed');
 
 			$session = $app->getSession();
 			$session->setId($sessionId);
@@ -178,10 +116,33 @@ class CustomTablesAPIHelpers
 			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
 
 		if (!file_exists($path))
-			die('CT Loader not found.');
+			CustomTablesAPIHelpers::fireError(500, 'CT Loader not found');
 
 		require_once($path);
 		CustomTablesLoader(false, false, null, 'com_customtables', true);
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.4.8
+	 */
+	static public function fireError(int $code = 500, ?string $title = null, ?string $message = null): void
+	{
+		$app = Factory::getApplication();
+		// Handle invalid request method
+		$app->setHeader('status', $code);
+		echo json_encode([
+			'success' => false,
+			'data' => null,
+			'errors' => [
+				[
+					'code' => $code,
+					'title' => $title ?? 'Error'
+				]
+			],
+			'message' => $message ?? ($title ?? 'Error')
+		], JSON_PRETTY_PRINT);
+		die;
 	}
 }
 

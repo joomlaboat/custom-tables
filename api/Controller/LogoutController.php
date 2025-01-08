@@ -15,22 +15,8 @@ class LogoutController
 			// Get the user object
 			$user = Factory::getUser($userId);
 
-			if (!$user->id) {
-				$app->setHeader('status', 401);
-				echo json_encode([
-					'success' => false,
-					'data' => null,
-					'errors' => [
-						[
-							'code' => 401,
-							'title' => 'Invalid user',
-							'detail' => 'User not found'
-						]
-					],
-					'message' => 'Invalid user'
-				]);
-				die;
-			}
+			if (!$user->id)
+				CustomTablesAPIHelpers::fireError(401, 'User not found', 'Invalid user');
 
 			// Get database connection
 			$db = Factory::getDbo();
@@ -54,19 +40,7 @@ class LogoutController
 			]);
 
 		} catch (Exception $e) {
-			$app->setHeader('status', 500);
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 500,
-						'title' => 'Server Error',
-						'detail' => $e->getMessage()
-					]
-				],
-				'message' => 'Server error'
-			]);
+			CustomTablesAPIHelpers::fireError(500, 'Server Error');
 		}
 	}
 }

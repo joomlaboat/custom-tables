@@ -8,7 +8,6 @@ class UserEmailController
 	{
 		$app = Factory::getApplication();
 		$app->getSession()->close();
-
 		$userId = CustomTablesAPIHelpers::checkToken();
 
 		if (!$userId)
@@ -23,46 +22,9 @@ class UserEmailController
 		$db->setQuery($query);
 		$result = $db->loadObject();
 
-		if (!$result) {
-			$app->setHeader('status', 401);
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 401,
-						'title' => 'Invalid user',
-						'detail' => 'User not found'
-					]
-				],
-				'message' => 'Invalid user'
-			]);
-			die;
-		}
-// Return email
-		echo json_encode([
-			'success' => true,
-			'data' => [
-				'email' => $result->email
-			],
-			'message' => 'Email retrieved successfully'
-		]);
+		if (!$result)
+			CustomTablesAPIHelpers::fireError(401, 'User not found', 'Invalid user');
 
-		/*} catch
-		(Exception $e) {
-			$app->setHeader('status', 500);
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 500,
-						'title' => 'Server Error',
-						'detail' => $e->getMessage()
-					]
-				],
-				'message' => 'Server error'
-			]);
-		}*/
+		CustomTablesAPIHelpers::fireSuccess($userId, ['email' => $result->email], 'Email retrieved successfully');
 	}
 }

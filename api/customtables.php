@@ -17,20 +17,8 @@ if (!$user->authorise('core.manage', 'com_customtables')) {
 $app = Factory::getApplication();
 
 // Check if site is offline
-if ($app->get('offline') == '1') {
-	echo json_encode([
-		'success' => false,
-		'data' => null,
-		'errors' => [
-			[
-				'code' => 401,
-				'title' => 'offline'
-			]
-		],
-		'message' => $app->get('offline_message', 'Site is offline for maintenance')
-	]);
-	die;
-}
+if ($app->get('offline') == '1')
+	CustomTablesAPIHelpers::fireError(401, 'offline', $app->get('offline_message', 'Site is offline for maintenance'));
 
 $controller = $app->input->get('controller');
 
@@ -53,11 +41,7 @@ if (file_exists($path)) {
 		echo json_encode(['error' => $e->getMessage()]);
 		die;
 	}
-
-
 } else {
-	$app->setHeader('status', 404);
-	$app->sendHeaders();
-	echo json_encode(['errors' => [['title' => 'Controller not found.', 'controller' => $controller, 'code' => 404]]]);
+	CustomTablesAPIHelpers::fireError(404, 'Controller [' . $controller . '] not found.', $app->get('offline_message', 'Controller not found.'));
 }
 die;

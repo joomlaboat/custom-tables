@@ -9,7 +9,6 @@ class RecordController
 {
 	function execute()
 	{
-		//$app = Factory::getApplication();
 		$userId = CustomTablesAPIHelpers::checkToken();
 
 		if (!$userId)
@@ -27,19 +26,8 @@ class RecordController
 		$result = $layout->renderMixedLayout($layoutName, null, 1, true);
 
 		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false or !isset($result['html'])) {
-			CustomTablesAPIHelpers::fireError($result['message'] ?? 'Error');
+			CustomTablesAPIHelpers::fireError(500, $result['message'] ?? 'Error');
 		}
-
-		/*
-		$j = [];
-		if (isset($result['html'])) {
-			try {
-				$j = json_decode($result['html'], true, 512, JSON_THROW_ON_ERROR);
-			} catch (Exception $e) {
-				$result = ['success' => false, 'message' => $e->getMessage()];
-			}
-		}
-		*/
 
 		CustomTablesAPIHelpers::fireSuccess(null, $result['html'], $result['message'] ?? 'Details page ready');
 	}

@@ -116,32 +116,22 @@ class LoginController
 				echo $e->getMessage();
 			}
 
-			$app->setHeader('status', 200);
-			$app->sendHeaders();
-
 			// Get lifetime from Joomla config
 			$lifetime = Factory::getApplication()->get('lifetime', 15); // Default 15 minutes if not set
 			$expires_in = $lifetime * 60; // Convert minutes to seconds
 
-			echo json_encode([
-				'success' => true,
-				'data' => [
-					'access_token' => $token,
-					'token_type' => 'Bearer',
-					'expires_in' => $expires_in,
-					'user' => [
-						'id' => $user->id,
-						'name' => $user->name,
-						'username' => $user->username,
-						'email' => $user->email
-					]
-				],
-				'message' => 'Authentication successful'
-			]);
-		} else {
-			$app->setHeader('status', 401);
-			$app->sendHeaders();
+			CustomTablesAPIHelpers::fireSuccess($user->id, [
+				'access_token' => $token,
+				'token_type' => 'Bearer',
+				'expires_in' => $expires_in,
+				'user' => [
+					'id' => $user->id,
+					'name' => $user->name,
+					'username' => $user->username,
+					'email' => $user->email
+				]], 'Authentication successful');
 
+		} else {
 			$message = 'Authentication failed';
 
 			// Check authentication status
@@ -163,18 +153,7 @@ class LoginController
 					break;
 			}
 
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 401,
-						'title' => 'Unauthorized',
-						'detail' => $message
-					]
-				],
-				'message' => 'Authentication failed'
-			]);
+			CustomTablesAPIHelpers::fireError(401, $message, 'Authentication failed');
 		}
 	}
 }

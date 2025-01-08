@@ -20,45 +20,19 @@ class RegisterController
 		$errors = [];
 
 		foreach ($requiredFields as $field) {
-			if (!isset($data->$field) || empty($data->$field)) {
-				$errors[] = [
-					'code' => 400,
-					'title' => 'Bad Request',
-					'detail' => ucfirst($field) . ' is required'
-				];
-			}
+			if (!isset($data->$field) || empty($data->$field))
+				CustomTablesAPIHelpers::fireError(400, ucfirst($field) . ' is required', 'Bad Request');
 		}
 
 		// Validate passwords match
 		if ($data->password !== $data->password_confirm) {
-			$errors[] = [
-				'code' => 400,
-				'title' => 'Bad Request',
-				'detail' => 'Passwords do not match'
-			];
+			CustomTablesAPIHelpers::fireError(400, 'Passwords do not match', 'Bad Request');
 		}
 
 		// Validate email format
 		if (!filter_var($data->email, FILTER_VALIDATE_EMAIL)) {
-			$errors[] = [
-				'code' => 400,
-				'title' => 'Bad Request',
-				'detail' => 'Invalid email format'
-			];
+			CustomTablesAPIHelpers::fireError(400, 'Invalid email format', 'Bad Request');
 		}
-
-		if (!empty($errors)) {
-			$app->setHeader('status', 400);
-			$app->sendHeaders();
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => $errors,
-				'message' => 'Validation failed'
-			]);
-			return;
-		}
-
 
 		try {
 			$db = Factory::getDbo();
@@ -103,7 +77,7 @@ class RegisterController
 
 			// Save user
 			if (!$user->save()) {
-				throw new Exception('Failed to create user');
+				CustomTablesAPIHelpers::fireError(400, 'Failed to create user', 'Bad Request');
 			}
 
 			$db->transactionCommit();
@@ -127,38 +101,19 @@ class RegisterController
 			$lifetime = Factory::getApplication()->get('lifetime', 15);
 			$expires_in = $lifetime * 60;
 
-			$app->setHeader('status', 201);
-			$app->sendHeaders();
-			echo json_encode([
-				'success' => true,
-				'data' => [
-					'access_token' => $token,
-					'token_type' => 'Bearer',
-					'expires_in' => $expires_in,
-					'user' => [
-						'id' => $user->id,
-						'name' => $user->name,
-						'username' => $user->username,
-						'email' => $user->email
-					]
-				],
-				'message' => 'Registration successful'
-			]);
+			CustomTablesAPIHelpers::fireSuccess($user->id, [
+				'access_token' => $token,
+				'token_type' => 'Bearer',
+				'expires_in' => $expires_in,
+				'user' => [
+					'id' => $user->id,
+					'name' => $user->name,
+					'username' => $user->username,
+					'email' => $user->email
+				]
+			], 'Registration successful');
 		} catch (Exception $e) {
-			$app->setHeader('status', 400);
-			$app->sendHeaders();
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 400,
-						'title' => 'Bad Request',
-						'detail' => $e->getMessage()
-					]
-				],
-				'message' => 'Registration failed'
-			]);
+			CustomTablesAPIHelpers::fireError(400, $e->getMessage(), 'Bad Request');
 		}
 		die;
 	}

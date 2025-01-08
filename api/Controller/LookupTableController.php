@@ -3,7 +3,6 @@
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\ProInputBoxTableJoin;
-use Joomla\CMS\Factory;
 
 class LookupTableController
 {
@@ -12,7 +11,6 @@ class LookupTableController
 		$userId = CustomTablesAPIHelpers::checkToken();
 		$key = common::inputGetCmd('key');
 		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
-		$app = Factory::getApplication();
 
 		if (file_exists($path . 'tablejoin.php') and file_exists($path . 'tablejoinlist.php')) {
 			require_once($path . 'tablejoin.php');
@@ -20,32 +18,9 @@ class LookupTableController
 
 			$ct = new CT(null, false);
 			$result = ProInputBoxTableJoin::renderTableJoinSelectorJSON_getOptions($ct, $key, false);
-
-			$app->setHeader('status', 200);
-			$app->sendHeaders();
-
-			echo json_encode([
-				'success' => true,
-				'data' => $result,
-				'message' => 'Lookup Table records loaded'
-			], JSON_PRETTY_PRINT);
-			die;
+			CustomTablesAPIHelpers::fireSuccess(null, $result, 'Lookup Table records loaded');
 		} else {
-			$app->setHeader('status', 400);
-			$app->sendHeaders();
-
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 400,
-						'title' => 'Bad Request',
-					]
-				],
-				'message' => 'Lookup Table records NOT loaded'
-			]);
-			die;
+			CustomTablesAPIHelpers::fireError(400, 'Lookup Table records NOT loaded', 'Bad Request');
 		}
 	}
 }
