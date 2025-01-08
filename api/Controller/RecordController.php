@@ -9,7 +9,7 @@ class RecordController
 {
 	function execute()
 	{
-		$app = Factory::getApplication();
+		//$app = Factory::getApplication();
 		$userId = CustomTablesAPIHelpers::checkToken();
 
 		if (!$userId)
@@ -26,17 +26,10 @@ class RecordController
 		$layout = new Layouts($ct);
 		$result = $layout->renderMixedLayout($layoutName, null, 1, true);
 
-		$j = [];
-		if (isset($result['html'])) {
-			try {
-				$j = json_decode($result['html'], true, 512, JSON_THROW_ON_ERROR);
-			} catch (Exception $e) {
-				$result = ['success' => false, 'message' => $e->getMessage()];
-			}
-		}
-
-		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false) {
+		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false or !isset($result['html'])) {
+			CustomTablesAPIHelpers::fireError($result['message'] ?? 'Error');
 			// Handle invalid request method
+			/*
 			$app = Factory::getApplication();
 			$app->setHeader('status', 500);
 			echo json_encode([
@@ -51,8 +44,22 @@ class RecordController
 				'message' => $result['message'] ?? 'Error'
 			]);
 			die;
+			*/
 		}
 
+		/*
+		$j = [];
+		if (isset($result['html'])) {
+			try {
+				$j = json_decode($result['html'], true, 512, JSON_THROW_ON_ERROR);
+			} catch (Exception $e) {
+				$result = ['success' => false, 'message' => $e->getMessage()];
+			}
+		}
+		*/
+
+		CustomTablesAPIHelpers::fireSuccess(null, $result['html'], $result['message'] ?? 'Details page ready');
+		/*
 		$app->setHeader('status', 200);
 		$app->sendHeaders();
 
@@ -62,5 +69,6 @@ class RecordController
 			'message' => $result['message'] ?? 'Details page ready'
 		], JSON_PRETTY_PRINT);
 		die;
+		*/
 	}
 }
