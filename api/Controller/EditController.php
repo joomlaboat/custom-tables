@@ -19,24 +19,24 @@ class EditController
 
 		switch ($_SERVER['REQUEST_METHOD']) {
 			case 'POST':
+				/*
+								$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
 
-				$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-
-				if (strpos($contentType, 'application/json') !== false) {
-					// Handle JSON data
-					$postData = json_decode(file_get_contents('php://input'), true);
-				} else if (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
-					// Handle form data
-					$postData = $_POST;
-				} else {
-					// Handle unsupported content type
-					http_response_code(415);
-					echo json_encode(['error' => 'Unsupported Media Type']);
-					exit;
-				}
-
+								if (strpos($contentType, 'application/json') !== false) {
+									// Handle JSON data
+									$postData = json_decode(file_get_contents('php://input'), true);
+								} else if (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
+									// Handle form data
+									$postData = $_POST;
+								} else {
+									// Handle unsupported content type
+									http_response_code(415);
+									echo json_encode(['error' => 'Unsupported Media Type']);
+									exit;
+								}
+				*/
 				// Handle POST request
-				$this->executePOST($postData);
+				$this->executePOST();//$postData
 				// or use $_POST if data is form-encoded
 				break;
 
@@ -69,12 +69,10 @@ class EditController
 	 *
 	 * @since 3.4.8
 	 */
-	function executePOST($postData)
+	function executePOST()
 	{
-		$app = Factory::getApplication();
-
 		$layoutName = common::inputGetCmd('layout');
-		$listing_id = common::inputPostCmd('id');
+		//$listing_id = common::inputPostCmd('id');
 
 		$task = common::inputPostCmd('task');
 
@@ -90,6 +88,7 @@ class EditController
 		if ($filter !== null)
 			$ct->setParams($layout->params);
 
+		/*
 		$filter = null;
 		if ($ct->Params->filter !== null)
 			$filter = $ct->Params->filter;
@@ -105,37 +104,20 @@ class EditController
 				$ct->Params->listing_id = $ct->Table->record[$ct->Table->realidfieldname];
 			}
 		}
+		*/
 
 		$layout = new Layouts($ct);
-		$result = $layout->renderMixedLayout($layoutName, null, 1, $task);
-
-		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false) {
-			// Handle invalid request method
-			$app = Factory::getApplication();
-			$app->setHeader('status', 500);
-			echo json_encode([
-				'success' => false,
-				'data' => null,
-				'errors' => [
-					[
-						'code' => 500,
-						'title' => $result['message'] ?? 'Error'
-					]
-				],
-				'message' => $result['message'] ?? 'Error'
-			]);
-			die;
+		$result = null;
+		try {
+			$result = @$layout->renderMixedLayout($layoutName, null, 1, true, $task);
+		} catch (Throwable $e) {
+			CustomTablesAPIHelpers::fireError($e->getMessage());
 		}
 
-		$app->setHeader('status', 200);
-		$app->sendHeaders();
+		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false)
+			CustomTablesAPIHelpers::fireError($result['message'] ?? 'Record not saved');
 
-		echo json_encode([
-			'success' => true,
-			'data' => null,
-			'message' => $result['message'] ?? 'Done'
-		]);
-		die;
+		CustomTablesAPIHelpers::fireSuccess($result['id'], $result['data'], $result['message'] ?? 'Done');
 	}
 
 	function executeGET()
@@ -145,6 +127,8 @@ class EditController
 		$layoutName = Factory::getApplication()->input->get('layout');
 		$listing_id = Factory::getApplication()->input->get('id');
 
+		$ct = null;
+
 		try {
 			$params['listingid'] = $listing_id;
 
@@ -153,8 +137,7 @@ class EditController
 			$ct->Params->blockExternalVars = false;
 			$ct->Params->editLayout = $layoutName;
 		} catch (Exception $e) {
-			echo $e->getMessage();
-			die;
+			CustomTablesAPIHelpers::fireError($e->getMessage());
 		}
 
 		$editForm = new Edit($ct);
@@ -163,12 +146,12 @@ class EditController
 		if (!empty($ct->Params->filter)) {
 			$ct->setFilter($ct->Params->filter);
 
-			if ($ct->Params->listing_id !== null)
+			if (!empty($ct->Params->listing_id))
 				$ct->getRecord($ct->Params->listing_id);
 			else
 				$ct->getRecord();
 		} else {
-			if ($ct->Params->listing_id !== null)
+			if (!empty($ct->Params->listing_id))
 				$ct->getRecord($ct->Params->listing_id);
 		}
 
@@ -200,7 +183,7 @@ class EditController
 		die;
 	}
 
-	protected function generateFormToken()
+	protected function generateFormToken(): string
 	{
 		// Get session object
 		$app = Factory::getApplication();

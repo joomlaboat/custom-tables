@@ -6,6 +6,62 @@ use Joomla\CMS\Factory;
 
 class CustomTablesAPIHelpers
 {
+	static public function fireSuccess(?string $id = null, $dataVariable = null, ?string $message = null): void
+	{
+		if (is_array($dataVariable)) {
+			$data = $dataVariable;
+		} else {
+
+			try {
+				$data = json_decode($dataVariable, true, 512, JSON_THROW_ON_ERROR);
+			} catch (Exception $e) {
+				$data = ['error' => $e->getMessage(), 'result' => $result];
+			}
+		}
+
+		$app = Factory::getApplication();
+		$app->setHeader('status', 200);
+		$app->sendHeaders();
+
+		$result = [
+			'success' => true,
+			'data' => $data,
+			'message' => $message
+		];
+
+		if ($id !== null)
+			$result['id'] = $id;
+
+		die(json_encode($result, JSON_PRETTY_PRINT));
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.4.8
+	 */
+	static public function fireError(?string $message = null): void
+	{
+		$app = Factory::getApplication();
+		// Handle invalid request method
+		$app->setHeader('status', 500);
+		echo json_encode([
+			'success' => false,
+			'data' => null,
+			'errors' => [
+				[
+					'code' => 500,
+					'title' => $message ?? 'Error'
+				]
+			],
+			'message' => $message ?? 'Error'
+		], JSON_PRETTY_PRINT);
+		die;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.4.8
+	 */
 	static public function checkToken(): int
 	{
 		self::loadCT();
@@ -59,7 +115,7 @@ class CustomTablesAPIHelpers
 					]
 				],
 				'message' => 'Invalid token'
-			]);
+			], JSON_PRETTY_PRINT);
 			die;
 		}
 
@@ -122,10 +178,7 @@ class CustomTablesAPIHelpers
 			die('CT Loader not found.');
 
 		require_once($path);
-
-		$loadTwig = true;
-
-		CustomTablesLoader(false, false, null, 'com_customtables', $loadTwig);
+		CustomTablesLoader(false, false, null, 'com_customtables', true);
 	}
 }
 

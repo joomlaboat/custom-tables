@@ -504,16 +504,19 @@ class Layouts
 
 		} elseif ($this->layoutType == 2) {
 			//Edit Form
+
+			//if ($this->ct->Env->clean == 0) {
 			if ($task == 'saveandcontinue' or $task == 'save') {
 				$record = new record($this->ct);
 				$record->editForm->layoutContent = $this->layoutCode;
 				$listing_id = common::inputGetCmd('id');
 				if ($record->save($listing_id, false)) {
 
+					$action = $record->isItNewRecord ? 'create' : 'update';
+
 					if ($this->ct->Env->advancedTagProcessor and !empty($this->ct->Table->tablerow['customphp'])) {
 
 						try {
-							$action = $record->isItNewRecord ? 'create' : 'update';
 							$customPHP = new CustomPHP($this->ct, $action);
 							$customPHP->executeCustomPHPFile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
 						} catch (Exception $e) {
@@ -523,7 +526,14 @@ class Layouts
 
 					if ($clean == 1) {
 						if ($mustReturn) {
-							return ['success' => true, 'message' => common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'short' => 'updated'];
+							$data = $this->renderEditForm(false);
+							return [
+								'success' => true,
+								'message' => common::translate('COM_CUSTOMTABLES_RECORD_SAVED'),
+								'action' => $action,
+								'id' => $this->ct->Table->record[$this->ct->Table->realidfieldname],
+								'data' => $data
+							];
 						} else {
 							die('updated');
 						}
@@ -537,22 +547,25 @@ class Layouts
 						} else {
 							die('error');
 						}
-					} else
+					} else {
 						common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'));
 
-					if ($record->ct->Params !== null and $record->ct->Params->msgItemIsSaved !== null)
-						common::enqueueMessage($record->ct->Params->msgItemIsSaved);
+						if ($record->ct->Params !== null and $record->ct->Params->msgItemIsSaved !== null)
+							common::enqueueMessage($record->ct->Params->msgItemIsSaved);
+					}
 				}
 
-				if ($task == 'save') {
+				if ($this->ct->Env->clean == 0) {
+					if ($task == 'save') {
 
-					$link = common::getReturnToURL();
-					if ($link === null)
-						$link = $this->ct->Params->returnTo;
+						$link = common::getReturnToURL();
+						if ($link === null)
+							$link = $this->ct->Params->returnTo;
 
-					$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
+						$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
 
-					common::redirect($link);
+						common::redirect($link);
+					}
 				}
 
 			} elseif ($task == 'cancel') {
@@ -565,19 +578,21 @@ class Layouts
 
 				common::redirect($link, common::translate('COM_CUSTOMTABLES_EDIT_CANCELED'));
 			}
-
+			//}
 
 			if ($this->ct->Table->record === null) {
-				if ($this->ct->Params->listing_id !== null)
+
+				if (!empty($this->ct->Params->listing_id))
 					$listing_id = $this->ct->Params->listing_id;
 				else
 					$listing_id = common::inputGetCmd('listing_id');
 
-				if ($listing_id !== null)
+				if (!empty($listing_id)) {
 					$this->ct->getRecord($listing_id);
+				}
 			}
 
-			$output['html'] = $this->renderEditForm();
+			$output['html'] = $this->renderEditForm(!($mustReturn or $this->ct->Env->clean == 1));
 
 			if (isset($this->ct->LayoutVariables['captcha']) and $this->ct->LayoutVariables['captcha'])
 				$output['captcha'] = true;
@@ -1043,21 +1058,26 @@ class Layouts
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function renderEditForm(): string
+	protected function renderEditForm(bool $addFormTag = true): string
 	{
-		$formLink = common::curPageURL();
+		if ($this->ct->Env->clean == 0)
+			$formLink = common::curPageURL();
+		else
+			$formLink = null;
 
-		if ($this->ct->Table->record !== null) {
-			if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-				$row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
-			else
-				$row = $this->ct->Table->record;
-		} else
-			$row = null;
+		/*
+				if ($this->ct->Table->record !== null) {
+					if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+						$row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
+					else
+						$row = $this->ct->Table->record;
+				} else
+					$row = null;
+				*/
 
 		$editForm = new Edit($this->ct);
 		$editForm->layoutContent = $this->layoutCode;
-		return $editForm->render($row, $formLink, 'ctEditForm');
+		return $editForm->render($this->ct->Table->record, $formLink, 'ctEditForm', $addFormTag);
 	}
 
 	/**

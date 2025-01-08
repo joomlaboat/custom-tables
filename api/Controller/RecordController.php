@@ -24,7 +24,7 @@ class RecordController
 		$ct->Params->blockExternalVars = false;
 
 		$layout = new Layouts($ct);
-		$result = $layout->renderMixedLayout($layoutName, null, 1);
+		$result = $layout->renderMixedLayout($layoutName, null, 1, true);
 
 		$j = [];
 		if (isset($result['html'])) {

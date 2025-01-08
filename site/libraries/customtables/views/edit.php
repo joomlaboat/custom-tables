@@ -142,32 +142,35 @@ class Edit
 			}
 		}
 
-		if ($this->ct->Env->clean == 0)
+		if ($this->ct->Env->clean == 0) {
 			common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
-		if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
+			if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
 
-			if (defined('_JEXEC'))
-				$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
-					. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
-			else
-				$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
-					. $this->ct->Params->pageTitle . '</h2></div>';
+				if (defined('_JEXEC'))
+					$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
+						. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
+				else
+					$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
+						. $this->ct->Params->pageTitle . '</h2></div>';
+			}
 		}
 
 		$listing_id = $this->row[$this->ct->Table->realidfieldname] ?? 0;
 
-		if ($addFormTag) {
+		if ($this->ct->Env->clean == 0) {
+			if ($addFormTag) {
 
-			$additionalParameter = ' enctype="multipart/form-data"';
+				$additionalParameter = ' enctype="multipart/form-data"';
 
-			$result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
-				. 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
-				. 'data-version=' . CUSTOMTABLES_JOOMLA_VERSION . $additionalParameter . '>';
+				$result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
+					. 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
+					. 'data-version=' . CUSTOMTABLES_JOOMLA_VERSION . $additionalParameter . '>';
+			}
+
+			if (defined('_JEXEC'))
+				$result .= (CUSTOMTABLES_JOOMLA_MIN_4 ? '<fieldset class="options-form">' : '<fieldset>');
 		}
-
-		if (defined('_JEXEC'))
-			$result .= (CUSTOMTABLES_JOOMLA_MIN_4 ? '<fieldset class="options-form">' : '<fieldset>');
 
 		//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 
@@ -212,30 +215,31 @@ class Edit
 
 		$encodedReturnTo = common::makeReturnToURL($returnTo);
 
-		if ($listing_id == 0) {
-			$result .= '<input type="hidden" name="published" value="' . (int)$this->ct->Params->publishStatus . '" />';
+		if ($this->ct->Env->clean == 0) {
+			if (empty($listing_id))
+				$result .= '<input type="hidden" name="published" value="' . (int)$this->ct->Params->publishStatus . '" />';
+
+			$result .= '<input type="hidden" name="task" id="task" value="save" />'
+				. '<input type="hidden" name="returnto" id="returnto" value="' . $encodedReturnTo . '" />'
+				. '<input type="hidden" name="listing_id" id="listing_id" value="' . $listing_id . '" />';
+
+			if (!is_null($this->ct->Params->ModuleId))
+				$result .= '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $this->ct->Params->ModuleId . '" />';
+
+			if (defined('_JEXEC')) {
+				$result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '');
+				$result .= HTMLHelper::_('form.token');
+
+			} elseif (defined('WPINC')) {
+				$result .= '<!-- token -->';
+			}
+
+			if (defined('_JEXEC'))
+				$result .= '</fieldset>';
+
+			if ($addFormTag)
+				$result .= '</form>';
 		}
-
-		$result .= '<input type="hidden" name="task" id="task" value="save" />'
-			. '<input type="hidden" name="returnto" id="returnto" value="' . $encodedReturnTo . '" />'
-			. '<input type="hidden" name="listing_id" id="listing_id" value="' . $listing_id . '" />';
-
-		if (!is_null($this->ct->Params->ModuleId))
-			$result .= '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $this->ct->Params->ModuleId . '" />';
-
-		if (defined('_JEXEC')) {
-			$result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '');
-			$result .= HTMLHelper::_('form.token');
-
-		} elseif (defined('WPINC')) {
-			$result .= '<!-- token -->';
-		}
-
-		if (defined('_JEXEC'))
-			$result .= '</fieldset>';
-
-		if ($addFormTag)
-			$result .= '</form>';
 
 		return $result;
 	}

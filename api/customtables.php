@@ -45,12 +45,19 @@ if (file_exists($path)) {
 	require_once $path;
 	$className = $controller . 'Controller';
 	$do = new $className;
-	$do->execute();
+
+
+	try {
+		$do->execute();
+	} catch (Exception $e) {
+		echo json_encode(['error' => $e->getMessage()]);
+		die;
+	}
+
+
 } else {
 	$app->setHeader('status', 404);
 	$app->sendHeaders();
 	echo json_encode(['errors' => [['title' => 'Controller not found.', 'controller' => $controller, 'code' => 404]]]);
 }
 die;
-// /var/www/swaglivestreet/api/components/com_customtables/Controller/loginController.php
-// /var/www/swaglivestreet/api/components/com_customtables

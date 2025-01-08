@@ -140,6 +140,7 @@ class record
 			}
 		}
 
+		//TODO: you probably should let empty records to be created
 		if (count($saveField->row_new) < 1) {
 			return false;
 		}
