@@ -37,10 +37,22 @@ class Documentation
 
 	function renderFieldTypes($types): string
 	{
+		/*
+				if (defined('WPINC')) {
+					//temporary
+					$root = common::UriRoot();
+					if ($root == 'https://ct4.us') {
+
+						$this->renderFieldTypesBetterDocArticles($types);
+						return '';
+					}
+				}
+		*/
 		if ($this->internal_use)
 			return $this->renderFieldTypesInternal($types);
 		else
 			return $this->renderFieldTypesGitHub($types);
+
 	}
 
 	function renderFieldTypesInternal($types): string
@@ -201,7 +213,7 @@ class Documentation
 			} else
 				$param_description = '';
 
-			$result .= '<li><h6>' . $param_att->label . ($param_description != '' ? ' - ' . $param_description : '') . '</h6>';
+			$result .= '<li><code>' . $param_att->label . '</code> (optional) ' . ($param_description != '' ? ' - ' . $param_description : '') . '';
 
 			if (isset($param_att->image)) {
 				$result .= '<p><img src="' . $param_att->image . '" alt="' . $param_att->label . '" /></p>';
@@ -234,12 +246,12 @@ class Documentation
 
 		if ($tag_name == '') {
 			if (!(int)$hideDefaultExample) {
-				$result_new .= '<p>' . common::translate('COM_CUSTOMTABLES_EXAMPLE') . ': <pre class="ct_doc_pre">'
+				$result_new .= '<p><b>' . common::translate('COM_CUSTOMTABLES_EXAMPLE') . '</b>: <pre class="ct_doc_pre">'
 					. $opening_char . $tag_name . $postfix . ($cleanedParamsStr != "" ? '(' . $cleanedParamsStr . ')' : '') . $closing_char . '</pre></p>';
 			}
 		} else {
 			if ($example_values_count > 0) {
-				$result_new .= '<p>' . common::translate('COM_CUSTOMTABLES_EXAMPLE') . ': <pre class="ct_doc_pre">'
+				$result_new .= '<p><b>' . common::translate('COM_CUSTOMTABLES_EXAMPLE') . '</b>: <pre class="ct_doc_pre">'
 					. $opening_char . $tag_name . $postfix . ($cleanedParamsStr != "" ? '(' . $cleanedParamsStr . ')' : '') . $closing_char . '</pre></p>';
 			}
 		}
@@ -334,9 +346,9 @@ class Documentation
 
 	function prepareExample(string $param): string
 	{
-		$output = preg_replace('/[^0-9]/', '', $param);
-		if ($output != '')
-			return $param;
+		//$output = preg_replace('/[^0-9]/', '', $param);
+		//if ($output != '')
+		//return $param;
 
 		if (is_numeric($param))
 			return $param;
@@ -691,6 +703,215 @@ class Documentation
 		return $result . $result_new;
 	}
 
+	function renderFieldTypesBetterDocArticles($types)
+	{
+		$count = 1;
+		foreach ($types as $type) {
+			//if ($count == 7)
+			//die;
+
+			$count += 1;
+
+			$type_att = $type->attributes();
+			$hideDefaultExample = (bool)(int)$type_att->hidedefaultexample;
+			$isDeprecated = (bool)(int)$type_att->deprecated;
+
+			$title = $type_att->label;
+			$slug = $type_att->ct_name;
+
+			if (!$isDeprecated and ($slug != 'alias' and $slug != 'server' and $slug != 'dummy')) {
+
+				$result = '<h3>Overview</h3>';
+				$result .= '<p>' . $type_att->description . '</p>';
+
+				if (isset($type_att->image)) {
+					$result .= '<p><img src="' . $type_att->image . '" alt="' . $type_att->label . '" /></p>';
+				}
+
+				if (isset($type_att->link) and isset($type_att->link_title)) {
+					$result .= '<p><a href="' . $type_att->link . '" title="' . $type_att->link_title . '" target="_blank">' . $type_att->link_title . '</a></p>';
+				}
+
+				if (!empty($type->params) and count($type->params) > 0) {
+					$content = $this->renderParametersInternal($type->params, '', '', '', '', true);
+					if ($content != '')
+						$result .= '<h4>' . common::translate('COM_CUSTOMTABLES_FIELDTYPEPARAMS') . '</h4>' . $content;
+				}
+
+				$result .= '<hr/>';
+
+				$result .= '<h4>' . common::translate('COM_CUSTOMTABLES_VALUEPARAMS') . ':</h4>'
+					. '<p>Basic usage:</p>'
+					//. common::translate('COM_CUSTOMTABLES_EXAMPLE')
+					. '<pre><code class="language-twig">'
+					. '{{ <i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i> }}</code></pre>';
+
+				if (!empty($type->valueparams)) {
+
+					$paramList = [];
+					foreach ($type->valueparams as $p) {
+						foreach ($p->params->param as $param) {
+							$param_att = $param->attributes();
+							$paramList [] = (string)$param_att->label;
+						}
+					}
+
+					$result .= '<p>Usage with parameters:</p>'
+						. '<pre><code class="language-twig">'
+						. '{{ <i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>(' . implode(', ', $paramList
+						) . ') }}</code></pre>';
+
+					foreach ($type->valueparams as $p) {
+						$params = $p->params;
+
+						$result .= $this->renderParametersInternal($params,
+							'{{ ',
+							'<i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
+							'',
+							' }}',
+							$hideDefaultExample);
+						break;
+					}
+				}
+
+				$result .= '<hr/>';
+
+				$result .= '<h4>' . common::translate('COM_CUSTOMTABLES_FIELDTYPE_PUREVALUE') . '</h4>'
+					. '<p>' . common::translate('COM_CUSTOMTABLES_EXAMPLE') . ':<pre><code class="language-twig">'
+					. '{{ <i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.value }}'
+					. '</code></pre></p>';
+
+				$result .= '<hr/>';
+
+				$result .= '<h4>' . common::translate('COM_CUSTOMTABLES_EDITRECPARAMS') . '</h4>';
+
+				if (!empty($type->editparams)) {
+
+					$editparams_att = $type->editparams->attributes();
+
+					if (isset($editparams_att->image)) {
+						$result .= '<p><img src="' . $editparams_att->image . '" alt="' . $editparams_att->label . '" /></p>';
+					}
+
+					if (isset($editparams_att->description)) {
+						$result .= '<p>' . $editparams_att->description . '</p>';
+					}
+
+					if (isset($editparams_att->link) and isset($editparams_att->link_title)) {
+						$result .= '<p><a href="' . $editparams_att->link . '" title="' . $editparams_att->link_title . '" target="_blank">' . $editparams_att->link_title . '</a></p>';
+					}
+				}
+
+				$result .= '<p>Basic usage:</p>'
+					. '<pre><code class="language-twig">'
+					. '{{ <i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.edit }}</code></pre>';
+
+
+				if (!empty($type->editparams)) {
+
+					$paramList = [];
+					foreach ($type->editparams as $p) {
+						foreach ($p->params->param as $param) {
+							$param_att = $param->attributes();
+							$paramList [] = (string)$param_att->label;
+						}
+					}
+
+					$result .= '<p>Usage with parameters:</p>'
+						. '<pre><code class="language-twig">'
+						. '{{ <i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.edit(' . implode(', ', $paramList
+						) . ') }}</code></pre>';
+
+					foreach ($type->editparams as $p) {
+						$params = $p->params;
+						$result .= $this->renderParametersInternal($params,
+							'{{ ',
+							'<i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
+							'.edit',
+							' }}',
+							$hideDefaultExample);
+						break;
+					}
+				}
+
+				if (!empty($type->subvalueparams)) {
+
+					foreach ($type->subvalueparams as $p) {
+
+						$params_att = $p->attributes();
+						$result .= '<h4>' . $params_att->label . ':</h4>';
+						$params = ((array)$p->params)['param'];
+
+						if (is_object($params)) {
+							$params = [$params];
+						}
+
+						$result .= $this->renderParametersInternal2($params,
+							'{{ ',
+							'<i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
+							'.' . $params_att->name,
+							' }}',
+							$hideDefaultExample);
+					}
+				}
+				$this->create_betterdocs_article('field-types', null, $slug, $title, $result);
+			}
+		}
+	}
+
+	function create_betterdocs_article($parentCategorySlug, $childCategorySlug, $slug, $title, $content)
+	{
+		// Check if post exists by slug
+		$existing_post = get_page_by_path($slug, OBJECT, 'docs');
+
+		if (!empty($existing_post)) {
+			echo "Article with slug '{$slug}' already exists with ID: {$existing_post->ID}<br/>";
+			return false;
+
+		}
+
+		// Get the category by slug
+		$parent_category = get_term_by('slug', $parentCategorySlug, 'doc_category');
+		if (!$parent_category) {
+			die("Category '" . $parentCategorySlug . "' not found");
+		}
+
+		if ($childCategorySlug !== null) {
+			$child_category = get_term_by('slug', $childCategorySlug, 'doc_category');
+			if (!$child_category) {
+				die("Category '" . $childCategorySlug . "' not found");
+			}
+		}
+
+		// Prepare post data
+		$post_data = array(
+			'post_title' => $title,
+			'post_content' => $content,
+			'post_status' => 'publish',
+			'post_type' => 'docs',
+			'post_name' => $slug,  // Set the slug
+			'post_author' => 1, // Default admin user ID
+		);
+
+		// Insert the post
+		$post_id = wp_insert_post($post_data);
+
+		if (is_wp_error($post_id)) {
+			die("Error creating article: " . $post_id->get_error_message());
+		}
+
+		if ($childCategorySlug !== null) {
+			// Set both parent and child categories
+			wp_set_object_terms($post_id, array($parent_category->term_id, $child_category->term_id), 'doc_category');
+		} else {
+			// Set the category
+			wp_set_object_terms($post_id, $parent_category->term_id, 'doc_category');
+		}
+
+		echo "Article created successfully with ID: " . $post_id . '<br/>';
+		return true;
+	}
+
 	function getLayoutTags(): string
 	{
 		$xml = CTMiscHelper::getXMLData('tags.xml');
@@ -703,6 +924,17 @@ class Documentation
 
 	function renderLayoutTagSets($tagsets): string
 	{
+		/*
+				if (defined('WPINC')) {
+					//temporary
+					$root = common::UriRoot();
+					if ($root == 'https://ct4.us') {
+
+						$this->renderLayoutTagBetterDocArticles($tagsets);
+						return '';
+					}
+				}
+		*/
 		if ($this->internal_use)
 			return $this->renderLayoutTagSetsInternal($tagsets);
 		else
@@ -907,6 +1139,112 @@ if ($this->onlyWordpress) {
 			}
 		}
 		return $result;
+	}
+
+	function renderLayoutTagBetterDocArticles($tagSets)
+	{
+		foreach ($tagSets as $tagSet) {
+			$tagSetAtt = $tagSet->attributes();
+			$isDeprecated = (bool)(int)$tagSetAtt->deprecated;
+
+			if (!$isDeprecated)
+				$this->renderTagsBetterDocArticles($tagSet->tag, $tagSetAtt->name);
+		}
+	}
+
+	function renderTagsBetterDocArticles($tags, $tagsetname)
+	{
+		$count = 1;
+		foreach ($tags as $tag) {
+
+			//if ($count > 3)
+			//return;
+
+			$count += 1;
+
+			$tag_att = $tag->attributes();
+
+			$result = '';
+
+			$hidedefaultexample = (bool)(int)$tag_att->hidedefaultexample;
+			$isDeprecated = (bool)(int)$tag_att->deprecated;
+
+			if (!$isDeprecated) {// and $tag_att->name == 'goback'
+
+				/*
+				if ($tagsetname == 'plugins') {
+					$startchar = '{';
+					$endchar = '}';
+					$label = $tag_att->label;
+				} elseif ($tagsetname == 'filters') {
+					$startchar = '{{ ' . $tag_att->examplevalue . ' | ';
+					$endchar = ' }}';
+					$label = $tag_att->description;
+				} else {
+					$startchar = '{{ ' . $tag_att->twigclass . '.';
+					$endchar = ' }}';
+					$label = $tag_att->label;
+				}
+				*/
+
+				if ($tagsetname != 'plugins') {
+
+					$result .= '<p>' . $tag_att->description . '</p>';
+
+					if (isset($tag_att->image)) {
+						$result .= '<p><img src="' . $tag_att->image . '" alt="' . $tag_att->label . '" /></p>';
+					}
+
+					if (isset($type_att->link) and isset($type_att->link_title)) {
+						$result .= '<p><a href="' . $type_att->link . '" title="' . $type_att->link_title . '" target="_blank">' . $type_att->link_title . '</a></p>';
+					}
+
+					$result .= '<p><b>Basic usage:</b></p>'
+						. '<pre><code class="language-twig">'
+						. '{{ ' . $tag_att->twigclass . '.' . $tag_att->name . ' }}</code></pre>';
+
+
+					if (!empty($tag->params) and count($tag->params) > 0) {
+
+						$paramList = [];
+
+						foreach ($tag->params->param as $param) {
+							$param_att = $param->attributes();
+							$paramList [] = (string)$param_att->label;
+						}
+
+						$result .= '<p><b>Usage with parameters:</b></p>'
+							. '<pre><code class="language-twig">'
+							. '{{ ' . $tag_att->twigclass . '.' . $tag_att->name . '(' . implode(', ', $paramList) . ') }}</code></pre>';
+
+
+						$content = $this->renderParametersInternal($tag->params,
+							'{{ ',
+							'<i>' . $tag_att->twigclass . '.' . $tag_att->name . '</i>',
+							'',
+							' }}',
+							$hidedefaultexample);
+
+						if ($content != '')
+							$result .= '<p><b>' . common::translate('COM_CUSTOMTABLES_PARAMS') . ':</b></p>' . $content;
+					}
+				}
+
+				if ($tag_att->example !== null) {
+
+					$result .= '<p><b>Example:</b></p>'
+						. '<pre><code class="language-twig">' . $tag_att->example . '</code></pre>';
+				}
+
+				$label = '{{ ' . $tag_att->twigclass . '.' . $tag_att->name . ' }} - ' . $tag_att->label;
+
+				//echo '$label:' . $label . '<br/>';
+				//echo '$result<br/>';
+				//echo $result;
+				//'layout-tags'
+				$this->create_betterdocs_article($tag_att->twigclass, null, $tag_att->twigclass . '-' . $tag_att->name, $label, $result);
+			}
+		}
 	}
 
 	function getMenuItems(): string

@@ -28,16 +28,17 @@
 			 description="Renders 'Add New Record' button" twigclass="html" wordpress="true">
 
 			<params>
-				<param type="string" name="alias" label="Menu Alias or Itemid in Joomla (Optional)"
+				<param type="string" name="alias" label="Menu Alias or Itemid in Joomla"
 					   description="To redirect to a specific Menu Item."/>
 			</params>
 		</tag>
 
-		<tag name="recordcount" label="Record Count (as text)" startchar="{" endchar="}"
-			 description="Example: Found 23 record(s)" twigclass="html" wordpress="true">
+		<tag name="recordcount" label="Record Count text" startchar="{" endchar="}"
+			 description="Format: Shows 'Found X record(s)' where X is automatically replaced with the actual count. Examples: 'Found 1 record', 'Found 23 records' and 'Found 0 records'. Usage: Place this tag where you want the record count to appear in your template"
+			 twigclass="html" wordpress="true">
 		</tag>
 
-		<tag name="checkboxcount" label="Record Selected (as HTML SPAN tag)" startchar="{" endchar="}"
+		<tag name="checkboxcount" label="Record Selected count" startchar="{" endchar="}"
 			 description="Renders an HTML SPAN tag that will hold the value - the number of selected records (checkboxes checked)"
 			 twigclass="html">
 		</tag>
@@ -357,9 +358,9 @@
 				To add '&#38;returnto=' query parameter to the link to allow 'Go Back' button on detailed or edit web page."
 					   type="radio" default=""
 					   options="|No,true|Add"/>
-				<param type="string" name="menu_item_alias" label="Menu Item alias (Optional)"
+				<param type="string" name="menu_item_alias" label="Menu Item alias"
 					   description="Menu Item alias to open the link using specific menu item parameters."/>
-				<param type="string" name="custom_returnto_link" label="Custom '&#38;returnto=' link (Optional)"
+				<param type="string" name="custom_returnto_link" label="Custom '&#38;returnto=' link"
 					   description="Example: {{ link(true,'','/index.php/thank-you') }}"/>
 			</params>
 		</tag>
@@ -881,7 +882,7 @@
 					<option value="linkonly" label="Link only"/>
 				</param>
 
-				<param type="string" name="image" label="Path to a custom icon (Optional)"
+				<param type="string" name="image" label="Path to a custom icon"
 					   description="Leave it empty to use available file format icon."/>
 
 				<param name="size" label="Icon Size" type="list" description="Select the icon size in pixels.">
@@ -1357,17 +1358,21 @@
 
 	<tagset name="filters" label="Filters" description="Extended Twig Filters. {{ value | filter }}" priority="3"
 			proversion="1">
-		<tag name="base64encode" description="Encodes the given string with base64." examplevalue="'hello world'"
+		<tag name="base64encode" twigclass="filters" description="Encodes the given string with base64."
+			 examplevalue="'hello world'"
 			 proversion="1" wordpress="true"/>
-		<tag name="base64decode" description="Decodes a base64 encoded string." examplevalue="'aGVsbG8gd29ybGQ='"
+		<tag name="base64decode" twigclass="filters" description="Decodes a base64 encoded string."
+			 examplevalue="'aGVsbG8gd29ybGQ='"
 			 proversion="1" wordpress="true"/>
-		<tag name="md5" description="Calculates the MD5 hash of string." examplevalue="'hello world'" proversion="1"
+		<tag name="md5" twigclass="filters" description="Calculates the MD5 hash of a string."
+			 examplevalue="'hello world'" proversion="1"
 			 wordpress="true"/>
-		<tag name="ucwords" description="Uppercase the first character of each word in a string."
+		<tag name="ucwords" twigclass="filters" description="Uppercase the first character of each word in a string."
 			 examplevalue="'hello world'" proversion="1" wordpress="true"/>
-		<tag name="json_encode" description="Returns the JSON representation of a value." examplevalue="{a:1,b:2}"
+		<tag name="json_encode" twigclass="filters" description="Returns the JSON representation of a value."
+			 examplevalue="{a:1,b:2}"
 			 proversion="1" wordpress="true"/>
-		<tag name="json_decode" description="Decodes a JSON string."
+		<tag name="json_decode" twigclass="filters" description="Decodes a JSON string."
 			 examplevalue="'{&quot;a&quot;:1,&quot;b&quot;:2}'" proversion="1" wordpress="true"/>
 	</tagset>
 </layouts>

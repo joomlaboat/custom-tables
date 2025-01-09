@@ -5,10 +5,19 @@
 	<type ct_name="alias" name="alias" label="Alias (For SEO Links)"
 		  description="Alias field that can be used instead of listing_id for SEO purposes." ct_alias="alias"
 		  disabled="false" ct_special="false" priority="1" wordpress="true" order="12">
+
+		<editparams name="alias" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes."/>
+				<param name="attributes" label="Attributes"
+					   description="Optional attributes like: disabled, onclick, onchange, etc." default=""
+					   type="string"/>
+			</params>
+		</editparams>
 	</type>
 
 	<!-- Not used in WordPress version 38 -->
-	<type ct_name="article" label="Article" description="Select Article box." priority="3" wordpress="false" order="38">
+	<type ct_name="article" label="Article" description="Article selection." priority="3" wordpress="false" order="38">
 		<params>
 			<param type="int" name="categoryid" label="Category ID"
 				   description="Category ID to allow selection from that category only."/>
@@ -18,9 +27,8 @@
 					 example="introtext">
 			<params>
 				<param type="article" name="articleField" default="name"
-					   label="What information about the article to show."
+					   label="What to show"
 					   description="What information about the article to show." example="introtext">
-
 					<option value="id" label="Article ID"/>
 					<option value="asset_id" label="Asset ID"/>
 					<option value="title" label="Title"/>
@@ -52,7 +60,6 @@
 					<option value="language" label="Language"/>
 					<option value="note" label="Note"/>
 				</param>
-
 				<param name="limit" label="Limit Output" type="list" example="50"
 					   description="Limits returning output text, first number of characters or first number of words.">
 					<option value="" label="Returns as it is"/>
@@ -1183,6 +1190,15 @@
 				<option value="svg-db" label="Save as SVG database record" />-->
 			</param>
 		</params>
+
+		<editparams name="signature" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes."/>
+				<param name="attributes" label="Attributes"
+					   description="Optional attributes like: disabled, onclick, onchange, etc." default=""
+					   type="string"/>
+			</params>
+		</editparams>
 	</type>
 
 	<!-- WordPress Ready 24 PRO -->
@@ -1617,6 +1633,15 @@
 				   description="Allow the URL links include query parameters like ?param1=apple" default=""
 				   options="|Yes,false|No"/>
 		</params>
+
+		<editparams name="url" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes."/>
+				<param name="attributes" label="Attributes"
+					   description="Optional attributes like: disabled, onclick, onchange, etc." default=""
+					   type="string"/>
+			</params>
+		</editparams>
 	</type>
 
 	<!-- WordPress Ready 34 -->

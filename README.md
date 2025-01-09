@@ -22,12 +22,12 @@ The schema is like the blueprint for the table. You need to define each field (c
 Download
 --------
 
-- Latest Build: [https://joomlaboat.com/custom-tables](https://joomlaboat.com/custom-tables)
+- Latest Build: [https://ct4.us/](https://ct4.us/)
 
 Help & User guide
 ------------
 
-- Documentation: [https://joomlaboat.com/custom-tables-wiki](https://joomlaboat.com/custom-tables-wiki)
+- Documentation: [https://ct4.us/docs/](https://ct4.us/docs/)
 - YouTube Playlist: [https://www.youtube.com/@JoomlaBoat/videos](https://www.youtube.com/@JoomlaBoat/videos)
 
 Bug Tracker
@@ -37,10 +37,10 @@ Bug Tracker
 Updates
 ----------
 
-[https://github.com/joomlaboat/custom-tables/wiki/15.-Change-Log](https://github.com/joomlaboat/custom-tables/wiki/15.-Change-Log)
+[https://ct4.us/docs/2024/](https://ct4.us/docs/2024/)
 
 Credits, Copyright and License
 ----------
 
-* Copyright (C) 2018 - 2024 Ivan Komlev. All rights reserved.
+* Copyright (C) 2018 - 2025 Ivan Komlev. All rights reserved.
 * Distributed under the GNU General Public License version 2 or later

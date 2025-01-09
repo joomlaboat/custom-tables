@@ -1,5 +1,15 @@
 <?php
-defined('_JEXEC') or die;
+/**
+ * CustomTables Joomla! 3.x/4.x/5.x Component
+ * @package Custom Tables
+ * @author Ivan Komlev <support@joomlaboat.com>
+ * @link https://joomlaboat.com
+ * @copyright (C) 2018-2025. Ivan Komlev
+ * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
+ **/
+
+// no direct access
+defined('_JEXEC') or die();
 
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
@@ -38,7 +48,7 @@ class CustomTablesAPIHelpers
 
 		if ($metadata !== null)
 			$result['metadata'] = $metadata;
-		
+
 		die(json_encode($result, JSON_PRETTY_PRINT));
 	}
 
