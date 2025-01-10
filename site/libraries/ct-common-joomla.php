@@ -807,10 +807,15 @@ class common
 	 */
 	static public function sendEmail($email, $emailSubject, $emailBody, $isHTML = true, $attachments = array()): bool
 	{
-		if (CUSTOMTABLES_JOOMLA_MIN_4)
-			$mailer = Factory::getContainer()->get('mailer');
-		else
-			$mailer = Factory::getMailer();
+		try {
+			if (CUSTOMTABLES_JOOMLA_MIN_4)
+				$mailer = Factory::getContainer()->get('mailer');
+			else
+				$mailer = Factory::getMailer();
+		} catch (Exception $e) {
+			self::enqueueMessage($e->getMessage());
+			return false;
+		}
 
 		$sender = array(
 			self::getMailFrom(),
@@ -829,8 +834,7 @@ class common
 		try {
 			$send = @$mailer->Send();
 		} catch (Exception $e) {
-			$msg = $e->getMessage();
-			self::enqueueMessage($msg);
+			self::enqueueMessage($e->getMessage());
 			return false;
 		}
 
@@ -838,6 +842,18 @@ class common
 			return false;
 
 		return true;
+	}
+
+	/**
+	 * @since 3.2.9
+	 */
+	public static function enqueueMessage($text, string $type = 'error'): void
+	{
+		try {
+			Factory::getApplication()->enqueueMessage($text, $type);
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
 	}
 
 	public static function getMailFrom()
@@ -858,17 +874,5 @@ class common
 			$config = Factory::getConfig();
 
 		return $config->get('fromname');
-	}
-
-	/**
-	 * @since 3.2.9
-	 */
-	public static function enqueueMessage($text, string $type = 'error'): void
-	{
-		try {
-			Factory::getApplication()->enqueueMessage($text, $type);
-		} catch (Exception $e) {
-			echo $e->getMessage();
-		}
 	}
 }

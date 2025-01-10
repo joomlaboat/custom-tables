@@ -59,6 +59,7 @@ class InputBox_date extends BaseInputBox
 			return HTMLHelper::calendar($value, $this->attributes['name'], $this->attributes['id'], $format, $this->attributes)
 				. '<script>'
 				. 'document.getElementById("' . $this->attributes['id'] . '").dataset.type = "date";'
+				. 'document.getElementById("' . $this->attributes['id'] . '").dataset.label = "' . $this->field->title . '";'
 				. 'document.getElementById("' . $this->attributes['id'] . '").dataset.format = "' . $format . '";'
 				. '</script>';
 		} elseif (defined('WPINC')) {
