@@ -93,7 +93,7 @@ function runTheTask(task, tableid, recordId, url, responses, last, reload) {
 					if (table_object) {
 						let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
 						if (task === 'delete')
-							document.getElementById(table_object).deleteRow(index);
+							table_object.deleteRow(index);
 						else
 							ctCatalogUpdate(tableid, recordId, index);
 					} else if (reload) {
@@ -368,7 +368,7 @@ function ctToolBarDO(task, tableid) {
 	if (task === 'delete') {
 
 		let msg;
-		if (elements.length === 1) msg = TranslateText('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1l'); else msg = TranslateText('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE').replace('%s', elements.length);
+		if (elements.length === 1) msg = TranslateText('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1'); else msg = TranslateText('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE').replace('%s', elements.length);
 
 		if (!confirm(msg)) {
 			ctLinkLoading = false;

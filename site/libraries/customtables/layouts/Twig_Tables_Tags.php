@@ -53,7 +53,7 @@ class Twig_Tables_Tags
 			}
 		} else {
 			try {
-				$join_ct->setFilter($record_id_or_filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
+				$join_ct->Params->filter = $record_id_or_filter;
 
 				if (!$join_ct->getRecord())
 					return '';
@@ -126,7 +126,7 @@ class Twig_Tables_Tags
 				return '';
 
 		} else {
-			$join_ct->setFilter($record_id_or_filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
+			$join_ct->Params->filter = $record_id_or_filter;
 
 			if (!$join_ct->getRecord())
 				return '';

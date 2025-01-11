@@ -1027,7 +1027,7 @@
 		  image="https://joomlaboat.com/images/components/ct/field-types/ordering-catalog.png"/>
 
 	<!-- WordPress Ready 7 PRO -->
-	<type ct_name="radio" label="Radio" description="Radio Buttons" priority="3" proversion="1"
+	<type ct_name="radio" label="Radio" description="Radio Buttons. Similar to MySQL ENUM" priority="3" proversion="1"
 		  repetitive="1" wordpress="true" order="7"><!-- pro -->
 		<params>
 			<param name="params" label="Parameters" description="" default="" type="string"/>
