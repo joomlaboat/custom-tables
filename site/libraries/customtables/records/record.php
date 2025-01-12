@@ -47,25 +47,23 @@ class record
 	{
 		if (empty($listing_id)) {
 			$listing_id = $this->ct->Params->listing_id;
-			if ($listing_id == 0)
-				$listing_id = '';
+			if (empty($listing_id))
+				$listing_id = null;
 		}
 
-		if (empty($listing_id)) {
-			$listing_id = common::inputGetCmd('listing_id', ''); //TODO : this inconsistency must be fixed
-			if ($listing_id == 0)
-				$listing_id = '';
-		}
+		if (empty($listing_id))
+			$listing_id = common::inputGetCmd('listing_id');
 
 		if (empty($listing_id))
 			$listing_id = null;
 
-		if ($listing_id !== null) {
+		if (!empty($listing_id)) {
 			$this->listing_id = $listing_id;
-			$this->ct->getRecord($this->listing_id);
+			$this->ct->Params->listing_id = $listing_id;
+			$this->ct->getRecord();
 			$this->row_old = $this->ct->Table->record;
 		} else
-			$this->row_old[$this->ct->Table->realidfieldname] = '';// Why?
+			$this->row_old[$this->ct->Table->realidfieldname] = '';// Why? TODO:: I think it should be NULL
 
 		$fieldsToSave = $this->getFieldsToSave($this->row_old); //will Read page Layout to find fields to save
 
@@ -146,8 +144,9 @@ class record
 		}
 
 		if ($this->isItNewRecord) {
-			if ($this->listing_id !== null) {
-				$this->ct->getRecord($this->listing_id);
+			if (!empty($this->listing_id)) {
+				$this->ct->Params->listing_id = $this->listing_id;
+				$this->ct->getRecord();
 				$this->row_new = $this->ct->Table->record;
 
 				if ($this->row_new !== null) {
@@ -175,7 +174,9 @@ class record
 				$this->ct->errors[] = $e->getMessage();
 			}
 
-			if ($this->ct->getRecord($this->listing_id)) {
+			$this->ct->Params->listing_id = $this->listing_id;
+
+			if ($this->ct->getRecord()) {
 				$this->row_new = $this->ct->Table->record;
 
 				if (defined('_JEXEC')) {

@@ -66,8 +66,10 @@ class Value_tablejoin extends BaseValue
 		if ($ct->Table === null)
 			return 'Table not found.';
 
-		if ($listing_id !== null)
-			$ct->getRecord($listing_id);
+		if (!empty($listing_id)) {
+			$ct->Params->listing_id = $listing_id;
+			$ct->getRecord();
+		}
 
 		$twig = new TwigProcessor($ct, $layoutcode);
 		$value = $twig->process($ct->Table->record);

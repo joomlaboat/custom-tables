@@ -96,7 +96,7 @@ class CTUser
 	 */
 	public static function ResetPassword(CT $ct, ?string $listing_id): bool
 	{
-		if ($listing_id === null or $listing_id === '' or $listing_id == 0) {
+		if (empty($listing_id)) {
 			common::enqueueMessage('Table record selected.');
 			return false;
 		}
@@ -109,8 +109,10 @@ class CTUser
 			return false;
 		}
 
-		if ($listing_id !== null)
-			$ct->getRecord($listing_id);
+		if (!empty($listing_id)) {
+			$ct->Params->listing_id = $listing_id;
+			$ct->getRecord();
+		}
 
 		if ($ct->Table->record === null) {
 			common::enqueueMessage('User record ID: "' . $listing_id . '" not found.');

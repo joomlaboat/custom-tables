@@ -60,11 +60,6 @@ class EditController
 		$layout = new Layouts($ct);
 		$layout->getLayout($layoutName);
 
-		//$filter = $layout->params['filter'] ?? null;
-		//if ($filter !== null)
-		//$ct->Params->setParams($layout->params);
-
-		//$layout = new Layouts($ct);
 		$result = null;
 		try {
 			$result = @$layout->renderMixedLayout($layoutName, null, 1, true, $task);
@@ -99,15 +94,8 @@ class EditController
 		$editForm = new Edit($ct);
 		$editForm->load();
 
-		if (!empty($ct->Params->filter)) {
-			if (!empty($ct->Params->listing_id))
-				$ct->getRecord($ct->Params->listing_id);
-			else
-				$ct->getRecord();
-		} else {
-			if (!empty($ct->Params->listing_id))
-				$ct->getRecord($ct->Params->listing_id);
-		}
+		if (!empty($ct->Params->listing_id) or !empty($ct->Params->filter))
+			$ct->getRecord();
 
 		$result = $editForm->processLayout();
 

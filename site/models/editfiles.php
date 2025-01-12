@@ -57,8 +57,8 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 
 		$this->fileBoxName = common::inputGetCmd('fileboxname');
 
-		if ($this->ct->Params->listing_id !== null)
-			$this->ct->getRecord($this->ct->Params->listing_id);
+		if (!empty($this->ct->Params->listing_id))
+			$this->ct->getRecord();
 
 		$this->row = $this->ct->Table->record;
 

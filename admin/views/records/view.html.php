@@ -68,20 +68,17 @@ class CustomtablesViewRecords extends HtmlView
 				$this->tableId = $tableId;
 			}
 
-			$listing_id = common::inputGetCmd('id');
-
-			$paramsArray = array();
-			$paramsArray['tableid'] = $this->tableId;
-			$paramsArray['publishstatus'] = 1;
-			$paramsArray['listingid'] = $listing_id;
-
 			// Assuming $paramsArray is your array of parameters
 			$this->ct = new CT([], true);
-			$this->ct->Params->setParams($paramsArray);
+			$this->ct->Params->setParams([
+				'tableid' => $this->tableId,
+				'publishstatus' => 1,//for new records
+				'listingid' => common::inputGetCmd('id')
+			]);
 			$this->ct->getTable($this->tableId);
 
-			if ($listing_id !== null)
-				$this->ct->getRecord($listing_id);
+			if (!empty($this->ct->Params->listing_id))
+				$this->ct->getRecord();
 
 			$this->row = $this->ct->Table->record;
 			$this->renderForm($tpl);

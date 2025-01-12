@@ -169,10 +169,10 @@ function CustomTablesSave(string $task, $this_)
 				$res = ['status' => 'saved', 'id' => $model->listing_id, 'message' => implode(',', $model->ct->messages)];
 
 				if (common::inputGetInt('load', 0) == 1) {
-					if ($ct->getRecord($model->listing_id))
-						$res['record'] = $ct->Table->record;
-					else
-						$res['record'] = null;
+					$ct->Params->listing_id = $model->listing_id;
+
+					if (!empty($ct->Params->listing_id))
+						$ct->getRecord();
 				}
 
 				die(common::ctJsonEncode($res));

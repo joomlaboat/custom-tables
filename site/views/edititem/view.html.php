@@ -71,8 +71,8 @@ class CustomTablesViewEditItem extends HtmlView
 				return false;
 			}
 
-			if ($this->ct->Params->listing_id !== null)
-				$this->ct->getRecord($this->ct->Params->listing_id);
+			if (!empty($this->ct->Params->listing_id))
+				$this->ct->getRecord();
 
 			parent::display($tpl);
 		}

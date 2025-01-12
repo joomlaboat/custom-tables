@@ -134,6 +134,7 @@ class Layouts
 		} else {
 			try {
 				$this->params = json_decode($row['params'], true);
+				$this->ct->Params->setParams($this->params);
 			} catch (Exception $e) {
 				$this->params = null; //If there is some JSON syntax error for some reason, it impossible but just in case, set null.
 			}
@@ -588,7 +589,8 @@ class Layouts
 					$listing_id = common::inputGetCmd('listing_id');
 
 				if (!empty($listing_id)) {
-					$this->ct->getRecord($listing_id);
+					$this->ct->Params->listing_id = $listing_id;
+					$this->ct->getRecord();
 				}
 			}
 
@@ -608,8 +610,10 @@ class Layouts
 				else
 					$listing_id = common::inputGetCmd('listing_id');
 
-				if ($listing_id !== null)
-					$this->ct->getRecord($listing_id);
+				if (!empty($listing_id)) {
+					$this->ct->Params->listing_id = $listing_id;
+					$this->ct->getRecord();
+				}
 			}
 
 			$details = new Details($this->ct);

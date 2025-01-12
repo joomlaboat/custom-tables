@@ -444,13 +444,17 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		if (!isset($to_field['type']))
 			die(common::ctJsonEncode(['error' => 'To field not found.']));
 
-		if ($from_listing_id !== null)
-			$this->ct->getRecord($from_listing_id);
+		if (!empty($from_listing_id)) {
+			$this->ct->Params->listing_id = $from_listing_id;
+			$this->ct->getRecord();
+		}
 
 		$from_row = $this->ct->Table->record;
 
-		if ($to_listing_id !== null)
-			$this->ct->getRecord($to_listing_id);
+		if (!empty($to_listing_id)) {
+			$this->ct->Params->listing_id = $to_listing_id;
+			$this->ct->getRecord();
+		}
 
 		$to_row = $this->ct->Table->record;
 

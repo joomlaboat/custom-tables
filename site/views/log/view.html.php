@@ -222,16 +222,16 @@ class CustomTablesViewLog extends HtmlView
 		$layoutContent = '{{ ' . $FieldName . ' }}';
 		$twig = new TwigProcessor($ct, $layoutContent);
 
-		if ($ct->getRecord($listing_id)) {
-			$row = $ct->Table->record;
-		} else
-			$row = null;
+		if (!empty($listing_id)) {
+			$ct->Params->listing_id = $listing_id;
+			$ct->getRecord();
+		}
 
 		if ($twig->errorMessage !== null) {
 			$ct->errors[] = $twig->errorMessage;
 			return '';
 		}
 
-		return $twig->process($row);
+		return $twig->process($ct->Table->record);
 	}
 }

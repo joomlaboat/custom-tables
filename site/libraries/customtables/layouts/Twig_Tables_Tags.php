@@ -45,7 +45,8 @@ class Twig_Tables_Tags
 
 		if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
 			try {
-				if (!$join_ct->getRecord($record_id_or_filter))
+				$join_ct->Params->listing_id = $record_id_or_filter;
+				if (!$join_ct->getRecord())
 					return '';
 
 			} catch (Exception $e) {
@@ -54,7 +55,6 @@ class Twig_Tables_Tags
 		} else {
 			try {
 				$join_ct->Params->filter = $record_id_or_filter;
-
 				if (!$join_ct->getRecord())
 					return '';
 
@@ -122,9 +122,9 @@ class Twig_Tables_Tags
 		$join_ct->Params->forceSortBy = $orderby;
 
 		if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
-			if (!$join_ct->getRecord($record_id_or_filter))
+			$join_ct->Params->listing_id = $record_id_or_filter;
+			if (!$join_ct->getRecord())
 				return '';
-
 		} else {
 			$join_ct->Params->filter = $record_id_or_filter;
 			if (!$join_ct->getRecord())

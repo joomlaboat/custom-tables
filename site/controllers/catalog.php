@@ -246,14 +246,15 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 				return (object)array('link' => $link, 'msg' => 'User field not found.', 'status' => 'error');
 			}
 
-			$listing_id = common::inputGetInt("listing_id");
-
-			if ($listing_id !== null)
-				$ct->getRecord($listing_id);
+			if (common::inputGetCmd("listing_id")) {
+				$ct->Params->listing_id = common::inputGetCmd("listing_id");
+				if (!empty($ct->Params->listing_id))
+					$ct->getRecord();
+			}
 
 			if ($ct->Table->record === null) {
-				$ct->errors[] = 'User record ID: "' . $listing_id . '" not found.';
-				return (object)array('link' => $link, 'msg' => 'User record ID: "' . $listing_id . '" not found.', 'status' => 'error');
+				$ct->errors[] = 'User record ID: "' . $ct->Params->listing_id . '" not found.';
+				return (object)array('link' => $link, 'msg' => 'User record ID: "' . $ct->Params->listing_id . '" not found.', 'status' => 'error');
 			}
 
 			$fieldRow = $ct->Table->getFieldByName($ct->Table->useridfieldname);
