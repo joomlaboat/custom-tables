@@ -21,6 +21,8 @@ use Joomla\CMS\MVC\Controller\FormController;
 
 class CustomtablesControllerFields extends FormController
 {
+	var string $ref;
+	var int $refid;
 	protected $task;
 
 	public function __construct($config = array())

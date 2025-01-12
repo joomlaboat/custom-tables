@@ -213,9 +213,9 @@ class CustomTablesViewChatGPT extends HtmlView
 
 		$response = $this->getResponse($this->messages);
 
-		$isSQLQuery = preg_match('/\b(SELECT)\b/i', $response);
+		//$isSQLQuery = preg_match('/\b(SELECT)\b/i', $response);
 
-		$this->saveMessage(["role" => "assistant", "content" => $response], true);// !$isSQLQuery);
+		$this->saveMessage(["role" => "assistant", "content" => $response]);
 		return $response;
 	}
 

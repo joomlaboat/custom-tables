@@ -98,14 +98,11 @@ class CustomtablesControllerListOfFields extends AdminController
 		$cid = common::inputPostArray('cid', []);
 		$cid = ArrayHelper::toInteger($cid);
 
-		$ok = true;
-
 		foreach ($cid as $id) {
 			if ((int)$id != 0) {
 				$id = (int)$id;
 				$isok = $this->setPublishStatusSingleRecord($id, $status);
 				if (!$isok) {
-					$ok = false;
 					break;
 				}
 			}

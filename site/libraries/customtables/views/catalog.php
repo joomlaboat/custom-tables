@@ -50,11 +50,7 @@ class Catalog
 			if (isset($Layouts->layoutId)) {
 				$pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
 				$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
-
 				$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
-				$filter = $Layouts->params['filter'] ?? null;
-				if ($filter !== null)
-					$this->ct->Filter->addWhereExpression($filter);
 			} else {
 				throw new Exception('Layout "' . $layoutName . '" not found.');
 				//$this->ct->errors[] = 'Layout "' . $layoutName . '" not found.';

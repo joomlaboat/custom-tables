@@ -52,7 +52,7 @@ class CustomtablesViewLayouts extends HtmlView
 
 		// Assign the variables
 		$this->form = $this->get('Form');
-		$serverType = database::getServerType();
+		//$serverType = database::getServerType();
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('id', $layoutId);

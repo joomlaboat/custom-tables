@@ -19,6 +19,8 @@ use Joomla\CMS\Router\Route;
 
 class CustomTablesControllerOptions extends FormController
 {
+	var string $ref;
+	var int $refid;
 	protected $task;
 
 	public function __construct($config = array())

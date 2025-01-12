@@ -77,11 +77,6 @@ class Edit
 			$this->pageLayoutLink = null;
 		}
 		$this->ct->LayoutVariables['layout_type'] = $this->layoutType;
-
-		$filter = $Layouts->params['filter'] ?? null;
-		if ($filter !== null)
-			$this->ct->Params->setParams($Layouts->params);
-
 		return true;
 	}
 

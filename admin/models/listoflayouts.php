@@ -46,7 +46,6 @@ class CustomtablesModelListOfLayouts extends ListModel
 		parent::__construct($config);
 
 		$this->ct = new CT([], true);
-		//$this->ct->Params->setParams();
 
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoflayouts.php');
 		$this->helperListOfLayout = new listOfLayouts($this->ct);

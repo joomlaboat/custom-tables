@@ -176,7 +176,7 @@ class CustomtablesModelMenus extends AdminModel
 		if ($data['title'] === null)
 			$data['title'] = 'Table Title';
 
-
+		/*
 		$columns = '(`id`, `menutype`, `title`, `alias`, `note`, `path`,
                  `link`, `type`, `published`, `parent_id`, `level`, `component_id`,
                  `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`,
@@ -189,6 +189,7 @@ class CustomtablesModelMenus extends AdminModel
                  0, '*', 1,
                  NULL, NULL)";
 		$query = 'INSERT INTO `#__menu` ' . $columns . ' VALUES ' . $values;
+		*/
 
 		if (parent::save($data))
 			return true;

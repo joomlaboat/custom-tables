@@ -120,7 +120,7 @@ class CustomTablesViewListOfTables extends HtmlView
 		}
 
 		if (!$this->isEmptyState and $this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED and $this->ct->Env->advancedTagProcessor)
-			$toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', $listSelect = true, $formId = null);
+			$toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', true, null);
 		if (($this->canState && $this->canDelete)) {
 			if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete) {
 				$toolbar->delete('listoftables.delete')

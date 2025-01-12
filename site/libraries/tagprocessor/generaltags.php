@@ -198,24 +198,17 @@ class tagProcessor_General
 			$pageLayout = str_replace('{currentusertype}', '0', $pageLayout);
 		}
 
-
 		$options = array();
 		$fList = CTMiscHelper::getListToReplace('currentuserid', $options, $pageLayout, '{}');
 
-		$i = 0;
-
-		foreach ($fList as $fItem) {
+		foreach ($fList as $fItem)
 			$pageLayout = str_replace($fItem, $currentUserId, $pageLayout);
-			$i++;
-		}
 	}
 
 	protected static function Itemid(CT $ct, string &$pageLayout): void
 	{
 		$options = array();
 		$fList = CTMiscHelper::getListToReplace('itemid', $options, $pageLayout, '{}');
-
-		$i = 0;
 
 		foreach ($fList as $fItem) {
 			if ($ct->Params->ItemId !== null)
@@ -224,7 +217,6 @@ class tagProcessor_General
 				$vlu = 0;
 
 			$pageLayout = str_replace($fItem, $vlu, $pageLayout);
-			$i++;
 		}
 	}
 
@@ -311,12 +303,8 @@ class tagProcessor_General
 		$options = array();
 		$fList = CTMiscHelper::getListToReplace('returnto', $options, $pageLayout, '{}');
 
-		$i = 0;
-
-		foreach ($fList as $fItem) {
+		foreach ($fList as $fItem)
 			$pageLayout = str_replace($fItem, $ct->Env->encoded_current_url, $pageLayout);
-			$i++;
-		}
 	}
 
 	protected static function WebsiteRoot(string &$htmlresult): void

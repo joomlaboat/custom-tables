@@ -705,13 +705,7 @@ class Documentation
 
 	function renderFieldTypesBetterDocArticles($types)
 	{
-		$count = 1;
 		foreach ($types as $type) {
-			//if ($count == 7)
-			//die;
-
-			$count += 1;
-
 			$type_att = $type->attributes();
 			$hideDefaultExample = (bool)(int)$type_att->hidedefaultexample;
 			$isDeprecated = (bool)(int)$type_att->deprecated;
@@ -1156,36 +1150,12 @@ if ($this->onlyWordpress) {
 	{
 		$count = 1;
 		foreach ($tags as $tag) {
-
-			//if ($count > 3)
-			//return;
-
-			$count += 1;
-
 			$tag_att = $tag->attributes();
-
 			$result = '';
-
 			$hidedefaultexample = (bool)(int)$tag_att->hidedefaultexample;
 			$isDeprecated = (bool)(int)$tag_att->deprecated;
 
 			if (!$isDeprecated) {// and $tag_att->name == 'goback'
-
-				/*
-				if ($tagsetname == 'plugins') {
-					$startchar = '{';
-					$endchar = '}';
-					$label = $tag_att->label;
-				} elseif ($tagsetname == 'filters') {
-					$startchar = '{{ ' . $tag_att->examplevalue . ' | ';
-					$endchar = ' }}';
-					$label = $tag_att->description;
-				} else {
-					$startchar = '{{ ' . $tag_att->twigclass . '.';
-					$endchar = ' }}';
-					$label = $tag_att->label;
-				}
-				*/
 
 				if ($tagsetname != 'plugins') {
 

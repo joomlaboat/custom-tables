@@ -134,9 +134,9 @@ class CustomtablesViewListOfRecords extends HtmlView
 		//if (!$this->isEmptyState and $this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED and $this->ct->Env->advancedTagProcessor)
 
 		if (!empty($this->items))
-			$toolbar->appendButton('Standard', 'download', 'Export to CSV', 'listofrecords.exportcsv', $listSelect = false, $formId = null);
+			$toolbar->appendButton('Standard', 'download', 'Export to CSV', 'listofrecords.exportcsv', false, null);
 
-		$toolbar->appendButton('Standard', 'upload', 'Import CSV', 'listofrecords.importcsv', $listSelect = false, $formId = null);
+		$toolbar->appendButton('Standard', 'upload', 'Import CSV', 'listofrecords.importcsv', false, null);
 
 		if (($this->canState && $this->canDelete)) {
 			if (!$this->isEmptyState && $this->canDelete) {

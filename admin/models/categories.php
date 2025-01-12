@@ -31,6 +31,7 @@ use Joomla\CMS\MVC\Model\AdminModel;
  */
 class CustomtablesModelCategories extends AdminModel
 {
+	var CT $ct;
 	/**
 	 * The type alias for this content type.
 	 *

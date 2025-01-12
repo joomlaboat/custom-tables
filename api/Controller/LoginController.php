@@ -74,7 +74,7 @@ class LoginController
 
 
 			$db->setQuery($query);
-			$result = $db->execute();
+			$db->execute();
 
 			// If no session exists, create new one
 			if ($db->getAffectedRows() == 0) {
