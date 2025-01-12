@@ -115,8 +115,9 @@ foreach ($this->allTables as $table) {
 
 		if ($this->ct->Env->folderToSaveLayouts !== null)
 			echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '_mobile.html</div>';
-	} else
-		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
+	} else {
+		echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+	}
 
 	echo HTMLHelper::_('bootstrap.endTab');
 
@@ -134,8 +135,9 @@ foreach ($this->allTables as $table) {
 
 		if ($this->ct->Env->folderToSaveLayouts !== null)
 			echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.css</div>';
-	} else
-		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
+	} else {
+		echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+	}
 
 	echo HTMLHelper::_('bootstrap.endTab');
 
@@ -154,8 +156,10 @@ foreach ($this->allTables as $table) {
 		if ($this->ct->Env->folderToSaveLayouts !== null)
 			echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.js</div>';
 
-	} else
+	} else {
+		echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
 		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
+	}
 
 	echo HTMLHelper::_('bootstrap.endTab');
 	echo HTMLHelper::_('bootstrap.endTabSet');

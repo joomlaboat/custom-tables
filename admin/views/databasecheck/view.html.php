@@ -75,7 +75,7 @@ class CustomtablesViewDataBaseCheck extends HtmlView
 				parent::display($tpl);
 			}
 		} else {
-			echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+			echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
 		}
 
 		// Set the document

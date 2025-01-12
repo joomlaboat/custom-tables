@@ -941,9 +941,9 @@ function renderTags(index, tagSet) {
 
 	if (!proversion) {
 		if (window.Joomla instanceof Object)
-			result += '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">* Get Custom Tables PRO Version</a></div>';
+			result += '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">* Get Custom Tables PRO Version</a></div>';
 		else
-			result += '<div class="ct_doc_pro_label"><a href="https://ct4.us" target="_blank">* Get Custom Tables PRO Version</a></div>';
+			result += '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-wordpress/" target="_blank">* Get Custom Tables PRO Version</a></div>';
 	}
 
 	return result;

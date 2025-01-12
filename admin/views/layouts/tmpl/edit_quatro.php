@@ -125,8 +125,9 @@ foreach ($this->allTables as $table) {
 
 		if ($this->ct->Env->folderToSaveLayouts !== null)
 			echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '_mobile.html</div>';
-	} else
-		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
+	} else {
+		echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+	}
 	?>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
@@ -144,8 +145,9 @@ foreach ($this->allTables as $table) {
 
 		if ($this->ct->Env->folderToSaveLayouts !== null)
 			echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.css</div>';
-	} else
-		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
+	} else {
+		echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+	}
 	?>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
@@ -164,8 +166,9 @@ foreach ($this->allTables as $table) {
 		if ($this->ct->Env->folderToSaveLayouts !== null)
 			echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.js</div>';
 
-	} else
-		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
+	} else {
+		echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+	}
 	?>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
@@ -189,8 +192,9 @@ foreach ($this->allTables as $table) {
 			</div>
 		</div>
 		<?php
-	} else
-		echo common::translate('COM_CUSTOMTABLES_AVAILABLE');
+	} else {
+		echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+	}
 	?>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 

@@ -33,7 +33,10 @@ HTMLHelper::_('behavior.multiselect');
 			<?php echo common::translate("COM_CUSTOMTABLES_CATEGORIES_DESCRIPTION"); ?>
 
 			<?php if (!$this->ct->Env->advancedTagProcessor): ?>
-				<p><?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?></p><?php endif; ?>
+				<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/"
+												 target="_blank"><?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?></a>
+				</div>
+			<?php endif; ?>
 
 			<?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
 			<div class="clearfix"></div>
