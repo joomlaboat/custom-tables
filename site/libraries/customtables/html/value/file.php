@@ -376,9 +376,9 @@ class Value_file extends BaseValue
 	 */
 	public function display()
 	{
-		$this->ct = new CT;
-
+		$this->ct = new CT([], true);
 		$this->ct->getTable($this->tableid);
+
 		if ($this->ct->Table === null) {
 			$this->ct->errors[] = 'Table not selected (79).';
 			return;

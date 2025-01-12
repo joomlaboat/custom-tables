@@ -31,7 +31,7 @@ class CustomtablesModelListOfRecords extends ListModel
 
 	public function __construct($config = array())
 	{
-		$this->ct = new CT;
+		$this->ct = new CT([], true);
 
 		$tableId = common::inputGetInt('tableid');
 		if (empty($tableId)) {
@@ -41,6 +41,7 @@ class CustomtablesModelListOfRecords extends ListModel
 				Factory::getApplication()->enqueueMessage('Table not selected.', 'error');
 				return;
 			} else {
+
 				$params = CTMiscHelper::getMenuParams($Itemid);
 				if ($params === null) {
 					Factory::getApplication()->enqueueMessage('Alias or Itemid not found.', 'error');

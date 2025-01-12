@@ -80,7 +80,7 @@ class Edit
 
 		$filter = $Layouts->params['filter'] ?? null;
 		if ($filter !== null)
-			$this->ct->setParams($Layouts->params);
+			$this->ct->Params->setParams($Layouts->params);
 
 		return true;
 	}

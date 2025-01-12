@@ -53,19 +53,18 @@ class EditController
 	{
 		$layoutName = common::inputGetCmd('layout');
 		$task = common::inputPostCmd('task');
-		$params = null;
-		$ct = @ new CT($params, false);
+
+		$ct = new CT([], true);
 		$ct->Env->clean = true;
-		$ct->Params->blockExternalVars = false;
 
 		$layout = new Layouts($ct);
 		$layout->getLayout($layoutName);
 
-		$filter = $layout->params['filter'] ?? null;
-		if ($filter !== null)
-			$ct->setParams($layout->params);
+		//$filter = $layout->params['filter'] ?? null;
+		//if ($filter !== null)
+		//$ct->Params->setParams($layout->params);
 
-		$layout = new Layouts($ct);
+		//$layout = new Layouts($ct);
 		$result = null;
 		try {
 			$result = @$layout->renderMixedLayout($layoutName, null, 1, true, $task);
@@ -101,8 +100,6 @@ class EditController
 		$editForm->load();
 
 		if (!empty($ct->Params->filter)) {
-			$ct->setFilter($ct->Params->filter);
-
 			if (!empty($ct->Params->listing_id))
 				$ct->getRecord($ct->Params->listing_id);
 			else

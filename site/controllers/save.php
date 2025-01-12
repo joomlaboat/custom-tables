@@ -46,7 +46,9 @@ switch ($task) {
 
 function CustomTablesDelete($this_)
 {
-	$ct = new CT;
+	$ct = new CT(null, false);
+	$ct->Params->constructJoomlaParams();
+
 	$edit_model = $this_->getModel('edititem');
 	$edit_model->load($ct);
 
@@ -105,6 +107,8 @@ function CustomTablesSave(string $task, $this_)
 
 	common::inputSet('task', '');
 	$ct = new CT(null, false);
+	$ct->Params->constructJoomlaParams();
+
 	$model = $this_->getModel('edititem');
 
 	if (!$model->load($ct))

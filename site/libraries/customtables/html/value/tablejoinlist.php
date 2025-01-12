@@ -40,7 +40,7 @@ class Value_tablejoinlist extends BaseValue
 		if ($rowValue === null)
 			return '';
 
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($field->params[0]);
 
 		$fieldName = $field->params[1] ?? '';
@@ -90,7 +90,7 @@ class Value_tablejoinlist extends BaseValue
 		if ($separatorCharacter === null)
 			$separatorCharacter = ',';
 
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($field->params[0]);
 
 		if (count($field->params) < 3)

@@ -51,7 +51,7 @@ class CustomtablesViewRecords extends HtmlView
 				require_once($path . 'tablejoin.php');
 				require_once($path . 'tablejoinlist.php');
 
-				$this->ct = new CT;
+				$this->ct = new CT([], true);
 				ProInputBoxTableJoin::renderTableJoinSelectorJSON($this->ct, $key);//Inputbox
 			}
 		} else {
@@ -76,8 +76,8 @@ class CustomtablesViewRecords extends HtmlView
 			$paramsArray['listingid'] = $listing_id;
 
 			// Assuming $paramsArray is your array of parameters
-			$this->ct = new CT;
-			$this->ct->setParams($paramsArray);
+			$this->ct = new CT([], true);
+			$this->ct->Params->setParams($paramsArray);
 			$this->ct->getTable($this->tableId);
 
 			if ($listing_id !== null)

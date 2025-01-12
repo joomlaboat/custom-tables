@@ -187,7 +187,7 @@ class Twig_Record_Tags
 			return null;
 		}
 
-		$join_ct = new CT;
+		$join_ct = new CT([], true);
 		$join_ct->getTable($join_table);
 		$join_table_fields = $join_ct->Table->fields;
 
@@ -394,7 +394,7 @@ class Twig_Record_Tags
 			return '';
 		}
 
-		$tempCT = new CT;
+		$tempCT = new CT([], true);
 		$tempCT->getTable($join_table);
 		$join_table_fields = $tempCT->Table->fields;
 
@@ -488,7 +488,7 @@ class Twig_Record_Tags
 			return '';
 		}
 
-		$layoutsCT = new CT;
+		$layoutsCT = new CT([], true);
 		$layoutsCT->getTable($layouts->tableId);
 		$join_table_fields = $layoutsCT->Table->fields;
 
@@ -507,8 +507,7 @@ class Twig_Record_Tags
 			}
 		}
 
-		$join_ct = new CT;
-
+		$join_ct = new CT([], true);
 		$join_ct->getTable($layouts->tableId);
 		if ($join_ct->Table === null) {
 			$this->ct->errors[] = '{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.';

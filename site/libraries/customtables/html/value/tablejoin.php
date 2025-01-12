@@ -57,7 +57,7 @@ class Value_tablejoin extends BaseValue
 		if (empty($field->params[0]))
 			return 'Table not selected.';
 
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($field->params[0]);
 
 		//TODO: add selector to the output box

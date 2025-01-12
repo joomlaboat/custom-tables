@@ -30,6 +30,7 @@ class CustomTablesViewCatalog extends HtmlView
 	function display($tpl = null)
 	{
 		$this->ct = new CT(null, false);
+		$this->ct->Params->constructJoomlaParams();
 
 		if ($this->ct->Env->legacySupport)
 			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');

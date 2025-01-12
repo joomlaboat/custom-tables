@@ -44,7 +44,7 @@ class CustomtablesModelListOfTables extends ListModel
 
 		parent::__construct($config);
 
-		$this->ct = new CT;
+		$this->ct = new CT([], true);
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoftables.php');
 		$this->helperListOfTables = new listOfTables($this->ct);
 	}

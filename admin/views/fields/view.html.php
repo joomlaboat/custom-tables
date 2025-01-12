@@ -49,7 +49,7 @@ class CustomtablesViewFields extends HtmlView
 		else
 			$tableid = $this->item->tableid;
 
-		$this->ct = new CT;
+		$this->ct = new CT([], true);
 		$this->ct->getTable($tableid);
 
 		$this->script = $this->get('Script');

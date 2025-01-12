@@ -36,6 +36,8 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 	function __construct()
 	{
 		$this->ct = new CT(null, false);
+		$this->ct->Params->constructJoomlaParams();
+
 		parent::__construct();
 
 		$this->allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb pages';

@@ -45,7 +45,7 @@ class CustomtablesViewDataBaseCheck extends HtmlView
 
 	public function display($tpl = null)
 	{
-		$this->ct = new CT;
+		$this->ct = new CT([], true);
 		$this->state = $this->get('State');
 
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-diagram.php');

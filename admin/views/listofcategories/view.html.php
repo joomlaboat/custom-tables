@@ -38,7 +38,7 @@ class CustomtablesViewListofcategories extends HtmlView
 
 	function display($tpl = null)
 	{
-		$this->ct = new CT;
+		$this->ct = new CT([], true);
 
 		if ($this->getLayout() !== 'modal') {
 			// Include helper submenu

@@ -44,7 +44,7 @@ class CustomtablesModelTables extends AdminModel
 	public function __construct($config = array())
 	{
 		parent::__construct($config);
-		$this->ct = new CT;
+		$this->ct = new CT([], true);
 	}
 
 	/**

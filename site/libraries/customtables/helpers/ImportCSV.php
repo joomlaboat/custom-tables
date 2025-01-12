@@ -40,7 +40,7 @@ class ImportCSV
 		if ($arrayOfLines === null)
 			return common::translate('COM_CUSTOMTABLES_CSV_FILE_EMPTY');
 
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($ct_tableid);
 		$line = $arrayOfLines[0];
 		$prepareFieldList = self::prepareFieldList($line, $ct->Table->fields);
@@ -167,7 +167,7 @@ class ImportCSV
 					$tableName = $type_params[0];
 					$fieldName = $type_params[1];
 
-					$ct = new CT;
+					$ct = new CT([], true);
 					$ct->getTable($tableName);
 
 					if (!$ct->Table) {

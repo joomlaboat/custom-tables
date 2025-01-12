@@ -64,7 +64,7 @@ abstract class CustomtablesHelper
 
 	public static function addSubmenu($submenu)
 	{
-		$ct = new CT;
+		$ct = new CT([], true);
 
 		if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 

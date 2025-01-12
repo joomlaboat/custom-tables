@@ -42,6 +42,7 @@ if (array_key_exists($task, $PermissionIndexes))
 if ($task != '') {
 
 	$ct = new CT(null, false);
+	$ct->Params->constructJoomlaParams();
 
 	/*
 	 * $user = new CTUser();

@@ -26,9 +26,8 @@ class RecordsController
 
 		$layoutName = Factory::getApplication()->input->get('layout');
 
-		$ct = new CT(null, false);
+		$ct = new CT([], true);
 		$ct->Env->clean = true;
-		$ct->Params->blockExternalVars = false;
 
 		$limit = Factory::getApplication()->input->getInt('limit');
 		if ($limit)

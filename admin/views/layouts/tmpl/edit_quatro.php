@@ -38,7 +38,7 @@ $typeBoxId = "jform_layouttype";
 
 foreach ($this->allTables as $table) {
 
-	$ct = new CT;
+	$ct = new CT([], true);
 	$ct->getTable($table['id']);
 	$list = array();
 	foreach ($ct->Table->fields as $field)

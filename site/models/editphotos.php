@@ -17,7 +17,6 @@ use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\MySQLWhereClause;
 use CustomTables\Save_imagegallery;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 class CustomTablesModelEditPhotos extends BaseDatabaseModel
@@ -43,11 +42,12 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	 */
 	function load(): bool
 	{
-		$this->ct = new CT;
+		$this->ct = new CT(null, false);
+		$this->ct->Params->constructJoomlaParams();
 
-		$app = Factory::getApplication();
-		$params = $app->getParams();
-		$this->ct->getTable($params->get('establename'));
+		//$app = Factory::getApplication();
+		//$params = $app->getParams();
+		$this->ct->getTable($this->ct->Params->tableName);// $params->get('establename'));
 		if ($this->ct->Table === null) {
 			common::enqueueMessage('Table not selected (62).');
 			return false;
@@ -75,8 +75,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'records' . DIRECTORY_SEPARATOR;
 		require_once $path . 'Save_imagegallery.php';
 		$this->imageGallery = new Save_imagegallery($this->ct, $this->field);
-		//$this->maxFileSize = CTMiscHelper::file_upload_max_size();
-
 		return true;
 	}
 

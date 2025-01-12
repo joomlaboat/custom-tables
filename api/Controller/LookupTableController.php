@@ -27,7 +27,8 @@ class LookupTableController
 			require_once($path . 'tablejoin.php');
 			require_once($path . 'tablejoinlist.php');
 
-			$ct = new CT(null, false);
+			$ct = new CT([], true);
+
 			$result = ProInputBoxTableJoin::renderTableJoinSelectorJSON_getOptions($ct, $key, false);
 			CustomTablesAPIHelpers::fireSuccess(null, $result, 'Lookup Table records loaded');
 		} else {

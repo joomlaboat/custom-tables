@@ -142,7 +142,7 @@ class com_customtablesInstallerScript
 			//Do not run on uninstall
 			require_once($loader_file);
 			CustomTablesLoader(true);
-			$ct = new CT;
+			$ct = new CT([], true);
 
 			$result = IntegrityChecks::check($ct, true, false);
 			if (count($result) > 0)

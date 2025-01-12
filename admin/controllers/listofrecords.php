@@ -123,7 +123,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 	 */
 	public function ordering()
 	{
-		$ct = new CT;
+		$ct = new CT([], true);
 
 		$tableid = common::inputGetInt('tableid');
 		$ct->getTable($tableid);
@@ -162,6 +162,8 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$cid = common::inputPostArray('cid', []);
 
 		$ct = new CT(null, false);
+		$ct->Params->constructJoomlaParams();
+
 		$ct->Env->frmt = 'csv';
 
 		$ct->getTable($tableid);

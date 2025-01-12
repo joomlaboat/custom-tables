@@ -45,7 +45,7 @@ class updateFiles
 		if ($fieldid == 0)
 			return array('error' => 'fieldid not set');
 
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($tableId);
 		$fieldRow = $ct->Table->getFieldById($fieldid);
 		if ($fieldRow === null) {

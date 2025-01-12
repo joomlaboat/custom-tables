@@ -80,7 +80,7 @@ class CustomtablesControllerRecords extends FormController
 	 */
 	public function save($key = null, $urlVar = null): bool
 	{
-		$ct = new CT;
+		$ct = new CT([], true);
 		$tableId = common::inputGet('tableid', 0, 'int');
 		$ct->getTable($tableId);
 

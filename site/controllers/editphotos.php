@@ -16,7 +16,9 @@ use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
 
-$ct = new CT;
+$ct = new CT(null, false);
+$ct->Params->constructJoomlaParams();
+
 $model = $this->getModel('edititem');
 $user = new CTUser();
 

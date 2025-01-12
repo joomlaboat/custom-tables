@@ -28,7 +28,7 @@ class CustomtablesModelCustomtables extends ListModel
 
 	public function getIcons()
 	{
-		$this->ct = new CT;
+		$this->ct = new CT([], true);
 
 		// load user for access menus
 		$user = new CTUser();

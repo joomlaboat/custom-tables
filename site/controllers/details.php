@@ -21,8 +21,10 @@ use Joomla\CMS\Router\Route;
 $task = common::inputGetCmd('task', '');
 
 $ct = null;
-if ($task != '')
-	$ct = new CT;
+if ($task != '') {
+	$ct = new CT(null, false);
+	$ct->Params->constructJoomlaParams();
+}
 
 $user = new CTUser();
 

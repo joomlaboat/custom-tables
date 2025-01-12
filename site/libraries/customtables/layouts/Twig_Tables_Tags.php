@@ -38,7 +38,7 @@ class Twig_Tables_Tags
 		if ($fieldname == '')
 			throw new Exception('{{ ' . $tag . '("' . $table . '",field_name) }} - Value field not specified.');
 
-		$join_ct = new CT;
+		$join_ct = new CT([], true);
 		$join_ct->getTable($table);
 		$join_ct->Params->forceSortBy = $orderby;
 		$join_table_fields = $join_ct->Table->fields;
@@ -108,7 +108,7 @@ class Twig_Tables_Tags
 		if ($layoutname == '')
 			throw new Exception('{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout name not specified.');
 
-		$join_ct = new CT;
+		$join_ct = new CT([], true);
 		$layouts = new Layouts($join_ct);
 
 		$pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
@@ -127,7 +127,6 @@ class Twig_Tables_Tags
 
 		} else {
 			$join_ct->Params->filter = $record_id_or_filter;
-
 			if (!$join_ct->getRecord())
 				return '';
 		}
@@ -151,7 +150,7 @@ class Twig_Tables_Tags
 		if ($layoutname == '')
 			throw new Exception('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout name not specified.');
 
-		$join_ct = new CT;
+		$join_ct = new CT([], true);
 		$layouts = new Layouts($join_ct);
 		$pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
 		if ($layouts->tableId === null)

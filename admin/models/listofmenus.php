@@ -36,7 +36,7 @@ class CustomtablesModelListOfMenus extends ListModel
 			);
 		}
 		parent::__construct($config);
-		$this->ct = new CT;
+		$this->ct = new CT([], true);
 	}
 
 	/**

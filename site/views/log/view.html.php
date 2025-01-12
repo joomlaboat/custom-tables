@@ -13,6 +13,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Details;
 use CustomTables\MySQLWhereClause;
@@ -23,7 +24,6 @@ use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewLog extends HtmlView
 {
-	var CT $ct;
 	var Details $details;
 	var int $limit;
 	var int $limitStart;
@@ -39,13 +39,13 @@ class CustomTablesViewLog extends HtmlView
 
 	function display($tpl = null)
 	{
-		$this->ct = new CT;
+		$user = new CTUser;
 		$this->action = common::inputGetInt('action', 0);
 		$this->userid = common::inputGetInt('user', 0);
 		$this->tableId = common::inputGetInt('table', 0);
 
 		//Is user super Admin?
-		$this->isUserAdministrator = $this->ct->Env->isUserAdministrator;
+		$this->isUserAdministrator = $user->isUserAdministrator;
 		$this->records = $this->getRecords($this->action, $this->userid, $this->tableId);
 		$this->actionSelector = $this->ActionFilter($this->action);
 		$this->userSelector = $this->getUsers($this->userid);

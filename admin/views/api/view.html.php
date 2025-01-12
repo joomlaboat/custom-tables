@@ -51,7 +51,7 @@ class CustomtablesViewAPI extends HtmlView
 		} else {
 			switch ($task) {
 				case 'getfields':
-					$ct = new CT;
+					$ct = new CT([], true);
 					$ct->getTable($tableId);
 					if ($ct->Table === null) {
 						$result = array('error' => 'tableid \'' . $tableId . '\' set but not loaded.');

@@ -804,7 +804,7 @@ class fieldObject
 		if ($this->ct->isRecordNull($this->ct->Table->record) or count($this->ct->Table->record) < 2)
 			return '';
 
-		$join_ct = new CT;
+		$join_ct = new CT([], true);
 		$Layouts = new Layouts($join_ct);
 		$layoutCode = $Layouts->getLayout($layoutName);
 

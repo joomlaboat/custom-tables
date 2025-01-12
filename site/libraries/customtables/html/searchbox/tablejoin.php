@@ -175,7 +175,7 @@ class Search_tablejoin extends BaseSearch
 		else
 			$paramsArray['filter'] = ''; //!IMPORTANT - NO FILTER
 
-		$ct->setParams($paramsArray);
+		$ct->Params->setParams($paramsArray);
 
 		// -------------------- Table
 		$ct->getTable($ct->Params->tableName);

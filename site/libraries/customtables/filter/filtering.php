@@ -343,7 +343,7 @@ class Filtering
 
 					if ($valueNew !== '') {
 						if ($asString) {
-							$tempCT = new CT;
+							$tempCT = new CT([], true);
 							if ($typeParamsArray[0] != '') {
 								$tempCT->getTable($typeParamsArray[0]);
 								if ($tempCT->Table === null) {
@@ -1111,7 +1111,7 @@ class LinkJoinFilters
 		else
 			return '<p style="color:white;background-color:red;">sqljoin: field not set</p>';
 
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($tablename);
 
 		if ($ct->Table === null)

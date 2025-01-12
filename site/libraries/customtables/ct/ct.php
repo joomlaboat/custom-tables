@@ -47,7 +47,7 @@ class CT
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function __construct(?array $menuParams = null, $blockExternalVars = true, ?string $ModuleId = null, bool $enablePlugin = true)
+	function __construct(?array $menuParams, bool $blockExternalVars = true, ?string $ModuleId = null, bool $enablePlugin = true)
 	{
 		$this->errors = [];
 		$this->messages = [];
@@ -68,7 +68,7 @@ class CT
 		$this->Languages = new Languages;
 
 		$this->Env = new Environment($enablePlugin);
-		$this->Params = new Params($menuParams, $blockExternalVars, $ModuleId);
+		$this->Params = new Params($menuParams, $blockExternalVars);
 
 		$this->GroupBy = null;
 		$this->isEditForm = false;
@@ -115,16 +115,6 @@ class CT
 
 	/**
 	 * @throws Exception
-	 *
-	 * @since 3.0.0
-	 */
-	function setParams(array $menuParams = null, $blockExternalVars = true, ?string $ModuleId = null): void
-	{
-		$this->Params->setParams($menuParams, $blockExternalVars, $ModuleId);
-	}
-
-	/**
-	 * @throws Exception
 	 * @since 3.4.9
 	 */
 	function getRecord(?string $listing_id = null): bool
@@ -138,7 +128,6 @@ class CT
 		$ordering = $this->GroupBy !== null ? [$this->GroupBy] : [];
 
 		$this->Ordering = new Ordering($this->Table, $this->Params);
-
 		$selects = $this->Table->selects;
 
 		if ($this->Filter === null)
@@ -149,18 +138,17 @@ class CT
 		if (!is_null($this->Params->alias) and $this->Table->alias_fieldname != '')
 			$this->Filter->addWhereExpression($this->Table->alias_fieldname . '="' . $this->Params->alias . '"');
 
-		if ($listing_id !== null) {
+		if (!empty($listing_id))
 			$this->Filter->whereClause->addCondition($this->Table->realidfieldname, $listing_id);
-		} else {
-			if ($this->Params->listing_id !== null)
-				$this->Filter->whereClause->addCondition($this->Table->realidfieldname, $this->Params->listing_id);
-		}
+		// else {
+		//if ($this->Params->listing_id !== null)
+		//	$this->Filter->whereClause->addCondition($this->Table->realidfieldname, $this->Params->listing_id);
+		//}
 
 		//Get order by fields from menu parameters
 		$this->Ordering->parseOrderByParam();
 		//Process the string to get the orderby
 		$this->Ordering->parseOrderByString();
-
 
 		if ($this->Ordering->orderby !== null) {
 			if ($this->Ordering->selects !== null)
@@ -212,7 +200,7 @@ class CT
 	 */
 	protected function checkRecordUserJoin(string $recordsTable, $recordsUserIdField, $recordsField, $listing_id): bool
 	{
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($recordsTable);
 		if ($ct->Table === null) {
 			return false;    // Exit if table to connect with not found

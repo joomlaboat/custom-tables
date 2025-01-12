@@ -24,14 +24,10 @@ class RecordController
 		if (!$userId)
 			die;
 
-		$ct = @ new CT(null, false);
+		$ct = new CT([], true);
 		$ct->Env->clean = true;
-
 		$layoutName = common::inputGetCmd('layout');
-
 		$ct->Env->clean = true;
-		$ct->Params->blockExternalVars = false;
-
 		$layout = new Layouts($ct);
 		$result = $layout->renderMixedLayout($layoutName, null, 1, true);
 

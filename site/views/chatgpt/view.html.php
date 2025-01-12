@@ -225,7 +225,7 @@ class CustomTablesViewChatGPT extends HtmlView
 	 */
 	public function getTableStructure(array $table): ?array
 	{
-		$ct = new CT();
+		$ct = new CT([], true);
 
 		$ct->getTable($table['table']);
 		if ($ct->Table === null) {

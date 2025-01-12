@@ -60,7 +60,7 @@ class LayoutEditor
 
 	public function renderEditor(string $textAreaCode, string $textAreaId, string $typeBoxId, string $textAreaTabId, array &$onPageLoads, string $mode = 'layouteditor'): string
 	{
-		$ct = new CT;
+		$ct = new CT([], true);
 		$index = count($onPageLoads);
 		$result = '<div class="customlayoutform layouteditorbox">' . $textAreaCode . '</div><div id="' . $textAreaTabId . '"></div>';
 		$code = '';

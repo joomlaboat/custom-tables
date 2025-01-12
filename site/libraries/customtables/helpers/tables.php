@@ -191,7 +191,7 @@ class TableHelper
 	 */
 	public static function addThirdPartyTableFieldsIfNeeded($database, $tablename, $realtablename): bool
 	{
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($tablename);
 
 		if (count($ct->Table->fields) > 0)

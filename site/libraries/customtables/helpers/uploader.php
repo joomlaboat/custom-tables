@@ -140,7 +140,7 @@ class FileUploader
 			$fieldname = common::inputGetCmd('fieldname', '');
 			$tableName = self::getTableRawByItemid();
 
-			$ct = new CT;
+			$ct = new CT([], true);
 			$ct->getTable($tableName);
 			if ($ct->Table === null)
 				return [];
@@ -301,7 +301,7 @@ class FileUploader
 
 	protected static function getFileSafeMIME($fileId)
 	{
-		$ct = new CT;
+		$ct = new CT([], true);
 		if ($ct->Env->advancedTagProcessor) {
 			//This will let PRO version users to upload zip files, please note that it will check if the file is zip or not (mime type).
 			//If not then regular Joomla input method will be used

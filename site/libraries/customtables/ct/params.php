@@ -88,60 +88,105 @@ class Params
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function __construct(?array $menu_params = null, $blockExternalVars = false, ?string $ModuleId = null)
+	function __construct(?array $menu_params, bool $blockExternalVars)
 	{
 		$this->params = $menu_params;
-
-		$this->ModuleId = null;
 		$this->blockExternalVars = $blockExternalVars;
-		$this->sortBy = null;
-		$this->allowContentPlugins = false;
+		$this->setDefault();
+	}
 
-		if (defined('_JEXEC'))
-			$this->constructJoomlaParams($menu_params, $blockExternalVars, $ModuleId);
-		else
-			$this->constructWPParams();
+	protected function setDefault(): void
+	{
+		$this->ModuleId = null;
+		$this->pageTitle = null;
+		$this->showPageHeading = null;
+		$this->pageClassSFX = null;
+		$this->listing_id = null;
+		$this->tableName = null;
+		$this->pageLayout = null;
+		$this->itemLayout = null;
+		$this->detailsLayout = null;
+		$this->editLayout = null;
+		$this->groupBy = null;
+		$this->sortBy = null;
+		$this->forceSortBy = null;
+		$this->addUserGroups = null;
+		$this->editUserGroups = null;
+		$this->publishUserGroups = null;
+		$this->deleteUserGroups = null;
+		$this->allowContentPlugins = false;
+		$this->userIdField = null;
+		$this->filter = null;
+		$this->showPublished = 2;//Show Any
+		$this->limit = null;
+		$this->publishStatus = 1;
+		$this->returnTo = null;
+		$this->guestCanAddNew = null;
+		$this->requiredLabel = null;
+		$this->msgItemIsSaved = null;
+		$this->onRecordAddSendEmail = null;
+		$this->sendEmailCondition = null;
+		$this->onRecordAddSendEmailTo = null;
+		$this->onRecordSaveSendEmailTo = null;
+		$this->onRecordAddSendEmailLayout = null;
+		$this->emailSentStatusField = null;
+		$this->showCartItemsOnly = false;
+		$this->showCartItemsPrefix = null;
+		$this->cartReturnTo = null;
+		$this->cartMsgItemAdded = null;
+		$this->cartMsgItemDeleted = null;
+		$this->cartMsgItemUpdated = null;
+		$this->ItemId = null;
+		$this->alias = null;
+		$this->recordsTable = null;
+		$this->recordsUserIdField = null;
+		$this->recordsField = null;
+
+		if (defined('WPINC')) {
+			$this->returnTo = common::curPageURL();
+			$this->returnTo = CTMiscHelper::deleteURLQueryOption($this->returnTo, 'listing_id');
+		}
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2
 	 */
-	protected function constructJoomlaParams(?array $menu_paramsArray = null, $blockExternalVars = true, ?string $ModuleId = null): void
+	public function constructJoomlaParams(?string $ModuleId = null): void
 	{
 		$this->app = Factory::getApplication();
+		$menu_paramsArray = [];
 
-		if (is_null($menu_paramsArray)) {
 
-			if (is_null($ModuleId)) {
-				$ModuleIdInt = common::inputGetInt('ModuleId');
+		if (is_null($ModuleId)) {
+			$ModuleIdInt = common::inputGetInt('ModuleId');
 
-				if ($ModuleIdInt)
-					$ModuleId = strval($ModuleIdInt);
-				else
-					$ModuleId = null;
-			}
+			if ($ModuleIdInt)
+				$ModuleId = strval($ModuleIdInt);
+			else
+				$ModuleId = null;
+		}
 
-			if (!is_null($ModuleId)) {
-				$module = ModuleHelper::getModuleById($ModuleId);
-				$menu_params = new Registry;//Joomla Specific
-				$menu_params->loadString($module->params);
-				$menu_paramsArray = self::menuParamsRegistry2Array($menu_params);
-				$blockExternalVars = false;
-				//Do not block external var parameters because this is the edit form or a task
-			} elseif (method_exists($this->app, 'getParams')) {
-				try {
-					if ($this->app->getLanguage() !== null) {
-						$menu_params_registry = @$this->app->getParams();//Joomla specific
-						$menu_paramsArray = self::menuParamsRegistry2Array($menu_params_registry);
-					} else
-						$menu_paramsArray = null;
-				} catch (Exception $e) {
+		if (!is_null($ModuleId)) {
+			$this->ModuleId = $ModuleId;
+			$module = ModuleHelper::getModuleById($ModuleId);
+			$menu_params = new Registry;//Joomla Specific
+			$menu_params->loadString($module->params);
+			$menu_paramsArray = self::menuParamsRegistry2Array($menu_params);
+			$this->blockExternalVars = false;
+			//Do not block external var parameters because this is the edit form or a task
+		} elseif (method_exists($this->app, 'getParams')) {
+			try {
+				if ($this->app->getLanguage() !== null) {
+					$menu_params_registry = @$this->app->getParams();//Joomla specific
+					$menu_paramsArray = self::menuParamsRegistry2Array($menu_params_registry);
+				} else
 					$menu_paramsArray = null;
-				}
+			} catch (Exception $e) {
+				$menu_paramsArray = null;
 			}
 		}
-		$this->setParams($menu_paramsArray, $blockExternalVars, $ModuleId);
+		$this->setParams($menu_paramsArray);
 	}
 
 	public static function menuParamsRegistry2Array(Registry $menu_params_registry): array
@@ -199,18 +244,18 @@ class Params
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function setParams(?array $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
+	public function setParams(?array $menu_params = null): void
 	{
+		//Merge parameters
 		if ($this->params !== null)
 			$this->params = array_merge($this->params, $menu_params);
 		else
 			$this->params = $menu_params;
 
 		if (defined('_JEXEC'))
-			$this->setJoomlaParams($this->params, $blockExternalVars, $ModuleId);
+			$this->setJoomlaParams();
 		else {
-			$this->setDefault();
-			$this->setWPParams($this->params, $blockExternalVars, $ModuleId);
+			$this->setWPParams();
 		}
 	}
 
@@ -218,9 +263,9 @@ class Params
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function setJoomlaParams(?array $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
+	protected function setJoomlaParams(?string $ModuleId = null): void
 	{
-		$this->blockExternalVars = $blockExternalVars;
+		$menu_params = $this->params;
 		$this->ModuleId = $ModuleId;
 
 		if (is_null($menu_params)) {
@@ -232,15 +277,11 @@ class Params
 				} catch (Exception $e) {
 					$menu_params = [];
 				}
-
-			} else {
-				$this->setDefault();
-				return;
 			}
 		} else
 			$menu_params = $this->getForceItemId($menu_params);
 
-		if (!$blockExternalVars and common::inputGetString('alias', ''))
+		if (!$this->blockExternalVars and common::inputGetString('alias', ''))
 			$this->alias = CTMiscHelper::slugify(common::inputGetString('alias'));
 		else
 			$this->alias = null;
@@ -249,7 +290,7 @@ class Params
 		$this->showPageHeading = $menu_params['show_page_heading'] ?? false;
 		$this->pageClassSFX = common::ctStripTags($menu_params['pageclass_sfx'] ?? '');
 
-		if (!$blockExternalVars and common::inputGetCmd('listing_id') !== null)
+		if (!$this->blockExternalVars and common::inputGetCmd('listing_id') !== null)
 			$this->listing_id = common::inputGetCmd('listing_id');
 		else
 			$this->listing_id = $menu_params['listingid'] ?? null;
@@ -271,15 +312,11 @@ class Params
 		//Filter
 		$this->userIdField = $menu_params['useridfield'] ?? null;
 
-		if (!$blockExternalVars and common::inputGetString('filter')) {
+		if (!$this->blockExternalVars and common::inputGetString('filter')) {
 
-			$filter = common::inputGetString('filter', '');
-			if (is_array($filter)) {
-				$this->filter = $filter['search'];
-			} else
-				$this->filter = $filter;
+			$this->filter = common::inputGetString('filter');
 		} else {
-			$this->filter = $menu_params['filter'] ?? null;
+			$this->filter = $menu_params['filter'] ?? null; //TODO: Check the security issue here. menu item filter must be on
 		}
 
 		$this->showPublished = (int)($menu_params['showpublished'] ?? CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY);
@@ -288,7 +325,7 @@ class Params
 		$this->groupBy = $menu_params['groupby'] ?? null;
 
 		//Sorting
-		if (!$blockExternalVars and !is_null(common::inputGetCmd('sortby')))
+		if (!$this->blockExternalVars and !is_null(common::inputGetCmd('sortby')))
 			$this->sortBy = strtolower(common::inputGetCmd('sortby'));
 		elseif (isset($menu_params['sortby']))
 			$this->sortBy = strtolower($menu_params['sortby']);
@@ -346,7 +383,7 @@ class Params
 		$this->publishStatus = $menu_params['publishstatus'] ?? null;
 
 		if ($this->publishStatus === null) {
-			if (!$blockExternalVars)
+			if (!$this->blockExternalVars)
 				$this->publishStatus = common::inputGetInt('published');
 			else
 				$this->publishStatus = 1;
@@ -361,7 +398,7 @@ class Params
 		$this->emailSentStatusField = $menu_params['emailsentstatusfield'] ?? null;
 
 		//Form Saved
-		if (!$blockExternalVars and common::inputGetCmd('returnto'))
+		if (!$this->blockExternalVars and common::inputGetCmd('returnto'))
 			$this->returnTo = common::getReturnToURL();
 		else {
 			if (CUSTOMTABLES_JOOMLA_MIN_4 and !empty($this->ItemId))
@@ -375,53 +412,6 @@ class Params
 		$this->recordsTable = $menu_params['recordstable'] ?? null;
 		$this->recordsUserIdField = $menu_params['recordsuseridfield'] ?? null;
 		$this->recordsField = $menu_params['recordsfield'] ?? null;
-	}
-
-	protected function setDefault(): void
-	{
-		$this->pageTitle = null;
-		$this->showPageHeading = null;
-		$this->pageClassSFX = null;
-		$this->listing_id = null;
-		$this->tableName = null;
-		$this->pageLayout = null;
-		$this->itemLayout = null;
-		$this->detailsLayout = null;
-		$this->editLayout = null;
-		$this->groupBy = null;
-		$this->sortBy = null;
-		$this->forceSortBy = null;
-		$this->addUserGroups = null;
-		$this->editUserGroups = null;
-		$this->publishUserGroups = null;
-		$this->deleteUserGroups = null;
-		$this->allowContentPlugins = false;
-		$this->userIdField = null;
-		$this->filter = null;
-		$this->showPublished = 2;//Show Any
-		$this->limit = null;
-		$this->publishStatus = 1;
-		$this->returnTo = null;
-		$this->guestCanAddNew = null;
-		$this->requiredLabel = null;
-		$this->msgItemIsSaved = null;
-		$this->onRecordAddSendEmail = null;
-		$this->sendEmailCondition = null;
-		$this->onRecordAddSendEmailTo = null;
-		$this->onRecordSaveSendEmailTo = null;
-		$this->onRecordAddSendEmailLayout = null;
-		$this->emailSentStatusField = null;
-		$this->showCartItemsOnly = false;
-		$this->showCartItemsPrefix = null;
-		$this->cartReturnTo = null;
-		$this->cartMsgItemAdded = null;
-		$this->cartMsgItemDeleted = null;
-		$this->cartMsgItemUpdated = null;
-		$this->ItemId = null;
-		$this->alias = null;
-		$this->recordsTable = null;
-		$this->recordsUserIdField = null;
-		$this->recordsField = null;
 	}
 
 	/**
@@ -458,12 +448,10 @@ class Params
 
 	//Used by Joomla version of the Custom Tables
 
-	function setWPParams(array $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
+	protected function setWPParams(): void
 	{
-		$this->blockExternalVars = $blockExternalVars;
-		$this->ModuleId = $ModuleId;
-
-		if (!$blockExternalVars and common::inputGetCmd('listing_id') !== null)
+		$menu_params = $this->params;
+		if (!$this->blockExternalVars and common::inputGetCmd('listing_id') !== null)
 			$this->listing_id = common::inputGetCmd('listing_id');
 		else
 			$this->listing_id = $menu_params['listingid'] ?? null;
@@ -485,17 +473,11 @@ class Params
 		//Filter
 		$this->userIdField = $menu_params['useridfield'] ?? null;
 
-		if (!$blockExternalVars and common::inputGetString('filter')) {
-
-			$filter = common::inputGetString('filter', '');
-			if (is_array($filter)) {
-				$this->filter = $filter['search'];
-			} else
-				$this->filter = $filter;
+		if (!$this->blockExternalVars and common::inputGetString('filter')) {
+			$this->filter = common::inputGetString('filter', '');
 		} else {
-			$this->filter = $menu_params['filter'] ?? null;
+			$this->filter = $menu_params['filter'] ?? null; //TODO: Security issue
 		}
-
 
 		$this->showPublished = (int)($menu_params['showpublished'] ?? CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY);
 
@@ -503,7 +485,7 @@ class Params
 		$this->groupBy = $menu_params['groupby'] ?? null;
 
 		//Sorting
-		if (!$blockExternalVars and !is_null(common::inputGetCmd('sortby')))
+		if (!$this->blockExternalVars and !is_null(common::inputGetCmd('sortby')))
 			$this->sortBy = strtolower(common::inputGetCmd('sortby'));
 		elseif (isset($menu_params['sortby']))
 			$this->sortBy = strtolower($menu_params['sortby']);
@@ -561,7 +543,7 @@ class Params
 		$this->publishStatus = $menu_params['publishstatus'] ?? null;
 
 		if ($this->publishStatus === null) {
-			if (!$blockExternalVars)
+			if (!$this->blockExternalVars)
 				$this->publishStatus = common::inputGetInt('published');
 			else
 				$this->publishStatus = 1;
@@ -576,7 +558,7 @@ class Params
 		$this->emailSentStatusField = $menu_params['emailsentstatusfield'] ?? null;
 
 		//Form Saved
-		if (!$blockExternalVars and common::inputGetCmd('returnto'))
+		if (!$this->blockExternalVars and common::inputGetCmd('returnto'))
 			$this->returnTo = common::getReturnToURL();
 		else {
 			$this->returnTo = $menu_params['returnto'] ?? null;
@@ -589,20 +571,13 @@ class Params
 		$this->recordsField = $menu_params['recordsfield'] ?? null;
 	}
 
-	protected function constructWPParams(): void
-	{
-		$this->setDefault();
-
-		$this->returnTo = common::curPageURL();
-		$this->returnTo = CTMiscHelper::deleteURLQueryOption($this->returnTo, 'listing_id');
-	}
-
 	/**
 	 * @throws Exception
 	 * @since 3.4.3
 	 */
-	function loadParameterUsingMenuAlias(string $Alias_or_ItemId): bool
+	public function loadParameterUsingMenuAlias(string $Alias_or_ItemId): bool
 	{
+		//TODO: Check this method CTMiscHelper::getMenuParams($Itemid); maybe they are duplicate
 		if ($Alias_or_ItemId == '')
 			return false;
 
@@ -616,7 +591,7 @@ class Params
 			if ($params === null)
 				return false;
 
-			$this->constructJoomlaParams($params);
+			$this->setParams($params);
 			return true;
 		} else {
 			return false;

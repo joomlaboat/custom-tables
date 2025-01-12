@@ -24,7 +24,7 @@ class ImportTables
 	 */
 	public static function processFile($filename, $menuType, &$msg, $category = '', $importFields = true, $importLayouts = true, $importMenu = true): bool
 	{
-		$ct = new CT;
+		$ct = new CT([], true);
 
 		if (file_exists($filename)) {
 			$data = common::getStringFromFile($filename);
@@ -385,7 +385,7 @@ class ImportTables
 	 */
 	protected static function processFields(string $tableName, array $fields, &$msg): bool
 	{
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($tableName);
 
 		foreach ($fields as $field) {

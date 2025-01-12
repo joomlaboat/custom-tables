@@ -26,7 +26,7 @@ class CustomtablesViewListoflayouts extends HtmlView
 
 	function display($tpl = null)
 	{
-		$this->ct = new CT;
+		$this->ct = new CT([], true);
 
 		if ($this->getLayout() !== 'modal') {
 			// Include helper submenu
@@ -195,7 +195,7 @@ class CustomtablesViewListoflayouts extends HtmlView
 		$twig_catalog_tags = ['html.add', 'html.batch', 'html.recordcount', 'html.checkboxcount', 'html.batch', 'html.search', 'html.searchbutton', 'html.searchreset',
 			'html.toolbar', 'html.pagination', 'html.orderby', 'html.limit', 'html.recordlist', 'html.importcsv'];
 
-		$ct = new CT;
+		$ct = new CT([], true);
 		$ct->getTable($row->tableid);
 
 		// ------------------------ CT Original

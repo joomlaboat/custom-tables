@@ -29,6 +29,8 @@ class CustomTablesViewEditItem extends HtmlView
 	function display($tpl = null): bool
 	{
 		$this->ct = new CT(null, false);
+		$this->ct->Params->constructJoomlaParams();
+
 		$Model = $this->getModel();
 		$Model->load($this->ct);
 
