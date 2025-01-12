@@ -149,11 +149,9 @@ class CustomtablesControllerListOfFields extends AdminController
 	public function delete()
 	{
 		$tableId = common::inputGetInt('tableid');
-
-		$ct = new CT();
+		$ct = new CT([], true);
 
 		if ($tableId !== null) {
-
 			$ct->getTable($tableId);
 
 			if ($ct->Table === null) {

@@ -157,7 +157,6 @@ class Params
 		$this->app = Factory::getApplication();
 		$menu_paramsArray = [];
 
-
 		if (is_null($ModuleId)) {
 			$ModuleIdInt = common::inputGetInt('ModuleId');
 
@@ -263,10 +262,9 @@ class Params
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	protected function setJoomlaParams(?string $ModuleId = null): void
+	protected function setJoomlaParams(): void
 	{
 		$menu_params = $this->params;
-		$this->ModuleId = $ModuleId;
 
 		if (is_null($menu_params)) {
 			if (method_exists($this->app, 'getParams')) {

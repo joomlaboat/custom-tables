@@ -38,7 +38,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 	{
 		$tableid = common::inputGet('tableid', 0, 'int');
 
-		$ct = new CT();
+		$ct = new CT([], true);
 		$ct->getTable($tableid);
 
 		if ($ct->Table === null) {
@@ -81,7 +81,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 	{
 		$tableid = common::inputGet('tableid', 0, 'int');
 
-		$ct = new CT();
+		$ct = new CT([], true);
 		$ct->getTable($tableid);
 
 		if ($ct->Table === null) {

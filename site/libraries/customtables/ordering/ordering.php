@@ -133,7 +133,7 @@ class Ordering
 		if ($fieldRow === null)
 			return null;
 
-		$temp_ct = new CT();
+		$temp_ct = new CT([], true);
 		$temp_ct->Table = $Table;
 		$field = new Field($temp_ct, $fieldRow);
 
@@ -147,7 +147,7 @@ class Ordering
 			case 'sqljoin':
 
 				$join_table = $field->params[0];
-				$sqljoin_temp_ct = new CT();
+				$sqljoin_temp_ct = new CT([], true);
 				$sqljoin_temp_ct->getTable($join_table);
 
 				if ($this->index == count($this->fieldList) - 1) {

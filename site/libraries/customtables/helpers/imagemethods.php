@@ -689,7 +689,7 @@ class CustomTablesImageMethods
 
 				$tablename = str_replace('#__customtables_table_', '', $realtablename);
 
-				$newCt = new CT();
+				$newCt = new CT([], true);
 				$newCt->getTable($tablename);
 				if ($newCt->Table === null)
 					return 0;

@@ -218,7 +218,7 @@ class Twig_Record_Tags
 	{
 		if ($sj_tablename === null or $sj_tablename == '') return '';
 
-		$newCt = new CT();
+		$newCt = new CT([], true);
 		$newCt->getTable($sj_tablename);
 		if ($newCt->Table === null)
 			return '';
@@ -554,7 +554,7 @@ class Twig_Record_Tags
 			return null;
 		}
 
-		$newCT = new CT();
+		$newCT = new CT([], true);
 		$newCT->getTable($tableName);
 		if ($newCT->Table === null) {
 			$this->ct->errors[] = '{{ record.count("' . $tableName . '") }} - Table not found.';

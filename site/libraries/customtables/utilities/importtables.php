@@ -631,7 +631,7 @@ class ImportTables
 	 */
 	protected static function processRecords(string $tableName, array $records): bool
 	{
-		$ct = new CT();
+		$ct = new CT([], true);
 		$ct->getTable($tableName);
 		if ($ct->Table === null) {
 			return false;    // Exit if table to connect with not found
