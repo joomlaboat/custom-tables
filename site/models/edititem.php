@@ -146,7 +146,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 					$link = $return2Link_Updated;
 			}
 
-			if ($this->listing_id !== null)
+			if (!empty($this->listing_id))
 				common::inputSet("listing_id", $this->listing_id);
 
 			return true;
@@ -250,7 +250,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	 */
 	function processCustomListingID(): ?int
 	{
-		if ($this->listing_id !== null and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
+		if (!empty($this->listing_id) and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
 			try {
 				$whereClause = new MySQLWhereClause();
 				$whereClause->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
@@ -352,7 +352,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		if ($listing_ids_str != '') {
 			$listing_ids_ = explode(',', $listing_ids_str);
 			foreach ($listing_ids_ as $listing_id) {
-				if ($listing_id != '') {
+				if ($listing_id !== '') {
 					$listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
 					if ($this->ct->RefreshSingleRecord($listing_id, $save_log) == -1)
 						return -count($listing_ids_); //negative value means that there is an error
@@ -379,7 +379,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		if ($listing_ids_str != '') {
 			$listing_ids_ = explode(',', $listing_ids_str);
 			foreach ($listing_ids_ as $listing_id) {
-				if ($listing_id != '') {
+				if ($listing_id !== '') {
 					$listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
 					if ($this->ct->setPublishStatusSingleRecord($listing_id, $status) == -1)
 						return -count($listing_ids_); //negative value means that there is an error
@@ -406,7 +406,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 
 			$listing_ids_ = explode(',', $listing_ids_str);
 			foreach ($listing_ids_ as $listing_id) {
-				if ($listing_id != '') {
+				if ($listing_id !== '') {
 					$listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
 					if ($this->ct->deleteSingleRecord($listing_id) == -1)
 						return -count($listing_ids_); //negative value means that there is an error

@@ -127,14 +127,14 @@ class Catalog
 			}
 		}
 
-		if ($this->ct->Params->listing_id !== null)
+		if (!empty($this->ct->Params->listing_id))
 			$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], $this->ct->Params->listing_id);
 
 // --------------------- Sorting
 		$this->ct->Ordering->parseOrderByParam();
 
 // --------------------- Limit
-		if ($this->ct->Params->listing_id !== null)
+		if (!empty($this->ct->Params->listing_id))
 			$this->ct->applyLimits(1);
 		else
 			$this->ct->applyLimits($limit);

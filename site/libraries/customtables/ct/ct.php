@@ -818,7 +818,7 @@ class CT
 
 		$whereClause->addNestedCondition($whereClauseOwner);
 
-		if ($listing_id != '' and $listing_id != 0)
+		if (!empty($listing_id))
 			$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
 
 		return $whereClause;

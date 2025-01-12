@@ -605,7 +605,7 @@ class Layouts
 			//Details or Catalog Item
 			if ($this->ct->Table->record === null) {
 
-				if ($this->ct->Params->listing_id !== null)
+				if (!empty($this->ct->Params->listing_id))
 					$listing_id = $this->ct->Params->listing_id;
 				else
 					$listing_id = common::inputGetCmd('listing_id');
@@ -1011,14 +1011,14 @@ class Layouts
 			}
 		}
 
-		if ($this->ct->Params->listing_id !== null)
+		if (!empty($this->ct->Params->listing_id))
 			$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], $this->ct->Params->listing_id);
 
 		// --------------------- Sorting
 		$this->ct->Ordering->parseOrderByParam();
 
 		// --------------------- Limit
-		if ($this->ct->Params->listing_id !== null)
+		if (!empty($this->ct->Params->listing_id))
 			$this->ct->applyLimits(1);
 		else
 			$this->ct->applyLimits($this->ct->Params->limit ?? 0);

@@ -205,7 +205,7 @@ class TwigProcessor
 
 		if ($row == null and isset($this->ct->LayoutVariables['layout_type']) and in_array($this->ct->LayoutVariables['layout_type'], [1, 5])) {
 
-			if ($this->ct->Params->listing_id != null and $this->ct->Params->listing_id != '')
+			if (!empty($this->ct->Params->listing_id))
 				$isSingleRecord = true;
 		}
 
