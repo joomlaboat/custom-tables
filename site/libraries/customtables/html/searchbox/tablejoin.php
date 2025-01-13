@@ -322,7 +322,7 @@ class Search_tablejoin extends BaseSearch
 
 			if ($dynamic_filter == '') {
 				$listValueString = (string)$list_value[0];
-				$htmlResult_select .= '<option value="' . $listValueString . '"' . ($listValueString == $current_value ? ' selected="SELECTED"' : '') . $style . '>LV:' . $listValueString . ' - ' . htmlspecialchars(common::ctStripTags($list_value[1] ?? '')) . '</option>';
+				$htmlResult_select .= '<option value="' . $listValueString . '"' . ($listValueString == $current_value ? ' selected="SELECTED"' : '') . $style . '>' . htmlspecialchars(common::ctStripTags($list_value[1] ?? '')) . '</option>';
 			}
 		}
 

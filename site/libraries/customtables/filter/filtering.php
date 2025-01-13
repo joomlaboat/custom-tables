@@ -23,7 +23,7 @@ class Filtering
 	var MySQLWhereClause $whereClause;
 	var int $showPublished;
 
-	function __construct(CT $ct, int $showPublished = 0)
+	function __construct(CT $ct, int $showPublished = CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY)
 	{
 		$this->ct = $ct;
 		$this->PathValue = [];
@@ -32,24 +32,23 @@ class Filtering
 
 		if ($this->ct->Table !== null and $this->ct->Table->published_field_found) {
 
-			//TODO: Fix this mess by replacing the state with a text code like 'published','unpublished','everything','any','trash'
-			//showPublished = 0 - show published
-			//showPublished = 1 - show unpublished
-			//showPublished = 2 - show everything
-			//showPublished = -1 - show published and unpublished
-			//showPublished = -2 - show trashed
+			//CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY = 0 - show published
+			//CUSTOMTABLES_SHOWPUBLISHED_UNPUBLISHED_ONLY = 1 - show unpublished
+			//CUSTOMTABLES_SHOWPUBLISHED_ANY = 2 - show everything
+			//CUSTOMTABLES_SHOW_NOT_TRASHED = -1 - show published and unpublished
+			//CUSTOMTABLES_SHOW_TRASHED = -2 - show trashed
 
-			if ($this->showPublished == 0) {
+			if ($this->showPublished == CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY) {
 				$this->whereClause->addCondition($this->ct->Table->realtablename . '.published', 1);
 			}
-			if ($this->showPublished == 1) {
+			if ($this->showPublished == CUSTOMTABLES_SHOWPUBLISHED_UNPUBLISHED_ONLY) {
 				$this->whereClause->addCondition($this->ct->Table->realtablename . '.published', 0);
 			}
-			if ($this->showPublished == -1) {
+			if ($this->showPublished == CUSTOMTABLES_SHOW_NOT_TRASHED) {
 				$this->whereClause->addOrCondition($this->ct->Table->realtablename . '.published', 0);
 				$this->whereClause->addOrCondition($this->ct->Table->realtablename . '.published', 1);
 			}
-			if ($this->showPublished == -2) {
+			if ($this->showPublished == CUSTOMTABLES_SHOW_TRASHED) {
 				$this->whereClause->addCondition($this->ct->Table->realtablename . '.published', -2);
 			}
 		}
@@ -59,18 +58,29 @@ class Filtering
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function addQueryWhereFilter(): void
+	public function addQueryWhereFilter(): void
 	{
+		if ($this->ct->Params->blockExternalVars)
+			return;
+
 		if (common::inputGetString('where')) {
 			$decodedURL = common::inputGetString('where', '');
-			$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));//base64_decode
+			$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));
+
+			if ($filter_string != '')
+				$this->addWhereExpression($filter_string);
+		}
+
+		if (common::inputGetString('filter')) {
+			$decodedURL = common::inputGetString('filter', '');
+			$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));
 
 			if ($filter_string != '')
 				$this->addWhereExpression($filter_string);
 		}
 	}
 
-	function sanitizeAndParseFilter($paramWhere, $parse = false): string
+	protected function sanitizeAndParseFilter($paramWhere, $parse = false): string
 	{
 		if ($parse) {
 			//Parse using layout, has no effect to layout itself
@@ -108,7 +118,7 @@ class Filtering
 	 * @throws Exception
 	 * @since 3.1.9
 	 */
-	function addWhereExpression(?string $param): void
+	public function addWhereExpression(?string $param): void
 	{
 		if ($param === null or $param == '')
 			return;
@@ -189,20 +199,20 @@ class Filtering
 	 * @throws Exception
 	 * @since 3.1.9
 	 */
-	function processSingleFieldWhereSyntax(array $fieldrow, string $comparison_operator, string $fieldname_, string $value, string $field_extra_param = '', bool $asString = false): MySQLWhereClause
+	protected function processSingleFieldWhereSyntax(array $fieldRow, string $comparison_operator, string $fieldname_, string $value, string $field_extra_param = '', bool $asString = false): MySQLWhereClause
 	{
-		if (!array_key_exists('type', $fieldrow)) {
+		if (!array_key_exists('type', $fieldRow)) {
 			throw new Exception('processSingleFieldWhereSyntax: Field not set');
 		}
 
-		$field = new Field($this->ct, $fieldrow);
+		$field = new Field($this->ct, $fieldRow);
 		//Check if it's a range filter
 		$fieldNameParts = explode('_r_', $fieldname_);
 		$isRange = count($fieldNameParts) == 2;
 		$fieldname = $fieldNameParts[0];
 		$whereClause = new MySQLWhereClause();
 
-		switch ($fieldrow['type']) {
+		switch ($fieldRow['type']) {
 			case '_id':
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
@@ -231,13 +241,13 @@ class Filtering
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				return $this->Search_User($value, $fieldrow, $comparison_operator, $field_extra_param, $asString);
+				return $this->Search_User($value, $fieldRow, $comparison_operator, $field_extra_param, $asString);
 
 			case 'usergroup':
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				return $this->Search_UserGroup($value, $fieldrow, $comparison_operator);
+				return $this->Search_UserGroup($value, $fieldRow, $comparison_operator);
 
 			case 'viewcount':
 			case 'id':
@@ -246,13 +256,13 @@ class Filtering
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				return $this->Search_Number($value, $fieldrow, $comparison_operator);
+				return $this->Search_Number($value, $fieldRow, $comparison_operator);
 
 			case 'float':
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				return $this->Search_Number($value, $fieldrow, $comparison_operator, true);
+				return $this->Search_Number($value, $fieldRow, $comparison_operator, true);
 
 			case 'checkbox':
 				$vList = explode(',', $value);
@@ -260,17 +270,17 @@ class Filtering
 				foreach ($vList as $vL) {
 
 					if ($vL == 'true' or $vL == '1') {
-						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], 1);
-						$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix];
+						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], 1);
+						$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix];
 					} else {
-						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], 0);
-						$this->PathValue[] = common::translate('COM_CUSTOMTABLES_NOT') . ' ' . $fieldrow['fieldtitle' . $this->ct->Languages->Postfix];
+						$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], 0);
+						$this->PathValue[] = common::translate('COM_CUSTOMTABLES_NOT') . ' ' . $fieldRow['fieldtitle' . $this->ct->Languages->Postfix];
 					}
 				}
 				return $whereClause;
 
 			case 'range':
-				return $this->getRangeWhere($fieldrow, $value);
+				return $this->getRangeWhere($fieldRow, $value);
 
 			case 'email':
 			case 'url':
@@ -279,11 +289,11 @@ class Filtering
 			case 'text':
 			case 'phponadd':
 			case 'radio':
-				return $this->Search_String($value, $fieldrow, $comparison_operator);
+				return $this->Search_String($value, $fieldRow, $comparison_operator);
 
 			case 'md5':
 			case 'alias':
-				return $this->Search_Alias($value, $fieldrow, $comparison_operator);
+				return $this->Search_Alias($value, $fieldRow, $comparison_operator);
 
 			case 'lastviewtime':
 			case 'changetime':
@@ -296,7 +306,7 @@ class Filtering
 
 			case 'multilangtext':
 			case 'multilangstring':
-				return $this->Search_String($value, $fieldrow, $comparison_operator, true);
+				return $this->Search_String($value, $fieldRow, $comparison_operator, true);
 
 			case 'records':
 
@@ -307,7 +317,7 @@ class Filtering
 
 				foreach ($vList as $vL) {
 					// Filter Title
-					$typeParamsArray = CTMiscHelper::csv_explode(',', $fieldrow['typeparams'], '"', false);
+					$typeParamsArray = CTMiscHelper::csv_explode(',', $fieldRow['typeparams'], '"', false);
 
 					$filterTitle = '';
 					if (count($typeParamsArray) < 1)
@@ -379,7 +389,7 @@ class Filtering
 
 							if ($operator !== null) {
 								$whereClause->addOrCondition(
-									$esr_table_full . '.' . $fieldrow['realfieldname'],
+									$esr_table_full . '.' . $fieldRow['realfieldname'],
 									$valueNew,
 									$operator,
 									false,
@@ -391,26 +401,26 @@ class Filtering
 						} else {
 							if ($comparison_operator == '!=') {
 								//Does not contain
-								$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
-								$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'NOT INSTR');
+								$whereClause->addCondition($esr_table_full . '.' . $fieldRow['realfieldname'], $valueNew, '!=');
+								$whereClause->addCondition($esr_table_full . '.' . $fieldRow['realfieldname'], ',' . $valueNew . ',', 'NOT INSTR');
 							} elseif ($comparison_operator == '!==') {
 								//Not equal
-								$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
-								$whereClause->addCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', '!=');//exact not value
+								$whereClause->addCondition($esr_table_full . '.' . $fieldRow['realfieldname'], $valueNew, '!=');
+								$whereClause->addCondition($esr_table_full . '.' . $fieldRow['realfieldname'], ',' . $valueNew . ',', '!=');//exact not value
 							} elseif ($comparison_operator == '=') {
 								//Contain
-								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
-								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',', 'INSTR');
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldRow['realfieldname'], $valueNew);
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldRow['realfieldname'], ',' . $valueNew . ',', 'INSTR');
 							} elseif ($comparison_operator == '==') {
 								//Equal
-								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
-								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], ',' . $valueNew . ',');//exact value
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldRow['realfieldname'], $valueNew);
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldRow['realfieldname'], ',' . $valueNew . ',');//exact value
 							} else
 								$opt_title = common::translate('COM_CUSTOMTABLES_UNKNOWN_OPERATION');
 						}
 
 						if ($comparison_operator == '!=' or $comparison_operator == '=') {
-							$this->PathValue[] = $fieldrow['fieldtitle'
+							$this->PathValue[] = $fieldRow['fieldtitle'
 								. $this->ct->Languages->Postfix]
 								. ' '
 								. $opt_title
@@ -433,7 +443,7 @@ class Filtering
 				$vList = explode(',', $this->getString_vL($value));
 
 				// Filter Title
-				$typeParamsArray = CTMiscHelper::csv_explode(',', $fieldrow['typeparams']);
+				$typeParamsArray = CTMiscHelper::csv_explode(',', $fieldRow['typeparams']);
 				$filterTitle = '';
 
 				if (count($typeParamsArray) < 2)
@@ -458,8 +468,8 @@ class Filtering
 						if ($valueNew != '') {
 							if ($comparison_operator == '!=') {
 								$opt_title = common::translate('COM_CUSTOMTABLES_NOT');
-								$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew, '!=');
-								$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix]
+								$whereClause->addOrCondition($esr_table_full . '.' . $fieldRow['realfieldname'], $valueNew, '!=');
+								$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix]
 									. ' '
 									. $opt_title
 									. ' '
@@ -469,13 +479,13 @@ class Filtering
 
 								$integerValueNew = $valueNew;
 								if ($integerValueNew == 0 or $integerValueNew == -1) {
-									$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], null, 'NULL');
-									$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], '');
-									$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], 0);
+									$whereClause->addOrCondition($esr_table_full . '.' . $fieldRow['realfieldname'], null, 'NULL');
+									$whereClause->addOrCondition($esr_table_full . '.' . $fieldRow['realfieldname'], '');
+									$whereClause->addOrCondition($esr_table_full . '.' . $fieldRow['realfieldname'], 0);
 								} else
-									$whereClause->addOrCondition($esr_table_full . '.' . $fieldrow['realfieldname'], $valueNew);
+									$whereClause->addOrCondition($esr_table_full . '.' . $fieldRow['realfieldname'], $valueNew);
 
-								$this->PathValue[] = $fieldrow['fieldtitle'
+								$this->PathValue[] = $fieldRow['fieldtitle'
 									. $this->ct->Languages->Postfix]
 									. ''
 									. $opt_title
@@ -503,9 +513,9 @@ class Filtering
 				}
 
 				if ($isNumber)
-					return $this->Search_Number($value, $fieldrow, $comparison_operator);
+					return $this->Search_Number($value, $fieldRow, $comparison_operator);
 				else
-					return $this->Search_String($value, $fieldrow, $comparison_operator);
+					return $this->Search_String($value, $fieldRow, $comparison_operator);
 		}
 		return $whereClause;
 	}
@@ -514,7 +524,7 @@ class Filtering
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function Search_User($value, $fieldrow, $comparison_operator, $field_extra_param = '', bool $asString = false): MySQLWhereClause
+	protected function Search_User($value, $fieldRow, $comparison_operator, $field_extra_param = '', bool $asString = false): MySQLWhereClause
 	{
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
 			. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
@@ -529,13 +539,13 @@ class Filtering
 				if ($vL != '') {
 					$whereClause->addOrCondition('(SELECT title FROM #__usergroups AS g WHERE g.id = m.group_id LIMIT 1)', $v, $comparison_operator);
 					$whereClause->addOrCondition('(SELECT m.group_id FROM #__user_usergroup_map AS m WHERE user_id='
-						. $this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'] . ' LIMIT 1)', $v, $comparison_operator);
+						. $this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'] . ' LIMIT 1)', $v, $comparison_operator);
 
 					require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
 						. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'user.php');
 
 					$filterTitle = Value_user::renderUserValue($vL);
-					$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
+					$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 				}
 			}
 		} else {
@@ -565,7 +575,7 @@ class Filtering
 
 						if ($operator !== null) {
 							$whereClause->addOrCondition(
-								$esr_table_full . '.' . $fieldrow['realfieldname'],
+								$esr_table_full . '.' . $fieldRow['realfieldname'],
 								$vL,
 								$operator,
 								false,
@@ -575,7 +585,7 @@ class Filtering
 							);
 
 							$whereClause->addOrCondition(
-								$esr_table_full . '.' . $fieldrow['realfieldname'],
+								$esr_table_full . '.' . $fieldRow['realfieldname'],
 								$vL,
 								$operator,
 								false,
@@ -585,7 +595,7 @@ class Filtering
 							);
 
 							$whereClause->addOrCondition(
-								$esr_table_full . '.' . $fieldrow['realfieldname'],
+								$esr_table_full . '.' . $fieldRow['realfieldname'],
 								$vL,
 								$operator,
 								false,
@@ -595,7 +605,7 @@ class Filtering
 							);
 						}
 
-						$this->PathValue[] = $fieldrow['fieldtitle'
+						$this->PathValue[] = $fieldRow['fieldtitle'
 							. $this->ct->Languages->Postfix]
 							. ' '
 							. $opt_title
@@ -604,14 +614,14 @@ class Filtering
 
 					} else {
 						if ((int)$vL == 0 and $comparison_operator == '=') {
-							$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], 0);
-							$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], null, 'NULL');
+							$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], 0);
+							$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], null, 'NULL');
 						} else {
-							$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], (int)$vL, $comparison_operator);
+							$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], (int)$vL, $comparison_operator);
 						}
 
 						$filterTitle = Value_user::renderUserValue((int)$vL);
-						$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
+						$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 					}
 				}
 			}
@@ -619,7 +629,7 @@ class Filtering
 		return $whereClause;
 	}
 
-	function getString_vL($vL): string
+	protected function getString_vL($vL): string
 	{
 		if (str_contains($vL, '$get_')) {
 			$getPar = str_replace('$get_', '', $vL);
@@ -639,7 +649,7 @@ class Filtering
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function Search_UserGroup($value, $fieldrow, $comparison_operator): MySQLWhereClause
+	protected function Search_UserGroup($value, $fieldRow, $comparison_operator): MySQLWhereClause
 	{
 		$v = $this->getString_vL($value);
 		$vList = explode(',', $v);
@@ -647,16 +657,16 @@ class Filtering
 
 		foreach ($vList as $vL) {
 			if ($vL != '') {
-				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], (int)$vL, $comparison_operator);
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], (int)$vL, $comparison_operator);
 				$filterTitle = CTUser::showUserGroup((int)$vL);
-				$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
+				$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $filterTitle;
 			}
 		}
 
 		return $whereClause;
 	}
 
-	function Search_Number($value, array $fieldrow, string $comparison_operator, bool $isFloat = false): MySQLWhereClause
+	protected function Search_Number($value, array $fieldRow, string $comparison_operator, bool $isFloat = false): MySQLWhereClause
 	{
 		if ($comparison_operator == '==')
 			$comparison_operator = '=';
@@ -673,13 +683,13 @@ class Filtering
 				else
 					$cleanValue = intval($vL);
 
-				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], $cleanValue, $comparison_operator);
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], $cleanValue, $comparison_operator);
 
 				$opt_title = ' ' . $comparison_operator;
 				if ($comparison_operator == '=')
 					$opt_title = ':';
 
-				$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . $cleanValue;
+				$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . $cleanValue;
 			}
 		}
 
@@ -695,13 +705,13 @@ class Filtering
 		*/
 	}
 
-	function getRangeWhere($fieldrow, $value): MySQLWhereClause
+	protected function getRangeWhere($fieldRow, $value): MySQLWhereClause
 	{
 		$whereClause = new MySQLWhereClause();
 
-		$fieldTitle = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix];
+		$fieldTitle = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix];
 
-		if ($fieldrow['typeparams'] == 'date')
+		if ($fieldRow['typeparams'] == 'date')
 			$valueArr = explode('-to-', $value);
 		else
 			$valueArr = explode('-', $value);
@@ -709,7 +719,7 @@ class Filtering
 		if ($valueArr[0] == '' and $valueArr[1] == '')
 			return $whereClause;
 
-		$range = explode('_r_', $fieldrow['fieldname']);
+		$range = explode('_r_', $fieldRow['fieldname']);
 		if (count($range) == 1)
 			return $whereClause;
 
@@ -727,7 +737,7 @@ class Filtering
 		if ($from_field == '' and $to_field == '')
 			return $whereClause;
 
-		if ($fieldrow['typeparams'] == 'date') {
+		if ($fieldRow['typeparams'] == 'date') {
 			$v_min = $valueArr[0];
 			$v_max = $valueArr[1];
 		} else {
@@ -757,7 +767,7 @@ class Filtering
 		return $whereClause;
 	}
 
-	function Search_String($value, array $fieldRow, $comparison_operator, $isMultilingual = false): MySQLWhereClause
+	protected function Search_String($value, array $fieldRow, $comparison_operator, $isMultilingual = false): MySQLWhereClause
 	{
 		$whereClause = new MySQLWhereClause();
 		$realfieldname = $fieldRow['realfieldname'] . ($isMultilingual ? $this->ct->Languages->Postfix : '');
@@ -835,7 +845,7 @@ class Filtering
 		}
 	}
 
-	function Search_Alias($value, $fieldrow, $comparison_operator): MySQLWhereClause
+	protected function Search_Alias($value, $fieldRow, $comparison_operator): MySQLWhereClause
 	{
 		if ($comparison_operator == '==')
 			$comparison_operator = '=';
@@ -846,22 +856,22 @@ class Filtering
 
 		foreach ($vList as $vL) {
 			if ($vL == "null" and $comparison_operator == '=') {
-				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], '', $comparison_operator);
-				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], null, 'NULL');
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], '', $comparison_operator);
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], null, 'NULL');
 			} else {
-				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldrow['realfieldname'], $vL, $comparison_operator);
+				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $fieldRow['realfieldname'], $vL, $comparison_operator);
 			}
 
 			$opt_title = ' ' . $comparison_operator;
 			if ($comparison_operator == '=')
 				$opt_title = ':';
 
-			$this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . $vL;
+			$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . $vL;
 		}
 		return $whereClause;
 	}
 
-	function Search_DateRange(string $fieldname, string $valueRaw): MySQLWhereClause
+	protected function Search_DateRange(string $fieldname, string $valueRaw): MySQLWhereClause
 	{
 		$titleStart = '';
 		$whereClause = new MySQLWhereClause();
@@ -895,7 +905,6 @@ class Filtering
 			} else {
 				// Invalid date format, handle the error or set a default value
 				$fieldRowStart = $this->ct->Table->getFieldByName($valueStart);
-				$valueStart = $valueStart;
 				$titleStart = $fieldRowStart['fieldtitle' . $this->ct->Languages->Postfix];
 			}
 		}
@@ -909,7 +918,6 @@ class Filtering
 			} else {
 				// Invalid date format, handle the error or set a default value
 				$fieldRowEnd = $this->ct->Table->getFieldByName($valueEnd);
-				$valueEnd = $valueEnd;
 				$titleEnd = $fieldRowEnd['fieldtitle' . $this->ct->Languages->Postfix];
 			}
 		}
@@ -936,7 +944,7 @@ class Filtering
 		return $whereClause;
 	}
 
-	function Search_Date(string $fieldname, string $valueRaw, string $comparison_operator): MySQLWhereClause
+	protected function Search_Date(string $fieldname, string $valueRaw, string $comparison_operator): MySQLWhereClause
 	{
 		$whereClause = new MySQLWhereClause();
 
@@ -988,7 +996,7 @@ class Filtering
 		return $whereClause;
 	}
 
-	function getInt_vL($vL)
+	protected function getInt_vL($vL)
 	{
 		if (str_contains($vL, '$get_')) {
 			$getPar = str_replace('$get_', '', $vL);
@@ -1000,7 +1008,7 @@ class Filtering
 		return $vL;
 	}
 
-	function getCmd_vL($vL)
+	protected function getCmd_vL($vL)
 	{
 		if (str_contains($vL, '$get_')) {
 			$getPar = str_replace('$get_', '', $vL);

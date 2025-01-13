@@ -45,6 +45,12 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	if (!defined('CUSTOMTABLES_SHOWPUBLISHED_ANY'))
 		define('CUSTOMTABLES_SHOWPUBLISHED_ANY', 2);
 
+	if (!defined('CUSTOMTABLES_SHOW_NOT_TRASHED'))
+		define('CUSTOMTABLES_SHOW_NOT_TRASHED', -1);
+
+	if (!defined('CUSTOMTABLES_SHOW_TRASHED'))
+		define('CUSTOMTABLES_SHOW_TRASHED', -2);
+
 	$libraryPath = null;
 
 	if (defined('_JEXEC')) {

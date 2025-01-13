@@ -58,7 +58,7 @@ class CustomtablesViewAPI extends HtmlView
 						break;
 					}
 
-					$result = $ct->Table->fields;// Fields::getFields($ct->Table, true);//TODO:  Check the output
+					$result = $ct->Table->fields;
 					break;
 				case 'updateimages':
 					$result = updateImages::process($tableId);

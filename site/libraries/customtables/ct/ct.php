@@ -132,8 +132,6 @@ class CT
 
 		if ($this->Filter === null)
 			$this->setFilter($this->Params->filter, $this->Params->showPublished);
-		else
-			$this->setFilter(null, $this->Params->showPublished);
 
 		if (!is_null($this->Params->alias) and $this->Table->alias_fieldname != '')
 			$this->Filter->addWhereExpression($this->Table->alias_fieldname . '="' . $this->Params->alias . '"');
@@ -183,9 +181,9 @@ class CT
 	 * @throws Exception
 	 * @since 3.2.3
 	 */
-	function setFilter(?string $filter_string = null, int $showpublished = CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY): void
+	function setFilter(?string $filter_string = null, int $showPublished = CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY): void
 	{
-		$this->Filter = new Filtering($this, $showpublished);
+		$this->Filter = new Filtering($this, $showPublished);
 		if ($filter_string != '')
 			$this->Filter->addWhereExpression($filter_string);
 	}

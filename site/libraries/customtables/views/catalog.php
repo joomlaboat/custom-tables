@@ -33,7 +33,6 @@ class Catalog
 	 */
 	function render($layoutName = null, $limit = 0): string
 	{
-
 		// --------------------- Layouts
 		$Layouts = new Layouts($this->ct);
 		$Layouts->layoutType = 0;
@@ -50,10 +49,8 @@ class Catalog
 			if (isset($Layouts->layoutId)) {
 				$pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
 				$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
-				$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 			} else {
 				throw new Exception('Layout "' . $layoutName . '" not found.');
-				//$this->ct->errors[] = 'Layout "' . $layoutName . '" not found.';
 			}
 		}
 
@@ -68,9 +65,10 @@ class Catalog
 			}
 		}
 
+		// --------------------- Filter
 		if ($this->ct->Filter === null) {
-			// --------------------- Filter
 			$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
+			$this->ct->Filter->addQueryWhereFilter();
 		}
 
 		if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
@@ -91,14 +89,6 @@ class Catalog
 				return 'Catalog Renderer. Legacy Support processing error: ' . $e->getMessage();
 			}
 		}
-
-		if (!$this->ct->Params->blockExternalVars) {
-			if (common::inputGetString('filter', '') and is_string(common::inputGetString('filter', '')))
-				$this->ct->Filter->addWhereExpression(common::inputGetString('filter', ''));
-		}
-
-		if (!$this->ct->Params->blockExternalVars)
-			$this->ct->Filter->addQueryWhereFilter();
 
 // --------------------- Shopping Cart
 

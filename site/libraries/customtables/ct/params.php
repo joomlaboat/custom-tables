@@ -288,12 +288,14 @@ class Params
 		$this->showPageHeading = $menu_params['show_page_heading'] ?? false;
 		$this->pageClassSFX = common::ctStripTags($menu_params['pageclass_sfx'] ?? '');
 
-		if (!$this->blockExternalVars and common::inputGetCmd('listing_id') !== null)
-			$this->listing_id = common::inputGetCmd('listing_id');
-		else
-			$this->listing_id = $menu_params['listingid'] ?? null;
+		$this->listing_id = $menu_params['listingid'] ?? null;
+		if (empty($this->listing_id) or $this->listing_id == '0')
+			$this->listing_id = null;
 
-		if ($this->listing_id == '' or $this->listing_id == '0')
+		if (empty($this->listing_id) and !$this->blockExternalVars and !empty(common::inputGetCmd('listing_id')))
+			$this->listing_id = common::inputGetCmd('listing_id');
+
+		if (empty($this->listing_id) or $this->listing_id == '0')
 			$this->listing_id = null;
 
 		$this->tableName = null;
@@ -309,14 +311,7 @@ class Params
 
 		//Filter
 		$this->userIdField = $menu_params['useridfield'] ?? null;
-
-		if (!$this->blockExternalVars and common::inputGetString('filter')) {
-
-			$this->filter = common::inputGetString('filter');
-		} else {
-			$this->filter = $menu_params['filter'] ?? null; //TODO: Check the security issue here. menu item filter must be on
-		}
-
+		$this->filter = $menu_params['filter'] ?? null; //TODO: Test it. Check the security issue here. menu item filter must be on
 		$this->showPublished = (int)($menu_params['showpublished'] ?? CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY);
 
 		//Group BY
@@ -348,7 +343,6 @@ class Params
 		$this->allowContentPlugins = $menu_params['allowcontentplugins'] ?? false;
 
 		//Shopping Cart
-
 		if (!empty($menu_params['showcartitemsonly']))
 			$this->showCartItemsOnly = (bool)(int)$menu_params['showcartitemsonly'];
 		else
@@ -449,12 +443,16 @@ class Params
 	protected function setWPParams(): void
 	{
 		$menu_params = $this->params;
-		if (!$this->blockExternalVars and common::inputGetCmd('listing_id') !== null)
-			$this->listing_id = common::inputGetCmd('listing_id');
-		else
-			$this->listing_id = $menu_params['listingid'] ?? null;
 
-		if ($this->listing_id == '' or $this->listing_id == '0')
+		$this->listing_id = $menu_params['listingid'] ?? null;
+
+		if (empty($this->listing_id) or $this->listing_id == '0')
+			$this->listing_id = null;
+
+		if (empty($this->listing_id) and !$this->blockExternalVars and !empty(common::inputGetCmd('listing_id')))
+			$this->listing_id = common::inputGetCmd('listing_id');
+
+		if (empty($this->listing_id) or $this->listing_id == '0')
 			$this->listing_id = null;
 
 		$this->tableName = null;
@@ -470,12 +468,7 @@ class Params
 
 		//Filter
 		$this->userIdField = $menu_params['useridfield'] ?? null;
-
-		if (!$this->blockExternalVars and common::inputGetString('filter')) {
-			$this->filter = common::inputGetString('filter', '');
-		} else {
-			$this->filter = $menu_params['filter'] ?? null; //TODO: Security issue
-		}
+		$this->filter = $menu_params['filter'] ?? null; //TODO: Test it. Security issue
 
 		$this->showPublished = (int)($menu_params['showpublished'] ?? CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY);
 

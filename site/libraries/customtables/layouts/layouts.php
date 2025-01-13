@@ -976,11 +976,7 @@ class Layouts
 
 		// --------------------- Filter
 		$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
-
-		if (!$this->ct->Params->blockExternalVars) {
-			if (common::inputGetString('filter', '') and is_string(common::inputGetString('filter', '')))
-				$this->ct->Filter->addWhereExpression(common::inputGetString('filter', ''));
-		}
+		$this->ct->Filter->addQueryWhereFilter();
 
 		if (!$this->ct->Params->blockExternalVars)
 			$this->ct->Filter->addQueryWhereFilter();
