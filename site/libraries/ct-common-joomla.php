@@ -580,7 +580,7 @@ class common
 	 */
 	public static function inputGetString($parameter, $default = null): ?string
 	{
-		return Factory::getApplication()->input->getString($parameter, $default);
+		return Factory::getApplication()->input->get->getString($parameter, $default);
 	}
 
 	/**

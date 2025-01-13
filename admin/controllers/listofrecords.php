@@ -180,12 +180,17 @@ class CustomtablesControllerListOfRecords extends AdminController
 		}
 
 		$ct->Params->filter = implode('or', $wheres);
-
 		$catalog = new Catalog($ct);
 
 		$pathViews = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
 		require_once($pathViews . 'catalog-csv.php');
-		$catalogCSV = new CatalogExportCSV($ct, $catalog);
+
+		try {
+			$catalogCSV = new CatalogExportCSV($ct, $catalog);
+		} catch (Exception $e) {
+			common::enqueueMessage($e->getMessage());
+			return false;
+		}
 
 		if (!$catalogCSV->error) {
 
@@ -200,7 +205,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 			echo $catalogCSV->render(null);
 			die;//CSV output
 		} else {
-			$ct->errors[] = $catalogCSV->error;
+			common::enqueueMessage($catalogCSV->error);
 		}
 		return false;
 	}
