@@ -45,7 +45,7 @@ class ImportCSV
 		$line = $arrayOfLines[0];
 		$prepareFieldList = self::prepareFieldList($line, $ct->Table->fields);
 		$fieldList = $prepareFieldList['fieldList'];
-		$fields = self::processFieldParams($fieldList, $ct->Table->fields);
+		$fields = self::processFieldParams($fieldList, $ct->Table->fields);//return associative array
 
 		if ($prepareFieldList['header'])
 			$offset = 1;
@@ -207,91 +207,91 @@ class ImportCSV
 
 				if ($fieldType == 'sqljoin') {
 
-					if (isset($fields[$f_index]->sqljoin)) {
-						$realtablename = $fields[$f_index]->sqljoin->table;
+					if (isset($fields[$f_index]['sqljoin'])) {
+						$realtablename = $fields[$f_index]['sqljoin']->table;
 
 						$vlu = self::findSQLJoin(
 							$realtablename,
-							$fields[$f_index]->sqljoin->field,
-							$fields[$f_index]->sqljoin->realidfieldname,
-							(bool)$fields[$f_index]->sqljoin->published_field_found,
+							$fields[$f_index]['sqljoin']->field,
+							$fields[$f_index]['sqljoin']->realidfieldname,
+							(bool)$fields[$f_index]['sqljoin']->published_field_found,
 							$line[$i]);
 
 						if (is_null($vlu))//Join table record doesn't exist
 						{
-							database::insert($realtablename, [$fields[$f_index]->sqljoin->field => $line[$i]]);
+							database::insert($realtablename, [$fields[$f_index]['sqljoin']->field => $line[$i]]);
 
 							$vlu = self::findSQLJoin(
 								$realtablename,
-								$fields[$f_index]->sqljoin->field,
-								$fields[$f_index]->sqljoin->realidfieldname,
-								(bool)$fields[$f_index]->sqljoin->published_field_found,
+								$fields[$f_index]['sqljoin']->field,
+								$fields[$f_index]['sqljoin']->realidfieldname,
+								(bool)$fields[$f_index]['sqljoin']->published_field_found,
 								$line[$i]);
 						}
 
 						if ((int)$vlu > 0) {
-							$whereClause->addCondition($fields[$f_index]->realfieldname, (int)$vlu);
-							$data[$fields[$f_index]->realfieldname] = (int)$vlu;
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], (int)$vlu);
+							$data[$fields[$f_index]['realfieldname']] = (int)$vlu;
 						} else {
-							$whereClause->addCondition($fields[$f_index]->realfieldname, null);
-							$data[$fields[$f_index]->realfieldname] = null;
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+							$data[$fields[$f_index]['realfieldname']] = null;
 						}
 					}
 				} elseif ($fieldType == 'records') {
 
-					if (isset($fields[$f_index]->sqljoin)) {
-						$realtablename = $fields[$f_index]->sqljoin->table;
+					if (isset($fields[$f_index]['sqljoin'])) {
+						$realtablename = $fields[$f_index]['sqljoin']->table;
 
 						$vlu = self::findSQLRecordJoin(
 							$realtablename,
-							$fields[$f_index]->sqljoin->field,
-							$fields[$f_index]->sqljoin->realidfieldname,
-							(bool)$fields[$f_index]->sqljoin->published_field_found,
+							$fields[$f_index]['sqljoin']->field,
+							$fields[$f_index]['sqljoin']->realidfieldname,
+							(bool)$fields[$f_index]['sqljoin']->published_field_found,
 							$line[$i]);
 
 						if (is_null($vlu)) {
 
-							database::insert($realtablename, [$fields[$f_index]->sqljoin->field => $line[$i]]);
+							database::insert($realtablename, [$fields[$f_index]['sqljoin']->field => $line[$i]]);
 
 							$vlu = self::findSQLRecordJoin(
 								$realtablename,
-								$fields[$f_index]->sqljoin->field,
-								$fields[$f_index]->sqljoin->realidfieldname,
-								(bool)$fields[$f_index]->sqljoin->published_field_found,
+								$fields[$f_index]['sqljoin']->field,
+								$fields[$f_index]['sqljoin']->realidfieldname,
+								(bool)$fields[$f_index]['sqljoin']->published_field_found,
 								$line[$i]);
 						}
 
 						if (!is_null($vlu) and $vlu != '') {
-							$whereClause->addCondition($fields[$f_index]->realfieldname, '%,' . implode(',', $vlu) . ',%', 'LIKE');
-							$data[$fields[$f_index]->realfieldname] = ',' . implode(',', $vlu) . ',';
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], '%,' . implode(',', $vlu) . ',%', 'LIKE');
+							$data[$fields[$f_index]['realfieldname']] = ',' . implode(',', $vlu) . ',';
 						} else {
-							$whereClause->addCondition($fields[$f_index]->realfieldname, null);
-							$data[$fields[$f_index]->realfieldname] = null;
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+							$data[$fields[$f_index]['realfieldname']] = null;
 						}
 					}
 				} elseif ($fieldType == 'date' or $fieldType == 'creationtime' or $fieldType == 'changetime') {
 					if (isset($line[$i]) and $line[$i] != '') {
-						$whereClause->addCondition($fields[$f_index]->realfieldname, $line[$i]);
-						$data[$fields[$f_index]->realfieldname] = $line[$i];
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], $line[$i]);
+						$data[$fields[$f_index]['realfieldname']] = $line[$i];
 					} else {
-						$whereClause->addCondition($fields[$f_index]->realfieldname, null);
-						$data[$fields[$f_index]->realfieldname] = null;
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+						$data[$fields[$f_index]['realfieldname']] = null;
 					}
 				} elseif ($fieldType == 'int' or $fieldType == 'user' or $fieldType == 'userid') {
 					if (isset($line[$i]) and $line[$i] != '') {
-						$whereClause->addCondition($fields[$f_index]->realfieldname, (int)$line[$i]);
-						$data[$fields[$f_index]->realfieldname] = (int)$line[$i];
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], (int)$line[$i]);
+						$data[$fields[$f_index]['realfieldname']] = (int)$line[$i];
 					} else {
-						$whereClause->addCondition($fields[$f_index]->realfieldname, null);
-						$data[$fields[$f_index]->realfieldname] = null;
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+						$data[$fields[$f_index]['realfieldname']] = null;
 					}
 				} elseif ($fieldType == 'float') {
 					if (isset($line[$i]) and $line[$i] != '') {
-						$whereClause->addCondition($fields[$f_index]->realfieldname, (float)$line[$i]);
-						$data[$fields[$f_index]->realfieldname] = (float)$line[$i];
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], (float)$line[$i]);
+						$data[$fields[$f_index]['realfieldname']] = (float)$line[$i];
 					} else {
-						$whereClause->addCondition($fields[$f_index]->realfieldname, null);
-						$data[$fields[$f_index]->realfieldname] = null;
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+						$data[$fields[$f_index]['realfieldname']] = null;
 					}
 				} elseif ($fieldType == 'checkbox') {
 					if (isset($line[$i]) and $line[$i] != '') {
@@ -300,8 +300,8 @@ class ImportCSV
 						else
 							$vlu = 0;
 
-						$whereClause->addCondition($fields[$f_index]->realfieldname, $vlu);
-						$data[$fields[$f_index]->realfieldname] = $vlu;
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], $vlu);
+						$data[$fields[$f_index]['realfieldname']] = $vlu;
 					}
 				} elseif ($fieldType == 'time') {
 					$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
@@ -310,15 +310,15 @@ class ImportCSV
 					$seconds = InputBox_Time::formattedTime2Seconds($line[$i]);
 					$ticks = InputBox_Time::seconds2Ticks($seconds, $fieldParams);
 
-					$whereClause->addCondition($fields[$f_index]->realfieldname, $ticks);
-					$data[$fields[$f_index]->realfieldname] = $ticks;
+					$whereClause->addCondition($fields[$f_index]['realfieldname'], $ticks);
+					$data[$fields[$f_index]['realfieldname']] = $ticks;
 
 				} else {
 
 					if (isset($line[$i])) {
 						$vlu = $line[$i];
-						$whereClause->addCondition($fields[$f_index]->realfieldname, $vlu);
-						$data[$fields[$f_index]->realfieldname] = $vlu;
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], $vlu);
+						$data[$fields[$f_index]['realfieldname']] = $vlu;
 					}
 				}
 			}
