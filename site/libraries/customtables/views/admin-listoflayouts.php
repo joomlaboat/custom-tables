@@ -160,6 +160,11 @@ class ListOfLayouts
 		$data['layoutcss'] = common::inputPostRaw('layoutcss', null, 'create-edit-layout');
 		$data['layoutjs'] = common::inputPostRaw('layoutjs', null, 'create-edit-layout');
 
+		$params = [];
+		$params['filter'] = stripcslashes(common::inputPostString('filter', null, 'create-edit-layout'));
+
+		$data['params'] = json_encode($params);
+
 		try {
 			if ($layoutId !== null) {
 				$whereClauseUpdate = new MySQLWhereClause();

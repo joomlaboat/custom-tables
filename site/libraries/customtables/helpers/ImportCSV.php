@@ -120,7 +120,7 @@ class ImportCSV
 					$clean_field_name = strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $field['fieldtitle']));
 
 					if ($fieldName_ == '#' or $fieldName_ == '') {
-						$fieldList[] = -1;
+						$fieldList[] = -1;//id field
 						$fieldsFoundCount += 1;
 						$found = true;
 						break;

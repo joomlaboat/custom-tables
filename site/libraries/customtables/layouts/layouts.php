@@ -1090,7 +1090,8 @@ class Layouts
 			'layoutcss',
 			'layoutjs',
 			'layouttype',
-			'MODIFIED_TIMESTAMP'
+			'MODIFIED_TIMESTAMP',
+			'params'
 		];
 
 		$whereClause = new MySQLWhereClause();
