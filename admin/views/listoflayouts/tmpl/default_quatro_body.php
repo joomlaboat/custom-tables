@@ -82,8 +82,45 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 
 		<td>
 			<?php
-			$layoutsize = strlen($item->layoutcode);
-			echo number_format($layoutsize);
+			$cssStyle = 'margin:5px;';//width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#5b8127;color:white';
+
+			if ($this->canEdit) {
+				$link = $edit . '&id=' . $item->id;
+
+				$layoutSize_desktop = strlen($item->layoutcode ?? '');
+				if ($layoutSize_desktop > 0)
+					echo '<a href="' . $link . '" class="btn btn-secondary" style="' . $cssStyle . '">Desktop: ' . number_format($layoutSize_desktop) . '</a>';
+
+				$layoutSize_mobile = strlen($item->layoutmobile ?? '');
+				if ($layoutSize_mobile > 0)
+					echo '<a href="' . $link . '" class="btn btn-primary" style="' . $cssStyle . '">Mobile: ' . number_format($layoutSize_mobile) . '</a>';
+
+				$layoutSize_css = strlen($item->layoutcss ?? '');
+				if ($layoutSize_css > 0)
+					echo '<a href="' . $link . '" class="btn btn-info" style="' . $cssStyle . '">CSS: ' . number_format($layoutSize_css) . '</a>';
+
+				$layoutSize_js = strlen($item->layoutjs ?? '');
+				if ($layoutSize_js > 0)
+					echo '<a href="' . $link . '" class="btn btn-warning" style="' . $cssStyle . '">JS: ' . number_format($layoutSize_js) . '</a>';
+
+			} else {
+
+				$layoutSize_desktop = strlen($item->layoutcode ?? '');
+				if ($layoutSize_desktop > 0)
+					echo '<div class="btn btn-secondary" style="' . $cssStyle . '">Desktop: ' . number_format($layoutSize_desktop) . '</div>';
+
+				$layoutSize_mobile = strlen($item->layoutmobile ?? '');
+				if ($layoutSize_mobile > 0)
+					echo '<div class="btn btn-primary" style="' . $cssStyle . '">Mobile: ' . number_format($layoutSize_mobile) . '</div>';
+
+				$layoutSize_css = strlen($item->layoutcss ?? '');
+				if ($layoutSize_css > 0)
+					echo '<div class="btn btn-info" style="' . $cssStyle . '">CSS: ' . number_format($layoutSize_css) . '</div>';
+
+				$layoutSize_js = strlen($item->layoutjs ?? '');
+				if ($layoutSize_js > 0)
+					echo '<div class="btn btn-warning" style="' . $cssStyle . '">JS: ' . number_format($layoutSize_js) . '</div>';
+			}
 			?>
 		</td>
 
@@ -105,13 +142,13 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			$engine = $this->isTwig($item);
 			$messages = [];
 			if ($engine['twig'] > 0)
-				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#5b8127;color:white">Twig (' . $engine['twig'] . ' tags)</div>';
+				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:5px;padding:7px;background:#5b8127;color:white">Twig (' . $engine['twig'] . ' tags)</div>';
 
 			if ($engine['original'] > 0)
-				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#373737;color:white">Original (' . $engine['original'] . ' tags)</div>';
+				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:5px;padding:7px;background:#373737;color:white">Original (' . $engine['original'] . ' tags)</div>';
 
 			if (count($engine['errors']) > 0)
-				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#ff0000;color:white">' . implode('</div><div style="width:auto;display: inline-block;margin:5px;border-radius:10px;padding:7px;background:#ff0000;color:white">', $engine['errors']) . '</div>';
+				$messages[] = '<div style="width:auto;display: inline-block;margin:5px;border-radius:5px;padding:7px;background:#ff0000;color:white">' . implode('</div><div style="width:auto;display: inline-block;margin:5px;border-radius:5px;padding:7px;background:#ff0000;color:white">', $engine['errors']) . '</div>';
 
 			echo implode('', $messages);
 
