@@ -43,7 +43,12 @@ class CustomTablesModelImportRecords extends ListModel
 
 		$tableId = common::inputGetInt('tableid', 0);
 
-		$msg = ImportCSV::importCSVFile($filename, $tableId);
+		try {
+			$msg = ImportCSV::importCSVFile($filename, $tableId);
+		} catch (Exception $e) {
+			common::enqueueMessage($e->getMessage());
+		}
+
 		unlink($filename);
 
 		return true;

@@ -1152,4 +1152,27 @@ class CTMiscHelper
 		// Return specific key value if it exists
 		return isset($sessionData[$key]) ? $sessionData[$key] : null;
 	}
+
+	static public function standardizeDate($dateString)
+	{
+		// Remove any extra whitespace
+		$dateString = trim($dateString);
+
+		// Try to parse the date using strtotime()
+		$timestamp = strtotime($dateString);
+
+		if ($timestamp === false) {
+			return false; // Return false if date parsing fails
+		}
+
+		// Check if the original string contains time components
+		$hasTime = preg_match('/\d{1,2}[:\.]\d{2}/', $dateString);
+
+		// Return appropriate format based on presence of time
+		if ($hasTime) {
+			return date('Y-m-d H:i:s', $timestamp);
+		} else {
+			return date('Y-m-d', $timestamp);
+		}
+	}
 }

@@ -61,7 +61,7 @@ class ImportCSV
 					try {
 						database::insert($ct->Table->realtablename, $result->data);
 					} catch (Exception $e) {
-						return $e->getMessage();
+						throw new Exception($e->getMessage());
 					}
 				}
 			}
@@ -271,8 +271,11 @@ class ImportCSV
 					}
 				} elseif ($fieldType == 'date' or $fieldType == 'creationtime' or $fieldType == 'changetime') {
 					if (isset($line[$i]) and $line[$i] != '') {
-						$whereClause->addCondition($fields[$f_index]['realfieldname'], $line[$i]);
-						$data[$fields[$f_index]['realfieldname']] = $line[$i];
+
+						$dateString = CTMiscHelper::standardizeDate($line[$i]);
+
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], $dateString);
+						$data[$fields[$f_index]['realfieldname']] = $dateString;
 					} else {
 						$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
 						$data[$fields[$f_index]['realfieldname']] = null;
