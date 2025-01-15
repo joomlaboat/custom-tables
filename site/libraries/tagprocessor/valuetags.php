@@ -303,7 +303,10 @@ class tagProcessor_Value
 										$new_array[] = $pureValueOptionArr[$i];
 								}
 
-								$vlu = Value_file::process($row[$field->realfieldname], $field, $new_array, $row[$ct->Table->realidfieldname], 0);
+								if (empty($row[$field->realfieldname]))
+									$vlu = null;
+								else
+									$vlu = Value_file::process($row[$field->realfieldname], $field, $new_array, $row[$ct->Table->realidfieldname], 0);
 							} else
 								$vlu = $row[$field->realfieldname];
 						} else {

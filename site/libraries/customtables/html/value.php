@@ -224,6 +224,9 @@ class Value
 					. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php';
 				require_once($processor_file);
 
+				if (empty($rowValue))
+					return null;
+
 				return Value_file::process($rowValue, $this->field, $option_list, $this->row[$this->ct->Table->realidfieldname], 0);
 
 			case 'language':
