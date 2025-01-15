@@ -84,7 +84,7 @@ class FileUploader
 							$msg = ['error' => $e->getMessage()];
 						}
 
-						if ($msg != '' and $msg != 'success')
+						if ($msg !== null)
 							$ret = ['error' => $msg];
 						else
 							$ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileId . '_' . $fileName
