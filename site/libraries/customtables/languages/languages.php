@@ -90,34 +90,35 @@ class Languages
 
 	function getLangPostfix(): string
 	{
-		$language = '';
+		$languageTag = '';
 
 		// Joomla detection
 		if (defined('_JEXEC')) {
 			try {
 				if (CUSTOMTABLES_JOOMLA_MIN_4) {
 					// Joomla 4+ method
-					$language = Factory::getContainer()->get('language')->getTag();
+					$languageTag = Factory::getApplication()->getLanguage()->getTag();
+
 				} else {
 					// Joomla 3 method
-					$language = Factory::getLanguage()->getTag();
+					$languageTag = Factory::getLanguage()->getTag();
 				}
 			} catch (Exception $e) {
 				// Fallback if language detection fails
-				$language = 'en-GB';
+				$languageTag = 'en-GB';
 			}
 		} // WordPress detection
 		elseif (defined('WPINC')) {
 			// Get WordPress locale (e.g., 'en_US', 'sk_SK')
-			$language = get_locale();
+			$languageTag = get_locale();
 		}
 
 		// Process language list
 		$index = 0;
-		foreach ($this->LanguageList as $lang) {
-			if ($lang->language == $language) {
-				$this->tag = $lang->sef;
-				return ($index == 0) ? '' : '_' . $lang->sef;
+		foreach ($this->LanguageList as $languageItem) {
+			if ($languageItem->language == $languageTag) {
+				$this->tag = $languageItem->sef;
+				return ($index == 0) ? '' : '_' . $languageItem->sef;
 			}
 			$index++;
 		}
