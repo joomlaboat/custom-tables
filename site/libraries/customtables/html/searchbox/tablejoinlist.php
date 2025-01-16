@@ -59,16 +59,6 @@ class Search_tablejoinlist extends BaseSearch
 		if (isset($this->field->params[5]))
 			$sortByField = $this->field->params[5];
 
-		/*
-		$v = [];
-		$v[] = $index;
-		$v[] = 'this.value';
-		$v[] = '"' . $this->field->fieldname . '"';
-		$v[] = '"' . urlencode($where) . '"';
-		$v[] = '"' . urlencode($whereList) . '"';
-		$v[] = '"' . $this->ct->Languages->Postfix . '"';
-		*/
-
 		$this->attributes['id'] = $this->objectName;
 		$this->attributes['name'] = $this->objectName;
 

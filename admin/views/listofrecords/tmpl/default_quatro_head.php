@@ -36,14 +36,12 @@ HTMLHelper::_('behavior.multiselect');
 			$title = $field[$id];
 
 			if ($this->ct->Languages->Postfix != '')
-				$id .= '_' . $this->ct->Languages->Postfix;
+				$id .= $this->ct->Languages->Postfix;
 
 			if (isset($field[$id]))
 				$title = $field[$id];
 
-			echo '
-				<th scope="col">' . $title . '</th>
-	';
+			echo '<th scope="col">' . $title . '</th>';
 		}
 	}
 

@@ -36,14 +36,12 @@ defined('_JEXEC') or die();
 			$title = $field[$id];
 
 			if ($this->ct->Languages->Postfix != '')
-				$id .= '_' . $this->ct->Languages->Postfix;
+				$id .= $this->ct->Languages->Postfix;
 
 			if (isset($field[$id]))
 				$title = $field[$id];
 
-			echo '
-						<th class="nowrap" >' . $title . '</th>
-					';
+			echo '<th class="nowrap" >' . $title . '</th>';
 		}
 	}
 
