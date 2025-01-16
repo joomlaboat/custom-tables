@@ -163,8 +163,8 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 	{
 		$this->ct = $ct;
 
-		if ($this->ct->Env->legacySupport)
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
+		//if ($this->ct->Env->legacySupport)
+		//require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 
 		$this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
 
@@ -272,11 +272,12 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		if ($filter == '')
 			return null;
 
+		/*
 		if ($this->ct->Env->legacySupport) {
 			$LayoutProc = new LayoutProcessor($this->ct);
 			$LayoutProc->layout = $filter;
 			$filter = $LayoutProc->fillLayout(null, null, '[]', true);
-		}
+		}*/
 
 		$twig = new TwigProcessor($this->ct, $filter);
 		$filter = $twig->process();

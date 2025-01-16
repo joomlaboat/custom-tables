@@ -38,7 +38,7 @@ class Environment
 	var string $field_prefix;
 	var bool $loadTwig;
 	var string $toolbarIcons;
-	var bool $legacySupport;
+	//var bool $legacySupport;
 	var ?string $folderToSaveLayouts;
 	var bool $isPlugin; //this can be set by calling the class from the plugin
 
@@ -160,7 +160,7 @@ class Environment
 			$this->field_prefix = $params->get('fieldPrefix') ?? 'ct_';
 			$this->loadTwig = $params->get('loadTwig') == '1';
 			$this->toolbarIcons = strval($params->get('toolbaricons'));
-			$this->legacySupport = $params->get('legacysupport') == 'legacy';
+			//$this->legacySupport = false;//$params->get('legacysupport') == 'legacy';
 
 			$this->folderToSaveLayouts = $params->get('folderToSaveLayouts');
 			if ($this->folderToSaveLayouts !== null)
@@ -182,7 +182,7 @@ class Environment
 
 			$this->loadTwig = true;
 			$this->toolbarIcons = '';
-			$this->legacySupport = false;
+			//$this->legacySupport = false;
 			$this->folderToSaveLayouts = null;
 
 			/*

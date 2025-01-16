@@ -149,13 +149,14 @@ function CustomTablesSave(string $task, $this_)
 			else
 				$msg = $ct->Params->msgItemIsSaved;
 
+			/*
 			if ($ct->Env->legacySupport) {
 				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 
 				$LayoutProc = new LayoutProcessor($ct);
 				$LayoutProc->layout = $msg;
 				$msg = $LayoutProc->fillLayout(null, null, '[]', true);
-			}
+			}*/
 
 			$twig = new TwigProcessor($ct, $msg);
 			$msg = $twig->process();

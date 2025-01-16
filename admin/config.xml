@@ -70,20 +70,9 @@
 		</field>
 
 		<field
-				name="legacysupport"
-				type="list"
-				label="Legacy Support"
-				default="puretwig"
-				description="Determines whether to support legacy layout syntax alongside modern Twig templates. 'Pure Twig' is recommended for new installations, offering cleaner syntax and better performance. Choose 'Twig and Legacy' only if you're maintaining older layouts that use *fieldname*, [fieldname], or similar syntax."
-		>
-			<option value="legacy">Twig and Legacy</option>
-			<option value="puretwig">Pure Twig</option>
-		</field>
-
-		<field
 				name="folderToSaveLayouts"
 				type="text"
-				label="Folder where to save Layouts (Optional)"
+				label="Folder where to save Layouts"
 				default=""
 				description="Specify a folder path where layout files should be stored on the server. This allows you to version control your layouts and edit them directly using your preferred text editor. Leave empty to store layouts in the database."
 		/>

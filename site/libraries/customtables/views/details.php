@@ -14,8 +14,9 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Exception;
-use LayoutProcessor;
-use tagProcessor_PHP;
+
+//use LayoutProcessor;
+//use tagProcessor_PHP;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -91,13 +92,14 @@ class Details
 	{
 		$layoutDetailsContent = $this->layoutDetailsContent;
 
+		/*
 		if ($this->ct->Env->legacySupport) {
 			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 
 			$LayoutProc = new LayoutProcessor($this->ct);
 			$LayoutProc->layout = $layoutDetailsContent;
 			$layoutDetailsContent = $LayoutProc->fillLayout($this->ct->Table->record);
-		}
+		}*/
 
 		$twig = new TwigProcessor($this->ct, $layoutDetailsContent, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
 		$layoutDetailsContent = $twig->process($this->ct->Table->record);

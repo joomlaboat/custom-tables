@@ -14,9 +14,11 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Exception;
-use LayoutProcessor;
-use tagProcessor_Catalog;
-use tagProcessor_CatalogTableView;
+
+//use LayoutProcessor;
+
+//use tagProcessor_Catalog;
+//use tagProcessor_CatalogTableView;
 
 class Catalog
 {
@@ -73,23 +75,23 @@ class Catalog
 
 		if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
 			common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+		/*
+				if ($this->ct->Env->legacySupport) {
+					try {
+						$site_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
 
-		if ($this->ct->Env->legacySupport) {
-			try {
-				$site_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-
-				require_once($site_path . 'layout.php');
-				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
-				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtableviewtag.php');
-				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'generaltags.php');
-				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'pagetags.php');
-				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'itemtags.php');
-				require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'fieldtags.php');
-			} catch (Exception $e) {
-				return 'Catalog Renderer. Legacy Support processing error: ' . $e->getMessage();
-			}
-		}
-
+						require_once($site_path . 'layout.php');
+						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
+						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtableviewtag.php');
+						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'generaltags.php');
+						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'pagetags.php');
+						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'itemtags.php');
+						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'fieldtags.php');
+					} catch (Exception $e) {
+						return 'Catalog Renderer. Legacy Support processing error: ' . $e->getMessage();
+					}
+				}
+		*/
 // --------------------- Shopping Cart
 
 		if ($this->ct->Params->showCartItemsOnly) {
@@ -180,6 +182,7 @@ class Catalog
 		}
 
 		// -------------------- Parse Layouts
+		/*
 		if ($this->ct->Env->legacySupport) {
 
 			if ($this->ct->Env->frmt == 'json') {
@@ -206,7 +209,7 @@ class Catalog
 			$pageLayout = $LayoutProc->fillLayout(null, null, '');
 			$pageLayout = str_replace('&&&&quote&&&&', '"', $pageLayout); // search boxes may return HTMl elements that contain placeholders with quotes like this: &&&&quote&&&&
 			$pageLayout = str_replace($catalogTableCode, $catalogTableContent, $pageLayout);
-		}
+		}*/
 
 		if ($this->ct->Env->frmt == 'json') {
 

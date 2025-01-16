@@ -14,7 +14,8 @@ namespace CustomTables;
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\HTML\HTMLHelper;
-use LayoutProcessor;
+
+//use LayoutProcessor;
 
 defined('_JEXEC') or die();
 
@@ -162,11 +163,12 @@ class Twig_Document_Tags
 				if ($twig->errorMessage !== null)
 					$this->ct->errors[] = $twig->errorMessage;
 
+				/*
 				if ($this->ct->Env->legacySupport) {
 					$LayoutProc = new LayoutProcessor($this->ct);
 					$LayoutProc->layout = $html_result_layout;
 					$html_result_layout = $LayoutProc->fillLayout($row);
-				}
+				}*/
 
 				$html_result .= $html_result_layout;
 
@@ -177,11 +179,12 @@ class Twig_Document_Tags
 			if ($twig->errorMessage !== null)
 				$this->ct->errors[] = $twig->errorMessage;
 
+			/*
 			if ($this->ct->Env->legacySupport) {
 				$LayoutProc = new LayoutProcessor($this->ct);
 				$LayoutProc->layout = $html_result;
 				$html_result = $LayoutProc->fillLayout($this->ct->Table->record);
-			}
+			}*/
 		}
 		return $html_result;
 	}

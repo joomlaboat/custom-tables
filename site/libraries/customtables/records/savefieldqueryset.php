@@ -15,12 +15,15 @@ defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
 use Exception;
-use LayoutProcessor;
-use tagProcessor_General;
+
+//use LayoutProcessor;
+
+//use tagProcessor_General;
 use tagProcessor_Item;
 use tagProcessor_If;
 use tagProcessor_Page;
-use tagProcessor_Value;
+
+//use tagProcessor_Value;
 use CustomTables\CustomPHP;
 
 class SaveFieldQuerySet
@@ -642,11 +645,13 @@ class SaveFieldQuerySet
 
 		if (!Fields::isVirtualField($fieldRow) and $this->field->defaultvalue != "" and !isset($this->row_old[$this->field->realfieldname]) and $this->field->type != 'dummy') {
 
+			/*
 			if ($this->ct->Env->legacySupport) {
 				$LayoutProc = new LayoutProcessor($this->ct);
 				$LayoutProc->layout = $this->field->defaultvalue;
 				$this->field->defaultvalue = $LayoutProc->fillLayout($this->row_old);
 			}
+			*/
 
 			$twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
 			$value = $twig->process($this->row_old);
@@ -727,13 +732,14 @@ class SaveFieldQuerySet
 
 		foreach ($field->params as $part) {
 
+			/*
 			if ($this->ct->Env->legacySupport) {
 				tagProcessor_General::process($this->ct, $part, $this->ct->Table->record);
 				tagProcessor_Item::process($this->ct, $part, $this->ct->Table->record, '');
 				tagProcessor_If::process($this->ct, $part, $this->ct->Table->record);
 				tagProcessor_Page::process($this->ct, $part);
 				tagProcessor_Value::processValues($this->ct, $part, $this->ct->Table->record);
-			}
+			}*/
 
 			$twig = new TwigProcessor($this->ct, $part, false, false, false);
 			$part = $twig->process($this->ct->Table->record);

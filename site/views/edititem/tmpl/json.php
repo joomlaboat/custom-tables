@@ -11,7 +11,7 @@
 // no direct access
 
 defined('_JEXEC') or die();
-
+/*
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
 
 use CustomTables\common;
@@ -69,3 +69,4 @@ header("Expires: 0");
 
 echo common::ctJsonEncode($response_object);
 die;//JSON output
+*/

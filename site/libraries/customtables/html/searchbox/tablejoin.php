@@ -15,8 +15,9 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
-use LayoutProcessor;
-use tagProcessor_Value;
+
+//use LayoutProcessor;
+//use tagProcessor_Value;
 
 //use CustomTables\ProInputBoxTableJoin;
 
@@ -230,12 +231,13 @@ class Search_tablejoin extends BaseSearch
 
 		foreach ($ct->Records as $row) {
 			if ($layout_mode) {
+				/*
 				if ($ct->Env->legacySupport) {
 					$LayoutProc = new LayoutProcessor($ct);
 					$LayoutProc->layout = $layoutcode;
 					$v = $LayoutProc->fillLayout($row);
-				} else
-					$v = $layoutcode;
+				} else*/
+				$v = $layoutcode;
 
 				$twig = new TwigProcessor($ct, $v);
 				$v = $twig->process($row);
