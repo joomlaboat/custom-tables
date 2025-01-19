@@ -323,11 +323,19 @@ class Layouts
 			return ['success' => false, 'message' => 'CustomTable: Unknown Layout Type', 'short' => 'error'];
 		}
 
+
 		if ($this->ct->Env->clean == 0) {
+
+			if (isset($this->ct->LayoutVariables['style']))
+				$this->layoutCodeCSS = ($this->layoutCodeCSS ?? '') . $this->ct->LayoutVariables['style'];
+
 			if (!empty($this->layoutCodeCSS)) {
 				$twig = new TwigProcessor($this->ct, $this->layoutCodeCSS, false);
 				$output['style'] = $twig->process($this->ct->Table->record ?? null);
 			}
+
+			if (isset($this->ct->LayoutVariables['script']))
+				$this->layoutCodeJS = ($this->layoutCodeJS ?? '') . $this->ct->LayoutVariables['script'];
 
 			if (!empty($this->layoutCodeJS)) {
 				$twig = new TwigProcessor($this->ct, $this->layoutCodeJS, false);
@@ -348,6 +356,7 @@ class Layouts
 	 */
 	function getLayout($layoutNameOrId, bool $processLayoutTag = true, bool $checkLayoutFile = true): string
 	{
+		$this->layoutId = null;
 		$whereClause = new MySQLWhereClause();
 
 		if (is_int($layoutNameOrId)) {
@@ -424,8 +433,10 @@ class Layouts
 		//if ($processLayoutTag)
 		//	$this->processLayoutTag($layoutCode);
 
-		if ($this->ct->Env->advancedTagProcessor and $this->ct->Env->clean == 0)
+		if ($this->ct->Env->advancedTagProcessor and $this->ct->Env->clean == 0) {
+			echo 'step k<br/>';
 			$this->addCSSandJSIfNeeded($row, $checkLayoutFile);
+		}
 
 		$this->pageLayoutNameString = $row['layoutname'];
 		$this->pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
@@ -488,14 +499,18 @@ class Layouts
 	{
 		//Get CSS content
 		$this->layoutCodeCSS = trim($layoutRow['layoutcss'] ?? '');
+		echo 'kkkkk9:$this->layoutCodeCSS' . $this->layoutCodeCSS . '<br/>';
 
 		if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
+			echo 'step l<br/>';
 			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $this->layoutCodeCSS, $layoutRow['modified_timestamp'], $layoutRow['layoutname'] . '.css', 'layoutcss');
-			if ($content != null)
+			if ($content != null) {
+				echo 'step m<br/>';
 				$this->layoutCodeCSS = $content;
+			}
 		}
 
-		if (empty($this->layoutCodeJS))
+		if (empty($this->layoutCodeCSS))
 			$this->layoutCodeCSS = null;
 
 		//Get JS content
@@ -876,12 +891,9 @@ class Layouts
 					$record->delete($listing_id);
 					$count += 1;
 				} catch (Exception $e) {
-					return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+					return ['success' => false, 'message' => 'Delete records: ' . $e->getMessage(), 'short' => 'error'];
 				}
 			}
-
-			//print_r($listing_ids);
-			//die;
 
 			$message = ($count == 1 ? common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED_1') :
 				common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED', $count));

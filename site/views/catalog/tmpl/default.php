@@ -17,7 +17,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 if ($this->ct->Env->frmt == 'html') {
-	if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
+	if (empty($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
 	{
 		if ($this->ct->Params->showPageHeading) {
 
@@ -32,14 +32,14 @@ if ($this->ct->Env->frmt == 'html') {
 try {
 	$result = $this->catalog->render();
 
-	if (is_null($this->ct->Params->listing_id)) {
+	if (empty($this->ct->Params->listing_id)) {
 		common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
-		if (!empty($this->result['style']))
-			$this->ct->document->addCustomTag('<style>' . $this->result['style'] . '</style>');
+		if (!empty($this->catalog->layoutCodeCSS))
+			$this->ct->document->addCustomTag('<style>' . $this->catalog->layoutCodeCSS . '</style>');
 
-		if (!empty($this->result['script']))
-			$this->ct->document->addCustomTag('<script>' . $this->result['script'] . '</script>');
+		if (!empty($this->catalog->layoutCodeJS))
+			$this->ct->document->addCustomTag('<script>' . $this->catalog->layoutCodeJS . '</script>');
 	}
 
 } catch (Exception $e) {

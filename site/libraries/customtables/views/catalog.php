@@ -15,18 +15,17 @@ defined('_JEXEC') or die();
 
 use Exception;
 
-//use LayoutProcessor;
-
-//use tagProcessor_Catalog;
-//use tagProcessor_CatalogTableView;
-
 class Catalog
 {
 	var CT $ct;
+	var string $layoutCodeCSS;
+	var string $layoutCodeJS;
 
 	function __construct(CT &$ct)
 	{
 		$this->ct = &$ct;
+		$this->layoutCodeCSS = '';
+		$this->layoutCodeJS = '';
 	}
 
 	/**
@@ -142,6 +141,14 @@ class Catalog
 
 					$pageLayout = $Layouts->getLayout($this->ct->Params->pageLayout);//Get Layout by name
 					if (isset($Layouts->layoutId)) {
+
+						if (!empty($Layouts->layoutCodeCSS)) {
+							$this->layoutCodeCSS = $Layouts->layoutCodeCSS;
+						}
+
+						if (!empty($Layouts->layoutCodeJS))
+							$this->layoutCodeJS = $Layouts->layoutCodeJS;
+
 						$pageLayoutNameString = $this->ct->Params->pageLayout;
 						$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 					} else {
@@ -151,6 +158,15 @@ class Catalog
 
 				} elseif (!is_null($this->ct->Params->itemLayout) and $this->ct->Params->itemLayout != '') {
 					$itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
+
+					if (isset($Layouts->layoutId)) {
+						if (!empty($Layouts->layoutCodeCSS))
+							$this->layoutCodeCSS .= $Layouts->layoutCodeCSS;
+
+						if (!empty($Layouts->layoutCodeJS))
+							$this->layoutCodeJS .= $Layouts->layoutCodeJS;
+					}
+
 					$pageLayout = '{% block record %}' . $itemLayout . '{% endblock %}';
 					$pageLayoutNameString = 'Generated_Basic_Page_Layout';
 				} else {
@@ -240,6 +256,25 @@ class Catalog
 
 		if ($this->ct->Params->allowContentPlugins)
 			$pageLayout = CTMiscHelper::applyContentPlugins($pageLayout);
+
+		if ($this->ct->Env->clean == 0) {
+
+			if (isset($this->ct->LayoutVariables['style']))
+				$this->layoutCodeCSS = ($this->layoutCodeCSS ?? '') . $this->ct->LayoutVariables['style'];
+
+			if (!empty($this->layoutCodeCSS)) {
+				$twig = new TwigProcessor($this->ct, $this->layoutCodeCSS, false);
+				$this->layoutCodeCSS = $twig->process($this->ct->Table->record ?? null);
+			}
+
+			if (isset($this->ct->LayoutVariables['script']))
+				$this->layoutCodeJS = ($this->layoutCodeJS ?? '') . $this->ct->LayoutVariables['script'];
+
+			if (!empty($this->layoutCodeJS)) {
+				$twig = new TwigProcessor($this->ct, $this->layoutCodeJS, false);
+				$this->layoutCodeJS = $twig->process($this->ct->Table->record ?? null);
+			}
+		}
 
 		return $pageLayout;
 	}

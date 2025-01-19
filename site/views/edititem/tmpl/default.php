@@ -33,7 +33,11 @@ if ($this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null
 		. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
 }
 
-echo $this->result['html'];
+if (isset($this->result['html'])) {
+	echo $this->result['html'];
+} else {
+	common::enqueueMessage('Details HTML not found');
+}
 
 ?>
 <!-- Modal content -->

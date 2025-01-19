@@ -137,41 +137,48 @@ class TwigProcessor
 	protected function addFieldValueMethods(): void
 	{
 		if (isset($this->ct->Table->fields)) {
+
+			$fieldsAdded = [];
+
 			$index = 0;
 			foreach ($this->ct->Table->fields as $fieldRow) {
 				if ($fieldRow === null or count($fieldRow) == 0) {
-					$this->errorMessage = 'addFieldValueMethods: Field row is empty.';
+					throw new Exception('addFieldValueMethods: Field row is empty.');
 				} else {
-					if ($this->parseParams) {
-						$function = new TwigFunction($fieldRow['fieldname'], function () use (&$ct, $index) {
-							//This function will process record values with field typeparams and with optional arguments
-							//Example:
-							//{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
-							//{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
+					if (!in_array($fieldRow['fieldname'], $fieldsAdded)) {
+						$fieldsAdded[] = $fieldRow['fieldname'];
+						if ($this->parseParams) {
+							$function = new TwigFunction($fieldRow['fieldname'], function () use (&$ct, $index) {
+								//This function will process record values with field typeparams and with optional arguments
+								//Example:
+								//{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
+								//{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
 
-							$args = func_get_args();
+								$args = func_get_args();
 
-							$valueProcessor = new Value($this->ct);
-							return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
-						});
-					} else {
-						$function = new TwigFunction($fieldRow['fieldname'], function () use (&$ct, $index) {
-							//This function will process record values with field typeparams and with optional arguments
-							//Example:
-							//{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
-							//{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
+								$valueProcessor = new Value($this->ct);
+								return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
+							});
+						} else {
+							$function = new TwigFunction($fieldRow['fieldname'], function () use (&$ct, $index) {
+								//This function will process record values with field typeparams and with optional arguments
+								//Example:
+								//{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
+								//{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
 
-							$args = func_get_args();
+								$args = func_get_args();
 
-							$valueProcessor = new Value($this->ct);
-							return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args, false));
-						});
+								$valueProcessor = new Value($this->ct);
+								return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args, false));
+							});
+						}
+
+						$this->twig->addFunction($function);
+						$this->variables[$fieldRow['fieldname']] = new fieldObject($this->ct, $fieldRow, $this->DoHTMLSpecialChars,
+							$this->getEditFieldNamesOnly, $this->parseParams);
+
+						$index++;
 					}
-
-					$this->twig->addFunction($function);
-					$this->variables[$fieldRow['fieldname']] = new fieldObject($this->ct, $fieldRow, $this->DoHTMLSpecialChars,
-						$this->getEditFieldNamesOnly, $this->parseParams);
-					$index++;
 				}
 			}
 		}

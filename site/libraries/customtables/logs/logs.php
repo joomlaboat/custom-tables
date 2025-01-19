@@ -41,7 +41,7 @@ trait Logs
 		try {
 			database::insert('#__customtables_log', $data);
 		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+			throw new Exception('Saving log: ' . $e->getMessage());
 		}
 	}
 }

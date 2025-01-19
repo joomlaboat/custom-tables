@@ -54,39 +54,110 @@ class Twig_Document_Tags
 
 	function setheadtag($tag): void
 	{
-		$this->ct->document->addCustomTag($tag);
+		if (defined('_JEXEC')) {
+			$this->ct->document->addCustomTag($tag);
+		} elseif (defined('WPINC')) {
+			common::enqueueMessage('Warning: The {{ document.setheadtag }} tag is not supported in the current version of the Custom Tables for WordPress.');
+		} else
+			common::enqueueMessage('Warning: The {{ document.setheadtag }} tag is not supported in the current version of the Custom Tables.');
 	}
 
-	function script($link): string
+	/**
+	 * Processes JavaScript content or URL and adds it to the layout variables.
+	 * If the input is a URL to a .js file (with optional query parameters),
+	 * it's added to the 'scripts' array.
+	 * If it's JavaScript content, it's concatenated to the 'script' variable.
+	 *
+	 * @param string $linkOrScript Either a URL to a .js file or JavaScript code
+	 * @return string Empty string as the content is stored in layout variables
+	 *
+	 * @example
+	 * // Adding a JavaScript file
+	 * script('https://example.com/script.js?version=2.3');
+	 *
+	 * @example
+	 * // Adding JavaScript code
+	 * script('alert("Hello World");');
+	 *
+	 * @since 3.5.0
+	 */
+	function script($linkOrScript): string
 	{
-		if (defined('_JEXEC')) {
-			$this->ct->document->addScript($link);
-			return '';
-		} elseif (defined('WPINC')) {
-			if (!isset($this->ct->LayoutVariables['scripts']))
-				$this->ct->LayoutVariables['scripts'] = [];
+		// Clean the input string
+		$input = trim($linkOrScript);
 
-			$this->ct->LayoutVariables['scripts'][] = $link;
-			return '';
-		} else {
-			return '{{ document.script() }} not supported in this version of Custom Tables';
+		// Check if it's a URL
+		if (filter_var($input, FILTER_VALIDATE_URL)) {
+			// Parse the URL and get the path
+			$urlParts = parse_url($input);
+			$path = $urlParts['path'];
+
+			// Check if the path ends with .js, ignoring any URL parameters
+			if (preg_match('/\.js($|\?)/', $path)) {
+
+				if (!isset($this->ct->LayoutVariables['scripts']))
+					$this->ct->LayoutVariables['scripts'] = [];
+
+				$this->ct->LayoutVariables['scripts'][] = $linkOrScript;
+
+				return '';
+			}
 		}
+
+		if (!isset($this->ct->LayoutVariables['script']))
+			$this->ct->LayoutVariables['script'] = $linkOrScript;
+		else
+			$this->ct->LayoutVariables['script'] .= PHP_EOL . $linkOrScript;
+		return '';
 	}
 
-	function style($link): string
+	/**
+	 * Processes CSS content or URL and adds it to the layout variables.
+	 * If the input is a URL to a .css file (with optional query parameters),
+	 * it's added to the 'styles' array.
+	 * If it's CSS content, it's concatenated to the 'style' variable.
+	 *
+	 * @param string $linkOrScript Either a URL to a .css file or CSS code
+	 * @return string Empty string as the content is stored in layout variables
+	 *
+	 * @example
+	 * // Adding a CSS file
+	 * style('https://example.com/styles.css?version=1.2');
+	 *
+	 * @example
+	 * // Adding CSS code
+	 * style('.my-class { color: blue; }');
+	 *
+	 * @since 3.5.0
+	 */
+	function style($linkOrStyle): string
 	{
-		if (defined('_JEXEC')) {
-			$this->ct->document->addStyleSheet($link);
-			return '';
-		} elseif (defined('WPINC')) {
-			if (!isset($this->ct->LayoutVariables['styles']))
-				$this->ct->LayoutVariables['styles'] = [];
+		// Clean the input string
+		$input = trim($linkOrStyle);
 
-			$this->ct->LayoutVariables['styles'][] = $link;
-			return '';
-		} else {
-			return '{{ document.style() }} not supported in this version of Custom Tables';
+		// Check if it's a URL
+		if (filter_var($input, FILTER_VALIDATE_URL)) {
+			// Parse the URL and get the path
+			$urlParts = parse_url($input);
+			$path = $urlParts['path'];
+
+			// Check if the path ends with .js, ignoring any URL parameters
+			if (preg_match('/\.css($|\?)/', $path)) {
+
+				if (!isset($this->ct->LayoutVariables['styles']))
+					$this->ct->LayoutVariables['styles'] = [];
+
+				$this->ct->LayoutVariables['styles'][] = $linkOrStyle;
+
+				return '';
+			}
 		}
+
+		if (!isset($this->ct->LayoutVariables['style']))
+			$this->ct->LayoutVariables['style'] = $linkOrStyle;
+		else
+			$this->ct->LayoutVariables['style'] .= PHP_EOL . $linkOrStyle;
+		return '';
 	}
 
 	function jslibrary($library): string
@@ -150,6 +221,12 @@ class Twig_Document_Tags
 			return '';
 		}
 
+		if (!empty($layouts->layoutCodeCSS))
+			$this->ct->LayoutVariables['style'] = ($this->ct->LayoutVariables['style'] ?? '') . $layouts->layoutCodeCSS;
+
+		if (!empty($layouts->layoutCodeJS))
+			$this->ct->LayoutVariables['script'] = ($this->ct->LayoutVariables['script'] ?? '') . $layouts->layoutCodeJS;
+
 		$twig = new TwigProcessor($this->ct, $layout, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
 		$number = 1;
 		$html_result = '';
@@ -178,14 +255,8 @@ class Twig_Document_Tags
 			$html_result = $twig->process($this->ct->Table->record);
 			if ($twig->errorMessage !== null)
 				$this->ct->errors[] = $twig->errorMessage;
-
-			/*
-			if ($this->ct->Env->legacySupport) {
-				$LayoutProc = new LayoutProcessor($this->ct);
-				$LayoutProc->layout = $html_result;
-				$html_result = $LayoutProc->fillLayout($this->ct->Table->record);
-			}*/
 		}
+
 		return $html_result;
 	}
 

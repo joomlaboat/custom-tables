@@ -55,7 +55,8 @@ class IntegrityTables extends IntegrityChecks
 					else
 						$link .= '&';
 
-					$result[] = '<p><span style="font-size:1.3em;">' . $table['tabletitle'] . '</span><br/><span style="color:gray;">' . $table['realtablename'] . '</span>'
+					$result[] = '<p><span style="font-size:1.3em;">' . $ct->Table->tabletitle . '</span><br/><span style="color:gray;">'
+						. $ct->Table->realtablename . '</span>'
 						. ' <a href="' . $link . 'task=fixfieldtype&fieldname=all_fields">Fix all fields</a>'
 						. '</p>'
 						. $content

@@ -52,6 +52,24 @@ class CustomTablesViewCatalog extends HtmlView
 	 */
 	function renderCatalog($tpl): bool
 	{
+		/*
+
+		FUTURE USE
+
+		if (!empty($this->ct->Params->tableName))
+			$this->ct->getTable($this->ct->Params->tableName);
+
+		if ($this->ct->Table === null) {
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'));
+			return false;
+		}
+
+		$layout = new Layouts($this->ct);
+		$layout->getLayout($this->ct->Params->editLayout);
+
+		$result = $layout->renderMixedLayout($this->ct->Params->editLayout);
+		*/
+
 		$this->catalog = new Catalog($this->ct);
 
 		if ($this->ct->Env->frmt == 'csv') {

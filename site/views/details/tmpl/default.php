@@ -38,7 +38,14 @@ if (!empty($this->result['style']))
 if (!empty($this->result['script']))
 	$this->ct->document->addCustomTag('<script>' . $this->result['script'] . '</script>');
 
-$results = $this->details->render();
+$results = '';
+
+try {
+	$results = $this->details->render();
+} catch (Throwable $e) {
+	common::enqueueMessage($e->getMessage(), 'error');
+}
+
 
 if ($this->ct->Env->frmt == 'csv') {
 	/**
