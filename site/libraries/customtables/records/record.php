@@ -29,6 +29,11 @@ class record
 	var ?string $listing_id;
 	var bool $isItNewRecord;
 
+	var bool $unauthorized = false;
+	var bool $incorrectCaptcha = false;
+
+	var ?string $message;
+
 	function __construct(CT $ct)
 	{
 		$this->ct = $ct;
@@ -37,6 +42,157 @@ class record
 		$this->listing_id = null;
 		$this->editForm = new Edit($ct);
 		$this->isItNewRecord = true;
+		$this->unauthorized = false;
+		$this->incorrectCaptcha = false;
+		$this->message = null;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	function delete(?string $listing_id): void
+	{
+		if (empty($listing_id))
+			$listing_id = common::inputGetCmd('listing_id');
+
+		if (empty($listing_id))
+			throw new Exception(common::translate('Records ID cannot be empty'));
+
+		$this->ct->Params->listing_id = $listing_id;
+		$this->ct->getRecord();
+
+		if ($this->ct->Table->record === null)
+			throw new Exception(common::translate('Records not found'));
+
+		if (!$this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_DELETE)) {
+			$this->unauthorized = true;
+			$this->message = common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED');
+			throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+		}
+
+		try {
+			$this->ct->deleteSingleRecord($this->ct->Table->record);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	function publish(?string $listing_id, int $status): void
+	{
+		if (empty($listing_id))
+			$listing_id = common::inputGetCmd('listing_id');
+
+		if (empty($listing_id))
+			throw new Exception(common::translate('Records ID cannot be empty'));
+
+		$this->ct->Params->listing_id = $listing_id;
+		$this->ct->getRecord();
+
+		if ($this->ct->Table->record === null)
+			throw new Exception(common::translate('Records not found'));
+
+		if (!$this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_PUBLISH)) {
+			$this->unauthorized = true;
+			$this->message = common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED');
+			throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+		}
+
+		try {
+			$this->ct->setPublishStatusSingleRecord($listing_id, $status);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+	}
+
+	function copy(?string $listing_id): void
+	{
+		if (empty($listing_id))
+			$listing_id = common::inputGetCmd('listing_id');
+
+		if (empty($listing_id))
+			throw new Exception(common::translate('Records ID cannot be empty'));
+
+		$this->ct->Params->listing_id = $listing_id;
+		$this->ct->getRecord();
+
+		if ($this->ct->Table->record === null)
+			throw new Exception(common::translate('Records not found'));
+
+		if (!$this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_ADD)) {
+			$this->unauthorized = true;
+			$this->message = common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED');
+			throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+		}
+
+		$newRow = $this->ct->Table->record;
+
+		try {
+			if ($this->ct->Table->published_field_found) {
+				if (isset($newRow['listing_published'])) {
+					$newRow['published'] = $newRow['listing_published'];
+					unset($newRow['listing_published']);
+				}
+			}
+
+			$this->insert($newRow);
+			$this->ct->RefreshSingleRecord($this->listing_id, false);
+
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+	}
+
+	protected function insert(array $row): void
+	{
+		if (!empty($this->ct->Table->tablerow['primarykeypattern']) and $this->ct->Table->tablerow['primarykeypattern'] != 'AUTO_INCREMENT') {
+			$twig = new TwigProcessor($this->ct, $this->ct->Table->tablerow['primarykeypattern']);
+			$this->listing_id = $twig->process($row);
+			$row[$this->ct->Table->realidfieldname] = $this->listing_id;
+		} else {
+			$row[$this->ct->Table->realidfieldname] = null;
+		}
+
+		try {
+			$this->listing_id = database::insert($this->ct->Table->realtablename, $row);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	function refresh(?string $listing_id): void
+	{
+		if (empty($listing_id))
+			$listing_id = common::inputGetCmd('listing_id');
+
+		if (empty($listing_id))
+			throw new Exception(common::translate('Records ID cannot be empty'));
+
+		$this->ct->Params->listing_id = $listing_id;
+		$this->ct->getRecord();
+
+		if ($this->ct->Table->record === null)
+			throw new Exception(common::translate('Records not found'));
+
+		if (!$this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT)) {
+			$this->unauthorized = true;
+			$this->message = common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED');
+			throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+		}
+
+		try {
+			$this->ct->RefreshSingleRecord($listing_id, true);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 	}
 
 	/**
@@ -63,14 +219,19 @@ class record
 			$this->ct->getRecord();
 			$this->row_old = $this->ct->Table->record;
 		} else
-			$this->row_old[$this->ct->Table->realidfieldname] = '';// Why? TODO:: I think it should be NULL
+			$this->row_old[$this->ct->Table->realidfieldname] = null;
+
+		if (!$this->ct->CheckAuthorization($isCopy ? CUSTOMTABLES_ACTION_COPY : CUSTOMTABLES_ACTION_EDIT)) {
+			$this->unauthorized = true;
+			throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+		}
 
 		$fieldsToSave = $this->getFieldsToSave($this->row_old); //will Read page Layout to find fields to save
 
 		if (($this->ct->LayoutVariables['captcha'] ?? null)) {
 			if (!$this->check_captcha()) {
-				common::enqueueMessage(common::translate('COM_CUSTOMTABLES_INCORRECT_CAPTCHA'));
-				return false;
+				$this->incorrectCaptcha = true;
+				throw new Exception(common::translate('COM_CUSTOMTABLES_INCORRECT_CAPTCHA'));
 			}
 		}
 
@@ -95,32 +256,37 @@ class record
 				$phpOnChangeFound = true;
 		}
 
-		if (empty($this->listing_id)) {
+		if (empty($this->listing_id) or $isCopy) {
 			$this->isItNewRecord = true;
 
 			if ($this->ct->Table->published_field_found)
 				$saveField->row_new['published'] = $this->ct->Params->publishStatus;
+			/*
+						if (!empty($this->ct->Table->tablerow['primarykeypattern']) and $this->ct->Table->tablerow['primarykeypattern'] != 'AUTO_INCREMENT') {
 
-			if (!empty($this->ct->Table->tablerow['primarykeypattern']) and $this->ct->Table->tablerow['primarykeypattern'] != 'AUTO_INCREMENT') {
+							$twig = new TwigProcessor($this->ct, $this->ct->Table->tablerow['primarykeypattern']);
+							$this->listing_id = $twig->process($saveField->row_new);
+							$saveField->row_new[$this->ct->Table->realidfieldname] = $this->listing_id;
 
-				$twig = new TwigProcessor($this->ct, $this->ct->Table->tablerow['primarykeypattern']);
-				$this->listing_id = $twig->process($saveField->row_new);
-				$saveField->row_new[$this->ct->Table->realidfieldname] = $this->listing_id;
+							try {
+								database::insert($this->ct->Table->realtablename, $saveField->row_new);
+							} catch (Exception $e) {
+								throw new Exception($e->getMessage());
+							}
+						} else {
+							try {
+								$this->listing_id = database::insert($this->ct->Table->realtablename, $saveField->row_new);
+								echo '$this->listing_id:' . $this->listing_id . '<br/>';
+							} catch (Exception $e) {
+								throw new Exception($e->getMessage());
+							}
+						}
+			*/
+			//if ($this->ct->Table->published_field_found)
+			//$row['published'] = $this->ct->Params->publishStatus;
 
-				try {
-					database::insert($this->ct->Table->realtablename, $saveField->row_new);
-				} catch (Exception $e) {
-					$this->ct->errors[] = $e->getMessage();
-					die('record.php:116 ' . $e->getMessage());
-				}
-			} else {
-				try {
-					$this->listing_id = database::insert($this->ct->Table->realtablename, $saveField->row_new);
-				} catch (Exception $e) {
-					$this->ct->errors[] = $e->getMessage();
-					die('record.php:124 ' . $e->getMessage());
-				}
-			}
+
+			$this->insert($saveField->row_new);
 
 		} else {
 			$this->isItNewRecord = false;
@@ -133,17 +299,18 @@ class record
 				$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
 				database::update($this->ct->Table->realtablename, $saveField->row_new, $whereClauseUpdate);
 			} catch (Exception $e) {
-				$this->ct->errors[] = $e->getMessage();
-				die('Error: ' . $e->getMessage());
+				throw new Exception($e->getMessage());
 			}
 		}
 
 		//TODO: you probably should let empty records to be created
 		if (count($saveField->row_new) < 1) {
+			echo 'exited.';
 			return false;
 		}
 
-		if ($this->isItNewRecord) {
+		if ($this->isItNewRecord) {// or $isCopy
+			echo '$this->isItNewRecord or $isCopy<br/>';
 			if (!empty($this->listing_id)) {
 				$this->ct->Params->listing_id = $this->listing_id;
 				$this->ct->getRecord();
@@ -162,7 +329,7 @@ class record
 					try {
 						$this->ct->Table->saveLog($this->listing_id, 1);
 					} catch (Exception $e) {
-						$this->ct->errors[] = $e->getMessage();
+						throw new Exception($e->getMessage());
 					}
 				}
 			}
@@ -171,7 +338,7 @@ class record
 			try {
 				$this->ct->Table->saveLog($this->listing_id, 2);
 			} catch (Exception $e) {
-				$this->ct->errors[] = $e->getMessage();
+				throw new Exception($e->getMessage());
 			}
 
 			$this->ct->Params->listing_id = $this->listing_id;

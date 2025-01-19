@@ -111,7 +111,7 @@ class Table
 		$this->alias_fieldname = '';
 		$this->imagegalleries = array();
 		$this->fileboxes = array();
-		$this->useridfieldname = '';
+		$this->useridfieldname = null;
 
 		if (!empty($this->tablerow['customfieldprefix'])) {
 			$this->fieldPrefix = $this->tablerow['customfieldprefix'];

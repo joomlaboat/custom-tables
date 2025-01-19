@@ -11,9 +11,8 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\Edit;
+use CustomTables\Layouts;
 use Joomla\CMS\MVC\View\HtmlView;
 use CustomTables\ctProHelpers;
 
@@ -23,59 +22,32 @@ jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditItem extends HtmlView
 {
 	var CT $ct;
-	var string $formLink;
-	var Edit $editForm;
+	var $result;
 
 	function display($tpl = null): bool
 	{
 		$this->ct = new CT(null, false);
 		$this->ct->Params->constructJoomlaParams();
 
-		$Model = $this->getModel();
-		$Model->load($this->ct);
+		if (!empty($this->ct->Params->tableName))
+			$this->ct->getTable($this->ct->Params->tableName);
 
-		if (!$this->ct->CheckAuthorization(1)) {
-			//not authorized
-			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-			echo common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED');
-			return false;
+		$layout = new Layouts($this->ct);
+
+		$this->result = $layout->renderMixedLayout($this->ct->Params->editLayout);
+		if ($this->result['success']) {
+			if ($this->ct->Env->isModal)
+				die($this->result['html']);
+			elseif ($this->ct->Env->clean)
+				die($this->result['short']);
+		} else {
+			if ($this->ct->Env->isModal)
+				die($this->result['message']);
+			elseif ($this->ct->Env->clean)
+				die($this->result['short']);
 		}
 
-		if (empty($this->ct->Table)) {
-			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'));
-			echo common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED');
-			return false;
-		}
-
-		if (!isset($this->ct->Table->fields) or !is_array($this->ct->Table->fields)) {
-			common::enqueueMessage('Fields not set');
-			echo common::translate('Fields not set');
-			return false;
-		}
-
-		if ($this->ct->Env->frmt == 'json')
-
-			require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
-		else {
-
-			$this->formLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem' . ($this->ct->Params->ItemId != 0 ? '&amp;Itemid=' . $this->ct->Params->ItemId : '');
-			if (!is_null($this->ct->Params->ModuleId))
-				$this->formLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
-
-			$this->editForm = new Edit($this->ct);
-			if (!$this->editForm->load()) {
-				if (count($this->ct->errors) > 0)
-					common::enqueueMessage('Errors: ' . implode(',', $this->ct->errors));
-
-				echo common::translate('Errors:' . implode(',', $this->ct->errors));
-				return false;
-			}
-
-			if (!empty($this->ct->Params->listing_id))
-				$this->ct->getRecord();
-
-			parent::display($tpl);
-		}
+		parent::display($tpl);
 		return true;
 	}
 }

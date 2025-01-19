@@ -206,7 +206,9 @@
 			   default="null"
 			   required="true"
 			   key_field="id"
-			   value_field="tabletitle">
+			   value_field="tabletitle"
+			   addfieldpath="/components/com_customtables/models/fields"
+		>
 			<!-- No Manual Options Were Added In Field Settings.-->
 		</field>
 		<!-- Defaultvalue Field. Type: Text. (joomla)-->

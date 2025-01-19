@@ -70,7 +70,7 @@ class Twig_HTML_Tags
 		$add_userGroup = (int)$this->ct->Params->addUserGroups;
 
 		if (!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup, $userGroups))
-			return '2'; //Not permitted
+			return ''; //Not permitted
 
 		if (defined('_JEXEC')) {
 			if ($Alias_or_ItemId != '' and is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)

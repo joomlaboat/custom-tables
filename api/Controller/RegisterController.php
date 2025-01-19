@@ -32,17 +32,17 @@ class RegisterController
 
 		foreach ($requiredFields as $field) {
 			if (!isset($data->$field) || empty($data->$field))
-				CustomTablesAPIHelpers::fireError(400, ucfirst($field) . ' is required', 'Bad Request');
+				CTMiscHelper::fireError(400, ucfirst($field) . ' is required', 'Bad Request');
 		}
 
 		// Validate passwords match
 		if ($data->password !== $data->password_confirm) {
-			CustomTablesAPIHelpers::fireError(400, 'Passwords do not match', 'Bad Request');
+			CTMiscHelper::fireError(400, 'Passwords do not match', 'Bad Request');
 		}
 
 		// Validate email format
 		if (!filter_var($data->email, FILTER_VALIDATE_EMAIL)) {
-			CustomTablesAPIHelpers::fireError(400, 'Invalid email format', 'Bad Request');
+			CTMiscHelper::fireError(400, 'Invalid email format', 'Bad Request');
 		}
 
 		try {
@@ -88,7 +88,7 @@ class RegisterController
 
 			// Save user
 			if (!$user->save()) {
-				CustomTablesAPIHelpers::fireError(400, 'Failed to create user', 'Bad Request');
+				CTMiscHelper::fireError(400, 'Failed to create user', 'Bad Request');
 			}
 
 			$db->transactionCommit();
@@ -112,7 +112,7 @@ class RegisterController
 			$lifetime = Factory::getApplication()->get('lifetime', 15);
 			$expires_in = $lifetime * 60;
 
-			CustomTablesAPIHelpers::fireSuccess($user->id, [
+			CTMiscHelper::fireSuccess($user->id, [
 				'access_token' => $token,
 				'token_type' => 'Bearer',
 				'expires_in' => $expires_in,
@@ -124,7 +124,7 @@ class RegisterController
 				]
 			], 'Registration successful');
 		} catch (Exception $e) {
-			CustomTablesAPIHelpers::fireError(400, $e->getMessage(), 'Bad Request');
+			CTMiscHelper::fireError(400, $e->getMessage(), 'Bad Request');
 		}
 		die;
 	}

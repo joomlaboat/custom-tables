@@ -31,6 +31,13 @@ use CustomTables\common;
 use CustomTables\CTMiscHelper;
 
 common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+
+if (!empty($this->result['style']))
+	$this->ct->document->addCustomTag('<style>' . $this->result['style'] . '</style>');
+
+if (!empty($this->result['script']))
+	$this->ct->document->addCustomTag('<script>' . $this->result['script'] . '</script>');
+
 $results = $this->details->render();
 
 if ($this->ct->Env->frmt == 'csv') {

@@ -32,7 +32,7 @@ switch ($task) {
 	case 'publish':
 
 		$model = $this->getModel('edititem');
-		if (!$ct->CheckAuthorization(2)) {
+		if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_PUBLISH)) {
 			$returnToEncoded = common::makeReturnToURL();
 			$link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
 			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
@@ -56,7 +56,7 @@ switch ($task) {
 	case 'unpublish':
 
 		$model = $this->getModel('edititem');
-		if (!$ct->CheckAuthorization(2)) {
+		if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_PUBLISH)) {
 			$returnToEncoded = common::makeReturnToURL();
 			$link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
 			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));

@@ -14,7 +14,6 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\Edit;
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 if (CUSTOMTABLES_JOOMLA_MIN_4) {
@@ -25,8 +24,7 @@ if (CUSTOMTABLES_JOOMLA_MIN_4) {
 	HTMLHelper::_('behavior.keepalive');
 }
 
-$document = Factory::getDocument();
-$document->addStyleSheet(common::UriRoot(true) . "/components/com_customtables/libraries/customtables/media/css/style.css");
+common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 $editForm = new Edit($this->ct);
 $editForm->layoutContent = $this->pageLayout;

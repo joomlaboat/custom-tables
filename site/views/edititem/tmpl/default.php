@@ -11,11 +11,30 @@
 // no direct access
 defined('_JEXEC') or die();
 
-if ($this->ct->Env->isModal) {
-	echo $this->editForm->render($this->ct->Table->record, $this->formLink, 'ctEditModalForm');
-	die;//Modal Edit Form
-} else
-	echo $this->editForm->render($this->ct->Table->record, $this->formLink, 'ctEditForm');
+use CustomTables\common;
+use Joomla\CMS\HTML\HTMLHelper;
+
+if ($this->ct->Params->ModuleId === null or $this->ct->Params->ModuleId == 0) {
+	HTMLHelper::_('jquery.framework');
+	jimport('joomla.html.html.bootstrap');
+}
+
+common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+
+if (!empty($this->result['style']))
+	$this->ct->document->addCustomTag('<style>' . $this->result['style'] . '</style>');
+
+if (!empty($this->result['script']))
+	$this->ct->document->addCustomTag('<script>' . $this->result['script'] . '</script>');
+
+if ($this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
+
+	echo '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
+		. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
+}
+
+echo $this->result['html'];
+
 ?>
 <!-- Modal content -->
 <div id="ctModal" class="ctModal">

@@ -16,6 +16,8 @@ use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
+use CustomTables\Layouts;
+use CustomTables\record;
 use CustomTables\TableHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
@@ -36,34 +38,27 @@ class CustomtablesControllerListOfRecords extends AdminController
 	 */
 	public function publish()
 	{
-		$tableid = common::inputGet('tableid', 0, 'int');
+		$tableid = common::inputGetInt('tableid', 0);
 
 		$ct = new CT([], true);
 		$ct->getTable($tableid);
 
 		if ($ct->Table === null) {
-			Factory::getApplication()->enqueueMessage('Table not set', 'error');
+			Factory::getApplication()->enqueueMessage('Table "' . $tableid . '" not found', 'error');
 			return;
 		}
 
-		$status = (int)($this->task == 'publish');
-		$cid = common::inputPostArray('cid', []);
-		foreach ($cid as $id) {
-			if ($id != '') {
-				if ($ct->setPublishStatusSingleRecord($id, $status) == -1)
-					break;
-			}
+		$layout = new Layouts($ct);
+		$result = $layout->renderMixedLayout($ct->Params->editLayout, null, $this->task);
+
+		if ($result['success']) {
+			Factory::getApplication()->enqueueMessage($result['message'], 'success');
+		} else {
+			Factory::getApplication()->enqueueMessage($result['message'], 'error');
 		}
 
 		$redirect = 'index.php?option=' . $this->option;
 		$redirect .= '&view=listofrecords&tableid=' . (int)$tableid;
-
-		$msg = $this->task == 'publish' ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED';
-
-		if (count($cid) == 1)
-			$msg .= '_1';
-
-		Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
 
 		// Redirect to the item screen.
 		$this->setRedirect(
@@ -85,29 +80,21 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$ct->getTable($tableid);
 
 		if ($ct->Table === null) {
-			Factory::getApplication()->enqueueMessage('Table not set', 'error');
+			Factory::getApplication()->enqueueMessage('Table "' . $tableid . '" not found', 'error');
 			return;
 		}
 
-		$cid = common::inputPostArray('cid', []);
+		$layout = new Layouts($ct);
+		$result = $layout->renderMixedLayout($ct->Params->editLayout, null, $this->task);
 
-		foreach ($cid as $id) {
-			if ($id != '') {
-				$ok = $ct->deleteSingleRecord($id);
-				if (!$ok)
-					break;
-			}
+		if ($result['success']) {
+			Factory::getApplication()->enqueueMessage($result['message'], 'success');
+		} else {
+			Factory::getApplication()->enqueueMessage($result['message'], 'error');
 		}
 
 		$redirect = 'index.php?option=' . $this->option;
 		$redirect .= '&view=listofrecords&tableid=' . (int)$tableid;
-
-		$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED';
-
-		if (count($cid) == 1)
-			$msg .= '_1';
-
-		Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
 
 		// Redirect to the item screen.
 		$this->setRedirect(

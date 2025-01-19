@@ -130,8 +130,8 @@ class CT
 		$this->Ordering = new Ordering($this->Table, $this->Params);
 		$selects = $this->Table->selects;
 
-		if ($this->Filter === null)
-			$this->setFilter($this->Params->filter, $this->Params->showPublished);
+		//if ($this->Filter === null)
+		$this->setFilter($this->Params->filter, $this->Params->showPublished);
 
 		if (!is_null($this->Params->alias) and $this->Table->alias_fieldname != '')
 			$this->Filter->addWhereExpression($this->Table->alias_fieldname . '="' . $this->Params->alias . '"');
@@ -219,7 +219,7 @@ class CT
 	 */
 	function getTable($tableNameOrID, $userIdFieldName = null, bool $loadAllField = false): void
 	{
-		$this->Table = new Table($this->Languages, $this->Env, $tableNameOrID, $userIdFieldName, $loadAllField);
+		$this->Table = new Table($this->Languages, $this->Env, $tableNameOrID, $this->Params->userIdField, $loadAllField);
 
 		if ($this->Table->tablename !== null) {
 			$this->Ordering = new Ordering($this->Table, $this->Params);
@@ -451,18 +451,8 @@ class CT
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public function deleteSingleRecord($listing_id): int
+	public function deleteSingleRecord(array $row): void
 	{
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
-
-		$rows = database::loadAssocList($this->Table->realtablename, $this->Table->selects, $whereClause, null, null, 1);
-
-		if (count($rows) == 0)
-			return -1;
-
-		$row = $rows[0];
-
 		//delete images if exist
 		$imageMethods = new CustomTablesImageMethods;
 
@@ -480,7 +470,7 @@ class CT
 					$imageMethods->DeleteExistingSingleImage(
 						$row[$field->realfieldname],
 						$ImageFolderArray['path'],
-						$field->params[0],
+						$field->params[0] ?? '',
 						$this->Table->realtablename,
 						$field->realfieldname,
 						$this->Table->realidfieldname,
@@ -495,7 +485,7 @@ class CT
 				$photoTableName = '#__customtables_gallery_' . $this->Table->tablename . '_' . $galleryName;
 
 				$whereClause = new MySQLWhereClause();
-				$whereClause->addCondition('listingid', $listing_id);
+				$whereClause->addCondition('listingid', $row[$this->Table->realidfieldname]);
 
 				$photoRows = database::loadObjectList($photoTableName, ['photoid'], $whereClause);
 				$imageGalleryPrefix = 'g';
@@ -507,17 +497,17 @@ class CT
 						$this->Table->tableid,
 						$galleryName,
 						$photoRow->photoid,
-						$field->params[0],
+						$field->params[0] ?? '',
 						true
 					);
 				}
 			}
 		}
 
-		database::deleteRecord($this->Table->realtablename, $this->Table->realidfieldname, $listing_id);
+		database::deleteRecord($this->Table->realtablename, $this->Table->realidfieldname, $row[$this->Table->realidfieldname]);
 
 		if ($this->Env->advancedTagProcessor)
-			$this->Table->saveLog($listing_id, 5);
+			$this->Table->saveLog($row[$this->Table->realidfieldname], 5);
 
 		$new_row = array();
 
@@ -525,18 +515,16 @@ class CT
 			$customPHP = new CustomPHP($this, 'delete');
 			$customPHP->executeCustomPHPFile($this->Table->tablerow['customphp'], $new_row, $row);
 		}
-
-		return 1;
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.3
 	 */
-	public function setPublishStatusSingleRecord($listing_id, int $status): int
+	public function setPublishStatusSingleRecord(string $listing_id, int $status): void
 	{
 		if (!$this->Table->published_field_found)
-			return -1;
+			throw new Exception("Field `published` not found.");
 
 		$data = [
 			'published' => $status
@@ -550,15 +538,14 @@ class CT
 		else
 			$this->Table->saveLog($listing_id, 4);
 
-		$this->RefreshSingleRecord($listing_id, 0, ($status == 1 ? 'publish' : 'unpublish'));
-		return 1;
+		$this->RefreshSingleRecord($listing_id, false, ($status == 1 ? 'publish' : 'unpublish'));
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public function RefreshSingleRecord($listing_id, $save_log, string $action = 'refresh'): int
+	public function RefreshSingleRecord($listing_id, bool $save_log, string $action = 'refresh'): void
 	{
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
@@ -566,7 +553,7 @@ class CT
 		$rows = database::loadAssocList($this->Table->realtablename, $this->Table->selects, $whereClause, null, null, 1);
 
 		if (count($rows) == 0)
-			return -1;
+			throw new Exception("No record found.");
 
 		$row = $rows[0];
 		$saveField = new SaveFieldQuerySet($this, $row, false);
@@ -594,13 +581,13 @@ class CT
 		//update MD5s
 		$this->updateMD5($listing_id);
 
-		if ($save_log == 1)
+		if ($save_log)
 			$this->Table->saveLog($listing_id, 10);
 
 		//TODO use $saveField->saveField
 		//$this->updateDefaultValues($row);
 
-		if ($this->Env->advancedTagProcessor) {
+		if ($this->Env->advancedTagProcessor and $this->Table->tablerow['customphp'] !== null) {
 			$customPHP = new CustomPHP($this, $action);
 			$customPHP->executeCustomPHPFile($this->Table->tablerow['customphp'], $row, $row);
 		}
@@ -614,7 +601,6 @@ class CT
 				$saveField->sendEmailIfAddressSet($listing_id, $row, $this->Params->onRecordSaveSendEmailTo);
 			}
 		}
-		return 1;
 	}
 
 	/**
@@ -654,36 +640,27 @@ class CT
 	 * @throws Exception
 	 * @since 3.2.3
 	 */
-	public function CheckAuthorization(int $action = 1): bool
+	public function CheckAuthorization(int $action = CUSTOMTABLES_ACTION_EDIT): bool
 	{
-		$listing_id = $this->Params->listing_id;
-		$userIdField = $this->Params->userIdField;
-
 		if ($action == 0)
 			return true;
 
-		if ($action == 5) //force edit
+		if ($action == CUSTOMTABLES_ACTION_FORCE_EDIT) //force edit
 		{
-			$action = 1;
+			$action = CUSTOMTABLES_ACTION_EDIT;
 		} else {
-			if ($action == 1 and $listing_id == 0)
-				$action = 4; //add new
+			if ($action == CUSTOMTABLES_ACTION_EDIT and empty($this->Params->listing_id))
+				$action = CUSTOMTABLES_ACTION_ADD; //add new
 		}
 
-		if ($this->Params->guestCanAddNew == 1)
-			return true;
-
-		if ($this->Params->guestCanAddNew == -1 and $listing_id == 0)
-			return false;
-
 		//check is authorized or not
-		if ($action == 1)
+		if ($action == CUSTOMTABLES_ACTION_EDIT)
 			$userGroup = $this->Params->editUserGroups;
-		elseif ($action == 2)
+		elseif ($action == CUSTOMTABLES_ACTION_PUBLISH)
 			$userGroup = $this->Params->publishUserGroups;
-		elseif ($action == 3)
+		elseif ($action == CUSTOMTABLES_ACTION_DELETE)
 			$userGroup = $this->Params->deleteUserGroups;
-		elseif ($action == 4)
+		elseif ($action == CUSTOMTABLES_ACTION_ADD)
 			$userGroup = $this->Params->addUserGroups;
 		else
 			$userGroup = null;
@@ -696,15 +673,32 @@ class CT
 			return true;
 		}
 
-		if ($listing_id === null or $listing_id === "" or $listing_id == 0 or $userIdField == '')
+		//echo '$action2:' . $action . '<br/>';
+		//echo '$userGroup:' . $userGroup . '<br/>';
+		//echo '$this->Env->user->groups:';
+		//print_r($this->Env->user->groups);
+		//die;
+
+		if (empty($this->Params->listing_id))
 			return $this->Env->user->checkUserGroupAccess($userGroup);
 
-		$theAnswerIs = $this->checkIfItemBelongsToUser($listing_id, $userIdField);
+		$authorized = false;
 
-		if (!$theAnswerIs)
+		if ($this->Params->userIdField !== null)
+			$authorized = $this->checkIfItemBelongsToUser($this->Params->listing_id, $this->Params->userIdField);
+
+		if ($authorized)
+			return true;
+
+		if ($action == CUSTOMTABLES_ACTION_COPY) {
+			//Copy action requires both access levels
+			if ($this->Env->user->checkUserGroupAccess($this->Params->editUserGroups))
+				return $this->Env->user->checkUserGroupAccess($this->Params->addUserGroups);
+
+			return false;
+		} else {
 			return $this->Env->user->checkUserGroupAccess($userGroup);
-
-		return true;
+		}
 	}
 
 	/**
@@ -713,6 +707,7 @@ class CT
 	 */
 	public function checkIfItemBelongsToUser(string $listing_id, string $userIdField): bool
 	{
+		//TODO: The record is already loaded, just check if it belongs to a user
 		$whereClause = $this->UserIDField_BuildWheres($userIdField, $listing_id);
 		$rows = database::loadObjectList($this->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
 
@@ -820,5 +815,32 @@ class CT
 			$whereClause->addCondition($this->Table->realidfieldname, $listing_id);
 
 		return $whereClause;
+	}
+
+	function CheckAuthorizationACL($access): bool
+	{
+		$this->isAuthorized = false;
+
+		if ($access == 'core.edit' and empty($this->listing_id))
+			$access = 'core.create'; //add new
+
+		if ($this->ct->Env->user->authorise($access, 'com_customtables')) {
+			$this->isAuthorized = true;
+			return true;
+		}
+
+		if ($access != 'core.edit')
+			return false;
+
+		if ($this->ct->Params->userIdField != '') {
+			if ($this->ct->checkIfItemBelongsToUser($this->listing_id, $this->ct->Params->userIdField)) {
+				if ($this->ct->Env->user->authorise('core.edit.own', 'com_customtables')) {
+					$this->isAuthorized = true;
+					return true;
+				} else
+					$this->isAuthorized = false;
+			}
+		}
+		return false;
 	}
 }

@@ -27,7 +27,7 @@ class LogoutController
 			$user = Factory::getUser($userId);
 
 			if (!$user->id)
-				CustomTablesAPIHelpers::fireError(401, 'User not found', 'Invalid user');
+				CTMiscHelper::fireError(401, 'User not found', 'Invalid user');
 
 			// Get database connection
 			$db = Factory::getDbo();
@@ -51,7 +51,7 @@ class LogoutController
 			]);
 
 		} catch (Exception $e) {
-			CustomTablesAPIHelpers::fireError(500, 'Server Error');
+			CTMiscHelper::fireError(500, 'Server Error');
 		}
 	}
 }

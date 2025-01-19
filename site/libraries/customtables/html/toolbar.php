@@ -127,12 +127,8 @@ class RecordToolbar
 				$editLink .= '&amp;returnto=' . $tmp_current_url;
 				$link = 'javascript:ctEditModal(\'' . $editLink . '\',null)';
 			} else {
-				$returnToEncoded = common::getReturnToURL(false);
-
-				if (!empty($returnToEncoded))
-					$link = $editLink . '&amp;returnto=' . $returnToEncoded;
-				else
-					$link = $editLink;
+				$returnToEncoded = base64_encode(common::curPageURL());//common::getReturnToURL(false);
+				$link = $editLink . '&amp;returnto=' . $returnToEncoded;
 			}
 		} elseif (defined('WPINC')) {
 			$link = common::curPageURL();
@@ -218,8 +214,12 @@ class RecordToolbar
 			else
 				$img = '<img src="' . $this->iconPath . 'copy.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-			$href = 'javascript:ctCopyObject("' . $Label . '", ' . $this->listing_id . ', "ctCopyIcon' . $this->rid . '",' . (int)$this->ct->Params->ModuleId . ')';
-			return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href=\'' . $href . '\'>' . $img . '</a></div>';
+
+			$href = 'javascript:ctCopyRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $this->rid . '\',' . (int)$this->ct->Params->ModuleId . ');';
+
+
+			//$href = 'javascript:ctCopyObject("' . $Label . '", ' . $this->listing_id . ', "ctCopyIcon' . $this->rid . '",' . (int)$this->ct->Params->ModuleId . ')';
+			return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
 		} elseif (defined('WPINC')) {
 			return '';
 		}

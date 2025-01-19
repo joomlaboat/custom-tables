@@ -9,13 +9,13 @@
  **/
 
 // no direct access
+defined('_JEXEC') or die();
+
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
-
-defined('_JEXEC') or die();
 
 $ct = new CT(null, false);
 $ct->Params->constructJoomlaParams();
@@ -26,7 +26,7 @@ $model->params = Factory::getApplication()->getParams();
 $model->listing_id = common::inputGetCmd('listing_id');
 $user = new CTUser();
 
-if (!$ct->CheckAuthorization(5)) {
+if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 	//not authorized
 	Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 

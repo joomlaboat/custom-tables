@@ -30,7 +30,6 @@ class CTUser
 	var bool $isUserAdministrator;
 	var ?string $name;
 	var ?string $username;
-	var bool $guestCanAddNew;
 
 	/**
 	 * @throws Exception
@@ -86,8 +85,6 @@ class CTUser
 				}
 			}
 		}
-
-		$this->guestCanAddNew = false;
 	}
 
 	/**

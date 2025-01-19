@@ -44,18 +44,18 @@ class RecordsController
 			$result = $catalog->render($layoutName);
 		} catch
 		(Exception $e) {
-			CustomTablesAPIHelpers::fireError(500, 'Server Error');
+			CTMiscHelper::fireError(500, 'Server Error');
 		}
 
 		try {
 			$resultArray = json_decode($result, true);
 		} catch
 		(Exception $e) {
-			CustomTablesAPIHelpers::fireError(500, 'Server Error');
+			CTMiscHelper::fireError(500, 'Server Error');
 		}
 
 		if (!is_array($resultArray)) {
-			CustomTablesAPIHelpers::fireError(500, 'Server Error');
+			CTMiscHelper::fireError(500, 'Server Error');
 		}
 
 		// Calculate pagination metadata
@@ -64,7 +64,7 @@ class RecordsController
 		$current_page = (int)floor($ct->LimitStart / $ct->Limit) + 1; // Convert to 1-based page index
 		$total_pages = (int)ceil($total_records / $ct->Limit); // Always round up for total pages
 
-		CustomTablesAPIHelpers::fireSuccess(null, $resultArray, 'Data retrieved successfully', [
+		CTMiscHelper::fireSuccess(null, $resultArray, 'Data retrieved successfully', [
 			"total_records" => $total_records,
 			"records_per_page" => $records_per_page,
 			"current_page" => $current_page,

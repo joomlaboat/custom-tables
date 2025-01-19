@@ -12,102 +12,13 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
-use CustomTables\CT;
-use CustomTables\CTMiscHelper;
 use CustomTables\database;
-use CustomTables\Filtering;
-use CustomTables\CustomPHP;
 use CustomTables\MySQLWhereClause;
-use CustomTables\record;
-use CustomTables\TwigProcessor;
-use CustomTables\SaveFieldQuerySet;
-
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 class CustomTablesModelEditItem extends BaseDatabaseModel
 {
-	var CT $ct;
-	var bool $userIdField_Unique;
-	var bool $userIdField_UniqueUsers;
-	var ?string $listing_id;
-	var bool $isAuthorized;
-	var ?array $row;
-
-	function __construct()
-	{
-		$this->userIdField_Unique = false;
-		$this->userIdField_UniqueUsers = false;
-		parent::__construct();
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	function CheckAuthorizationACL($access): bool
-	{
-		$this->isAuthorized = false;
-
-		if ($access == 'core.edit' and $this->listing_id == 0)
-			$access = 'core.create'; //add new
-
-		if ($this->ct->Env->user->authorise($access, 'com_customtables')) {
-			$this->isAuthorized = true;
-			return true;
-		}
-
-		if ($access != 'core.edit')
-			return false;
-
-		if ($this->ct->Params->userIdField != '') {
-			if ($this->ct->checkIfItemBelongsToUser($this->listing_id, $this->ct->Params->userIdField)) {
-				if ($this->ct->Env->user->authorise('core.edit.own', 'com_customtables')) {
-					$this->isAuthorized = true;
-					return true;
-				} else
-					$this->isAuthorized = false;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.3
-	 */
-	function copy(&$msg, &$link): bool
-	{
-		$listing_id = common::inputGetCmd('listing_id');
-		if ($listing_id === null)
-			return false;
-
-		try {
-			$whereClause = new MySQLWhereClause();
-			$whereClause->addCondition($this->ct->Table->realidfieldname, $listing_id);
-			$rows = database::loadAssocList($this->ct->Table->realtablename, ['*'], $whereClause, null, null, 1);
-		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			$msg = $e->getMessage();
-			return false;
-		}
-
-		if (count($rows) == 0) {
-			$msg = 'Record not found or something went wrong.';
-			return false;
-		}
-
-		$newRow = $rows[0];
-		$newRow[$this->ct->Table->realidfieldname] = null;
-		$new_listing_id = database::insert($this->ct->Table->realtablename, $newRow);
-
-		return $this->store($link, true, $new_listing_id);
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.3
-	 */
+	/*
 	function store(string &$link, bool $isCopy = false, ?string $listing_id = null): bool
 	{
 		$record = new record($this->ct);
@@ -119,7 +30,22 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		if (in_array($USER_IP, $IP_Black_List))
 			return false;
 
+		if (!empty($this->ct->Params->tableName))
+			$this->ct->getTable($this->ct->Params->tableName);
+
+		$record->editForm = new Edit($this->ct);
 		$record->editForm->load();//Load Menu Item parameters
+
+
+		if (!$this->ct->CheckAuthorization()) {
+			$returnToEncoded = common::makeReturnToURL();
+			$link = $this->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $returnToEncoded;
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+			//$this_->setRedirect($link, common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+			return false;
+		}
+
+		echo 'Save new record<br/>';
 
 		if ($record->save($listing_id, $isCopy)) {
 			$this->listing_id = $record->listing_id;
@@ -149,105 +75,111 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			if (!empty($this->listing_id))
 				common::inputSet("listing_id", $this->listing_id);
 
+			echo 'OK<br/>';
+			die;
 			return true;
 		} else {
+			echo 'Not OK<br/>';
+			die;
 			return false;
 		}
 	}
+	*/
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function load(CT $ct): bool
-	{
-		$this->ct = $ct;
+	//function load(CT $ct): bool
+	//{
+	//	$this->ct = $ct;
 
-		//if ($this->ct->Env->legacySupport)
-		//require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
+	//if ($this->ct->Env->legacySupport)
+	//require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 
-		$this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
+	//$this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
 
-		if ($this->ct->Table === null) {
-			$this->ct->errors[] = 'Table not selected (61).';
-			return false;
-		}
+	//if ($this->ct->Table === null) {
+	//	$this->ct->errors[] = 'Table not selected (61).';
+	//	return false;
+	//}
 
-		$this->ct->Params->userIdField = $this->findUserIDField($this->ct->Params->userIdField);//to make sure that the field name is real and two userid fields can be used
+	//$this->ct->Params->userIdField = $this->findUserIDField($this->ct->Params->userIdField);//to make sure that the field name is real and two userid fields can be used
 
-		if (is_null($ct->Params->msgItemIsSaved))
-			$ct->Params->msgItemIsSaved = common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
+	//$this->listing_id = $this->ct->Params->listing_id;
 
-		$this->listing_id = $this->ct->Params->listing_id;
+	//Load the record
+	/*
+	$app = Factory::getApplication();
+	$menu = $app->getMenu();
+	$currentMenuItem = $menu->getActive();
 
-		//Load the record
-		$app = Factory::getApplication();
-		$menu = $app->getMenu();
-		$currentMenuItem = $menu->getActive();
+	if ($currentMenuItem and $currentMenuItem->query['view'] == 'edititem')
+		$this->listing_id = $this->processCustomListingID();
 
-		if ($currentMenuItem and $currentMenuItem->query['view'] == 'edititem')
-			$this->listing_id = $this->processCustomListingID();
-
-		if (($this->listing_id === null or $this->listing_id == '' or $this->listing_id == 0) and $this->userIdField_UniqueUsers and $this->ct->Params->userIdField != '') {
-			//try to find record by userid and load it
-			$this->listing_id = $this->findRecordByUserID();
-		}
-
-		$this->ct->Params->listing_id = $this->listing_id;
-		return true;
+	if (($this->listing_id === null or $this->listing_id == '' or $this->listing_id == 0) and $this->userIdField_UniqueUsers and $this->ct->Params->userIdField != '') {
+		//try to find record by userid and load it
+		$this->listing_id = $this->findRecordByUserID();
 	}
 
-	function findUserIDField($userIdField): string
-	{
-		if ($userIdField != '') {
-			$userIdFields = array();
-			$statement_items = CTMiscHelper::ExplodeSmartParamsArray($userIdField); //"and" and "or" as separators
+	$this->ct->Params->listing_id = $this->listing_id;
+	return true;
+	*/
+//	}
+	/*
+		function findUserIDField($userIdField): string
+		{
+			if ($userIdField != '') {
+				$userIdFields = array();
+				$statement_items = CTMiscHelper::ExplodeSmartParamsArray($userIdField); //"and" and "or" as separators
 
-			foreach ($statement_items as $item) {
-				if (!str_contains($item['equation'], '.')) {
-					//Current table field name
-					//find selected field
-					foreach ($this->ct->Table->fields as $fieldRow) {
-						if ($fieldRow['fieldname'] == $item['equation'] and ($fieldRow['type'] == 'userid' or $fieldRow['type'] == 'user')) {
-							$userIdFields[] = [$item['logic'], $item['equation']];
+				foreach ($statement_items as $item) {
+					if (!str_contains($item['equation'], '.')) {
+						//Current table field name
+						//find selected field
+						foreach ($this->ct->Table->fields as $fieldRow) {
+							if ($fieldRow['fieldname'] == $item['equation'] and ($fieldRow['type'] == 'userid' or $fieldRow['type'] == 'user')) {
+								$userIdFields[] = [$item['logic'], $item['equation']];
 
-							//Following apply to current table fields only and to only one (the last one in the statement)
-							$params = $fieldRow['typeparams'];
-							$parts = CTMiscHelper::csv_explode(',', $params);
+								//Following apply to current table fields only and to only one (the last one in the statement)
+								$params = $fieldRow['typeparams'];
+								$parts = CTMiscHelper::csv_explode(',', $params);
 
-							$this->userIdField_UniqueUsers = false;
-							if (isset($parts[4]) and $parts[4] == 'unique')
-								$this->userIdField_UniqueUsers = true;
+								$this->userIdField_UniqueUsers = false;
+								if (isset($parts[4]) and $parts[4] == 'unique')
+									$this->userIdField_UniqueUsers = true;
 
-							break;
+								break;
+							}
 						}
+					} else {
+						//Table join
+						//parents(children).user
+						$userIdFields[] = [$item['logic'], $item['equation']];
 					}
-				} else {
-					//Table join
-					//parents(children).user
-					$userIdFields[] = [$item['logic'], $item['equation']];
 				}
-			}
 
-			$userIdFieldsStr = '';
-			$index = 0;
-			foreach ($userIdFields as $field) {
-				if ($index == 0)
-					$userIdFieldsStr .= $field[1];
-				else
-					$userIdFieldsStr .= ' ' . $field[0] . ' ' . $field[1];
+				$userIdFieldsStr = '';
+				$index = 0;
+				foreach ($userIdFields as $field) {
+					if ($index == 0)
+						$userIdFieldsStr .= $field[1];
+					else
+						$userIdFieldsStr .= ' ' . $field[0] . ' ' . $field[1];
 
-				$index += 1;
+					$index += 1;
+				}
+				return $userIdFieldsStr;
 			}
-			return $userIdFieldsStr;
+			return '';
 		}
-		return '';
-	}
+	*/
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
+	/*
 	function processCustomListingID(): ?int
 	{
 		if (!empty($this->listing_id) and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
@@ -272,12 +204,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		if ($filter == '')
 			return null;
 
-		/*
-		if ($this->ct->Env->legacySupport) {
-			$LayoutProc = new LayoutProcessor($this->ct);
-			$LayoutProc->layout = $filter;
-			$filter = $LayoutProc->fillLayout(null, null, '[]', true);
-		}*/
+
 
 		$twig = new TwigProcessor($this->ct, $filter);
 		$filter = $twig->process();
@@ -307,11 +234,13 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		$this->listing_id = $rows[0][$this->ct->Table->realidfieldname];
 		return $this->listing_id;
 	}
-
+*/
 	/**
 	 * @throws Exception
 	 * @since 3.2.3
 	 */
+
+	/*
 	function findRecordByUserID(): ?string
 	{
 		$whereClause = new MySQLWhereClause();
@@ -341,87 +270,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 		$row = $rows[0];
 		return $row[$this->ct->Table->realidfieldname];
 	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	function Refresh($save_log = 1): int
-	{
-		$listing_ids_str = common::inputPostString('ids', '', 'create-edit-record');
-
-		if ($listing_ids_str != '') {
-			$listing_ids_ = explode(',', $listing_ids_str);
-			foreach ($listing_ids_ as $listing_id) {
-				if ($listing_id !== '') {
-					$listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
-					if ($this->ct->RefreshSingleRecord($listing_id, $save_log) == -1)
-						return -count($listing_ids_); //negative value means that there is an error
-				}
-			}
-			return count($listing_ids_);
-		}
-
-		$listing_id = common::inputGetCmd('listing_id', 0);
-
-		if ($listing_id == 0 or $listing_id == '')
-			return 0;
-
-		return $this->ct->RefreshSingleRecord($listing_id, $save_log);
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.3
-	 */
-	function setPublishStatus($status): int
-	{
-		$listing_ids_str = common::inputPostString('ids', '', 'create-edit-record');
-		if ($listing_ids_str != '') {
-			$listing_ids_ = explode(',', $listing_ids_str);
-			foreach ($listing_ids_ as $listing_id) {
-				if ($listing_id !== '') {
-					$listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
-					if ($this->ct->setPublishStatusSingleRecord($listing_id, $status) == -1)
-						return -count($listing_ids_); //negative value means that there is an error
-				}
-			}
-			return count($listing_ids_);
-		}
-
-		$listing_id = $this->listing_id;
-		if ($listing_id == '' or $listing_id == 0)
-			return 0;
-
-		return $this->ct->setPublishStatusSingleRecord($listing_id, $status);
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	function delete(): int
-	{
-		$listing_ids_str = common::inputPostString('ids', '', 'create-edit-record');
-		if ($listing_ids_str != '') {
-
-			$listing_ids_ = explode(',', $listing_ids_str);
-			foreach ($listing_ids_ as $listing_id) {
-				if ($listing_id !== '') {
-					$listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
-					if ($this->ct->deleteSingleRecord($listing_id) == -1)
-						return -count($listing_ids_); //negative value means that there is an error
-				}
-			}
-			return count($listing_ids_);
-		}
-
-		$listing_id = common::inputGetCmd('listing_id', 0);
-		if ($listing_id == '' or $listing_id == 0)
-			return 0;
-
-		return $this->ct->deleteSingleRecord($listing_id);
-	}
+*/
 
 	/**
 	 * @throws Exception

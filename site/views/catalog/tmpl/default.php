@@ -30,10 +30,23 @@ if ($this->ct->Env->frmt == 'html') {
 }
 
 try {
-	echo $this->catalog->render();
+	$result = $this->catalog->render();
+
+	if (is_null($this->ct->Params->listing_id)) {
+		common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+
+		if (!empty($this->result['style']))
+			$this->ct->document->addCustomTag('<style>' . $this->result['style'] . '</style>');
+
+		if (!empty($this->result['script']))
+			$this->ct->document->addCustomTag('<script>' . $this->result['script'] . '</script>');
+	}
+
 } catch (Exception $e) {
-	echo 'Error during the Catalog rendering: ' . $e->getMessage();
+	$result = 'Error during the Catalog rendering: ' . $e->getMessage();
 }
+
+echo $result;
 
 if (common::inputGetInt('clean', 0) == 1 or !empty(common::inputGetCmd('listing_id')))
 	die;//Clean exit, single record loaded.

@@ -17,6 +17,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 $recordLayout = '';
 
+common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+
 foreach ($this->ct->Table->fields as $field) {
 	if ($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering') {
 		if ($field['type'] == 'text' or $field['type'] == 'multilangtext' or $field['type'] == 'string' or $field['type'] == 'multilangstring')

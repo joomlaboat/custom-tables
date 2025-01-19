@@ -32,7 +32,7 @@ if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
 
 trait JFormFieldCTTableCommon
 {
-	protected static function getOptionList(): array
+	protected static function getOptionList(string $returnValue = 'id'): array
 	{
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
@@ -50,8 +50,12 @@ trait JFormFieldCTTableCommon
 		$options = ['' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT')];
 
 		if ($tables) {
-			foreach ($tables as $table)
-				$options[] = HTMLHelper::_('select.option', $table->tablename, $table->tablename);
+			foreach ($tables as $table) {
+				if ($returnValue == 'id')
+					$options[] = HTMLHelper::_('select.option', $table->id, $table->tablename);
+				elseif ($returnValue == 'tablename')
+					$options[] = HTMLHelper::_('select.option', $table->tablename, $table->tablename);
+			}
 		}
 		return $options;
 	}
@@ -69,7 +73,8 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
 		protected function getOptions()
 		{
-			return self::getOptionList();
+			$returnValue = $this->element['returnvalue'] ?? 'id';
+			return self::getOptionList($returnValue);
 		}
 	}
 } else {
@@ -82,8 +87,9 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
 		protected function getInput()
 		{
+			$returnValue = $this->element['returnvalue'] ?? 'id';
 			$data = $this->getLayoutData();
-			$data['options'] = self::getOptionList();
+			$data['options'] = self::getOptionList($returnValue);
 			return $this->getRenderer($this->layout)->render($data);
 		}
 	}

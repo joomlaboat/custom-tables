@@ -25,6 +25,6 @@ class LoginController
 		$db->setQuery($query);
 		$response = $db->loadObjectList();
 
-		CustomTablesAPIHelpers::fireSuccess(null, $response, 'List of Tables loaded');
+		CTMiscHelper::fireSuccess(null, $response, 'List of Tables loaded');
 	}
 }

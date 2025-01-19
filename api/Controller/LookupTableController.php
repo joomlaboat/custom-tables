@@ -30,9 +30,9 @@ class LookupTableController
 			$ct = new CT([], true);
 
 			$result = ProInputBoxTableJoin::renderTableJoinSelectorJSON_getOptions($ct, $key, false);
-			CustomTablesAPIHelpers::fireSuccess(null, $result, 'Lookup Table records loaded');
+			CTMiscHelper::fireSuccess(null, $result, 'Lookup Table records loaded');
 		} else {
-			CustomTablesAPIHelpers::fireError(400, 'Lookup Table records NOT loaded', 'Bad Request');
+			CTMiscHelper::fireError(400, 'Lookup Table records NOT loaded', 'Bad Request');
 		}
 	}
 }

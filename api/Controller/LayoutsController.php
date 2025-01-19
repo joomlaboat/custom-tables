@@ -26,6 +26,6 @@ class LoginController
 		$response = $db->loadObjectList();
 
 		// Send the response
-		CustomTablesAPIHelpers::fireSuccess(null, $response, 'List of Layouts loaded');
+		CTMiscHelper::fireSuccess(null, $response, 'List of Layouts loaded');
 	}
 }

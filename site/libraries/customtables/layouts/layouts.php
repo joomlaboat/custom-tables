@@ -50,6 +50,7 @@ class Layouts
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
+	/*
 	function processLayoutTag(string &$htmlResult): bool
 	{
 		$options = array();
@@ -78,143 +79,40 @@ class Layouts
 
 		return true;
 	}
+	*/
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	function getLayout($layoutNameOrId, bool $processLayoutTag = true, bool $checkLayoutFile = true, bool $addHeaderCode = true): string
+	public function deleteLayoutFiles(string $layoutName): bool
 	{
-		$whereClause = new MySQLWhereClause();
+		if ($this->ct->Env->folderToSaveLayouts === null)
+			return false;
 
-		if (is_int($layoutNameOrId)) {
-			if ($layoutNameOrId == 0)
-				return '';
-
-			$whereClause->addCondition('id', $layoutNameOrId);
-		} else {
-			if ($layoutNameOrId == '')
-				return '';
-
-			if (self::isLayoutContent($layoutNameOrId)) {
-				$this->layoutType = 0;
-				return $layoutNameOrId;
-			}
-			$whereClause->addCondition('layoutname', $layoutNameOrId);
-		}
-
-		$selects = [
-			'id',
-			'tableid',
-			'layoutname',
-			'layoutcode',
-			'layoutmobile',
-			'layoutcss',
-			'layoutjs',
-			'layouttype',
-			'MODIFIED_TIMESTAMP',
-			'params'
-		];
-
-		$rows = database::loadAssocList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
-		if (count($rows) != 1)
-			return '';
-
-		$row = $rows[0];
-		$this->tableId = (int)$row['tableid'];
-
-		if ($this->ct->Table === null)
-			$this->ct->getTable($this->tableId);
-
-		$this->layoutId = (int)$row['id'];
-		$this->layoutType = (int)$row['layouttype'];
-
-		if (!empty($row['params'])) {
-			try {
-				$params = json_decode($row['params'], true);
-				$this->ct->Params->setParams($params);
-			} catch (Exception $e) {
-				//$this->params = null; //If there is some JSON syntax error for some reason, it impossible but just in case, set null.
-			}
-		}
-
-		if ($this->ct->Env->isMobile and trim($row['layoutmobile']) != '') {
-			$layoutCode = $row['layoutmobile'];
-			if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
-				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['modified_timestamp'], $layoutNameOrId . '_mobile.html', 'layoutmobile');
-				if ($content != null)
-					$layoutCode = $content;
-			}
-		} else {
-			$layoutCode = $row['layoutcode'];
-			if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
-				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['modified_timestamp'], $layoutNameOrId . '.html', 'layoutcode');
-				if ($content != null)
-					$layoutCode = $content;
-			}
-		}
-
-		if ($layoutCode === null)
-			return '';
-
-		//Get all layouts recursively
-		if ($processLayoutTag)
-			$this->processLayoutTag($layoutCode);
-
-		if ($addHeaderCode and $this->ct->Env->advancedTagProcessor and $this->ct->Env->clean == 0)
-			$this->addCSSandJSIfNeeded($row, $checkLayoutFile);
-
-		$this->pageLayoutNameString = $row['layoutname'];
-		$this->pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
-		$this->layoutCode = $layoutCode;
-		return $layoutCode;
-	}
-
-	public static function isLayoutContent($layout): bool
-	{
-		if (str_contains($layout, '[') or str_contains($layout, '{'))
-			return true;
-
-		return false;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public function getLayoutFileContent(int $layout_id, string $layoutName, string $layoutCode, int $db_layout_ts, string $filename, string $fieldName): ?string
-	{
-		if (file_exists($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename)) {
-			$file_ts = filemtime($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
-
-			if ($db_layout_ts == 0) {
-				$whereClause = new MySQLWhereClause();
-				$whereClause->addCondition('id', $layout_id);
-				$rows = database::loadAssocList('#__customtables_layouts', ['MODIFIED_TIMESTAMP'], $whereClause, null, null, 1);
-
-				if (count($rows) != 0) {
-					$row = $rows[0];
-					$db_layout_ts = $row['modified_timestamp'];
+		$fileNames = ['.html', '_mobile.html', '.css', '.js'];
+		foreach ($fileNames as $fileName) {
+			$path = $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $layoutName . $fileName;
+			if (file_exists($path)) {
+				try {
+					@unlink($path);
+				} catch (Exception $e) {
+					common::enqueueMessage($path . ': ' . $e->getMessage());
+					return false;
 				}
 			}
-
-			if ($file_ts > $db_layout_ts) {
-				$content = common::getStringFromFile($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
-
-				$data = [
-					$fieldName => $content,
-					'modified' => common::formatDateFromTimeStamp($file_ts)
-				];
-
-				$whereClauseUpdate = new MySQLWhereClause();
-				$whereClauseUpdate->addCondition('id', $layout_id);
-				database::update('#__customtables_layouts', $data, $whereClauseUpdate);
-				return $content;
-			}
-		} else {
-			$this->storeLayoutAsFile($layout_id, $layoutName, $layoutCode, $filename);
 		}
-		return null;
+		return true;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public function storeAsFile($data): void
+	{
+		if ($this->ct->Env->folderToSaveLayouts !== null) {
+			$this->storeLayoutAsFile((int)$data['id'], $data['layoutname'], $data['layoutcode'], $data['layoutname'] . '.html');
+			$this->storeLayoutAsFile((int)$data['id'], $data['layoutname'], $data['layoutmobile'], $data['layoutname'] . '_mobile.html');
+			$this->storeLayoutAsFile((int)$data['id'], $data['layoutname'], $data['layoutcss'], $data['layoutname'] . '.css');
+			$this->storeLayoutAsFile((int)$data['id'], $data['layoutname'], $data['layoutjs'], $data['layoutname'] . '.js');
+		}
 	}
 
 	/**
@@ -267,86 +165,6 @@ class Layouts
 			database::update('#__customtables_layouts', $data, $whereClauseUpdate);
 		}
 		return true;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	protected function addCSSandJSIfNeeded(array $layoutRow, bool $checkLayoutFile = true): void
-	{
-		$layoutContent = trim($layoutRow['layoutcss'] ?? '');
-
-		if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['modified_timestamp'], $layoutRow['layoutname'] . '.css', 'layoutcss');
-			if ($content != null)
-				$layoutContent = $content;
-		}
-
-		if ($layoutContent != '') {
-			$twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
-			$this->layoutCodeCSS = $twig->process($this->ct->Table->record ?? null);
-
-			if (defined('_JEXEC')) {
-				if ($twig->errorMessage !== null)
-					$this->ct->errors[] = $twig->errorMessage;
-
-				$this->ct->document->addCustomTag('<style>' . $this->layoutCodeCSS . '</style>');
-			}
-		}
-
-		$layoutContent = trim($layoutRow['layoutjs'] ?? '');
-		if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['modified_timestamp'], $layoutRow['layoutname'] . '.js', 'layoutjs');
-			if ($content != null)
-				$layoutContent = $content;
-		}
-
-		if ($layoutContent != '') {
-			$twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
-			$this->layoutCodeJS = $twig->process($this->ct->Table->record ?? null);
-
-			if (defined('_JEXEC')) {
-				if ($twig->errorMessage !== null)
-					$this->ct->errors[] = $twig->errorMessage;
-
-				$this->ct->document->addCustomTag('<script>' . $this->layoutCodeJS . '</script>');
-			}
-		}
-	}
-
-	public function deleteLayoutFiles(string $layoutName): bool
-	{
-		if ($this->ct->Env->folderToSaveLayouts === null)
-			return false;
-
-		$fileNames = ['.html', '_mobile.html', '.css', '.js'];
-		foreach ($fileNames as $fileName) {
-			$path = $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $layoutName . $fileName;
-			if (file_exists($path)) {
-				try {
-					@unlink($path);
-				} catch (Exception $e) {
-					common::enqueueMessage($path . ': ' . $e->getMessage());
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public function storeAsFile($data): void
-	{
-		if ($this->ct->Env->folderToSaveLayouts !== null) {
-			$this->storeLayoutAsFile((int)$data['id'], $data['layoutname'], $data['layoutcode'], $data['layoutname'] . '.html');
-			$this->storeLayoutAsFile((int)$data['id'], $data['layoutname'], $data['layoutmobile'], $data['layoutname'] . '_mobile.html');
-			$this->storeLayoutAsFile((int)$data['id'], $data['layoutname'], $data['layoutcss'], $data['layoutname'] . '.css');
-			$this->storeLayoutAsFile((int)$data['id'], $data['layoutname'], $data['layoutjs'], $data['layoutname'] . '.js');
-		}
 	}
 
 	public function layoutTypeTranslation(): array
@@ -416,23 +234,18 @@ class Layouts
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function renderMixedLayout($layoutId, ?int $layoutType = null, ?int $clean = null, bool $mustReturn = false, ?string $task = null): array
+	function renderMixedLayout($layoutId, ?int $layoutType = null, ?string $task = null): array
 	{
-		if ($clean === null)
-			$clean = common::inputGetInt('clean', 0);
-
 		if (!empty($layoutId)) {
 			$this->getLayout($layoutId);
 			if ($this->layoutType === null)
-				return ['html' => 'CustomTable: Layout "' . $layoutId . '" not found'];
-
+				return ['success' => false, 'message' => 'CustomTable: Layout "' . $layoutId . '" not found', 'short' => 'error'];
 			if ($this->ct->Table->fields === null)
-				return ['html' => 'CustomTable: Table not selected or not found'];
-
+				return ['success' => false, 'message' => 'CustomTable: Table not selected or not found', 'short' => 'error'];
 		} else {
 
 			if ($this->ct->Table === null)
-				return ['html' => 'CustomTable: Table not selected'];
+				return ['success' => false, 'message' => 'CustomTable: Table not selected', 'short' => 'error'];
 
 			if ($layoutType == 1 or $layoutType == 5)
 				$this->layoutCode = $this->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
@@ -449,136 +262,19 @@ class Layouts
 				$this->layoutCode = $this->createDefaultLayout_CSV($this->ct->Table->fields);
 		}
 
-		/*
-		 * <option value="1">Simple Catalog</option>
-				<option value="5">Catalog Page</option>
-				<option value="6">Catalog Item</option>
-				<option value="2">Edit form</option>
-				<option value="4">Details</option>
-				<!--<option value="3">COM_CUSTOMTABLES_LAYOUTS_RECORD_LINK</option>-->
-				<option value="7">Email Message</option>
-				<option value="8">XML File</option>
-				<option value="9">CSV File</option>
-				<option value="10">JSON File</option>
-		 */
-
-		$output = ['style' => $this->layoutCodeCSS, 'script' => $this->layoutCodeJS];
-
+		//Do the task if set
 		if ($task === null)
 			$task = common::inputPostCmd('task', null, 'create-edit-record');
 
 		if ($task === null)
 			$task = common::inputGetCmd('task');
 
+		if ($task !== null)
+			return $this->doTasks($task);
+
 		if (in_array($this->layoutType, [1, 5, 8, 9, 10])) {
-			//Simple Catalog or Catalog Page
-			if ($task == 'delete') {
-
-				$listing_id = common::inputGetCmd('listing_id', 0);
-				if (!empty($listing_id)) {
-					if ($this->ct->deleteSingleRecord($listing_id) === 1) {
-
-						if ($clean == 1) {
-							if ($mustReturn) {
-								return ['success' => true, 'message' => common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED_1'), 'short' => 'deleted'];
-							} else {
-								die('deleted');
-							}
-						} else
-							common::enqueueMessage(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED_1'), 'notice');
-					} else {
-						if ($clean == 1) {
-							if ($mustReturn) {
-								return ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED_1'), 'short' => 'error'];
-							} else {
-								die('error');
-							}
-						} else
-							common::enqueueMessage(common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED_1'));
-					}
-				}
-			}
-
 			$output['html'] = $this->renderCatalog();
-
 		} elseif ($this->layoutType == 2) {
-			//Edit Form
-
-			//if ($this->ct->Env->clean == 0) {
-			if ($task == 'saveandcontinue' or $task == 'save') {
-				$record = new record($this->ct);
-				$record->editForm->layoutContent = $this->layoutCode;
-				$listing_id = common::inputGetCmd('id');
-				if ($record->save($listing_id, false)) {
-
-					$action = $record->isItNewRecord ? 'create' : 'update';
-
-					if ($this->ct->Env->advancedTagProcessor and !empty($this->ct->Table->tablerow['customphp'])) {
-
-						try {
-							$customPHP = new CustomPHP($this->ct, $action);
-							$customPHP->executeCustomPHPFile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
-						} catch (Exception $e) {
-							$this->ct->errors[] = 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
-						}
-					}
-
-					if ($clean == 1) {
-						if ($mustReturn) {
-							$data = $this->renderEditForm(false);
-							return [
-								'success' => true,
-								'message' => common::translate('COM_CUSTOMTABLES_RECORD_SAVED'),
-								'action' => $action,
-								'id' => $this->ct->Table->record[$this->ct->Table->realidfieldname],
-								'data' => $data
-							];
-						} else {
-							die('updated');
-						}
-					} else
-						common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_SAVED'), 'notice');
-				} else {
-
-					if ($clean == 1) {
-						if ($mustReturn) {
-							return ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'), 'short' => 'error'];
-						} else {
-							die('error');
-						}
-					} else {
-						common::enqueueMessage(common::translate('COM_CUSTOMTABLES_RECORD_NOT_SAVED'));
-
-						if ($record->ct->Params !== null and $record->ct->Params->msgItemIsSaved !== null)
-							common::enqueueMessage($record->ct->Params->msgItemIsSaved);
-					}
-				}
-
-				if ($this->ct->Env->clean == 0) {
-					if ($task == 'save') {
-
-						$link = common::getReturnToURL();
-						if ($link === null)
-							$link = $this->ct->Params->returnTo;
-
-						$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
-
-						common::redirect($link);
-					}
-				}
-
-			} elseif ($task == 'cancel') {
-				common::enqueueMessage(common::translate('COM_CUSTOMTABLES_EDIT_CANCELED'), 'notice');
-				$link = common::getReturnToURL();
-				if ($link === null)
-					$link = $this->ct->Params->returnTo;
-
-				$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
-
-				common::redirect($link, common::translate('COM_CUSTOMTABLES_EDIT_CANCELED'));
-			}
-			//}
-
 			if ($this->ct->Table->record === null) {
 
 				if (!empty($this->ct->Params->listing_id))
@@ -592,46 +288,226 @@ class Layouts
 				}
 			}
 
-			$output['html'] = $this->renderEditForm(!($mustReturn or $this->ct->Env->clean == 1));
+			$editForm = new Edit($this->ct);
+			$editForm->layoutContent = $this->layoutCode;
+
+			if ($this->ct->Env->clean == 0) {
+				$formLink = common::curPageURL();
+				//$formLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem' . ($this->ct->Params->ItemId != 0 ? '&amp;Itemid=' . $this->ct->Params->ItemId : '');
+				if (!is_null($this->ct->Params->ModuleId))
+					$formLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+			} else {
+				$formLink = null;
+			}
+
+			if ($this->ct->Env->isModal)
+				$formName = 'ctEditModalForm';
+			else
+				$formName = 'ctEditForm';
+
+			if (!is_null($this->ct->Params->ModuleId))
+				$formName .= $this->ct->Params->ModuleId;
+
+			$output['html'] = $editForm->render($this->ct->Table->record,
+				$formLink,
+				$formName,
+				$this->ct->Env->clean == 0);
 
 			if (isset($this->ct->LayoutVariables['captcha']) and $this->ct->LayoutVariables['captcha'])
 				$output['captcha'] = true;
 
 			$output['fieldtypes'] = $this->ct->editFieldTypes;
-
 		} elseif ($this->layoutType == 4 or $this->layoutType == 6) {
-			//Details or Catalog Item
-			if ($this->ct->Table->record === null) {
+			$output['html'] = $this->renderDetailedLayout();
+		} else {
+			return ['success' => false, 'message' => 'CustomTable: Unknown Layout Type', 'short' => 'error'];
+		}
 
-				if (!empty($this->ct->Params->listing_id))
-					$listing_id = $this->ct->Params->listing_id;
-				else
-					$listing_id = common::inputGetCmd('listing_id');
-
-				if (!empty($listing_id)) {
-					$this->ct->Params->listing_id = $listing_id;
-					$this->ct->getRecord();
-				}
+		if ($this->ct->Env->clean == 0) {
+			if (!empty($this->layoutCodeCSS)) {
+				$twig = new TwigProcessor($this->ct, $this->layoutCodeCSS, false);
+				$output['style'] = $twig->process($this->ct->Table->record ?? null);
 			}
 
-			$details = new Details($this->ct);
-			$details->layoutDetailsContent = $this->layoutCode;
-			$details->pageLayoutNameString = $this->pageLayoutNameString;
-			$details->pageLayoutLink = $this->pageLayoutLink;
-
-			$output['html'] = $details->render();
-
-			//$output['html'] = $this->renderDetails();
-		} else
-			$output['html'] = 'CustomTable: Unknown Layout Type';
-
-		$output['scripts'] = $this->ct->LayoutVariables['scripts'] ?? null;
-		$output['styles'] = $this->ct->LayoutVariables['styles'] ?? null;
-		$output['jslibrary'] = $this->ct->LayoutVariables['jslibrary'] ?? null;
-
+			if (!empty($this->layoutCodeJS)) {
+				$twig = new TwigProcessor($this->ct, $this->layoutCodeJS, false);
+				$output['script'] = $twig->process($this->ct->Table->record ?? null);
+			}
+			$output['scripts'] = $this->ct->LayoutVariables['scripts'] ?? null;
+			$output['styles'] = $this->ct->LayoutVariables['styles'] ?? null;
+			$output['jslibrary'] = $this->ct->LayoutVariables['jslibrary'] ?? null;
+		}
 		$output['success'] = true;
 
 		return $output;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	function getLayout($layoutNameOrId, bool $processLayoutTag = true, bool $checkLayoutFile = true): string
+	{
+		$whereClause = new MySQLWhereClause();
+
+		if (is_int($layoutNameOrId)) {
+			if ($layoutNameOrId == 0)
+				return '';
+
+			$whereClause->addCondition('id', $layoutNameOrId);
+		} else {
+			if ($layoutNameOrId == '')
+				return '';
+
+			if (self::isLayoutContent($layoutNameOrId)) {
+				$this->layoutType = 0;
+				return $layoutNameOrId;
+			}
+			$whereClause->addCondition('layoutname', $layoutNameOrId);
+		}
+
+		$selects = [
+			'id',
+			'tableid',
+			'layoutname',
+			'layoutcode',
+			'layoutmobile',
+			'layoutcss',
+			'layoutjs',
+			'layouttype',
+			'MODIFIED_TIMESTAMP',
+			'params'
+		];
+
+		$rows = database::loadAssocList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
+		if (count($rows) != 1)
+			return '';
+
+		$row = $rows[0];
+		$this->tableId = (int)$row['tableid'];
+
+		if ($this->ct->Table === null)
+			$this->ct->getTable($this->tableId);
+
+		$this->layoutId = (int)$row['id'];
+		$this->layoutType = (int)$row['layouttype'];
+
+		if (!empty($row['params'])) {
+			try {
+				$params = json_decode($row['params'], true);
+				$this->ct->Params->setParams($params);
+			} catch (Exception $e) {
+
+			}
+		}
+
+		if ($this->ct->Env->isMobile and trim($row['layoutmobile']) != '') {
+			$layoutCode = $row['layoutmobile'];
+			if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
+				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['modified_timestamp'], $layoutNameOrId . '_mobile.html', 'layoutmobile');
+				if ($content != null)
+					$layoutCode = $content;
+			}
+		} else {
+			$layoutCode = $row['layoutcode'];
+			if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
+				$content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['modified_timestamp'], $layoutNameOrId . '.html', 'layoutcode');
+				if ($content != null)
+					$layoutCode = $content;
+			}
+		}
+
+		if ($layoutCode === null)
+			return '';
+
+		//Get all layouts recursively
+		//if ($processLayoutTag)
+		//	$this->processLayoutTag($layoutCode);
+
+		if ($this->ct->Env->advancedTagProcessor and $this->ct->Env->clean == 0)
+			$this->addCSSandJSIfNeeded($row, $checkLayoutFile);
+
+		$this->pageLayoutNameString = $row['layoutname'];
+		$this->pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
+		$this->layoutCode = $layoutCode;
+		return $layoutCode;
+	}
+
+	public static function isLayoutContent($layout): bool
+	{
+		if (str_contains($layout, '[') or str_contains($layout, '{'))
+			return true;
+
+		return false;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public function getLayoutFileContent(int $layout_id, string $layoutName, string $layoutCode, int $db_layout_ts, string $filename, string $fieldName): ?string
+	{
+		if (file_exists($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename)) {
+			$file_ts = filemtime($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
+
+			if ($db_layout_ts == 0) {
+				$whereClause = new MySQLWhereClause();
+				$whereClause->addCondition('id', $layout_id);
+				$rows = database::loadAssocList('#__customtables_layouts', ['MODIFIED_TIMESTAMP'], $whereClause, null, null, 1);
+
+				if (count($rows) != 0) {
+					$row = $rows[0];
+					$db_layout_ts = $row['modified_timestamp'];
+				}
+			}
+
+			if ($file_ts > $db_layout_ts) {
+				$content = common::getStringFromFile($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
+
+				$data = [
+					$fieldName => $content,
+					'modified' => common::formatDateFromTimeStamp($file_ts)
+				];
+
+				$whereClauseUpdate = new MySQLWhereClause();
+				$whereClauseUpdate->addCondition('id', $layout_id);
+				database::update('#__customtables_layouts', $data, $whereClauseUpdate);
+				return $content;
+			}
+		} else {
+			$this->storeLayoutAsFile($layout_id, $layoutName, $layoutCode, $filename);
+		}
+		return null;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function addCSSandJSIfNeeded(array $layoutRow, bool $checkLayoutFile = true): void
+	{
+		//Get CSS content
+		$this->layoutCodeCSS = trim($layoutRow['layoutcss'] ?? '');
+
+		if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
+			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $this->layoutCodeCSS, $layoutRow['modified_timestamp'], $layoutRow['layoutname'] . '.css', 'layoutcss');
+			if ($content != null)
+				$this->layoutCodeCSS = $content;
+		}
+
+		if (empty($this->layoutCodeJS))
+			$this->layoutCodeCSS = null;
+
+		//Get JS content
+		$this->layoutCodeJS = trim($layoutRow['layoutjs'] ?? '');
+		if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
+			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $this->layoutCodeJS, $layoutRow['modified_timestamp'], $layoutRow['layoutname'] . '.js', 'layoutjs');
+			if ($content != null)
+				$this->layoutCodeJS = $content;
+		}
+
+		if (empty($this->layoutCodeJS))
+			$this->layoutCodeJS = null;
 	}
 
 	function createDefaultLayout_SimpleCatalog(array $fields, bool $addToolbar = true): string
@@ -960,6 +836,285 @@ class Layouts
 
 	/**
 	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	private function doTasks($task): array
+	{
+		if ($task == 'delete') {
+			return $this->doTask_delete();
+		} elseif ($task == 'refresh') {
+			return $this->doTask_refresh();
+		} elseif ($task == 'copy') {
+			return $this->doTask_copy();
+		} elseif ($task == 'publish') {
+			return $this->doTask_publish(1);
+		} elseif ($task == 'unpublish') {
+			return $this->doTask_publish(0);
+		} elseif ($task == 'cancel') {
+			return $this->doTask_cancel();
+		} elseif ($task == 'saveandcontinue' or $task == 'save' or $task == 'saveascopy') {
+			return $this->doTask_save($task);
+		}
+		return ['success' => false, 'message' => 'Unknown task', 'short' => 'error'];
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	private function doTask_delete(): array
+	{
+		$listing_ids = $this->getListingIds();
+
+		if (count($listing_ids) > 0) {
+
+			$count = 0;
+			$record = new record($this->ct);
+
+			foreach ($listing_ids as $listing_id) {
+				try {
+					$record->delete($listing_id);
+					$count += 1;
+				} catch (Exception $e) {
+					return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+				}
+			}
+
+			//print_r($listing_ids);
+			//die;
+
+			$message = ($count == 1 ? common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED_1') :
+				common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED', $count));
+			return ['success' => true, 'message' => $message, 'short' => 'deleted'];
+		}
+
+		return ['success' => false, 'message' => 'Records not selected', 'short' => 'error'];
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	private function getListingIds(): array
+	{
+		//Joomla back-end many
+		$listing_ids = common::inputPostArray('cid', []);
+
+		if (count($listing_ids) == 0) {
+			//Joomla front-end many
+			$listing_ids_str = common::inputPostString('ids', null, 'create-edit-record');
+			if ($listing_ids_str != null) {
+				$listing_ids_ = explode(',', $listing_ids_str);
+
+				$listing_ids = [];
+
+				foreach ($listing_ids_ as $listing_id_) {
+					$listing_id = trim(preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id_));
+					if ($listing_id !== '')
+						$listing_ids[] = $listing_id;
+				}
+			}
+
+			if (count($listing_ids) == 0) {
+				if (common::inputGetCmd('listing_id') !== null) {
+					$listing_id_ = common::inputGetCmd('listing_id');
+					$listing_id = trim(preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id_));
+
+					if ($listing_id !== '')
+						$listing_ids = [$listing_id];
+				}
+			}
+		}
+		return $listing_ids;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	private function doTask_refresh(): array
+	{
+		$listing_ids = $this->getListingIds();
+
+		if (count($listing_ids) > 0) {
+
+			$count = 0;
+			$record = new record($this->ct);
+
+			foreach ($listing_ids as $listing_id) {
+				try {
+					$record->refresh($listing_id);
+					$count += 1;
+				} catch (Exception $e) {
+					return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+				}
+			}
+
+			$message = ($count == 1 ? common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_REFRESHED_1') :
+				common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_REFRESHED', $count));
+
+			return ['success' => true, 'message' => $message, 'short' => 'refreshed'];
+
+		}
+
+		return ['success' => false, 'message' => 'Records not selected', 'short' => 'error'];
+	}
+
+	private function doTask_copy(): array
+	{
+		$listing_id = common::inputGetCmd('listing_id');
+		if (empty($listing_id))
+			return ['success' => false, 'message' => 'Record not selected', 'short' => 'error'];
+
+		$record = new record($this->ct);
+
+		try {
+			$record->copy($listing_id);
+		} catch (Exception $e) {
+			return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+		}
+
+		return ['success' => true, 'message' => common::translate('COM_CUSTOMTABLES_RECORDS_COPIED'), 'short' => 'copied'];
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	private function doTask_publish(int $status): array
+	{
+		$listing_ids = $this->getListingIds();
+
+		if (count($listing_ids) > 0) {
+
+			$count = 0;
+			$record = new record($this->ct);
+
+			foreach ($listing_ids as $listing_id) {
+				try {
+					$record->publish($listing_id, $status);
+					$count += 1;
+				} catch (Exception $e) {
+					return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+				}
+			}
+
+			if ($status == 1) {
+				$message = ($count == 1 ? common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED_1') :
+					common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED', $count));
+
+				$statusMessage = ($status == 1 ? 'published' : 'unpublished');
+			} else {
+				$message = ($count == 1 ? common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED_1') :
+					common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED', $count));
+
+				$statusMessage = 'unpublished';
+			}
+
+			return ['success' => true, 'message' => $message, 'short' => $statusMessage];
+		}
+
+		return ['success' => false, 'message' => 'Records not selected', 'short' => 'error'];
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	private function doTask_cancel(): array
+	{
+		$link = common::getReturnToURL();
+		if ($link === null)
+			$link = $this->ct->Params->returnTo;
+
+		$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
+		return ['success' => true, 'message' => common::translate('COM_CUSTOMTABLES_EDIT_CANCELED'), 'short' => 'canceled', 'redirect' => $link];
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
+	private function doTask_save(string $task): array
+	{
+		$record = new record($this->ct);
+		$record->editForm->layoutContent = $this->layoutCode;
+		$listing_id = common::inputGetCmd('id');
+
+		try {
+			$ok = $record->save($listing_id, $task == 'saveascopy');
+		} catch (Exception $e) {
+
+			$output = ['success' => false, 'message' => $e->getMessage(), 'short' => 'error'];
+			if ($record->unauthorized) {
+				$returnToEncoded = common::makeReturnToURL();
+				$output['redirect'] = $this->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $returnToEncoded;
+			}
+			return $output;
+		}
+
+		if ($ok) {
+			//Success
+			//Prepare success message
+			$twig = new TwigProcessor($this->ct, $this->ct->Params->msgItemIsSaved);
+
+			try {
+				$output['message'] = $twig->process($this->ct->Table->record);
+			} catch (Exception $e) {
+				$output['message'] = $e->getMessage();
+			}
+			if ($twig->errorMessage !== null) {
+				$output['message'] = $twig->errorMessage;
+			}
+
+			$action = $record->isItNewRecord ? 'create' : 'update';
+
+			if ($this->ct->Env->advancedTagProcessor and !empty($this->ct->Table->tablerow['customphp'])) {
+
+				try {
+					$customPHP = new CustomPHP($this->ct, $action);
+					$customPHP->executeCustomPHPFile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
+				} catch (Exception $e) {
+					$output['message'] = 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
+				}
+			}
+
+			if ($task == 'saveandcontinue') {
+				$link = common::getReturnToURL();
+				if ($link === null)
+					$link = $this->ct->Params->returnTo;
+
+				$link = CTMiscHelper::deleteURLQueryOption($link, "listing_id");
+
+				if (!str_contains($link, "?"))
+					$link .= '?';
+				else
+					$link .= '&';
+
+				$link .= 'listing_id=' . $record->listing_id;
+				$output['redirect'] = $link;
+			}
+
+			$editForm = new Edit($this->ct);
+			$editForm->layoutContent = $this->layoutCode;
+			$data = $editForm->render($this->ct->Table->record, null, 'ctEditForm', false);
+
+			$output['success'] = true;
+			$output['action'] = $action;
+			$output['id'] = $this->ct->Table->record[$this->ct->Table->realidfieldname];
+			$output['data'] = $data;
+			$output['short'] = $action == 'create' ? 'created' : 'updated';
+		} else {
+			if ($record->incorrectCaptcha)
+				$output = ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_INCORRECT_CAPTCHA'), 'short' => 'error'];
+			else
+				$output = ['success' => false, 'message' => 'error', 'short' => 'error'];
+		}
+		return $output;
+	}
+
+	/**
+	 * @throws Exception
 	 * @since 3.2.2
 	 */
 	protected function renderCatalog(): string
@@ -974,8 +1129,8 @@ class Layouts
 			}
 		}
 
-		if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
-			common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+		//if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
+		//common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 		// --------------------- Filter
 		$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
@@ -1053,29 +1208,33 @@ class Layouts
 	}
 
 	/**
+	 * @throws RuntimeError
+	 * @throws SyntaxError
+	 * @throws LoaderError
 	 * @throws Exception
-	 * @since 3.2.2
+	 * @since 3.5.0
 	 */
-	protected function renderEditForm(bool $addFormTag = true): string
+	private function renderDetailedLayout(): ?string
 	{
-		if ($this->ct->Env->clean == 0)
-			$formLink = common::curPageURL();
-		else
-			$formLink = null;
+		//Details or Catalog Item
+		if ($this->ct->Table->record === null) {
 
-		/*
-				if ($this->ct->Table->record !== null) {
-					if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-						$row = ctProHelpers::getSpecificVersionIfSet($this->ct, $this->ct->Table->record);
-					else
-						$row = $this->ct->Table->record;
-				} else
-					$row = null;
-				*/
+			if (!empty($this->ct->Params->listing_id))
+				$listing_id = $this->ct->Params->listing_id;
+			else
+				$listing_id = common::inputGetCmd('listing_id');
 
-		$editForm = new Edit($this->ct);
-		$editForm->layoutContent = $this->layoutCode;
-		return $editForm->render($this->ct->Table->record, $formLink, 'ctEditForm', $addFormTag);
+			if (!empty($listing_id)) {
+				$this->ct->Params->listing_id = $listing_id;
+				$this->ct->getRecord();
+			}
+		}
+
+		$details = new Details($this->ct);
+		$details->layoutDetailsContent = $this->layoutCode;
+		$details->pageLayoutNameString = $this->pageLayoutNameString;
+		$details->pageLayoutLink = $this->pageLayoutLink;
+		return $details->render();
 	}
 
 	/**
@@ -1106,4 +1265,6 @@ class Layouts
 
 		return $rows[0];
 	}
+
+
 }

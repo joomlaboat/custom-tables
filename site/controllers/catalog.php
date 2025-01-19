@@ -28,57 +28,97 @@ if ($view == 'home') {
 
 $task = common::inputGetCmd('task');
 
+$updatedTask = ['delete', 'refresh', 'publish', 'unpublish', 'copy'];
+if (in_array($task, $updatedTask)) {
+
+	require_once CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'controllerHelper.php';
+	$result = controllerHelper::doTheTask($task);
+
+	if (isset($result['html']))
+		echo $result['html'];
+
+	if ($result['link'] !== null)
+		$this->setRedirect($result['link'], $result['message'], $result['success'] ? 'success' : 'error');
+	else
+		parent::display();
+
+} else {
 //Check Authorization
-$PermissionIndexes = ['setorderby' => 0, 'clear' => 3, 'delete' => 3, 'copy' => 4, 'copycontent' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];
-//$PermissionWords=['clear'=>'core.delete','delete'=>'core.delete','copy'=>'core.create','refresh'=>'core.edit','publish'=>'core.edit.state','unpublish'=>'core.edit.state','createuser'=>'core.edit'];
-$PermissionIndex = 0;
-//$PermissionWord='';
-//if (array_key_exists($task,$PermissionWords))
-//$PermissionWord=$PermissionWords[$task];
+	$PermissionIndexes = ['setorderby' => 0, 'clear' => 3, 'delete' => 3, 'copy' => 4, 'copycontent' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];
+	$PermissionIndex = 0;
 
-if (array_key_exists($task, $PermissionIndexes))
-	$PermissionIndex = $PermissionIndexes[$task];
+	if (array_key_exists($task, $PermissionIndexes))
+		$PermissionIndex = $PermissionIndexes[$task];
 
-if ($task != '') {
+	if ($task != '') {
+
+		$ct = new CT(null, false);
+		$ct->Params->constructJoomlaParams();
+
+		if ($ct->CheckAuthorization($PermissionIndex)) {
+
+			$edit_model = $this->getModel('edititem');
+			$redirect = doTheTask($ct, $task, $edit_model, $this);
+			if (is_null($redirect))
+				$ct->errors[] = 'Unknown task';
+			else {
+				$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
+			}
+
+		} else {
+			// not authorized
+			if ($ct->Env->clean == 1)
+				die('not authorized');
+			else {
+				$returnToEncoded = common::makeReturnToURL();
+				$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $returnToEncoded;
+				$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+			}
+		}
+	} else {
+		parent::display();
+	}
+}
+/*
+function CustomTablesDelete($this_)
+{
+	$link = common::getReturnToURL() ?? '';
 
 	$ct = new CT(null, false);
 	$ct->Params->constructJoomlaParams();
+	$layout = new Layouts($ct);
 
-	/*
-	 * $user = new CTUser();
-	if ($user->authorise('core.admin', 'com_helloworld'))
-				<action name="core.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
-	<action name="core.edit" title="JACTION_EDIT" description="COM_CUSTOMTABLES_ACCESS_EDIT_DESC" />
-	<action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CUSTOMTABLES_ACCESS_EDITOWN_DESC" />
-	<action name="core.edit.state" title="JACTION_EDITSTATE" description="COM_CUSTOMTABLES_ACCESS_EDITSTATE_DESC" />
-	<action name="core.delete" title="JACTION_DELETE" description="COM_CUSTOMTABLES_ACCESS_DELETE_DESC" />
-	<action name="core.update" title="COM_CUSTOMTABLES_REFRESH" description="COM_CUSTOMTABLES_ACCESS_REFRESH_DESC" />
-*/
-
-	if ($ct->CheckAuthorization($PermissionIndex)) {
-
-		$edit_model = $this->getModel('edititem');
-		$redirect = doTheTask($ct, $task, $edit_model, $this);
-		if (is_null($redirect))
-			$ct->errors[] = 'Unknown task';
-		else {
-			$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
+	$result = $layout->renderMixedLayout($ct->Params->editLayout);
+	if ($result['success']) {
+		if ($ct->Env->clean) {
+			if ($ct->Env->frmt == 'json')
+				CTMiscHelper::fireSuccess($result['id'], $result['data'], $ct->Params->msgItemIsSaved);
+			else
+				die($result['short'] ?? 'deleted');
 		}
 
+		if (isset($result['redirect']))
+			$link = $result['redirect'];
+
+		if ($result['message'] !== null) {
+			$this_->setRedirect($link, $result['message']);
+		} else
+			$this_->setRedirect($link);
 	} else {
-		// not authorized
-		if ($ct->Env->clean == 1)
-			die('not authorized');
-		else {
-			$returnToEncoded = common::makeReturnToURL();
-			$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $returnToEncoded;
-			$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+		if ($ct->Env->clean) {
+			if ($ct->Env->frmt == 'json')
+				CTMiscHelper::fireError(500, $result['message'] ?? 'Error deleting record');
+			else
+				die($result['short'] ?? 'error');
 		}
-	}
-} else {
-	parent::display();
-}
 
+		if (isset($result['redirect']))
+			$link = $result['redirect'];
+
+		$this_->setRedirect($link, $result['message'], 'error');
+	}
+}
+*/
 /**
  * @throws Exception
  *
@@ -102,138 +142,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
 	$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
-	if (!$edit_model->load($ct, false))
-		die('Model not loaded');
-
 	switch ($task) {
-
-		case 'delete':
-
-			$count = $edit_model->delete();
-			if ($count > 0) {
-				if ($ct->Env->clean == 1) {
-					if (ob_get_contents())
-						ob_end_clean();
-
-					header('Content-Type: text/csv; charset=utf-8');
-					header("Pragma: no-cache");
-					header("Expires: 0");
-
-					die('deleted');
-				} else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED';
-					if ($count == 1)
-						$msg .= '_1';
-
-					return (object)array('link' => $link, 'msg' => common::translate($msg, $count), 'status' => null);
-					//COM_CUSTOMTABLES_RECORDS_DELETED
-				}
-			} elseif ($count < 0) {
-				if ($ct->Env->clean == 1)
-					die('error');
-				else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED';
-					if (abs($count) == 1)
-						$msg .= '_1';
-
-					return (object)array('link' => $link, 'msg' => common::translate($msg, abs($count)), 'status' => 'error');
-				}
-			}
-			break;
-
-		case 'copy':
-
-			$msg = '';
-			if ($edit_model->copy($msg, $link)) {
-				if ($ct->Env->clean == 1)
-					die('copied');
-				else
-					return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_RECORDS_COPIED'), 'status' => null);
-			} else {
-				if ($ct->Env->clean == 1)
-					die('error');
-				else
-					return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_RECORDS_NOT_COPIED'), 'status' => 'error');
-			}
-
-		case 'refresh':
-
-			$count = $edit_model->Refresh();
-			if ($count > 0) {
-				if ($ct->Env->clean == 1)
-					die('refreshed');
-				else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_REFRESHED';
-					if ($count == 1)
-						$msg .= '_1';
-
-					return (object)array('link' => $link, 'msg' => common::translate($msg, $count), 'status' => null);
-				}
-			} else {
-				if ($ct->Env->clean == 1)
-					die('error');
-				else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_REFRESHED';
-					if (abs($count) == 1)
-						$msg .= '_1';
-
-					return (object)array('link' => $link, 'msg' => common::translate($msg, abs($count)), 'status' => 'error');
-				}
-			}
-
-		case 'publish':
-
-			$count = $edit_model->setPublishStatus(1);
-			if ($count > 0) {
-				if ($ct->Env->clean == 1)
-					die('published');
-				else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED';
-					if ($count == 1)
-						$msg .= '_1';
-
-					return (object)array('link' => $link, 'msg' => common::translate($msg, $count), 'status' => null);
-				}
-			} elseif ($count < 0) {
-				if ($ct->Env->clean == 1)
-					die('error');
-				else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED';
-					if (abs($count) == 1)
-						$msg .= '_1';
-
-					return (object)array('link' => $link, 'msg' => common::translate($msg, abs($count)), 'status' => 'error');
-				}
-			}
-
-			break;
-
-		case 'unpublish':
-
-			$count = $edit_model->setPublishStatus(0);
-			if ($count > 0) {
-				if ($ct->Env->clean == 1)
-					die('unpublished');
-				else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED';
-					if ($count == 1)
-						$msg .= '_1';
-
-					return (object)array('link' => $link, 'msg' => common::translate($msg, $count), 'status' => null);
-				}
-			} elseif ($count < 0) {
-				if ($ct->Env->clean == 1)
-					die('error');
-				else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED';
-					if (abs($count) == 1)
-						$msg .= '_1';
-
-					return (object)array('link' => $link, 'msg' => common::translate($msg, abs($count)), 'status' => 'error');
-				}
-			}
-
-			break;
 
 		case 'createuser':
 

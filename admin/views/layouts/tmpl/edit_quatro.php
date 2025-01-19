@@ -183,12 +183,56 @@ foreach ($this->allTables as $table) {
 					<div class="control-label"><?php echo $this->form->getLabel('filter'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('filter'); ?>
 						<p class="field-description">
-							<?php echo JText::_($this->form->getField('filter')->description); ?>
+							<?php echo common::translate($this->form->getField('filter')->description); ?>
 						</p>
 					</div>
 
 				</div>
 
+				<hr/>
+				<h2>Permissions</h2>
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('addusergroups'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('addusergroups'); ?>
+						<p class="field-description">
+							<?php echo common::translate($this->form->getField('addusergroups')->description); ?>
+						</p>
+					</div>
+
+				</div>
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('editusergroups'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('editusergroups'); ?>
+						<p class="field-description">
+							<?php echo common::translate($this->form->getField('editusergroups')->description); ?>
+						</p>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('publishusergroups'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('publishusergroups'); ?>
+						<p class="field-description">
+							<?php echo common::translate($this->form->getField('publishusergroups')->description); ?>
+						</p>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('deleteusergroups'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('deleteusergroups'); ?>
+						<p class="field-description">
+							<?php echo common::translate($this->form->getField('deleteusergroups')->description); ?>
+						</p>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('publishstatus'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('publishstatus'); ?>
+						<p class="field-description">
+							<?php echo common::translate($this->form->getField('publishstatus')->description); ?>
+						</p>
+					</div>
+				</div>
 			</div>
 		</div>
 		<?php

@@ -28,7 +28,7 @@ $app = Factory::getApplication();
 
 // Check if site is offline
 if ($app->get('offline') == '1')
-	CustomTablesAPIHelpers::fireError(401, 'offline', $app->get('offline_message', 'Site is offline for maintenance'));
+	CTMiscHelper::fireError(401, 'offline', $app->get('offline_message', 'Site is offline for maintenance'));
 
 $controller = $app->input->get('controller');
 
@@ -52,6 +52,6 @@ if (file_exists($path)) {
 		die;
 	}
 } else {
-	CustomTablesAPIHelpers::fireError(404, 'Controller [' . $controller . '] not found.', $app->get('offline_message', 'Controller not found.'));
+	CTMiscHelper::fireError(404, 'Controller [' . $controller . '] not found.', $app->get('offline_message', 'Controller not found.'));
 }
 die;

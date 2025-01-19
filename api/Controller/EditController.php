@@ -41,7 +41,7 @@ class EditController
 				break;
 
 			default:
-				CustomTablesAPIHelpers::fireError(405, 'Method Not Allowed');
+				CTMiscHelper::fireError(405, 'Method Not Allowed');
 		}
 	}
 
@@ -62,15 +62,15 @@ class EditController
 
 		$result = null;
 		try {
-			$result = @$layout->renderMixedLayout($layoutName, null, 1, true, $task);
+			$result = @$layout->renderMixedLayout($layoutName, null, $task);
 		} catch (Throwable $e) {
-			CustomTablesAPIHelpers::fireError(500, $e->getMessage());
+			CTMiscHelper::fireError(500, $e->getMessage());
 		}
 
 		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false)
-			CustomTablesAPIHelpers::fireError(500, $result['message'] ?? 'Record not saved');
+			CTMiscHelper::fireError(500, $result['message'] ?? 'Record not saved');
 
-		CustomTablesAPIHelpers::fireSuccess($result['id'], $result['data'], $result['message'] ?? 'Done');
+		CTMiscHelper::fireSuccess($result['id'], $result['data'], $result['message'] ?? 'Done');
 	}
 
 	function executeGET()
@@ -88,7 +88,7 @@ class EditController
 			$ct->Params->blockExternalVars = false;
 			$ct->Params->editLayout = $layoutName;
 		} catch (Exception $e) {
-			CustomTablesAPIHelpers::fireError(500, $e->getMessage());
+			CTMiscHelper::fireError(500, $e->getMessage());
 		}
 
 		$editForm = new Edit($ct);
@@ -110,7 +110,7 @@ class EditController
 			$listing_id = $ct->Table->record[$ct->Table->realidfieldname];
 		}
 
-		CustomTablesAPIHelpers::fireSuccess($listing_id, $j, 'Edit form fields',
+		CTMiscHelper::fireSuccess($listing_id, $j, 'Edit form fields',
 			['form_token' => $this->generateFormToken(), // Add token to response
 				'input_prefix' => $ct->Table->fieldInputPrefix]);
 	}

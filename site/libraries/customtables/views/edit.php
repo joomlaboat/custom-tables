@@ -48,13 +48,8 @@ class Edit
 	 */
 	function load(): bool
 	{
-		if ($this->ct->Params->editLayout != '') {
+		if (!empty($this->ct->Params->editLayout)) {
 			$Layouts = new Layouts($this->ct);
-
-			if (empty($this->ct->Params->editLayout)) {
-				$this->ct->errors[] = 'Edit Layout not selected.';
-				return false;
-			}
 
 			$this->layoutContent = $Layouts->getLayout($this->ct->Params->editLayout);
 			if (isset($Layouts->layoutId)) {
@@ -124,33 +119,31 @@ class Edit
 		if ($row !== null)
 			$this->row = $row;
 
-		if (!is_null($this->ct->Params->ModuleId))
-			$formName .= $this->ct->Params->ModuleId;
+		//if (!is_null($this->ct->Params->ModuleId))
+		//	$formName .= $this->ct->Params->ModuleId;
 
-		if (defined('_JEXEC')) {
-			/*
-			if ($this->ct->Env->legacySupport) {
-				$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-				require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
-				require_once($path . 'layout.php');
-			}*/
-			if ($this->ct->Params->ModuleId === null or $this->ct->Params->ModuleId == 0) {
-				HTMLHelper::_('jquery.framework');
-				jimport('joomla.html.html.bootstrap');
-			}
-		}
+		//if (defined('_JEXEC')) {
+		/*
+		if ($this->ct->Env->legacySupport) {
+			$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
+			require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
+			require_once($path . 'layout.php');
+		}*/
+		//if ($this->ct->Params->ModuleId === null or $this->ct->Params->ModuleId == 0) {
+		//	HTMLHelper::_('jquery.framework');
+		//	jimport('joomla.html.html.bootstrap');
+		//}
+		//}
 
 		if ($this->ct->Env->clean == 0) {
-			common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+			//common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 			if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
 
-				if (defined('_JEXEC'))
-					$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
-						. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
-				else
+				if (defined('WPINC')) {
 					$result .= '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
 						. $this->ct->Params->pageTitle . '</h2></div>';
+				}
 			}
 		}
 

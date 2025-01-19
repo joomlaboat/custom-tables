@@ -73,8 +73,8 @@ class Catalog
 			$this->ct->Filter->addQueryWhereFilter();
 		}
 
-		if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
-			common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+		//if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
+		//common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 		/*
 				if ($this->ct->Env->legacySupport) {
 					try {

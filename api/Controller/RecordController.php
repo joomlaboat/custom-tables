@@ -29,12 +29,12 @@ class RecordController
 		$layoutName = common::inputGetCmd('layout');
 		$ct->Env->clean = true;
 		$layout = new Layouts($ct);
-		$result = $layout->renderMixedLayout($layoutName, null, 1, true);
+		$result = $layout->renderMixedLayout($layoutName);
 
 		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false or !isset($result['html'])) {
-			CustomTablesAPIHelpers::fireError(500, $result['message'] ?? 'Error');
+			CTMiscHelper::fireError(500, $result['message'] ?? 'Error');
 		}
 
-		CustomTablesAPIHelpers::fireSuccess(null, $result['html'], $result['message'] ?? 'Details page ready');
+		CTMiscHelper::fireSuccess(null, $result['html'], $result['message'] ?? 'Details page ready');
 	}
 }

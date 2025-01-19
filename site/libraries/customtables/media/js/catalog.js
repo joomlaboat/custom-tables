@@ -78,6 +78,8 @@ function runTheTask(task, tableid, recordId, url, responses, last, reload) {
 
 	if (http) {
 
+		console.warn(url);
+
 		http.open("GET", url, true);
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		http.onreadystatechange = function () {
@@ -139,6 +141,23 @@ function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 		window.location.href = link;
 	}
 }
+
+function ctCopyRecord(tableid, recordId, toolbarBoxId, ModuleId) {
+	if (ctLinkLoading) return;
+
+	ctLinkLoading = true;
+
+	if (document.getElementById(toolbarBoxId))
+		document.getElementById(toolbarBoxId).innerHTML = '';
+
+	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+	let returnto = btoa(window.location.href);
+
+	if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=refresh', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=copy', 'listing_id=' + recordId, 'returnto=' + returnto], link);
+
+	window.location.href = link;
+}
+
 
 function ctOrderChanged(objectValue) {
 	const current_url = esPrepareLink(['returnto', 'task', 'orderby'], [], '');
@@ -688,18 +707,20 @@ function ctUpdateCheckboxCounter(tableid) {
 
 function ctValue_googlemapcoordinates(boxId, lat, long, zoom) {
 
-	let cursorPoint = new google.maps.LatLng(lat, long);
-	let map_obj = document.getElementById(boxId);
+	setTimeout(function () {
+		let cursorPoint = new google.maps.LatLng(lat, long);
+		let map_obj = document.getElementById(boxId);
 
-	gmapdata[boxId] = new google.maps.Map(map_obj, {
-		center: cursorPoint, zoom: zoom, mapTypeId: 'roadmap'
-	});
+		gmapdata[boxId] = new google.maps.Map(map_obj, {
+			center: cursorPoint, zoom: zoom, mapTypeId: 'roadmap'
+		});
 
-	gmapmarker[boxId] = new google.maps.Marker({
-		map: gmapdata[boxId], position: cursorPoint
-	});
+		gmapmarker[boxId] = new google.maps.Marker({
+			map: gmapdata[boxId], position: cursorPoint
+		});
 
-	let infoWindow = new google.maps.InfoWindow;
+		let infoWindow = new google.maps.InfoWindow;
+	}, 500)
 	return false;
 }
 

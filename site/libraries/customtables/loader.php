@@ -51,6 +51,24 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	if (!defined('CUSTOMTABLES_SHOW_TRASHED'))
 		define('CUSTOMTABLES_SHOW_TRASHED', -2);
 
+	if (!defined('CUSTOMTABLES_ACTION_EDIT'))
+		define('CUSTOMTABLES_ACTION_EDIT', 1);
+
+	if (!defined('CUSTOMTABLES_ACTION_PUBLISH'))
+		define('CUSTOMTABLES_ACTION_PUBLISH', 2);
+
+	if (!defined('CUSTOMTABLES_ACTION_DELETE'))
+		define('CUSTOMTABLES_ACTION_DELETE', 3);
+
+	if (!defined('CUSTOMTABLES_ACTION_ADD'))
+		define('CUSTOMTABLES_ACTION_ADD', 4);
+
+	if (!defined('CUSTOMTABLES_ACTION_FORCE_EDIT'))
+		define('CUSTOMTABLES_ACTION_FORCE_EDIT', 5);
+
+	if (!defined('CUSTOMTABLES_ACTION_COPY'))
+		define('CUSTOMTABLES_ACTION_COPY', 6);
+
 	$libraryPath = null;
 
 	if (defined('_JEXEC')) {

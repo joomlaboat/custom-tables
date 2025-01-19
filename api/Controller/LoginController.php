@@ -131,7 +131,7 @@ class LoginController
 			$lifetime = Factory::getApplication()->get('lifetime', 15); // Default 15 minutes if not set
 			$expires_in = $lifetime * 60; // Convert minutes to seconds
 
-			CustomTablesAPIHelpers::fireSuccess($user->id, [
+			CTMiscHelper::fireSuccess($user->id, [
 				'access_token' => $token,
 				'token_type' => 'Bearer',
 				'expires_in' => $expires_in,
@@ -164,7 +164,7 @@ class LoginController
 					break;
 			}
 
-			CustomTablesAPIHelpers::fireError(401, $message, 'Authentication failed');
+			CTMiscHelper::fireError(401, $message, 'Authentication failed');
 		}
 	}
 }

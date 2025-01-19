@@ -53,7 +53,6 @@ class Params
 
 	var ?int $publishStatus;
 	var ?string $returnTo;
-	var ?bool $guestCanAddNew;
 	var ?string $requiredLabel;
 	var ?string $msgItemIsSaved;
 	var ?int $onRecordAddSendEmail;
@@ -121,7 +120,6 @@ class Params
 		$this->limit = null;
 		$this->publishStatus = 1;
 		$this->returnTo = null;
-		$this->guestCanAddNew = null;
 		$this->requiredLabel = null;
 		$this->msgItemIsSaved = null;
 		$this->onRecordAddSendEmail = null;
@@ -222,7 +220,6 @@ class Params
 		$menu_params['addusergroups'] = $menu_params_registry->get('addusergroups');
 		$menu_params['publishusergroups'] = $menu_params_registry->get('publishusergroups');
 		$menu_params['deleteusergroups'] = $menu_params_registry->get('deleteusergroups');
-		$menu_params['guestcanaddnew'] = $menu_params_registry->get('guestcanaddnew');
 		$menu_params['publishstatus'] = $menu_params_registry->get('publishstatus');
 		$menu_params['onrecordaddsendemail'] = $menu_params_registry->get('onrecordaddsendemail');
 		$menu_params['sendemailcondition'] = $menu_params_registry->get('sendemailcondition');
@@ -371,7 +368,6 @@ class Params
 		if ($this->deleteUserGroups == 0)
 			$this->deleteUserGroups = $this->editUserGroups;
 
-		$this->guestCanAddNew = $menu_params['guestcanaddnew'] ?? null;
 		$this->publishStatus = $menu_params['publishstatus'] ?? null;
 
 		if ($this->publishStatus === null) {
@@ -399,7 +395,9 @@ class Params
 				$this->returnTo = $menu_params['returnto'] ?? null;
 		}
 		$this->requiredLabel = $menu_params['requiredlabel'] ?? null;
-		$this->msgItemIsSaved = $menu_params['msgitemissaved'] ?? null;
+		$this->msgItemIsSaved = $menu_params['msgitemissaved'] ?? common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
+		if ($this->msgItemIsSaved == '-')
+			$this->msgItemIsSaved = null;//Do not show "save message"
 
 		$this->recordsTable = $menu_params['recordstable'] ?? null;
 		$this->recordsUserIdField = $menu_params['recordsuseridfield'] ?? null;
@@ -530,7 +528,6 @@ class Params
 		if ($this->deleteUserGroups == 0)
 			$this->deleteUserGroups = $this->editUserGroups;
 
-		$this->guestCanAddNew = $menu_params['guestcanaddnew'] ?? null;
 		$this->publishStatus = $menu_params['publishstatus'] ?? null;
 
 		if ($this->publishStatus === null) {
@@ -555,7 +552,7 @@ class Params
 			$this->returnTo = $menu_params['returnto'] ?? null;
 		}
 		$this->requiredLabel = $menu_params['requiredlabel'] ?? null;
-		$this->msgItemIsSaved = $menu_params['msgitemissaved'] ?? null;
+		$this->msgItemIsSaved = $menu_params['msgitemissaved'] ?? common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
 
 		$this->recordsTable = $menu_params['recordstable'] ?? null;
 		$this->recordsUserIdField = $menu_params['recordsuseridfield'] ?? null;

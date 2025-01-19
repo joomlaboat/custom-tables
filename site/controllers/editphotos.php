@@ -9,12 +9,12 @@
  **/
 
 // no direct access
+defined('_JEXEC') or die();
+
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use Joomla\CMS\Router\Route;
-
-defined('_JEXEC') or die();
 
 $ct = new CT(null, false);
 $ct->Params->constructJoomlaParams();
@@ -22,7 +22,7 @@ $ct->Params->constructJoomlaParams();
 $model = $this->getModel('edititem');
 $user = new CTUser();
 
-if (!$ct->CheckAuthorization(1)) {
+if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT)) {
 	//not authorized
 	$returnToEncoded = common::makeReturnToURL();
 	$link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);

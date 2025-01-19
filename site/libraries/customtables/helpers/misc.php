@@ -1175,4 +1175,66 @@ class CTMiscHelper
 			return date('Y-m-d', $timestamp);
 		}
 	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.4.8
+	 */
+	static public function fireError(int $code = 500, ?string $title = null, ?string $message = null): void
+	{
+		$app = Factory::getApplication();
+		// Handle invalid request method
+		$app->setHeader('status', $code);
+		echo json_encode([
+			'success' => false,
+			'data' => null,
+			'errors' => [
+				[
+					'code' => $code,
+					'title' => $title ?? 'Error'
+				]
+			],
+			'message' => $message ?? ($title ?? 'Error')
+		], JSON_PRETTY_PRINT);
+		die;
+	}
+
+	static public function fireSuccess(?string $id = null, $dataVariable = null, ?string $message = null, ?array $metadata = null): void
+	{
+		if (is_array($dataVariable)) {
+			$data = $dataVariable;
+		} else {
+			if ($dataVariable === null) {
+				$data = null;
+			} else {
+				try {
+					$data = json_decode($dataVariable, true, 512, JSON_THROW_ON_ERROR);
+
+					if ($id === null and $data !== null and is_array($data) and $data['id'] !== null)
+						$id = $data['id'];
+				} catch (Exception $e) {
+					$data = ['error' => $e->getMessage(), 'result' => $dataVariable];
+				}
+			}
+		}
+
+		$app = Factory::getApplication();
+		$app->setHeader('status', 200);
+		$app->setHeader('Content-Type', 'application/vnd.api+json');
+		$app->sendHeaders();
+
+		$result = [
+			'success' => true,
+			'data' => $data,
+			'message' => $message
+		];
+
+		if ($id !== null)
+			$result['id'] = $id;
+
+		if ($metadata !== null)
+			$result['metadata'] = $metadata;
+
+		die(json_encode($result, JSON_PRETTY_PRINT));
+	}
 }

@@ -34,8 +34,8 @@ class UserEmailController
 		$result = $db->loadObject();
 
 		if (!$result)
-			CustomTablesAPIHelpers::fireError(401, 'User not found', 'Invalid user');
+			CTMiscHelper::fireError(401, 'User not found', 'Invalid user');
 
-		CustomTablesAPIHelpers::fireSuccess($userId, ['email' => $result->email], 'Email retrieved successfully');
+		CTMiscHelper::fireSuccess($userId, ['email' => $result->email], 'Email retrieved successfully');
 	}
 }

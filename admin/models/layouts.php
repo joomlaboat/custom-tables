@@ -542,7 +542,13 @@ class CustomtablesModelLayouts extends AdminModel
 		$Layouts->storeAsFile($data);
 
 		$params = [];
-		$params['filter'] = $data['filter'];
+		$params['filter'] = $data['filter'] ?? null;
+		$params['addusergroups'] = $data['addusergroups'] ?? null;
+		$params['editusergroups'] = $data['editusergroups'] ?? null;
+		$params['publishusergroup'] = $data['publishusergroup'] ?? null;
+		$params['deleteusergroups'] = $data['deleteusergroups'] ?? null;
+		$params['publishstatus'] = $data['publishstatus'] ?? null;
+
 		$data['params'] = json_encode($params);
 
 		if (parent::save($data)) {
@@ -660,9 +666,26 @@ class CustomtablesModelLayouts extends AdminModel
 		}
 
 		if (isset($data->params)) {
-			if (isset($data->params['filter'])) {
+			if (isset($data->params['filter']))
 				$data->filter = $data->params['filter'];
-			}
+
+			//if (isset($data->params['guestcanaddnew']))
+			//$data->guestcanaddnew = $data->params['guestcanaddnew'];
+
+			if (isset($data->params['addusergroups']))
+				$data->addusergroups = $data->params['addusergroups'];
+
+			if (isset($data->params['editusergroups']))
+				$data->editusergroups = $data->params['editusergroups'];
+
+			if (isset($data->params['publishusergroup']))
+				$data->publishusergroup = $data->params['publishusergroup'];
+
+			if (isset($data->params['deleteusergroups']))
+				$data->deleteusergroups = $data->params['deleteusergroups'];
+
+			if (isset($data->params['publishstatus']))
+				$data->publishstatus = $data->params['publishstatus'];
 		}
 
 		return $data;

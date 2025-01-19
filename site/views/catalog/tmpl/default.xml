@@ -16,7 +16,9 @@
 
 			<field type="CTTable" name="establename" label="Table"
 				   description="Select the Table for reading the records. You can create a new table in Components/Custom Tables/Tables."
-				   required="true"/>
+				   required="true"
+				   returnvalue="tablename"
+			/>
 			<field type="CTCatalogLayout" name="escataloglayout" default="" label="Page Layout"
 				   description="Select Catalog Page Layout. This parameter is available on Custom Tables - Records menu item type."/>
 
