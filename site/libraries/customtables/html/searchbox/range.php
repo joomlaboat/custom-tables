@@ -74,7 +74,9 @@ class Search_range extends BaseSearch
 		//' . $this->moduleName . '_onChange(' . $this->index . ',v_min+"' . $d . '"+v_max,"' . $this->field->fieldname . '","' . urlencode($this->where) . '","' . urlencode($this->whereList) . '");
 	}
 ';
-		$this->ct->document->addCustomTag('<script>' . $js . '</script>');
+		$this->ct->LayoutVariables['script'] .= $js;
+
+		//$this->ct->document->addCustomTag('<script>' . $js . '</script>');
 		//end of header function
 
 		$attribs = 'onChange="Update' . $this->objectName . 'Values()" class="' . $default_class . '" ';

@@ -174,10 +174,13 @@ class Twig_Document_Tags
 					HTMLHelper::_('jquery.framework');
 
 					// Add the jQuery UI core library
-					$this->ct->document->addScript('https://code.jquery.com/ui/1.14.0/jquery-ui.min.js');
+					$this->ct->LayoutVariables['scripts'][] = 'https://code.jquery.com/ui/1.14.0/jquery-ui.min.js';
+					$this->ct->LayoutVariables['styles'][] = 'https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css';
 
-					// Add the jQuery UI CSS
-					$this->ct->document->addStyleSheet('https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css');
+				//$this->ct->document->addScript('https://code.jquery.com/ui/1.14.0/jquery-ui.min.js');
+
+				// Add the jQuery UI CSS
+				//$this->ct->document->addStyleSheet('https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css');
 			}
 
 			return '';
@@ -198,6 +201,8 @@ class Twig_Document_Tags
 	 */
 	function layout(string $layoutName = ''): ?string
 	{
+		//TODO: the use if this tag must be reflected in the dependence tab of the layout used.
+
 		if ($layoutName == '') {
 			common::enqueueMessage('Warning: The {{ document.layout("layout_name") }} layout name is required.');
 			return null;

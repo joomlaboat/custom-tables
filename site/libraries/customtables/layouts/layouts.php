@@ -430,13 +430,8 @@ class Layouts
 			return '';
 
 		//Get all layouts recursively
-		//if ($processLayoutTag)
-		//	$this->processLayoutTag($layoutCode);
-
-		if ($this->ct->Env->advancedTagProcessor and $this->ct->Env->clean == 0) {
-			echo 'step k<br/>';
+		if ($this->ct->Env->advancedTagProcessor and $this->ct->Env->clean == 0)
 			$this->addCSSandJSIfNeeded($row, $checkLayoutFile);
-		}
 
 		$this->pageLayoutNameString = $row['layoutname'];
 		$this->pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
@@ -499,15 +494,11 @@ class Layouts
 	{
 		//Get CSS content
 		$this->layoutCodeCSS = trim($layoutRow['layoutcss'] ?? '');
-		echo 'kkkkk9:$this->layoutCodeCSS' . $this->layoutCodeCSS . '<br/>';
 
 		if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-			echo 'step l<br/>';
 			$content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $this->layoutCodeCSS, $layoutRow['modified_timestamp'], $layoutRow['layoutname'] . '.css', 'layoutcss');
-			if ($content != null) {
-				echo 'step m<br/>';
+			if ($content != null)
 				$this->layoutCodeCSS = $content;
-			}
 		}
 
 		if (empty($this->layoutCodeCSS))

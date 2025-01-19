@@ -28,7 +28,7 @@ class Search_date extends BaseSearch
 	{
 		common::loadJQueryUI();
 
-		$this->ct->document->addCustomTag('<script>
+		$js = '
 
 jQuery(document).ready(function($) {
     $("#' . $this->objectName . '_start").datepicker({
@@ -46,7 +46,9 @@ jQuery(document).ready(function($) {
     });
 });
 
-</script>');
+';
+
+		$this->ct->LayoutVariables['script'] .= $js;
 
 		$valueParts = explode('-to-', $value);
 

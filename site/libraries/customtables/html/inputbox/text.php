@@ -37,9 +37,13 @@ class InputBox_text extends BaseInputBox
 			$file_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'jsc' . DIRECTORY_SEPARATOR . 'include.js';
 
 			if (file_exists($file_path)) {
-				$this->ct->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js"></script>');
-				$this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $this->attributes['id'] . '");</script>');
-				$this->ct->document->addCustomTag('<script>$Spelling.DefaultDictionary = "English";</script>');
+
+				$this->ct->LayoutVariables['scripts'][] = URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js';
+				$this->ct->LayoutVariables['script'] .= '$Spelling.SpellCheckAsYouType("' . $this->attributes['id'] . '");';
+				$this->ct->LayoutVariables['script'] .= '$Spelling.DefaultDictionary = "English";';
+				//$this->ct->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js"></script>');
+				//$this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $this->attributes['id'] . '");</script>');
+				//$this->ct->document->addCustomTag('<script>$Spelling.DefaultDictionary = "English";</script>');
 			}
 		}
 
