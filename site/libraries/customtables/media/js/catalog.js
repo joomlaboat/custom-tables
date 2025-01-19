@@ -77,9 +77,6 @@ function runTheTask(task, tableid, recordId, url, responses, last, reload) {
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
 
 	if (http) {
-
-		console.warn(url);
-
 		http.open("GET", url, true);
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		http.onreadystatechange = function () {
