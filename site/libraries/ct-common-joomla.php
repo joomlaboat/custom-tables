@@ -644,7 +644,7 @@ class common
 		$js[] = 'let ctFieldInputPrefix = "' . $fieldInputPrefix . '";';
 		$js[] = 'let gmapdata = [];';
 		$js[] = 'let gmapmarker = [];';
-		$js[] = 'const CTEditHelper = new CustomTablesEdit();';
+		$js[] = 'const CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ');';
 
 		if ($params->ModuleId == null)
 			$js[] = 'let ctItemId = "' . $params->ItemId . '";';

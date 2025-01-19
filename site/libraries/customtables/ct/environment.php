@@ -104,21 +104,13 @@ class Environment
 				$sef = $mainframe->getCfg('sef');
 			}
 
-			if ($sef) {
-				$this->WebsiteRoot = CUSTOMTABLES_MEDIA_HOME_URL;
-				if ($this->WebsiteRoot == '' or $this->WebsiteRoot[strlen($this->WebsiteRoot) - 1] != '/') //Root must have the slash character "/" in the end
-					$this->WebsiteRoot .= '/';
-			} else
-				$this->WebsiteRoot = '';
+			$this->WebsiteRoot = CUSTOMTABLES_MEDIA_HOME_URL;
+			if ($this->WebsiteRoot == '' or $this->WebsiteRoot[strlen($this->WebsiteRoot) - 1] != '/') //Root must have the slash character "/" in the end
+				$this->WebsiteRoot .= '/';
 		} else {
-			if (get_option('permalink_structure')) {
-				$this->WebsiteRoot = home_url();
-				if (substr($this->WebsiteRoot, -1) !== '/') {
-					$this->WebsiteRoot .= '/';
-				}
-			} else {
-				$this->WebsiteRoot = '';
-			}
+			$this->WebsiteRoot = home_url();
+			if (substr($this->WebsiteRoot, -1) !== '/')
+				$this->WebsiteRoot .= '/';
 		}
 
 		$this->advancedTagProcessor = false;

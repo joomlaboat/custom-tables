@@ -8,9 +8,11 @@
  **/
 class CustomTablesEdit {
 
-	constructor() {
+	constructor(cmsName = 'Joomla', cmsVersion = 5) {
 		this.GoogleDriveTokenClient = [];
 		this.GoogleDriveAccessToken = null;
+		this.cmsName = cmsName;
+		this.cmsVersion = cmsVersion;
 	}
 
 	GoogleDriveInitClient(fieldName, GoogleDriveAPIKey, GoogleDriveClientId) {
@@ -899,22 +901,18 @@ function doSanitanization(obj, sanitizers_string) {
 
 
 function TranslateText() {
-	if (arguments.length == 0)
+	if (arguments.length === 0)
 		return 'Nothing to translate';
 
 	let str;
 	const key = arguments[0];
 
-	// Try Joomla first
-	if (typeof Joomla !== 'undefined' && Joomla.JText && typeof Joomla.JText._ === 'function') {
+	if (CTEditHelper.cmsName === "Joomla")
 		str = Joomla.JText._(key);
-	}
-	// Try WordPress
-	else if (typeof ctTranslationScriptObject !== 'undefined' && ctTranslationScriptObject[key]) {
+	else if (CTEditHelper.cmsName === "WordPress") {
 		str = ctTranslationScriptObject[key];
-	}
-	// Fallback
-	else {
+	} else {
+		// Fallback
 		str = key; // Return the key itself if no translation found
 	}
 
@@ -1096,14 +1094,8 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
 	let result = '';
 	let cssClass = 'form-control form-select valid form-control-success';
-	let objForm = document.getElementById(formId);
-
-	if (objForm) {
-		let v1 = objForm.dataset.version.split('.');
-		let version = parseInt(v1[0]);
-		if (version < 4)
-			cssClass = 'inputbox';
-	}
+	if (CTEditHelper.cmsName === 'Joomla' && CTEditHelper.cmsVersion < 4)
+		cssClass = 'inputbox';
 
 	//Add select box
 	let current_object_id = control_name + index + (Array.isArray(filters[index]) ? '_' + sub_index : '');
@@ -1175,7 +1167,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
 	let wrapper = document.getElementById(control_name + "Wrapper");
 	let url;
 
-	if (typeof Joomla !== 'undefined') {
+	if (CTEditHelper.cmsName === "Joomla") {
 		let link = location.href.split('administrator/index.php?option=com_customtables');
 
 		if (link.length === 2)//to make sure that it will work in the back-end
@@ -1183,7 +1175,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
 		else
 			url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&frmt=json&key=' + wrapper.dataset.key + '&index=' + index;
 
-	} else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+	} else if (CTEditHelper.cmsName === "WordPress") {
 		url = ctWebsiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + wrapper.dataset.key + '&index=' + index;
 	}
 
@@ -1404,9 +1396,9 @@ function ctInputBoxRecords_showMultibox(control_name, control_name_postfix) {
 
 		let deleteImage;
 
-		if (window.Joomla instanceof Object)
+		if (CTEditHelper.cmsName === "Joomla")
 			deleteImage = ctWebsiteRoot + 'components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
-		else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar'))
+		else if (CTEditHelper.cmsName === "WordPress")
 			deleteImage = ctWebsiteRoot + 'wp-content/plugins/customtables/libraries/customtables/media/images/icons/cancel.png';
 
 		v += '<td style="border-bottom:1px dotted grey;min-width:16px;">';
@@ -1832,7 +1824,7 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
 	let where = childFilterFieldName + '=' + parentValue;
 	let url;
 
-	if (typeof Joomla !== 'undefined') {
+	if (CTEditHelper.cmsName === "Joomla") {
 		let link = location.href.split('administrator/index.php?option=com_customtables');
 
 		if (link.length === 2)//to make sure that it will work in the back-end
@@ -1840,7 +1832,7 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
 		else
 			url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
 
-	} else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+	} else if (CTEditHelper.cmsName === "WordPress") {
 		url = ctWebsiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + key + '&index=0&where=' + encodeURIComponent(where);
 		console.error(url);
 		console.error("updateChildTableJoinField is going to be supported by WP yet.");
@@ -1901,7 +1893,7 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 	let key = wrapper.dataset.key;
 	let url;
 
-	if (typeof Joomla !== 'undefined') {
+	if (CTEditHelper.cmsName === "Joomla") {
 		let link = location.href.split('administrator/index.php?option=com_customtables');
 
 		if (link.length === 2)//to make sure that it will work in the back-end
@@ -1909,7 +1901,7 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 		else
 			url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
 
-	} else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
+	} else if (CTEditHelper.cmsName === "WordPress") {
 		console.error("onCTVirtualSelectServerSearch is not supported by WP yet.");
 		alert("onCTVirtualSelectServerSearch is not supported by WP yet.")
 		return;
