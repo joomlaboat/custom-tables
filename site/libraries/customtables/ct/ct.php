@@ -47,7 +47,7 @@ class CT
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function __construct(?array $menuParams, bool $blockExternalVars = true, ?string $ModuleId = null, bool $enablePlugin = true)
+	function __construct(?array $menuParams = [], bool $blockExternalVars = true)
 	{
 		$this->errors = [];
 		$this->messages = [];
@@ -67,7 +67,7 @@ class CT
 
 		$this->Languages = new Languages;
 
-		$this->Env = new Environment($enablePlugin);
+		$this->Env = new Environment();
 		$this->Params = new Params($menuParams, $blockExternalVars);
 
 		$this->GroupBy = null;

@@ -44,18 +44,16 @@ class Environment
 
 	var bool $CustomPHPEnabled;
 
-	function __construct(bool $enablePlugin = true)
+	function __construct()
 	{
 		$this->CustomPHPEnabled = false;
 
 		if (defined('_JEXEC')) {
-			if ($enablePlugin) {
-				$plugin = PluginHelper::getPlugin('content', 'customtables');
+			$plugin = PluginHelper::getPlugin('content', 'customtables');
 
-				if (!is_null($plugin) and is_object($plugin) > 0) {
-					$pluginParamsArray = json_decode($plugin->params);
-					$this->CustomPHPEnabled = (int)($pluginParamsArray->phpPlugin ?? 0) == 1;
-				}
+			if (!is_null($plugin) and is_object($plugin) > 0) {
+				$pluginParamsArray = json_decode($plugin->params);
+				$this->CustomPHPEnabled = (int)($pluginParamsArray->phpPlugin ?? 0) == 1;
 			}
 		}
 
