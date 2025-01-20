@@ -45,9 +45,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		$this->ct = new CT(null, false);
 		$this->ct->Params->constructJoomlaParams();
 
-		//$app = Factory::getApplication();
-		//$params = $app->getParams();
-		$this->ct->getTable($this->ct->Params->tableName);// $params->get('establename'));
+		$this->ct->getTable($this->ct->Params->tableName);
 		if ($this->ct->Table === null) {
 			common::enqueueMessage('Table not selected (62).');
 			return false;
@@ -166,7 +164,6 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 		return true;
 	}
 
-
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
@@ -178,8 +175,15 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 
 		foreach ($photo_arr as $photoId) {
 			if ($photoId != '') {
-				$this->imageGallery->imageMethods->DeleteExistingGalleryImage($this->imageGallery->imageFolder, $this->imageGallery->imageMainPrefix, $this->ct->Table->tableid, $this->galleryname,
-					$photoId, (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : ''), true);
+				$this->imageGallery->imageMethods->DeleteExistingGalleryImage(
+					$this->imageGallery->imageFolderArray['path'],
+					$this->imageGallery->imageMainPrefix,
+					$this->ct->Table->tableid,
+					$this->galleryname,
+					$photoId,
+					(($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : ''),
+					true
+				);
 
 				database::deleteRecord($this->imageGallery->photoTableName, 'photoid', $photoId);
 			}

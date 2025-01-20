@@ -36,6 +36,7 @@ class Save_imagegallery
 		$this->ct = &$ct;
 		$this->field = $field;
 		$this->imageFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params);//self::getImageGalleryFolder($this->field->params);
+
 		$this->photoTableName = database::getDBPrefix() . 'customtables_gallery_' . $this->ct->Table->tablename . '_' . $field->fieldname;
 		$this->imageMethods = new CustomTablesImageMethods;
 		$this->imageMainPrefix = 'g';

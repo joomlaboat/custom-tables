@@ -72,10 +72,10 @@ class CustomTablesViewEditPhotos extends HtmlView
 			$htmlOut .= '
 				<tr>';
 
-			$imageFile = $this->Model->imageGallery->imageFolderWeb . '/' . $this->Model->imageGallery->imageMainPrefix . $this->Model->ct->Table->tableid . '_'
+			$imageFile = $this->Model->imageGallery->imageFolderArray['web'] . '/' . $this->Model->imageGallery->imageMainPrefix . $this->Model->ct->Table->tableid . '_'
 				. $this->Model->field->fieldname . '__esthumb_' . $image->photoid . '.jpg';
 
-			$imageFileOriginal = $this->Model->imageGallery->imageFolderWeb . '/' . $this->Model->imageGallery->imageMainPrefix
+			$imageFileOriginal = $this->Model->imageGallery->imageFolderArray['web'] . '/' . $this->Model->imageGallery->imageMainPrefix
 				. $this->Model->ct->Table->tableid . '_' . $this->Model->field->fieldname . '__original_' . $image->photoid . '.' . $image->photo_ext;
 
 			$htmlOut .= '
