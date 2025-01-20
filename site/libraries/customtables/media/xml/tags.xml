@@ -1170,25 +1170,25 @@
 			</params>
 		</tag>
 
-		<tag name="script" label="Add JavaScript file" startchar="{" endchar="}" hidedefaultexample="1"
-			 description="Inserts a JavaScript file into the HTML document page.. This tag allows you to add external JavaScript files to your WordPress or Joomla site."
+		<tag name="script" label="Add JavaScript file or script" startchar="{" endchar="}" hidedefaultexample="1"
+			 description="The document.script function allows you to add JavaScript to your page, either by including external JS files or embedding inline scripts."
 			 proversion="0" twigclass="document"
 			 layouttypes="1,2,4,5,6" wordpress="true">
 			<params>
-				<param name="link" label="Link to the file" type="string"
+				<param name="link" label="Link to the file or code" type="string"
 					   example="https://code.jquery.com/ui/1.12.1/jquery-ui.js' type='text/javascript'&gt;&lt;/script&gt;"
-					   description="URL of the JavaScript file to be included. This should be a full URL to the external JavaScript file you want to include in your document."/>
+					   description="This tag provides a flexible way to inject JavaScript into your document’s <head> section. It can handle both external JavaScript file references and direct JavaScript code."/>
 			</params>
 		</tag>
 
-		<tag name="style" label="Add CSS file" startchar="{" endchar="}" hidedefaultexample="1"
-			 description="Inserts a CSS file into the HTML document page.. This tag allows you to add external CSS files to your WordPress or Joomla site."
+		<tag name="style" label="Add CSS file or CSS style" startchar="{" endchar="}" hidedefaultexample="1"
+			 description="The document.style function allows you to add CSS styles to your page by injecting CSS into your document's <head> section. It can handle both external CSS file references and direct CSS code."
 			 proversion="0" twigclass="document"
 			 layouttypes="1,2,4,5,6" wordpress="true">
 			<params>
-				<param name="link" label="Link to the file" type="string"
-					   example="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' type='text/css'&gt;&lt;/link&gt;"
-					   description="URL of the CSS file to be included. This should be a full URL to the external CSS file you want to include in your document."/>
+				<param name="link" label="CSS file or code" type="string"
+					   example="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+					   description="URL path to the CSS file or CSS code to be embedded."/>
 			</params>
 		</tag>
 

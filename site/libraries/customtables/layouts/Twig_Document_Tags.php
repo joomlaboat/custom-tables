@@ -83,6 +83,8 @@ class Twig_Document_Tags
 	 */
 	function script($linkOrScript): string
 	{
+		//TODO: Consider using defer or async attributes for external scripts when appropriate (currently managed by the browser/CMS defaults)
+
 		// Clean the input string
 		$input = trim($linkOrScript);
 
