@@ -277,7 +277,8 @@ class Value
 		if ($this->ct->Env->isPlugin)
 			return $value;
 
-		if (!in_array($this->ct->LayoutVariables['layout_type'], [1, 5, 6]))//If not Simple Catalog and not Catalog Page and not Catalog Item
+		if (!in_array($this->ct->LayoutVariables['layout_type'],
+			[CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG, CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE, CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM]))//If not Simple Catalog and not Catalog Page and not Catalog Item
 			return $value;
 
 		$edit_userGroup = (int)$this->ct->Params->editUserGroups;

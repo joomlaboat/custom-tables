@@ -103,7 +103,7 @@ class Forms
 				$field_label .= '<span class="ms-1 icon-sort" aria-hidden="true"></span>';
 		}
 
-		if ($field->isrequired == 1 and isset($this->ct->LayoutVariables['layout_type']) and $this->ct->LayoutVariables['layout_type'] == 2)
+		if ($field->isrequired == 1 and isset($this->ct->LayoutVariables['layout_type']) and $this->ct->LayoutVariables['layout_type'] == CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM)
 			$field_label .= '<span class="star" aria-hidden="true">&nbsp;*</span>';
 
 		$field_label .= '</label>';

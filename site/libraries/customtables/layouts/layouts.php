@@ -171,30 +171,30 @@ class Layouts
 	{
 		if (defined('_JEXEC')) {
 			return array(
-				1 => 'COM_CUSTOMTABLES_LAYOUTS_SIMPLE_CATALOG',
-				5 => 'COM_CUSTOMTABLES_LAYOUTS_CATALOG_PAGE',
-				6 => 'COM_CUSTOMTABLES_LAYOUTS_CATALOG_ITEM',
-				2 => 'COM_CUSTOMTABLES_LAYOUTS_EDIT_FORM',
-				4 => 'COM_CUSTOMTABLES_LAYOUTS_DETAILS',
-				3 => 'COM_CUSTOMTABLES_LAYOUTS_RECORD_LINK',
-				7 => 'COM_CUSTOMTABLES_LAYOUTS_EMAIL_MESSAGE',
-				8 => 'COM_CUSTOMTABLES_LAYOUTS_XML',
-				9 => 'COM_CUSTOMTABLES_LAYOUTS_CSV',
-				10 => 'COM_CUSTOMTABLES_LAYOUTS_JSON'
+				CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG => 'COM_CUSTOMTABLES_LAYOUTS_SIMPLE_CATALOG', //1
+				CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE => 'COM_CUSTOMTABLES_LAYOUTS_CATALOG_PAGE', //5
+				CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM => 'COM_CUSTOMTABLES_LAYOUTS_CATALOG_ITEM', //6
+				CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM => 'COM_CUSTOMTABLES_LAYOUTS_EDIT_FORM', //2
+				CUSTOMTABLES_LAYOUT_TYPE_DETAILS => 'COM_CUSTOMTABLES_LAYOUTS_DETAILS', //4
+				3 => 'COM_CUSTOMTABLES_LAYOUTS_RECORD_LINK', //unused old type
+				CUSTOMTABLES_LAYOUT_TYPE_EMAIL => 'COM_CUSTOMTABLES_LAYOUTS_EMAIL_MESSAGE', //7
+				CUSTOMTABLES_LAYOUT_TYPE_XML => 'COM_CUSTOMTABLES_LAYOUTS_XML', //8
+				CUSTOMTABLES_LAYOUT_TYPE_CSV => 'COM_CUSTOMTABLES_LAYOUTS_CSV', //9
+				CUSTOMTABLES_LAYOUT_TYPE_JSON => 'COM_CUSTOMTABLES_LAYOUTS_JSON' //10
 			);
 		}
 
 		return array(
-			1 => 'Catalog',
+			CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG => 'Catalog', //1
 			//5 => 'Catalog Page',
 			//6 => 'Catalog Item',
-			2 => 'Edit Form',
-			4 => 'Details',
+			CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM => 'Edit Form', //2
+			CUSTOMTABLES_LAYOUT_TYPE_DETAILS => 'Details', //4
 			//3 => 'COM_CUSTOMTABLES_LAYOUTS_DETAILS',
-			7 => 'Email Message',
-			8 => 'XML File',
-			9 => 'CSV File',
-			10 => 'JSON File'
+			CUSTOMTABLES_LAYOUT_TYPE_EMAIL => 'Email Message', //7
+			CUSTOMTABLES_LAYOUT_TYPE_XML => 'XML File', //8
+			CUSTOMTABLES_LAYOUT_TYPE_CSV => 'CSV File', //9
+			CUSTOMTABLES_LAYOUT_TYPE_JSON => 'JSON File' //10
 		);
 	}
 
@@ -247,18 +247,18 @@ class Layouts
 			if ($this->ct->Table === null)
 				return ['success' => false, 'message' => 'CustomTable: Table not selected', 'short' => 'error'];
 
-			if ($layoutType == 1 or $layoutType == 5)
+			if ($layoutType == CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG or $layoutType == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE)
 				$this->layoutCode = $this->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
-			elseif ($layoutType == 2) {
+			elseif ($layoutType == CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM) {
 				if (defined('_JEXEC'))
 					$this->layoutCode = $this->createDefaultLayout_Edit($this->ct->Table->fields);
 				elseif (defined('WPINC'))
 					$this->layoutCode = $this->createDefaultLayout_Edit_WP($this->ct->Table->fields);
-			} elseif ($layoutType == 4 or $layoutType == 6 or $layoutType == 3)
+			} elseif ($layoutType == CUSTOMTABLES_LAYOUT_TYPE_DETAILS or $layoutType == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM or $layoutType == 3) //3 is old unused type
 				$this->layoutCode = $this->createDefaultLayout_Details($this->ct->Table->fields);
-			elseif ($layoutType == 7)
+			elseif ($layoutType == CUSTOMTABLES_LAYOUT_TYPE_EMAIL)
 				$this->layoutCode = $this->createDefaultLayout_Email($this->ct->Table->fields);
-			elseif ($layoutType == 9)
+			elseif ($layoutType == CUSTOMTABLES_LAYOUT_TYPE_CSV)
 				$this->layoutCode = $this->createDefaultLayout_CSV($this->ct->Table->fields);
 		}
 
@@ -272,9 +272,15 @@ class Layouts
 		if ($task !== null)
 			return $this->doTasks($task);
 
-		if (in_array($this->layoutType, [1, 5, 8, 9, 10])) {
+		if (in_array($this->layoutType, [
+			CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG,
+			CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE,
+			CUSTOMTABLES_LAYOUT_TYPE_XML,
+			CUSTOMTABLES_LAYOUT_TYPE_CSV,
+			CUSTOMTABLES_LAYOUT_TYPE_JSON
+		])) {
 			$output['html'] = $this->renderCatalog();
-		} elseif ($this->layoutType == 2) {
+		} elseif ($this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM) {
 			if ($this->ct->Table->record === null) {
 
 				if (!empty($this->ct->Params->listing_id))
@@ -317,7 +323,7 @@ class Layouts
 				$output['captcha'] = true;
 
 			$output['fieldtypes'] = $this->ct->editFieldTypes;
-		} elseif ($this->layoutType == 4 or $this->layoutType == 6) {
+		} elseif ($this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_DETAILS or $this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM) {
 			$output['html'] = $this->renderDetailedLayout();
 		} else {
 			return ['success' => false, 'message' => 'CustomTable: Unknown Layout Type', 'short' => 'error'];
@@ -517,7 +523,7 @@ class Layouts
 
 	function createDefaultLayout_SimpleCatalog(array $fields, bool $addToolbar = true): string
 	{
-		$this->layoutType = 1;
+		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG;
 
 		$result = '<style>' . PHP_EOL . '.datagrid th{text-align:left;}' . PHP_EOL . '.datagrid td{text-align:left;}' . PHP_EOL . '</style>' . PHP_EOL;
 		$result .= '<div style="float:right;">{{ html.recordcount }}</div>' . PHP_EOL;
@@ -682,7 +688,7 @@ class Layouts
 
 	function createDefaultLayout_Edit(array $fields, bool $addToolbar = true): string
 	{
-		$this->layoutType = 2;
+		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM;
 		$result = '<legend>{{ table.title }}</legend>{{ html.goback() }}<div class="form-horizontal">';
 		//, 'imagegallery'
 		$fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy', 'virtual'];
@@ -715,7 +721,7 @@ class Layouts
 
 	function createDefaultLayout_Edit_WP(array $fields, bool $addToolbar = true, bool $addLegend = true, bool $addGoBack = true): string
 	{
-		$this->layoutType = 2;
+		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM;
 
 		$result = '';
 
@@ -763,7 +769,7 @@ class Layouts
 
 	function createDefaultLayout_Details(array $fields): string
 	{
-		$this->layoutType = 4;
+		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_DETAILS;
 		$result = '<legend>{{ table.title }}</legend>{{ html.goback() }}<div class="form-horizontal">';
 
 		$fieldTypes_to_skip = ['dummy'];
@@ -789,7 +795,7 @@ class Layouts
 
 	function createDefaultLayout_Email(array $fields): string
 	{
-		$this->layoutType = 4;
+		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_DETAILS;
 		$result = 'Dear ...<br/>A new records has been added to {{ table.title }} table.<br/><br/>Details below:<br/>';
 
 		$fieldTypes_to_skip = ['log', 'filebox', 'dummy'];
@@ -803,7 +809,7 @@ class Layouts
 
 	function createDefaultLayout_CSV($fields): string
 	{
-		$this->layoutType = 9;
+		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_CSV;
 
 		$result = '';
 

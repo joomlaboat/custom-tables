@@ -33,7 +33,7 @@ trait JFormFieldCTEditLayoutCommon
 		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
-		$whereClause->addOrCondition('layouttype', 2);
+		$whereClause->addOrCondition('layouttype', CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM);
 
 		$layouts = database::loadObjectList('#__customtables_layouts AS a',
 			['id', 'layoutname', 'TABLE_NAME'], $whereClause, 'TABLE_NAME,layoutname');

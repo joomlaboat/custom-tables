@@ -33,11 +33,11 @@ trait JFormFieldCTCatalogLayoutCommon
 		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
-		$whereClause->addOrCondition('layouttype', 1);
-		$whereClause->addOrCondition('layouttype', 5);
-		$whereClause->addOrCondition('layouttype', 8);
-		$whereClause->addOrCondition('layouttype', 9);
-		$whereClause->addOrCondition('layouttype', 10);
+		$whereClause->addOrCondition('layouttype', CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG);
+		$whereClause->addOrCondition('layouttype', CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE);
+		$whereClause->addOrCondition('layouttype', CUSTOMTABLES_LAYOUT_TYPE_XML);
+		$whereClause->addOrCondition('layouttype', CUSTOMTABLES_LAYOUT_TYPE_CSV);
+		$whereClause->addOrCondition('layouttype', CUSTOMTABLES_LAYOUT_TYPE_JSON);
 
 		$layouts = database::loadObjectList('#__customtables_layouts AS a',
 			['id', 'layoutname', 'TABLE_NAME'], $whereClause, 'TABLE_NAME,layoutname');

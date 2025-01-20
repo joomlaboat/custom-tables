@@ -11,13 +11,11 @@
 namespace CustomTables;
 
 // no direct access
+defined('_JEXEC') or die();
+
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\HTML\HTMLHelper;
-
-//use LayoutProcessor;
-
-defined('_JEXEC') or die();
 
 class Twig_Document_Tags
 {
@@ -238,7 +236,7 @@ class Twig_Document_Tags
 		$number = 1;
 		$html_result = '';
 
-		if ($layouts->layoutType == 6 and !is_null($this->ct->Records)) {
+		if ($layouts->layoutType == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM and !is_null($this->ct->Records)) {
 			foreach ($this->ct->Records as $row) {
 				$row['_number'] = $number;
 				$row['_islast'] = $number == count($this->ct->Records);

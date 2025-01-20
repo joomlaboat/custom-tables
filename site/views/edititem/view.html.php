@@ -34,7 +34,7 @@ class CustomTablesViewEditItem extends HtmlView
 
 		$layout = new Layouts($this->ct);
 
-		$this->result = $layout->renderMixedLayout($this->ct->Params->editLayout);
+		$this->result = $layout->renderMixedLayout($this->ct->Params->editLayout, CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM);
 		if ($this->result['success']) {
 			if ($this->ct->Env->isModal)
 				die($this->result['html']);

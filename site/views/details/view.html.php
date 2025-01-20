@@ -38,11 +38,11 @@ class CustomTablesViewDetails extends HtmlView
 
 		if ($this->details->load()) {
 
-			if ($this->details->layoutType == 8)
+			if ($this->details->layoutType == CUSTOMTABLES_LAYOUT_TYPE_XML)
 				$this->ct->Env->frmt = 'xml';
-			elseif ($this->details->layoutType == 9)
+			elseif ($this->details->layoutType == CUSTOMTABLES_LAYOUT_TYPE_CSV)
 				$this->ct->Env->frmt = 'csv';
-			elseif ($this->details->layoutType == 10)
+			elseif ($this->details->layoutType == CUSTOMTABLES_LAYOUT_TYPE_JSON)
 				$this->ct->Env->frmt = 'json';
 
 			parent::display($tpl);

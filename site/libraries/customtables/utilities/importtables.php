@@ -469,11 +469,11 @@ class ImportTables
 		$Layouts = new Layouts($ct);
 
 		//Convert all Layout Types
-		if ($layout_new['layouttype'] == 5)
-			$layout_new['layouttype'] = 1;
+		if ($layout_new['layouttype'] == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE)
+			$layout_new['layouttype'] = CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG;
 
-		if ($layout_new['layouttype'] == 3 or $layout_new['layouttype'] == 6)
-			$layout_new['layouttype'] = 4;
+		if ($layout_new['layouttype'] == 3 or $layout_new['layouttype'] == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM)
+			$layout_new['layouttype'] = CUSTOMTABLES_LAYOUT_TYPE_DETAILS;
 
 		if (is_array($layout_old) and count($layout_old) > 0) {
 			$layoutId = $layout_old['id'];

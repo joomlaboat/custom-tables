@@ -92,7 +92,7 @@ class CustomtablesViewRecords extends HtmlView
 	protected function renderForm($tpl): bool
 	{
 		$Layouts = new Layouts($this->ct);
-		$this->ct->LayoutVariables['layout_type'] = 2;
+		$this->ct->LayoutVariables['layout_type'] = CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM;
 		$this->pageLayout = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, false);
 
 		// get action permissions

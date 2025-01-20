@@ -239,7 +239,7 @@ class CustomtablesViewListoflayouts extends HtmlView
 		$twig_matches = 0;
 		$twigTagFound = false;
 
-		if (in_array((int)$row->layouttype, [2, 4, 6, 7])) {
+		if (in_array((int)$row->layouttype, [CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM, CUSTOMTABLES_LAYOUT_TYPE_DETAILS, CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM, CUSTOMTABLES_LAYOUT_TYPE_EMAIL])) {
 			if (str_contains($row->layoutcode, '{% block record %}'))
 				$errors [] = 'Remove {% block record %} tag';
 		}
@@ -255,8 +255,7 @@ class CustomtablesViewListoflayouts extends HtmlView
 				$twig_matches += 1;
 				$twigTagFound = false;
 
-
-				if (in_array((int)$row->layouttype, [2, 4, 6, 7])) {
+				if (in_array((int)$row->layouttype, [CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM, CUSTOMTABLES_LAYOUT_TYPE_DETAILS, CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM, CUSTOMTABLES_LAYOUT_TYPE_EMAIL])) {
 					//Edit for or single item type layout
 					if (in_array($tag, $twig_catalog_tags))
 						$errors [] = 'Remove {{ ' . $tag . ' }} tag';

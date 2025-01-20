@@ -33,10 +33,10 @@ if ($this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null
 		. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
 }
 
-if (isset($this->result['html'])) {
+if ($this->result['success']) {
 	echo $this->result['html'];
 } else {
-	common::enqueueMessage('Details HTML not found');
+	common::enqueueMessage($this->result['message'], 'error');
 }
 
 ?>
