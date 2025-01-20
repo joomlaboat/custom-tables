@@ -323,7 +323,6 @@ class Layouts
 			return ['success' => false, 'message' => 'CustomTable: Unknown Layout Type', 'short' => 'error'];
 		}
 
-
 		if ($this->ct->Env->clean == 0) {
 
 			if (isset($this->ct->LayoutVariables['style']))
@@ -1082,11 +1081,11 @@ class Layouts
 				}
 			}
 
-			if ($task == 'saveandcontinue') {
-				$link = common::getReturnToURL();
-				if ($link === null)
-					$link = $this->ct->Params->returnTo;
+			$link = common::getReturnToURL();
+			if ($link === null)
+				$link = $this->ct->Params->returnTo;
 
+			if ($task == 'saveandcontinue') {
 				$link = CTMiscHelper::deleteURLQueryOption($link, "listing_id");
 
 				if (!str_contains($link, "?"))
@@ -1095,8 +1094,9 @@ class Layouts
 					$link .= '&';
 
 				$link .= 'listing_id=' . $record->listing_id;
-				$output['redirect'] = $link;
 			}
+
+			$output['redirect'] = $link;
 
 			$editForm = new Edit($this->ct);
 			$editForm->layoutContent = $this->layoutCode;

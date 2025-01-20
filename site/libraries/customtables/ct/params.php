@@ -395,7 +395,8 @@ class Params
 				$this->returnTo = $menu_params['returnto'] ?? null;
 		}
 		$this->requiredLabel = $menu_params['requiredlabel'] ?? null;
-		$this->msgItemIsSaved = $menu_params['msgitemissaved'] ?? common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
+
+		$this->msgItemIsSaved = (empty($menu_params['msgitemissaved']) ? common::translate('COM_CUSTOMTABLES_RECORD_SAVED') : $menu_params['msgitemissaved']);
 		if ($this->msgItemIsSaved == '-')
 			$this->msgItemIsSaved = null;//Do not show "save message"
 
@@ -455,7 +456,7 @@ class Params
 
 		$this->tableName = null;
 
-		if (common::inputGetInt("ctmodalform", 0) == 1)
+		if (!$this->blockExternalVars and common::inputGetInt("ctmodalform", 0) == 1)
 			$this->tableName = common::inputGetInt("tableid");//Used in Save Modal form content.
 
 		if ($this->tableName === null) {
@@ -466,7 +467,7 @@ class Params
 
 		//Filter
 		$this->userIdField = $menu_params['useridfield'] ?? null;
-		$this->filter = $menu_params['filter'] ?? null; //TODO: Test it. Security issue
+		$this->filter = $menu_params['filter'] ?? null;
 
 		$this->showPublished = (int)($menu_params['showpublished'] ?? CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY);
 
@@ -552,7 +553,10 @@ class Params
 			$this->returnTo = $menu_params['returnto'] ?? null;
 		}
 		$this->requiredLabel = $menu_params['requiredlabel'] ?? null;
-		$this->msgItemIsSaved = $menu_params['msgitemissaved'] ?? common::translate('COM_CUSTOMTABLES_RECORD_SAVED');
+
+		$this->msgItemIsSaved = (empty($menu_params['msgitemissaved']) ? common::translate('COM_CUSTOMTABLES_RECORD_SAVED') : $menu_params['msgitemissaved']);
+		if ($this->msgItemIsSaved == '-')
+			$this->msgItemIsSaved = null;//Do not show "save message"
 
 		$this->recordsTable = $menu_params['recordstable'] ?? null;
 		$this->recordsUserIdField = $menu_params['recordsuseridfield'] ?? null;
