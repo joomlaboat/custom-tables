@@ -356,8 +356,8 @@ class CT
 	function getRecordsByKeyword(): void
 	{
 		//Joomla Method
-		$moduleId = common::inputGetInt('ModuleId', 0);
-		if ($moduleId != 0) {
+		$moduleId = common::inputPostInt('ModuleId');
+		if ($moduleId !== null) {
 			$keywordSearch = common::inputGetString('eskeysearch_' . $moduleId, '');
 			if ($keywordSearch != '') {
 				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'filter' . DIRECTORY_SEPARATOR . 'keywordsearch.php');
@@ -824,7 +824,7 @@ class CT
 		if ($access == 'core.edit' and empty($this->listing_id))
 			$access = 'core.create'; //add new
 
-		if ($this->ct->Env->user->authorise($access, 'com_customtables')) {
+		if ($this->Env->user->authorise($access, 'com_customtables')) {
 			$this->isAuthorized = true;
 			return true;
 		}
@@ -832,9 +832,9 @@ class CT
 		if ($access != 'core.edit')
 			return false;
 
-		if ($this->ct->Params->userIdField != '') {
-			if ($this->ct->checkIfItemBelongsToUser($this->listing_id, $this->ct->Params->userIdField)) {
-				if ($this->ct->Env->user->authorise('core.edit.own', 'com_customtables')) {
+		if ($this->Params->userIdField != '') {
+			if ($this->checkIfItemBelongsToUser($this->listing_id, $this->ct->Params->userIdField)) {
+				if ($this->Env->user->authorise('core.edit.own', 'com_customtables')) {
 					$this->isAuthorized = true;
 					return true;
 				} else

@@ -156,7 +156,7 @@ class Params
 		$menu_paramsArray = [];
 
 		if (is_null($ModuleId)) {
-			$ModuleIdInt = common::inputGetInt('ModuleId');
+			$ModuleIdInt = common::inputPostInt('ModuleId');
 
 			if ($ModuleIdInt)
 				$ModuleId = strval($ModuleIdInt);

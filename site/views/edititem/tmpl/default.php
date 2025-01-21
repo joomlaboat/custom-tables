@@ -14,7 +14,7 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
 
-if ($this->ct->Params->ModuleId === null or $this->ct->Params->ModuleId == 0) {
+if (empty($this->ct->Params->ModuleId)) {//} === null or $this->ct->Params->ModuleId == 0) {
 	HTMLHelper::_('jquery.framework');
 	jimport('joomla.html.html.bootstrap');
 }

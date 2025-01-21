@@ -152,7 +152,7 @@ class InputBox_file extends BaseInputBox
 		$URLString = common::UriRoot(true, true) . 'index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname
 			. '_fileid=' . $file_id
 			. '&Itemid=' . $this->field->ct->Params->ItemId
-			. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
+			//. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
 			. '&fieldname=' . $this->field->fieldname;
 
 		if (defined('_JEXEC')) {

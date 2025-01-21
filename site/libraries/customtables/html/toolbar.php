@@ -119,8 +119,8 @@ class RecordToolbar
 			if ($this->ct->Params->ItemId > 0)
 				$editLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
 
-			if (!is_null($this->ct->Params->ModuleId))
-				$editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+			//if (!is_null($this->ct->Params->ModuleId))
+			//$editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
 			if ($isModal) {
 				$tmp_current_url = common::makeReturnToURL($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
@@ -167,8 +167,8 @@ class RecordToolbar
 				if ($this->ct->Params->ItemId > 0)
 					$imageManagerLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
 
-				if (!is_null($this->ct->Params->ModuleId))
-					$imageManagerLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+				//if (!is_null($this->ct->Params->ModuleId))
+				//$imageManagerLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
 				$alt = $gallery[1];
 

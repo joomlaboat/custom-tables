@@ -300,8 +300,8 @@ class Layouts
 			if ($this->ct->Env->clean == 0) {
 				$formLink = common::curPageURL();
 				//$formLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem' . ($this->ct->Params->ItemId != 0 ? '&amp;Itemid=' . $this->ct->Params->ItemId : '');
-				if (!is_null($this->ct->Params->ModuleId))
-					$formLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+				//if (!is_null($this->ct->Params->ModuleId))
+				//$formLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 			} else {
 				$formLink = null;
 			}

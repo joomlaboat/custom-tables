@@ -72,8 +72,8 @@ class InputBox_filebox extends BaseInputBox
 		if ($ct->Params->ItemId > 0)
 			$fileManagerLink .= '&amp;Itemid=' . $ct->Params->ItemId;
 
-		if (!is_null($ct->Params->ModuleId))
-			$fileManagerLink .= '&amp;ModuleId=' . $ct->Params->ModuleId;
+		//if (!is_null($ct->Params->ModuleId))
+		//$fileManagerLink .= '&amp;ModuleId=' . $ct->Params->ModuleId;
 
 		if ($ct->Env->toolbarIcons != '')
 			$img = '<i class="ba-btn-transition ' . $ct->Env->toolbarIcons . ' fa-folder" data-icon="' . $ct->Env->toolbarIcons . ' fa-folder" title="' . $title . '"></i>';

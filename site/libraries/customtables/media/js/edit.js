@@ -919,12 +919,11 @@ function TranslateText() {
 	}
 
 	// Handle placeholders
-	if (arguments.length == 1)
+	if (arguments.length === 1)
 		return str;
 
-	for (let i = 1; i < arguments.length; i++) {
+	for (let i = 1; i < arguments.length; i++)
 		str = str.replace('%s', arguments[i]);
-	}
 
 	return str;
 }

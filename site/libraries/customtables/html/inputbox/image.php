@@ -75,7 +75,7 @@ class InputBox_image extends BaseInputBox
 
 		$urlString = common::UriRoot(true, true) . 'index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname . '_fileid=' . $fileId
 			. '&Itemid=' . $this->field->ct->Params->ItemId
-			. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
+			//. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
 			. '&fieldname=' . $this->field->fieldname;
 
 		if (defined('_JEXEC')) {

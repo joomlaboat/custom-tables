@@ -677,6 +677,8 @@ class common
 		Text::script('COM_CUSTOMTABLES_JS_SECURE_URL_INVALID');
 		Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
 		Text::script('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID');
+		Text::script('COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH');
+
 	}
 
 	public static function filterText(?string $text): string

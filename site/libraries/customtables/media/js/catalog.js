@@ -274,7 +274,7 @@ function ctSearchBoxDo() {
 
 				if (l > 0) {
 					if (objValue.length < l) {
-						alert("Please enter at least " + l + " characters to perform a search");
+						alert(obj.dataset.label + ": " + TranslateText('COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH', l));
 						ctLinkLoading = false;
 						return;
 					}

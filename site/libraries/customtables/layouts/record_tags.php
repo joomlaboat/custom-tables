@@ -82,8 +82,8 @@ class Twig_Record_Tags
 			if ($view_link == '')
 				$view_link = 'index.php?option=com_customtables&amp;view=details';
 
-			if (!is_null($this->ct->Params->ModuleId))
-				$view_link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+			//if (!is_null($this->ct->Params->ModuleId))
+			//$view_link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
 			if ($this->ct->Table->alias_fieldname != '') {
 				$alias = $this->ct->Table->record[$this->ct->Table->fieldPrefix . $this->ct->Table->alias_fieldname] ?? '';
@@ -100,7 +100,7 @@ class Twig_Record_Tags
 			}
 
 			$view_link .= '&amp;Itemid=' . ($menu_item_id == 0 ? $this->ct->Params->ItemId : $menu_item_id);
-			$view_link .= (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId);
+			//$view_link .= (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId);
 
 
 			$view_link = CTMiscHelper::deleteURLQueryOption($view_link, 'returnto');

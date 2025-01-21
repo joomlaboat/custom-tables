@@ -97,14 +97,14 @@ class Twig_HTML_Tags
 			}
 
 
-			if (!is_null($this->ct->Params->ModuleId))
-				$link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+			//if (!is_null($this->ct->Params->ModuleId))
+			//	$link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
 			if (common::inputGetCmd('tmpl', '') != '')
 				$link .= '&amp;tmpl=' . common::inputGetCmd('tmpl', '');
 
-			if (!is_null($this->ct->Params->ModuleId))
-				$link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+			//if (!is_null($this->ct->Params->ModuleId))
+			//$link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 		} elseif (defined('WPINC')) {
 			$link = common::curPageURL();
 			$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);

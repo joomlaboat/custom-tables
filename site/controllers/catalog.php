@@ -43,7 +43,7 @@ if (in_array($task, $updatedTask)) {
 		parent::display();
 
 } else {
-//Check Authorization
+	//Check Authorization
 	$PermissionIndexes = ['setorderby' => 0, 'clear' => 3, 'delete' => 3, 'copy' => 4, 'copycontent' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];
 	$PermissionIndex = 0;
 
@@ -137,7 +137,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
 	} else {
 		$link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $ct->Params->ItemId;
-		$link .= (is_null($ct->Params->ModuleId) ? '' : '&ModuleId=' . $ct->Params->ModuleId);
+		//$link .= (is_null($ct->Params->ModuleId) ? '' : '&ModuleId=' . $ct->Params->ModuleId);
 	}
 
 	$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
