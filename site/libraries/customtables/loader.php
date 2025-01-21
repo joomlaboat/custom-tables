@@ -33,9 +33,6 @@ if (!function_exists('str_contains')) {
 
 function CustomTablesLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', bool $loadTwig = true): void
 {
-	if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
-		return;
-
 	if (!defined('CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY'))
 		define('CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY', 0);
 
@@ -95,6 +92,9 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 
 	if (!defined('CUSTOMTABLES_LAYOUT_TYPE_JSON'))
 		define('CUSTOMTABLES_LAYOUT_TYPE_JSON', 10);
+
+	if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
+		return;
 
 	$libraryPath = null;
 

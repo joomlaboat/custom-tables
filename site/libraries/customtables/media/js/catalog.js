@@ -14,9 +14,7 @@ function ctCreateUser(msg, listing_id, toolbarBoxId, ModuleId) {
 		document.getElementById(toolbarBoxId).innerHTML = '';
 
 		let returnTo = btoa(window.location.href);
-
-		//ctWebsiteRoot is the global variable same like ctItemId
-		let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+		let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 
 		if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=createuser', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnTo, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnTo], link);
 
@@ -124,7 +122,7 @@ function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 
 	let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
 
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 
 	let tr_object = document.getElementById(element_tableid_tr);
 	if (tr_object) {
@@ -147,7 +145,7 @@ function ctCopyRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 	if (document.getElementById(toolbarBoxId))
 		document.getElementById(toolbarBoxId).innerHTML = '';
 
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 	let returnto = btoa(window.location.href);
 
 	if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=refresh', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=copy', 'listing_id=' + recordId, 'returnto=' + returnto], link);
@@ -159,7 +157,8 @@ function ctCopyRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 function ctOrderChanged(objectValue) {
 	const current_url = esPrepareLink(['returnto', 'task', 'orderby'], [], '');
 	let returnto = btoa(current_url);
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+
+	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 	link = esPrepareLink(['task'], ['task=setorderby', 'orderby=' + objectValue, 'returnto=' + returnto], link);
 	window.location.href = link;
 }
@@ -167,7 +166,7 @@ function ctOrderChanged(objectValue) {
 function ctLimitChanged(object) {
 	const current_url = esPrepareLink(['returnto', 'task', 'limit'], [], '');
 	let returnto = btoa(current_url);
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 	link = esPrepareLink(['task'], ['task=setlimit', 'limit=' + object.value, 'returnto=' + returnto], link);
 	window.location.href = link;
 }
@@ -181,7 +180,7 @@ function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
 	let task = publish === 1 ? 'task=publish' : 'task=unpublish';
 	let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
 	let tr_object = document.getElementById(element_tableid_tr);
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 
 	if (tr_object) {
 		let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordId, 'clean=1', 'tmpl=component'], link);
@@ -220,7 +219,7 @@ function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
 
 		// Check if a Joomla class is defined
 		if (window.Joomla instanceof Object) {
-			link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+			link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 		} else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
 			link = window.location.href;
 		} else {
@@ -310,7 +309,7 @@ function ctSearchBoxDo() {
 	let link;
 
 	if (typeof Joomla !== 'undefined') {
-		link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+		link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 	} else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
 		link = window.location.href;
 	}
@@ -329,7 +328,7 @@ function ctSearchReset() {
 
 	ctLinkLoading = true;
 
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 	link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], [], link);
 	window.location.href = link;
 }
@@ -398,7 +397,7 @@ function ctToolBarDO(task, tableid) {
 	let element_tableid = "ctTable_" + tableid;
 	let tr_object = document.getElementById(element_tableid);
 
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 
 	if (tr_object) {
 
@@ -560,7 +559,7 @@ function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, pos
 function ctCatalogUpdate(tableid, recordsId, row_index) {
 
 	let element_tableid = "ctTable_" + tableid;
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 	let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], ['listing_id=' + recordsId, 'number=' + row_index, 'clean=1'], link);
 	let params = "";
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
@@ -625,7 +624,7 @@ function ctCatalogOnDrop(event) {
 		let index;
 		if (table_object) index = findRowIndexById("ctTable_" + to_parts[1], element_tableid_tr);
 
-		let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+		let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 		let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], ['task=copycontent', 'from=' + from, 'to=' + to, 'clean=1', 'tmpl=component', 'frmt=json'], link);
 
 		fetch(url)

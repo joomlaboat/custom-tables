@@ -7,7 +7,8 @@
  * @copyright (C) 2018-2025. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
-// No direct access to this file access');
+
+// No direct access to this file access
 defined('_JEXEC') or die();
 
 use CustomTables\common;
@@ -15,7 +16,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
-//HTMLHelper::_('behavior.multiselect');
 $saveOrderingUrl = null;
 
 if ($this->saveOrder and $this->ordering_realfieldname != '') {

@@ -83,7 +83,7 @@ class Forms
 		if ($field->description != "")
 			$field_label .= ' data-content="' . $field->description . '"';
 
-		if ($this->ct->Ordering->ordering_processed_string !== null and $allowSortBy) {
+		if ($this->ct->Ordering->ordering_processed_string !== null and $allowSortBy and $this->ct->Params->ModuleId === null) {
 			$field_label .= ' style="cursor:pointer"';
 			$field_label .= ' onClick="ctOrderChanged(\'' . $field->fieldname . ($OrderingField == $field->fieldname ? ($OrderingDirection == 'desc' ? '' : ' desc') : '') . '\')"';
 		}
@@ -93,7 +93,7 @@ class Forms
 		if (!$allowSortBy or $field->type != 'ordering')
 			$field_label .= $field->title;
 
-		if ($this->ct->Ordering->ordering_processed_string !== null and $allowSortBy) {
+		if ($this->ct->Ordering->ordering_processed_string !== null and $allowSortBy and $this->ct->Params->ModuleId === null) {
 			if ($OrderingField == $field->fieldname) {
 				if ($OrderingDirection == 'desc')
 					$field_label .= '<span class="ms-1 icon-caret-down" aria-hidden="true"></span>';

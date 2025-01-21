@@ -8,11 +8,13 @@
  **/
 class CustomTablesEdit {
 
-	constructor(cmsName = 'Joomla', cmsVersion = 5) {
+	constructor(cmsName = 'Joomla', cmsVersion = 5, itemId = 0, moduleId = 0) {
 		this.GoogleDriveTokenClient = [];
 		this.GoogleDriveAccessToken = null;
 		this.cmsName = cmsName;
 		this.cmsVersion = cmsVersion;
+		this.itemId = itemId;
+		this.moduleId = moduleId;
 	}
 
 	GoogleDriveInitClient(fieldName, GoogleDriveAPIKey, GoogleDriveClientId) {
