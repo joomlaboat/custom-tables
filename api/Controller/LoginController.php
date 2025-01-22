@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die();
 
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Authentication\Authentication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
@@ -18,6 +19,11 @@ use Joomla\CMS\User\UserHelper;
 
 class LoginController
 {
+	/**
+	 * @throws Exception
+	 *
+	 * @since 3.5.0
+	 */
 	function execute()
 	{
 		$app = Factory::getApplication();
@@ -30,7 +36,7 @@ class LoginController
 		$username = $data->username ?? '';
 		$password = $data->password ?? '';
 
-		// Attempt to login
+		// Attempt to log in
 		$credentials = [
 			'username' => $username,
 			'password' => $password

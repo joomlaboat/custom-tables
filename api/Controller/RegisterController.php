@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die();
 
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
@@ -18,20 +19,22 @@ use Joomla\CMS\User\UserHelper;
 
 class RegisterController
 {
+	/**
+	 * @throws Exception
+	 *
+	 * @since 3.5.0
+	 */
 	function execute()
 	{
-		$app = Factory::getApplication();
-
 		// Get POST data
 		$input = file_get_contents('php://input');
 		$data = json_decode($input);
 
 		// Validate required fields
 		$requiredFields = ['name', 'username', 'email', 'password', 'password_confirm'];
-		$errors = [];
 
 		foreach ($requiredFields as $field) {
-			if (!isset($data->$field) || empty($data->$field))
+			if (empty($data->$field))
 				CTMiscHelper::fireError(400, ucfirst($field) . ' is required', 'Bad Request');
 		}
 

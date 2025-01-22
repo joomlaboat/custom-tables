@@ -18,9 +18,20 @@ use CustomTables\Edit;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Session\Session;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class EditController
 {
+	/**
+	 * @throws RuntimeError
+	 * @throws SyntaxError
+	 * @throws LoaderError
+	 * @throws Exception
+	 *
+	 * @since 3.5.0
+	 */
 	function execute()
 	{
 		$userId = CustomTablesAPIHelpers::checkToken();
@@ -73,6 +84,14 @@ class EditController
 		CTMiscHelper::fireSuccess($result['id'], $result['data'], $result['message'] ?? 'Done');
 	}
 
+	/**
+	 * @throws RuntimeError
+	 * @throws SyntaxError
+	 * @throws LoaderError
+	 * @throws Exception
+	 *
+	 * @since 3.5.0
+	 */
 	function executeGET()
 	{
 		$layoutName = Factory::getApplication()->input->get('layout');
@@ -115,6 +134,11 @@ class EditController
 				'input_prefix' => $ct->Table->fieldInputPrefix]);
 	}
 
+	/**
+	 * @throws Exception
+	 *
+	 * @since 3.5.0
+	 */
 	protected function generateFormToken(): string
 	{
 		// Get session object

@@ -13,10 +13,16 @@ defined('_JEXEC') or die();
 
 use CustomTables\Catalog;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 
 class RecordsController
 {
+	/**
+	 * @throws Exception
+	 *
+	 * @since 3.5.0
+	 */
 	function execute()
 	{
 		$userId = CustomTablesAPIHelpers::checkToken();
@@ -40,6 +46,8 @@ class RecordsController
 
 		$catalog = new Catalog($ct);
 
+		$result = '';
+
 		try {
 			$result = $catalog->render($layoutName);
 		} catch
@@ -59,7 +67,7 @@ class RecordsController
 		}
 
 		// Calculate pagination metadata
-		$total_records = (int)$ct->Table->recordcount;
+		$total_records = $ct->Table->recordcount;
 		$records_per_page = count($resultArray); // Actual number of records in this response
 		$current_page = (int)floor($ct->LimitStart / $ct->Limit) + 1; // Convert to 1-based page index
 		$total_pages = (int)ceil($total_records / $ct->Limit); // Always round up for total pages

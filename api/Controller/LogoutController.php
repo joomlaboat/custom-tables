@@ -11,10 +11,16 @@
 // no direct access
 defined('_JEXEC') or die();
 
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 
 class LogoutController
 {
+	/**
+	 * @throws Exception
+	 *
+	 * @since 3.5.0
+	 */
 	function execute()
 	{
 		$app = Factory::getApplication();

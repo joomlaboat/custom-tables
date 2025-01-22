@@ -22,8 +22,6 @@ class CustomTablesAPIHelpers
 	 */
 	static public function checkToken(): int
 	{
-		self::loadCT();
-
 		$app = Factory::getApplication();
 		$db = Factory::getDbo();
 
@@ -84,18 +82,16 @@ class CustomTablesAPIHelpers
 		return $result->user_id;
 	}
 
-	static protected function loadCT()
+	static public function loadCT()
 	{
 		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
 			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'loader.php';
 
 		if (!file_exists($path))
-			CTMiscHelper::fireError(500, 'CT Loader not found');
+			fireError(500, 'CT Loader not found');
 
 		require_once($path);
-		CustomTablesLoader(false, false, null, 'com_customtables', true);
+		CustomTablesLoader();
 	}
-
-
 }
 

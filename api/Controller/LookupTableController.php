@@ -13,10 +13,16 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\ProInputBoxTableJoin;
 
 class LookupTableController
 {
+	/**
+	 * @throws Exception
+	 *
+	 * @since 3.5.0
+	 */
 	function execute()
 	{
 		$userId = CustomTablesAPIHelpers::checkToken();
