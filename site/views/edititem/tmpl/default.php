@@ -14,10 +14,8 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use Joomla\CMS\HTML\HTMLHelper;
 
-if (empty($this->ct->Params->ModuleId)) {//} === null or $this->ct->Params->ModuleId == 0) {
-	HTMLHelper::_('jquery.framework');
-	jimport('joomla.html.html.bootstrap');
-}
+HTMLHelper::_('jquery.framework');
+jimport('joomla.html.html.bootstrap');
 
 common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 

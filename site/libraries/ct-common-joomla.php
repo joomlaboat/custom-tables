@@ -16,6 +16,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -644,7 +645,11 @@ class common
 		$js[] = 'let ctFieldInputPrefix = "' . $fieldInputPrefix . '";';
 		$js[] = 'let gmapdata = [];';
 		$js[] = 'let gmapmarker = [];';
-		$js[] = 'const CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',' . ($params->ItemId ?? 0) . ',' . ($params->ModuleId ?? 0) . ');';
+		$js[] = '
+if (typeof CTEditHelper === "undefined") {
+	const CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',' . ($params->ItemId ?? 0) . ');
+}
+';
 
 		$document->addCustomTag('
 <script>
@@ -690,15 +695,38 @@ class common
 	}
 
 	/**
+	 * Redirect user to a specified URL with optional notification message
+	 *
+	 * @param string $link The URL to redirect to
+	 * @param string|null $message Optional message to display after redirect
+	 * @param bool $success Whether the message is a success (true) or error (false) notification
+	 * @return void
+	 *
 	 * @throws Exception
+	 * @since 3.5.1
+	 */
+	public static function redirect(string $link, ?string $message = null, bool $success = true): void
+	{
+		if ($message !== null) {
+			$app = Factory::getApplication();
+			$messageType = $success ? 'message' : 'error';
+			$app->enqueueMessage($message, $messageType);
+		}
+
+		$app = Factory::getApplication();
+		$app->redirect(Route::_($link, false));
+	}
+
+	/**
 	 * @since 3.2.9
 	 */
-	public static function redirect(string $link, ?string $msg = null): void
+	public static function enqueueMessage($text, string $type = 'error'): void
 	{
-		if ($msg === null)
-			$msg = '';
-
-		Factory::getApplication()->setRedirect($link, $msg);
+		try {
+			Factory::getApplication()->enqueueMessage($text, $type);
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
 	}
 
 	/**
@@ -842,18 +870,6 @@ class common
 			return false;
 
 		return true;
-	}
-
-	/**
-	 * @since 3.2.9
-	 */
-	public static function enqueueMessage($text, string $type = 'error'): void
-	{
-		try {
-			Factory::getApplication()->enqueueMessage($text, $type);
-		} catch (Exception $e) {
-			echo $e->getMessage();
-		}
 	}
 
 	public static function getMailFrom()

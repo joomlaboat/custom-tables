@@ -208,20 +208,22 @@ class Edit
 		$encodedReturnTo = common::makeReturnToURL($returnTo);
 
 		if ($this->ct->Env->clean == 0) {
-			if (empty($listing_id))
-				$result .= '<input type="hidden" name="published" value="' . (int)$this->ct->Params->publishStatus . '" />';
 
-			$result .= '<input type="hidden" name="task" id="task" value="save" />'
-				. '<input type="hidden" name="returnto" id="returnto" value="' . $encodedReturnTo . '" />'
-				. '<input type="hidden" name="listing_id" id="listing_id" value="' . $listing_id . '" />';
+			$taskObjectName = 'task' . ($this->ct->Params->ModuleId ?? '');
+			$returnToObjectName = 'returnto' . ($this->ct->Params->ModuleId ?? '');
+			$listingIdObjectName = 'listing_id' . ($this->ct->Params->ModuleId ?? '');
 
-			if (!is_null($this->ct->Params->ModuleId))
-				$result .= '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $this->ct->Params->ModuleId . '" />';
+			$result .= '<input type="hidden" name="' . $taskObjectName . '" id="' . $taskObjectName . '" value="save" />';
+			$result .= '<input type="hidden" name="' . $returnToObjectName . '" id="' . $returnToObjectName . '" value="' . $encodedReturnTo . '" />';
+			$result .= '<input type="hidden" name="' . $listingIdObjectName . '" id="' . $listingIdObjectName . '" value="' . $listing_id . '" />';
 
 			if (defined('_JEXEC')) {
-				$result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '');
-				$result .= HTMLHelper::_('form.token');
+				if (is_null($this->ct->Params->ModuleId))
+					$result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '');
+				else
+					$result .= '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $this->ct->Params->ModuleId . '" />';
 
+				$result .= HTMLHelper::_('form.token');
 			} elseif (defined('WPINC')) {
 				$result .= '<!-- token -->';
 			}

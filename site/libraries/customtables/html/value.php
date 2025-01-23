@@ -129,7 +129,6 @@ class Value
 
 <script>
             window.addEventListener("load", function() {
-                console.log("try to ctValue_googlemapcoordinates")
 				ctValue_googlemapcoordinates("' . $boxId . '", ' . $lat . ',' . $lng . ',' . $zoom . ');
             });
 </script>';

@@ -919,9 +919,9 @@ class Twig_HTML_Tags
 		$parentField = common::inputGetCmd('parentfield');
 
 		if ($parentField === null)
-			$onclick = 'setTask(event, "' . $task . '","' . $redirect . '",true,"' . $formName . '",' . $isModal . ',null);';
+			$onclick = 'setTask(event, "' . $task . '","' . $redirect . '",true,"' . $formName . '",' . $isModal . ',null,' . ($this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId) . ');';
 		else
-			$onclick = 'setTask(event, "' . $task . '","' . $redirect . '",true,"' . $formName . '",' . $isModal . ',"' . $parentField . '");';
+			$onclick = 'setTask(event, "' . $task . '","' . $redirect . '",true,"' . $formName . '",' . $isModal . ',"' . $parentField . '"' . ($this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId) . ');';
 
 		return '<input id="' . $buttonId . '" type="submit" class="' . common::convertClassString($the_class) . '"' . $attribute . ' onClick=\'' . $onclick . '\' value="' . $title . '">';
 	}
@@ -985,7 +985,6 @@ class Twig_HTML_Tags
 			$cancel_class = 'ctEditFormButton btn button-cancel';
 
 		$returnToEncoded = common::makeReturnToURL($redirectLink);
-
 		return $this->renderButtonHTML($cancel_class, $title, $formName, "customtables_button_cancel", $returnToEncoded, false, "cancel");
 	}
 

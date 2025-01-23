@@ -27,6 +27,7 @@ class controllerHelper
 		$layout = new Layouts($ct);
 
 		$result = $layout->renderMixedLayout($ct->Params->editLayout, null, $task);
+
 		if ($result['success']) {
 			if ($ct->Env->clean) {
 				if ($ct->Env->frmt == 'json')
@@ -54,7 +55,6 @@ class controllerHelper
 				$link = $result['redirect'];
 
 			if (isset($result['captcha']) and $result['captcha']) {
-				//Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_INCORRECT_CAPTCHA'), 'error');
 				$content = '
 <script>
 setTimeout("history.go(-1)", 2000);

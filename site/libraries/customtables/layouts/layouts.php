@@ -242,8 +242,7 @@ class Layouts
 				return ['success' => false, 'message' => 'CustomTable: Layout "' . $layoutId . '" not found', 'short' => 'error'];
 			if ($this->ct->Table->fields === null)
 				return ['success' => false, 'message' => 'CustomTable: Table not selected or not found', 'short' => 'error'];
-		} else {
-
+		} elseif ($task !== 'cancel') {
 			if ($this->ct->Table === null)
 				return ['success' => false, 'message' => 'CustomTable: Table not selected', 'short' => 'error'];
 
@@ -1035,7 +1034,9 @@ class Layouts
 		if ($link === null)
 			$link = $this->ct->Params->returnTo;
 
-		$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
+		if ($this->ct->Table !== null)
+			$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
+
 		return ['success' => true, 'message' => common::translate('COM_CUSTOMTABLES_EDIT_CANCELED'), 'short' => 'canceled', 'redirect' => $link];
 	}
 

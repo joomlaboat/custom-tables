@@ -8,13 +8,12 @@
  **/
 class CustomTablesEdit {
 
-	constructor(cmsName = 'Joomla', cmsVersion = 5, itemId = 0, moduleId = 0) {
+	constructor(cmsName = 'Joomla', cmsVersion = 5, itemId = 0) {
 		this.GoogleDriveTokenClient = [];
 		this.GoogleDriveAccessToken = null;
 		this.cmsName = cmsName;
 		this.cmsVersion = cmsVersion;
 		this.itemId = itemId;
-		this.moduleId = moduleId;
 	}
 
 	GoogleDriveInitClient(fieldName, GoogleDriveAPIKey, GoogleDriveClientId) {
@@ -522,15 +521,9 @@ class CustomTablesEdit {
 	}
 
 	convertDateTypeValues(elements) {
-		console.warn("convertDateTypeValues")
 		for (let i = 0; i < elements.length; i++) {
-			console.warn("a")
 			if (elements[i].name && elements[i].name !== '' && elements[i].name !== 'returnto') {
-
 				if (elements[i].dataset.type === "date") {
-					console.warn("type", elements[i].dataset.type);
-					console.warn("format", elements[i].dataset.format);
-
 					if (elements[i].dataset.format !== "%Y-%m-%d") {
 						//convert date to %Y-%m-%d
 						let dateValue = elements[i].value;
@@ -560,56 +553,57 @@ class CustomTablesEdit {
 	}
 }
 
-function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField) {
+function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField, moduleId) {
 
 	event.preventDefault();
 
-	if (returnLink !== "") {
-		let obj = document.getElementById('returnto');
-		if (obj)
-			obj.value = returnLink;
-	}
+	let objForm = document.getElementById(formName);
 
-	let obj2 = document.getElementById('task');
-	if (obj2)
-		obj2.value = task;
-	else
-		alert("Task Element not found.");
+	if (objForm) {
+		if (returnLink !== "") {
+			let returnToObject = document.getElementById('returnto' + (moduleId !== null ? moduleId : ''));
+			if (returnToObject)
+				returnToObject.value = returnLink;
+		}
 
-	if (submitForm) {
-		let objForm = document.getElementById(formName);
-		if (objForm) {
-			const tasks_with_validation = ['saveandcontinue', 'save', 'saveandprint', 'saveascopy'];
-			if (isModal && task !== 'saveascopy') {
-				let hideModelOnSave = true;
-				if (task === 'saveandcontinue')
-					hideModelOnSave = false;
+		let TaskObject = document.getElementById('task' + (moduleId !== null ? moduleId : ''));
+		if (TaskObject)
+			TaskObject.value = task;
+		else {
+			alert('Task Element "' + 'task' + moduleId + '"not found.');
+			return;
+		}
 
-				if (tasks_with_validation.includes(task)) {
-					if (CTEditHelper.checkRequiredFields(objForm)) {
-						CTEditHelper.convertDateTypeValues(objForm.elements);
-						submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
-					}
-				} else {
+		const tasks_with_validation = ['saveandcontinue', 'save', 'saveandprint', 'saveascopy'];
+		if (isModal && task !== 'saveascopy') {
+			let hideModelOnSave = true;
+			if (task === 'saveandcontinue')
+				hideModelOnSave = false;
+
+			if (tasks_with_validation.includes(task)) {
+				if (CTEditHelper.checkRequiredFields(objForm)) {
 					CTEditHelper.convertDateTypeValues(objForm.elements);
 					submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
 				}
-
-				return false;
 			} else {
-				if (tasks_with_validation.includes(task)) {
-					if (CTEditHelper.checkRequiredFields(objForm)) {
-						CTEditHelper.convertDateTypeValues(objForm.elements);
-						objForm.submit();
-					}
-				} else {
+				CTEditHelper.convertDateTypeValues(objForm.elements);
+				submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
+			}
+
+			return false;
+		} else {
+			if (tasks_with_validation.includes(task)) {
+				if (CTEditHelper.checkRequiredFields(objForm)) {
 					CTEditHelper.convertDateTypeValues(objForm.elements);
 					objForm.submit();
 				}
+			} else {
+				CTEditHelper.convertDateTypeValues(objForm.elements);
+				objForm.submit();
 			}
-		} else
-			alert("Form not found.");
-	}
+		}
+	} else
+		alert("Form not found.");
 }
 
 function stripInvalidCharacters(str) {
