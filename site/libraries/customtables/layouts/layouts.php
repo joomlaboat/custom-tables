@@ -270,12 +270,8 @@ class Layouts
 			if (empty($task))
 				$task = common::inputGetCmd('task');
 
-			if (!empty($task)) {
-
-				echo 'not empty task: ' . $task . '<br/>';
-
+			if (!empty($task))
 				return $this->doTasks($task);
-			}
 		}
 
 		if (in_array($this->layoutType, [

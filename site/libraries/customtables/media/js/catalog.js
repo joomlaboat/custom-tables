@@ -74,8 +74,6 @@ function runTheTask(task, tableid, recordId, url, responses, last, reload, Modul
 	let params = "";
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
 
-	console.error('url:', url);
-
 	if (http) {
 		http.open("GET", url, true);
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

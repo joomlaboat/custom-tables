@@ -63,7 +63,7 @@ class record
 		$this->ct->getRecord();
 
 		if ($this->ct->Table->record === null)
-			throw new Exception(common::translate('Records not found'));
+			throw new Exception(common::translate('COM_CUSTOMTABLES_NOTFOUND'));
 
 		if (!$this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_DELETE)) {
 			$this->unauthorized = true;
