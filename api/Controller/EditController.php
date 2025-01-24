@@ -63,7 +63,6 @@ class EditController
 	function executePOST()
 	{
 		$layoutName = common::inputGetCmd('layout');
-		$task = common::inputPostCmd('task');
 
 		$ct = new CT([], true);
 		$ct->Env->clean = true;
@@ -73,7 +72,7 @@ class EditController
 
 		$result = null;
 		try {
-			$result = @$layout->renderMixedLayout($layoutName, null, $task);
+			$result = @$layout->renderMixedLayout($layoutName, CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM, 'save');
 		} catch (Throwable $e) {
 			CTMiscHelper::fireError(500, $e->getMessage());
 		}

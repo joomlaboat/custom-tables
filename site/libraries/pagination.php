@@ -200,8 +200,9 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
 		$limits[] = HTMLHelper::_('select.option', $the_step * 20);
 		$selected = $this->_viewall ? 0 : $this->limit;
 
+		$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 		// Build the select list.
-		return HTMLHelper::_('select.genericlist', $limits, $this->prefix . 'limit', 'class="inputbox" size="1" onchange="ctLimitChanged(this);"', 'value', 'text', $selected);
+		return HTMLHelper::_('select.genericlist', $limits, $this->prefix . 'limit', 'class="inputbox" size="1" onchange="ctLimitChanged(this,' . $moduleIDString . ');"', 'value', 'text', $selected);
 	}
 
 	/**

@@ -84,8 +84,11 @@ class Forms
 			$field_label .= ' data-content="' . $field->description . '"';
 
 		if ($this->ct->Ordering->ordering_processed_string !== null and $allowSortBy and $this->ct->Params->ModuleId === null) {
+
+			$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
+
 			$field_label .= ' style="cursor:pointer"';
-			$field_label .= ' onClick="ctOrderChanged(\'' . $field->fieldname . ($OrderingField == $field->fieldname ? ($OrderingDirection == 'desc' ? '' : ' desc') : '') . '\')"';
+			$field_label .= ' onClick="ctOrderChanged(\'' . $field->fieldname . ($OrderingField == $field->fieldname ? ($OrderingDirection == 'desc' ? '' : ' desc') : '') . '\',' . $moduleIDString . ')"';
 		}
 
 		$field_label .= ' data-original-title="' . $field->title . '">';

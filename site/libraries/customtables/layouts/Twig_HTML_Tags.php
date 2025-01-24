@@ -344,7 +344,8 @@ class Twig_HTML_Tags
 					} else
 						$img = '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/' . $mode . '.png" border="0" alt="' . $alt . '" title="' . $alt . '" />';
 
-					$link = 'javascript:ctToolBarDO("' . $mode . '", ' . $this->ct->Table->tableid . ')';
+					$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
+					$link = 'javascript:ctToolBarDO("' . $mode . '", ' . $this->ct->Table->tableid . ', ' . $moduleIDString . ')';
 					$html_buttons[] = '<div id="' . $rid . '" class="toolbarIcons"><a href=\'' . $link . '\'>' . $img . '</a></div>';
 				}
 			}

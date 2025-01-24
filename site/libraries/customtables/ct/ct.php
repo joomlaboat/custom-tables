@@ -356,9 +356,8 @@ class CT
 	function getRecordsByKeyword(): void
 	{
 		//Joomla Method
-		$moduleId = common::inputPostInt('ModuleId');
-		if ($moduleId !== null) {
-			$keywordSearch = common::inputGetString('eskeysearch_' . $moduleId, '');
+		if ($this->Params->ModuleId !== null) {
+			$keywordSearch = common::inputGetString('eskeysearch_' . $this->Params->ModuleId, '');
 			if ($keywordSearch != '') {
 				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'filter' . DIRECTORY_SEPARATOR . 'keywordsearch.php');
 
@@ -672,12 +671,6 @@ class CT
 			//Super Users have access to everything
 			return true;
 		}
-
-		//echo '$action2:' . $action . '<br/>';
-		//echo '$userGroup:' . $userGroup . '<br/>';
-		//echo '$this->Env->user->groups:';
-		//print_r($this->Env->user->groups);
-		//die;
 
 		if (empty($this->Params->listing_id))
 			return $this->Env->user->checkUserGroupAccess($userGroup);

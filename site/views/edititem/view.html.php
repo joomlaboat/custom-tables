@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die();
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Layouts;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -40,14 +41,19 @@ class CustomTablesViewEditItem extends HtmlView
 				die($this->result['html']);
 			elseif ($this->ct->Env->clean)
 				die($this->result['short']);
+
+			//show default page only on success
+			parent::display($tpl);
 		} else {
-			if ($this->ct->Env->isModal)
+
+			if ($this->ct->Table === null) {
+				common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
+			} elseif ($this->ct->Env->isModal)
 				die($this->result['message']);
 			elseif ($this->ct->Env->clean)
 				die($this->result['short']);
 		}
 
-		parent::display($tpl);
 		return true;
 	}
 }

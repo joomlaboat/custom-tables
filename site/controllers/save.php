@@ -18,13 +18,14 @@ if ($task !== null) {
 	require_once CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'controllerHelper.php';
 	$result = controllerHelper::doTheTask($task);
 
-	if (isset($result['html']))
-		echo $result['html'];
-
-	if ($result['link'] !== null)
+	if ($result['link'] !== null) {
 		$this->setRedirect($result['link'], $result['message'], !$result['success'] ? 'error' : 'success');
-	else
+	} else {
+		if (isset($result['html']))
+			echo $result['html'];
+
 		parent::display();
+	}
 } else {
 	parent::display();
 }

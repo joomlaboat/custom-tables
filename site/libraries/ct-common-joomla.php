@@ -646,8 +646,8 @@ class common
 		$js[] = 'let gmapdata = [];';
 		$js[] = 'let gmapmarker = [];';
 		$js[] = '
-if (typeof CTEditHelper === "undefined") {
-	const CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',' . ($params->ItemId ?? 0) . ');
+if (typeof window.CTEditHelper === "undefined") {
+	window.CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',' . ($params->ItemId ?? 0) . ');
 }
 ';
 

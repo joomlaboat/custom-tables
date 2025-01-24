@@ -15,8 +15,10 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
+use Throwable;
 
 class Params
 {
@@ -149,23 +151,36 @@ class Params
 	 * @throws Exception
 	 * @since 3.2
 	 */
-	public function constructJoomlaParams(): void // ?string $ModuleId = null
+	public function constructJoomlaParams(): void
 	{
 		$this->app = Factory::getApplication();
-		$menu_paramsArray = [];
+
+		//This is used for module tasks
+		$ModuleId = common::inputGetInt('ModuleId');
+
+		if ($ModuleId !== null) {
+
+			$this->ModuleId = $ModuleId;
+			$module = ModuleHelper::getModuleById((string)$ModuleId);
+			$menu_params = new Registry;//Joomla Specific
+			$menu_params->loadString($module->params);
+			$menu_paramsArray = self::menuParamsRegistry2Array($menu_params);
+			$this->blockExternalVars = false;
+			$this->setParams($menu_paramsArray);
+			return;
+		}
 
 		if (method_exists($this->app, 'getParams')) {
 			try {
 				if ($this->app->getLanguage() !== null) {
 					$menu_params_registry = @$this->app->getParams();//Joomla specific
 					$menu_paramsArray = self::menuParamsRegistry2Array($menu_params_registry);
-				} else
-					$menu_paramsArray = null;
-			} catch (Exception $e) {
-				$menu_paramsArray = null;
+					$this->setParams($menu_paramsArray);
+				}
+			} catch (Throwable $e) {
+				throw new Exception($e->getMessage());
 			}
 		}
-		$this->setParams($menu_paramsArray);
 	}
 
 	public static function menuParamsRegistry2Array(Registry $menu_params_registry): array

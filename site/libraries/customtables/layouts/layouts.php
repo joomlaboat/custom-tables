@@ -261,15 +261,22 @@ class Layouts
 				$this->layoutCode = $this->createDefaultLayout_CSV($this->ct->Table->fields);
 		}
 
-		//Do the task if set
-		if ($task === null)
-			$task = common::inputPostCmd('task', null, 'create-edit-record');
+		if ($task !== 'none') {
 
-		if ($task === null)
-			$task = common::inputGetCmd('task');
+			// Some API controllers do not use tasks at all. "record" - detailed view for example
+			if (empty($task))
+				$task = common::inputPostCmd('task', null, 'create-edit-record');
 
-		if ($task !== null)
-			return $this->doTasks($task);
+			if (empty($task))
+				$task = common::inputGetCmd('task');
+
+			if (!empty($task)) {
+
+				echo 'not empty task: ' . $task . '<br/>';
+
+				return $this->doTasks($task);
+			}
+		}
 
 		if (in_array($this->layoutType, [
 			CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG,

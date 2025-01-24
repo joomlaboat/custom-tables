@@ -17,7 +17,10 @@ class OrderingHTML
 		$lists = $ordering->getSortByFields();
 		$order_values = $lists->values;
 		$order_list = $lists->titles;
-		$result = '<select name="esordering" id="esordering" onChange="ctOrderChanged(this.value);" class="inputbox">' . PHP_EOL;
+
+		$moduleIDString = $ordering->Params->ModuleId === null ? 'null' : $ordering->Params->ModuleId;
+
+		$result = '<select name="esordering" id="esordering" onChange="ctOrderChanged(this.value, ' . $moduleIDString . ');" class="inputbox">' . PHP_EOL;
 
 		for ($i = 0; $i < count($order_values); $i++) {
 			$result .= '<option value="' . $order_values[$i] . '" ' . ($ordering->ordering_processed_string == $order_values[$i] ? ' selected ' : '') . '>'

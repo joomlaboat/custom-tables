@@ -230,7 +230,8 @@ class CustomTablesEdit {
 			});
 	}
 
-	async refreshRecord(url, listing_id, successCallback, errorCallback) {
+	//TODO: no usages found
+	async refreshRecord(url, listing_id, successCallback, errorCallback, ModuleId) {
 		let completeURL = url + '?tmpl=component&clean=1&task=refresh';
 		if (listing_id !== undefined && listing_id !== null)
 			completeURL += '&ids=' + listing_id;
@@ -313,7 +314,7 @@ class CustomTablesEdit {
 				const records = table.querySelectorAll('tr[id^="' + trId + '"]');
 				if (records.length == 1) {
 					let index = findRowIndexById(table.id, trId);
-					ctCatalogUpdate(tableId, listing_id, index);
+					ctCatalogUpdate(tableId, listing_id, index, ModuleId);
 				}
 			}
 		});
@@ -553,7 +554,7 @@ class CustomTablesEdit {
 	}
 }
 
-function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField, moduleId) {
+function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField, ModuleId) {
 
 	event.preventDefault();
 
@@ -561,16 +562,16 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
 
 	if (objForm) {
 		if (returnLink !== "") {
-			let returnToObject = document.getElementById('returnto' + (moduleId !== null ? moduleId : ''));
+			let returnToObject = document.getElementById('returnto' + (ModuleId !== null ? ModuleId : ''));
 			if (returnToObject)
 				returnToObject.value = returnLink;
 		}
 
-		let TaskObject = document.getElementById('task' + (moduleId !== null ? moduleId : ''));
+		let TaskObject = document.getElementById('task' + (ModuleId !== null ? ModuleId : ''));
 		if (TaskObject)
 			TaskObject.value = task;
 		else {
-			alert('Task Element "' + 'task' + moduleId + '"not found.');
+			alert('Task Element "' + 'task' + ModuleId + '"not found.');
 			return;
 		}
 
@@ -583,11 +584,11 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
 			if (tasks_with_validation.includes(task)) {
 				if (CTEditHelper.checkRequiredFields(objForm)) {
 					CTEditHelper.convertDateTypeValues(objForm.elements);
-					submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
+					submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink, ModuleId)
 				}
 			} else {
 				CTEditHelper.convertDateTypeValues(objForm.elements);
-				submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
+				submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink, ModuleId)
 			}
 
 			return false;
@@ -611,7 +612,7 @@ function stripInvalidCharacters(str) {
 	return str.replace(/[^\x20-\x7E]/g, '');
 }
 
-function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField, returnLinkEncoded) {
+function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField, returnLinkEncoded, ModuleId) {
 
 	let fieldsProcessed = [];
 	let params = "";
@@ -680,7 +681,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 
 					if (table_object) {
 						let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
-						ctCatalogUpdate(tableid, recordId, index);
+						ctCatalogUpdate(tableid, recordId, index, ModuleId);
 					}
 
 					if (modalFormParentField !== null) {

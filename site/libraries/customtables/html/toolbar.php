@@ -62,7 +62,8 @@ class RecordToolbar
 						else
 							$img = '<img src="' . $this->iconPath . 'refresh.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-						$href = 'javascript:ctRefreshRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\');';
+						$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
+						$href = 'javascript:ctRefreshRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',' . $moduleIDString . ');';
 
 						return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
 					} elseif (defined('WPINC')) {
@@ -119,11 +120,13 @@ class RecordToolbar
 			if ($this->ct->Params->ItemId > 0)
 				$editLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
 
-			//if (!is_null($this->ct->Params->ModuleId))
-			//$editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
+			if (!is_null($this->ct->Params->ModuleId))
+				$editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
 			if ($isModal) {
 				$tmp_current_url = common::makeReturnToURL($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
+
+
 				$editLink .= '&amp;returnto=' . $tmp_current_url;
 				$link = 'javascript:ctEditModal(\'' . $editLink . '\',null)';
 			} else {
@@ -211,7 +214,8 @@ class RecordToolbar
 			else
 				$img = '<img src="' . $this->iconPath . 'copy.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-			$href = 'javascript:ctCopyRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $this->rid . '\');';
+			$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
+			$href = 'javascript:ctCopyRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $this->rid . '\',' . $moduleIDString . ');';
 
 			return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
 		} elseif (defined('WPINC')) {
@@ -329,7 +333,8 @@ class RecordToolbar
 			$img = '<img src="' . $this->iconPath . 'delete.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
 		$msg = 'Do you want to delete (' . $deleteLabel . ')?';
-		$href = 'javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . ($this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId) . ');';
+		$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
+		$href = 'javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . $moduleIDString . ');';
 		return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
 	}
 
@@ -339,16 +344,18 @@ class RecordToolbar
 			if ($this->isPublishable) {
 				$rid = 'esPublishIcon' . $this->rid;
 
+				$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
+
 				if ($this->row['listing_published']) {
-					$link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',0,' . $this->ct->Params->ModuleId . ');';
+					$link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',0,' . $moduleIDString . ');';
 					$alt = common::translate('COM_CUSTOMTABLES_UNPUBLISH');
 
-					if ($this->ct->Env->toolbarIcons != '')
+					if ($this->ct->Env->toolbarIcons != '') {
 						$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-check-circle" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-check-circle" title="' . $alt . '"></i>';
-					else
+					} else
 						$img = '<img src="' . $this->iconPath . 'publish.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 				} else {
-					$link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',1,' . $this->ct->Params->ModuleId . ');';
+					$link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',1,' . $moduleIDString . ');';
 					$alt = common::translate('COM_CUSTOMTABLES_PUBLISH');
 
 					if ($this->ct->Env->toolbarIcons != '')

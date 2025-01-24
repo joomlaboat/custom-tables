@@ -21,11 +21,13 @@ class controllerHelper
 	public static function doTheTask(string $task)
 	{
 		$link = common::getReturnToURL() ?? '';
-
 		$ct = new CT(null, false);
 		$ct->Params->constructJoomlaParams();
-		$layout = new Layouts($ct);
 
+		if (!empty($ct->Params->tableName))
+			$ct->getTable($ct->Params->tableName);
+
+		$layout = new Layouts($ct);
 		$result = $layout->renderMixedLayout($ct->Params->editLayout, null, $task);
 
 		if ($result['success']) {

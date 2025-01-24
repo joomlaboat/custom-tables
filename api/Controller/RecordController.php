@@ -35,7 +35,7 @@ class RecordController
 		$layoutName = common::inputGetCmd('layout');
 		$ct->Env->clean = true;
 		$layout = new Layouts($ct);
-		$result = $layout->renderMixedLayout($layoutName);
+		$result = $layout->renderMixedLayout($layoutName, CUSTOMTABLES_LAYOUT_TYPE_DETAILS, 'none');
 
 		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false or !isset($result['html'])) {
 			CTMiscHelper::fireError(500, $result['message'] ?? 'Error');
