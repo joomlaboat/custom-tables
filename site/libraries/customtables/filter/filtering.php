@@ -697,15 +697,6 @@ class Filtering
 		}
 
 		return $whereClause;
-		/*
-		if (count($cArr) == 0)
-			return '';
-
-		if (count($cArr) == 1)
-			return $cArr[0];
-		else
-			return '(' . implode(' OR ', $cArr) . ')';
-		*/
 	}
 
 	protected function getRangeWhere($fieldRow, $value): MySQLWhereClause
@@ -780,42 +771,36 @@ class Filtering
 		if ($comparison_operator == '=' and $v != "") {
 			$PathValue = [];
 
+			//this method breaks search sentence to words and creates the LIKE where filter
+			$v = str_replace(' ', ',', $v);
 			$vList = explode(',', $v);
-			$parentWhereClause = new MySQLWhereClause();
+			$nestedWhereClause = new MySQLWhereClause();
 
 			foreach ($vList as $vL) {
-				//this method breaks search sentence to words and creates the LIKE where filter
-				$nestedWhereClause = new MySQLWhereClause();
 
-				$v_list = explode(' ', $vL);
-				foreach ($v_list as $vl) {
-
-					if ($serverType == 'postgresql') {
-						$nestedWhereClause->addOrCondition(
-							'CAST ( ' . $this->ct->Table->realtablename . '.' . $realfieldname . ' AS text )',
-							'%' . $vl . '%',
-							'LIKE',
-							true
-						);
-					} else {
-						$nestedWhereClause->addOrCondition(
-							$this->ct->Table->realtablename . '.' . $realfieldname,
-							'%' . $vl . '%',
-							'LIKE',
-							true
-						);
-					}
-					$PathValue[] = $vl;
+				if ($serverType == 'postgresql') {
+					$nestedWhereClause->addOrCondition(
+						'CAST ( ' . $this->ct->Table->realtablename . '.' . $realfieldname . ' AS text )',
+						'%' . $vL . '%',
+						'LIKE',
+						true
+					);
+				} else {
+					$nestedWhereClause->addOrCondition(
+						$this->ct->Table->realtablename . '.' . $realfieldname,
+						'%' . $vL . '%',
+						'LIKE',
+						true
+					);
 				}
-				if ($nestedWhereClause->hasConditions())//if (count($new_v_list) > 1)
-					$parentWhereClause->addNestedCondition($nestedWhereClause);
+				$PathValue[] = $vL;
 			}
 
 			$opt_title = ':';
 			$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . implode(', ', $PathValue);
 
-			if ($parentWhereClause->hasConditions())
-				$whereClause->addNestedCondition($parentWhereClause);
+			if ($nestedWhereClause->hasConditions())
+				$whereClause->addNestedCondition($nestedWhereClause);
 
 			return $whereClause;
 
@@ -824,26 +809,40 @@ class Filtering
 			if ($comparison_operator == '==')
 				$comparison_operator = '=';
 
-			if ($v == '' and $comparison_operator == '=') {
-				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, null);
-				$whereClause->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, '');
-			} elseif ($v == '' and $comparison_operator == '!=') {
-				$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, null, 'NOT NULL');
-				$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, '', '!=');
-			} else {
+			$vList = explode(',', $v);
+			$nestedWhereClause = new MySQLWhereClause();
 
-				if ($comparison_operator == '=' and str_contains($v, '%')) {
-					$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, $v, 'LIKE');
+			foreach ($vList as $vL) {
+
+				if ($vL == '' and $comparison_operator == '=') {
+
+					$nestedWhereClause2 = new MySQLWhereClause();
+					$nestedWhereClause2->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, null);
+					$nestedWhereClause2->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, '');
+					$nestedWhereClause->addNestedCondition($nestedWhereClause2);
+
+				} elseif ($vL == '' and $comparison_operator == '!=') {
+					$nestedWhereClause->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, null, 'NOT NULL');
+					$nestedWhereClause->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, '', '!=');
 				} else {
-					$whereClause->addCondition($this->ct->Table->realtablename . '.' . $realfieldname, $v, $comparison_operator);
+
+					if ($comparison_operator == '=' and str_contains($vL, '%')) {
+						$nestedWhereClause->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, $vL, 'LIKE');
+					} else {
+						$nestedWhereClause->addOrCondition($this->ct->Table->realtablename . '.' . $realfieldname, $vL, $comparison_operator);
+					}
 				}
+
+				$opt_title = ' ' . $comparison_operator;
+				if ($comparison_operator == '=')
+					$opt_title = ':';
+
+				$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . ($vL == '' ? 'NOT SELECTED' : $v);
 			}
 
-			$opt_title = ' ' . $comparison_operator;
-			if ($comparison_operator == '=')
-				$opt_title = ':';
+			if ($nestedWhereClause->hasConditions())
+				$whereClause->addNestedCondition($nestedWhereClause);
 
-			$this->PathValue[] = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . ($v == '' ? 'NOT SELECTED' : $v);
 			return $whereClause;
 		}
 	}
