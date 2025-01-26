@@ -102,7 +102,6 @@ function loadTags(type_id, tags_box) {
 
 			if (http.readyState === 4) {
 				const res = http.response;
-
 				const parser = new DOMParser();
 				const xmlDoc = parser.parseFromString(res, "text/xml");
 
@@ -767,7 +766,7 @@ function closeModal(e) {
 	e.preventDefault();
 
 	document.getElementById('layouteditor_Modal').style.display = "none";
-	const cm = getActiveEditor(-1);//codemirror_editors[0];
+	const cm = getActiveEditor(-1);
 	cm.focus();
 	return false;
 }

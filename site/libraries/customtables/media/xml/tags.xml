@@ -602,8 +602,8 @@
 			</params>
 		</tag>
 
-		<tag name="id" label="record ID" startchar="{" endchar="}" twigreplacement="record.id" deprecated="1"/>
-		<!--<tag name="number" label="Record Number" startchar="{" endchar="}" twigreplacement="record.number" />-->
+		<!-- <tag name="id" label="record ID" startchar="{" endchar="}" twigreplacement="record.id" deprecated="1"/> -->
+		<!-- <tag name="number" label="Record Number" startchar="{" endchar="}" twigreplacement="record.number" /> -->
 
 		<tag name="sqljoin" label="Table Join" startchar="{" endchar="}" deprecated="1"
 			 description="Returns value of joined table field." hidedefaultexample="1"
@@ -1176,13 +1176,13 @@
 			 layouttypes="1,2,4,5,6" wordpress="true">
 			<params>
 				<param name="link" label="Link to the file or code" type="string"
-					   example="https://code.jquery.com/ui/1.12.1/jquery-ui.js' type='text/javascript'&gt;&lt;/script&gt;"
-					   description="This tag provides a flexible way to inject JavaScript into your document’s <head> section. It can handle both external JavaScript file references and direct JavaScript code."/>
+					   example="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+					   description="This tag provides a flexible way to inject JavaScript into your document’s HEAD section. It can handle both external JavaScript file references and direct JavaScript code."/>
 			</params>
 		</tag>
 
 		<tag name="style" label="Add CSS file or CSS style" startchar="{" endchar="}" hidedefaultexample="1"
-			 description="The document.style function allows you to add CSS styles to your page by injecting CSS into your document's <head> section. It can handle both external CSS file references and direct CSS code."
+			 description="The document.style function allows you to add CSS styles to your page by injecting CSS into your document's HEAD section. It can handle both external CSS file references and direct CSS code."
 			 proversion="0" twigclass="document"
 			 layouttypes="1,2,4,5,6" wordpress="true">
 			<params>

@@ -66,7 +66,7 @@ foreach ($this->allTables as $table) {
 				<div class="control-label"><?php echo $this->form->getLabel('layoutname'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('layoutname'); ?>
 					<p class="field-description">
-						<?php echo JText::_($this->form->getField('layoutname')->description); ?>
+						<?php echo common::translate($this->form->getField('layoutname')->description); ?>
 					</p>
 				</div>
 			</div>
@@ -75,7 +75,7 @@ foreach ($this->allTables as $table) {
 				<div class="control-label"><?php echo $this->form->getLabel('layouttype'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('layouttype'); ?>
 					<p class="field-description">
-						<?php echo JText::_($this->form->getField('layouttype')->description); ?>
+						<?php echo common::translate($this->form->getField('layouttype')->description); ?>
 					</p>
 				</div>
 			</div>
@@ -84,7 +84,7 @@ foreach ($this->allTables as $table) {
 				<div class="control-label"><?php echo $this->form->getLabel('tableid'); ?></div>
 				<div class="controls"><?php echo $this->form->getInput('tableid'); ?>
 					<p class="field-description">
-						<?php echo JText::_($this->form->getField('tableid')->description); ?>
+						<?php echo common::translate($this->form->getField('tableid')->description); ?>
 					</p>
 				</div>
 			</div>
@@ -183,7 +183,7 @@ foreach ($this->allTables as $table) {
 					<div class="control-label"><?php echo $this->form->getLabel('filter'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('filter'); ?>
 						<p class="field-description">
-							<?php echo common::translate($this->form->getField('filter')->description); ?>
+							<?php echo htmlspecialchars(common::translate($this->form->getField('filter')->description)); ?>
 						</p>
 					</div>
 
@@ -269,4 +269,5 @@ foreach ($this->allTables as $table) {
 			}
 			?>
 		</div>
+	</div>
 </form>
