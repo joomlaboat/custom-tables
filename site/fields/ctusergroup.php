@@ -11,6 +11,7 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
 
+use CustomTables\common;
 use CustomTables\database;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Form\FormField;
@@ -32,15 +33,47 @@ trait JFormFieldCTUserGroupCommon
 		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
 		$whereClause = new MySQLWhereClause();
 
-		$userGroups = database::loadObjectList('#__usergroups', ['id', 'title'], $whereClause, 'title');
-
-		$options = [];
+		// Load all user groups with their parent IDs
+		$userGroups = database::loadObjectList('#__usergroups', ['id', 'title', 'parent_id'], $whereClause, 'lft');
+		$options = ['' => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
 
 		if ($userGroups) {
-			foreach ($userGroups as $userGroup)
-				$options[] = HTMLHelper::_('select.option', $userGroup->id, $userGroup->title);
+			// Create a hierarchical structure
+			$groups = self::buildGroupHierarchy($userGroups);
+			// Convert the hierarchy to options
+			self::addGroupOptions($groups, $options);
 		}
 		return $options;
+	}
+
+
+	protected static function buildGroupHierarchy(array $userGroups, int $parentId = 0): array
+	{
+		$branch = [];
+
+		foreach ($userGroups as $group) {
+			if ($group->parent_id == $parentId) {
+				$children = self::buildGroupHierarchy($userGroups, $group->id);
+				if ($children) {
+					$group->children = $children;
+				}
+				$branch[] = $group;
+			}
+		}
+
+		return $branch;
+	}
+
+	protected static function addGroupOptions(array $groups, array &$options, int $level = 0): void
+	{
+		foreach ($groups as $group) {
+			$prefix = str_repeat('—', $level);
+			$options[] = HTMLHelper::_('select.option', $group->id, ($level > 0 ? '└' : '') . $prefix . ' ' . $group->title);
+
+			if (!empty($group->children)) {
+				self::addGroupOptions($group->children, $options, $level + 1);
+			}
+		}
 	}
 }
 

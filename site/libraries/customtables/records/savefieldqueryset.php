@@ -275,6 +275,10 @@ class SaveFieldQuerySet
 				$value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
+
+					if (empty($value))
+						$value = null;
+
 					$this->setNewValue($value);
 					return;
 				}

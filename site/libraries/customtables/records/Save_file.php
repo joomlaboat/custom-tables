@@ -111,10 +111,6 @@ class Save_file
 			$newValue = ['value' => null];//This way it will be clear if the value changed or not. If $this->newValue = null means that value not changed.
 		}
 
-
-		print_r($newValue);
-//        die;
-
 		return $newValue;
 	}
 

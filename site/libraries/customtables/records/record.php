@@ -261,30 +261,6 @@ class record
 
 			if ($this->ct->Table->published_field_found)
 				$saveField->row_new['published'] = $this->ct->Params->publishStatus;
-			/*
-						if (!empty($this->ct->Table->tablerow['primarykeypattern']) and $this->ct->Table->tablerow['primarykeypattern'] != 'AUTO_INCREMENT') {
-
-							$twig = new TwigProcessor($this->ct, $this->ct->Table->tablerow['primarykeypattern']);
-							$this->listing_id = $twig->process($saveField->row_new);
-							$saveField->row_new[$this->ct->Table->realidfieldname] = $this->listing_id;
-
-							try {
-								database::insert($this->ct->Table->realtablename, $saveField->row_new);
-							} catch (Exception $e) {
-								throw new Exception($e->getMessage());
-							}
-						} else {
-							try {
-								$this->listing_id = database::insert($this->ct->Table->realtablename, $saveField->row_new);
-								echo '$this->listing_id:' . $this->listing_id . '<br/>';
-							} catch (Exception $e) {
-								throw new Exception($e->getMessage());
-							}
-						}
-			*/
-			//if ($this->ct->Table->published_field_found)
-			//$row['published'] = $this->ct->Params->publishStatus;
-
 
 			$this->insert($saveField->row_new);
 

@@ -130,7 +130,6 @@ class CT
 		$this->Ordering = new Ordering($this->Table, $this->Params);
 		$selects = $this->Table->selects;
 
-		//if ($this->Filter === null)
 		$this->setFilter($this->Params->filter, $this->Params->showPublished);
 
 		if (!is_null($this->Params->alias) and $this->Table->alias_fieldname != '')
@@ -663,6 +662,10 @@ class CT
 			$userGroup = $this->Params->addUserGroups;
 		else
 			$userGroup = null;
+
+		echo '$userGroup:' . $userGroup . '<br>';
+		die;
+
 
 		if ($this->Env->user->id === null)
 			return false;

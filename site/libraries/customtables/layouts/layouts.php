@@ -290,23 +290,20 @@ class Layouts
 				else
 					$listing_id = common::inputGetCmd('listing_id');
 
-				if (!empty($listing_id)) {
+				if (!empty($listing_id))
 					$this->ct->Params->listing_id = $listing_id;
+
+				if (!empty($listing_id) or !empty($this->ct->Params->filter))
 					$this->ct->getRecord();
-				}
 			}
 
 			$editForm = new Edit($this->ct);
 			$editForm->layoutContent = $this->layoutCode;
 
-			if ($this->ct->Env->clean == 0) {
+			if ($this->ct->Env->clean == 0)
 				$formLink = common::curPageURL();
-				//$formLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem' . ($this->ct->Params->ItemId != 0 ? '&amp;Itemid=' . $this->ct->Params->ItemId : '');
-				//if (!is_null($this->ct->Params->ModuleId))
-				//$formLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
-			} else {
+			else
 				$formLink = null;
-			}
 
 			if ($this->ct->Env->isModal)
 				$formName = 'ctEditModalForm';

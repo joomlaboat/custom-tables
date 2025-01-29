@@ -154,16 +154,19 @@
 			<option value="-1">Disable Add New records</option>
 		</field>
 
-		<field name="addusergroups" type="CTUserGroup" default="8" label="Who may add records"
+		<field name="viewusergroups" type="CTUserGroup" default="" label="Who may view records"
+			   addfieldpath="/components/com_customtables/fields"
+			   description="Select the user group that may view the records."/>
+		<field name="addusergroups" type="CTUserGroup" default="" label="Who may add records"
 			   addfieldpath="/components/com_customtables/fields"
 			   description="Select the user group that may add the records."/>
-		<field name="editusergroups" type="CTUserGroup" default="8" label="Who may edit records"
+		<field name="editusergroups" type="CTUserGroup" default="" label="Who may edit records"
 			   addfieldpath="/components/com_customtables/fields"
 			   description="Select the user group that may edit records."/>
-		<field name="publishusergroups" type="CTUserGroup" default="8" label="Who may publish records (Admin)"
+		<field name="publishusergroups" type="CTUserGroup" default="" label="Who may publish records (Admin)"
 			   addfieldpath="/components/com_customtables/fields"
 			   description="Select the user group that may publish and unpublish records."/>
-		<field name="deleteusergroups" type="CTUserGroup" default="8" label="Who may delete records"
+		<field name="deleteusergroups" type="CTUserGroup" default="" label="Who may delete records"
 			   addfieldpath="/components/com_customtables/fields"
 			   description="Select the user group that may delete records."/>
 

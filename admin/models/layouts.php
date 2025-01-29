@@ -125,6 +125,8 @@ class CustomtablesModelLayouts extends AdminModel
 	 * Method to get the script that have to be included on the form
 	 *
 	 * @return string    script files
+	 *
+	 * @since 3.0.0
 	 */
 	public function getScript()
 	{
@@ -138,6 +140,7 @@ class CustomtablesModelLayouts extends AdminModel
 	 *
 	 * @return  boolean  True if successful, false if an error occurs.
 	 *
+	 * @throws Exception
 	 * @since   12.2
 	 */
 	public function delete(&$pks)
