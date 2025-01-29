@@ -313,10 +313,14 @@ class Layouts
 			if (!is_null($this->ct->Params->ModuleId))
 				$formName .= $this->ct->Params->ModuleId;
 
-			$output['html'] = $editForm->render($this->ct->Table->record,
-				$formLink,
-				$formName,
-				$this->ct->Env->clean == 0);
+			if ($this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT)) {
+				$output['html'] = $editForm->render($this->ct->Table->record,
+					$formLink,
+					$formName,
+					$this->ct->Env->clean == 0);
+			} else {
+				return ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'short' => 'error'];
+			}
 
 			if (isset($this->ct->LayoutVariables['captcha']) and $this->ct->LayoutVariables['captcha'])
 				$output['captcha'] = true;
@@ -770,7 +774,6 @@ class Layouts
 	{
 		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_DETAILS;
 		$result = '<legend>{{ table.title }}</legend>{{ html.goback() }}<div class="form-horizontal">';
-
 		$fieldTypes_to_skip = ['dummy'];
 
 		foreach ($fields as $field) {
@@ -1275,6 +1278,4 @@ class Layouts
 
 		return $rows[0];
 	}
-
-
 }

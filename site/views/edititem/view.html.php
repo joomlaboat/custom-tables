@@ -52,6 +52,9 @@ class CustomTablesViewEditItem extends HtmlView
 				die($this->result['message']);
 			elseif ($this->ct->Env->clean)
 				die($this->result['short']);
+
+			parent::display($tpl);
+			return false;
 		}
 
 		return true;

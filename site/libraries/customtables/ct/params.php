@@ -352,7 +352,9 @@ class Params
 		$this->cartMsgItemUpdated = $menu_params['cart_msgitemupdated'] ?? null;
 
 		//Permissions
-		$this->editUserGroups = $menu_params['editusergroups'] ?? null;
+		if (!empty($menu_params['editusergroups']))
+			$this->editUserGroups = $menu_params['editusergroups'];
+
 		$this->addUserGroups = $menu_params['addusergroups'] ?? 0;
 		if ($this->addUserGroups == 0)
 			$this->addUserGroups = $this->editUserGroups;

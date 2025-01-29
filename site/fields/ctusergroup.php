@@ -28,14 +28,18 @@ if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
 
 trait JFormFieldCTUserGroupCommon
 {
-	protected static function getOptionList(): array
+	protected static function getOptionList(int $default = 8): array
 	{
 		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
 		$whereClause = new MySQLWhereClause();
 
 		// Load all user groups with their parent IDs
 		$userGroups = database::loadObjectList('#__usergroups', ['id', 'title', 'parent_id'], $whereClause, 'lft');
-		$options = ['' => ' - ' . common::translate('COM_CUSTOMTABLES_SELECT')];
+
+		$options = [];
+
+		if ($default == 0)
+			$options [''] = ' - ' . common::translate('COM_CUSTOMTABLES_SELECT');
 
 		if ($userGroups) {
 			// Create a hierarchical structure
@@ -89,7 +93,8 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
 		protected function getOptions(): array
 		{
-			return self::getOptionList();
+			$default = (int)$this->element['default'] ?? 8;
+			return self::getOptionList($default);
 		}
 	}
 } else {
@@ -103,8 +108,9 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 
 		protected function getInput()
 		{
+			$default = (int)$this->element['default'] ?? 8;
 			$data = $this->getLayoutData();
-			$data['options'] = self::getOptionList();
+			$data['options'] = self::getOptionList($default);
 			return $this->getRenderer($this->layout)->render($data);
 		}
 	}

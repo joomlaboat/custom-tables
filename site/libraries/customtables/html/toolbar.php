@@ -16,6 +16,7 @@ class RecordToolbar
 {
 	var CT $ct;
 	var Table $Table;
+	var bool $isAddable;
 	var bool $isEditable;
 	var bool $isPublishable;
 	var bool $isDeletable;
@@ -24,10 +25,11 @@ class RecordToolbar
 	var array $row;
 	var string $iconPath;
 
-	function __construct(CT $ct, $isEditable, $isPublishable, $isDeletable)
+	function __construct(CT $ct, $isAddable, $isEditable, $isPublishable, $isDeletable)
 	{
 		$this->ct = $ct;
 		$this->Table = $ct->Table;
+		$this->isAddable = $isAddable;
 		$this->isEditable = $isEditable;
 		$this->isPublishable = $isPublishable;
 		$this->isDeletable = $isDeletable;
@@ -83,17 +85,16 @@ class RecordToolbar
 					else
 						return '';
 
-				case 'copy':
-					return $this->renderCopyIcon();
-
 				case 'resetpassword':
 					return $this->renderResetPasswordIcon();
 			}
 		}
 
-		if ($this->isDeletable and $mode == 'delete')
+		if ($this->isAddable and $mode == 'copy')
+			return $this->renderCopyIcon();
+		elseif ($this->isDeletable and $mode == 'delete')
 			return $this->renderDeleteIcon();
-		elseif ($mode == 'publish')
+		elseif ($this->isPublishable and $mode == 'publish')
 			return $this->renderPublishIcon();
 		elseif ($mode == 'checkbox')
 			return '<input type="checkbox" onClick="ctUpdateCheckboxCounter(' . $this->Table->tableid . ')" name="esCheckbox' . $this->Table->tableid . '" id="esCheckbox' . $this->rid . '" value="' . $this->listing_id . '" />';
@@ -203,64 +204,6 @@ class RecordToolbar
 		return implode('', $fileBoxes);
 	}
 
-	protected function renderCopyIcon(): string
-	{
-		$Label = 'Would you like to copy (' . $this->firstFieldValueLabel() . ')?';
-		$alt = common::translate('COM_CUSTOMTABLES_COPY');
-
-		if (defined('_JEXEC')) {
-			if ($this->ct->Env->toolbarIcons != '')
-				$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-copy" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-copy" title="' . $alt . '"></i>';
-			else
-				$img = '<img src="' . $this->iconPath . 'copy.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-
-			$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
-			$href = 'javascript:ctCopyRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $this->rid . '\',' . $moduleIDString . ');';
-
-			return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
-		} elseif (defined('WPINC')) {
-			return '';
-		}
-		return '';
-	}
-
-	protected function firstFieldValueLabel(): ?string
-	{
-		if (is_null($this->Table->fields))
-			return null;
-
-		$min_ordering = 99999999;
-		$min_ordering_field = null;
-
-		foreach ($this->Table->fields as $mFld) {
-			$ordering = (int)$mFld['ordering'];
-			if ($mFld['type'] != 'dummy' and $ordering < $min_ordering) {
-				if ($mFld['type'] != 'virtual' and !Fields::isVirtualField($mFld)) {
-					$min_ordering = $ordering;
-					$min_ordering_field = $mFld;
-				}
-			}
-		}
-		if ($min_ordering_field !== null) {
-			$fieldTitleValue = $this->getFieldCleanValue4RDI($min_ordering_field);
-			return substr($fieldTitleValue, -100);
-		}
-		return null;
-	}
-
-	protected function getFieldCleanValue4RDI($mFld): string
-	{
-		$titleField = $mFld['realfieldname'];
-		if (str_contains($mFld['type'], 'multi'))
-			$titleField .= $this->ct->Languages->Postfix;
-
-		$fieldTitleValue = $this->row[$titleField];
-		$deleteLabel = common::ctStripTags($fieldTitleValue ?? '');
-
-		$deleteLabel = trim(preg_replace("/[^a-zA-Z\d ,.]/", "", $deleteLabel));
-		return preg_replace('/\s{3,}/', ' ', $deleteLabel);
-	}
-
 	/**
 	 * @throws Exception
 	 * @since 3.2.7
@@ -315,6 +258,64 @@ class RecordToolbar
 				$action = 'ctResetPassword("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '")';
 			}
 			return '<div id="' . $rid . '" class="toolbarIcons"><a href=\'javascript:' . $action . ' \'>' . $img . '</a></div>';
+		} elseif (defined('WPINC')) {
+			return '';
+		}
+		return '';
+	}
+
+	protected function firstFieldValueLabel(): ?string
+	{
+		if (is_null($this->Table->fields))
+			return null;
+
+		$min_ordering = 99999999;
+		$min_ordering_field = null;
+
+		foreach ($this->Table->fields as $mFld) {
+			$ordering = (int)$mFld['ordering'];
+			if ($mFld['type'] != 'dummy' and $ordering < $min_ordering) {
+				if ($mFld['type'] != 'virtual' and !Fields::isVirtualField($mFld)) {
+					$min_ordering = $ordering;
+					$min_ordering_field = $mFld;
+				}
+			}
+		}
+		if ($min_ordering_field !== null) {
+			$fieldTitleValue = $this->getFieldCleanValue4RDI($min_ordering_field);
+			return substr($fieldTitleValue, -100);
+		}
+		return null;
+	}
+
+	protected function getFieldCleanValue4RDI($mFld): string
+	{
+		$titleField = $mFld['realfieldname'];
+		if (str_contains($mFld['type'], 'multi'))
+			$titleField .= $this->ct->Languages->Postfix;
+
+		$fieldTitleValue = $this->row[$titleField];
+		$deleteLabel = common::ctStripTags($fieldTitleValue ?? '');
+
+		$deleteLabel = trim(preg_replace("/[^a-zA-Z\d ,.]/", "", $deleteLabel));
+		return preg_replace('/\s{3,}/', ' ', $deleteLabel);
+	}
+
+	protected function renderCopyIcon(): string
+	{
+		$Label = 'Would you like to copy (' . $this->firstFieldValueLabel() . ')?';
+		$alt = common::translate('COM_CUSTOMTABLES_COPY');
+
+		if (defined('_JEXEC')) {
+			if ($this->ct->Env->toolbarIcons != '')
+				$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-copy" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-copy" title="' . $alt . '"></i>';
+			else
+				$img = '<img src="' . $this->iconPath . 'copy.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+
+			$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
+			$href = 'javascript:ctCopyRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $this->rid . '\',' . $moduleIDString . ');';
+
+			return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
 		} elseif (defined('WPINC')) {
 			return '';
 		}

@@ -1062,6 +1062,7 @@ class Twig_HTML_Tags
 
 		$modes = func_get_args();
 
+		$add_userGroup = (int)$this->ct->Params->addUserGroups;
 		$edit_userGroup = (int)$this->ct->Params->editUserGroups;
 		$publish_userGroup = (int)$this->ct->Params->publishUserGroups;
 
@@ -1072,11 +1073,12 @@ class Twig_HTML_Tags
 		if ($delete_userGroup == 0)
 			$delete_userGroup = $edit_userGroup;
 
+		$isAddable = CTUser::checkIfRecordBelongsToUser($this->ct, $add_userGroup);
 		$isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
 		$isPublishable = CTUser::checkIfRecordBelongsToUser($this->ct, $publish_userGroup);
 		$isDeletable = CTUser::checkIfRecordBelongsToUser($this->ct, $delete_userGroup);
 
-		$RecordToolbar = new RecordToolbar($this->ct, $isEditable, $isPublishable, $isDeletable);
+		$RecordToolbar = new RecordToolbar($this->ct, $isAddable, $isEditable, $isPublishable, $isDeletable);
 
 		if (count($modes) == 0)
 			$modes = ['edit', 'refresh', 'publish', 'delete'];

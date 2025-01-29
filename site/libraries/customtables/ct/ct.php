@@ -663,10 +663,6 @@ class CT
 		else
 			$userGroup = null;
 
-		echo '$userGroup:' . $userGroup . '<br>';
-		die;
-
-
 		if ($this->Env->user->id === null)
 			return false;
 
