@@ -310,7 +310,7 @@ class Layouts
 			else
 				$formName = 'ctEditForm';
 
-			if (!is_null($this->ct->Params->ModuleId))
+			if (!empty($this->ct->Params->ModuleId))
 				$formName .= $this->ct->Params->ModuleId;
 
 			if ($this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT)) {
@@ -867,6 +867,8 @@ class Layouts
 			return $this->doTask_cancel();
 		} elseif ($task == 'saveandcontinue' or $task == 'save' or $task == 'saveascopy') {
 			return $this->doTask_save($task);
+		} elseif ($task == 'createuser') {
+			return $this->doTask_createuser();
 		}
 		return ['success' => false, 'message' => 'Unknown task', 'short' => 'error'];
 	}
@@ -1124,6 +1126,44 @@ class Layouts
 				$output = ['success' => false, 'message' => 'error', 'short' => 'error'];
 		}
 		return $output;
+	}
+
+	private function doTask_createuser(): array
+	{
+		$listing_ids = $this->getListingIds();
+
+		if (count($listing_ids) > 0) {
+
+			$count = 0;
+
+			foreach ($listing_ids as $listing_id) {
+				try {
+					$this->ct->Params->listing_id = $listing_id;
+					$this->ct->getRecord();
+
+					if ($this->ct->Table->record === null)
+						return ['success' => false, 'message' => 'User record ID: "' . $this->ct->Params->listing_id . '" not found.', 'short' => 'error'];
+
+					$fieldRow = $this->ct->Table->getFieldByName($this->ct->Table->useridfieldname);
+
+					$saveField = new SaveFieldQuerySet($this->ct, $this->ct->Table->record, false);
+					$field = new Field($this->ct, $fieldRow);
+
+					if (!$saveField->Try2CreateUserAccount($field))
+						return ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'short' => 'error'];
+
+					$count += 1;
+				} catch (Exception $e) {
+					return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+				}
+			}
+
+			$message = ($count == 1 ? common::translate('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT_1') :
+				common::translate('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'));
+
+			return ['success' => true, 'message' => $message, 'short' => 'user_created'];
+		}
+		return ['success' => false, 'message' => 'Records not selected', 'short' => 'error'];
 	}
 
 	/**

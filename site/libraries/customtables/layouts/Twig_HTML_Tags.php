@@ -97,13 +97,13 @@ class Twig_HTML_Tags
 			}
 
 
-			//if (!is_null($this->ct->Params->ModuleId))
+			//if (!empty($this->ct->Params->ModuleId))
 			//	$link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
 			if (common::inputGetCmd('tmpl', '') != '')
 				$link .= '&amp;tmpl=' . common::inputGetCmd('tmpl', '');
 
-			//if (!is_null($this->ct->Params->ModuleId))
+			//if (!empty($this->ct->Params->ModuleId))
 			//$link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 		} elseif (defined('WPINC')) {
 			$link = common::curPageURL();
@@ -135,10 +135,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		$usergroups = $this->ct->Env->user->groups;
@@ -183,13 +180,13 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		if ($this->ct->Table->recordcount <= $this->ct->Limit)
 			return '';
 
-		if (!is_null($this->ct->Params->ModuleId))
+		if (!empty($this->ct->Params->ModuleId))
 			return '';
 
 		if (defined('_JEXEC')) {
@@ -211,10 +208,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		$pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '');
@@ -226,10 +220,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		if ($this->ct->Params->forceSortBy !== null and $this->ct->Params->forceSortBy != '')
@@ -254,10 +245,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		if ($returnto == '')
@@ -388,10 +376,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		$link = $this->ct->Env->current_url . (!str_contains($this->ct->Env->current_url, '?') ? '?' : '&') . 'tmpl=component&amp;print=1';
@@ -439,10 +424,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		if (is_array($list_of_fields_string_or_array))
@@ -620,10 +602,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		$class = 'ctSearchBox';
@@ -658,10 +637,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		$class = 'ctSearchBox';
@@ -695,10 +671,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		if ($type === 'error')
@@ -714,7 +687,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != '')
 			return '';
 
-		if (!is_null($this->ct->Params->ModuleId))
+		if (!empty($this->ct->Params->ModuleId))
 			return '';
 
 		$PathValue = $this->CleanNavigationPath($this->ct->Filter->PathValue);
@@ -766,10 +739,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
-			return '';
-
-		if (!is_null($this->ct->Params->ModuleId))
+		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
 		$site_key = null;

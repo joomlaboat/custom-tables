@@ -609,7 +609,7 @@ class common
 		$app = Factory::getApplication();
 		$document = $app->getDocument();
 
-		if ($params->ModuleId === null or (int)$params->ModuleId == 0) {
+		if (empty($params->ModuleId)) {
 			//JQuery and Bootstrap
 			if (CUSTOMTABLES_JOOMLA_MIN_4) {
 				HTMLHelper::_('jquery.framework');

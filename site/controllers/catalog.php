@@ -28,7 +28,7 @@ if ($view == 'home') {
 
 $task = common::inputGetCmd('task');
 
-$updatedTask = ['delete', 'refresh', 'publish', 'unpublish', 'copy'];
+$updatedTask = ['delete', 'refresh', 'publish', 'unpublish', 'copy', 'createuser'];
 if (in_array($task, $updatedTask)) {
 
 	require_once CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'controllerHelper.php';
@@ -79,46 +79,7 @@ if (in_array($task, $updatedTask)) {
 		parent::display();
 	}
 }
-/*
-function CustomTablesDelete($this_)
-{
-	$link = common::getReturnToURL() ?? '';
 
-	$ct = new CT(null, false);
-	$ct->Params->constructJoomlaParams();
-	$layout = new Layouts($ct);
-
-	$result = $layout->renderMixedLayout($ct->Params->editLayout);
-	if ($result['success']) {
-		if ($ct->Env->clean) {
-			if ($ct->Env->frmt == 'json')
-				CTMiscHelper::fireSuccess($result['id'], $result['data'], $ct->Params->msgItemIsSaved);
-			else
-				die($result['short'] ?? 'deleted');
-		}
-
-		if (isset($result['redirect']))
-			$link = $result['redirect'];
-
-		if ($result['message'] !== null) {
-			$this_->setRedirect($link, $result['message']);
-		} else
-			$this_->setRedirect($link);
-	} else {
-		if ($ct->Env->clean) {
-			if ($ct->Env->frmt == 'json')
-				CTMiscHelper::fireError(500, $result['message'] ?? 'Error deleting record');
-			else
-				die($result['short'] ?? 'error');
-		}
-
-		if (isset($result['redirect']))
-			$link = $result['redirect'];
-
-		$this_->setRedirect($link, $result['message'], 'error');
-	}
-}
-*/
 /**
  * @throws Exception
  *
@@ -143,38 +104,6 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 	$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
 	switch ($task) {
-
-		case 'createuser':
-
-			$ct->getTable($ct->Params->tableName);
-			if ($ct->Table === null) {
-				return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
-			}
-
-			if ($ct->Table->useridfieldname === null) {
-				return (object)array('link' => $link, 'msg' => 'User field not found.', 'status' => 'error');
-			}
-
-			if (common::inputGetCmd("listing_id")) {
-				$ct->Params->listing_id = common::inputGetCmd("listing_id");
-				if (!empty($ct->Params->listing_id))
-					$ct->getRecord();
-			}
-
-			if ($ct->Table->record === null) {
-				$ct->errors[] = 'User record ID: "' . $ct->Params->listing_id . '" not found.';
-				return (object)array('link' => $link, 'msg' => 'User record ID: "' . $ct->Params->listing_id . '" not found.', 'status' => 'error');
-			}
-
-			$fieldRow = $ct->Table->getFieldByName($ct->Table->useridfieldname);
-
-			$saveField = new SaveFieldQuerySet($ct, $ct->Table->record, false);
-			$field = new Field($ct, $fieldRow);
-
-			if ($saveField->Try2CreateUserAccount($field))
-				return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'), 'status' => 'notice');
-			else
-				return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
 
 		case 'resetpassword':
 

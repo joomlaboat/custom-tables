@@ -158,7 +158,7 @@ class Params
 		//This is used for module tasks
 		$ModuleId = common::inputGetInt('ModuleId');
 
-		if ($ModuleId !== null) {
+		if (!empty($ModuleId)) {
 
 			$this->ModuleId = $ModuleId;
 			$module = ModuleHelper::getModuleById((string)$ModuleId);
@@ -381,7 +381,7 @@ class Params
 			$this->returnTo = common::getReturnToURL();//base 64 decode "returnto" value
 		else {
 
-			if ($this->ModuleId === null) {
+			if (empty($this->ModuleId)) {
 				if (CUSTOMTABLES_JOOMLA_MIN_4 and !empty($this->ItemId)) {
 					//Check if current ItemId is not the same as set $this->ItemId
 					if ($this->ItemId != common::inputGetInt('Itemid'))

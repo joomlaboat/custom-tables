@@ -355,13 +355,12 @@ class CT
 	function getRecordsByKeyword(): void
 	{
 		//Joomla Method
-		if ($this->Params->ModuleId !== null) {
+		if (!empty($this->Params->ModuleId)) {
 			$keywordSearch = common::inputGetString('eskeysearch_' . $this->Params->ModuleId, '');
 			if ($keywordSearch != '') {
 				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'filter' . DIRECTORY_SEPARATOR . 'keywordsearch.php');
 
 				$KeywordSearcher = new CustomTablesKeywordSearch($this);
-
 				$KeywordSearcher->groupby = $this->GroupBy;
 				$KeywordSearcher->esordering = $this->Ordering->ordering_processed_string;
 
@@ -570,7 +569,6 @@ class CT
 		}
 
 		//End of Apply default values
-
 		common::inputSet("listing_id", $listing_id);
 
 		if ($this->Env->advancedTagProcessor)

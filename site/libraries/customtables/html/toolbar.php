@@ -121,7 +121,7 @@ class RecordToolbar
 			if ($this->ct->Params->ItemId > 0)
 				$editLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
 
-			if (!is_null($this->ct->Params->ModuleId))
+			if (!empty($this->ct->Params->ModuleId))
 				$editLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
 			if ($isModal) {

@@ -119,22 +119,6 @@ class Edit
 		if ($row !== null)
 			$this->row = $row;
 
-		//if (!is_null($this->ct->Params->ModuleId))
-		//	$formName .= $this->ct->Params->ModuleId;
-
-		//if (defined('_JEXEC')) {
-		/*
-		if ($this->ct->Env->legacySupport) {
-			$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-			require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
-			require_once($path . 'layout.php');
-		}*/
-		//if ($this->ct->Params->ModuleId === null or $this->ct->Params->ModuleId == 0) {
-		//	HTMLHelper::_('jquery.framework');
-		//	jimport('joomla.html.html.bootstrap');
-		//}
-		//}
-
 		if ($this->ct->Env->clean == 0) {
 			//common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
@@ -166,15 +150,6 @@ class Edit
 		//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 
 		$this->ct->isEditForm = true; //These changes input box prefix
-
-		/*
-		if ($this->ct->Env->legacySupport) {
-			$LayoutProc = new LayoutProcessor($this->ct, $this->layoutContent);
-
-			//Better to run tag processor before rendering form edit elements because of IF statements that can exclude the part of the layout that contains form fields.
-			$pageLayout = $LayoutProc->fillLayout($this->row, null, '||', false, true);
-			tagProcessor_Edit::process($this->ct, $pageLayout, $this->row);
-		} else*/
 		$pageLayout = $this->layoutContent;
 
 		$twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
