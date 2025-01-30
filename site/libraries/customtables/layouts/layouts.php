@@ -763,7 +763,6 @@ class Layouts
 
 		$result .= '</table>';
 
-
 		if ($addToolbar)
 			$result .= '<div style="text-align:center;">{{ html.button("save") }} {{ html.button("saveandclose") }} {{ html.button("saveascopy") }} {{ html.button("cancel") }}</div>
 ';
@@ -1283,11 +1282,56 @@ class Layouts
 			}
 		}
 
-		$details = new Details($this->ct);
-		$details->layoutDetailsContent = $this->layoutCode;
-		$details->pageLayoutNameString = $this->pageLayoutNameString;
-		$details->pageLayoutLink = $this->pageLayoutLink;
-		return $details->render();
+		return $this->renderDetailedLayoutDO();
+	}
+
+	/**
+	 * @throws SyntaxError
+	 * @throws RuntimeError
+	 * @throws LoaderError
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
+	public function renderDetailedLayoutDO(): string
+	{
+		$twig = new TwigProcessor($this->ct, $this->layoutCode, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
+		$layoutDetailsContent = $twig->process($this->ct->Table->record);
+
+		if ($twig->errorMessage !== null)
+			$this->ct->errors[] = $twig->errorMessage;
+
+		if ($this->ct->Params->allowContentPlugins)
+			$layoutDetailsContent = CTMiscHelper::applyContentPlugins($layoutDetailsContent);
+
+
+		if (!is_null($this->ct->Table->record)) {
+			//Save view log
+			$this->SaveViewLogForRecord();
+		}
+
+		return $layoutDetailsContent;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected function SaveViewLogForRecord(): void
+	{
+		$updateFields = [];
+
+		foreach ($this->ct->Table->fields as $field) {
+			if ($field['type'] == 'lastviewtime')
+				$updateFields[$field['realfieldname']] = common::currentDate();
+			elseif ($field['type'] == 'viewcount')
+				$updateFields[$field['realfieldname']] = ((int)($this->ct->Table->record[$field['realfieldname']]) + 1);
+		}
+
+		if (count($updateFields) > 0) {
+			$whereClauseUpdate = new MySQLWhereClause();
+			$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $this->ct->Table->record[$this->ct->Table->realidfieldname]);
+			database::update($this->ct->Table->realtablename, $updateFields, $whereClauseUpdate);
+		}
 	}
 
 	/**

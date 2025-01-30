@@ -19,33 +19,28 @@
 defined('_JEXEC') or die();
 
 use CustomTables\CT;
-use CustomTables\Details;
+use CustomTables\Layouts;
 use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewDetails extends HtmlView
 {
 	var CT $ct;
-	var Details $details;
+	var array $result;
 
 	function display($tpl = null)
 	{
 		$this->ct = new CT(null, false);
 		$this->ct->Params->constructJoomlaParams();
-		$this->details = new Details($this->ct);
+
+		if (!empty($this->ct->Params->tableName))
+			$this->ct->getTable($this->ct->Params->tableName);
+
+		$layout = new Layouts($this->ct);
+		$this->result = $layout->renderMixedLayout($this->ct->Params->detailsLayout, CUSTOMTABLES_LAYOUT_TYPE_DETAILS, 'none');
 
 		if ($this->ct->Env->print)
 			$this->ct->document->setMetaData('robots', 'noindex, nofollow');
 
-		if ($this->details->load()) {
-
-			if ($this->details->layoutType == CUSTOMTABLES_LAYOUT_TYPE_XML)
-				$this->ct->Env->frmt = 'xml';
-			elseif ($this->details->layoutType == CUSTOMTABLES_LAYOUT_TYPE_CSV)
-				$this->ct->Env->frmt = 'csv';
-			elseif ($this->details->layoutType == CUSTOMTABLES_LAYOUT_TYPE_JSON)
-				$this->ct->Env->frmt = 'json';
-
-			parent::display($tpl);
-		}
+		parent::display($tpl);
 	}
 }

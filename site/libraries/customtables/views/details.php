@@ -17,9 +17,9 @@ use Exception;
 
 //use LayoutProcessor;
 //use tagProcessor_PHP;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
+//use Twig\Error\LoaderError;
+//use Twig\Error\RuntimeError;
+//use Twig\Error\SyntaxError;
 
 class Details
 {
@@ -39,6 +39,7 @@ class Details
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
+	/*
 	function load($layoutDetailsContent = null): bool
 	{
 		$this->ct->getTable($this->ct->Params->tableName, $this->ct->Params->userIdField);
@@ -80,70 +81,10 @@ class Details
 
 		return true;
 	}
-
-	/**
-	 * @throws SyntaxError
-	 * @throws RuntimeError
-	 * @throws LoaderError
-	 * @throws Exception
-	 * @since 3.0.0
-	 */
-	public function render(): string
-	{
-		$layoutDetailsContent = $this->layoutDetailsContent;
-
-		/*
-		if ($this->ct->Env->legacySupport) {
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
-
-			$LayoutProc = new LayoutProcessor($this->ct);
-			$LayoutProc->layout = $layoutDetailsContent;
-			$layoutDetailsContent = $LayoutProc->fillLayout($this->ct->Table->record);
-		}*/
-
-		$twig = new TwigProcessor($this->ct, $layoutDetailsContent, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
-		$layoutDetailsContent = $twig->process($this->ct->Table->record);
-
-		if ($twig->errorMessage !== null)
-			$this->ct->errors[] = $twig->errorMessage;
-
-		if ($this->ct->Params->allowContentPlugins)
-			$layoutDetailsContent = CTMiscHelper::applyContentPlugins($layoutDetailsContent);
+	*/
 
 
-		if (!is_null($this->ct->Table->record)) {
-			//Save view log
-			$this->SaveViewLogForRecord($this->ct->Table->record);
-		}
-
-		return $layoutDetailsContent;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public function SaveViewLogForRecord($rec): void
-	{
-		$updateFields = [];
-
-		foreach ($this->ct->Table->fields as $field) {
-			if ($field['type'] == 'lastviewtime')
-				$updateFields[$field['realfieldname']] = common::currentDate();
-			elseif ($field['type'] == 'viewcount')
-				$updateFields[$field['realfieldname']] = ((int)($rec[$field['realfieldname']]) + 1);
-		}
-
-		if (count($updateFields) > 0) {
-
-			$whereClauseUpdate = new MySQLWhereClause();
-			$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $rec[$this->ct->Table->realidfieldname]);
-
-			database::update($this->ct->Table->realtablename, $updateFields, $whereClauseUpdate);
-		}
-	}
-
-
+	/*
 	protected function UpdatePHPOnView(): bool
 	{
 		if (!isset($row[$this->ct->Table->realidfieldname]))
@@ -157,5 +98,6 @@ class Details
 		}
 		return true;
 	}
+	*/
 
 }

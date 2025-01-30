@@ -38,15 +38,6 @@ if (!empty($this->result['style']))
 if (!empty($this->result['script']))
 	$this->ct->document->addCustomTag('<script>' . $this->result['script'] . '</script>');
 
-$results = '';
-
-try {
-	$results = $this->details->render();
-} catch (Throwable $e) {
-	common::enqueueMessage($e->getMessage(), 'error');
-}
-
-
 if ($this->ct->Env->frmt == 'csv') {
 	/**
 	 * Prepare and send CSV output for download:
@@ -63,9 +54,7 @@ if ($this->ct->Env->frmt == 'csv') {
 	header('Content-Type: text/csv; charset=utf-8');
 	header("Pragma: no-cache");
 	header("Expires: 0");
-
-	echo mb_convert_encoding($results, 'UTF-16LE', 'UTF-8');
-
+	echo mb_convert_encoding($this->result['html'], 'UTF-16LE', 'UTF-8');
 	die;//clean exit
 } elseif ($this->ct->Env->frmt == 'xml') {
 	/**
@@ -85,7 +74,7 @@ if ($this->ct->Env->frmt == 'csv') {
 	header("Pragma: no-cache");
 	header("Expires: 0");
 	ob_start();
-	echo $results;
+	echo $this->result['html'];
 	ob_flush();
 	die;//clean exit
 } elseif ($this->ct->Env->clean) {
@@ -93,7 +82,7 @@ if ($this->ct->Env->frmt == 'csv') {
 	 * Sends raw rendered output directly to the browser:
 	 * - Used for clean, machine-readable data output.
 	 */
-	echo $results;
+	echo $this->result['html'];
 	die;//clean exit
 }
 
@@ -112,7 +101,11 @@ if ($this->ct->Params->showPageHeading) {
 }
 
 // Output the final results
-echo $results;
+if ($this->result['success']) {
+	echo $this->result['html'];
+} else {
+	common::enqueueMessage($this->result['message']);
+}
 ?>
 
 <!-- Modal content -->
