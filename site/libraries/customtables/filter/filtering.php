@@ -127,6 +127,7 @@ class Filtering
 
 		$param = $this->sanitizeAndParseFilter($param, true);
 		$items = CTMiscHelper::ExplodeSmartParamsArray($param);
+		$whereClauseExpression = new MySQLWhereClause();
 
 		foreach ($items as $item) {
 
@@ -191,11 +192,16 @@ class Filtering
 
 			if ($whereClauseTemp->hasConditions()) {
 				if ($item['logic'] == 'or')
-					$this->whereClause->addNestedOrCondition($whereClauseTemp);
+					$whereClauseExpression->addNestedOrCondition($whereClauseTemp);
 				else
-					$this->whereClause->addNestedCondition($whereClauseTemp);
+					$whereClauseExpression->addNestedCondition($whereClauseTemp);
 			}
 		}
+
+		if ($whereClauseExpression->hasConditions())
+			$this->whereClause->addNestedCondition($whereClauseExpression);
+
+		//echo 'This what we have: ' . $this->whereClause . '<br/>';
 	}
 
 	/**

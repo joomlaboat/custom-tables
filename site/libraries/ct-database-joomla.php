@@ -150,8 +150,9 @@ class MySQLWhereClause
 				$where [] = '(' . self::getWhereClauseMergeConditions($this->orConditions, 'OR') . ')';
 		}
 		// Process nested conditions
-		foreach ($this->nestedConditions as $nestedCondition)
-			$where [] = $nestedCondition->getWhereClause();
+		foreach ($this->nestedConditions as $nestedCondition) {
+			$where [] = '(' . $nestedCondition->getWhereClause() . ')';
+		}
 
 		$orWhere = [];
 		foreach ($this->nestedOrConditions as $nestedOrCondition) {
@@ -161,8 +162,12 @@ class MySQLWhereClause
 				$orWhere [] = '(' . $nestedOrCondition->getWhereClause('OR') . ')';
 		}
 
-		if (count($orWhere) > 0)
-			$where [] = implode(' OR ', $orWhere);
+		if (count($orWhere) > 0) {
+			if (count($orWhere) > 1)
+				$where [] = '(' . implode(' OR ', $orWhere) . ')';
+			else
+				$where [] = implode(' OR ', $orWhere);
+		}
 
 		return implode(' ' . $logicalOperator . ' ', $where);
 	}
