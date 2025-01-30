@@ -1271,15 +1271,10 @@ class Layouts
 		//Details or Catalog Item
 		if ($this->ct->Table->record === null) {
 
-			if (!empty($this->ct->Params->listing_id))
-				$listing_id = $this->ct->Params->listing_id;
-			else
-				$listing_id = common::inputGetCmd('listing_id');
+			if (empty($this->ct->Params->listing_id) and !empty(common::inputGetCmd('listing_id')))
+				$this->ct->Params->listing_id = common::inputGetCmd('listing_id');
 
-			if (!empty($listing_id)) {
-				$this->ct->Params->listing_id = $listing_id;
-				$this->ct->getRecord();
-			}
+			$this->ct->getRecord();
 		}
 
 		return $this->renderDetailedLayoutDO();
