@@ -663,49 +663,29 @@ class CT
 		else
 			$userGroups = [];
 
-		//if ($this->Env->user->id === null)
-		//return false;
-
 		if ($this->Env->user->isUserAdministrator) {
 			//Super Users have access to everything
 			return true;
 		}
 
-		if ($this->Env->user->checkUserGroupAccess($userGroups))
-			return true;
+		if ($this->Env->user->checkUserGroupAccess($userGroups)) {
 
-		$authorUserGroupName = (defined('_JEXEC') ? '3' : (defined('WPINC') ? 'author' : null));
+			$authorUserGroupName = (defined('_JEXEC') ? '3' : (defined('WPINC') ? 'author' : null));
 
-		if ($authorUserGroupName !== null and $this->Table !== null and $this->Table->useridrealfieldname !== null and $this->Table->record !== null) {
 			if (in_array($authorUserGroupName, $userGroups))//3 is Author in Joomla
 			{
-				if ($this->checkIfItemBelongsToUser()) {
-					// $this->Params->listing_id, $this->Params->userIdField)) {
-					echo '!<br/>!ItemBelongsToUser!<br/>';
-					return true;
+				if ($this->Table !== null and $this->Table->useridrealfieldname !== null and $this->Table->record !== null) {
+					if (in_array($authorUserGroupName, $userGroups))//3 is Author in Joomla
+					{
+						if ($this->checkIfItemBelongsToUser())
+							return true;
+					}
 				}
-			}
+			} else
+				return true;
 		}
+
 		return false;
-
-		//$authorized = false;
-		/*
-				if ($this->Params->userIdField !== null)
-					$authorized = $this->checkIfItemBelongsToUser($this->Params->listing_id, $this->Params->userIdField);
-
-				if ($authorized)
-					return true;
-
-				if ($action == CUSTOMTABLES_ACTION_COPY) {
-					//Copy action requires both access levels
-					if ($this->Env->user->checkUserGroupAccess($this->Params->editUserGroups))
-						return $this->Env->user->checkUserGroupAccess($this->Params->addUserGroups);
-
-					return false;
-				} else {
-					return $this->Env->user->checkUserGroupAccess($userGroups);
-				}
-				*/
 	}
 
 	/**
