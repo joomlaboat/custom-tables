@@ -112,7 +112,6 @@ class CustomTablesViewCatalog extends HtmlView
 	 */
 	function SaveViewLog_CheckIfNeeded(): array
 	{
-		$user_groups = $this->ct->Env->user->groups;
 		$allowed_fields = array();
 
 		if ($this->ct->Table === null)
@@ -135,7 +134,7 @@ class CustomTablesViewCatalog extends HtmlView
 				$group_id = CTMiscHelper::getGroupIdByTitle($user_group);
 
 				if ($user_group != '') {
-					if (in_array($group_id, $user_groups))
+					if (in_array($group_id, $this->ct->Env->user->groups))
 						$allowed_fields[] = $mFld['fieldname'];
 				}
 			}
