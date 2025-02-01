@@ -313,7 +313,7 @@ class Layouts
 			if (!empty($this->ct->Params->ModuleId))
 				$formName .= $this->ct->Params->ModuleId;
 
-			if ($this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT)) {
+			if ($this->ct->CheckAuthorization($this->ct->Table->record === null ? CUSTOMTABLES_ACTION_ADD : CUSTOMTABLES_ACTION_EDIT)) {
 				$output['html'] = $editForm->render($this->ct->Table->record,
 					$formLink,
 					$formName,

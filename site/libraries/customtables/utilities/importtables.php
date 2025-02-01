@@ -254,6 +254,7 @@ class ImportTables
 
 				if (!Fields::checkIfFieldExists($mysqlTableName, $fieldname)) {
 					//Add field
+					/*
 					if (in_array($mysqlTableName, $tablesToIgnore)) {
 						//$data[$fieldname] = $rows[$key];
 					} else {
@@ -282,6 +283,7 @@ class ImportTables
 							}
 						}
 					}
+					*/
 				} else {
 					$data[$fieldname] = $rows[$key];
 				}

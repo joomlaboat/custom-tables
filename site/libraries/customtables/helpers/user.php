@@ -76,10 +76,6 @@ class CTUser
 		} elseif (defined('WPINC')) {
 
 			if (function_exists('get_current_user_id')) {
-				$this->id = get_current_user_id(); //This is WordPress method
-
-				if (empty($this->id))
-					$this->groups [] = 'guest';
 
 				if (function_exists('wp_get_current_user')) {
 					$current_user = wp_get_current_user(); //This is WordPress method
@@ -90,6 +86,11 @@ class CTUser
 					else
 						$this->isUserAdministrator = false;
 				}
+
+				$this->id = get_current_user_id(); //This is WordPress method
+
+				if (empty($this->id))
+					$this->groups [] = 'guest';
 			}
 		}
 	}
