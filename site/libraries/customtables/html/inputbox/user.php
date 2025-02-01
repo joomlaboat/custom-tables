@@ -60,12 +60,12 @@ class InputBox_user extends BaseInputBox
 			$from .= ' INNER JOIN ' . $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__users.id';
 
 		//User Group Filter
-		$userGroup = (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : '');
-		if ($userGroup != '') {
+		$userGroups = (($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] ?? '' : '');
+		if ($userGroups != '') {
 			$from .= ' INNER JOIN #__user_usergroup_map ON user_id=#__users.id';
 			$from .= ' INNER JOIN #__usergroups ON #__usergroups.id=#__user_usergroup_map.group_id';
 
-			$ug = explode(",", $userGroup);
+			$ug = explode(",", $userGroups);
 			foreach ($ug as $u)
 				$whereClause->addOrCondition('#__usergroups.title', $u);
 		}

@@ -67,7 +67,7 @@ class Twig_HTML_Tags
 		if ($Alias_or_ItemId !== '')
 			$this->ct->Params->loadParameterUsingMenuAlias($Alias_or_ItemId);
 
-		$add_userGroup = (int)$this->ct->Params->addUserGroups;
+		$add_userGroup = $this->ct->Params->addUserGroups;
 
 		if (!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup, $userGroups))
 			return ''; //Not permitted
@@ -348,22 +348,25 @@ class Twig_HTML_Tags
 	protected function getAvailableModes(): array
 	{
 		$available_modes = array();
-		if ($this->ct->Env->user->id != 0) {
-			$publish_userGroup = (int)$this->ct->Params->publishUserGroups;
 
-			if ($this->ct->Env->user->checkUserGroupAccess($publish_userGroup)) {
-				$available_modes[] = 'publish';
-				$available_modes[] = 'unpublish';
-			}
+		$publish_userGroups = $this->ct->Params->publishUserGroups;
 
-			$edit_userGroup = (int)$this->ct->Params->editUserGroups;
-			if ($this->ct->Env->user->checkUserGroupAccess($edit_userGroup))
-				$available_modes[] = 'refresh';
-
-			$delete_userGroup = (int)$this->ct->Params->deleteUserGroups;
-			if ($this->ct->Env->user->checkUserGroupAccess($delete_userGroup))
-				$available_modes[] = 'delete';
+		if ($this->ct->Env->user->checkUserGroupAccess($publish_userGroups)) {
+			$available_modes[] = 'publish';
+			$available_modes[] = 'unpublish';
 		}
+
+		$edit_userGroups = $this->ct->Params->editUserGroups;
+
+		if ($this->ct->Env->user->checkUserGroupAccess($edit_userGroups)) {
+			$available_modes[] = 'edit';
+			$available_modes[] = 'refresh';
+		}
+
+		$delete_userGroups = $this->ct->Params->deleteUserGroups;
+		if ($this->ct->Env->user->checkUserGroupAccess($delete_userGroups))
+			$available_modes[] = 'delete';
+
 		return $available_modes;
 	}
 
@@ -1032,21 +1035,10 @@ class Twig_HTML_Tags
 
 		$modes = func_get_args();
 
-		$add_userGroup = (int)$this->ct->Params->addUserGroups;
-		$edit_userGroup = (int)$this->ct->Params->editUserGroups;
-		$publish_userGroup = (int)$this->ct->Params->publishUserGroups;
-
-		if ($publish_userGroup == 0)
-			$publish_userGroup = $edit_userGroup;
-
-		$delete_userGroup = (int)$this->ct->Params->deleteUserGroups;
-		if ($delete_userGroup == 0)
-			$delete_userGroup = $edit_userGroup;
-
-		$isAddable = CTUser::checkIfRecordBelongsToUser($this->ct, $add_userGroup);
-		$isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
-		$isPublishable = CTUser::checkIfRecordBelongsToUser($this->ct, $publish_userGroup);
-		$isDeletable = CTUser::checkIfRecordBelongsToUser($this->ct, $delete_userGroup);
+		$isAddable = $this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_ADD);
+		$isEditable = $this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT);
+		$isPublishable = $this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_PUBLISH);
+		$isDeletable = $this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_DELETE);
 
 		$RecordToolbar = new RecordToolbar($this->ct, $isAddable, $isEditable, $isPublishable, $isDeletable);
 

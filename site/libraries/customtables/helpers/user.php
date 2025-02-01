@@ -65,7 +65,11 @@ class CTUser
 				$this->email = $user->email;
 				$this->name = $user->name;
 				$this->username = $user->username;
+			} else {
+				$this->groups [] = 9; //Guest
 			}
+
+			$this->groups [] = 1; //Public
 
 			$this->isUserAdministrator = in_array(8, $this->groups);//8 is Super Users
 
@@ -73,6 +77,9 @@ class CTUser
 
 			if (function_exists('get_current_user_id')) {
 				$this->id = get_current_user_id(); //This is WordPress method
+
+				if (empty($this->id))
+					$this->groups [] = 'guest';
 
 				if (function_exists('wp_get_current_user')) {
 					$current_user = wp_get_current_user(); //This is WordPress method
@@ -492,29 +499,6 @@ class CTUser
 		return false;
 	}
 
-	public static function checkIfRecordBelongsToUser(CT $ct, int $ug): bool
-	{
-		if (!isset($ct->Env->user->isUserAdministrator))
-			return false;
-
-		if ($ug == 1)
-			$usergroups = array();
-		else
-			$usergroups = $ct->Env->user->groups;
-
-		if ($ct->Env->user->isUserAdministrator or in_array($ug, $usergroups)) {
-			return true;
-		} else {
-			if (isset($ct->Table->record) and isset($ct->Table->record['listing_published']) and $ct->Table->useridfieldname != '') {
-				$uid = $ct->Table->record[$ct->Table->useridrealfieldname];
-
-				if ($uid == $ct->Env->user->id and $ct->Env->user->id != 0)
-					return true;
-			}
-		}
-		return false;
-	}
-
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
@@ -708,15 +692,15 @@ class CTUser
 		return implode(',', $groups);
 	}
 
-	public function checkUserGroupAccess($group = 0): bool
+	public function checkUserGroupAccess(array $groups = []): bool
 	{
-		if ($group == 0)
+		if (count($groups) == 0)
 			return false;
 
 		if ($this->isUserAdministrator)
 			return true;
 
-		if (in_array($group, $this->groups))
+		if (!empty(array_intersect($groups, $this->groups)))
 			return true;
 
 		return false;

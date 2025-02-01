@@ -342,21 +342,25 @@ function ctSearchBoxDo() {
 	}
 
 	// Check if a Joomla class is defined
+	/*
 	let link;
 
 	if (typeof Joomla !== 'undefined') {
+		link = window.location.href;
+		link = esPrepareLink(deleteParams, addParams, window.location.href)
+
 		link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 	} else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
 		link = window.location.href;
 	}
+	*/
 
 	let whereList = [];
 
 	if (w.length > 0)
 		whereList.push("where=" + encodeURIComponent(w.join(" and ")));
 
-	link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], whereList, link);
-	window.location.href = link;
+	window.location.href = esPrepareLink(['where', 'task', "listing_id", 'returnto'], whereList, window.location.href);
 }
 
 function ctSearchReset() {

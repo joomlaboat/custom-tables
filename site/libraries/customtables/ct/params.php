@@ -40,10 +40,10 @@ class Params
 	var ?string $sortBy;
 	var ?string $forceSortBy;
 
-	var ?string $addUserGroups;
-	var ?string $editUserGroups;
-	var ?string $publishUserGroups;
-	var ?string $deleteUserGroups;
+	var array $addUserGroups;
+	var array $editUserGroups;
+	var array $publishUserGroups;
+	var array $deleteUserGroups;
 
 	var bool $allowContentPlugins;
 	var ?string $userIdField;
@@ -110,10 +110,10 @@ class Params
 		$this->groupBy = null;
 		$this->sortBy = null;
 		$this->forceSortBy = null;
-		$this->addUserGroups = null;
-		$this->editUserGroups = null;
-		$this->publishUserGroups = null;
-		$this->deleteUserGroups = null;
+		$this->addUserGroups = [];
+		$this->editUserGroups = [];
+		$this->publishUserGroups = [];
+		$this->deleteUserGroups = [];
 		$this->allowContentPlugins = false;
 		$this->userIdField = null;
 		$this->filter = null;
@@ -355,26 +355,7 @@ class Params
 		$this->cartMsgItemUpdated = $menu_params['cart_msgitemupdated'] ?? null;
 
 		//Permissions
-		if (!empty($menu_params['editusergroups']))
-			$this->editUserGroups = $menu_params['editusergroups'];
-
-		if (!empty($menu_params['addusergroups']))
-			$this->addUserGroups = $menu_params['addusergroups'];
-
-		if ($this->addUserGroups == 0)//If add user group not set then edit user group will be used
-			$this->addUserGroups = $this->editUserGroups;
-
-		if (!empty($menu_params['publishusergroups']))
-			$this->publishUserGroups = $menu_params['publishusergroups'];
-
-		if ($this->publishUserGroups == 0)//If publish user group not set then edit user group will be used
-			$this->publishUserGroups = $this->editUserGroups;
-
-		if (!empty($menu_params['deleteusergroups']))
-			$this->deleteUserGroups = $menu_params['deleteusergroups'];
-		
-		if ($this->deleteUserGroups == 0)//If publish user group not set then edit user group will be used
-			$this->deleteUserGroups = $this->editUserGroups;
+		$this->setPermissions($menu_params);
 
 		$this->publishStatus = $menu_params['publishstatus'] ?? 1;
 
@@ -442,6 +423,46 @@ class Params
 		}
 		$this->ItemId = common::inputGetInt('Itemid', 0);
 		return $menu_params;
+	}
+
+	protected function setPermissions(array $menu_params): void
+	{
+		if (!empty($menu_params['editusergroups'])) {
+			if (is_array($menu_params['editusergroups']))
+				$this->editUserGroups = $menu_params['editusergroups'];
+			else
+				$this->editUserGroups = [$menu_params['editusergroups']];
+		}
+
+		if (!empty($menu_params['addusergroups'])) {
+			if (is_array($menu_params['addusergroups']))
+				$this->addUserGroups = $menu_params['addusergroups'];
+			else
+				$this->addUserGroups = [$menu_params['addusergroups']];
+		}
+
+		if (count($this->addUserGroups) == 0)//If add user group not set then edit user group will be used
+			$this->addUserGroups = $this->editUserGroups;
+
+		if (!empty($menu_params['publishusergroups'])) {
+			if (is_array($menu_params['publishusergroups']))
+				$this->publishUserGroups = $menu_params['publishusergroups'];
+			else
+				$this->publishUserGroups = [$menu_params['publishusergroups']];
+		}
+
+		if (count($this->publishUserGroups) == 0)//If publish user group not set then edit user group will be used
+			$this->publishUserGroups = $this->editUserGroups;
+
+		if (!empty($menu_params['deleteusergroups'])) {
+			if (is_array($menu_params['deleteusergroups']))
+				$this->deleteUserGroups = $menu_params['deleteusergroups'];
+			else
+				$this->deleteUserGroups = [$menu_params['deleteusergroups']];
+		}
+
+		if (count($this->deleteUserGroups) == 0)//If publish user group not set then edit user group will be used
+			$this->deleteUserGroups = $this->editUserGroups;
 	}
 
 	//Used by Joomla version of the Custom Tables
@@ -523,18 +544,7 @@ class Params
 		$this->cartMsgItemUpdated = $menu_params['cart_msgitemupdated'] ?? null;
 
 		//Permissions
-		$this->editUserGroups = $menu_params['editusergroups'] ?? null;
-		$this->addUserGroups = $menu_params['addusergroups'] ?? 0;
-		if ($this->addUserGroups == 0)
-			$this->addUserGroups = $this->editUserGroups;
-
-		$this->publishUserGroups = $menu_params['publishusergroups'] ?? 0;
-		if ($this->publishUserGroups == 0)
-			$this->publishUserGroups = $this->editUserGroups;
-
-		$this->deleteUserGroups = $menu_params['deleteusergroups'] ?? 0;
-		if ($this->deleteUserGroups == 0)
-			$this->deleteUserGroups = $this->editUserGroups;
+		$this->setPermissions($menu_params);
 
 		$this->publishStatus = $menu_params['publishstatus'] ?? 1;
 

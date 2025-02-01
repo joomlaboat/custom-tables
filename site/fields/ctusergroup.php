@@ -28,7 +28,7 @@ if (!defined('CUSTOMTABLES_JOOMLA_MIN_4')) {
 
 trait JFormFieldCTUserGroupCommon
 {
-	protected static function getOptionList(int $default = 8): array
+	protected static function getOptionList(int $default = 8, $multiple = false): array
 	{
 		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ct-database-joomla.php');
 		$whereClause = new MySQLWhereClause();
@@ -38,7 +38,7 @@ trait JFormFieldCTUserGroupCommon
 
 		$options = [];
 
-		if ($default == 0)
+		if ($default == 0 and !$multiple)
 			$options [''] = ' - ' . common::translate('COM_CUSTOMTABLES_SELECT');
 
 		if ($userGroups) {
@@ -49,7 +49,6 @@ trait JFormFieldCTUserGroupCommon
 		}
 		return $options;
 	}
-
 
 	protected static function buildGroupHierarchy(array $userGroups, int $parentId = 0): array
 	{
@@ -109,8 +108,18 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 		protected function getInput()
 		{
 			$default = (int)$this->element['default'] ?? 8;
+			$multiple = $this->element['multiple'] ?? false;
 			$data = $this->getLayoutData();
-			$data['options'] = self::getOptionList($default);
+
+			if ($multiple) {
+				// Add multiple attribute to the field
+				$data['multiple'] = 'multiple';
+
+				// Adjust the size attribute
+				$data['size'] = (int)$this->element['size'] ?? 4;
+			}
+
+			$data['options'] = self::getOptionList($default, $multiple);
 			return $this->getRenderer($this->layout)->render($data);
 		}
 	}

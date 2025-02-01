@@ -264,6 +264,10 @@ class Value
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
 	protected function orderingProcess($value): string
 	{
 		if (defined('WPINC')) {
@@ -280,17 +284,13 @@ class Value
 			[CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG, CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE, CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM]))//If not Simple Catalog and not Catalog Page and not Catalog Item
 			return $value;
 
-		$edit_userGroup = (int)$this->ct->Params->editUserGroups;
-		$isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
+		$isEditable = $this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT);
 		if (!$isEditable)
 			return '';
 
-		$edit_userGroup = (int)$this->ct->Params->editUserGroups;
-		$isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
-
 		$orderByPair = explode(' ', $this->ct->Ordering->orderby ?? '');
 
-		if ($orderByPair[0] == $this->field->realfieldname and $isEditable)
+		if ($orderByPair[0] == $this->field->realfieldname)
 			$iconClass = '';
 		else
 			$iconClass = ' inactive tip-top hasTooltip" title="' . HTMLHelper::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
@@ -314,7 +314,7 @@ class Value
 		return $result;
 	}
 
-	protected function multilingual(array $option_list)
+	protected function multilingual(array $option_list): ?string
 	{
 		$specific_lang = $option_list[4] ?? '';
 

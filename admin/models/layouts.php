@@ -548,7 +548,7 @@ class CustomtablesModelLayouts extends AdminModel
 		$params['filter'] = $data['filter'] ?? null;
 		$params['addusergroups'] = $data['addusergroups'] ?? null;
 		$params['editusergroups'] = $data['editusergroups'] ?? null;
-		$params['publishusergroup'] = $data['publishusergroup'] ?? null;
+		$params['publishusergroups'] = $data['publishusergroups'] ?? null;
 		$params['deleteusergroups'] = $data['deleteusergroups'] ?? null;
 		$params['publishstatus'] = $data['publishstatus'] ?? null;
 
@@ -681,8 +681,8 @@ class CustomtablesModelLayouts extends AdminModel
 			if (isset($data->params['editusergroups']))
 				$data->editusergroups = $data->params['editusergroups'];
 
-			if (isset($data->params['publishusergroup']))
-				$data->publishusergroup = $data->params['publishusergroup'];
+			if (isset($data->params['publishusergroups']))
+				$data->publishusergroups = $data->params['publishusergroups'];
 
 			if (isset($data->params['deleteusergroups']))
 				$data->deleteusergroups = $data->params['deleteusergroups'];

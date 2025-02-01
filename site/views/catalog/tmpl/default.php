@@ -58,11 +58,7 @@ if (count($this->catalog->ct->errors)) {
 if ($this->ct->Env->frmt == 'html') {
 	if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
 
-		$order_by_pair = explode(' ', $this->ct->Ordering->orderby);
-		$edit_userGroup = (int)$this->ct->Params->editUserGroups;
-		$isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
-
-		if ($isEditable) {
+		if ($this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT)) {
 
 			$saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component&clean=1';
 			if (CUSTOMTABLES_JOOMLA_MIN_4) {

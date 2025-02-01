@@ -162,6 +162,12 @@ class ListOfLayouts
 
 		$params = [];
 		$params['filter'] = stripcslashes(common::inputPostString('filter', null, 'create-edit-layout'));
+		$params['viewusergroups'] = common::inputPostArray('viewusergroups', null, 'create-edit-layout');
+		$params['addusergroups'] = common::inputPostArray('addusergroups', null, 'create-edit-layout');
+		$params['editusergroups'] = common::inputPostArray('editusergroups', null, 'create-edit-layout');
+		$params['publishusergroups'] = common::inputPostArray('publishusergroups', null, 'create-edit-layout');
+		$params['deleteusergroups'] = common::inputPostArray('deleteusergroups', null, 'create-edit-layout');
+		//$params['publishstatus'] = common::inputPostInt('publishstatus', null, 'create-edit-layout');
 
 		$data['params'] = json_encode($params);
 
