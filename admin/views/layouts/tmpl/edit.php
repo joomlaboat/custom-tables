@@ -162,6 +162,58 @@ foreach ($this->allTables as $table) {
 	}
 
 	echo HTMLHelper::_('bootstrap.endTab');
+
+	echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'params-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_PARAMS'));
+
+	if ($this->ct->Env->advancedTagProcessor): ?>
+
+		<div class="row-fluid form-horizontal-desktop">
+			<div class="span12">
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('filter'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('filter'); ?></div>
+				</div>
+
+				<hr/>
+				<h2>Permissions</h2>
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('addusergroups'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('addusergroups'); ?></div>
+				</div>
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('editusergroups'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('editusergroups'); ?></div>
+				</div>
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('publishusergroups'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('publishusergroups'); ?></div>
+				</div>
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('deleteusergroups'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('deleteusergroups'); ?></div>
+				</div>
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('publishstatus'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('publishstatus'); ?></div>
+				</div>
+			</div>
+		</div>
+
+	<?php else: ?>
+		<div class="ct_doc_pro_label">
+			<a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">
+				<?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?>
+			</a>
+		</div>';
+	<?php endif; ?>
+
+	<?php
 	echo HTMLHelper::_('bootstrap.endTabSet');
 	echo HTMLHelper::_('form.token');
 	echo $this->layoutEditor->render_onPageLoads($onPageLoads);

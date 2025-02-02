@@ -226,42 +226,55 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 			</div>
 		</div>
 
-		<?php
+		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-		echo HTMLHelper::_('uitab.endTab');
+		<?php if ($this->item->tablename !== null): ?>
 
-		if ($this->item->tablename !== null) {
-			echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
+			<?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES')); ?>
 
-			include('_dependencies.php');
-			?>
+			<?php if ($this->ct->Env->advancedTagProcessor) : ?>
 
-			<div class="row-fluid form-horizontal-desktop">
-				<div class="span12">
+				<?php include('_dependencies.php'); ?>
 
-					<?php
-					echo renderDependencies($this->item->id, $this->item->tablename);
-					?>
-
+				<div class="row-fluid form-horizontal-desktop">
+					<div class="span12">
+						<?php echo renderDependencies($this->item->id, $this->item->tablename); ?>
+					</div>
 				</div>
+			<?php else: ?>
+				<div class="ct_doc_pro_label">
+					<a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">
+						<?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?>
+					</a>
+				</div>
+			<?php endif; ?>
+			<?php echo HTMLHelper::_('uitab.endTab'); ?>
+		<?php endif; ?>
+
+		<?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'schema', common::translate('COM_CUSTOMTABLES_SUBMENU_DATABASECHECK')); ?>
+
+		<?php if ($this->ct->Table !== null and $this->ct->Env->advancedTagProcessor): ?>
+			<?php echo $this->getTableSchema(); ?>
+		<?php else: ?>
+			<div class="ct_doc_pro_label">
+				<a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">
+					<?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?>
+				</a>
 			</div>
-			<?php echo HTMLHelper::_('uitab.endTab');
-		}
-		?>
+		<?php endif; ?>
+
+		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
 		<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
 		<div>
 			<input type="hidden" name="task" value="tables.edit"/>
 			<input type="hidden" name="originaltableid" value="<?php echo $this->item->id; ?>"/>
-			<?php
-			echo HTMLHelper::_('form.token');
-			//echo HTMLHelper::_('form.token'); ?>
+			<?php echo HTMLHelper::_('form.token'); ?>
 		</div>
 	</div>
 
 	<div class="clearfix"></div>
-	<?php //echo JLayoutHelper::render('tables.details_under', $this); ?>
 
 	<?php if (!$this->ct->Env->advancedTagProcessor): ?>
 		<script>

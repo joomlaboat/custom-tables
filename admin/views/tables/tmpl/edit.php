@@ -10,12 +10,12 @@
  **/
 
 // No direct access to this file
+defined('_JEXEC') or die();
+
 use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-
-defined('_JEXEC') or die();
 
 if (CUSTOMTABLES_JOOMLA_MIN_4) {
 	$wa = $this->document->getWebAssetManager();
@@ -221,26 +221,46 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 
 		<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
 
-		<?php
+		<?php if ($this->item->tablename !== null): ?>
+			<?php //----------------------- Dependencies ------------- ?>
+			<?php echo HTMLHelper::_('bootstrap.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES')); ?>
 
-		if ($this->item->tablename !== null) {
+			<?php if ($this->ct->Env->advancedTagProcessor) : ?>
 
-			echo HTMLHelper::_('bootstrap.addTab', 'tablesTab', 'dependencies', common::translate('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
-			include('_dependencies.php');
-			?>
+				<?php include('_dependencies.php'); ?>
 
-			<div class="row-fluid form-horizontal-desktop">
-				<div class="span12">
-
-					<?php
-					echo renderDependencies($this->item->id, $this->item->tablename);
-					?>
-
+				<div class="row-fluid form-horizontal-desktop">
+					<div class="span12">
+						<?php echo renderDependencies($this->item->id, $this->item->tablename); ?>
+					</div>
 				</div>
+
+			<?php else: ?>
+				<div class="ct_doc_pro_label">
+					<a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">
+						<?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?>
+					</a>
+				</div>
+			<?php endif; ?>
+
+			<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
+
+		<?php endif; ?>
+
+		<?php //----------------------- Schema ------------- ?>
+		<?php echo HTMLHelper::_('bootstrap.addTab', 'tablesTab', 'schema', common::translate('COM_CUSTOMTABLES_SUBMENU_DATABASECHECK')); ?>
+
+		<?php if ($this->ct->Env->advancedTagProcessor): ?>
+			<?php echo $this->getTableSchema(); ?>
+		<?php else: ?>
+			<div class="ct_doc_pro_label">
+				<a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">
+					<?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?>
+				</a>
 			</div>
-			<?php echo HTMLHelper::_('bootstrap.endTab');
-		}
-		?>
+		<?php endif; ?>
+
+		<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
 
 		<?php echo HTMLHelper::_('bootstrap.endTabSet'); ?>
 

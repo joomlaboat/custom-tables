@@ -14,6 +14,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -78,6 +79,9 @@ class CustomtablesViewTables extends HtmlView
 		if (count($errors = $this->get('Errors'))) {
 			throw new Exception(implode("\n", $errors), 500);
 		}
+
+		if ($this->item->tablename !== null)
+			$this->ct->getTable($this->item->tablename);
 
 		// Set the document
 		$this->document = Factory::getDocument();
@@ -144,6 +148,34 @@ class CustomtablesViewTables extends HtmlView
 			$isNew = ($this->item->id < 1);
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
 			$document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
+		}
+	}
+
+	public function getTableSchema(): string
+	{
+		$tableCreateQuery = database::showCreateTable($this->ct->Table->realtablename);
+
+		if (count($tableCreateQuery) == 0) {
+			return '<p>Table not found</p>';
+		} else {
+			$createTableSql = $tableCreateQuery[0];
+
+			// Remove redundant COLLATE specifications
+			$createStatement = $createTableSql['Create Table'];
+			$createStatement = preg_replace(
+				"/CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci|COLLATE utf8mb4_unicode_ci/",
+				"",
+				$createStatement
+			);
+
+			// Add IF NOT EXISTS
+			$createStatement = str_replace(
+				'CREATE TABLE',
+				'CREATE TABLE IF NOT EXISTS',
+				$createStatement
+			);
+
+			return '<pre><code>' . $createStatement . '</code></pre>';
 		}
 	}
 }
