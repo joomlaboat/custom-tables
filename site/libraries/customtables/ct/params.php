@@ -489,7 +489,7 @@ class Params
 
 		if ($this->tableName === null) {
 			$this->tableName = $menu_params['establename'] ?? null; //Table name or id not sanitized
-			if ($this->tableName === null)
+			if ($this->tableName === null and isset($menu_params['tableid']))
 				$this->tableName = $menu_params['tableid']; //Used in the back-end
 		}
 

@@ -270,8 +270,22 @@ class Layouts
 			if (empty($task))
 				$task = common::inputGetCmd('task');
 
-			if (!empty($task))
-				return $this->doTasks($task);
+			if (!empty($task)) {
+
+				$output = $this->doTasks($task);
+
+				$link = common::getReturnToURL();
+				if ($link === null)
+					$link = $this->ct->Params->returnTo;
+
+				if (!empty($link) and $this->ct->Table !== null)
+					$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
+
+				if (empty($output['redirect']) and !empty($link))
+					$output['redirect'] = $link;
+
+				return $output;
+			}
 		}
 
 		if (in_array($this->layoutType, [
@@ -927,8 +941,8 @@ class Layouts
 			}
 
 			if (count($listing_ids) == 0) {
-				if (common::inputGetCmd('listing_id') !== null) {
-					$listing_id_ = common::inputGetCmd('listing_id');
+				if (common::inputPostCmd('listing_id', null, 'create-edit-record') !== null) {
+					$listing_id_ = common::inputPostCmd('listing_id', null, 'create-edit-record');
 					$listing_id = trim(preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id_));
 
 					if ($listing_id !== '')
@@ -957,7 +971,7 @@ class Layouts
 					$record->refresh($listing_id);
 					$count += 1;
 				} catch (Exception $e) {
-					return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+					return ['success' => false, 'message' => $e->getMessage(), 'short' => 'error'];
 				}
 			}
 
@@ -982,7 +996,7 @@ class Layouts
 		try {
 			$record->copy($listing_id);
 		} catch (Exception $e) {
-			return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+			return ['success' => false, 'message' => $e->getMessage(), 'short' => 'error'];
 		}
 
 		return ['success' => true, 'message' => common::translate('COM_CUSTOMTABLES_RECORDS_COPIED'), 'short' => 'copied'];
@@ -1006,7 +1020,7 @@ class Layouts
 					$record->publish($listing_id, $status);
 					$count += 1;
 				} catch (Exception $e) {
-					return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+					return ['success' => false, 'message' => $e->getMessage(), 'short' => 'error'];
 				}
 			}
 
@@ -1153,7 +1167,7 @@ class Layouts
 
 					$count += 1;
 				} catch (Exception $e) {
-					return ['success' => true, 'message' => $e->getMessage(), 'short' => 'error'];
+					return ['success' => false, 'message' => $e->getMessage(), 'short' => 'error'];
 				}
 			}
 

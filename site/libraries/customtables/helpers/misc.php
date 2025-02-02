@@ -1182,9 +1182,17 @@ class CTMiscHelper
 	 */
 	static public function fireError(int $code = 500, ?string $title = null, ?string $message = null): void
 	{
-		$app = Factory::getApplication();
-		// Handle invalid request method
-		$app->setHeader('status', $code);
+		if (defined('_JEXEC')) {
+			$app = Factory::getApplication();
+			$app->setHeader('status', $code);
+			$app->setHeader('Content-Type', 'application/vnd.api+json');
+			$app->sendHeaders();
+		} elseif (defined('WPINC')) {
+			// Set headers
+			status_header($code);
+			header('Content-Type: application/vnd.api+json');
+		}
+
 		echo json_encode([
 			'success' => false,
 			'data' => null,
@@ -1218,10 +1226,16 @@ class CTMiscHelper
 			}
 		}
 
-		$app = Factory::getApplication();
-		$app->setHeader('status', 200);
-		$app->setHeader('Content-Type', 'application/vnd.api+json');
-		$app->sendHeaders();
+		if (defined('_JEXEC')) {
+			$app = Factory::getApplication();
+			$app->setHeader('status', 200);
+			$app->setHeader('Content-Type', 'application/vnd.api+json');
+			$app->sendHeaders();
+		} elseif (defined('WPINC')) {
+			// Set headers
+			status_header(200);
+			header('Content-Type: application/vnd.api+json');
+		}
 
 		$result = [
 			'success' => true,

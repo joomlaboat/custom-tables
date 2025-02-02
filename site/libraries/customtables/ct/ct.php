@@ -569,7 +569,7 @@ class CT
 		}
 
 		//End of Apply default values
-		common::inputSet("listing_id", $listing_id);
+		//common::inputSet("listing_id", $listing_id);
 
 		if ($this->Env->advancedTagProcessor)
 			CustomPHP::doPHPonChange($this, $row);

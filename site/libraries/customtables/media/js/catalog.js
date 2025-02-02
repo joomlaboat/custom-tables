@@ -69,13 +69,26 @@ function esEditObject(objId, toolbarBoxId, Itemid, tmpl, returnto) {
 	window.location.href = link;
 }
 
-function runTheTask(task, tableid, recordId, url, responses, last, reload, ModuleId) {
+function runTheTask(task, tableid, recordId, responses, last, reload, ModuleId) {
 
-	let params = "";
+	let params = 'task=' + task + '&listing_id=' + recordId;
+
+	if (CTEditHelper.cmsName === 'Joomla') {
+		if (ModuleId === null)
+			params += '&Itemid=' + CTEditHelper.itemId;
+		else
+			params += '&ModuleId=' + ModuleId;
+	}
+
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
 
+	let addParams = ['clean=1'];
+	let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], addParams, window.location.href);
+
+	console.warn(url);
+
 	if (http) {
-		http.open("GET", url, true);
+		http.open("POST", url, true);
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		http.onreadystatechange = function () {
 
@@ -87,17 +100,17 @@ function runTheTask(task, tableid, recordId, url, responses, last, reload, Modul
 					let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
 
 					let table_object = document.getElementById("ctTable_" + tableid);
-					if (table_object) {
+					if (!reload && table_object && CTEditHelper.cmsName === 'Joomla') {
 						let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
 						if (task === 'delete')
 							table_object.deleteRow(index);
 						else {
-							console.log("tableid", tableid)
-							console.log("recordId", recordId)
-							console.log("index", index)
+							//console.log("tableid", tableid)
+							//console.log("recordId", recordId)
+							//console.log("index", index)
 							ctCatalogUpdate(tableid, recordId, index, ModuleId);
 						}
-					} else if (reload) {
+					} else {
 						window.location.reload();
 					}
 
@@ -118,32 +131,8 @@ function runTheTask(task, tableid, recordId, url, responses, last, reload, Modul
 
 function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 	if (ctLinkLoading) return;
-
 	ctLinkLoading = true;
-
-	if (document.getElementById(toolbarBoxId))
-		document.getElementById(toolbarBoxId).innerHTML = '';
-
-	let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
-
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog';
-
-	if (ModuleId === null)
-		link += '&Itemid=' + CTEditHelper.itemId;
-	else
-		link += '&ModuleId=' + ModuleId;
-
-	let tr_object = document.getElementById(element_tableid_tr);
-	if (tr_object) {
-		let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordId, 'clean=1', 'tmpl=component'], link);
-		runTheTask('refresh', tableid, recordId, url, ['refreshed'], false, false, ModuleId);
-	} else {
-		let returnto = btoa(window.location.href);
-
-		if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=refresh', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordId, 'returnto=' + returnto], link);
-
-		window.location.href = link;
-	}
+	runTheTask('refresh', tableid, recordId, ['refreshed'], false, false, ModuleId);
 }
 
 function ctCopyRecord(tableid, recordId, toolbarBoxId, ModuleId) {
@@ -171,7 +160,6 @@ function ctCopyRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 
 	window.location.href = link;
 }
-
 
 function ctOrderChanged(objectValue, ModuleId) {
 	const current_url = esPrepareLink(['returnto', 'task', 'orderby'], [], '');
@@ -207,27 +195,7 @@ function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
 
 	ctLinkLoading = true;
 	document.getElementById(toolbarBoxId).innerHTML = '';
-
-	let task = publish === 1 ? 'task=publish' : 'task=unpublish';
-	let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
-	let tr_object = document.getElementById(element_tableid_tr);
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog';
-
-	if (ModuleId === null)
-		link += '&Itemid=' + CTEditHelper.itemId;
-	else
-		link += '&ModuleId=' + ModuleId;
-
-	if (tr_object) {
-		let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordId, 'clean=1', 'tmpl=component'], link);
-		runTheTask((publish === 0 ? 'unpublish' : 'publish'), tableid, recordId, url, ['published', 'unpublished'], false, false, ModuleId);
-	} else {
-		let returnto = Base64.encode(window.location.href);
-
-		if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], [task, 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordId, 'returnto=' + returnto], link);
-
-		window.location.href = link;
-	}
+	runTheTask((publish === 0 ? 'unpublish' : 'publish'), tableid, recordId, ['published', 'unpublished'], false, false, ModuleId);
 }
 
 function findRowIndexById(tableid, rowId) {
@@ -249,40 +217,10 @@ function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
 	ctLinkLoading = true;
 
 	if (confirm(msg)) {
-
-		let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
-		let link
-
-		// Check if a Joomla class is defined
-		if (window.Joomla instanceof Object) {
-			link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
-		} else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
-			link = window.location.href;
-		} else {
-			return;
-		}
-
-		link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'tableid'], ['tableid=' + tableid, 'task=delete', 'listing_id=' + recordId], link);
-
-		let tr_object = document.getElementById(element_tableid_tr);
-
-
-		if (typeof wp === 'undefined') {
-			if (tr_object) {
-				link = esPrepareLink([], ['clean=1', 'tmpl=component'], link);
-				runTheTask('delete', tableid, recordId, link, ['deleted'], false, false, ModuleId);
-			} else {
-				if (typeof ModuleId !== 'undefined' && ModuleId !== 0)
-					link = esPrepareLink(['option', 'view', 'ModuleId'], ['option=com_customtables', 'view=catalog', 'ModuleId=' + ModuleId], link);
-
-				window.location.href = link;
-			}
-		} else {
-			link = esPrepareLink([], ['clean=1'], link);
-			runTheTask('delete', tableid, recordId, link, ['deleted'], false, !tr_object, ModuleId);
-		}
-
-	} else ctLinkLoading = false;
+		runTheTask('delete', tableid, recordId, ['deleted'], false, false, ModuleId);
+	} else {
+		ctLinkLoading = false;
+	}
 }
 
 function es_SearchBoxKeyPress(e) {
@@ -434,27 +372,29 @@ function ctToolBarDO(task, tableid, ModuleId) {
 	const toolbarBoxId = 'esToolBar_' + task + '_box_' + tableid;
 	document.getElementById(toolbarBoxId).style.visibility = 'hidden';
 
-	let element_tableid = "ctTable_" + tableid;
-	let tr_object = document.getElementById(element_tableid);
+	//let element_tableid = "ctTable_" + tableid;
+	//let tr_object = document.getElementById(element_tableid);
 
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
+	//let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
 
-	if (tr_object) {
+	//if (tr_object) {
 
-		for (let i = 0; i < elements.length; i++) {
-			let listing_id = elements[i];
-			let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'listing_id=' + listing_id, 'clean=1', 'tmpl=component'], link);
-			let accept_responses = [];
-			if (task === 'refresh') accept_responses = ['refreshed']; else if (task === 'publish' || task === 'unpublish') accept_responses = ['published', 'unpublished']; else if (task === 'delete') accept_responses = ['published', 'deleted'];
+	for (let i = 0; i < elements.length; i++) {
+		let listing_id = elements[i];
+		//let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'listing_id=' + listing_id, 'clean=1', 'tmpl=component'], link);
 
-			let last = i === elements.length - 1;
-			runTheTask(task, tableid, listing_id, url, accept_responses, last, false, ModuleId);
-		}
-	} else {
-		let returnto = btoa(window.location.href);
-		link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'ids=' + elements.toString(), 'returnto=' + returnto], link);
-		window.location.href = link;
+		let accept_responses = [];
+		if (task === 'refresh') accept_responses = ['refreshed']; else if (task === 'publish' || task === 'unpublish') accept_responses = ['published', 'unpublished']; else if (task === 'delete') accept_responses = ['published', 'deleted'];
+
+		let last = i === elements.length - 1;
+		runTheTask(task, tableid, listing_id, accept_responses, last, false, ModuleId);
 	}
+
+	//} else {
+	//	let returnto = btoa(window.location.href);
+	//	link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'ids=' + elements.toString(), 'returnto=' + returnto], link);
+	//	window.location.href = link;
+	//}
 }
 
 //https://stackoverflow.com/a/1634841
