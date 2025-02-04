@@ -16,149 +16,6 @@ defined('_JEXEC') or die();
 use CustomTablesFileMethods;
 use CustomTablesImageMethods;
 use Exception;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
-
-class Field
-{
-	var CT $ct;
-
-	var int $id;
-	var ?array $params;
-	var ?string $type;
-	var int $isrequired;
-	var ?string $defaultvalue;
-
-	var string $title;
-	var ?string $description;
-	var string $fieldname;
-	var string $realfieldname;
-	var ?string $comesfieldname;
-	var ?string $valuerule;
-	var ?string $valuerulecaption;
-
-	var array $fieldrow;
-	var string $prefix; //part of the table class
-
-	var ?string $layout; //output layout, used in Search Boxes
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	function __construct(CT &$ct, array $fieldRow, ?array $row = null, bool $parseParams = true)
-	{
-		$this->ct = &$ct;
-
-		if (!array_key_exists('id', $fieldRow))
-			throw new Exception('FieldRaw: Empty.');
-
-		$this->id = $fieldRow['id'];
-		$this->fieldname = $fieldRow['fieldname'];
-		$this->realfieldname = $fieldRow['realfieldname'];
-
-		if ($fieldRow['type'] !== null) {
-			$this->type = $fieldRow['type'];
-			$this->fieldrow = $fieldRow;
-			$this->layout = $fieldRow['layout'] ?? null; //rendering layout
-
-			if ($fieldRow['type'] == '_id') {
-				$this->title = '#';
-			} elseif (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldRow)) {
-				$this->title = 'fieldtitle' . $ct->Languages->Postfix . ' - not found';
-			} else {
-				$vlu = $fieldRow['fieldtitle' . $ct->Languages->Postfix];
-				if ($vlu == '')
-					$this->title = $fieldRow['fieldtitle'];
-				else
-					$this->title = $vlu;
-			}
-
-			if (!array_key_exists('description' . $ct->Languages->Postfix, $fieldRow)) {
-				$this->description = 'description' . $ct->Languages->Postfix . ' - not found';
-			} else {
-				$vlu = $fieldRow['description' . $ct->Languages->Postfix];
-				if ($vlu == '')
-					$this->description = $fieldRow['description'];
-				else
-					$this->description = $vlu;
-			}
-
-			if (isset($fieldRow['isrequired']))
-				$this->isrequired = intval($fieldRow['isrequired']);
-			else
-				$this->isrequired = false;
-
-			if (isset($fieldRow['defaultvalue']))
-				$this->defaultvalue = $fieldRow['defaultvalue'];
-			else
-				$this->defaultvalue = null;
-
-			if (isset($fieldRow['valuerule']))
-				$this->valuerule = $fieldRow['valuerule'];
-			else
-				$this->valuerule = null;
-
-			if (isset($fieldRow['valuerulecaption']))
-				$this->valuerulecaption = $fieldRow['valuerulecaption'];
-			else
-				$this->valuerulecaption = null;
-
-			$this->prefix = $this->ct->Table->fieldInputPrefix;
-			$this->comesfieldname = $this->prefix . $this->fieldname;
-
-			if (isset($fieldRow['typeparams']))
-				$this->params = CTMiscHelper::csv_explode(',', $fieldRow['typeparams']);
-			else
-				$this->params = null;
-
-			if ($parseParams and $this->type != 'virtual')
-				$this->parseParams($row, $this->type);
-		} else
-			$this->type = null;
-	}
-
-	/**
-	 * @throws SyntaxError
-	 * @throws RuntimeError
-	 * @throws LoaderError
-	 * @throws Exception
-	 * @since 3.0.0
-	 */
-	function parseParams(?array $row, string $type): void
-	{
-		$new_params = [];
-
-		$index = 0;
-		foreach ($this->params as $type_param) {
-			if ($type_param !== null) {
-				$type_param = str_replace('****quote****', '"', $type_param);
-				$type_param = str_replace('****apos****', '"', $type_param);
-
-				if (is_numeric($type_param))
-					$new_params[] = $type_param;
-				elseif (!str_contains($type_param, '{{') and !str_contains($type_param, '{%'))
-					$new_params[] = $type_param;
-				else {
-
-					if ($type == 'user' and ($index == 1 or $index == 2)) {
-						//Do not parse
-						$new_params[] = $type_param;
-					} else {
-						$twig = new TwigProcessor($this->ct, $type_param, false, false, false);
-						$new_params[] = $twig->process($row);
-
-						if ($twig->errorMessage !== null)
-							$this->ct->errors[] = $twig->errorMessage;
-					}
-				}
-			}
-			$index++;
-		}
-		$this->params = $new_params;
-	}
-}
 
 class Fields
 {
@@ -409,10 +266,24 @@ class Fields
 		return false;
 	}
 
-	public static function convertMySQLFieldTypeToCT(string $data_type, ?string $column_type): array
+	public static function convertMySQLFieldTypeToCT(string $column_type): array
 	{
+		//column type from information_schema.columns
+		//example:  decimal(20,7)
 		$type = null;
 		$typeParams = null;
+
+		$parts = explode('(', $column_type);
+
+		$data_type = explode(' ', $parts[0])[0];
+		$options = null;
+
+		if (isset($parts[1])) {
+			$parts2 = explode(')', $parts[1]);
+
+			if (!empty($parts2[0]))
+				$options = $parts2[0];
+		}
 
 		switch (strtolower(trim($data_type))) {
 			case 'bit':
@@ -429,25 +300,17 @@ class Fields
 			case 'decimal':
 			case 'float':
 			case 'double':
+				if ($options !== null)
+					$typeParams = $options;
 
-				$parts = explode('(', $column_type);
-				if (count($parts) > 1) {
-					$length = str_replace(')', '', $parts[1]);
-					if ($length != '')
-						$typeParams = $length;
-				}
 				$type = 'float';
 				break;
 
 			case 'char':
 			case 'varchar':
+				if ($options !== null)
+					$typeParams = $options;
 
-				$parts = explode('(', $column_type);
-				if (count($parts) > 1) {
-					$length = str_replace(')', '', $parts[1]);
-					if ($length != '')
-						$typeParams = $length;
-				}
 				$type = 'string';
 				break;
 
@@ -604,7 +467,7 @@ class Fields
 	 * @throws Exception
 	 * @since 3.1.8
 	 */
-	public static function saveField(?int $tableId, ?int $fieldId): ?int
+	public static function saveField(?int $tableId, ?int $fieldId, ?array $data = null): ?int
 	{
 		if ($fieldId == 0)
 			$fieldId = null; // new field
@@ -618,38 +481,39 @@ class Fields
 			return null;
 		}
 
-		if (defined('_JEXEC')) {
-			$data = common::inputGet('jform', array(), 'ARRAY');
-		} else {
-			$data = [];
-			$data['tableid'] = $tableId;
+		if ($data === null) {
+			if (defined('_JEXEC')) {
+				$data = common::inputGet('jform', array(), 'ARRAY');
+			} else {
+				$data = [];
+				$data['tableid'] = $tableId;
 
-			$moreThanOneLang = false;
-			foreach ($ct->Languages->LanguageList as $lang) {
-				$id_title = 'fieldtitle';
-				$id_description = 'description';
+				$moreThanOneLang = false;
+				foreach ($ct->Languages->LanguageList as $lang) {
+					$id_title = 'fieldtitle';
+					$id_description = 'description';
 
-				if ($moreThanOneLang) {
-					$id_title .= '_' . $lang->sef;
-					$id_description .= '_' . $lang->sef;
+					if ($moreThanOneLang) {
+						$id_title .= '_' . $lang->sef;
+						$id_description .= '_' . $lang->sef;
+					}
+					$data[$id_title] = common::inputPostString($id_title, null, 'create-edit-field');
+					$data[$id_description] = common::inputPostString($id_description, null, 'create-edit-field');
+					$moreThanOneLang = true; //More than one language installed
 				}
-				$data[$id_title] = common::inputPostString($id_title, null, 'create-edit-field');
-				$data[$id_description] = common::inputPostString($id_description, null, 'create-edit-field');
-				$moreThanOneLang = true; //More than one language installed
+
+				$data['type'] = common::inputPostCmd('type', null, 'create-edit-field');
+
+				$typeParams = common::inputPostString('typeparams', null, 'create-edit-field');
+				$data['typeparams'] = $typeParams !== null ? str_replace('\"', '"', $typeParams) : null;
+				$data['isrequired'] = common::inputPostInt('isrequired', 0, 'create-edit-field');
+				$data['defaultvalue'] = common::inputPostString('defaultvalue', null, 'create-edit-field');
+				$data['allowordering'] = common::inputPostInt('allowordering', 1, 'create-edit-field');
+				$data['valuerule'] = common::inputPostString('valuerule', null, 'create-edit-field');
+				$data['valuerulecaption'] = common::inputPostString('valuerulecaption', null, 'create-edit-field');
+				$data['fieldname'] = common::inputPostString('fieldname', null, 'create-edit-field');
 			}
-
-			$data['type'] = common::inputPostCmd('type', null, 'create-edit-field');
-
-			$typeParams = common::inputPostString('typeparams', null, 'create-edit-field');
-			$data['typeparams'] = $typeParams !== null ? str_replace('\"', '"', $typeParams) : null;
-			$data['isrequired'] = common::inputPostInt('isrequired', 0, 'create-edit-field');
-			$data['defaultvalue'] = common::inputPostString('defaultvalue', null, 'create-edit-field');
-			$data['allowordering'] = common::inputPostInt('allowordering', 1, 'create-edit-field');
-			$data['valuerule'] = common::inputPostString('valuerule', null, 'create-edit-field');
-			$data['valuerulecaption'] = common::inputPostString('valuerulecaption', null, 'create-edit-field');
-			$data['fieldname'] = common::inputPostString('fieldname', null, 'create-edit-field');
 		}
-
 		$task = common::inputPostCmd('task', null, 'create-edit-field');
 
 		// Process field name
@@ -739,7 +603,8 @@ class Fields
 				throw new Exception('Add field details: ' . $e->getMessage());
 			}
 
-			$ct->getTable($tableId);
+			$ct->getTable($tableId);//reload table to include new field
+
 		}
 
 		if (!self::update_physical_field($ct, $fieldId, $data)) {

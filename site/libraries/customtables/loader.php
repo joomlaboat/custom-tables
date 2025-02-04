@@ -207,6 +207,7 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	require_once($path_helpers . 'imagemethods.php');
 	require_once($path_helpers . 'user.php');
 	require_once($path_helpers . 'misc.php');
+	require_once($path_helpers . 'Fields.php');
 
 	if (defined('_JEXEC')) {
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');
@@ -229,9 +230,12 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	}
 
 	$pathDataTypes = $path . 'ct' . DIRECTORY_SEPARATOR;
-	require_once($pathDataTypes . 'ct.php');
-	require_once($pathDataTypes . 'environment.php');
-	require_once($pathDataTypes . 'params.php');
+	require_once($pathDataTypes . 'CT.php');
+	require_once($pathDataTypes . 'Environment.php');
+	require_once($pathDataTypes . 'Logs.php');
+	require_once($pathDataTypes . 'Params.php');
+	require_once($pathDataTypes . 'Field.php');
+	require_once($pathDataTypes . 'Table.php');
 
 	$pathDataTypes = $path . 'datatypes' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'datatypes.php');
@@ -249,9 +253,6 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	require_once($pathDataTypes . 'Twig_Document_Tags.php');
 	require_once($pathDataTypes . 'Twig_URL_Tags.php');
 
-	$pathDataTypes = $path . 'logs' . DIRECTORY_SEPARATOR;
-	require_once($pathDataTypes . 'logs.php');
-
 	$pathDataTypes = $path . 'ordering' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'ordering.php');
 
@@ -264,26 +265,17 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	require_once($pathDataTypes . 'savefieldqueryset.php');
 	require_once($pathDataTypes . 'record.php');
 
-	$pathDataTypes = $path . 'table' . DIRECTORY_SEPARATOR;
-	require_once($pathDataTypes . 'table.php');
-
 	$pathDataTypes = $path . 'html' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'toolbar.php');
 	require_once($pathDataTypes . 'forms.php');
 	require_once($pathDataTypes . 'inputbox.php');
 	require_once($pathDataTypes . 'value.php');
 
-	$pathDataTypes = $path . 'fields' . DIRECTORY_SEPARATOR;
-	require_once($pathDataTypes . 'fields.php');
-
 	$pathDataTypes = $path . 'languages' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'languages.php');
 
 	$pathDataTypes = $path . 'filter' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'filtering.php');
-
-	//$path_datatypes = $path . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
-	//require_once($path_datatypes.'Logs.php');
 
 	$pathViews = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
 

@@ -86,11 +86,12 @@ class CustomTablesViewListOfTables extends HtmlView
 
 	protected function addToolbar_4()
 	{
-		// Get the toolbar object instance
-
-		$toolbar = Toolbar::getInstance('toolbar');
+		// Get toolbar through the application
+		$toolbar = Factory::getApplication()->getDocument()->getToolbar();
 
 		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
+		$document = Factory::getDocument();
+		$document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/listoftables/submitbutton.js"></script>');
 
 		if ($this->canCreate)
 			$toolbar->addNew('tables.add');
@@ -121,6 +122,12 @@ class CustomTablesViewListOfTables extends HtmlView
 
 		if (!$this->isEmptyState and $this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED and $this->ct->Env->advancedTagProcessor)
 			$toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', true, null);
+
+		// First button (Create from Schema)
+		$toolbar->standardButton('plus')
+			->text('Create from Schema')
+			->task('listoftables.createFromSchema');
+
 		if (($this->canState && $this->canDelete)) {
 			if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete) {
 				$toolbar->delete('listoftables.delete')
@@ -134,6 +141,8 @@ class CustomTablesViewListOfTables extends HtmlView
 	protected function addToolBar_3()
 	{
 		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
+		$document = Factory::getDocument();
+		$document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/listoftables/submitbutton.js"></script>');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoftables');
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 

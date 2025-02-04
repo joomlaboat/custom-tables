@@ -1218,7 +1218,7 @@ class CTMiscHelper
 				try {
 					$data = json_decode($dataVariable, true, 512, JSON_THROW_ON_ERROR);
 
-					if ($id === null and $data !== null and is_array($data) and $data['id'] !== null)
+					if ($id === null and $data !== null and is_array($data) and !empty($data['id']))
 						$id = $data['id'];
 				} catch (Exception $e) {
 					$data = ['error' => $e->getMessage(), 'result' => $dataVariable];

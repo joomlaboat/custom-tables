@@ -232,6 +232,8 @@ class record
 			$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
 			$this->ct->getRecord();
 			$this->row_old = $this->ct->Table->record;
+			if ($this->ct->Table->record !== null)
+				$this->listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
 		} else
 			$this->row_old[$this->ct->Table->realidfieldname] = null;
 
@@ -291,12 +293,6 @@ class record
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
-		}
-
-		//TODO: you probably should let empty records to be created
-		if (count($saveField->row_new) < 1) {
-			echo 'exited.';
-			return false;
 		}
 
 		if ($this->isItNewRecord) {// or $isCopy
