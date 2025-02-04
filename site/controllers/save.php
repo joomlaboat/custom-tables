@@ -14,7 +14,7 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 
 $task = common::inputGetCmd('task');
-if ($task !== null) {
+if ($task !== null and $task !== 'new') {
 	require_once CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'controllerHelper.php';
 	$result = controllerHelper::doTheTask($task);
 

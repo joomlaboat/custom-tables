@@ -69,29 +69,35 @@ class Twig_HTML_Tags
 			return ''; //Not permitted
 
 		if (defined('_JEXEC')) {
-			if ($Alias_or_ItemId != '' and is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)
-				$link = common::UriRoot(true, true) . 'index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' . $Alias_or_ItemId;
-			elseif ($Alias_or_ItemId != '') {
 
-				$link = common::UriRoot(true, true) . 'index.php/' . $Alias_or_ItemId;
+			$link = common::UriRoot(true, true);
+
+			if ($Alias_or_ItemId !== '' and is_numeric($Alias_or_ItemId) and (int)$Alias_or_ItemId > 0)
+				$link .= 'index.php?option=com_customtables'
+					. '&amp;view=edititem'
+					. '&amp;Itemid=' . $Alias_or_ItemId;
+			elseif ($Alias_or_ItemId !== '') {
+				$link .= 'index.php/' . $Alias_or_ItemId;
 				$link = CTMiscHelper::deleteURLQueryOption($link, 'option');
 				$link = CTMiscHelper::deleteURLQueryOption($link, 'edit');
 				$link .= (str_contains($link, '?') ? '&amp;' : '?') . 'option=com_customtables';
 				$link .= '&amp;view=edititem';
 
-			} else
-				$link = common::UriRoot(true, true) . 'index.php?option=com_customtables&amp;view=edititem&amp;returnto='
+			} else {
+				$link .= 'index.php?option=com_customtables'
+					. '&amp;view=edititem'
 					. '&amp;Itemid=' . $this->ct->Params->ItemId;
+			}
+			$link .= '&amp;task=new';
 
 			if ($isModal) {
 				$tmp_current_url = common::makeReturnToURL($this->ct->Env->current_url);//To have the returnto link that may include listing_id param.
-				$link .= (str_contains($link, '?') ? '&amp;' : '?') . 'returnto=' . $tmp_current_url;
+				$link .= '&amp;returnto=' . $tmp_current_url;
 
 				$link = 'javascript:ctEditModal(\'' . $link . '\',null)';
 			} else {
-				$link .= (str_contains($link, '?') ? '&amp;' : '?') . 'returnto=' . $this->ct->Env->encoded_current_url;
+				$link .= '&amp;returnto=' . $this->ct->Env->encoded_current_url;
 			}
-
 
 			//if (!empty($this->ct->Params->ModuleId))
 			//	$link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
@@ -105,6 +111,9 @@ class Twig_HTML_Tags
 			$link = common::curPageURL();
 			$link = CTMiscHelper::deleteURLQueryOption($link, 'view' . $this->ct->Table->tableid);
 			$link .= (str_contains($link, '?') ? '&amp;' : '?') . 'view' . $this->ct->Table->tableid . '=edititem';
+
+			$link .= '&amp;task=new';
+
 			if (!empty($this->ct->Env->encoded_current_url))
 				$link .= '&amp;returnto=' . $this->ct->Env->encoded_current_url;
 		} else {
@@ -122,6 +131,10 @@ class Twig_HTML_Tags
 		return '<a href="' . $link . '" id="ctToolBarAddNew' . $this->ct->Table->tableid . '" class="toolbarIcons">' . $img . '</a>';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
 	function importcsv(): string
 	{
 		if (defined('WPINC')) {

@@ -270,7 +270,8 @@ class Layouts
 			if (empty($task))
 				$task = common::inputGetCmd('task');
 
-			if (!empty($task)) {
+
+			if (!empty($task) and $task !== 'new') {
 
 				$output = $this->doTasks($task);
 
@@ -288,6 +289,8 @@ class Layouts
 			}
 		}
 
+		//	echo '$task=' . $task . '<br/>';
+		//	die;
 		if (in_array($this->layoutType, [
 			CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG,
 			CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE,
@@ -297,18 +300,19 @@ class Layouts
 		])) {
 			$output['html'] = $this->renderCatalog();
 		} elseif ($this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM) {
-			if ($this->ct->Table->record === null) {
 
-				if (!empty($this->ct->Params->listing_id))
-					$listing_id = $this->ct->Params->listing_id;
-				else
-					$listing_id = common::inputGetCmd('listing_id');
+			if ($task == 'new') {
+				$task = null;
+				$this->ct->Table->record = null;
+			} else {
+				if ($this->ct->Table->record === null) {
 
-				if (!empty($listing_id))
-					$this->ct->Params->listing_id = $listing_id;
+					if (empty($this->ct->Params->listing_id))
+						$this->ct->Params->listing_id = common::inputGetCmd('listing_id');
 
-				if (!empty($listing_id) or !empty($this->ct->Params->filter))
-					$this->ct->getRecord();
+					if (!empty($listing_id) or !empty($this->ct->Params->filter))
+						$this->ct->getRecord();
+				}
 			}
 
 			$editForm = new Edit($this->ct);
