@@ -80,8 +80,14 @@ class IntegrityFields extends IntegrityChecks
 					$found_field = '_id';
 					$projected_field['fieldtitle'] = 'Primary Key';
 
-					if ($ct->Table->tablerow['customidfieldtype'] !== null and $ct->Table->tablerow['customidfieldtype'] != '') {
-						$projected_data_type = Fields::parseFieldTypeFromString($ct->Table->tablerow['customidfieldtype']);
+					if (!empty($ct->Table->tablerow['customidfieldtype'])) {
+
+						$customIdFieldType = $ct->Table->tablerow['customidfieldtype'];
+						if (!str_contains($customIdFieldType, 'AUTO_INCREMENT') and trim($ct->Table->tablerow['primarykeypattern']) == 'AUTO_INCREMENT')
+							$customIdFieldType .= ' AUTO_INCREMENT';
+
+						$projected_data_type = Fields::parseFieldTypeFromString($customIdFieldType);
+
 					} else {
 						$projected_data_type = Fields::getProjectedFieldType('_id', null);
 					}
