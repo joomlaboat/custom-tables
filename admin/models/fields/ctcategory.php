@@ -43,7 +43,8 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 				$records = [];
 			}
 
-			$options = array();
+			$options = [];
+
 			if ($records) {
 				if ($add_empty_option)
 					$options[] = HTMLHelper::_('select.option', '', common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'));
@@ -74,7 +75,7 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 		protected function getInput(): string
 		{
 			$data = $this->getLayoutData();
-			$data['options'] = $this->getOptions();
+			$data['options'] = $this->getOptions(true);
 			return $this->getRenderer($this->layout)->render($data);
 		}
 
@@ -93,7 +94,8 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 				$records = [];
 			}
 
-			$options = array();
+			$options = [];
+
 			if ($add_empty_option)
 				$options[] = ['value' => '', 'text' => common::translate('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT')];
 

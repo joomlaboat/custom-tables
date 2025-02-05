@@ -53,31 +53,11 @@
 			   class="readonly"
 			   readonly="true"
 			   filter="unset"/>
-		<!-- Ordering Field. Type: Numbers (joomla)-->
-		<field name="ordering"
-			   type="number"
-			   class="inputbox validate-ordering"
-			   label="COM_CUSTOMTABLES_TABLES_ORDERING_LABEL"
-			   description=""
-			   default="0"
-			   size="6"
-			   required="false"/>
-		<!-- Version Field. Type: Text (joomla)-->
-		<field name="version"
-			   type="text"
-			   class="readonly"
-			   label="COM_CUSTOMTABLES_TABLES_VERSION_LABEL"
-			   description="COM_CUSTOMTABLES_TABLES_VERSION_DESC"
-			   size="6"
-			   readonly="true"
-			   filter="unset"/>
-		<!-- Dynamic Fields.-->
 		<!-- Tablecategory Field. Type: Sql. (joomla)-->
-		<field type="sql"
+		<field type="ctcategory"
 			   name="tablecategory"
 			   label="COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL"
-			   query="SELECT id AS value, categoryname AS tablecategory, categoryname AS categoryname FROM #__customtables_categories"
-			   default="null"
+			   default=""
 			   required="false"
 			   value_field="categoryname">
 			<!-- No Manual Options Were Added In Field Settings.-->
@@ -96,19 +76,16 @@
 			   message="COM_CUSTOMTABLES_TABLES_TABLETITLE_MESSAGE"
 			   hint="COM_CUSTOMTABLES_TABLES_TABLETITLE_HINT"
 			   autocomplete="on"/>
-
 		<field type="text"
 			   name="tablename"
 			   label="COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL"
 			   required="true"
 			   filter="CMD"
 			   hint="COM_CUSTOMTABLES_TABLES_TABLENAME_HINT"/>
-
 		<field type="filelist"
 			   name="customphp"
 			   label="COM_CUSTOMTABLES_TABLES_CUSTOMPHP_LABEL"
 			   directory="/components/com_customtables/customphp"/>
-
 		<field type="radio"
 			   name="allowimportcontent"
 			   label="COM_CUSTOMTABLES_FIELDS_ALLOWCONTENTIMPORT"
