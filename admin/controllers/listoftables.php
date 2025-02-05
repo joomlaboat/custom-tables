@@ -107,7 +107,6 @@ class CustomtablesControllerListOfTables extends AdminController
 		try {
 			$dbPrefix = database::getDBPrefix();
 			$tableId = database::insert('#__customtables_tables', $newTableData);
-			echo 'new $tableId:' . $tableId . '<br/>';
 
 			$primaryKeyType = trim(($data['customidfieldtype'] ?? '') . ' ' . ($data['primarykeypattern'] ?? ''));
 			if ($primaryKeyType === '')
@@ -146,12 +145,12 @@ class CustomtablesControllerListOfTables extends AdminController
 				$fieldData['fieldname'] = $fieldName;
 				$fieldData['fieldtitle'] = $column['fieldtitle'];
 				$fieldData['type'] = $ct_field_type['type'];
-				$fieldData['typeparams'] = $ct_field_type['typeparams'];
+				$fieldData['typeparams'] = $ct_field_type['typeparams'] ?? '';
 				$fieldData['isrequired'] = 0;
 
 				try {
 					$fieldId = Fields::saveField($tableId, null, $fieldData);
-				} catch (Exception $e) {
+				} catch (Throwable $e) {
 					common::enqueueMessage('Add field details: ' . $e->getMessage());
 				}
 			}
