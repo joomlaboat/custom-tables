@@ -157,7 +157,7 @@
 		<field type="text"
 			   name="customfieldprefix"
 			   label="Field Name Prefix"
-			   description="Field name prefix. Example by default: es_phone. Type '-' to save fields without prefix, be careful because MySQL has many registered names like, 'group', 'select', 'where' etc. If you change the filed prefix then you will have to manually change all the field prefixes."
+			   description="Specifies the prefix added to all table field names (e.g., 'ct_FieldName'). This prefix helps prevent conflicts with MySQL reserved words and ensures database compatibility. Only modify this if you have a specific reason to use a different prefix scheme. Type NO-PREFIX to have field names without a prefix. Changing the prefix doesnt automatically renames fields. You will have to do it manually."
 			   required="false"
 			   filter="CMD"
 			   default=""

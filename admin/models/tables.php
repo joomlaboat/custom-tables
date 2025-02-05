@@ -385,7 +385,7 @@ class CustomtablesModelTables extends AdminModel
 		if ($data['customidfieldtype'] === null)
 			$data['customidfieldtype'] = 'int UNSIGNED NOT NULL AUTO_INCREMENT';
 
-		$customFieldPrefix = trim(preg_replace("/[^a-zA-Z_\d]/", "_", ($data['customfieldprefix'] ?? null)));
+		$customFieldPrefix = trim(preg_replace("/[^a-zA-Z-_\d]/", "_", ($data['customfieldprefix'] ?? null)));
 		if ($customFieldPrefix === "")
 			$customFieldPrefix = null;
 

@@ -120,7 +120,7 @@ class Table
 			$this->fieldPrefix = '';
 		}
 
-		if ($this->fieldPrefix == 'NO-PREFIX')
+		if ($this->fieldPrefix == 'NO-PREFIX' or $this->fieldPrefix == 'NO_PREFIX' or $this->fieldPrefix == '-')//'NO_PREFIX' and '-' left to keep backward compatibility
 			$this->fieldPrefix = '';
 
 		$this->fieldInputPrefix = 'com' . $this->fieldPrefix;
