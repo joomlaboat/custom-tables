@@ -605,6 +605,8 @@ class database
 			$realTableName = $tablename;
 		elseif ($type == 'table')
 			$realTableName = $dbPrefix . 'customtables_table_' . $tablename;
+		elseif ($type == 'categories')
+			$realTableName = $dbPrefix . 'customtables_categories';
 		else
 			$realTableName = $dbPrefix . 'customtables_' . $tablename;
 

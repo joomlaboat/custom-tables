@@ -17,7 +17,6 @@ use CustomTables\database;
 use CustomTables\ExportTables;
 
 use CustomTables\Fields;
-use CustomTables\ListOfTables;
 use CustomTables\TableHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
@@ -218,7 +217,6 @@ class CustomtablesControllerListOfTables extends AdminController
 					$customIdFieldType = $column['type'];
 				}
 			}
-
 		}
 
 		return [

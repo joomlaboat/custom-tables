@@ -119,7 +119,7 @@ class EditController
 
 		try {
 			$j = json_decode($result, true, 512, JSON_THROW_ON_ERROR);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			$j = ['error' => $e->getMessage(), 'result' => $result];
 		}
 

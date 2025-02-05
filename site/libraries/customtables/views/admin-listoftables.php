@@ -54,7 +54,8 @@ class ListOfTables
 		$selects = TableHelper::getTableRowSelectArray();
 
 		//Check if table exists
-		$rows = database::getTableStatus('categories');
+		$rows = database::getTableStatus('categories', 'categories');
+
 		$tableExists = !(count($rows) == 0);
 
 		if ($tableExists)
