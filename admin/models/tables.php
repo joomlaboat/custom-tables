@@ -379,6 +379,8 @@ class CustomtablesModelTables extends AdminModel
 			}
 		}
 
+		$data['tablecategory'] = (int)$data['tablecategory'];
+
 		if ($data['customidfield'] === null)
 			$data['customidfield'] = 'id';
 
@@ -469,7 +471,7 @@ class CustomtablesModelTables extends AdminModel
 				return false;
 			}
 		}
-		// In the absense of better information, revert to the component permissions.
+		// In the absence of better information, revert to the component permissions.
 		return parent::canEditState($record);
 	}
 

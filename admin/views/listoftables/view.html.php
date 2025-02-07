@@ -19,6 +19,7 @@ use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Version;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
@@ -29,7 +30,7 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 class CustomTablesViewListOfTables extends HtmlView
 {
 	var CT $ct;
-	var $languages;
+	var array $languages;
 
 	function display($tpl = null)
 	{
@@ -84,13 +85,24 @@ class CustomTablesViewListOfTables extends HtmlView
 			parent::display($tpl);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
 	protected function addToolbar_4()
 	{
-		// Get toolbar through the application
-		$toolbar = Factory::getApplication()->getDocument()->getToolbar();
+		$application = Factory::getApplication();
+		$document = $application->getDocument();
+
+		// Check Joomla version before calling getToolbar()
+		if (Version::MAJOR_VERSION >= 5 && method_exists($document, 'getToolbar')) {
+			$toolbar = $document->getToolbar();
+		} else {
+			// Joomla 4 compatibility: Get the toolbar manually
+			$toolbar = Toolbar::getInstance('toolbar');
+		}
 
 		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
-		$document = Factory::getDocument();
 		$document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/listoftables/submitbutton.js"></script>');
 
 		if ($this->canCreate)
@@ -141,7 +153,10 @@ class CustomTablesViewListOfTables extends HtmlView
 	protected function addToolBar_3()
 	{
 		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
-		$document = Factory::getDocument();
+
+		$application = Factory::getApplication();
+		$document = $application->getDocument();
+
 		$document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/listoftables/submitbutton.js"></script>');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoftables');
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
@@ -175,7 +190,5 @@ class CustomTablesViewListOfTables extends HtmlView
 		if ($this->ct->Env->advancedTagProcessor)
 			if (!$this->isEmptyState and $this->state->get('filter.published') != -2 and $this->ct->Env->advancedTagProcessor)
 				ToolbarHelper::custom('listoftables.export', 'download.png', '', 'Export');
-
-
 	}
 }

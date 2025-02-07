@@ -68,6 +68,7 @@ class CustomtablesModelDatabasecheck extends ListModel
 	 *
 	 * @return  string  A store id.
 	 *
+	 * @since 3.0.0
 	 */
 	protected function getStoreId($id = '')
 	{

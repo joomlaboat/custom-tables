@@ -49,7 +49,7 @@ class ListOfTables
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function getListQuery($published = null, $search = null, $category = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0, bool $returnQueryString = false)
+	function getListQuery($published = null, $search = null, int $category = 0, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0, bool $returnQueryString = false)
 	{
 		$selects = TableHelper::getTableRowSelectArray();
 
@@ -92,10 +92,8 @@ class ListOfTables
 		}
 
 		// Filter by Category.
-		if ($category !== null and $category != '' and (int)$category != 0) {
-			$whereClause->addCondition('a.tablecategory', (int)$category);
-		}
-
+		if (!empty($category))
+			$whereClause->addCondition('a.tablecategory', $category);
 
 		return database::loadAssocList('#__customtables_tables AS a', $selects, $whereClause, $orderCol, $orderDirection, $limit, $start, null, $returnQueryString);
 	}

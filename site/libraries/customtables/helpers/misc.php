@@ -1253,7 +1253,7 @@ class CTMiscHelper
 		die(json_encode($result, JSON_PRETTY_PRINT));
 	}
 
-	public static function getJSONUrlResponse(string $url, bool $associative = true): ?array
+	public static function getJSONUrlResponse(string $url, bool $associative = true): ?object
 	{
 		$response = self::getRawUrlResponse($url);
 		if (trim($response) === '') {
@@ -1263,7 +1263,7 @@ class CTMiscHelper
 		try {
 			return json_decode($response, $associative, 512, JSON_THROW_ON_ERROR);
 		} catch (Throwable $e) {
-			return ['error' => ['code' => 500, 'message' => 'Invalid JSON response: ' . $e->getMessage()]];
+			return (object)(['error' => ['code' => 500, 'message' => 'Invalid JSON response: ' . $e->getMessage()]]);
 		}
 	}
 
