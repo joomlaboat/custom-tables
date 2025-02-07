@@ -17,6 +17,7 @@ use Exception;
 use Joomla\CMS\Factory;
 use JPluginHelper;
 use stdClass;
+use Throwable;
 
 class CTMiscHelper
 {
@@ -1251,4 +1252,105 @@ class CTMiscHelper
 
 		die(json_encode($result, JSON_PRETTY_PRINT));
 	}
+
+	public static function getJSONUrlResponse(string $url, bool $associative = true): ?array
+	{
+		$response = self::getRawUrlResponse($url);
+		if (trim($response) === '') {
+			return null;
+		}
+
+		try {
+			return json_decode($response, $associative, 512, JSON_THROW_ON_ERROR);
+		} catch (Throwable $e) {
+			return ['error' => ['code' => 500, 'message' => 'Invalid JSON response: ' . $e->getMessage()]];
+		}
+	}
+
+
+	public static function getRawUrlResponse(string $url): string
+	{
+		// Check if cURL is available
+		if (function_exists('curl_init')) {
+			return self::fetchDataWithCurl($url);
+		}
+
+		// Fallback to file_get_contents if allow_url_fopen is enabled
+		if (ini_get('allow_url_fopen')) {
+			return self::fetchDataWithFileGetContents($url);
+		}
+
+		// If neither method is available, return an error message
+		return json_encode([
+			'error' => [
+				'code' => 500,
+				'message' => 'Cannot load data, enable "allow_url_fopen" or install cURL. ' .
+					'<a href="https://joomlaboat.com/youtube-gallery/f-a-q/why-i-see-allow-url-fopen-message" target="_blank">Here</a> is what to do.'
+			]
+		]);
+	}
+
+
+	/**
+	 * Fetch data using cURL
+	 *
+	 * @since 3.5.3
+	 */
+	private static function fetchDataWithCurl(string $url): string
+	{
+		$ch = curl_init();
+		curl_setopt_array($ch, [
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_FOLLOWLOCATION => true, // Follow redirects
+			CURLOPT_SSL_VERIFYPEER => true, // Enforce SSL verification for security
+			CURLOPT_TIMEOUT => 10, // Set a timeout to avoid hanging requests
+			CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+		]);
+
+		try {
+			$response = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+			if ($response === false) {
+				throw new Exception(curl_error($ch), curl_errno($ch));
+			}
+
+			// Validate JSON response
+			if ($httpCode !== 200 || ($json = json_decode($response, true)) === null) {
+				throw new Exception("Invalid response received. HTTP Code: $httpCode");
+			}
+
+			return $response;
+		} catch (Exception $e) {
+			return json_encode(['error' => ['code' => 500, 'message' => $e->getMessage()]]);
+		} finally {
+			curl_close($ch);
+		}
+	}
+
+	/**
+	 * Fetch data using file_get_contents
+	 *
+	 * @since 3.5.4
+	 */
+	private static function fetchDataWithFileGetContents(string $url): string
+	{
+		try {
+			$context = stream_context_create([
+				'http' => ['ignore_errors' => true]
+			]);
+			$response = file_get_contents($url, false, $context);
+
+			// Validate JSON response
+			if ($response === false || json_decode($response, true) === null) {
+				throw new Exception("Invalid response received.");
+			}
+
+			return $response;
+		} catch (Throwable $e) {
+			return json_encode(['error' => ['code' => 500, 'message' => $e->getMessage()]]);
+		}
+	}
+
 }
