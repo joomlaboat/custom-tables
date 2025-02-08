@@ -12,12 +12,10 @@
 defined('_JEXEC') or die();
 
 use CustomTables\Catalog;
-use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\Layouts;
-use CustomTables\record;
 use CustomTables\TableHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;

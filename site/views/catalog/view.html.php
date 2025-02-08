@@ -11,7 +11,6 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Catalog;
@@ -19,6 +18,7 @@ use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\ProInputBoxTableJoin;
 use CustomTables\MySQLWhereClause;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewCatalog extends HtmlView
@@ -31,6 +31,13 @@ class CustomTablesViewCatalog extends HtmlView
 	{
 		$this->ct = new CT(null, false);
 		$this->ct->Params->constructJoomlaParams();
+
+		$app = Factory::getApplication();
+		$menuParams = $app->getParams();
+		$frmt = $menuParams->get('frmt') ?? null;
+		if ($frmt !== null)
+			$this->ct->Env->frmt = $frmt;
+
 		$key = common::inputGetCmd('key');
 
 		if (defined('_JEXEC') and $key != '') {
@@ -52,6 +59,19 @@ class CustomTablesViewCatalog extends HtmlView
 	 */
 	function renderCatalog($tpl): bool
 	{
+		if (!function_exists('mb_convert_encoding')) {
+			$msg = '"mbstring" PHP extension not installed.<br/>
+				You need to install this extension. It depends on of your operating system, here are some examples:<br/><br/>
+				sudo apt-get install php-mbstring  # Debian, Ubuntu<br/>
+				sudo yum install php-mbstring  # RedHat, Fedora, CentOS<br/><br/>
+				Uncomment the following line in php.ini, and restart the Apache server:<br/>
+				extension=mbstring<br/><br/>
+				Then restart your webs\' server. Example:<br/>service apache2 restart';
+
+			common::enqueueMessage($msg);
+			return false;
+		}
+
 		/*
 
 		FUTURE USE
@@ -72,38 +92,60 @@ class CustomTablesViewCatalog extends HtmlView
 
 		$this->catalog = new Catalog($this->ct);
 
-		if ($this->ct->Env->frmt == 'csv') {
+		if ($this->ct->Env->frmt === '' or $this->ct->Env->frmt === 'html') {
+			//Save view log
+			$allowed_fields = $this->SaveViewLog_CheckIfNeeded();
+			if (count($allowed_fields) > 0 and $this->ct->Records !== null) {
+				foreach ($this->ct->Records as $rec)
+					$this->SaveViewLogForRecord($rec, $allowed_fields);
+			}
 
-			if (ob_get_contents())
-				ob_end_clean();
-
-			$pathViews = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
-			require_once($pathViews . 'catalog-csv.php');
-			$catalogCSV = new CatalogExportCSV($this->ct, $this->catalog);
-			if (!$catalogCSV->error) {
-				$filename = CTMiscHelper::makeNewFileName($this->ct->Params->pageTitle, 'csv');
-				header('Content-Disposition: attachment; filename="' . $filename . '"');
-				header('Content-Type: text/csv; charset=utf-16');
-				header("Pragma: no-cache");
-				header("Expires: 0");
-
-				//layoutType: 9 CSV
-				$layout = common::inputGetCmd('layout');
-				echo $catalogCSV->render($layout);
-				die;//CSV output
-			} else
-				return false;
-		} else {
 			parent::display($tpl);
+			return true;
 		}
 
-		//Save view log
-		$allowed_fields = $this->SaveViewLog_CheckIfNeeded();
-		if (count($allowed_fields) > 0 and $this->ct->Records !== null) {
-			foreach ($this->ct->Records as $rec)
-				$this->SaveViewLogForRecord($rec, $allowed_fields);
+		// Ensure no previous output interferes
+		//while (ob_get_level() > 0) ob_end_clean();
+
+		if (!$this->ct->Env->frmt == 'rawhtml') {
+
+			$fileExtension = 'html';
+			if ($this->ct->Env->frmt == 'text/html')
+				$fileExtension = 'html';
+			elseif ($this->ct->Env->frmt == 'txt')
+				$fileExtension = 'txt';
+			elseif ($this->ct->Env->frmt == 'json')
+				$fileExtension = 'json';
+			elseif ($this->ct->Env->frmt == 'xml')
+				$fileExtension = 'xml';
+
+			$filename = CTMiscHelper::makeNewFileName($this->ct->Params->pageTitle, $fileExtension);
+			if (is_null($filename))
+				$filename = 'ct';
+
+			header('Content-Disposition: attachment; filename="' . $filename . '"');
 		}
-		return true;
+
+		if ($this->ct->Env->frmt == 'text/html')
+			header('Content-Type: text/html; charset=utf-8');
+		elseif ($this->ct->Env->frmt == 'txt')
+			header('Content-Type: text/plain; charset=utf-8');
+		elseif ($this->ct->Env->frmt == 'json')
+			header('Content-Type: application/json; charset=utf-8');
+		elseif ($this->ct->Env->frmt == 'xml')
+			header('Content-Type: application/xml; charset=utf-8');
+
+		header("Pragma: no-cache");
+		header("Expires: 0");
+
+		try {
+			$content = $this->catalog->render($this->ct->Params->pageLayout);
+			echo preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $content);
+		} catch (Exception $e) {
+			echo 'Error during the Catalog rendering: ' . $e->getMessage();
+		}
+
+		exit;
 	}
 
 	/**

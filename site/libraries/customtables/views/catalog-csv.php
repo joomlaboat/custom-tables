@@ -12,7 +12,7 @@ namespace CustomTables;
 
 // no direct access
 defined('_JEXEC') or die();
-
+/*
 class CatalogExportCSV
 {
 	var CT $ct;
@@ -51,3 +51,4 @@ class CatalogExportCSV
 		return $pageLayoutContent;
 	}
 }
+*/

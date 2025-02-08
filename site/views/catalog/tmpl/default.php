@@ -30,7 +30,7 @@ if ($this->ct->Env->frmt == 'html') {
 }
 
 try {
-	$result = $this->catalog->render();
+	$result = $this->catalog->render($this->ct->Params->pageLayout);
 
 	if (empty($this->ct->Params->listing_id)) {
 		common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);

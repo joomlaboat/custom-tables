@@ -1208,10 +1208,6 @@ if ($this->onlyWordpress) {
 
 				$label = '{{ ' . $tag_att->twigclass . '.' . $tag_att->name . ' }} - ' . $tag_att->label;
 
-				//echo '$label:' . $label . '<br/>';
-				//echo '$result<br/>';
-				//echo $result;
-				//'layout-tags'
 				$this->create_betterdocs_article($tag_att->twigclass, null, $tag_att->twigclass . '-' . $tag_att->name, $label, $result);
 			}
 		}

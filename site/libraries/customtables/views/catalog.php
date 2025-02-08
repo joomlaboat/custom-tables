@@ -61,8 +61,6 @@ class Catalog
 
 			if ($this->ct->Table === null) {
 				throw new Exception('Catalog View: Table not selected.');
-				//$this->ct->errors[] = 'Catalog View: Table not selected.';
-				//return 'Catalog View: Table not selected.';
 			}
 		}
 
@@ -72,26 +70,7 @@ class Catalog
 			$this->ct->Filter->addQueryWhereFilter();
 		}
 
-		//if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
-		//common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
-		/*
-				if ($this->ct->Env->legacySupport) {
-					try {
-						$site_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-
-						require_once($site_path . 'layout.php');
-						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
-						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtableviewtag.php');
-						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'generaltags.php');
-						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'pagetags.php');
-						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'itemtags.php');
-						require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'fieldtags.php');
-					} catch (Exception $e) {
-						return 'Catalog Renderer. Legacy Support processing error: ' . $e->getMessage();
-					}
-				}
-		*/
-// --------------------- Shopping Cart
+		// --------------------- Shopping Cart
 
 		if ($this->ct->Params->showCartItemsOnly) {
 			$cookieValue = common::inputCookieGet($this->ct->Params->showCartItemsPrefix . $this->ct->Table->tablename);
@@ -117,18 +96,21 @@ class Catalog
 		if (!empty($this->ct->Params->listing_id))
 			$this->ct->Filter->whereClause->addCondition($this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'], $this->ct->Params->listing_id);
 
-// --------------------- Sorting
+		// --------------------- Sorting
 		$this->ct->Ordering->parseOrderByParam();
 
-// --------------------- Limit
+		// --------------------- Limit
 		if (!empty($this->ct->Params->listing_id))
 			$this->ct->applyLimits(1);
 		else
 			$this->ct->applyLimits($limit);
 
 		// --------------------- Layouts
+		
 		if ($layoutName === null) {
 			if ($this->ct->Env->frmt == 'csv') {
+				$pageLayout = $Layouts->createDefaultLayout_CSV($this->ct->Table->fields);
+			} elseif ($this->ct->Env->frmt == 'xml') {
 				$pageLayout = $Layouts->createDefaultLayout_CSV($this->ct->Table->fields);
 			} else {
 
@@ -197,46 +179,6 @@ class Catalog
 			return 'CustomTables: Records not loaded.';
 		}
 
-		// -------------------- Parse Layouts
-		/*
-		if ($this->ct->Env->legacySupport) {
-
-			if ($this->ct->Env->frmt == 'json') {
-				$itemLayout = str_replace("\n", '', $itemLayout);
-				$itemLayout = str_replace("\r", '', $itemLayout);
-				$itemLayout = str_replace("\t", '', $itemLayout);
-			}
-
-			$catalogTableCode = common::generateRandomString();//this is temporary replace placeholder. to not parse content result again
-
-			$catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $Layouts->layoutType, $pageLayout, $catalogTableCode);
-			if ($catalogTableContent == '') {
-				$catalogTableContent = tagProcessor_Catalog::process($this->ct, $Layouts->layoutType, $pageLayout, $itemLayout, $catalogTableCode);
-
-				if ($this->ct->Env->frmt == 'json') {
-					$catalogTableContent = str_replace("\n", '', $catalogTableContent);
-					$catalogTableContent = str_replace("\r", '', $catalogTableContent);
-					$catalogTableContent = str_replace("\t", '', $catalogTableContent);
-				}
-			}
-
-			$LayoutProc = new LayoutProcessor($this->ct);
-			$LayoutProc->layout = $pageLayout;
-			$pageLayout = $LayoutProc->fillLayout(null, null, '');
-			$pageLayout = str_replace('&&&&quote&&&&', '"', $pageLayout); // search boxes may return HTMl elements that contain placeholders with quotes like this: &&&&quote&&&&
-			$pageLayout = str_replace($catalogTableCode, $catalogTableContent, $pageLayout);
-		}*/
-
-		if ($this->ct->Env->frmt == 'json') {
-
-			$pathViews = CUSTOMTABLES_LIBRARIES_PATH
-				. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
-
-			require_once($pathViews . 'json.php');
-			$jsonOutput = new ViewJSON($this->ct);
-			die($jsonOutput->render($pageLayout));
-		}
-
 		$twig = null;
 
 		try {
@@ -254,10 +196,10 @@ class Catalog
 			return 'There is an error in rendering the catalog page :' . implode(', ', $this->ct->errors);
 		}
 
-		if ($this->ct->Params->allowContentPlugins)
-			$pageLayout = CTMiscHelper::applyContentPlugins($pageLayout);
-
 		if ($this->ct->Env->clean == 0) {
+
+			if ($this->ct->Params->allowContentPlugins)
+				$pageLayout = CTMiscHelper::applyContentPlugins($pageLayout);
 
 			if (isset($this->ct->LayoutVariables['style']))
 				$this->layoutCodeCSS = ($this->layoutCodeCSS ?? '') . $this->ct->LayoutVariables['style'];

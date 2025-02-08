@@ -228,6 +228,10 @@ class CT
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
 	protected function prepareSEFLinkBase(): void
 	{
 		if (is_null($this->Table))
@@ -327,16 +331,19 @@ class CT
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.0
+	 */
 	function getNumberOfRecords(MySQLWhereClause $whereClause): ?int
 	{
 		if ($this->Table === null or $this->Table->tablerow === null or $this->Table->tablerow['realidfieldname'] === null)
-			return null;
+			throw new Exception('getNumberOfRecords: Table not selected.');
 
 		try {
 			$rows = database::loadObjectList($this->Table->realtablename, ['COUNT_ROWS'], $whereClause);
 		} catch (Exception $e) {
-			$this->errors[] = $e->getMessage();
-			return null;
+			throw new Exception('getNumberOfRecords:' . $e->getMessage());
 		}
 
 		if (count($rows) == 0)

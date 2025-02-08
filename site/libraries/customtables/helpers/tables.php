@@ -233,9 +233,6 @@ class TableHelper
 			} else {
 				$ct_field_type = Fields::convertMySQLFieldTypeToCT($field->column_type);
 
-				//echo '$ct_field_type:';
-				//print_r($ct_field_type);
-				//die;
 				//TODO: check how it works
 
 				if ($ct_field_type['type'] === null) {

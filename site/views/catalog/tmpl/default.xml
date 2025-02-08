@@ -193,6 +193,16 @@ In this case, there will be two checks: first, it will check if the record belon
 			<field type="text" name="requiredlabel" filter="raw" default="" size="70" label="Required Label"
 				   description="Character or a text to show next to required field if there is one."/>
 
+			<field type="list" name="frmt" default="" label="Output Format"
+				   description="Select the HTTP response format for the page. This determines the Content-Type header.">
+				<option value="">HTML (text/html, default)</option>
+				<option value="rawhtml">HTML Without Template (tmpl=component)</option>
+				<option value="json">JSON (application/json)</option>
+				<option value="csv">CSV (text/csv)</option>
+				<option value="xml">XML (application/xml)</option>
+				<option value="txt">Plain Text (text/plain)</option>
+			</field>
+
 		</fieldset>
 
 		<fieldset name="SHOPPING_CART" label="Shopping Cart"

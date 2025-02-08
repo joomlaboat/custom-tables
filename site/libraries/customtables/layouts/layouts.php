@@ -289,8 +289,6 @@ class Layouts
 			}
 		}
 
-		//	echo '$task=' . $task . '<br/>';
-		//	die;
 		if (in_array($this->layoutType, [
 			CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG,
 			CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE,

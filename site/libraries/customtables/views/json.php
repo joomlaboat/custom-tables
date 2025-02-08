@@ -11,7 +11,7 @@
 namespace CustomTables;
 
 defined('_JEXEC') or die();
-
+/*
 class ViewJSON
 {
 	var CT $ct;
@@ -52,3 +52,4 @@ class ViewJSON
 		return $pageLayoutContent;
 	}
 }
+*/
