@@ -486,44 +486,6 @@ class CTMiscHelper
 	}
 
 	//-- only for "records" field type;
-	public static function makeNewFileName(string $filename, string $format): string
-	{
-		//Use translation if needed
-		$parts = explode('.', $filename);
-		$filename_array = array();
-
-		if (defined('_JEXEC'))
-			$filename_array[] = common::translate($parts[0]);
-		else
-			$filename_array[] = $parts[0];
-
-		if (count($parts) > 1) {
-			for ($i = 1; $i < count($parts); $i++)
-				$filename_array[] = $parts[$i];
-		}
-
-		$filename = implode('.', $filename_array);
-
-		// Remove anything which isn't a word, whitespace, number
-		// or any of the following characters -_~,;[]().
-		// If you don't need to handle multibyte characters
-		// you can use preg_replace rather than mb_ereg_replace
-		// Thanks @Łukasz Rysiak!
-		if (function_exists('mb_ereg_replace')) {
-			$filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
-			// Remove any runs of periods (thanks falstro!)
-			$filename = mb_ereg_replace("([\.]{2,})", '', $filename);
-		} else {
-			$filename = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
-			// Remove any runs of periods (thanks falstro!)
-			$filename = preg_replace("(\.{2,})", '', $filename);
-		}
-
-		if ($format != '')
-			$filename .= '.' . $format;
-
-		return $filename;
-	}
 
 	public static function strip_tags_content($text, $tags = '', $invert = FALSE)
 	{
@@ -661,7 +623,6 @@ class CTMiscHelper
 		return $htmlResult;
 	}
 
-	//Used in custom php
 	public static function suggest_TempFileName(&$webFileLink, ?string $fileExtension = null): ?string
 	{
 		$random_name = common::generateRandomString();
@@ -1267,7 +1228,6 @@ class CTMiscHelper
 		}
 	}
 
-
 	public static function getRawUrlResponse(string $url): string
 	{
 		// Check if cURL is available
@@ -1289,7 +1249,6 @@ class CTMiscHelper
 			]
 		]);
 	}
-
 
 	/**
 	 * Fetch data using cURL
@@ -1351,6 +1310,96 @@ class CTMiscHelper
 		} catch (Throwable $e) {
 			return json_encode(['error' => ['code' => 500, 'message' => $e->getMessage()]]);
 		}
+	}
+
+	public static function fireFormattedOutput(string $content, string $format, string $pageTitle, int $code)
+	{
+		// Ensure no previous output interferes
+		while (ob_get_level() > 0) ob_end_clean();
+
+		if (!$format == 'rawhtml') {
+
+			$fileExtension = 'html';
+			if ($format == 'text/html')
+				$fileExtension = 'html';
+			elseif ($format == 'txt')
+				$fileExtension = 'txt';
+			elseif ($format == 'json')
+				$fileExtension = 'json';
+			elseif ($format == 'xml')
+				$fileExtension = 'xml';
+
+			$filename = CTMiscHelper::makeNewFileName($pageTitle, $fileExtension);
+			if (is_null($filename))
+				$filename = 'ct';
+
+			header('Content-Disposition: attachment; filename="' . $filename . '"');
+		}
+
+		if (defined('_JEXEC')) {
+			$app = Factory::getApplication();
+			$app->setHeader('status', $code);
+			//$app->sendHeaders();
+		} elseif (defined('WPINC')) {
+			// Set headers
+			status_header($code);
+			//header('Content-Type: application/vnd.api+json');
+		}
+
+		if ($format == 'text/html')
+			header('Content-Type: text/html; charset=utf-8');
+		elseif ($format == 'txt')
+			header('Content-Type: text/plain; charset=utf-8');
+		elseif ($format == 'json')
+			header('Content-Type: application/json; charset=utf-8');
+		elseif ($format == 'xml')
+			header('Content-Type: application/xml; charset=utf-8');
+
+		header("Pragma: no-cache");
+		header("Expires: 0");
+
+		echo $content;
+
+		exit;
+	}
+
+	public static function makeNewFileName(string $filename, string $format): string
+	{
+		//Use translation if needed
+		$parts = explode('.', $filename);
+		$filename_array = array();
+
+		if (defined('_JEXEC'))
+			$filename_array[] = common::translate($parts[0]);
+		else
+			$filename_array[] = $parts[0];
+
+		if (count($parts) > 1) {
+			for ($i = 1; $i < count($parts); $i++)
+				$filename_array[] = $parts[$i];
+		}
+
+		$filename = implode('.', $filename_array);
+
+		// Remove anything which isn't a word, whitespace, number
+		// or any of the following characters -_~,;[]().
+		// If you don't need to handle multibyte characters
+		// you can use preg_replace rather than mb_ereg_replace
+		// Thanks @Łukasz Rysiak!
+		if (function_exists('mb_ereg_replace')) {
+			$filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
+			// Remove any runs of periods (thanks falstro!)
+			$filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+		} else {
+			$filename = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
+			// Remove any runs of periods (thanks falstro!)
+			$filename = preg_replace("(\.{2,})", '', $filename);
+		}
+
+		if ($format != '')
+			$filename .= '.' . $format;
+
+		return $filename;
 	}
 
 }

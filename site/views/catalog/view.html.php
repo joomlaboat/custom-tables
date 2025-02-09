@@ -35,8 +35,10 @@ class CustomTablesViewCatalog extends HtmlView
 		$app = Factory::getApplication();
 		$menuParams = $app->getParams();
 		$frmt = $menuParams->get('frmt') ?? null;
-		if ($frmt !== null)
+		if ($frmt !== null) {
 			$this->ct->Env->frmt = $frmt;
+			$this->ct->Env->clean = 1;
+		}
 
 		$key = common::inputGetCmd('key');
 
@@ -92,60 +94,28 @@ class CustomTablesViewCatalog extends HtmlView
 
 		$this->catalog = new Catalog($this->ct);
 
-		if ($this->ct->Env->frmt === '' or $this->ct->Env->frmt === 'html') {
-			//Save view log
-			$allowed_fields = $this->SaveViewLog_CheckIfNeeded();
-			if (count($allowed_fields) > 0 and $this->ct->Records !== null) {
-				foreach ($this->ct->Records as $rec)
-					$this->SaveViewLogForRecord($rec, $allowed_fields);
-			}
-
-			parent::display($tpl);
-			return true;
-		}
-
-		// Ensure no previous output interferes
-		//while (ob_get_level() > 0) ob_end_clean();
-
-		if (!$this->ct->Env->frmt == 'rawhtml') {
-
-			$fileExtension = 'html';
-			if ($this->ct->Env->frmt == 'text/html')
-				$fileExtension = 'html';
-			elseif ($this->ct->Env->frmt == 'txt')
-				$fileExtension = 'txt';
-			elseif ($this->ct->Env->frmt == 'json')
-				$fileExtension = 'json';
-			elseif ($this->ct->Env->frmt == 'xml')
-				$fileExtension = 'xml';
-
-			$filename = CTMiscHelper::makeNewFileName($this->ct->Params->pageTitle, $fileExtension);
-			if (is_null($filename))
-				$filename = 'ct';
-
-			header('Content-Disposition: attachment; filename="' . $filename . '"');
-		}
-
-		if ($this->ct->Env->frmt == 'text/html')
-			header('Content-Type: text/html; charset=utf-8');
-		elseif ($this->ct->Env->frmt == 'txt')
-			header('Content-Type: text/plain; charset=utf-8');
-		elseif ($this->ct->Env->frmt == 'json')
-			header('Content-Type: application/json; charset=utf-8');
-		elseif ($this->ct->Env->frmt == 'xml')
-			header('Content-Type: application/xml; charset=utf-8');
-
-		header("Pragma: no-cache");
-		header("Expires: 0");
-
 		try {
 			$content = $this->catalog->render($this->ct->Params->pageLayout);
-			echo preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $content);
+			$content = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $content);
+			$code = 200;
 		} catch (Exception $e) {
-			echo 'Error during the Catalog rendering: ' . $e->getMessage();
+			$content = 'Error during the Catalog rendering: ' . $e->getMessage();
+			$code = 500;
 		}
 
-		exit;
+		//Save view log
+		//$allowed_fields = $this->SaveViewLog_CheckIfNeeded();
+		//if (count($allowed_fields) > 0 and $this->ct->Records !== null) {
+		//	foreach ($this->ct->Records as $rec)
+		//		$this->SaveViewLogForRecord($rec, $allowed_fields);
+		//}
+
+		if ($this->ct->Env->frmt === '' or $this->ct->Env->frmt === 'html') {
+			parent::display($tpl);
+			return true;
+		} else {
+			CTMiscHelper::fireFormattedOutput($content, $this->ct->Env->frmt, $this->ct->Params->pageTitle, $code);
+		}
 	}
 
 	/**

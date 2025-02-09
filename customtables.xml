@@ -25,7 +25,7 @@
 		<filename>index.html</filename>
 		<filename>router.php</filename>
 		<filename>customtables.php</filename>
-
+		<!--<filename>provider.php</filename>-->
 		<folder>controllers</folder>
 		<folder>customphp</folder>
 		<folder>fields</folder>
@@ -51,6 +51,11 @@
 		<language tag="sl-SI">language/sl-SI/sl-SI.com_customtables.ini</language>
 		<language tag="uk-UA">language/uk-UA/uk-UA.com_customtables.ini</language>
 	</languages>
+	<!--
+		<services>
+			<file>provider.php</file>
+		</services>
+		-->
 
 	<administration>
 		<menu>COM_CUSTOMTABLES_MENU</menu>

@@ -13,7 +13,9 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\Layouts;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 use CustomTables\ctProHelpers;
 
@@ -30,33 +32,47 @@ class CustomTablesViewEditItem extends HtmlView
 		$this->ct = new CT(null, false);
 		$this->ct->Params->constructJoomlaParams();
 
+		$app = Factory::getApplication();
+		$menuParams = $app->getParams();
+		$frmt = $menuParams->get('frmt') ?? null;
+		if ($frmt !== null) {
+			$this->ct->Env->frmt = $frmt;
+			$this->ct->Env->clean = 1;
+		}
+
 		if (!empty($this->ct->Params->tableName))
 			$this->ct->getTable($this->ct->Params->tableName);
 
 		$layout = new Layouts($this->ct);
 
 		$this->result = $layout->renderMixedLayout($this->ct->Params->editLayout, CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM);
-		if ($this->result['success']) {
+
+		$content = '';
+
+		if ($this->ct->Table === null) {
+			$content = common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
+			$code = 500;
+		} elseif ($this->result['success']) {
 			if ($this->ct->Env->isModal)
-				die($this->result['html']);
+				$content = $this->result['html'];
 			elseif ($this->ct->Env->clean)
-				die($this->result['short']);
+				$content = $this->result['short'];
 
-			//show default page only on success
-			parent::display($tpl);
+			$code = 200;
 		} else {
-
-			if ($this->ct->Table === null) {
-				common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
-			} elseif ($this->ct->Env->isModal)
-				die($this->result['message']);
+			if ($this->ct->Env->isModal)
+				$content = $this->result['message'];
 			elseif ($this->ct->Env->clean)
-				die($this->result['short']);
+				$content = $this->result['short'];
 
-			parent::display($tpl);
-			return false;
+			$code = 500;
 		}
 
+		if ($this->ct->Env->frmt === '' or $this->ct->Env->frmt === 'html') {
+			parent::display($tpl);
+		} else {
+			CTMiscHelper::fireFormattedOutput($content, $this->ct->Env->frmt, $this->ct->Params->pageTitle, $code);
+		}
 		return true;
 	}
 }
