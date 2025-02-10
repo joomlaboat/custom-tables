@@ -320,6 +320,9 @@ class database
 	{
 		$db = self::getDB();
 
+		$db->setQuery("SET NAMES 'utf8mb4'");
+		$db->execute();
+
 		$query = $db->getQuery(true);
 
 		// Construct the insert statement
@@ -652,6 +655,9 @@ class database
 			return true;
 
 		$db = self::getDB();
+		
+		$db->setQuery("SET NAMES 'utf8mb4'");
+		$db->execute();
 
 		$fields = self::prepareFields($db, $data);
 
