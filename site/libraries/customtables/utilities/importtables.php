@@ -23,7 +23,7 @@ class ImportTables
 	 * @since 3.2.2
 	 */
 	public static function processFile($filename, $menuType, &$msg, $category = '',
-									   $importFields = true, $importLayouts = true, $importMenu = true, string $fieldPrefix = 'ct_'): bool
+									   $importFields = true, $importLayouts = true, $importMenu = true, string $fieldPrefix = null): bool
 	{
 		$ct = new CT([], true);
 
@@ -34,6 +34,9 @@ class ImportTables
 				return false;
 			}
 			$ct->Env->folderToSaveLayouts = null;
+
+			if ($fieldPrefix === null)
+				$fieldPrefix = $ct->Env->field_prefix;
 
 			return ImportTables::processContent($ct, $data, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu, $fieldPrefix);
 		} else {
@@ -70,6 +73,8 @@ class ImportTables
 										  bool $importfields = true, bool $importlayouts = true, bool $importmenu = true, string $fieldPrefix = 'ct_'): bool
 	{
 		foreach ($JSON_data as $table) {
+
+			$table['table']['customfieldprefix'] = $fieldPrefix;
 			$tableid = ImportTables::processTable($table['table'], $category);
 
 			if ($tableid != 0) {
