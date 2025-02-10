@@ -17,7 +17,6 @@ defined('_JEXEC') or die();
 
 use Exception;
 
-//use LayoutProcessor;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -236,6 +235,9 @@ class Layouts
 	 */
 	function renderMixedLayout($layoutId, ?int $layoutType = null, ?string $task = null): array
 	{
+		if ($layoutType === null and ($task == 'saveandcontinue' or $task == 'save' or $task == 'saveascopy'))
+			$layoutType = CUSTOMTABLES_ACTION_EDIT;
+
 		if (!empty($layoutId)) {
 			$this->getLayout($layoutId);
 			if ($this->layoutType === null)
