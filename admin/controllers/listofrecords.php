@@ -130,7 +130,7 @@ class CustomtablesControllerListOfRecords extends AdminController
 	 * @throws Exception
 	 * @since 1.0.0
 	 */
-	public function exportcsv()
+	public function exportcsv(): bool
 	{
 		$tableid = common::inputGet('tableid', 0, 'int');
 
@@ -139,8 +139,6 @@ class CustomtablesControllerListOfRecords extends AdminController
 			if (!is_object($table) and $table == 0) {
 				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return false;
-			} else {
-				$tablename = $table->tablename;
 			}
 		}
 
@@ -148,7 +146,6 @@ class CustomtablesControllerListOfRecords extends AdminController
 
 		$ct = new CT(null, false);
 		$ct->Params->constructJoomlaParams();
-
 		$ct->Env->frmt = 'csv';
 
 		$ct->getTable($tableid);
@@ -167,32 +164,14 @@ class CustomtablesControllerListOfRecords extends AdminController
 		$ct->Params->filter = implode('or', $wheres);
 		$catalog = new Catalog($ct);
 
-		$pathViews = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
-		require_once($pathViews . 'catalog-csv.php');
+		$pageLayoutContent = $catalog->render();
 
-		try {
-			$catalogCSV = new CatalogExportCSV($ct, $catalog);
-		} catch (Exception $e) {
-			common::enqueueMessage($e->getMessage());
-			return false;
-		}
+		if ($ct->Params->allowContentPlugins)
+			CTMiscHelper::applyContentPlugins($pageLayoutContent);
 
-		if (!$catalogCSV->error) {
+		CTMiscHelper::fireFormattedOutput($pageLayoutContent, 'csv', $ct->Table->tablename, 200);
 
-			if (ob_get_contents())
-				ob_end_clean();
-
-			$filename = CTMiscHelper::makeNewFileName($ct->Table->tablename, 'csv');
-			header('Content-Disposition: attachment; filename="' . $filename . '"');
-			header('Content-Type: text/csv; charset=utf-16');
-			header("Pragma: no-cache");
-			header("Expires: 0");
-			echo $catalogCSV->render(null);
-			die;//CSV output
-		} else {
-			common::enqueueMessage($catalogCSV->error);
-		}
-		return false;
+		return true;
 	}
 
 	/**

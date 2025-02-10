@@ -44,9 +44,7 @@ class CustomTablesViewEditItem extends HtmlView
 			$this->ct->getTable($this->ct->Params->tableName);
 
 		$layout = new Layouts($this->ct);
-
 		$this->result = $layout->renderMixedLayout($this->ct->Params->editLayout, CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM);
-
 		$content = '';
 
 		if ($this->ct->Table === null) {

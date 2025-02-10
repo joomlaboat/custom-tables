@@ -1348,6 +1348,8 @@ class CTMiscHelper
 
 		if ($format == 'text/html')
 			header('Content-Type: text/html; charset=utf-8');
+		elseif ($format == 'csv')
+			header('Content-Type: text/csv; charset=utf-8');
 		elseif ($format == 'txt')
 			header('Content-Type: text/plain; charset=utf-8');
 		elseif ($format == 'json')
@@ -1358,7 +1360,10 @@ class CTMiscHelper
 		header("Pragma: no-cache");
 		header("Expires: 0");
 
-		echo $content;
+		if ($format == 'csv')
+			echo preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $content);
+		else
+			echo $content;
 
 		exit;
 	}

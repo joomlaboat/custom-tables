@@ -18,6 +18,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Version;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -836,7 +837,7 @@ if (typeof window.CTEditHelper === "undefined") {
 	static public function sendEmail($email, $emailSubject, $emailBody, $isHTML = true, $attachments = array()): bool
 	{
 		try {
-			if (CUSTOMTABLES_JOOMLA_MIN_4)
+			if (Version::MAJOR_VERSION >= 5)
 				$mailer = Factory::getContainer()->get('mailer');
 			else
 				$mailer = Factory::getMailer();
