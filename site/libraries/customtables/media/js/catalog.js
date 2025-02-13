@@ -185,15 +185,13 @@ function ctOrderChanged(objectValue, ModuleId) {
 			addParams.push('Itemid=' + CTEditHelper.itemId);
 		}
 	}
-
 	window.location.href = esPrepareLink(deleteParams, addParams);
 }
 
-function ctLimitChanged(object, ModuleId) {
+function ctLimitChanged(objectValue, ModuleId) {
 
-	let returnTo = btoa(window.location.href);
 	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
-	let addParams = ['task=setlimit', 'limit=' + object.value, 'returnto=' + returnTo];
+	let addParams = ['task=setlimit', 'limit=' + objectValue];
 
 	if (CTEditHelper.cmsName === 'Joomla') {
 		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {

@@ -26,7 +26,7 @@ if ($view == 'home') {
 
 $task = common::inputGetCmd('task');
 
-$updatedTask = ['delete', 'refresh', 'publish', 'unpublish', 'copy', 'createuser', 'setorderby'];
+$updatedTask = ['delete', 'refresh', 'publish', 'unpublish', 'copy', 'createuser', 'setorderby', 'setlimit'];
 if (in_array($task, $updatedTask)) {
 
 	require_once CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'controllerHelper.php';
@@ -125,17 +125,6 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 				else
 					return (object)array('link' => $link, 'msg' => common::translate('COM_USERS_RESET_COMPLETE_ERROR'), 'status' => 'error');
 			}
-
-		case 'setlimit':
-
-			$limit = common::inputGetInt('limit', 0);
-
-			$ct->app->setUserState('com_customtables.limit_' . $ct->Params->ItemId, $limit);
-
-			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
-			$link = CTMiscHelper::deleteURLQueryOption($link, 'limit');
-
-			return (object)array('link' => $link, 'msg' => null, 'status' => null);
 
 		case 'copycontent':
 

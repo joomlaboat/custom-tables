@@ -878,6 +878,8 @@ class Layouts
 			return $this->doTask_createuser();
 		} elseif ($task == 'setorderby') {
 			return $this->doTask_setorderby();
+		} elseif ($task == 'setlimit') {
+			return $this->doTask_setlimit();
 		}
 		return ['success' => false, 'message' => 'Unknown task', 'short' => 'unknown'];
 	}
@@ -1214,6 +1216,29 @@ class Layouts
 
 	/**
 	 * @throws Exception
+	 * @since 3.5.4
+	 */
+	private function doTask_setlimit()
+	{
+		$limit = common::inputGetInt('limit', 0);
+
+		if (defined('_JEXEC'))
+			common::setUserState('com_customtables.limit_' . $this->ct->Params->ItemId, $limit);
+		elseif (defined('WPINC'))
+			common::setUserState('com_customtables.limit_' . $this->tableId, $limit);
+		else
+			throw new Exception('doTask_setlimit not supported in this version');
+
+		$link = common::curPageURL();
+
+		$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
+		$link = CTMiscHelper::deleteURLQueryOption($link, 'limit');
+
+		return ['success' => true, 'message' => null, 'short' => 'order_by set', 'redirect' => $link];
+	}
+
+	/**
+	 * @throws Exception
 	 * @since 3.2.2
 	 */
 	protected function renderCatalog(): string
@@ -1267,7 +1292,7 @@ class Layouts
 		if (!empty($this->ct->Params->listing_id))
 			$this->ct->applyLimits(1);
 		else
-			$this->ct->applyLimits($this->ct->Params->limit ?? 0);
+			$this->ct->applyLimits();
 
 		$this->ct->LayoutVariables['layout_type'] = $this->layoutType;
 

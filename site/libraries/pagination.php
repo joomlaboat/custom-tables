@@ -153,7 +153,7 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
 		$list['limit'] = $this->limit;
 		$list['limitstart'] = $this->limitstart;
 		$list['total'] = $this->total;
-		$list['limitfield'] = $this->getLimitBox();
+		//$list['limitfield'] = $this->getLimitBox();
 		$list['pagescounter'] = $this->getPagesCounter();
 		$list['pageslinks'] = $this->getPagesLinks();
 
@@ -170,47 +170,6 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
 		return $this->_list_footer($list);
 	}
 
-	/**
-	 * Creates a dropdown box for selecting how many records to show per page.
-	 *
-	 * @return  string   The HTML for the limit # input box.
-	 * @since   11.1
-	 */
-	public function getLimitBox($the_step = 5)
-	{
-		$the_step = (int)$the_step;
-
-		if ($the_step < 1)
-			$the_step = 1;
-
-		if ($the_step > 1000)
-			$the_step = 1000;
-
-		$app = Factory::getApplication();
-
-		// Initialise variables.
-		$limits = array();
-
-		// Make the option list.
-		for ($i = $the_step; $i <= $the_step * 6; $i += $the_step) {
-			$limits[] = HTMLHelper::_('select.option', "$i");
-		}
-
-		$limits[] = HTMLHelper::_('select.option', $the_step * 10);
-		$limits[] = HTMLHelper::_('select.option', $the_step * 20);
-		$selected = $this->_viewall ? 0 : $this->limit;
-
-		$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
-		// Build the select list.
-
-		if (CUSTOMTABLES_JOOMLA_MIN_4)
-			$default_class = 'form-control';
-		else
-			$default_class = 'inputbox';
-
-		return HTMLHelper::_('select.genericlist', $limits, $this->prefix . 'limit',
-			'class="' . $default_class . '" size="1" onchange="ctLimitChanged(this,' . $moduleIDString . ');"', 'value', 'text', $selected);
-	}
 
 	/**
 	 * Create and return the pagination pages counter string, ie. Page 2 of 4.

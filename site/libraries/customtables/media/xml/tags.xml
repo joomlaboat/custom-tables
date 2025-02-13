@@ -214,11 +214,11 @@
 			<params>
 				<param name="step" label="Step" type="list" example="10" default="5"
 					   description="Defines the incremental steps for the dropdown options. For example, if set to 1, the options will be: 1, 2, 3, 4, 5, 6, 10, 20.">
-					<option value="1" label="1"/>
-					<option value="5" label="5"/>
-					<option value="10" label="10"/>
-					<option value="20" label="20"/>
-					<option value="50" label="50"/>
+					<option value="1" label="1" wordpress="true"/>
+					<option value="5" label="5" wordpress="true"/>
+					<option value="10" label="10" wordpress="true"/>
+					<option value="20" label="20" wordpress="true"/>
+					<option value="50" label="50" wordpress="true"/>
 				</param>
 
 				<param name="label" label="Show Label"

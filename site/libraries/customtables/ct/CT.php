@@ -411,9 +411,15 @@ class CT
 
 		if (defined('_JEXEC')) {
 			$limit_var = 'com_customtables.limit_' . $this->Params->ItemId;
-			$this->Limit = $this->app->getUserState($limit_var, 0);
-		} else
-			$this->Limit = 0;
+			$this->Limit = common::getUserState($limit_var, 0);
+		} elseif (defined('WPINC')) {
+			if ($this->Table === null) {
+				$this->Limit = 0;
+			} else {
+				$limit_var = 'com_customtables.limit_' . $this->Table->tableid;
+				$this->Limit = common::getUserState($limit_var, 0);
+			}
+		}
 
 		//Grouping
 		$this->GroupBy = null;
@@ -424,8 +430,11 @@ class CT
 		}
 
 		if ($this->Params->blockExternalVars) {
-			if ((int)$this->Params->limit > 0) {
+
+			if ($this->Limit == 0 and (int)$this->Params->limit > 0)
 				$this->Limit = (int)$this->Params->limit;
+
+			if ($this->Limit > 0) {
 				$this->LimitStart = common::inputGetInt('start', 0);
 				$this->LimitStart = ($this->Limit != 0 ? (floor($this->LimitStart / $this->Limit) * $this->Limit) : 0);
 			} else {
@@ -437,9 +446,15 @@ class CT
 
 			if (defined('_JEXEC')) {
 				$limit_var = 'com_customtables.limit_' . $this->Params->ItemId;
-				$this->Limit = $this->app->getUserState($limit_var, 0);
-			} else
-				$this->Limit = 0;
+				$this->Limit = common::getUserState($limit_var, 0);
+			} elseif (defined('WPINC')) {
+				if ($this->Table === null) {
+					$this->Limit = 0;
+				} else {
+					$limit_var = 'com_customtables.limit_' . $this->Table->tableid;
+					$this->Limit = common::getUserState($limit_var, 0);
+				}
+			}
 
 			if ($this->Limit == 0 and (int)$this->Params->limit > 0) {
 				$this->Limit = (int)$this->Params->limit;
