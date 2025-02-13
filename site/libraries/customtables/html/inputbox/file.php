@@ -271,7 +271,12 @@ class InputBox_file extends BaseInputBox
 			$result .= common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size);
 		}
 
-		return '<div style="' . $style . '"' . ($this->field->isrequired == 1 ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
+		if (CUSTOMTABLES_JOOMLA_MIN_4)
+			$default_class = 'form-control';
+		else
+			$default_class = 'inputbox';
+
+		return '<div style="' . $style . '"' . ($this->field->isrequired == 1 ? ' class="' . $default_class . ' required"' : '') . ' id="' . $element_id . '" '
 			. 'data-type="' . $this->field->type . '" '
 			. 'data-label="' . $this->field->title . '" '
 			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule ?? '') . '" '

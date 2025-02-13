@@ -223,6 +223,10 @@ class Twig_HTML_Tags
 		return common::translate('COM_CUSTOMTABLES_SHOW') . ': ' . $pagination->getLimitBox($the_step);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
 	function orderby(): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
@@ -232,9 +236,9 @@ class Twig_HTML_Tags
 			return '';
 
 		if ($this->ct->Params->forceSortBy !== null and $this->ct->Params->forceSortBy != '')
-			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED');
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED'));
 
-		return common::translate('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
+		return OrderingHTML::getOrderBox($this->ct->Ordering);
 	}
 
 	/**

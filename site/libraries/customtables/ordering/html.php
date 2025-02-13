@@ -20,7 +20,15 @@ class OrderingHTML
 
 		$moduleIDString = $ordering->Params->ModuleId === null ? 'null' : $ordering->Params->ModuleId;
 
-		$result = '<select name="esordering" id="esordering" onChange="ctOrderChanged(this.value, ' . $moduleIDString . ');" class="inputbox">' . PHP_EOL;
+		if (CUSTOMTABLES_JOOMLA_MIN_4)
+			$default_class = 'form-control';
+		else
+			$default_class = 'inputbox';
+
+		$result = '<select name="esordering" id="esordering" onChange="ctOrderChanged(this.value, ' . $moduleIDString . ');" class="' . $default_class . '">' . PHP_EOL;
+
+		$result .= '<option value="" ' . ($ordering->ordering_processed_string == "" ? ' selected ' : '') . '> - '
+			. common::translate('COM_CUSTOMTABLES_ORDER_BY') . '</option>' . PHP_EOL;
 
 		for ($i = 0; $i < count($order_values); $i++) {
 			$result .= '<option value="' . $order_values[$i] . '" ' . ($ordering->ordering_processed_string == $order_values[$i] ? ' selected ' : '') . '>'

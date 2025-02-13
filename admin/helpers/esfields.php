@@ -33,6 +33,11 @@ class JHTMLCTFields
 
 		$fields[] = array('id' => '0', 'fieldname' => '- ROOT');
 
-		return HTMLHelper::_('select.genericlist', $fields, $control_name, 'class="inputbox"', 'id', 'fieldname', $value);
+		if (CUSTOMTABLES_JOOMLA_MIN_4)
+			$default_class = 'form-control';
+		else
+			$default_class = 'inputbox';
+
+		return HTMLHelper::_('select.genericlist', $fields, $control_name, 'class="' . $default_class . '"', 'id', 'fieldname', $value);
 	}
 }

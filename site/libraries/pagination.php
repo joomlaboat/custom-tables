@@ -202,7 +202,14 @@ class JESPagination extends CMSObject //JObject //TODO: Replace JObject with J4.
 
 		$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 		// Build the select list.
-		return HTMLHelper::_('select.genericlist', $limits, $this->prefix . 'limit', 'class="inputbox" size="1" onchange="ctLimitChanged(this,' . $moduleIDString . ');"', 'value', 'text', $selected);
+
+		if (CUSTOMTABLES_JOOMLA_MIN_4)
+			$default_class = 'form-control';
+		else
+			$default_class = 'inputbox';
+
+		return HTMLHelper::_('select.genericlist', $limits, $this->prefix . 'limit',
+			'class="' . $default_class . '" size="1" onchange="ctLimitChanged(this,' . $moduleIDString . ');"', 'value', 'text', $selected);
 	}
 
 	/**

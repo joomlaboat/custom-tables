@@ -114,7 +114,12 @@ class InputBox_image extends BaseInputBox
 			$result .= '<input type="file" name="' . $this->attributes['id'] . '" accept=".jpg,.jpeg,.png,.gif,.svg,.webp" max-size="' . $max_file_size . '" />';
 		}
 
-		return '<div style="' . $style . '"' . ($this->field->isrequired == 1 ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
+		if (CUSTOMTABLES_JOOMLA_MIN_4)
+			$default_class = 'form-control';
+		else
+			$default_class = 'inputbox';
+
+		return '<div style="' . $style . '"' . ($this->field->isrequired == 1 ? ' class="' . $default_class . ' required"' : '') . ' id="' . $element_id . '" '
 			. 'data-type="' . $this->field->type . '" '
 			. 'data-label="' . $this->field->title . '" '
 			. 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule ?? '') . '" '

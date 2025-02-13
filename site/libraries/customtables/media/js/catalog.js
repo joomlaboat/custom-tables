@@ -173,10 +173,8 @@ function ctCopyRecord(tableid, listing_id, toolbarBoxId, ModuleId) {
 }
 
 function ctOrderChanged(objectValue, ModuleId) {
-	const current_url = esPrepareLink(['returnto', 'task', 'orderby'], []);
-
 	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
-	let addParams = ['task=setorderby', 'orderby=' + objectValue, 'returnto=' + returnTo];
+	let addParams = ['task=setorderby', 'orderby=' + objectValue];
 
 	if (CTEditHelper.cmsName === 'Joomla') {
 		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
