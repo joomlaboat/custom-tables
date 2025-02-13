@@ -227,7 +227,7 @@ class Twig_HTML_Tags
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function orderby(): string
+	function orderby($listOfFields = null): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
@@ -238,7 +238,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Params->forceSortBy !== null and $this->ct->Params->forceSortBy != '')
 			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED'));
 
-		return OrderingHTML::getOrderBox($this->ct->Ordering);
+		return OrderingHTML::getOrderBox($this->ct->Ordering, $listOfFields);
 	}
 
 	/**

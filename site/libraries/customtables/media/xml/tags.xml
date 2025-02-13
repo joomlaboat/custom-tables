@@ -189,8 +189,17 @@
 			</params>
 		</tag>
 
-		<tag name="orderby" label="Order By (Sort By) box" startchar="{" endchar="}" proversion="1"
-			 description="Renders HTML Order By select box." twigclass="html"/>
+		<tag name="orderby" label="Order By (Sort By) Box" startchar="{" endchar="}" proversion="1"
+			 description="Generates an HTML dropdown allowing visitors to sort the table by selected fields."
+			 twigclass="html">
+
+			<params>
+				<param name="fieldlist" example="firstname,lastname,birthdate" label="List of Fields"
+					   description="Comma-separated list of fields that users can choose from to sort the table in the front-end."
+					   default=""
+					   type="field" repetitive="1"/>
+			</params>
+		</tag>
 
 		<tag name="limit" label="A select box to change the number of records per page" startchar="{" endchar="}"
 			 proversion="1"
