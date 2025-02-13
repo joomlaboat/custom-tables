@@ -36,7 +36,7 @@ class OrderingHTML
 		}
 
 		$moduleIDString = $ordering->Params->ModuleId ?? 'null';
-		$defaultClass = CUSTOMTABLES_JOOMLA_MIN_4 ? 'form-control' : 'inputbox';
+		$defaultClass = CUSTOMTABLES_JOOMLA_MIN_4 ? 'form-select' : 'inputbox';
 
 		$options = [];
 

@@ -34,7 +34,7 @@ class JHTMLCTFields
 		$fields[] = array('id' => '0', 'fieldname' => '- ROOT');
 
 		if (CUSTOMTABLES_JOOMLA_MIN_4)
-			$default_class = 'form-control';
+			$default_class = 'form-select';
 		else
 			$default_class = 'inputbox';
 

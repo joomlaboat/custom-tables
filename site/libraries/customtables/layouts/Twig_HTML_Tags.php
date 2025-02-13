@@ -265,7 +265,7 @@ class Twig_HTML_Tags
 		// Build the select list.
 
 		if (CUSTOMTABLES_JOOMLA_MIN_4)
-			$defaultClass = 'form-control';
+			$defaultClass = 'form-select';
 		else
 			$defaultClass = 'inputbox';
 
