@@ -85,15 +85,6 @@ class Filtering
 	{
 		if ($parse) {
 			//Parse using layout, has no effect to layout itself
-			/*
-			if ($this->ct->Env->legacySupport) {
-				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
-
-				$LayoutProc = new LayoutProcessor($this->ct);
-				$LayoutProc->layout = $paramWhere;
-				$paramWhere = $LayoutProc->fillLayout();
-			}*/
-
 			$twig = new TwigProcessor($this->ct, $paramWhere);
 			$paramWhere = $twig->process();
 
@@ -135,14 +126,6 @@ class Filtering
 
 			$fieldNames = explode(';', $item['field']);
 			$value = $item['value'];
-
-			/*
-			if ($this->ct->Env->legacySupport) {
-				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
-				$LayoutProc = new LayoutProcessor($this->ct);
-				$LayoutProc->layout = $value;
-				$value = $LayoutProc->fillLayout();
-			}*/
 
 			$twig = new TwigProcessor($this->ct, $value);
 			$value = $twig->process();

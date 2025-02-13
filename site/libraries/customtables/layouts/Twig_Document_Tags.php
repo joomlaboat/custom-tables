@@ -245,15 +245,7 @@ class Twig_Document_Tags
 				if ($twig->errorMessage !== null)
 					$this->ct->errors[] = $twig->errorMessage;
 
-				/*
-				if ($this->ct->Env->legacySupport) {
-					$LayoutProc = new LayoutProcessor($this->ct);
-					$LayoutProc->layout = $html_result_layout;
-					$html_result_layout = $LayoutProc->fillLayout($row);
-				}*/
-
 				$html_result .= $html_result_layout;
-
 				$number++;
 			}
 		} else {

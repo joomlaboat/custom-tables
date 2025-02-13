@@ -88,16 +88,6 @@ class Edit
 	{
 		if ($row !== null)
 			$this->row = $row;
-		/*
-				if ($this->ct->Env->legacySupport) {
-					$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
-					require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
-					require_once($path . 'layout.php');
-
-					$LayoutProc = new LayoutProcessor($this->ct, $this->layoutContent);
-					$this->layoutContent = $LayoutProc->fillLayout(null, null, '||', false, true);
-					tagProcessor_Edit::process($this->ct, $this->layoutContent, $row, true);
-				}*/
 
 		$twig = new TwigProcessor($this->ct, $this->layoutContent, true);
 		$result = $twig->process($this->row);

@@ -206,16 +206,6 @@ class Layouts
 	 */
 	function parseRawLayoutContent(string $content, bool $applyContentPlugins = true): string
 	{
-		/*
-		if ($this->ct->Env->legacySupport) {
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
-
-			$LayoutProc = new LayoutProcessor($this->ct);
-			$LayoutProc->layout = $content;
-			$content = $LayoutProc->fillLayout($this->ct->Table->record);
-		}
-		*/
-
 		$twig = new TwigProcessor($this->ct, $content);
 
 		try {

@@ -470,17 +470,8 @@ class Inputbox
 			if ($value == '') {
 				$value = $this->field->defaultvalue;
 
-				//Process default value, not processing PHP tag
+				//Process default value
 				if ($value != '') {
-					/*
-					if ($this->ct->Env->legacySupport) {
-						tagProcessor_General::process($this->ct, $value, $row);
-						tagProcessor_Item::process($this->ct, $value, $row);
-						tagProcessor_If::process($this->ct, $value, $row);
-						tagProcessor_Page::process($this->ct, $value);
-						tagProcessor_Value::processValues($this->ct, $value, $row);
-					}
-					*/
 
 					$twig = new TwigProcessor($this->ct, $value);
 					$value = $twig->process($row);
@@ -502,9 +493,8 @@ class Inputbox
 				}
 			}
 		} else {
-			if ($this->field->type != 'multilangstring' and $this->field->type != 'multilangtext') {// and $this->field->type != 'multilangarticle') {
+			if ($this->field->type != 'multilangstring' and $this->field->type != 'multilangtext')
 				$value = $row[$this->field->realfieldname] ?? null;
-			}
 		}
 		return $value;
 	}
