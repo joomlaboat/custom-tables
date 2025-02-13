@@ -211,7 +211,7 @@ class Twig_HTML_Tags
 			return '<div class="pagination">' . $pagination->getPagesLinks() . '</div>';
 	}
 
-	function limit($the_step = 5): string
+	function limit($the_step = 5, $showLabel = false): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
@@ -219,15 +219,21 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
+		$result = '';
+		if ($showLabel)
+			$result .= common::translate('COM_CUSTOMTABLES_SHOW') . ': ';
+
 		$pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '');
-		return $pagination->getLimitBox($the_step);
+
+		$result .= $pagination->getLimitBox($the_step);
+		return $result;
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function orderby($listOfFields = null): string
+	function orderby($listOfFields = null, $showLabel = false): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
@@ -238,7 +244,12 @@ class Twig_HTML_Tags
 		if ($this->ct->Params->forceSortBy !== null and $this->ct->Params->forceSortBy != '')
 			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED'));
 
-		return OrderingHTML::getOrderBox($this->ct->Ordering, $listOfFields);
+		$result = '';
+		if ($showLabel)
+			$result .= common::translate('COM_CUSTOMTABLES_ORDER_BY') . ': ';
+
+		$result .= OrderingHTML::getOrderBox($this->ct->Ordering, $listOfFields);
+		return $result;
 	}
 
 	/**
