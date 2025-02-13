@@ -516,17 +516,18 @@ class Twig_Record_Tags
 
 		$join_ct->setFilter($complete_filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
 		if ($join_ct->getRecords(false, $limit, $orderby)) {
-			$twig = new TwigProcessor($join_ct, $pageLayout);
 
-			$value = $twig->process();
-			if ($twig->errorMessage !== null)
-				$this->ct->errors[] = $twig->errorMessage;
+			try {
+				$twig = new TwigProcessor($join_ct, $pageLayout);
+				$value = $twig->process();
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
 
 			return $value;
 		}
 
-		$this->ct->errors[] = '{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - LCould not load records.';
-		return '';
+		throw new Exception('{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - LCould not load records.');
 	}
 
 	/**

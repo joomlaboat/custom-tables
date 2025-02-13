@@ -473,11 +473,12 @@ class Inputbox
 				//Process default value
 				if ($value != '') {
 
-					$twig = new TwigProcessor($this->ct, $value);
-					$value = $twig->process($row);
-
-					if ($twig->errorMessage !== null)
-						$this->ct->errors[] = $twig->errorMessage;
+					try {
+						$twig = new TwigProcessor($this->ct, $value);
+						$value = $twig->process($row);
+					} catch (Exception $e) {
+						throw new Exception($e->getMessage());
+					}
 
 					if ($value != '') {
 						if ($this->ct->Params->allowContentPlugins)

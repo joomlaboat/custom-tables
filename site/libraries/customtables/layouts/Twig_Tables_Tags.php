@@ -66,11 +66,12 @@ class Twig_Tables_Tags
 
 		if (Layouts::isLayoutContent($fieldname)) {
 
-			$twig = new TwigProcessor($join_ct, $fieldname);
-			$value = $twig->process($join_ct->Table->record);
-
-			if ($twig->errorMessage !== null)
-				$join_ct->errors[] = $twig->errorMessage;
+			try {
+				$twig = new TwigProcessor($join_ct, $fieldname);
+				$value = $twig->process($join_ct->Table->record);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
 
 			return $value;
 
@@ -132,10 +133,12 @@ class Twig_Tables_Tags
 				return '';
 		}
 
-		$twig = new TwigProcessor($join_ct, $pageLayout);
-		$value = $twig->process($join_ct->Table->record);
-		if ($twig->errorMessage !== null)
-			throw new Exception($twig->errorMessage);
+		try {
+			$twig = new TwigProcessor($join_ct, $pageLayout);
+			$value = $twig->process($join_ct->Table->record);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 
 		return $value;
 	}
@@ -166,12 +169,7 @@ class Twig_Tables_Tags
 			if ($join_ct->getRecords(false, $limit, $orderby, $groupby)) {
 
 				$twig = new TwigProcessor($join_ct, $pageLayout);
-				$value = $twig->process();
-
-				if ($twig->errorMessage !== null)
-					$join_ct->errors[] = $twig->errorMessage;
-
-				return $value;
+				return $twig->process();
 			}
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());

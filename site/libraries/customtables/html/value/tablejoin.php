@@ -51,11 +51,14 @@ class Value_tablejoin extends BaseValue
 		return self::renderTableJoinValue($this->field, $layoutCode, $this->rowValue);
 	}
 
-	//Value_tablejoin::renderTableJoinValue
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function renderTableJoinValue(Field $field, string $layoutcode, $listing_id): string
 	{
 		if (empty($field->params[0]))
-			return 'Table not selected.';
+			throw new Exception('Table not selected.');
 
 		$ct = new CT([], true);
 		$ct->getTable($field->params[0]);
@@ -64,18 +67,19 @@ class Value_tablejoin extends BaseValue
 		//$selector = $field->params[6] ?? 'dropdown';
 
 		if ($ct->Table === null)
-			return 'Table not found.';
+			throw new Exception('Table Join: Table not found.');
 
 		if (!empty($listing_id)) {
 			$ct->Params->listing_id = $listing_id;
 			$ct->getRecord();
 		}
 
-		$twig = new TwigProcessor($ct, $layoutcode);
-		$value = $twig->process($ct->Table->record);
-
-		if ($twig->errorMessage !== null)
-			return 'renderTableJoinValue: ' . $twig->errorMessage;
+		try {
+			$twig = new TwigProcessor($ct, $layoutcode);
+			$value = $twig->process($ct->Table->record);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 
 		return $value;
 	}

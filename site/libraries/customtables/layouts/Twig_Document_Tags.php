@@ -241,17 +241,21 @@ class Twig_Document_Tags
 				$row['_number'] = $number;
 				$row['_islast'] = $number == count($this->ct->Records);
 
-				$html_result_layout = $twig->process($row);
-				if ($twig->errorMessage !== null)
-					$this->ct->errors[] = $twig->errorMessage;
+				try {
+					$html_result_layout = $twig->process($row);
+				} catch (Exception $e) {
+					throw new Exception($e->getMessage());
+				}
 
 				$html_result .= $html_result_layout;
 				$number++;
 			}
 		} else {
-			$html_result = $twig->process($this->ct->Table->record);
-			if ($twig->errorMessage !== null)
-				$this->ct->errors[] = $twig->errorMessage;
+			try {
+				$html_result = $twig->process($this->ct->Table->record);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
 		}
 
 		return $html_result;

@@ -179,9 +179,6 @@ class Catalog
 			throw new Exception($e->getMessage());
 		}
 
-		if ($twig->errorMessage !== null)
-			throw new Exception('errorMessage: ' . implode(', ', $this->ct->errors));
-
 		if ($this->ct->Env->clean == 0) {
 
 			if ($this->ct->Params->allowContentPlugins)

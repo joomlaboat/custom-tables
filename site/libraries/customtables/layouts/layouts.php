@@ -1086,16 +1086,12 @@ class Layouts
 
 		if ($ok) {
 			//Success
-			//Prepare success message
-			$twig = new TwigProcessor($this->ct, $this->ct->Params->msgItemIsSaved);
 
 			try {
+				$twig = new TwigProcessor($this->ct, $this->ct->Params->msgItemIsSaved);
 				$output['message'] = $twig->process($this->ct->Table->record);
 			} catch (Exception $e) {
 				$output['message'] = $e->getMessage();
-			}
-			if ($twig->errorMessage !== null) {
-				$output['message'] = $twig->errorMessage;
 			}
 
 			$action = $record->isItNewRecord ? 'create' : 'update';
@@ -1299,11 +1295,12 @@ class Layouts
 	 */
 	public function renderDetailedLayoutDO(): string
 	{
-		$twig = new TwigProcessor($this->ct, $this->layoutCode, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
-		$layoutDetailsContent = $twig->process($this->ct->Table->record);
-
-		if ($twig->errorMessage !== null)
-			$this->ct->errors[] = $twig->errorMessage;
+		try {
+			$twig = new TwigProcessor($this->ct, $this->layoutCode, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
+			$layoutDetailsContent = $twig->process($this->ct->Table->record);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 
 		if ($this->ct->Params->allowContentPlugins)
 			$layoutDetailsContent = CTMiscHelper::applyContentPlugins($layoutDetailsContent);

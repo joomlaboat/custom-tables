@@ -73,9 +73,10 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 
 		$link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item_array[$this->ct->Table->realidfieldname];
 
-		$result = $twig->process($item_array);
-		if ($twig->errorMessage !== null) {
-			$this->ct->errors[] = $twig->errorMessage;
+		try {
+			$result = $twig->process($item_array);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
 		}
 
 		echo str_replace('****link****', $link, $result);

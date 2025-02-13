@@ -132,9 +132,7 @@ class Value_tablejoinlist extends BaseValue
 	protected static function processRecordRecords(CT $ct, $layoutcode, ?string $rowValue, $records, string $separatorCharacter = ','): string
 	{
 		$htmlResult = '';
-
 		$valueArray = explode(',', $rowValue);
-
 		$number = 1;
 
 		//To make sure that records belong to the value
@@ -147,19 +145,15 @@ class Value_tablejoinlist extends BaseValue
 			$row['_number'] = $number;
 			$row['_islast'] = $number == count($CleanSearchResult);
 
-			$twig = new TwigProcessor($ct, $layoutcode);
-
 			if ($htmlResult != '')
 				$htmlResult .= $separatorCharacter;
 
 			try {
+				$twig = new TwigProcessor($ct, $layoutcode);
 				$htmlResult .= $twig->process($row);
 			} catch (Exception $e) {
-				return 'processRecordRecords: ' . $e->getMessage();
+				throw new Exception($e->getMessage());
 			}
-
-			if ($twig->errorMessage !== null)
-				$ct->errors[] = $twig->errorMessage;
 
 			$number++;
 		}

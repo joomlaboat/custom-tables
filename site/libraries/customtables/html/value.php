@@ -401,6 +401,10 @@ class Value
 		return common::formatDate($value, $format);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function virtualProcess(): string
 	{
 		if (count($this->field->params) == 0)
@@ -411,12 +415,9 @@ class Value
 
 		try {
 			$twig = new TwigProcessor($this->ct, $layout, false, false, true);
-			$value = @$twig->process($this->row);
-
-			if ($twig->errorMessage !== null)
-				return 'virtualProcess Error:' . $twig->errorMessage;
+			$value = $twig->process($this->row);
 		} catch (Exception $e) {
-			return 'virtualProcess Error:' . $e->getMessage();
+			throw new Exception($e->getMessage());
 		}
 		return $value;
 	}

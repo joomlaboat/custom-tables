@@ -220,18 +220,21 @@ class CustomTablesViewLog extends HtmlView
 		}
 
 		$layoutContent = '{{ ' . $FieldName . ' }}';
-		$twig = new TwigProcessor($ct, $layoutContent);
 
-		if (!empty($listing_id)) {
-			$ct->Params->listing_id = $listing_id;
-			$ct->getRecord();
-		}
+		try {
+			$twig = new TwigProcessor($ct, $layoutContent);
 
-		if ($twig->errorMessage !== null) {
-			$ct->errors[] = $twig->errorMessage;
+			if (!empty($listing_id)) {
+				$ct->Params->listing_id = $listing_id;
+				$ct->getRecord();
+			}
+
+			$content = $twig->process($ct->Table->record);
+		} catch (Exception $e) {
+			common::enqueueMessage($e->getMessage());
 			return '';
 		}
 
-		return $twig->process($ct->Table->record);
+		return $content;
 	}
 }

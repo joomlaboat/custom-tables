@@ -144,11 +144,12 @@ class Field
 						//Do not parse
 						$new_params[] = $type_param;
 					} else {
-						$twig = new TwigProcessor($this->ct, $type_param, false, false, false);
-						$new_params[] = $twig->process($row);
-
-						if ($twig->errorMessage !== null)
-							$this->ct->errors[] = $twig->errorMessage;
+						try {
+							$twig = new TwigProcessor($this->ct, $type_param, false, false, false);
+							$new_params[] = $twig->process($row);
+						} catch (Exception $e) {
+							throw new Exception($e->getMessage());
+						}
 					}
 				}
 			}

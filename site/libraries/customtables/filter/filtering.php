@@ -81,15 +81,21 @@ class Filtering
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
 	protected function sanitizeAndParseFilter($paramWhere, $parse = false): string
 	{
 		if ($parse) {
 			//Parse using layout, has no effect to layout itself
-			$twig = new TwigProcessor($this->ct, $paramWhere);
-			$paramWhere = $twig->process();
 
-			if ($twig->errorMessage !== null)
-				$this->ct->errors[] = $twig->errorMessage;
+			try {
+				$twig = new TwigProcessor($this->ct, $paramWhere);
+				$paramWhere = $twig->process();
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
 
 			if ($this->ct->Params->allowContentPlugins)
 				$paramWhere = CTMiscHelper::applyContentPlugins($paramWhere);
@@ -123,16 +129,14 @@ class Filtering
 		foreach ($items as $item) {
 
 			$whereClauseTemp = new MySQLWhereClause();
-
 			$fieldNames = explode(';', $item['field']);
 			$value = $item['value'];
 
-			$twig = new TwigProcessor($this->ct, $value);
-			$value = $twig->process();
-
-			if ($twig->errorMessage !== null) {
-				$this->ct->errors[] = $twig->errorMessage;
-				return;
+			try {
+				$twig = new TwigProcessor($this->ct, $value);
+				$value = $twig->process();
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
 			}
 
 			foreach ($fieldNames as $fieldname_) {

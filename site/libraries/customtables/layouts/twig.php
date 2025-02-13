@@ -47,7 +47,6 @@ class TwigProcessor
 		$this->debug = false;
 
 		$this->parseParams = $parseParams;
-		$this->errorMessage = null;
 		$this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
 		$this->ct = $ct;
 		$this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
