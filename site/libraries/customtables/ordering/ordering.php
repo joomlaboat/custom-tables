@@ -182,7 +182,6 @@ class Ordering
 	{
 		if (defined('_JEXEC')) {
 			//get sort field (and direction) example "price desc"
-			$app = Factory::getApplication();
 			$ordering_param_string = '';
 
 			if ($this->Params->blockExternalVars) {
@@ -194,15 +193,16 @@ class Ordering
 			} else {
 				if ($this->Params->forceSortBy != '') {
 					$ordering_param_string = $this->Params->forceSortBy;
-				} elseif (common::inputGetCmd('esordering', '', 'create-edit-record')) {
-					$ordering_param_string = common::inputGetString('esordering', '', 'create-edit-record');
+				} elseif (common::inputGetCmd('esordering', '')) {
+					$ordering_param_string = common::inputGetString('esordering', '');
 					$ordering_param_string = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $ordering_param_string));
 				} else {
-					$Itemid = common::inputGetInt('Itemid', 0, 'create-edit-record');
-					$ordering_param_string = $app->getUserState('com_customtables.orderby_' . $Itemid, '');
+
+					$Itemid = common::inputGetInt('Itemid', 0);
+					$ordering_param_string = common::getUserState('com_customtables.orderby_' . $Itemid);
 
 					if ($ordering_param_string == '') {
-						if ($this->Params->sortBy !== null and $this->Params->sortBy != '')
+						if (!empty($this->Params->sortBy))
 							$ordering_param_string = $this->Params->sortBy;
 					}
 				}
@@ -210,11 +210,29 @@ class Ordering
 			$this->ordering_processed_string = $ordering_param_string;
 
 			//set state
-			if (!$this->Params->blockExternalVars)
-				$app->setUserState('com_customtables.esorderby', $this->ordering_processed_string);
+			if (!$this->Params->blockExternalVars) {
+				$Itemid = common::inputGetInt('Itemid', 0);
+				common::setUserState('com_customtables.orderby_' . $Itemid, $this->ordering_processed_string);
+			}
+
 		} else {
-			if ($this->Params->sortBy != '')
-				$this->ordering_processed_string = $this->Params->sortBy;
+			if ($this->Params->forceSortBy != '') {
+				$ordering_param_string = $this->Params->forceSortBy;
+			} elseif (common::inputGetCmd('ordering', '')) {
+				$ordering_param_string = common::inputGetString('ordering', '');
+				$ordering_param_string = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $ordering_param_string));
+			} else {
+				$ordering_param_string = common::getUserState('com_customtables.orderby_' . $this->Table->tableid);
+			}
+
+
+			$this->ordering_processed_string = $ordering_param_string;
+
+			//set state
+			if ($ordering_param_string == '') {
+				if (!empty($this->Params->sortBy))
+					common::setUserState('com_customtables.orderby_' . $this->Table->tableid, $this->ordering_processed_string);
+			}
 		}
 	}
 
