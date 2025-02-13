@@ -168,11 +168,6 @@ foreach ($this->allTables as $table) {
 					<div class="controls"><?php echo $this->form->getInput('defaultvalue'); ?></div>
 				</div>
 
-				<div class="control-group">
-					<div class="control-label"><?php echo $this->form->getLabel('allowordering'); ?></div>
-					<div class="controls"><?php echo $this->form->getInput('allowordering'); ?></div>
-				</div>
-
 				<div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
 					<div class="control-label"><?php echo $this->form->getLabel('valuerule'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('valuerule'); ?></div>

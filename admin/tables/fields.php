@@ -21,10 +21,8 @@ class CustomtablesTableFields extends Table
 {
 	var $id = null;
 	var $tableid = null;
-	var $allowordering = null;
 	var $defaultvalue = null;
 	var $fieldname = null;
-	//var $customfieldname = null;
 	var $fieldtitle = null;
 	var $description = null;
 	var $isrequired = null;
@@ -48,7 +46,8 @@ class CustomtablesTableFields extends Table
 	/**
 	 * Constructor
 	 *
-	 * @param object Database connector object
+	 * @param object $db Database connector object
+	 * @since 3.0.0
 	 */
 	function __construct(&$db)
 	{

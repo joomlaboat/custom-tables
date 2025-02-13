@@ -685,14 +685,12 @@ class Layouts
 
 			$result .= '<th>';
 
-			if ($field['allowordering'] && in_array($field['type'], $fieldtypes_allowed_to_orderby))
-
+			if (in_array($field['type'], $fieldtypes_allowed_to_orderby)) {
 				if (Fields::isVirtualField($field))
 					$result .= '{{ ' . $field['fieldname'] . '.title }}';
 				else
 					$result .= '{{ ' . $field['fieldname'] . '.label(true) }}';
-
-			else
+			} else
 				$result .= '{{ ' . $field['fieldname'] . '.title }}';
 
 			if ($addToolbar and in_array($field['type'], $fieldtypesWithSearch)) {

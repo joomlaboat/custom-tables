@@ -251,7 +251,6 @@ class IntegrityCoreTables extends IntegrityChecks
 		$fields_projected_fields[] = ['name' => 'fieldtitle', 'ct_fieldtype' => 'string', 'ct_typeparams' => 255, 'mysql_type' => 'VARCHAR(255) NULL', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'multilang' => true];
 		$fields_projected_fields[] = ['name' => 'description', 'ct_fieldtype' => 'text', 'mysql_type' => 'TEXT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL', 'multilang' => true];
 
-		$fields_projected_fields[] = ['name' => 'allowordering', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
 		$fields_projected_fields[] = ['name' => 'isrequired', 'ct_fieldtype' => '_published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
 		$fields_projected_fields[] = ['name' => 'isdisabled', 'ct_fieldtype' => 'checkbox', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 0', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 0'];
 		$fields_projected_fields[] = ['name' => 'alwaysupdatevalue', 'ct_fieldtype' => 'checkbox', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 0', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 0', 'comment' => 'Update default value every time record is edited.'];

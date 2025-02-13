@@ -223,17 +223,6 @@
 			   required="false"
 			   filter="STRING"
 			   autocomplete="on"/>
-		<!-- Allowordering Field. Type: Radio. (joomla)-->
-		<field type="radio"
-			   name="allowordering"
-			   label="COM_CUSTOMTABLES_FIELDS_ALLOWORDERING_LABEL"
-			   description="COM_CUSTOMTABLES_FIELDS_ALLOWORDERING_DESCRIPTION"
-			   class="btn-group btn-group-yesno"
-			   default="1">
-			<!-- Option Set.-->
-			<option value="1">COM_CUSTOMTABLES_FIELDS_YES</option>
-			<option value="0">COM_CUSTOMTABLES_FIELDS_NO</option>
-		</field>
 		<!-- Valuerule Field. Type: Text. (joomla)-->
 		<field type="text"
 			   name="valuerule"

@@ -243,7 +243,6 @@ class TableHelper
 				$data['tableid'] = $ct->Table->tableid;
 				$data['fieldname'] = $field->column_name;//strtolower();
 				$data['fieldtitle'] = ucwords(strtolower($field->column_name));
-				$data['allowordering'] = true;
 				$data['type'] = $ct_field_type['type'];
 
 				if (key_exists('typeparams', $ct_field_type))
@@ -351,8 +350,7 @@ class TableHelper
 		}
 
 		//Copy Fields
-		//'customfieldname',
-		$fields = array('fieldname', 'allowordering', 'isrequired', 'isdisabled', 'alwaysupdatevalue', 'parentid', 'ordering', 'defaultvalue', 'type', 'typeparams', 'valuerule', 'valuerulecaption',
+		$fields = array('fieldname', 'isrequired', 'isdisabled', 'alwaysupdatevalue', 'parentid', 'ordering', 'defaultvalue', 'type', 'typeparams', 'valuerule', 'valuerulecaption',
 			'created_by', 'modified_by', 'created', 'modified');
 
 		$moreThanOneLanguage = false;

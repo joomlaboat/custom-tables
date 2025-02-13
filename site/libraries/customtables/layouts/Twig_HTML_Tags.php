@@ -220,7 +220,7 @@ class Twig_HTML_Tags
 			return '';
 
 		$pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '');
-		return common::translate('COM_CUSTOMTABLES_SHOW') . ': ' . $pagination->getLimitBox($the_step);
+		return $pagination->getLimitBox($the_step);
 	}
 
 	/**
