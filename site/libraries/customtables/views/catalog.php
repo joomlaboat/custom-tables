@@ -116,10 +116,8 @@ class Catalog
 
 				if (!is_null($this->ct->Params->pageLayout) and $this->ct->Params->pageLayout != '') {
 
-					if (empty($this->ct->Params->pageLayout)) {
-						$this->ct->errors[] = 'Catalog Layout not selected.';
-						return '';
-					}
+					if (empty($this->ct->Params->pageLayout))
+						throw new Exception('Catalog Layout not selected.');
 
 					$pageLayout = $Layouts->getLayout($this->ct->Params->pageLayout);//Get Layout by name
 					if (isset($Layouts->layoutId)) {
@@ -134,8 +132,7 @@ class Catalog
 						$pageLayoutNameString = $this->ct->Params->pageLayout;
 						$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 					} else {
-						$this->ct->errors[] = 'Layout "' . $this->ct->Params->pageLayout . '" not found.';
-						return '';
+						throw new Exception('Layout "' . $this->ct->Params->pageLayout . '" not found.');
 					}
 
 				} elseif (!is_null($this->ct->Params->itemLayout) and $this->ct->Params->itemLayout != '') {
@@ -178,7 +175,7 @@ class Catalog
 		try {
 			$twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
 			if (count($this->ct->errors) > 0)
-				throw new Exception(implode(', ', $this->ct->errors));
+				throw new Exception('TwigProcessor: ' . implode(', ', $this->ct->errors));
 
 			$pageLayout = $twig->process();
 		} catch (Exception $e) {
@@ -186,7 +183,7 @@ class Catalog
 		}
 
 		if ($twig->errorMessage !== null)
-			throw new Exception(implode(', ', $this->ct->errors));
+			throw new Exception('errorMessage: ' . implode(', ', $this->ct->errors));
 
 		if ($this->ct->Env->clean == 0) {
 

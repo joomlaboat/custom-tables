@@ -12,7 +12,7 @@ namespace CustomTables;
 
 class OrderingHTML
 {
-	public static function getOrderBox(Ordering &$ordering): string
+	public static function getOrderBox(Ordering $ordering): string
 	{
 		$lists = $ordering->getSortByFields();
 		$order_values = $lists->values;

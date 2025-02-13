@@ -63,14 +63,10 @@ class TwigProcessor
 		$pos1 = strpos($layoutContent, $tag1);
 
 		try {
-			if (!class_exists('Twig\Loader\ArrayLoader')) {//
-				$this->errorMessage = 'Twig not loaded. Go to Global Configuration/ Custom Tables Configuration to enable it.';
-				common::enqueueMessage($this->errorMessage);
-				return;
-			}
+			if (!class_exists('Twig\Loader\ArrayLoader'))
+				throw new Exception('Twig not loaded. Go to Global Configuration/ Custom Tables Configuration to enable it.');
 		} catch (Exception $e) {
-			echo $e->getMessage();
-			return;
+			throw new Exception($e->getMessage());
 		}
 
 		$this->itemLayoutLineStart = 0;
@@ -198,6 +194,7 @@ class TwigProcessor
 	 * @throws SyntaxError
 	 * @throws RuntimeError
 	 * @throws LoaderError
+	 * @throws Exception
 	 * @since 3.2.2
 	 */
 	public function process(?array $row = null): string
@@ -227,14 +224,11 @@ class TwigProcessor
 					$result = @$this->twig->render($this->pageLayoutName, $this->variables);
 				} catch (Exception $e) {
 					$msg = $e->getMessage();// . $e->getFile() . $e->getLine();// . $e->getTraceAsString();
-					$this->errorMessage = $msg;
-					$this->ct->errors[] = $msg;
 
 					if ($this->pageLayoutLink !== null)
 						$msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
 
 					throw new Exception($msg);
-					//return 'Error: ' . $msg;
 				}
 			}
 		}
@@ -256,8 +250,6 @@ class TwigProcessor
 						try {
 							$row_result = @$this->twig->render($this->itemLayoutName, $this->variables);
 						} catch (Exception $e) {
-							$this->errorMessage = $e->getMessage();
-
 							$msg = $e->getMessage();
 							$pos = strpos($msg, '" at line ');
 

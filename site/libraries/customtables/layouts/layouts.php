@@ -217,10 +217,12 @@ class Layouts
 		*/
 
 		$twig = new TwigProcessor($this->ct, $content);
-		$content = $twig->process($this->ct->Table->record);
 
-		if ($twig->errorMessage !== null)
-			$this->ct->errors[] = $twig->errorMessage;
+		try {
+			$content = $twig->process($this->ct->Table->record);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 
 		if ($applyContentPlugins and $this->ct->Params->allowContentPlugins)
 			$content = CTMiscHelper::applyContentPlugins($content);
@@ -1210,10 +1212,8 @@ class Layouts
 		if ($this->ct->Table === null) {
 			$this->ct->getTable($this->ct->Params->tableName);
 
-			if ($this->ct->Table === null) {
-				$this->ct->errors[] = 'Catalog View: Table not selected.';
-				return 'Catalog View: Table not selected.';
-			}
+			if ($this->ct->Table === null)
+				throw new Exception('Catalog View: Table not selected.');
 		}
 
 		//if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
@@ -1262,22 +1262,19 @@ class Layouts
 		$this->ct->LayoutVariables['layout_type'] = $this->layoutType;
 
 		// -------------------- Load Records
-		if (!$this->ct->getRecords()) {
-
-			if (defined('_JEXEC'))
-				$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
-
-			return 'CustomTables: Records not loaded.';
-		}
+		if (!$this->ct->getRecords())
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
 
 		// -------------------- Parse Layouts
 		$twig = new TwigProcessor($this->ct, $this->layoutCode, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
-		$pageLayout = $twig->process();
+
+		try {
+			$pageLayout = $twig->process();
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 
 		if (defined('_JEXEC')) {
-			if ($twig->errorMessage !== null)
-				$this->ct->errors[] = $twig->errorMessage;
-
 			if ($this->ct->Params->allowContentPlugins)
 				$pageLayout = CTMiscHelper::applyContentPlugins($pageLayout);
 		}
