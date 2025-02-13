@@ -43,7 +43,7 @@ try {
 	}
 
 } catch (Exception $e) {
-	$result = 'Error during the Catalog rendering: ' . $e->getMessage();
+	Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 }
 
 echo $result;

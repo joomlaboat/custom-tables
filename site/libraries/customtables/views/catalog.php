@@ -106,7 +106,7 @@ class Catalog
 			$this->ct->applyLimits($limit);
 
 		// --------------------- Layouts
-		
+
 		if ($layoutName === null) {
 			if ($this->ct->Env->frmt == 'csv') {
 				$pageLayout = $Layouts->createDefaultLayout_CSV($this->ct->Table->fields);
@@ -172,29 +172,21 @@ class Catalog
 			return $e->getMessage();
 		}
 
-		if (!$recordsLoaded) {
-			if (defined('_JEXEC'))
-				$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
-
-			return 'CustomTables: Records not loaded.';
-		}
-
-		$twig = null;
+		if (!$recordsLoaded)
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
 
 		try {
 			$twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
 			if (count($this->ct->errors) > 0)
-				return 'There is an error in rendering the catalog page:' . implode(', ', $this->ct->errors);
+				throw new Exception(implode(', ', $this->ct->errors));
 
 			$pageLayout = $twig->process();
 		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
+			throw new Exception($e->getMessage());
 		}
 
-		if ($twig->errorMessage !== null) {
-			$this->ct->errors[] = $twig->errorMessage;
-			return 'There is an error in rendering the catalog page :' . implode(', ', $this->ct->errors);
-		}
+		if ($twig->errorMessage !== null)
+			throw new Exception(implode(', ', $this->ct->errors));
 
 		if ($this->ct->Env->clean == 0) {
 

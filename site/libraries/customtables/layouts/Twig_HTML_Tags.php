@@ -234,7 +234,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Params->forceSortBy !== null and $this->ct->Params->forceSortBy != '')
 			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED');
 
-		return common::translate('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
+		return '';
 	}
 
 	/**

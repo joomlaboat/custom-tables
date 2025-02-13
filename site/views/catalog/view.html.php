@@ -99,7 +99,8 @@ class CustomTablesViewCatalog extends HtmlView
 			$content = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $content);
 			$code = 200;
 		} catch (Exception $e) {
-			$content = 'Error during the Catalog rendering: ' . $e->getMessage();
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			$content = '';//
 			$code = 500;
 		}
 

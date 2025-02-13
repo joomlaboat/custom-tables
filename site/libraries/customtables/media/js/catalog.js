@@ -148,7 +148,7 @@ function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 	runTheTask('refresh', tableid, recordId, ['refreshed'], false, false, ModuleId);
 }
 
-function ctCopyRecord(tableid, recordId, toolbarBoxId, ModuleId) {
+function ctCopyRecord(tableid, listing_id, toolbarBoxId, ModuleId) {
 	if (ctLinkLoading) return;
 
 	ctLinkLoading = true;
@@ -174,10 +174,9 @@ function ctCopyRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 
 function ctOrderChanged(objectValue, ModuleId) {
 	const current_url = esPrepareLink(['returnto', 'task', 'orderby'], []);
-	let returnto = btoa(current_url);
 
 	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
-	let addParams = ['task=setorderby', 'listing_id=' + listing_id, 'orderby=' + objectValue, 'returnto=' + returnTo];
+	let addParams = ['task=setorderby', 'orderby=' + objectValue, 'returnto=' + returnTo];
 
 	if (CTEditHelper.cmsName === 'Joomla') {
 		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
@@ -196,7 +195,7 @@ function ctLimitChanged(object, ModuleId) {
 
 	let returnTo = btoa(window.location.href);
 	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
-	let addParams = ['task=setlimit', 'listing_id=' + listing_id, 'limit=' + object.value, 'returnto=' + returnTo];
+	let addParams = ['task=setlimit', 'limit=' + object.value, 'returnto=' + returnTo];
 
 	if (CTEditHelper.cmsName === 'Joomla') {
 		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
@@ -427,10 +426,7 @@ function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, 
 			document.getElementById(objectNameOff).value = obj_checkbox_off.value;
 
 			let objectName = ctFieldInputPrefix + ids[i] + "_" + fieldname_;
-			if (parseInt(obj_checkbox_off.value) === 1)
-				document.getElementById(objectName).checked = true;
-			else
-				document.getElementById(objectName).checked = false;
+			document.getElementById(objectName).checked = parseInt(obj_checkbox_off.value) === 1;
 
 			ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, ids[i], postfix, ModuleId);
 		}
@@ -444,7 +440,7 @@ function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, 
 			let obj = document.getElementById(objectName);
 			obj.value = value;
 			ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, ids[i], postfix, ModuleId);
-			if (obj.dataset.type == "sqljoin") {
+			if (obj.dataset.type === "sqljoin") {
 
 				let tableid = obj.dataset.tableid;
 				let table_object = document.getElementById("ctTable_" + tableid);
@@ -525,9 +521,9 @@ function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, pos
 					return console.error(e);
 				}
 
-				if (response.status == "saved") {
+				if (response.status === "saved") {
 					obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
-				} else if (response.status == "error") {
+				} else if (response.status === "error") {
 					obj.className = "ct_checkmark_err";
 					alert(response.message);
 				} else {
