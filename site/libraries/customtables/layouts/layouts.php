@@ -887,7 +887,7 @@ class Layouts
 		} elseif ($task == 'createuser') {
 			return $this->doTask_createuser();
 		}
-		return ['success' => false, 'message' => 'Unknown task', 'short' => 'error'];
+		return ['success' => false, 'message' => 'Unknown task', 'short' => 'unknown'];
 	}
 
 	/**
@@ -1317,7 +1317,6 @@ class Layouts
 
 		if ($this->ct->Params->allowContentPlugins)
 			$layoutDetailsContent = CTMiscHelper::applyContentPlugins($layoutDetailsContent);
-
 
 		if (!is_null($this->ct->Table->record)) {
 			//Save view log

@@ -18,8 +18,8 @@ use Exception;
 class Catalog
 {
 	var CT $ct;
-	var string $layoutCodeCSS;
-	var string $layoutCodeJS;
+	var ?string $layoutCodeCSS;
+	var ?string $layoutCodeJS;
 
 	function __construct(CT &$ct)
 	{
@@ -37,10 +37,8 @@ class Catalog
 		// --------------------- Layouts
 		$Layouts = new Layouts($this->ct);
 		$Layouts->layoutType = 0;
-		$itemLayout = '';
 		$pageLayoutNameString = null;
 		$pageLayoutLink = null;
-		$itemLayoutNameString = null;
 
 		if ($layoutName === '')
 			$layoutName = null;
@@ -50,6 +48,9 @@ class Catalog
 			if (isset($Layouts->layoutId)) {
 				$pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
 				$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+
+				$this->layoutCodeCSS = $Layouts->layoutCodeCSS;
+				$this->layoutCodeJS = $Layouts->layoutCodeJS;
 			} else {
 				throw new Exception('Layout "' . $layoutName . '" not found.');
 			}
@@ -122,12 +123,8 @@ class Catalog
 					$pageLayout = $Layouts->getLayout($this->ct->Params->pageLayout);//Get Layout by name
 					if (isset($Layouts->layoutId)) {
 
-						if (!empty($Layouts->layoutCodeCSS)) {
-							$this->layoutCodeCSS = $Layouts->layoutCodeCSS;
-						}
-
-						if (!empty($Layouts->layoutCodeJS))
-							$this->layoutCodeJS = $Layouts->layoutCodeJS;
+						$this->layoutCodeCSS = $Layouts->layoutCodeCSS;
+						$this->layoutCodeJS = $Layouts->layoutCodeJS;
 
 						$pageLayoutNameString = $this->ct->Params->pageLayout;
 						$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;

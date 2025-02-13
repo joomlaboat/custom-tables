@@ -26,6 +26,7 @@ class CustomTablesViewCatalog extends HtmlView
 	var CT $ct;
 	var string $listing_id;
 	var Catalog $catalog;
+	var ?string $content;
 
 	function display($tpl = null)
 	{
@@ -95,12 +96,11 @@ class CustomTablesViewCatalog extends HtmlView
 		$this->catalog = new Catalog($this->ct);
 
 		try {
-			$content = $this->catalog->render($this->ct->Params->pageLayout);
-			$content = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $content);
+			$this->content = $this->catalog->render($this->ct->Params->pageLayout);
 			$code = 200;
 		} catch (Exception $e) {
 			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-			$content = '';//
+			$this->content = '';
 			$code = 500;
 		}
 
@@ -113,10 +113,11 @@ class CustomTablesViewCatalog extends HtmlView
 
 		if ($this->ct->Env->frmt === '' or $this->ct->Env->frmt === 'html') {
 			parent::display($tpl);
-			return true;
 		} else {
-			CTMiscHelper::fireFormattedOutput($content, $this->ct->Env->frmt, $this->ct->Params->pageTitle, $code);
+			$this->content = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $this->content);
+			CTMiscHelper::fireFormattedOutput($this->content, $this->ct->Env->frmt, $this->ct->Params->pageTitle, $code);
 		}
+		return true;
 	}
 
 	/**

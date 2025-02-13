@@ -373,13 +373,6 @@ function ctToolBarDO(task, tableid, ModuleId) {
 	const toolbarBoxId = 'esToolBar_' + task + '_box_' + tableid;
 	document.getElementById(toolbarBoxId).style.visibility = 'hidden';
 
-	//let element_tableid = "ctTable_" + tableid;
-	//let tr_object = document.getElementById(element_tableid);
-
-	//let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
-
-	//if (tr_object) {
-
 	for (let i = 0; i < elements.length; i++) {
 		let listing_id = elements[i];
 		let accept_responses = [];

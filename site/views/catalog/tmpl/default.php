@@ -12,7 +12,6 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
-use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
@@ -30,8 +29,6 @@ if ($this->ct->Env->frmt == 'html') {
 }
 
 try {
-	$result = $this->catalog->render($this->ct->Params->pageLayout);
-
 	if (empty($this->ct->Params->listing_id)) {
 		common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
@@ -46,10 +43,10 @@ try {
 	Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 }
 
-echo $result;
+echo $this->content;
 
 if (common::inputGetInt('clean', 0) == 1 or !empty(common::inputGetCmd('listing_id')))
-	die;//Clean exit, single record loaded.
+	exit;//Clean exit, single record loaded.
 
 if (count($this->catalog->ct->errors)) {
 	Factory::getApplication()->enqueueMessage(implode(',', $this->catalog->ct->errors), 'error');
@@ -80,6 +77,6 @@ if ($this->ct->Env->frmt == 'html') {
 </div>
 <!-- end of the modal -->';
 	} else {
-		die;//Render single record only
+		exit;//Render single record only
 	}
 }
