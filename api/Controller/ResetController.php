@@ -14,9 +14,7 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\User;
-use Joomla\CMS\Mail\Mail;
 use Joomla\CMS\User\UserHelper;
 
 class ResetController

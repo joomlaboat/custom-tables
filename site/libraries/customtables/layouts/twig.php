@@ -30,7 +30,6 @@ class TwigProcessor
 	var string $recordBlockReplaceCode;
 	var bool $DoHTMLSpecialChars;
 	var bool $getEditFieldNamesOnly;
-	var ?string $errorMessage;
 	var string $pageLayoutName;
 	var ?string $pageLayoutLink;
 	var string $itemLayoutName;

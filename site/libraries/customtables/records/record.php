@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
 use Exception;
 use CustomTables\CustomPHP;
 use CustomTables\ctProHelpers;
