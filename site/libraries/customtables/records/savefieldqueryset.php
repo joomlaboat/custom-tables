@@ -720,16 +720,12 @@ class SaveFieldQuerySet
 		if ($uid != 0) {
 
 			$email = $this->ct->Env->user->email . '';
-			if ($email != '') {
-				$this->ct->messages[] = common::translate('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS');
-				return false; //all good, user already assigned.
-			}
+			if ($email != '')
+				throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS'));
 		}
 
-		if (count($field->params) < 3) {
-			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_USERACCOUNT_PARAMCOUNT_ERROR');
-			return false;
-		}
+		if (count($field->params) < 3)
+			throw new Exception(common::translate('COM_CUSTOMTABLES_USERACCOUNT_PARAMCOUNT_ERROR'));
 
 		//Try to create user
 		$new_parts = array();
@@ -760,16 +756,12 @@ class SaveFieldQuerySet
 		$user_name = $new_parts[1];
 		$user_email = $new_parts[2];
 
-		if ($user_groups == '') {
-			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_USERACCOUNT_GROUPFIELD_NOT_SET');
-			return false;
-		} elseif ($user_name == '') {
-			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET');
-			return false;
-		} elseif ($user_email == '') {
-			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_USERACCOUNT_EMAIL_NOT_SET');
-			return false;
-		}
+		if ($user_groups == '')
+			throw new Exception(common::translate('COM_CUSTOMTABLES_USERACCOUNT_GROUPFIELD_NOT_SET'));
+		elseif ($user_name == '')
+			throw new Exception(common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET'));
+		elseif ($user_email == '')
+			throw new Exception(common::translate('COM_CUSTOMTABLES_USERACCOUNT_EMAIL_NOT_SET'));
 
 		$unique_users = false;
 		if (isset($new_parts[4]) and $new_parts[4] == 'unique')
@@ -785,14 +777,20 @@ class SaveFieldQuerySet
 
 				$this->ct->messages[] = common::translate('COM_CUSTOMTABLES_RECORD_USER_UPDATED');
 			} else {
-				$this->ct->errors[] =
+				$msg =
 					common::translate('COM_CUSTOMTABLES_ERROR_USER_WITH_EMAIL')
 					. ' "' . $user_email . '" '
 					. common::translate('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS');
+
+				throw new Exception($msg);
 			}
 		} else {
-			CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $user_email, $user_name,
-				$user_groups, $this->ct->Table->record[$this->ct->Table->realidfieldname], $field->realfieldname);
+			try {
+				CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $user_email, $user_name,
+					$user_groups, $this->ct->Table->record[$this->ct->Table->realidfieldname], $field->realfieldname);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
 		}
 		return true;
 	}

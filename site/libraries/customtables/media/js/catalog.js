@@ -14,29 +14,46 @@ function ctCreateUser(msg, listing_id, toolbarBoxId, ModuleId) {
 		document.getElementById(toolbarBoxId).innerHTML = '';
 
 		let returnTo = btoa(window.location.href);
-		let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
+		let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
+		let addParams = ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnTo];
 
-		if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=createuser', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnTo, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnTo], link);
-
-		window.location.href = link;
+		if (CTEditHelper.cmsName === 'Joomla') {
+			if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
+				addParams.push('option=com_customtables');
+				addParams.push('view=catalog');
+				addParams.push('ModuleId=' + ModuleId);
+			} else {
+				addParams.push('Itemid=' + CTEditHelper.itemId);
+			}
+		}
+		window.location.href = esPrepareLink(deleteParams, addParams);
 	}
 }
 
 function ctResetPassword(msg, listing_id, toolbarBoxId, ModuleId) {
 	if (confirm(msg)) {
 		document.getElementById(toolbarBoxId).innerHTML = '';
-		let returnto = btoa(window.location.href);
-		let link;
 
-		if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], ''); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + listing_id, 'returnto=' + returnto], '');
+		let returnTo = btoa(window.location.href);
+		let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
+		let addParams = ['task=resetpassword', 'listing_id=' + listing_id, 'returnto=' + returnTo];
 
-		window.location.href = link;
+		if (CTEditHelper.cmsName === 'Joomla') {
+			if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
+				addParams.push('option=com_customtables');
+				addParams.push('view=catalog');
+				addParams.push('ModuleId=' + ModuleId);
+			} else {
+				addParams.push('Itemid=' + CTEditHelper.itemId);
+			}
+		}
+		window.location.href = esPrepareLink(deleteParams, addParams);
 	}
 }
 
-function esPrepareLink(deleteParams, addParams, custom_link) {
+function esPrepareLink(deleteParams, addParams) {
 
-	let link = (custom_link !== '' ? custom_link : window.location.href);
+	let link = window.location.href;
 
 	const pair = link.split('#');
 	link = pair[0];
@@ -74,16 +91,16 @@ function runTheTask(task, tableid, recordId, responses, last, reload, ModuleId) 
 	let params = 'task=' + task + '&listing_id=' + recordId;
 
 	if (CTEditHelper.cmsName === 'Joomla') {
-		if (ModuleId === null)
-			params += '&Itemid=' + CTEditHelper.itemId;
-		else
+		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0)
 			params += '&ModuleId=' + ModuleId;
+		else
+			params += '&Itemid=' + CTEditHelper.itemId;
 	}
 
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
 
 	let addParams = ['clean=1'];
-	let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], addParams, window.location.href);
+	let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], addParams);
 
 	console.warn(url);
 
@@ -104,12 +121,8 @@ function runTheTask(task, tableid, recordId, responses, last, reload, ModuleId) 
 						let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
 						if (task === 'delete')
 							table_object.deleteRow(index);
-						else {
-							//console.log("tableid", tableid)
-							//console.log("recordId", recordId)
-							//console.log("index", index)
+						else
 							ctCatalogUpdate(tableid, recordId, index, ModuleId);
-						}
 					} else {
 						window.location.reload();
 					}
@@ -143,51 +156,58 @@ function ctCopyRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 	if (document.getElementById(toolbarBoxId))
 		document.getElementById(toolbarBoxId).innerHTML = '';
 
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog';
+	let returnTo = btoa(window.location.href);
+	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
+	let addParams = ['task=copy', 'listing_id=' + listing_id, 'returnto=' + returnTo];
 
-	if (ModuleId === null)
-		link += '&Itemid=' + CTEditHelper.itemId;
-	else
-		link += '&ModuleId=' + ModuleId;
-
-	let returnto = btoa(window.location.href);
-	let addParams = ['task=copy', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId]
-
-	if (ModuleId !== null)
-		addParams.push('ModuleId=' + ModuleId);
-
-	link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], addParams, link);
-
-	window.location.href = link;
+	if (CTEditHelper.cmsName === 'Joomla') {
+		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
+			addParams.push('option=com_customtables');
+			addParams.push('view=catalog');
+			addParams.push('ModuleId=' + ModuleId);
+		} else {
+			addParams.push('Itemid=' + CTEditHelper.itemId);
+		}
+	}
+	window.location.href = esPrepareLink(deleteParams, addParams);
 }
 
 function ctOrderChanged(objectValue, ModuleId) {
-	const current_url = esPrepareLink(['returnto', 'task', 'orderby'], [], '');
+	const current_url = esPrepareLink(['returnto', 'task', 'orderby'], []);
 	let returnto = btoa(current_url);
 
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog';
+	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
+	let addParams = ['task=setorderby', 'listing_id=' + listing_id, 'orderby=' + objectValue, 'returnto=' + returnTo];
 
-	if (ModuleId === null)
-		link += '&Itemid=' + CTEditHelper.itemId;
-	else
-		link += '&ModuleId=' + ModuleId;
+	if (CTEditHelper.cmsName === 'Joomla') {
+		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
+			addParams.push('option=com_customtables');
+			addParams.push('view=catalog');
+			addParams.push('ModuleId=' + ModuleId);
+		} else {
+			addParams.push('Itemid=' + CTEditHelper.itemId);
+		}
+	}
 
-	link = esPrepareLink(['task'], ['task=setorderby', 'orderby=' + objectValue, 'returnto=' + returnto], link);
-	window.location.href = link;
+	window.location.href = esPrepareLink(deleteParams, addParams);
 }
 
 function ctLimitChanged(object, ModuleId) {
-	const current_url = esPrepareLink(['returnto', 'task', 'limit'], [], '');
-	let returnto = btoa(current_url);
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog';
 
-	if (ModuleId === null)
-		link += '&Itemid=' + CTEditHelper.itemId;
-	else
-		link += '&ModuleId=' + ModuleId;
+	let returnTo = btoa(window.location.href);
+	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
+	let addParams = ['task=setlimit', 'listing_id=' + listing_id, 'limit=' + object.value, 'returnto=' + returnTo];
 
-	link = esPrepareLink(['task'], ['task=setlimit', 'limit=' + object.value, 'returnto=' + returnto], link);
-	window.location.href = link;
+	if (CTEditHelper.cmsName === 'Joomla') {
+		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
+			addParams.push('option=com_customtables');
+			addParams.push('view=catalog');
+			addParams.push('ModuleId=' + ModuleId);
+		} else {
+			addParams.push('Itemid=' + CTEditHelper.itemId);
+		}
+	}
+	window.location.href = esPrepareLink(deleteParams, addParams);
 }
 
 function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
@@ -279,26 +299,12 @@ function ctSearchBoxDo() {
 		}
 	}
 
-	// Check if a Joomla class is defined
-	/*
-	let link;
-
-	if (typeof Joomla !== 'undefined') {
-		link = window.location.href;
-		link = esPrepareLink(deleteParams, addParams, window.location.href)
-
-		link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
-	} else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
-		link = window.location.href;
-	}
-	*/
-
-	let whereList = [];
+	let addParams = [];
 
 	if (w.length > 0)
-		whereList.push("where=" + encodeURIComponent(w.join(" and ")));
+		addParams.push("where=" + encodeURIComponent(w.join(" and ")));
 
-	window.location.href = esPrepareLink(['where', 'task', "listing_id", 'returnto'], whereList, window.location.href);
+	window.location.href = esPrepareLink(['where', 'task', "listing_id", 'returnto'], addParams);
 }
 
 function ctSearchReset() {
@@ -306,9 +312,7 @@ function ctSearchReset() {
 
 	ctLinkLoading = true;
 
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
-	link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], [], link);
-	window.location.href = link;
+	window.location.href = esPrepareLink(['where', 'task', "listing_id", 'returnto'], []);
 }
 
 function esCheckboxAllClicked(tableid) {
@@ -381,20 +385,13 @@ function ctToolBarDO(task, tableid, ModuleId) {
 
 	for (let i = 0; i < elements.length; i++) {
 		let listing_id = elements[i];
-		//let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'listing_id=' + listing_id, 'clean=1', 'tmpl=component'], link);
-
 		let accept_responses = [];
+
 		if (task === 'refresh') accept_responses = ['refreshed']; else if (task === 'publish' || task === 'unpublish') accept_responses = ['published', 'unpublished']; else if (task === 'delete') accept_responses = ['published', 'deleted'];
 
 		let last = i === elements.length - 1;
 		runTheTask(task, tableid, listing_id, accept_responses, last, false, ModuleId);
 	}
-
-	//} else {
-	//	let returnto = btoa(window.location.href);
-	//	link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'ids=' + elements.toString(), 'returnto=' + returnto], link);
-	//	window.location.href = link;
-	//}
 }
 
 //https://stackoverflow.com/a/1634841
@@ -487,14 +484,26 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
 function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId, valueParam) {
 
 	const fieldname = fieldname_.split('_')[0];
-	const url = ctWebsiteRoot + 'index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' + Itemid;
+
+	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
+	let addParams = [];
+
+	if (CTEditHelper.cmsName === 'Joomla') {
+		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
+			addParams.push('option=com_customtables');
+			addParams.push('view=edititem');
+			addParams.push('ModuleId=' + ModuleId);
+		} else {
+			addParams.push('Itemid=' + CTEditHelper.itemId);
+		}
+	}
+
+	const url = esPrepareLink(deleteParams, addParams);
+
 	let params = "";
 
 	params += valueParam;
 	params += "&task=save";
-	params += "&Itemid=" + Itemid;
-	if (ModuleId !== 0) params += "&ModuleId=" + ModuleId;
-
 	params += "&listing_id=" + record_id;
 
 	const obj = document.getElementById(ctFieldInputPrefix + record_id + "_" + fieldname + postfix + "_div");
@@ -539,18 +548,22 @@ function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, pos
 function ctCatalogUpdate(tableid, recordsId, row_index, ModuleId) {
 
 	let element_tableid = "ctTable_" + tableid;
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog';
 
-	if (ModuleId === null)
-		link += '&Itemid=' + CTEditHelper.itemId;
-	else
-		link += '&ModuleId=' + ModuleId;
-
+	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view', 'clean', 'component', 'frmt'];
 	let addParams = ['listing_id=' + recordsId, 'number=' + row_index, 'clean=1'];
 
-	let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], addParams, link);
+	if (CTEditHelper.cmsName === 'Joomla') {
+		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
+			addParams.push('option=com_customtables');
+			addParams.push('view=catalog');
+			addParams.push('ModuleId=' + ModuleId);
+		} else {
+			addParams.push('Itemid=' + CTEditHelper.itemId);
+		}
+	}
 
-	console.log("url", url)
+	let url = esPrepareLink(deleteParams, addParams);
+
 	let params = "";
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
 
@@ -614,8 +627,20 @@ function ctCatalogOnDrop(event, ModuleId) {
 		let index;
 		if (table_object) index = findRowIndexById("ctTable_" + to_parts[1], element_tableid_tr);
 
-		let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + CTEditHelper.itemId;
-		let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], ['task=copycontent', 'from=' + from, 'to=' + to, 'clean=1', 'tmpl=component', 'frmt=json'], link);
+		let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view', 'clean', 'component', 'frmt'];
+		let addParams = ['task=copycontent', 'from=' + from, 'to=' + to, 'clean=1', 'tmpl=component', 'frmt=json'];
+
+		if (CTEditHelper.cmsName === 'Joomla') {
+			if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
+				addParams.push('option=com_customtables');
+				addParams.push('view=catalog');
+				addParams.push('ModuleId=' + ModuleId);
+			} else {
+				addParams.push('Itemid=' + CTEditHelper.itemId);
+			}
+		}
+
+		let url = esPrepareLink(deleteParams, addParams);
 
 		fetch(url)
 			.then(r => r.json())

@@ -953,6 +953,16 @@ class Layouts
 						$listing_ids = [$listing_id];
 				}
 			}
+
+			if (count($listing_ids) == 0) {
+				if (common::inputGetCmd('listing_id', null) !== null) {
+					$listing_id_ = common::inputGetCmd('listing_id', null);
+					$listing_id = trim(preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id_));
+
+					if ($listing_id !== '')
+						$listing_ids = [$listing_id];
+				}
+			}
 		}
 		return $listing_ids;
 	}
@@ -1152,6 +1162,7 @@ class Layouts
 		if (count($listing_ids) > 0) {
 
 			$count = 0;
+			$record = new record($this->ct);
 
 			foreach ($listing_ids as $listing_id) {
 				try {
@@ -1166,8 +1177,14 @@ class Layouts
 					$saveField = new SaveFieldQuerySet($this->ct, $this->ct->Table->record, false);
 					$field = new Field($this->ct, $fieldRow);
 
-					if (!$saveField->Try2CreateUserAccount($field))
-						return ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'short' => 'error'];
+					try {
+						$saveField->Try2CreateUserAccount($field);
+					} catch (Exception $e) {
+						return ['success' => false, 'message' => common::translate('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED')
+							. ' ' . $e->getMessage(), 'short' => 'error'];
+					}
+
+					$record->refresh($this->ct->Params->listing_id);
 
 					$count += 1;
 				} catch (Exception $e) {

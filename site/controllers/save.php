@@ -24,6 +24,9 @@ if ($task !== null and $task !== 'new') {
 		if (isset($result['html']))
 			echo $result['html'];
 
+		if (!empty($result['message']))
+			common::enqueueMessage($result['message'], $result['success'] ? 'success' : 'error');
+
 		parent::display();
 	}
 } else {

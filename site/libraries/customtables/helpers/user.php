@@ -261,25 +261,19 @@ class CTUser
 	 */
 	public static function CreateUser(string $realtablename, string $realidfieldname, string $email, string $name, string $usergroups, string $listing_id, string $useridfieldname): bool
 	{
-		if ($name == '') {
-			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET'));
-			return false;
-		}
+		if ($name == '')
+			throw new Exception(common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET'));
 
 		$msg = '';
 		$password = strtolower(JUserHelper::genRandomPassword());
 
-		if (!@CTMiscHelper::checkEmail($email)) {
-			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"');
-			return false;
-		}
+		if (!@CTMiscHelper::checkEmail($email))
+			throw new Exception(common::translate('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"');
 
 		$realUserId = CTUser::CreateUserAccount($name, $email, $password, $email, $usergroups, $msg);
 
-		if ($msg != '') {
-			common::enqueueMessage($msg);
-			return false;
-		}
+		if ($msg != '')
+			throw new Exception($msg);
 
 		if ($realUserId !== null) {
 			CTUser::UpdateUserField($realtablename, $realidfieldname, $useridfieldname, $realUserId, $listing_id);
@@ -349,11 +343,10 @@ class CTUser
 
 		// Store the data.
 		if (!$user->save()) {
-
 			if (!CUSTOMTABLES_JOOMLA_MIN_4)
-				$msg = common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_SAVE_FAILED') . ': ' . $user->getError() ?? '';
+				$msg = $user->getError() ?? '';
 			else
-				$msg = common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_SAVE_FAILED') . ': ' . implode(',', $user->getErrors());
+				$msg = implode(',', $user->getErrors());
 
 			return null;
 		}

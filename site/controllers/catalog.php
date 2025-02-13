@@ -14,9 +14,7 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
-use CustomTables\Field;
 use CustomTables\CTUser;
-use CustomTables\SaveFieldQuerySet;
 
 $view = common::inputGetCmd('view');
 
@@ -37,10 +35,14 @@ if (in_array($task, $updatedTask)) {
 	if (isset($result['html']))
 		echo $result['html'];
 
-	if ($result['link'] !== null)
-		$this->setRedirect($result['link'], $result['message'], $result['success'] ? 'success' : 'error');
-	else
+	if ($result['link'] !== null) {
+		$this->setRedirect($result['link'], $result['message'] ?? null, $result['success'] ? 'success' : 'error');
+	} else {
+		if (!empty($result['message']))
+			common::enqueueMessage($result['message'], $result['success'] ? 'success' : 'error');
+
 		parent::display();
+	}
 
 } else {
 	//Check Authorization
