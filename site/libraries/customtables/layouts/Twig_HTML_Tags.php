@@ -230,7 +230,7 @@ class Twig_HTML_Tags
 				$CSS_Class = 'inputbox';
 		}
 
-		$result .= $this->getLimitBox($the_step, $CSS_Class);
+		$result .= $this->getLimitBox((int)$the_step, $CSS_Class);
 		return $result;
 	}
 
@@ -240,10 +240,9 @@ class Twig_HTML_Tags
 	 * @return  string   The HTML for the limit # input box.
 	 * @since   3.5.4
 	 */
-	protected function getLimitBox($the_step = 5, $CSS_Class)
+	protected function getLimitBox(int $the_step, string $CSS_Class)
 	{
 		$all = false;
-		$the_step = (int)$the_step;
 
 		if ($the_step < 1)
 			$the_step = 1;
