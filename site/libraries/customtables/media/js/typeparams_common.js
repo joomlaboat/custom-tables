@@ -112,7 +112,8 @@ function renderInput_Article(id, param, value, onchange) {
 	return result;
 }
 
-function renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) {
+function renderInputBox(id, param, vlu2, attributes, fieldTypeParametersList) {
+	let vlu = vlu2.replaceAll('"', '');
 	const param_att = param["@attributes"];
 	let result = '';
 	if (param_att.type != null) {
@@ -475,7 +476,7 @@ function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQ
 					v = '"' + v + '"';
 				}
 				params.push(v);
-				if (v !== "" && v != '[]')
+				if (v !== "" && v !== '[]')
 					count = i + 1; //to include all previous parameters even if they are empty
 			} else
 				break;
@@ -604,7 +605,7 @@ function renderInput_ImageSizeList(id, param, value, attributes) {
 
 	temp_imagesize_updateparent = attributes.replace('onchange="updateParamString(', '');
 	temp_imagesize_updateparent = temp_imagesize_updateparent.replace(');"', '');
-	temp_imagesize_updateparent = temp_imagesize_updateparent.replace(/[']/g, "");
+	temp_imagesize_updateparent = temp_imagesize_updateparent.replace(/'/g, "");
 	temp_imagesize_updateparent = temp_imagesize_updateparent.split(",");
 
 	result += '<input type="text" id="' + id + '" class="' + convertClassString('form-control') + '" data-type="imagesizelist" value="' + value + '" style="display:none;width:100%;" ' + attributes + '>';// '+onchange+'>';
@@ -666,6 +667,7 @@ function BuildImageSizeTable() {
 	value = value.replaceAll('****semicolon****', ';');
 
 	const value_array = value.split(";");
+	console.warn("value_array:", value_array)
 	let result = '';
 	let i;
 	let param = null;
@@ -700,6 +702,7 @@ function BuildImageSizeTable() {
 		for (let r = 0; r < count_list; r++) {
 			const values = value_array[r].split(',');
 
+			console.warn("values", values)
 			result += '<tr>';
 			for (i = 0; i < count_params; i++) {
 				param = temp_imagesizeparams[i];
@@ -708,6 +711,8 @@ function BuildImageSizeTable() {
 
 				if (values.length > i)
 					vlu = values[i];
+
+				console.warn("vlu", vlu)
 
 				let id = 'size_param_';
 
@@ -899,7 +904,7 @@ function updateFieldSelectOptionsDo(tableSelectElementId, fieldchild, selectedIn
 	let selectObject = document.getElementById(fieldchild);
 
 	while (selectObject.options.length > 0) {
-		selectObject.remove(0);
+		selectObject.remove();
 	}
 
 	if (selectedIndex !== 0) {
