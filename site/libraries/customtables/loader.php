@@ -256,11 +256,6 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	$pathDataTypes = $path . 'ordering' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'ordering.php');
 
-	if ($include_html) {
-		$pathDataTypes = $path . 'ordering' . DIRECTORY_SEPARATOR;
-		require_once($pathDataTypes . 'html.php');
-	}
-
 	$pathDataTypes = $path . 'records' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes . 'savefieldqueryset.php');
 	require_once($pathDataTypes . 'record.php');

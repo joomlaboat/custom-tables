@@ -202,6 +202,9 @@
 					   description="Display a text label before the dropdown menu."
 					   type="radio" default=""
 					   options="|No,true|Yes"/>
+
+				<param name="class" label="CSS Class" type="string" description="Name or names of CSS class(s)."
+					   example="registerButton"/>
 			</params>
 		</tag>
 
@@ -225,6 +228,9 @@
 					   description="Display a text label before the dropdown menu."
 					   type="radio" default=""
 					   options="|No,true|Yes"/>
+
+				<param name="class" label="CSS Class" type="string" description="Name or names of CSS class(s)."
+					   example="registerButton"/>
 			</params>
 		</tag>
 
