@@ -904,7 +904,7 @@ function updateFieldSelectOptionsDo(tableSelectElementId, fieldchild, selectedIn
 	let selectObject = document.getElementById(fieldchild);
 
 	while (selectObject.options.length > 0) {
-		selectObject.remove();
+		selectObject.remove(0);
 	}
 
 	if (selectedIndex !== 0) {

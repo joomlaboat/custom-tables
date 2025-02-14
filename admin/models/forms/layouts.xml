@@ -66,7 +66,7 @@
 		<field type="cttable"
 			   name="tableid"
 			   label="COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL"
-			   addfieldpath="/components/com_customtables/models/fields"
+			   addfieldpath="/components/com_customtables/fields"
 			   default="0"
 			   required="true"
 			   description="COM_CUSTOMTABLES_LAYOUTS_TABLEID_DESCRIPTION"

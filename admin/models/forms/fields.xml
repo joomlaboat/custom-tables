@@ -203,11 +203,12 @@
 		<field type="cttable"
 			   name="tableid"
 			   label="COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL"
+			   addfieldpath="/components/com_customtables/fields"
 			   default="null"
 			   required="true"
 			   key_field="id"
 			   value_field="tabletitle"
-			   addfieldpath="/components/com_customtables/models/fields"
+			   returnvalue="id"
 		>
 			<!-- No Manual Options Were Added In Field Settings.-->
 		</field>

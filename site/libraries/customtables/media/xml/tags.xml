@@ -103,24 +103,24 @@
 			 image="https://joomlaboat.com/images/components/ct/tags/search-box.png" wordpress="true">
 			<params>
 				<param type="field" name="field" label="Field(s)"
-					   description="Specify which table field(s) to search. For multiple fields, use comma separation (e.g., {{ html.search('firstname,lastname') }}).
+					   description="Specifies which table field(s) to search within. Use a comma to separate multiple fields. (e.g., {{ html.search('firstname,lastname') }}).
 					   When using 'Table Join (Lookup Table)' or 'Table Join List' fields, you can specify a rendering layout (e.g., {{ html.search('fieldname:layoutname') }})."
 					   repetitive="0"/>
 
 				<param type="string" name="cssclass" label="CSS Class"
-					   description="Add custom styling by specifying one or more CSS class names, separated by spaces (e.g., 'search-input highlighted')"/>
+					   description="Defines custom styling by specifying one or more CSS class names, separated by spaces (e.g., 'search-input highlighted')"/>
 
-				<param name="reload" label="On Change"
-					   description="For select boxes only: Choose whether to automatically reload the page when a new option is selected."
+				<param name="reload" label="Reload"
+					   description="For select boxes only: Determines whether the page reloads automatically when a new option is selected. "
 					   type="radio"
 					   default="" example="reload"
 					   options="|Do nothing,reload|Reload Page"/>
 
-				<param name="improved" label="Enhanced Select Box"
-					   description="Enable an advanced select box interface with built-in search functionality for easier option finding."
+				<param name="improved" label="In-list search"
+					   description="For large select boxes only: Enables an advanced dropdown with built-in search functionality for easier option selection."
 					   type="radio"
 					   default=""
-					   example="reload"
+					   example="standard"
 					   options="|Standard,improved|Improved"/>
 
 				<param name="match" label="Exact Match"
