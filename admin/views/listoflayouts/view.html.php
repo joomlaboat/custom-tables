@@ -193,7 +193,7 @@ class CustomtablesViewListoflayouts extends HtmlView
 			'document.config'];
 
 		$twig_catalog_tags = ['html.add', 'html.batch', 'html.recordcount', 'html.checkboxcount', 'html.batch', 'html.search', 'html.searchbutton', 'html.searchreset',
-			'html.toolbar', 'html.pagination', 'html.orderby', 'html.limit', 'html.recordlist', 'html.importcsv'];
+			'html.pagination', 'html.orderby', 'html.limit', 'html.recordlist', 'html.importcsv'];
 
 		$ct = new CT([], true);
 		$ct->getTable($row->tableid);
