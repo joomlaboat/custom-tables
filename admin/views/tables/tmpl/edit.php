@@ -135,7 +135,6 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 		?>
 
 		<?php
-		//if($this->ct->Env->advancedTagProcessor):
 
 		echo HTMLHelper::_('bootstrap.addTab', 'tablesTab', 'advanced', common::translate('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 
@@ -186,6 +185,22 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 					</div>
 				</div>
 
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('customidfieldtype'); ?></div>
+					<div class="controls">
+						<?php echo $this->form->getInput('customidfieldtype'); ?>
+						<p><?php echo common::translate($this->form->getField('customidfieldtype')->description); ?></p>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('primarykeypattern'); ?></div>
+					<div class="controls">
+						<?php echo $this->form->getInput('primarykeypattern'); ?>
+						<p><?php echo common::translate($this->form->getField('primarykeypattern')->description); ?></p>
+					</div>
+				</div>
+
 				<div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
 					<div class="control-label"><?php echo $this->form->getLabel('customidfieldtype'); ?></div>
 					<div class="controls">
@@ -206,17 +221,6 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 					</div>
 				</div>
 
-				<div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
-					<div class="control-label"><?php echo $this->form->getLabel('customfieldprefix'); ?></div>
-					<div class="controls">
-						<?php
-						if (!$this->ct->Env->advancedTagProcessor)
-							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
-						else
-							echo $this->form->getInput('customfieldprefix');
-						?>
-					</div>
-				</div>
 			</div>
 		</div>
 

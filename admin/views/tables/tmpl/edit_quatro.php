@@ -189,6 +189,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 							<p><?php echo common::translate($this->form->getField('customidfield')->description); ?></p>
 						</div>
 					</div>
+
 					<div class="control-group">
 						<div class="control-label"><?php echo $this->form->getLabel('customidfieldtype'); ?></div>
 						<div class="controls">
