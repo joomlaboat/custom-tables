@@ -9,13 +9,16 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
 
+$document = Factory::getApplication()->getDocument();
+
 if (CUSTOMTABLES_JOOMLA_MIN_4) {
-	$wa = $this->document->getWebAssetManager();
+	$wa = $document->getWebAssetManager();
 	$wa->useScript('keepalive')->useScript('form.validate');
 } else {
 	HTMLHelper::_('behavior.formvalidation');

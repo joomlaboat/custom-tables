@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die();
 
+use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 
 // Get the application

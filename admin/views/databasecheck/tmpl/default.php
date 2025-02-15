@@ -17,7 +17,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 
 //https://github.com/DmitryBaranovskiy/raphael/releases
 $document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/raphael.min.js"></script>');

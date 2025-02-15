@@ -12,8 +12,6 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
-
-use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
 
@@ -32,22 +30,23 @@ class CustomTablesViewAdminMenu extends HtmlView
 	 */
 	function display($tpl = null): void
 	{
-		parent::display($tpl);
-
 		// Set the document
-		$document = Factory::getDocument();
-		$this->setDocument($document);
+		$this->setMyDocument();
+
+		parent::display($tpl);
 	}
 
 	/**
 	 * Method to set up the document properties
 	 *
-	 * @param Document $document
 	 * @return void
+	 * @throws Exception
 	 * @since 3.2.9
 	 */
-	public function setDocument(Joomla\CMS\Document\Document $document): void
+	public function setMyDocument(): void
 	{
+		$document = Factory::getApplication()->getDocument();
+
 		// add dashboard style sheets
 		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
 

@@ -7,14 +7,14 @@
 	<authorUrl>https://joomlaboat.com</authorUrl>
 	<copyright>Copyright (C) 2018-2025 Ivan Komlev</copyright>
 	<license>GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html</license>
-	<version>3.5.4</version>
+	<version>3.5.5</version>
 	<description><![CDATA[
 		<h1>Custom Tables</h1>
 		<div style="clear: both;"></div>
 		<p>Personalized Database Tables for Joomla! This component creates custom tables with custom fields and shows it in front-end in following formats: Catalog, Detailed page, Edit form.</p>
 		<p>Created by <a href="https://joomlaboat.com" target="_blank">Ivan Komlev</a><br />
 		<small>Development started in 2010</small><br/>
-		<small>Current Version 3.5.4 (February 2025)</small>
+		<small>Current Version 3.5.5 (February 2025)</small>
 		</p>
 	]]></description>
 

@@ -66,6 +66,9 @@ class CustomtablesViewDataBaseCheck extends HtmlView
 			}
 		}
 
+		// Set the document
+		$this->setMyDocument();
+
 		if ($this->ct->Env->advancedTagProcessor) {
 			// Display the template
 			if (CUSTOMTABLES_JOOMLA_MIN_4) {
@@ -76,10 +79,6 @@ class CustomtablesViewDataBaseCheck extends HtmlView
 		} else {
 			echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
 		}
-
-		// Set the document
-		$document = Factory::getDocument();
-		$this->setDocument($document);
 	}
 
 	protected function addToolbar_4()
@@ -104,8 +103,14 @@ class CustomtablesViewDataBaseCheck extends HtmlView
 		);
 	}
 
-	public function setDocument(Joomla\CMS\Document\Document $document): void
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
+	public function setMyDocument(): void
 	{
+		$document = Factory::getApplication()->getDocument();
+
 		$document->setTitle(common::translate('COM_CUSTOMTABLES_DATABASECHECK'));
 		$document->addStyleSheet(common::UriRoot(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 	}

@@ -15,6 +15,7 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\Factory;
 
 class InputBox_multilingualtext extends BaseInputBox
 {
@@ -66,22 +67,29 @@ class InputBox_multilingualtext extends BaseInputBox
 
 			$result .= '<div id="' . $fieldname . '_div" class="multilangtext">';
 
-			if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] == 'rich') {
-				$result .= '<span class="language_label_rich">' . $lang->caption . '</span>';
+			if (defined('_JEXEC')) {
+				if ($this->field->params !== null and count($this->field->params) > 0 and $this->field->params[0] == 'rich') {
+					$result .= '<span class="language_label_rich">' . $lang->caption . '</span>';
 
-				$w = 500;
-				$h = 200;
-				$c = 0;
-				$l = 0;
+					$w = 500;
+					$h = 200;
+					$c = 0;
+					$l = 0;
 
-				$editor_name = $this->ct->app->get('editor');
-				$editor = Editor::getInstance($editor_name);
+					$editor_name = Factory::getApplication()->get('editor');
+					$editor = Editor::getInstance($editor_name);
 
-				$input = '<div>' . $editor->display($attributes['name'], $value, $w, $h, $c, $l) . '</div>';
-			} else {
+					$input = '<div>' . $editor->display($attributes['name'], $value, $w, $h, $c, $l) . '</div>';
+				} else {
+					$input = '<textarea ' . self::attributes2String($attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>'
+						. '<span class="language_label">' . $lang->caption . '</span>';
+				}
+			} elseif (defined('WPINC')) {
 				$input = '<textarea ' . self::attributes2String($attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>'
 					. '<span class="language_label">' . $lang->caption . '</span>';
 			}
+
+
 			$result .= '<div id="' . $fieldname . '_div" class="multilangtext">' . $input . '</div>';
 			$result .= '</div>';
 		}

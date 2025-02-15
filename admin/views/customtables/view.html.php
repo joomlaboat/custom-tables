@@ -49,15 +49,14 @@ class CustomTablesViewCustomTables extends HtmlView
 			throw new Exception(implode("\n", $errors), 500);
 		}
 
+		// Set the document
+		$this->setMyDocument();
+
 		// Display the template
 		if (CUSTOMTABLES_JOOMLA_MIN_4)
 			parent::display('quatro');
 		else
 			parent::display($tpl);
-
-		// Set the document
-		$document = Factory::getDocument();
-		$this->setDocument($document);
 	}
 
 	/**
@@ -81,8 +80,10 @@ class CustomTablesViewCustomTables extends HtmlView
 	 * @return void
 	 * @since 3.2.9
 	 */
-	public function setDocument(Joomla\CMS\Document\Document $document): void
+	public function setMyDocument(): void
 	{
+		$document = Factory::getApplication()->getDocument();
+
 		// add dashboard style sheets
 		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
 

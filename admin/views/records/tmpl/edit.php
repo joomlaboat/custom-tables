@@ -14,10 +14,12 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\Edit;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 if (CUSTOMTABLES_JOOMLA_MIN_4) {
-	$wa = $this->document->getWebAssetManager();
+	$document = Factory::getApplication()->getDocument();
+	$wa = $document->getWebAssetManager();
 	$wa->useScript('keepalive')->useScript('form.validate');
 } else {
 	HTMLHelper::_('behavior.formvalidation');

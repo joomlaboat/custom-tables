@@ -29,14 +29,15 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CTMiscHelper;
+use Joomla\CMS\Factory;
 
 common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 if (!empty($this->result['style']))
-	$this->ct->document->addCustomTag('<style>' . $this->result['style'] . '</style>');
+	Factory::getApplication()->getDocument()->addCustomTag('<style>' . $this->result['style'] . '</style>');
 
 if (!empty($this->result['script']))
-	$this->ct->document->addCustomTag('<script>' . $this->result['script'] . '</script>');
+	Factory::getApplication()->getDocument()->addCustomTag('<script>' . $this->result['script'] . '</script>');
 
 if ($this->ct->Env->frmt == 'csv') {
 	/**
@@ -45,7 +46,7 @@ if ($this->ct->Env->frmt == 'csv') {
 	 * - Encodes the content in UTF-16LE from UTF-8.
 	 * - Ensures a clean buffer by clearing any prior content.
 	 */
-	$filename = CTMiscHelper::makeNewFileName($this->ct->document->getTitle(), 'csv');
+	$filename = CTMiscHelper::makeNewFileName(Factory::getApplication()->getDocument()->getTitle(), 'csv');
 
 	if (ob_get_contents())
 		ob_end_clean();
@@ -62,7 +63,7 @@ if ($this->ct->Env->frmt == 'csv') {
 	 * - Sets headers for XML file download.
 	 * - Ensures a clean output buffer to prevent invalid content.
 	 */
-	$filename = CTMiscHelper::makeNewFileName($this->ct->document->getTitle(), 'xml');
+	$filename = CTMiscHelper::makeNewFileName(Factory::getApplication()->getDocument()->getTitle(), 'xml');
 
 	ob_end_clean();
 
@@ -93,10 +94,10 @@ if ($this->ct->Params->showPageHeading) {
 	 */
 	if (isset($this->ct->Params->pageClassSFX)) {
 		echo '<div class="page-header' . common::escape($this->ct->Params->pageClassSFX) . '"><h2 itemprop="headline">'
-			. common::translate($this->ct->document->getTitle()) . '</h2></div>';
+			. common::translate(Factory::getApplication()->getDocument()->getTitle()) . '</h2></div>';
 	} else {
 		echo '<div class="page-header"><h2 itemprop="headline">'
-			. common::translate($this->ct->document->getTitle()) . '</h2></div>';
+			. common::translate(Factory::getApplication()->getDocument()->getTitle()) . '</h2></div>';
 	}
 }
 

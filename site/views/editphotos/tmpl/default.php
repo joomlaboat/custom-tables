@@ -15,7 +15,7 @@ use CustomTables\common;
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/imagegallery.js"></script>');
 
 ?>

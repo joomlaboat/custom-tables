@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
-use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -84,8 +83,7 @@ class CustomtablesViewTables extends HtmlView
 			$this->ct->getTable($this->item->tablename);
 
 		// Set the document
-		$this->document = Factory::getDocument();
-		$this->setDocument($this->document);
+		$this->setMyDocument();
 
 		// Display the template
 		if (CUSTOMTABLES_JOOMLA_MIN_4)
@@ -137,15 +135,16 @@ class CustomtablesViewTables extends HtmlView
 	/**
 	 * Method to set up the document properties
 	 *
-	 * @param Document $document
 	 * @return void
 	 *
+	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	public function setDocument(Joomla\CMS\Document\Document $document): void
+	public function setMyDocument(): void
 	{
 		if ($this->item !== null) {
 			$isNew = ($this->item->id < 1);
+			$document = Factory::getApplication()->getDocument();
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
 			$document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
 		}

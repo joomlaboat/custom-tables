@@ -27,7 +27,6 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class CustomtablesViewMenus extends HtmlView
 {
-	var $document;
 	var $form;
 	var $item;
 	var $script;
@@ -80,8 +79,7 @@ class CustomtablesViewMenus extends HtmlView
 		// }
 
 		// Set the document
-		$this->document = Factory::getDocument();
-		$this->setDocument($this->document);
+		$this->setMyDocument();
 
 		// Display the template
 		parent::display($tpl);
@@ -152,10 +150,11 @@ class CustomtablesViewMenus extends HtmlView
 	 *
 	 * @since 3.6.7
 	 */
-	public function setDocument(Joomla\CMS\Document\Document $document): void
+	public function setMyDocument(): void
 	{
 		if ($this->item !== null) {
 			$isNew = ($this->item->id < 1);
+			$document = Factory::getApplication()->getDocument();
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_MENUS_NEW' : 'COM_CUSTOMTABLES_MENUS_EDIT'));
 
 			if (!CUSTOMTABLES_JOOMLA_MIN_4)

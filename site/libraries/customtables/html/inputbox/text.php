@@ -14,6 +14,7 @@ namespace CustomTables;
 defined('_JEXEC') or die();
 
 use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 class InputBox_text extends BaseInputBox
@@ -32,30 +33,35 @@ class InputBox_text extends BaseInputBox
 				$value = $defaultValue;
 		}
 
-		if (in_array('spellcheck', $this->field->params)) {
+		if (defined('_JEXEC')) {
 
-			$file_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'jsc' . DIRECTORY_SEPARATOR . 'include.js';
+			if (in_array('spellcheck', $this->field->params)) {
 
-			if (file_exists($file_path)) {
+				$file_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'jsc' . DIRECTORY_SEPARATOR . 'include.js';
 
-				$this->ct->LayoutVariables['scripts'][] = URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js';
-				$this->ct->LayoutVariables['script'] .= '$Spelling.SpellCheckAsYouType("' . $this->attributes['id'] . '");';
-				$this->ct->LayoutVariables['script'] .= '$Spelling.DefaultDictionary = "English";';
-				//$this->ct->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js"></script>');
-				//$this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $this->attributes['id'] . '");</script>');
-				//$this->ct->document->addCustomTag('<script>$Spelling.DefaultDictionary = "English";</script>');
+				if (file_exists($file_path)) {
+
+					$this->ct->LayoutVariables['scripts'][] = URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js';
+					$this->ct->LayoutVariables['script'] .= '$Spelling.SpellCheckAsYouType("' . $this->attributes['id'] . '");';
+					$this->ct->LayoutVariables['script'] .= '$Spelling.DefaultDictionary = "English";';
+					//$this->ct->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js"></script>');
+					//$this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $this->attributes['id'] . '");</script>');
+					//$this->ct->document->addCustomTag('<script>$Spelling.DefaultDictionary = "English";</script>');
+				}
 			}
-		}
 
-		if (in_array('rich', $this->field->params)) {
-			$w = $this->option_list[2] ?? '100%';
-			$h = $this->option_list[3] ?? '300';
-			$c = 0;
-			$l = 0;
-			$editor_name = $this->ct->app->get('editor');
-			$editor = Editor::getInstance($editor_name);
-			return '<div>' . $editor->display($this->attributes['id'], $value, $w, $h, $c, $l) . '</div>';
-		} else {
+			if (in_array('rich', $this->field->params)) {
+				$w = $this->option_list[2] ?? '100%';
+				$h = $this->option_list[3] ?? '300';
+				$c = 0;
+				$l = 0;
+				$editor_name = Factory::getApplication()->get('editor');
+				$editor = Editor::getInstance($editor_name);
+				return '<div>' . $editor->display($this->attributes['id'], $value, $w, $h, $c, $l) . '</div>';
+			} else {
+				return '<textarea ' . self::attributes2String($this->attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>';
+			}
+		} elseif (defined('WPINC')) {
 			return '<textarea ' . self::attributes2String($this->attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>';
 		}
 	}

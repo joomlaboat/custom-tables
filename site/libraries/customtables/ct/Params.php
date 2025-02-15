@@ -153,8 +153,6 @@ class Params
 	 */
 	public function constructJoomlaParams(): void
 	{
-		$this->app = Factory::getApplication();
-
 		//This is used for module tasks
 		$ModuleId = common::inputGetInt('ModuleId');
 
@@ -170,10 +168,10 @@ class Params
 			return;
 		}
 
-		if (method_exists($this->app, 'getParams')) {
+		if (method_exists(Factory::getApplication(), 'getParams')) {
 			try {
-				if ($this->app->getLanguage() !== null) {
-					$menu_params_registry = @$this->app->getParams();//Joomla specific
+				if (Factory::getApplication()->getLanguage() !== null) {
+					$menu_params_registry = @Factory::getApplication()->getParams();//Joomla specific
 					$menu_paramsArray = self::menuParamsRegistry2Array($menu_params_registry);
 					$this->setParams($menu_paramsArray);
 				}
@@ -261,10 +259,10 @@ class Params
 		$menu_params = $this->params;
 
 		if (is_null($menu_params)) {
-			if (method_exists($this->app, 'getParams')) {
+			if (method_exists(Factory::getApplication(), 'getParams')) {
 
 				try {
-					$menu_params_registry = $this->app->getParams();
+					$menu_params_registry = Factory::getApplication()->getParams();
 					$menu_params = self::menuParamsRegistry2Array($menu_params_registry);
 				} catch (Exception $e) {
 					$menu_params = [];

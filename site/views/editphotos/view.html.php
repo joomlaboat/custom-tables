@@ -33,7 +33,6 @@ class CustomTablesViewEditPhotos extends HtmlView
 		$this->Model = $this->getModel();
 		$this->Model->load();
 		$this->images = $this->Model->imageGallery->getPhotoList($this->Model->listing_id);
-
 		$this->idList = array();
 
 		foreach ($this->images as $image)

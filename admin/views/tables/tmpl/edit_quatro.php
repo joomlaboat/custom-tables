@@ -18,10 +18,11 @@ use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 
-$wa = $this->document->getWebAssetManager();
+$document = Factory::getApplication()->getDocument();
+
+$wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
-$document = Factory::getDocument();
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" rel="stylesheet">');
 
 ?>

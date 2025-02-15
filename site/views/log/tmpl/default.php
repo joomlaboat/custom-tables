@@ -20,7 +20,7 @@ $cleanURL = CTMiscHelper::deleteURLQueryOption($currentURL, 'action');
 $cleanURL = CTMiscHelper::deleteURLQueryOption($cleanURL, 'user');
 $cleanURL = CTMiscHelper::deleteURLQueryOption($cleanURL, 'table');
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" rel="stylesheet">');
 
 ?>

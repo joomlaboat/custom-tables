@@ -14,6 +14,7 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CT;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 
 class CustomTablesModelCatalog extends BaseDatabaseModel
@@ -34,8 +35,8 @@ class CustomTablesModelCatalog extends BaseDatabaseModel
 	{
 		common::inputCookieSet($this->showcartitemsprefix . $this->ct->Table->tablename, '',
 			time() - 3600,
-			$this->ct->app->get('cookie_path', '/'),
-			$this->ct->app->get('cookie_domain'), $this->ct->app->isSSLConnection());
+			Factory::getApplication()->get('cookie_path', '/'),
+			Factory::getApplication()->get('cookie_domain'));
 		return true;
 	}
 
@@ -192,8 +193,11 @@ class CustomTablesModelCatalog extends BaseDatabaseModel
 
 		$nc = implode(';', $items);
 
-		common::inputCookieSet($this->showcartitemsprefix . $this->ct->Table->tablename, $nc, time() + 3600 * 24,
-			$this->ct->app->get('cookie_path', '/'), $this->ct->app->get('cookie_domain'), $this->ct->app->isSSLConnection());
+		common::inputCookieSet($this->showcartitemsprefix . $this->ct->Table->tablename,
+			$nc,
+			time() + 3600 * 24,
+			Factory::getApplication()->get('cookie_path', '/'),
+			Factory::getApplication()->get('cookie_domain'));
 
 		return true;
 	}

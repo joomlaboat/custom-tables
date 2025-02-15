@@ -36,7 +36,6 @@ class CustomtablesViewLayouts extends HtmlView
 
 	var CT $ct;
 	var array $allTables;
-	var $document;
 	var $item;
 	var LayoutEditor $layoutEditor;
 
@@ -118,10 +117,9 @@ class CustomtablesViewLayouts extends HtmlView
 			$this->active_tab = 'layoutjs-tab';
 
 		$this->allTables = TableHelper::getAllTables();
-		$this->document = Factory::getDocument();
 
 		// Set the document
-		$this->setDocument($this->document);
+		$this->setMyDocument();
 
 		// Display the template
 		if (CUSTOMTABLES_JOOMLA_MIN_4)
@@ -210,14 +208,15 @@ class CustomtablesViewLayouts extends HtmlView
 	/**
 	 * Method to set up the document properties
 	 *
-	 * @param \Joomla\CMS\Document\Document $document
 	 * @return void
+	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public function setDocument(Joomla\CMS\Document\Document $document): void
+	public function setMyDocument(): void
 	{
 		if ($this->item !== null) {
 			$isNew = ($this->item->id < 1);
+			$document = Factory::getApplication()->getDocument();
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
 			$document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
 		}

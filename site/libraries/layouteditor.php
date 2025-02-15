@@ -24,7 +24,7 @@ class LayoutEditor
 		$this->theme = 'eclipse';
 
 		if (defined('_JEXEC')) {
-			$document = Factory::getDocument();
+			$document = Factory::getApplication()->getDocument();
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 
@@ -188,7 +188,7 @@ class LayoutEditor
 	setTimeout(addTabExtraEvents, 500);
     ';
 
-		$document = Factory::getDocument();
+		$document = Factory::getApplication()->getDocument();
 		$document->addCustomTag('<script>' . $result_js . '</script>');
 
 		return $result;

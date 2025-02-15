@@ -33,10 +33,10 @@ try {
 		common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 		if (!empty($this->catalog->layoutCodeCSS))
-			$this->ct->document->addCustomTag('<style>' . $this->catalog->layoutCodeCSS . '</style>');
+			Factory::getApplication()->getDocument()->addCustomTag('<style>' . $this->catalog->layoutCodeCSS . '</style>');
 
 		if (!empty($this->catalog->layoutCodeJS))
-			$this->ct->document->addCustomTag('<script>' . $this->catalog->layoutCodeJS . '</script>');
+			Factory::getApplication()->getDocument()->addCustomTag('<script>' . $this->catalog->layoutCodeJS . '</script>');
 	}
 
 } catch (Exception $e) {

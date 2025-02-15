@@ -15,6 +15,7 @@ defined('_JEXEC') or die();
 
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 class Twig_Document_Tags
@@ -28,12 +29,12 @@ class Twig_Document_Tags
 
 	function setmetakeywords($metakeywords): void
 	{
-		$this->ct->document->setMetaData('keywords', $metakeywords);
+		Factory::getApplication()->getDocument()->setMetaData('keywords', $metakeywords);
 	}
 
 	function setmetadescription($metadescription): void
 	{
-		$this->ct->document->setMetaData('description', $metadescription);
+		Factory::getApplication()->getDocument()->setMetaData('description', $metadescription);
 	}
 
 	/**
@@ -43,7 +44,7 @@ class Twig_Document_Tags
 	function setpagetitle($pageTitle): void
 	{
 		if (defined('_JEXEC')) {
-			$this->ct->document->setTitle(common::translate($pageTitle));
+			Factory::getApplication()->getDocument()->setTitle(common::translate($pageTitle));
 		} elseif (defined('WPINC')) {
 			common::enqueueMessage('Warning: The {{ document.setpagetitle }} tag is not supported in the current version of the Custom Tables for WordPress.');
 		} else
@@ -53,7 +54,7 @@ class Twig_Document_Tags
 	function setheadtag($tag): void
 	{
 		if (defined('_JEXEC')) {
-			$this->ct->document->addCustomTag($tag);
+			Factory::getApplication()->getDocument()->addCustomTag($tag);
 		} elseif (defined('WPINC')) {
 			common::enqueueMessage('Warning: The {{ document.setheadtag }} tag is not supported in the current version of the Custom Tables for WordPress.');
 		} else
@@ -267,23 +268,7 @@ class Twig_Document_Tags
 	 */
 	function sitename(): ?string
 	{
-		if (defined('_JEXEC'))
-			return $this->ct->app->get('sitename');
-		elseif (defined('WPINC'))
-			return get_bloginfo('name');
-		else
-			common::enqueueMessage('Warning: The {{ document.sitename }} tag is not supported by the current version of the Custom Tables.');
-
-		return null;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.4.1
-	 */
-	public function get(string $variable)
-	{
-		return $this->ct->LayoutVariables['globalVariables'][$variable];
+		return common::getSiteName();
 	}
 
 	function languagepostfix(): string
@@ -350,5 +335,14 @@ class Twig_Document_Tags
 		} else {
 			return 'Unknown parameter in document.config()';
 		}
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.4.1
+	 */
+	public function get(string $variable)
+	{
+		return $this->ct->LayoutVariables['globalVariables'][$variable];
 	}
 }

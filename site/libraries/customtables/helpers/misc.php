@@ -597,8 +597,8 @@ class CTMiscHelper
 		$mainframe = Factory::getApplication();
 
 		if (method_exists($mainframe, 'getParams')) {
-			$myDoc = Factory::getDocument();
-			$pageTitle = $myDoc->getTitle(); //because content plugins may overwrite the title
+			$document = Factory::getApplication()->getDocument();
+			$pageTitle = $document->getTitle(); //because content plugins may overwrite the title
 
 			$content_params = $mainframe->getParams('com_content');
 
@@ -617,7 +617,7 @@ class CTMiscHelper
 				$htmlResult = $o->text;
 			}
 
-			$myDoc->setTitle(common::translate($pageTitle)); //because content plugins may overwrite the title
+			$document->setTitle(common::translate($pageTitle)); //because content plugins may overwrite the title
 
 		}
 		return $htmlResult;

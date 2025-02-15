@@ -393,7 +393,7 @@
 
 	<!-- WordPress Ready 19 PRO -->
 	<type ct_name="file" label="File" description="Enables file upload functionality." priority="2"
-		  helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types" proversion="1" wordpress="true"
+		  helplink="https://ct4.us/docs-category/field-types/" proversion="1" wordpress="true"
 		  order="19">
 		<params>
 			<param name="size" label="Max File Size" example="8"

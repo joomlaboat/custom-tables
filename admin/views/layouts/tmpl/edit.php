@@ -20,7 +20,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/fieldtypes.css" rel="stylesheet">');
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/modal.css" rel="stylesheet">');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
@@ -28,7 +28,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typep
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
 
 if (CUSTOMTABLES_JOOMLA_MIN_4) {
-	$wa = $this->document->getWebAssetManager();
+	$wa = $document->getWebAssetManager();
 	$wa->useScript('keepalive')->useScript('form.validate');
 } else {
 	HTMLHelper::_('behavior.formvalidation');

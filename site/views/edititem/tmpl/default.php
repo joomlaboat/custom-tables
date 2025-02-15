@@ -12,6 +12,7 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 HTMLHelper::_('jquery.framework');
@@ -20,10 +21,10 @@ jimport('joomla.html.html.bootstrap');
 common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 if (!empty($this->result['style']))
-	$this->ct->document->addCustomTag('<style>' . $this->result['style'] . '</style>');
+	Factory::getApplication()->getDocument()->addCustomTag('<style>' . $this->result['style'] . '</style>');
 
 if (!empty($this->result['script']))
-	$this->ct->document->addCustomTag('<script>' . $this->result['script'] . '</script>');
+	Factory::getApplication()->getDocument()->addCustomTag('<script>' . $this->result['script'] . '</script>');
 
 if ($this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
 

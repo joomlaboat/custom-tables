@@ -50,7 +50,7 @@ class CustomTablesViewDetails extends HtmlView
 		$this->result = $layout->renderMixedLayout($this->ct->Params->detailsLayout, CUSTOMTABLES_LAYOUT_TYPE_DETAILS, 'none');
 
 		if ($this->ct->Env->print)
-			$this->ct->document->setMetaData('robots', 'noindex, nofollow');
+			Factory::getApplication()->getDocument()->setMetaData('robots', 'noindex, nofollow');
 
 		if ($this->ct->Env->isModal) {
 			$this->ct->Env->clean = 1;

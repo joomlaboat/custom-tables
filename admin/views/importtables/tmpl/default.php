@@ -22,7 +22,7 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 }
 
 HTMLHelper::_('behavior.formvalidator');
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 
 if (CUSTOMTABLES_JOOMLA_MIN_4)
 	$document->addCustomTag('<script src="' . common::UriRoot(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');

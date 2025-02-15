@@ -327,7 +327,7 @@ function renderFieldsBox() {
 	if (current_layout_type === 2) {
 		let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
 
-		let label = '<p>Dynamic Field Tags that renders an input field where the user can enter data.<span style="font-weight:bold;color:darkgreen;">(more <a href="https://joomlaboat.com/custom-tables-wiki?document=04.-Field-Types" target="_blank">here</a>)</span></p>';
+		let label = '<p>Dynamic Field Tags that renders an input field where the user can enter data.<span style="font-weight:bold;color:darkgreen;">(more <a href="https://ct4.us/docs-category/field-types/" target="_blank">here</a>)</span></p>';
 		tabs.push({
 			'id': 'layouteditor_fields_edit', 'title': 'Input/Edit',
 			'content': label + renderFieldTags('{{ ', '.edit', ' }}', fieldtypes_to_skip, 'editparams')

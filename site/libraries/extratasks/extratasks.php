@@ -30,7 +30,7 @@ class extraTasks
 
 		$field_row = $table->getFieldById($fieldId);
 
-		$document = Factory::getDocument();
+		$document = Factory::getApplication()->getDocument();
 		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/extratasks.js"></script>');
 		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/modal.js"></script>');
 		$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base64.js"></script>');

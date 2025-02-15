@@ -38,7 +38,6 @@ class CustomtablesViewRecords extends HtmlView
 	var int $refId;
 	var string $referral;
 	var string $formLink;
-	var $document;
 
 	public function display($tpl = null)
 	{
@@ -124,8 +123,7 @@ class CustomtablesViewRecords extends HtmlView
 		$this->formLink = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableId . '&id=' . $this->ct->Params->listing_id;
 
 		// Set the document
-		$this->document = Factory::getDocument();
-		$this->setDocument($this->document);
+		$this->setMyDocument();
 
 		parent::display($tpl);
 		return true;
@@ -167,10 +165,11 @@ class CustomtablesViewRecords extends HtmlView
 		ToolbarHelper::divider();
 	}
 
-	public function setDocument(Joomla\CMS\Document\Document $document): void
+	public function setMyDocument(): void
 	{
 		if (isset($this->ct) and $this->ct !== null) {
 			$isNew = $this->ct->Params->listing_id == 0;
+			$document = Factory::getApplication()->getDocument();
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
 		}
 	}

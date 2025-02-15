@@ -10,13 +10,14 @@
 
 // No direct access to this file
 use CustomTables\common;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die();
 
-
-$wa = $this->document->getWebAssetManager();
+$document = Factory::getApplication()->getDocument();
+$wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
 ?>

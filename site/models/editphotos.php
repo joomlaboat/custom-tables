@@ -116,6 +116,9 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	 */
 	function reorder(): bool
 	{
+		if (!$this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT))
+			throw new Exception(common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+
 		$images = $this->imageGallery->getPhotoList($this->listing_id);
 
 		//Set order
@@ -170,6 +173,9 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	 */
 	function delete(): bool
 	{
+		if (!$this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT))
+			throw new Exception(common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+
 		$photoIDs = common::inputPostString('photoids', '', 'create-edit-record');
 		$photo_arr = explode('*', $photoIDs);
 
@@ -199,6 +205,9 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	 */
 	function add(): bool
 	{
+		if (!$this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT))
+			throw new Exception(common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+		
 		$file = common::inputFiles('uploadedfile');
 		$this->imageGallery->uploadImageFile($file['name'], $file['tmp_name'], $this->listing_id);
 		return true;

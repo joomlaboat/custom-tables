@@ -17,15 +17,16 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
+$document = Factory::getApplication()->getDocument();
+
 if (CUSTOMTABLES_JOOMLA_MIN_4) {
-	$wa = $this->document->getWebAssetManager();
+	$wa = $document->getWebAssetManager();
 	$wa->useScript('keepalive')->useScript('form.validate');
 } else {
 	HTMLHelper::_('behavior.formvalidation');
 	HTMLHelper::_('behavior.keepalive');
 }
 
-$document = Factory::getDocument();
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" rel="stylesheet">');
 
 ?>

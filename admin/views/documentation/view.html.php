@@ -60,8 +60,7 @@ class CustomtablesViewDocumentation extends HtmlView
 		parent::display($tpl);
 
 		// Set the document
-		$document = Factory::getDocument();
-		$this->setDocument($document);
+		$this->setMyDocument();
 	}
 
 	protected function addToolBar_4()
@@ -75,8 +74,9 @@ class CustomtablesViewDocumentation extends HtmlView
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
 	}
 
-	public function setDocument(Joomla\CMS\Document\Document $document): void
+	public function setMyDocument(): void
 	{
+		$document = Factory::getApplication()->getDocument();
 		$document->setTitle(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'));
 		$document->addStyleSheet(common::UriRoot(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 

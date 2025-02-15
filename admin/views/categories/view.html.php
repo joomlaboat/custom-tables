@@ -13,7 +13,6 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
-use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -26,7 +25,6 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class CustomtablesViewCategories extends HtmlView
 {
-	var $document;
 	var $form;
 	var $item;
 	var $script;
@@ -76,8 +74,7 @@ class CustomtablesViewCategories extends HtmlView
 		}
 
 		// Set the document
-		$this->document = Factory::getDocument();
-		$this->setDocument($this->document);
+		$this->setMyDocument();
 
 		// Display the template
 		parent::display($tpl);
@@ -141,15 +138,18 @@ class CustomtablesViewCategories extends HtmlView
 	/**
 	 * Method to set up the document properties
 	 *
-	 * @param Document $document
 	 * @return void
 	 *
+	 * @throws Exception
 	 * @since 1.0.0
 	 */
-	public function setDocument(Joomla\CMS\Document\Document $document): void
+	public function setMyDocument(): void
 	{
 		if ($this->item !== null) {
 			$isNew = ($this->item->id < 1);
+
+			$document = Factory::getApplication()->getDocument();
+
 			$document->setTitle(common::translate($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
 
 			if (!CUSTOMTABLES_JOOMLA_MIN_4)
