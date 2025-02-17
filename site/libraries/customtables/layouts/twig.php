@@ -552,29 +552,6 @@ class fieldObject
 		return $Inputbox->getTypeDetails($value, $this->ct->Table->record);
 	}
 
-	/*
-	public function options(): ?array
-	{
-		if (!isset($this->field->fieldrow))
-			return [];
-
-		if (Fields::isVirtualField($this->field->fieldrow))
-			return [];
-
-		$args = [];
-
-		$Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
-
-		$this->ct->editFields[] = $this->field->fieldname;
-
-		if (!in_array($this->field->type, $this->ct->editFieldTypes))
-			$this->ct->editFieldTypes[] = $this->field->type;
-
-		$value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
-		return $Inputbox->getOptions($value, $this->ct->Table->record);
-	}
-	*/
-
 	/**
 	 * @throws Exception
 	 * @since 3.2.2

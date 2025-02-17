@@ -148,7 +148,9 @@ class Environment
 			$params = ComponentHelper::getParams('com_customtables');
 			$this->field_prefix = $params->get('fieldPrefix') ?? 'ct_';
 			$this->loadTwig = $params->get('loadTwig') == '1';
-			$this->toolbarIcons = strval($params->get('toolbaricons'));
+			$this->toolbarIcons = strval($params->get('toolbaricons'));// Default is empty means Legacy Image Icons
+			if ($this->toolbarIcons === 'fas')
+				$this->toolbarIcons = 'font-awesome-6';
 
 			$this->folderToSaveLayouts = $params->get('folderToSaveLayouts');
 			if ($this->folderToSaveLayouts !== null)
@@ -161,7 +163,6 @@ class Environment
 				if ($this->folderToSaveLayouts[0] != '/')
 					$this->folderToSaveLayouts = CUSTOMTABLES_ABSPATH . $this->folderToSaveLayouts;
 			}
-
 		} else {
 
 			$this->field_prefix = get_option('customtables-fieldprefix') ?? 'ct_';
@@ -169,25 +170,8 @@ class Environment
 				$this->field_prefix = 'ct_';
 
 			$this->loadTwig = true;
-			$this->toolbarIcons = '';
+			$this->toolbarIcons = get_option('customtables-toolbaricons', ''); // Default is empty means Legacy Image Icons
 			$this->folderToSaveLayouts = null;
-
-			/*
-			 *
-			 * TODO:
-			 *
-			In WordPress, plugin settings are typically stored in the WordPress database. Plugin developers can use the WordPress Options API or Custom Post Types to store and retrieve settings.
-
-			Options API: This is the most common way for plugins to store settings. Plugins can use functions like add_option(), update_option(), and get_option() to save and retrieve settings. These settings are stored in the wp_options table in the database.
-
-			Custom Post Types: Some plugins might create custom post types to store settings. This is less common for simple settings, but it can be used for more complex configurations.
-
-			Settings API: WordPress provides a Settings API that allows developers to create a settings page in the WordPress admin area. This API handles the form creation, validation, and saving of settings.
-
-			Configuration Files: Some plugins may use configuration files (typically PHP files) to store settings. These files might be located within the plugin's directory.
-
-			The exact location and structure of these settings can vary depending on how the plugin developer chose to implement them. It's important to note that well-developed plugins should handle settings securely and follow WordPress coding standards.
-			*/
 		}
 		$this->isPlugin = false;
 	}

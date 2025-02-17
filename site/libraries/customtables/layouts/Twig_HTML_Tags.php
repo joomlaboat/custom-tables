@@ -120,15 +120,8 @@ class Twig_HTML_Tags
 			return '{{ html.add }} not supported.';
 		}
 
-		$alt = common::translate('COM_CUSTOMTABLES_ADD');
-
-		if ($this->ct->Env->toolbarIcons != '')
-			$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-plus-circle" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-plus-circle" title="' . $alt . '"></i>';
-		else {
-			$img = '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/new.png" alt="' . $alt . '" title="' . $alt . '" />';
-		}
-
-		return '<a href="' . $link . '" id="ctToolBarAddNew' . $this->ct->Table->tableid . '" class="toolbarIcons">' . $img . '</a>';
+		$icon = Icons::iconNew($this->ct->Env->toolbarIcons);
+		return '<a href="' . $link . '" id="ctToolBarAddNew' . $this->ct->Table->tableid . '" class="toolbarIcons">' . $icon . '</a>';
 	}
 
 	/**
@@ -431,30 +424,23 @@ class Twig_HTML_Tags
 
 					switch ($mode) {
 						case 'publish':
-							$alt = common::translate('COM_CUSTOMTABLES_PUBLISH_SELECTED');
+							$icons = Icons::iconPublished($this->ct->Env->toolbarIcons, common::translate('COM_CUSTOMTABLES_PUBLISH_SELECTED'));
 							break;
 						case 'unpublish':
-							$alt = common::translate('COM_CUSTOMTABLES_UNPUBLISH_SELECTED');
+							$icons = Icons::iconUnpublished($this->ct->Env->toolbarIcons, common::translate('COM_CUSTOMTABLES_UNPUBLISH_SELECTED'));
 							break;
 						case 'refresh':
-							$alt = common::translate('COM_CUSTOMTABLES_REFRESH_SELECTED');
+							$icons = Icons::iconRefresh($this->ct->Env->toolbarIcons, common::translate('COM_CUSTOMTABLES_REFRESH_SELECTED'));
 							break;
 						case 'delete':
-							$alt = common::translate('COM_CUSTOMTABLES_DELETE_SELECTED');
+							$icons = Icons::iconDelete($this->ct->Env->toolbarIcons, common::translate('COM_CUSTOMTABLES_DELETE_SELECTED'));
 							break;
 						default:
 							return 'unsupported batch toolbar icon.';
 					}
-
-					if ($this->ct->Env->toolbarIcons != '') {
-						$icons = ['publish' => 'fa-check-circle', 'unpublish' => 'fa-ban', 'refresh' => 'fa-sync', 'delete' => 'fa-trash'];
-						$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' ' . $icons[$mode] . '" data-icon="' . $this->ct->Env->toolbarIcons . ' ' . $icons[$mode] . '" title="' . $alt . '"></i>';
-					} else
-						$img = '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/' . $mode . '.png" border="0" alt="' . $alt . '" title="' . $alt . '" />';
-
 					$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 					$link = 'javascript:ctToolBarDO("' . $mode . '", ' . $this->ct->Table->tableid . ', ' . $moduleIDString . ')';
-					$html_buttons[] = '<div id="' . $rid . '" class="toolbarIcons"><a href=\'' . $link . '\'>' . $img . '</a></div>';
+					$html_buttons[] = '<div id="' . $rid . '" class="toolbarIcons"><a href=\'' . $link . '\'>' . $icons . '</a></div>';
 				}
 			}
 		}
@@ -493,13 +479,16 @@ class Twig_HTML_Tags
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function print($linktype = '', $label = '', $class = 'ctEditFormButton btn button'): string
+	function print($linkType = '', $label = '', $class = 'ctEditFormButton btn button-apply btn-primary'): string
 	{
-		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
+		if ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != '')
 			return '';
 
 		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
+
+		if (empty($label))
+			$label = common::translate('COM_CUSTOMTABLES_PRINT');
 
 		$link = $this->ct->Env->current_url . (!str_contains($this->ct->Env->current_url, '?') ? '?' : '&') . 'tmpl=component&amp;print=1';
 
@@ -515,16 +504,16 @@ class Twig_HTML_Tags
 		}
 
 		$onClick = 'window.open("' . $link . '","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no");return false;';
-		if ($this->ct->Env->print == 1) {
-			$vlu = '<p><a href="#" onclick="window.print();return false;"><img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/print.png" alt="' . common::translate('COM_CUSTOMTABLES_PRINT') . '"  /></a></p>';
-		} else {
-			if ($label == '')
-				$label = common::translate('COM_CUSTOMTABLES_PRINT');
 
-			if ($linktype != '')
-				$vlu = '<a href="#" onclick=\'' . $onClick . '\'><i class="ba-btn-transition fas fa-print" data-icon="fas fa-print" title="' . $label . '"></i></a>';
+		$icon = Icons::iconPrint($this->ct->Env->toolbarIcons, $label);
+
+		if ($this->ct->Env->print == 1) {
+			$vlu = '<p><a class="no-print" href="#" onclick="window.print();return false;">' . $icon . '</a></p>';
+		} else {
+			if ($linkType == 'icon')
+				$vlu = '<a href="#" onclick=\'' . $onClick . '\'>' . $icon . '</a>';
 			else
-				$vlu = '<input type="button" class="' . $class . '" value="' . $label . '" onClick=\'' . $onClick . '\' />';
+				$vlu = '<button class="' . $class . '" onclick=\'' . $onClick . '\' title="' . $label . '"><span>' . $label . '</span></button>';
 		}
 		return $vlu;
 	}

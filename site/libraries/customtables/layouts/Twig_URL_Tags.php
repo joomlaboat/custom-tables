@@ -247,7 +247,7 @@ class Twig_URL_Tags
 	 * @throws Exception
 	 * @since 3.2.9
 	 */
-	function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $layoutname = '', $csv_column_separator = ','): ?string
+	function format($format, $link_type = 'anchor', $image = '', $imageSize = '', $layoutname = '', $csv_column_separator = ','): ?string
 	{
 		if (defined('_JEXEC')) {
 			if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
@@ -255,11 +255,9 @@ class Twig_URL_Tags
 
 			$link = CTMiscHelper::deleteURLQueryOption($this->ct->Env->current_url, 'frmt');
 			$link = CTMiscHelper::deleteURLQueryOption($link, 'layout');
-//}
-
 			$link = Route::_($link);
 
-//check if format supported
+			//check if format supported
 			$allowed_formats = ['csv', 'json', 'xml', 'xlsx', 'pdf', 'image'];
 			if ($format == '' or !in_array($format, $allowed_formats))
 				$format = 'csv';
@@ -274,8 +272,8 @@ class Twig_URL_Tags
 
 			if ($link_type == 'anchor' or $link_type == '') {
 				$allowed_sizes = ['16', '32', '48'];
-				if ($imagesize == '' or !in_array($imagesize, $allowed_sizes))
-					$imagesize = 32;
+				if ($imageSize == '' or !in_array($imageSize, $allowed_sizes))
+					$imageSize = 32;
 
 				if ($format == 'image')
 					$format_image = 'jpg';
@@ -285,19 +283,19 @@ class Twig_URL_Tags
 				$alt = 'Download ' . strtoupper($format) . ' file';
 
 				if ($image == '') {
+
 					if ($this->ct->Env->toolbarIcons != '' and $format == 'csv') {
-						$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-file-csv" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-file-csv" title="' . $alt . '"></i>';
+						$icon = Icons::iconDownloadCSV($this->ct->Env->toolbarIcons, $alt);
 					} else {
-						$image = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $imagesize . 'px/' . $format_image . '.png';
-						$img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" style="width:' . $imagesize . 'px;height:' . $imagesize . 'px;">';
+						$image = 'components/com_customtables/libraries/customtables/media/images/fileformats/' . $imageSize . 'px/' . $format_image . '.png';
+						$icon = Icons::iconDownload($this->ct->Env->toolbarIcons, $alt, $image, $imageSize);
 					}
 				} else
-					$img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" style="width:' . $imagesize . 'px;height:' . $imagesize . 'px;">';
+					$icon = Icons::iconDownload($this->ct->Env->toolbarIcons, $alt, $image);
 
-				return '<a href="' . $link . '" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank">' . $img . '</a>';
+				return '<a href="' . $link . '" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank">' . $icon . '</a>';
 
 			} elseif ($link_type == '_value' or $link_type == 'linkonly') {
-//link only
 				return $link;
 			}
 			return '';

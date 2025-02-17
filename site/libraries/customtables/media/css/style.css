@@ -534,3 +534,9 @@
 .remove-btn:hover {
 	background: darkred;
 }
+
+@media print {
+	.no-print {
+		display: none;
+	}
+}

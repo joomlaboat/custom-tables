@@ -83,10 +83,8 @@ class Forms
 		if ($field->description != "")
 			$field_label .= ' data-content="' . $field->description . '"';
 
-		if ($this->ct->Ordering->ordering_processed_string !== null and $allowSortBy and $this->ct->Params->ModuleId === null) {
-
+		if ($allowSortBy) {
 			$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
-
 			$field_label .= ' style="cursor:pointer"';
 			$field_label .= ' onClick="ctOrderChanged(\'' . $field->fieldname . ($OrderingField == $field->fieldname ? ($OrderingDirection == 'desc' ? '' : ' desc') : '') . '\',' . $moduleIDString . ')"';
 		}
@@ -96,15 +94,13 @@ class Forms
 		if (!$allowSortBy or $field->type != 'ordering')
 			$field_label .= $field->title;
 
-		if ($this->ct->Ordering->ordering_processed_string !== null and $allowSortBy and $this->ct->Params->ModuleId === null) {
-			if ($OrderingField == $field->fieldname) {
-				if ($OrderingDirection == 'desc')
-					$field_label .= '<span class="ms-1 icon-caret-down" aria-hidden="true"></span>';
-				else
-					$field_label .= '<span class="ms-1 icon-caret-up" aria-hidden="true"></span>';
-			} else
-				$field_label .= '<span class="ms-1 icon-sort" aria-hidden="true"></span>';
-		}
+		if ($OrderingField == $field->fieldname) {
+			if ($OrderingDirection == 'desc')
+				$field_label .= Icons::iconDescendingOrder($this->ct->Env->toolbarIcons);
+			else
+				$field_label .= Icons::iconAscendingOrder($this->ct->Env->toolbarIcons);
+		} else
+			$field_label .= Icons::iconOrderBy($this->ct->Env->toolbarIcons);
 
 		if ($field->isrequired == 1 and isset($this->ct->LayoutVariables['layout_type']) and $this->ct->LayoutVariables['layout_type'] == CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM)
 			$field_label .= '<span class="star" aria-hidden="true">&nbsp;*</span>';

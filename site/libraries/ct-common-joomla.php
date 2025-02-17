@@ -685,6 +685,41 @@ if (typeof window.CTEditHelper === "undefined") {
 		Text::script('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID');
 		Text::script('COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH');
 
+
+		if ($env->toolbarIcons == 'font-awesome-4' or $env->toolbarIcons == 'font-awesome-5' or $env->toolbarIcons == 'font-awesome-6') {
+			$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+
+			// Check if Font Awesome is loaded
+			$isFontAwesomeLoaded = $wa->assetExists('style', 'fontawesome');
+
+			if (!$isFontAwesomeLoaded) {
+				common::enqueueMessage('Font Awesome icons have been selected for the toolbar, but the Font Awesome library is not loaded in your template.'
+					. ' Please ensure the library is included for proper icon display.');
+			}
+		}
+
+		if ($env->toolbarIcons == 'bootstrap') {
+			$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+
+			// Check if Bootstrap Icons are loaded
+			$isBootstrapLoaded = $wa->assetExists('style', 'bootstrap-icons');
+
+			if (!$isBootstrapLoaded) {
+				common::enqueueMessage('Bootstrap icons have been selected for the toolbar, but the Bootstrap Icons library is not loaded in your template. Please ensure the library is included for proper icon display.');
+			}
+		}
+	}
+
+	/**
+	 * @since 3.2.9
+	 */
+	public static function enqueueMessage($text, string $type = 'error'): void
+	{
+		try {
+			Factory::getApplication()->enqueueMessage($text, $type);
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
 	}
 
 	public static function filterText(?string $text): string
@@ -716,18 +751,6 @@ if (typeof window.CTEditHelper === "undefined") {
 
 		$app = Factory::getApplication();
 		$app->redirect(Route::_($link, false));
-	}
-
-	/**
-	 * @since 3.2.9
-	 */
-	public static function enqueueMessage($text, string $type = 'error'): void
-	{
-		try {
-			Factory::getApplication()->enqueueMessage($text, $type);
-		} catch (Exception $e) {
-			echo $e->getMessage();
-		}
 	}
 
 	/**

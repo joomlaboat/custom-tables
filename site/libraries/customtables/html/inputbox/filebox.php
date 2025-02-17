@@ -72,15 +72,8 @@ class InputBox_filebox extends BaseInputBox
 		if ($ct->Params->ItemId > 0)
 			$fileManagerLink .= '&amp;Itemid=' . $ct->Params->ItemId;
 
-		//if (!is_null($ct->Params->ModuleId))
-		//$fileManagerLink .= '&amp;ModuleId=' . $ct->Params->ModuleId;
-
-		if ($ct->Env->toolbarIcons != '')
-			$img = '<i class="ba-btn-transition ' . $ct->Env->toolbarIcons . ' fa-folder" data-icon="' . $ct->Env->toolbarIcons . ' fa-folder" title="' . $title . '"></i>';
-		else
-			$img = '<img src="' . $iconPath . 'filemanager.png" border="0" alt="' . $title . '" title="' . $title . '">';
-
-		return '<div id="esFileBoxIcon' . $rid . '" class="toolbarIcons"><a href="' . $ct->Env->WebsiteRoot . $fileManagerLink . '">' . $img . '</a></div>';
+		$icon = Icons::iconFileManager($ct->Env->toolbarIcons, $title);
+		return '<div id="esFileBoxIcon' . $rid . '" class="toolbarIcons"><a href="' . $ct->Env->WebsiteRoot . $fileManagerLink . '">' . $icon . '</a></div>';
 	}
 
 	public static function process(array $FileBoxRows, &$field, ?string $listing_id, array $option_list): string

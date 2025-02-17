@@ -63,10 +63,17 @@
 				type="list"
 				label="Toolbar Icons"
 				default=""
-				description="Choose the icon style for your toolbar interface. Image Icons use traditional PNG/JPG files, while Font Awesome provides scalable vector icons that load faster and look crisp at any size. Font Awesome Solid is the recommended modern option."
+				description="Choose the icon style for your toolbar interface.
+        - Image Icons: Uses PNG/JPG files for maximum compatibility.
+        - Font Awesome: A modern, scalable icon library (version 4, 5, or 6). Ensure your template supports the selected version.
+        - Bootstrap Icons: Alternative vector icons available in some Joomla templates.
+        - Recommended: Font Awesome 6 (for Joomla 5+) or Bootstrap if your template does not use Font Awesome."
 		>
 			<option value="">Image Icons</option>
-			<option value="fas">Font Awesome - Solid</option>
+			<option value="font-awesome-4">Font Awesome 4 (Joomla 3)</option>
+			<option value="font-awesome-5">Font Awesome 5 (Joomla 4)</option>
+			<option value="font-awesome-6">Font Awesome 6 (Joomla 5+)</option>
+			<option value="bootstrap">Bootstrap Icons</option>
 		</field>
 
 		<field

@@ -56,17 +56,11 @@ class RecordToolbar
 
 				case 'refresh':
 					$rid = 'esRefreshIcon' . $this->rid;
-					$alt = common::translate('COM_CUSTOMTABLES_REFRESH');
-
-					if ($this->ct->Env->toolbarIcons != '')
-						$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-sync" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-sync" title="' . $alt . '"></i>';
-					else
-						$img = '<img src="' . $this->iconPath . 'refresh.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-
+					$icon = Icons::iconRefresh($this->ct->Env->toolbarIcons);
 					$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 					$href = 'javascript:ctRefreshRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',' . $moduleIDString . ');';
 
-					return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
+					return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $href . '">' . $icon . '</a></div>';
 
 				case 'gallery':
 					if (is_array($this->Table->imagegalleries) and count($this->Table->imagegalleries) > 0)
@@ -99,13 +93,6 @@ class RecordToolbar
 
 	protected function renderEditIcon($isModal = false): string
 	{
-		$alt = common::translate('COM_CUSTOMTABLES_EDIT');
-
-		if ($this->ct->Env->toolbarIcons != '')
-			$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-pen" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-pen" title="' . $alt . '"></i>';
-		else
-			$img = '<img src="' . $this->iconPath . 'edit.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-
 		if (defined('_JEXEC')) {
 			$editLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem'
 				. '&amp;listing_id=' . $this->listing_id;
@@ -143,7 +130,8 @@ class RecordToolbar
 			$link = '';
 		}
 
-		$a = '<a href="' . $link . '">' . $img . '</a>';
+		$icon = Icons::iconEdit($this->ct->Env->toolbarIcons);
+		$a = '<a href="' . $link . '">' . $icon . '</a>';
 
 		return '<div id="esEditIcon' . $this->rid . '" class="toolbarIcons">' . $a . '</div>';
 	}
@@ -166,15 +154,8 @@ class RecordToolbar
 				if ($this->ct->Params->ItemId > 0)
 					$imageManagerLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
 
-				$alt = $gallery[1];
-
-				if ($this->ct->Env->toolbarIcons != '')
-					$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-image" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-image" title="' . $alt . '"></i>';
-				else
-					$img = '<img src="' . $this->iconPath . 'photomanager.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-
-				$imageGalleries[] = '<div id="esImageGalleryIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $this->ct->Env->WebsiteRoot . $imageManagerLink . '">' . $img . '</a></div>';
-
+				$icon = Icons::iconPhotoManager($this->ct->Env->toolbarIcons, $gallery[1]);
+				$imageGalleries[] = '<div id="esImageGalleryIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $this->ct->Env->WebsiteRoot . $imageManagerLink . '">' . $icon . '</a></div>';
 			}
 		} elseif (defined('WPINC')) {
 
@@ -229,34 +210,21 @@ class RecordToolbar
 
 			if ($userRow === null) {
 				$rid = 'ctCreateUserIcon' . $this->rid;
-				$alt = 'Create User Account';
-
-				if ($this->ct->Env->toolbarIcons != '')
-					$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-user-plus" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-user-plus" title="' . $alt . '"></i>';
-				else
-					$img = '<img src="' . $this->iconPath . 'key-add.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-
+				$icon = Icons::iconCreateUser($this->ct->Env->toolbarIcons);
 				$resetLabel = common::translate('COM_CUSTOMTABLES_USERWILLBECREATED') . ' ' . $this->firstFieldValueLabel();
-
 				$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 				$action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . $moduleIDString . ')';
 			} else {
 				$user_full_name = ucwords(strtolower($userRow['name']));
 
 				$rid = 'ctResetPasswordIcon' . $this->rid;
-				$alt = 'Username: ' . $userRow['username'];
-
-				if ($this->ct->Env->toolbarIcons != '')
-					$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-user" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-user" title="' . $alt . '"></i>';
-				else
-					$img = '<img src="' . $this->iconPath . 'key.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-
+				$title = common::translate('COM_CUSTOMTABLES_FIELDS_USER ') . ': ' . $userRow['username'];
+				$icon = Icons::iconResetPassword($this->ct->Env->toolbarIcons, $title);
 				$resetLabel = 'Would you like to reset ' . $user_full_name . ' (' . $userRow['username'] . ') password?';
-
 				$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 				$action = 'ctResetPassword("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . $moduleIDString . ')';
 			}
-			return '<div id="' . $rid . '" class="toolbarIcons"><a href=\'javascript:' . $action . ' \'>' . $img . '</a></div>';
+			return '<div id="' . $rid . '" class="toolbarIcons"><a href=\'javascript:' . $action . ' \'>' . $icon . '</a></div>';
 		} elseif (defined('WPINC')) {
 			return '';
 		}
@@ -302,19 +270,12 @@ class RecordToolbar
 
 	protected function renderCopyIcon(): string
 	{
-		$Label = 'Would you like to copy (' . $this->firstFieldValueLabel() . ')?';
-		$alt = common::translate('COM_CUSTOMTABLES_COPY');
-
 		if (defined('_JEXEC')) {
-			if ($this->ct->Env->toolbarIcons != '')
-				$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-copy" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-copy" title="' . $alt . '"></i>';
-			else
-				$img = '<img src="' . $this->iconPath . 'copy.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-
+			$icon = Icons::iconCopy($this->ct->Env->toolbarIcons);
 			$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 			$href = 'javascript:ctCopyRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $this->rid . '\',' . $moduleIDString . ');';
 
-			return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
+			return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $icon . '</a></div>';
 		} elseif (defined('WPINC')) {
 			return '';
 		}
@@ -324,18 +285,11 @@ class RecordToolbar
 	protected function renderDeleteIcon(): string
 	{
 		$deleteLabel = $this->firstFieldValueLabel();
-
-		$alt = common::translate('COM_CUSTOMTABLES_DELETE');
-
-		if ($this->ct->Env->toolbarIcons != '')
-			$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-trash" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-trash" title="' . $alt . '"></i>';
-		else
-			$img = '<img src="' . $this->iconPath . 'delete.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-
+		$icon = Icons::iconDelete($this->ct->Env->toolbarIcons);
 		$msg = 'Do you want to delete (' . $deleteLabel . ')?';
 		$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 		$href = 'javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . $moduleIDString . ');';
-		return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
+		return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $icon . '</a></div>';
 	}
 
 	protected function renderPublishIcon(): string
@@ -347,22 +301,12 @@ class RecordToolbar
 
 			if ($this->row['listing_published']) {
 				$link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',0,' . $moduleIDString . ');';
-				$alt = common::translate('COM_CUSTOMTABLES_UNPUBLISH');
-
-				if ($this->ct->Env->toolbarIcons != '') {
-					$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-check-circle" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-check-circle" title="' . $alt . '"></i>';
-				} else
-					$img = '<img src="' . $this->iconPath . 'publish.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+				$icon = Icons::iconPublished($this->ct->Env->toolbarIcons, common::translate('COM_CUSTOMTABLES_UNPUBLISH'));
 			} else {
 				$link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',1,' . $moduleIDString . ');';
-				$alt = common::translate('COM_CUSTOMTABLES_PUBLISH');
-
-				if ($this->ct->Env->toolbarIcons != '')
-					$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-ban" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-ban" title="' . $alt . '"></i>';
-				else
-					$img = '<img src="' . $this->iconPath . 'unpublish.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
+				$icon = Icons::iconUnpublished($this->ct->Env->toolbarIcons, common::translate('COM_CUSTOMTABLES_PUBLISH'));
 			}
-			return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $link . '">' . $img . '</a></div>';
+			return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $link . '">' . $icon . '</a></div>';
 		} else {
 			if (!$this->row['listing_published'])
 				return common::translate('COM_CUSTOMTABLES_PUBLISHED');
