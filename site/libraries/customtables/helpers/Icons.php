@@ -115,7 +115,6 @@ class Icons
 			return 'Print';
 	}
 
-
 	public static function iconOrderBy(string $type, string $title = ''): string
 	{
 		if (empty($title))
@@ -143,9 +142,8 @@ class Icons
 
 		// Default fallback
 		else
-			return 'OrderBy';
+			return 'Order By';
 	}
-
 
 	public static function iconAscendingOrder(string $type, string $title = ''): string
 	{
@@ -177,7 +175,6 @@ class Icons
 			return 'Ascending Order';
 	}
 
-
 	public static function iconDescendingOrder(string $type, string $title = ''): string
 	{
 		if (empty($title))
@@ -207,7 +204,6 @@ class Icons
 		else
 			return 'Descending Order';
 	}
-
 
 	public static function iconEdit(string $type, string $title = ''): string
 	{
@@ -239,7 +235,6 @@ class Icons
 			return 'Edit';
 	}
 
-
 	public static function iconPublished(string $type, string $title = ''): string
 	{
 		if (empty($title))
@@ -269,7 +264,6 @@ class Icons
 		else
 			return 'Published';
 	}
-
 
 	public static function iconUnpublished(string $type, string $title = ''): string
 	{
@@ -301,7 +295,6 @@ class Icons
 			return 'Unpublished';
 	}
 
-
 	public static function iconRefresh(string $type, string $title = ''): string
 	{
 		if (empty($title))
@@ -331,7 +324,6 @@ class Icons
 		else
 			return 'Refresh';
 	}
-
 
 	public static function iconDelete(string $type, string $title = ''): string
 	{
@@ -367,7 +359,6 @@ class Icons
 			return 'Delete';
 	}
 
-
 	public static function iconCopy(string $type, string $title = ''): string
 	{
 		if (empty($title))
@@ -397,7 +388,6 @@ class Icons
 		else
 			return 'Copy';
 	}
-
 
 	public static function iconCreateUser(string $type, string $title = ''): string
 	{
@@ -429,7 +419,6 @@ class Icons
 			return 'Create User';
 	}
 
-
 	public static function iconResetPassword(string $type, string $title = ''): string
 	{
 		if (empty($title))
@@ -459,7 +448,6 @@ class Icons
 		else
 			return 'Reset Password';
 	}
-
 
 	public static function iconFileManager(string $type, string $title = ''): string
 	{
@@ -491,7 +479,6 @@ class Icons
 			return 'File Manager';
 	}
 
-
 	public static function iconPhotoManager(string $type, string $title = ''): string
 	{
 		if (empty($title))
@@ -521,6 +508,40 @@ class Icons
 		else
 			return 'Photo Manager';
 	}
+
+	public static function iconGoBack(string $type, string $title = '', ?string $iconFile = null): string
+	{
+		if (empty($title))
+			$title = common::translate('COM_CUSTOMTABLES_GO_BACK');
+
+		if (!empty($iconFile))
+			return '<img src="' . $iconFile . '" alt="' . $title . '" title="' . $title . '" />';
+
+		// Image Icons (default)
+		if ($type == '')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/arrow_rtl.png" alt="' . $title . '" title="' . $title . '" />';
+
+		// Font Awesome 4
+		elseif ($type == 'font-awesome-4')
+			return '<i class="fa fa-arrow-left" data-icon="fa fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Font Awesome 5
+		elseif ($type == 'font-awesome-5')
+			return '<i class="fas fa-arrow-left" data-icon="fas fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Font Awesome 6
+		elseif ($type == 'font-awesome-6')
+			return '<i class="fas fa-arrow-left" data-icon="fas fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Bootstrap Icons
+		elseif ($type == 'bootstrap')
+			return '<i class="bi bi-arrow-left" data-icon="bi bi-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Default fallback
+		else
+			return 'Go Back';
+	}
+
 
 	public static function iconDownloadCSV(string $type, string $title = '', ?string $iconFile = null, int $imageSize = 32): string
 	{
@@ -555,6 +576,37 @@ class Icons
 		else
 			return 'Download CSV';
 	}
+
+	public static function iconSearch(string $type, string $title = ''): string
+	{
+		if (empty($title))
+			$title = common::translate('COM_CUSTOMTABLES_SEARCH');
+
+		// Image Icons (default)
+		if ($type == '')
+			return '';
+
+		// Font Awesome 4
+		elseif ($type == 'font-awesome-4')
+			return '<i class="fa fa-search" data-icon="fa fa-search" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Font Awesome 5
+		elseif ($type == 'font-awesome-5')
+			return '<i class="fas fa-search" data-icon="fas fa-search" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Font Awesome 6
+		elseif ($type == 'font-awesome-6')
+			return '<i class="fas fa-search" data-icon="fas fa-search" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Bootstrap Icons
+		elseif ($type == 'bootstrap')
+			return '<i class="bi bi-search" data-icon="bi bi-search" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Default fallback
+		else
+			return 'Search';
+	}
+
 
 	public static function iconDownload(string $type, string $title = '', ?string $iconFile = null, int $imageSize = 32): string
 	{

@@ -348,13 +348,8 @@ class Twig_HTML_Tags
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function goback($defaultLabel = null, $image_icon = '', $attribute = '', string $returnto = ''): string //WordPress Ready
+	function goback($defaultLabel = null, $image_icon = '', $attribute = '', string $returnto = '', string $class = ''): string //WordPress Ready
 	{
-		if ($defaultLabel === null)
-			$label = common::translate('COM_CUSTOMTABLES_GO_BACK');
-		else
-			$label = $defaultLabel;
-
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
@@ -370,26 +365,24 @@ class Twig_HTML_Tags
 		if ($returnto == '')
 			return '';
 
-		if ($attribute == '' and $image_icon == '') {
-			if ($this->ct->Env->toolbarIcons != '')
-				$vlu = '<a href="' . $returnto . '"><i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons
-					. ' fa-angle-left" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-angle-left" title="'
-					. $label . '" style="margin-right:10px;"></i>' . $label . '</a>';
+		if ($defaultLabel === null or $defaultLabel == common::ctStripTags($defaultLabel)) {
+
+			if ($defaultLabel === null)
+				$label = common::translate('COM_CUSTOMTABLES_GO_BACK');
 			else
-				$vlu = '<a href="' . $returnto . '" class="ct_goback"><div>' . $label . '</div></a>';
+				$label = $defaultLabel;
+
+			$icon = Icons::iconGoBack($this->ct->Env->toolbarIcons, $label, $image_icon);
+
+			if ($label === '')
+				$content = $icon;
+			else
+				$content = $icon . '<span>' . $label . '</span>';
+
+			return '<a href="' . $returnto . '"' . (!empty($attribute) ? ' ' . $attribute : '') . (!empty($class) ? ' class="' . $class . '"' : '') . '>' . $content . '</a>';
 		} else {
-
-			$img = '';
-			if (($this->ct->Env->toolbarIcons != '' or $image_icon == '') and $attribute == '')
-				$img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-angle-left" data-icon="'
-					. $this->ct->Env->toolbarIcons . ' fa-angle-left" title="' . $label . '" style="margin-right:10px;"></i>';
-			elseif ($this->ct->Env->toolbarIcons == '')
-				$img = '<img src="' . $image_icon . '" alt="' . $label . '" />';
-
-			$vlu = '<a href="' . $returnto . '" ' . $attribute . '><div>' . $img . $label . '</div></a>';
+			return '<a href="' . $returnto . '"' . (!empty($attribute) ? ' ' . $attribute : '') . (!empty($class) ? ' class="' . $class . '"' : '') . '>' . $defaultLabel . '</a>';
 		}
-
-		return $vlu;
 	}
 
 	function batch(): string
@@ -479,7 +472,7 @@ class Twig_HTML_Tags
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function print($linkType = '', $label = '', $class = 'ctEditFormButton btn button-apply btn-primary'): string
+	function print($linkType = '', $defaultLabel = null, $class = 'ctEditFormButton btn button-apply btn-primary'): string
 	{
 		if ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != '')
 			return '';
@@ -487,8 +480,15 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
-		if (empty($label))
+		if (empty($defaultLabel))
 			$label = common::translate('COM_CUSTOMTABLES_PRINT');
+		else
+			$label = $defaultLabel;
+
+		$icon = Icons::iconPrint($this->ct->Env->toolbarIcons, $label);
+
+		if ($this->ct->Env->print == 1)
+			return '<p><a class="no-print" href="#" onclick="window.print();return false;">' . $icon . '</a></p>';
 
 		$link = $this->ct->Env->current_url . (!str_contains($this->ct->Env->current_url, '?') ? '?' : '&') . 'tmpl=component&amp;print=1';
 
@@ -505,17 +505,25 @@ class Twig_HTML_Tags
 
 		$onClick = 'window.open("' . $link . '","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no");return false;';
 
-		$icon = Icons::iconPrint($this->ct->Env->toolbarIcons, $label);
+		return $this->renderButtonOrIcon($linkType, $label, $class, $icon, $onClick);
+	}
 
-		if ($this->ct->Env->print == 1) {
-			$vlu = '<p><a class="no-print" href="#" onclick="window.print();return false;">' . $icon . '</a></p>';
-		} else {
-			if ($linkType == 'icon')
-				$vlu = '<a href="#" onclick=\'' . $onClick . '\'>' . $icon . '</a>';
-			else
-				$vlu = '<button class="' . $class . '" onclick=\'' . $onClick . '\' title="' . $label . '"><span>' . $label . '</span></button>';
-		}
-		return $vlu;
+	protected function renderButtonOrIcon($linkType, $label, $class, $icon, $onClick)
+	{
+		if ($linkType == 'linkicon')
+			return '<a href="#" onclick=\'' . $onClick . '\'>' . $icon . '</a>';
+		elseif ($linkType == 'linklabel')
+			return '<a href="#" onclick=\'' . $onClick . '\'><span>' . $label . '</span></a>';
+		elseif ($linkType == 'linkiconlabel')
+			return '<a href="#" onclick=\'' . $onClick . '\'>' . $icon . '<span>' . $label . '</span></a>';
+		elseif ($linkType == 'buttonicon')
+			return '<button class="' . $class . '" onclick=\'' . $onClick . '\' title="' . $label . '">' . $icon . '</button>';
+		elseif ($linkType == 'buttonlabel')
+			return '<button class="' . $class . '" onclick=\'' . $onClick . '\' title="' . $label . '"><span>' . $label . '</span></button>';
+		elseif ($linkType == 'buttoniconlabel')
+			return '<button class="' . $class . '" onclick=\'' . $onClick . '\' title="' . $label . '">' . $icon . '<span>' . $label . '</span></button>';
+		else
+			return '<button class="' . $class . '" onclick=\'' . $onClick . '\' title="' . $label . '">' . $icon . '<span>' . $label . '</span></button>';
 	}
 
 	/**
@@ -708,7 +716,7 @@ class Twig_HTML_Tags
 		}
 	}
 
-	function searchbutton($label = '', $class_ = ''): string
+	function searchbutton($linkType = '', $defaultLabel = null, $class_ = ''): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
@@ -718,29 +726,21 @@ class Twig_HTML_Tags
 
 		$class = 'ctSearchBox';
 
-		if (isset($class_) and $class_ != '')
+		if (!empty($class_))
 			$class .= ' ' . $class_;
 		else
 			$class .= ' btn button-apply btn-primary';
 
-		$default_Label = common::translate('COM_CUSTOMTABLES_SEARCH');
+		if (empty($defaultLabel))
+			$label = common::translate('COM_CUSTOMTABLES_SEARCH');
+		else
+			$label = $defaultLabel;
 
-		if ($label == common::ctStripTags($label)) {
-			if ($this->ct->Env->toolbarIcons != '') {
-				$img = '<i class=\'' . $this->ct->Env->toolbarIcons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbarIcons . ' fa-search\' title=\'' . $label . '\'></i>';
-				$labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
-			} else {
-				$img = '';
+		$icon = Icons::iconSearch($this->ct->Env->toolbarIcons, $label);
 
-				if ($label == '')
-					$label = $default_Label;
+		$onClick = 'ctSearchBoxDo()';
 
-				$labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
-			}
-			return '<button class=\'' . common::convertClassString($class) . '\' onClick=\'ctSearchBoxDo()\' title=\'' . $default_Label . '\'>' . $img . $labelHtml . '</button>';
-		} else {
-			return '<button class=\'' . common::convertClassString($class) . '\' onClick=\'ctSearchBoxDo()\' title=\'' . $default_Label . '\'>' . $label . '</button>';
-		}
+		return $this->renderButtonOrIcon($linkType, $label, $class, $icon, $onClick);
 	}
 
 	function searchreset($label = '', $class_ = ''): string

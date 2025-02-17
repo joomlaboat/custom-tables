@@ -46,9 +46,13 @@
 		<tag name="print" label="Print Button" startchar="{" endchar="}" twigclass="html"
 			 description="A button that opens a new controllers window without a template, only content.">
 			<params>
-				<param name="listtype" label="Link Type" type="list">
-					<option value="" label="Button"/>
-					<option value="icon" label="Icon"/>
+				<param name="listtype" label="Link Type" type="list" default="buttoniconlabel">
+					<option value="buttoniconlabel" label="Button with Icon and Label"/>
+					<option value="buttonicon" label="Button with Icon"/>
+					<option value="buttonlabel" label="Button with Label"/>
+					<option value="linkiconlabel" label="Link with Icon and Label"/>
+					<option value="linkicon" label="Link with Icon"/>
+					<option value="linklabel" label="Link with Label"/>
 				</param>
 				<param type="label" name="label" label="Label" description="What will be written on the button."/>
 				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
@@ -67,6 +71,7 @@
 					   example="style='border:1px solid red;'"/>
 				<param name="redirectlink" label="Custom Redirect Link" type="string"
 					   description="URL to redirect after processing the button click. Tip: user $get_listing_id keyword to get newly saved record id."/>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
 			</params>
 		</tag>
 
@@ -144,8 +149,16 @@
 			 twigclass="html" image="https://joomlaboat.com/images/components/ct/tags/search-button.png"
 			 wordpress="true">
 			<params>
-				<param name="label" label="Button Label" type="string" example="Search"
-					   description="The label of the button. Leaving the label parameter empty will produce an icon only (a magnifying glass). You can also pass HTML code as the label argument to control the button look completely. "/>
+				<param name="listtype" label="Link Type" type="list" default="buttoniconlabel">
+					<option value="buttoniconlabel" label="Button with Icon and Label"/>
+					<option value="buttonicon" label="Button with Icon"/>
+					<option value="buttonlabel" label="Button with Label"/>
+					<option value="linkiconlabel" label="Link with Icon and Label"/>
+					<option value="linkicon" label="Link with Icon"/>
+					<option value="linklabel" label="Link with Label"/>
+				</param>
+				<param name="label" label="Label" type="string" example="Search"
+					   description="The label. Leaving the label parameter empty will produce an icon only (a magnifying glass). You can also pass HTML code as the label argument to control the button look completely. "/>
 				<param type="string" name="cssclass" label="CSS Class"
 					   description="Name or names of CSS classes separated by space."/>
 			</params>
