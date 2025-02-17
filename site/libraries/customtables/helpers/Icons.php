@@ -69,16 +69,15 @@ class Icons
 			return '<i class="fa fa-plus-circle" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-plus-circle" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-plus-circle" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-file-earmark-plus ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-plus-circle" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -99,16 +98,15 @@ class Icons
 			return '<i class="fa fa-print" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-print" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-print" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-printer ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-print" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -129,16 +127,15 @@ class Icons
 			return '<i class="fa fa-sort" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-sort" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-sort" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-filter ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-sort" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -159,16 +156,15 @@ class Icons
 			return '<i class="fa fa-caret-up" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-caret-up" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-caret-up" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-caret-up-fill ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-caret-up" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -189,16 +185,15 @@ class Icons
 			return '<i class="fa fa-caret-down" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-caret-down" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-caret-down" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-caret-down-fill ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-caret-down" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -219,16 +214,15 @@ class Icons
 			return '<i class="fa fa-pencil" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-pencil-alt" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-pencil-alt" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-pencil-square ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-pencil" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -249,16 +243,15 @@ class Icons
 			return '<i class="fa fa-eye" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-eye" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-eye" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-eye ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-eye" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -279,16 +272,15 @@ class Icons
 			return '<i class="fa fa-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-eye-slash ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -309,16 +301,15 @@ class Icons
 			return '<i class="fa fa-refresh" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-sync-alt" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-sync-alt" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-arrow-repeat ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-refresh" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -343,16 +334,15 @@ class Icons
 			return '<i class="fa fa-trash" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-trash-alt" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-trash-alt" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-trash ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-trash" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -373,16 +363,15 @@ class Icons
 			return '<i class="fa fa-copy" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-copy" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-copy" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-files ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-copy" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -403,16 +392,15 @@ class Icons
 			return '<i class="fa fa-user-plus" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-user-plus" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-user-plus" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-person-plus ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-user-plus" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -433,16 +421,15 @@ class Icons
 			return '<i class="fa fa-key" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-key" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-key" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-key ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-key" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -463,16 +450,15 @@ class Icons
 			return '<i class="fa fa-folder-open" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-folder-open" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-folder-open" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-folder ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-folder-open" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -493,16 +479,15 @@ class Icons
 			return '<i class="fa fa-image" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-image" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-image" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-image ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-image" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -526,22 +511,20 @@ class Icons
 			return '<i class="fa fa-arrow-left" data-icon="fa fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-arrow-left" data-icon="fas fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-arrow-left" data-icon="fas fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-arrow-left" data-icon="bi bi-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
 
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
+
 		// Default fallback
 		else
 			return 'Go Back';
 	}
-
 
 	public static function iconDownloadCSV(string $type, string $title = '', ?string $iconFile = null, int $imageSize = 32): string
 	{
@@ -557,20 +540,15 @@ class Icons
 			return '<i class="fa fa-file-csv" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-file-csv" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-file-csv" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-file-earmark-spreadsheet" aria-hidden="true" title="' . $title . '"></i>';
 
-		// Font Awesome - CSV File Icon
-		elseif ($type == 'csv')
-			return '<i class="fas fa-file-csv" aria-hidden="true" title="' . $title . '"></i>';
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-file-csv" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -591,16 +569,15 @@ class Icons
 			return '<i class="fa fa-search" data-icon="fa fa-search" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-search" data-icon="fas fa-search" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-search" data-icon="fas fa-search" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-search" data-icon="bi bi-search" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="bi bi-search" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-search" aria-hidden="true" title="' . $title . '"></i>'; // Added UM icon support
 
 		// Default fallback
 		else
@@ -622,16 +599,15 @@ class Icons
 			return '<i class="fa fa-file" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
-		elseif ($type == 'font-awesome-5')
-			return '<i class="fas fa-file" aria-hidden="true" title="' . $title . '"></i>';
-
-		// Font Awesome 6
-		elseif ($type == 'font-awesome-6')
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
 			return '<i class="fas fa-file" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
 			return '<i class="bi bi-file-earmark" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="um-faicon-file" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
