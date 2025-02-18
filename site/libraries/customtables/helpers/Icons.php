@@ -64,6 +64,10 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/new.png" alt="' . $title . '" title="' . $title . '" />';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/new.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-plus-circle" aria-hidden="true" title="' . $title . '"></i>';
@@ -92,6 +96,10 @@ class Icons
 		// Image Icons (default)
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/print.png" alt="' . $title . '" title="' . $title . '" />';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/print.png" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
@@ -122,6 +130,10 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/order.png" alt="' . $title . '" title="' . $title . '" />';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/order.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-sort" aria-hidden="true" title="' . $title . '"></i>';
@@ -150,6 +162,10 @@ class Icons
 		// Image Icons (default)
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/up.png" alt="' . $title . '" title="' . $title . '" />';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/up.png" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
@@ -180,6 +196,10 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/down.png" alt="' . $title . '" title="' . $title . '" />';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/down.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-caret-down" aria-hidden="true" title="' . $title . '"></i>';
@@ -208,6 +228,10 @@ class Icons
 		// Image Icons (default)
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/edit.png" alt="' . $title . '" title="' . $title . '" />';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/edit.png" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
@@ -238,6 +262,10 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/publish.png" alt="' . $title . '" title="' . $title . '" />';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/published.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-eye" aria-hidden="true" title="' . $title . '"></i>';
@@ -266,6 +294,10 @@ class Icons
 		// Image Icons (default)
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/unpublish.png" alt="' . $title . '" title="' . $title . '" />';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/unpublished.png" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
@@ -296,6 +328,10 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/refresh.png" alt="' . $title . '" title="' . $title . '" />';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/refresh.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-refresh" aria-hidden="true" title="' . $title . '"></i>';
@@ -325,9 +361,9 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/delete.png" alt="' . $title . '" title="' . $title . '" />';
 
-		// Mark-Awesome Icons (custom image icons)
-		if ($type == 'mark-awesome')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/mark_awesome_icons/delete.png" alt="' . $title . '" title="' . $title . '" />';
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/delete.png" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
@@ -358,6 +394,10 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/copy.png" alt="' . $title . '" title="' . $title . '" />';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/copy.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-copy" aria-hidden="true" title="' . $title . '"></i>';
@@ -386,6 +426,10 @@ class Icons
 		// Image Icons (default)
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/key-add.png" alt="' . $title . '" title="' . $title . '" />';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/keyadd.png" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
@@ -416,6 +460,10 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/key.png" alt="' . $title . '" title="' . $title . '" />';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/key.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-key" aria-hidden="true" title="' . $title . '"></i>';
@@ -445,6 +493,10 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/filemanager.png" alt="' . $title . '" title="' . $title . '" />';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/filemanager.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-folder-open" aria-hidden="true" title="' . $title . '"></i>';
@@ -473,6 +525,10 @@ class Icons
 		// Image Icons (default)
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/photomanager.png" alt="' . $title . '" title="' . $title . '" />';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/photomanager.png" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
@@ -506,6 +562,10 @@ class Icons
 		if ($type == '')
 			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/arrow_rtl.png" alt="' . $title . '" title="' . $title . '" />';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/back.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-arrow-left" data-icon="fa fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
@@ -534,6 +594,10 @@ class Icons
 		// Image Icons (default)
 		if ($type == '')
 			return '<img src="' . $iconFile . '" alt="' . $title . '" title="' . $title . '" style="width:' . $imageSize . 'px;height:' . $imageSize . 'px;">';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return 'ICON NEEDED';//'<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/delete.png" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
@@ -564,6 +628,10 @@ class Icons
 		if ($type == '')
 			return '';
 
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/search.png" alt="' . $title . '" title="' . $title . '" />';
+
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
 			return '<i class="fa fa-search" data-icon="fa fa-search" aria-hidden="true" title="' . $title . '"></i>';
@@ -593,6 +661,10 @@ class Icons
 		// Image Icons (default)
 		if ($type == '')
 			return '<img src="' . $iconFile . '" alt="' . $title . '" title="' . $title . '" style="width:' . $imageSize . 'px;height:' . $imageSize . 'px;">';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return 'ICON NEEDED';//'<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/delete.png" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')

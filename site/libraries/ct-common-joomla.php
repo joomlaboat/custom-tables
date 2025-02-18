@@ -77,7 +77,6 @@ class common
 		$contentType = $app->input->server->get('CONTENT_TYPE');
 
 		if (
-
 			$contentType === 'applicationjson' ||         // Joomla's modified version
 			$contentType === 'application/json' ||        // Standard version
 			strpos(($contentType ?? ''), 'application/json') !== false  // Partial match for safety

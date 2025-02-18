@@ -70,6 +70,7 @@
         - Recommended: Font Awesome 6 (for Joomla 5+) or Bootstrap if your template does not use Font Awesome."
 		>
 			<option value="">Image Icons</option>
+			<option value="not-so-pixelly">Not So Pixelly</option>
 			<option value="font-awesome-4">Font Awesome 4 (Joomla 3)</option>
 			<option value="font-awesome-5">Font Awesome 5 (Joomla 4)</option>
 			<option value="font-awesome-6">Font Awesome 6 (Joomla 5+)</option>

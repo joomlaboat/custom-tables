@@ -13,6 +13,8 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use Exception;
+
 class InputBox_filebox extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
@@ -20,6 +22,10 @@ class InputBox_filebox extends BaseInputBox
 		parent::__construct($ct, $field, $row, $option_list, $attributes);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function render(): string
 	{
 		if (!$this->ct->isRecordNull($this->row)) {
@@ -36,7 +42,8 @@ class InputBox_filebox extends BaseInputBox
 
 			if (count($FileBoxRows) > 0) {
 				$vlu = self::process($FileBoxRows, $this->field, $listing_id, ['', 'icon-filename-link', '32', '_blank', 'ol']);
-				$result = '<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">'
+				$backGround = "background-image: url('" . CUSTOMTABLES_MEDIA_WEBPATH . "images/icons/bg.png');";
+				$result = '<div style="padding:5px;width:100%;overflow:scroll;border:1px dotted grey;' . $backGround . '">'
 					. $manageButton . '<br/>' . $vlu . '</div>';
 			} else
 				$result = common::translate('COM_CUSTOMTABLES_FILE_NO_FILES') . ' ' . $manageButton;
@@ -46,6 +53,10 @@ class InputBox_filebox extends BaseInputBox
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getFileBoxRows(string $tablename, string $fieldname, ?string $listing_id)
 	{
 		$fileBoxTableName = '#__customtables_filebox_' . $tablename . '_' . $fieldname;
@@ -55,9 +66,12 @@ class InputBox_filebox extends BaseInputBox
 		return database::loadObjectList($fileBoxTableName, ['fileid', 'file_ext'], $whereClause, 'fileid');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function renderFileBoxIcon(CT $ct, string $listing_id, string $fileBoxName, string $title): string
 	{
-		$iconPath = CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/';
 		$rid = $ct->Table->tableid . 'x' . $listing_id;
 
 		$fileManagerLink = 'index.php?option=com_customtables&amp;view=editfiles'
@@ -76,7 +90,11 @@ class InputBox_filebox extends BaseInputBox
 		return '<div id="esFileBoxIcon' . $rid . '" class="toolbarIcons"><a href="' . $ct->Env->WebsiteRoot . $fileManagerLink . '">' . $icon . '</a></div>';
 	}
 
-	public static function process(array $FileBoxRows, &$field, ?string $listing_id, array $option_list): string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function process(array $FileBoxRows, $field, ?string $listing_id, array $option_list): string
 	{
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
 			. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php');
