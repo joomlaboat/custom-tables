@@ -878,7 +878,7 @@ class SaveFieldQuerySet
 					$attachments[] = $filename;//TODO: Check the functionality
 					$vlu = '';
 				} else
-					$vlu = '<p>File "' . $filename . '"not found.</p>';
+					$vlu = '<p>File Attachment "' . $filename . '"not found.</p>';
 
 				$note_final = str_replace($fItem, $vlu, $note);
 				$i++;
