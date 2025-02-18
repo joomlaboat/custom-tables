@@ -658,6 +658,34 @@ if (typeof window.CTEditHelper === "undefined") {
 </script>
 ');
 
+		$document->addCustomTag('
+<style>
+	:root {--ctToolBarIconSize: 16px;--ctToolBarIconFontSize: 16px;}
+	
+	.ctToolBarIcon{
+		width: var(--ctToolBarIconSize);
+		height: var(--ctToolBarIconSize);
+		//font-size: var(--ctToolBarIconFontSize);
+		text-decoration: none;
+	}
+	
+	.ctToolBarIcon + span {
+    	margin-left:10px;
+	}
+	
+	.ctToolBarIcon2x{
+		width: calc(var(--ctToolBarIconSize) * 2);
+		height: calc(var(--ctToolBarIconSize) * 2);
+		font-size: 2em;
+		text-decoration: none;
+	}
+	
+	.ctToolBarIcon2x + span {
+    	margin-left:15px;
+	}
+</style>
+');
+
 		//Styles
 		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" type="text/css" rel="stylesheet" >');
 		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/modal.css" type="text/css" rel="stylesheet" >');
@@ -683,7 +711,6 @@ if (typeof window.CTEditHelper === "undefined") {
 		Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
 		Text::script('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID');
 		Text::script('COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH');
-
 
 		if ($env->toolbarIcons == 'font-awesome-4' or $env->toolbarIcons == 'font-awesome-5' or $env->toolbarIcons == 'font-awesome-6') {
 			$wa = Factory::getApplication()->getDocument()->getWebAssetManager();

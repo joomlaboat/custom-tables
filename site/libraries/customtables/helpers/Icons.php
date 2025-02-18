@@ -62,26 +62,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/new.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/new.png" class="ctToolBarIcon2x" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/new.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/new.png" class="ctToolBarIcon2x" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-plus-circle" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fa fa-plus-circle" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-plus-circle" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fas fa-plus-circle" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-file-earmark-plus ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x bi bi-file-earmark-plus ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-plus-circle" aria-hidden="true" title="' . $title . '"></i>';//checked
+			return '<i class="ctToolBarIcon2x um-faicon-plus-circle" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -95,26 +95,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/print.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/print.png" class="ctToolBarIcon2x" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/print.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/print.png" class="ctToolBarIcon2x" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-print" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fa fa-print" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-print" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fas fa-print" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-printer ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x bi bi-printer ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-print" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x um-faicon-print" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -128,26 +128,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/order.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/order.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/order.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/order.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-sort" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-sort" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-sort" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-sort" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-filter ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-filter ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-sort" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon um-faicon-sort" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -161,26 +161,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/up.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/up.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/up.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/up.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-caret-up" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-caret-up" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-caret-up" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-caret-up" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-caret-up-fill ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-caret-up-fill ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-caret-up" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon um-faicon-caret-up" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -194,26 +194,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/down.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/down.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/down.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/down.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-caret-down" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-caret-down" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-caret-down" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-caret-down" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-caret-down-fill ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-caret-down-fill ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-caret-down" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon um-faicon-caret-down" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -227,26 +227,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/edit.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/edit.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/edit.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/edit.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-pencil" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon ctToolBarIcon fa fa-pencil" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-pencil-alt" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon ctToolBarIcon fas fa-pencil-alt" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-pencil-square ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-pencil-square ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-pencil" aria-hidden="true" title="' . $title . '"></i>';//checked
+			return '<i class="ctToolBarIcon um-faicon-pencil" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -260,26 +260,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/publish.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/publish.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/published.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/published.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-eye" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-eye" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-eye" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-eye" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-eye ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-eye ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-eye" aria-hidden="true" title="' . $title . '"></i>';//checked
+			return '<i class="ctToolBarIcon um-faicon-eye" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -293,26 +293,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/unpublish.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/unpublish.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/unpublished.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/unpublished.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-eye-slash ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-eye-slash ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon um-faicon-eye-slash" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -326,26 +326,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/refresh.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/refresh.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/refresh.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/refresh.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-refresh" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-refresh" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-sync-alt" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-sync-alt" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-arrow-repeat ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-arrow-repeat ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-refresh" aria-hidden="true" title="' . $title . '"></i>';//checked
+			return '<i class="ctToolBarIcon um-faicon-refresh" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -359,26 +359,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/delete.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/delete.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/delete.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/delete.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-trash" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-trash" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-trash-alt" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-trash-alt" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-trash ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-trash ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-trash" aria-hidden="true" title="' . $title . '"></i>';//checked
+			return '<i class="ctToolBarIcon um-faicon-trash" aria-hidden="true" title="' . $title . '"></i>';//checked
 
 		// Default fallback
 		else
@@ -392,26 +392,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/copy.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/copy.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/copy.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/copy.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-copy" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-copy" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-copy" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-copy" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-files ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-files ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-copy" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon um-faicon-copy" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -425,26 +425,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/key-add.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/key-add.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/keyadd.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/keyadd.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-user-plus" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-user-plus" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-user-plus" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-user-plus" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-person-plus ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-person-plus ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-user-plus" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon um-faicon-user-plus" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -458,26 +458,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/key.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/key.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/key.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/key.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-key" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-key" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-key" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-key" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-key ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-key ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-key" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon um-faicon-key" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -491,26 +491,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/filemanager.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/filemanager.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/filemanager.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/filemanager.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-folder-open" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-folder-open" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-folder-open" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-folder-open" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-folder ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-folder ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-folder-open" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon um-faicon-folder-open" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -524,26 +524,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/photomanager.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/photomanager.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/photomanager.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/photomanager.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-image" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fa fa-image" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-image" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-image" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-image ms-1" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon bi bi-image ms-1" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-image" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon um-faicon-image" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -560,26 +560,26 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/arrow_rtl.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/arrow_rtl.png" class="ctToolBarIcon2x" alt="' . $title . '" title="' . $title . '" />';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/back.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/back.png" class="ctToolBarIcon2x" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-arrow-left" data-icon="fa fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fa fa-arrow-left" data-icon="fa fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-arrow-left" data-icon="fas fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fas fa-arrow-left" data-icon="fas fa-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-arrow-left" data-icon="bi bi-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x bi bi-arrow-left" data-icon="bi bi-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x um-faicon-arrow-left" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -601,18 +601,18 @@ class Icons
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-file-csv" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fa fa-file-csv" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-file-csv" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fas fa-file-csv" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-file-earmark-spreadsheet" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x bi bi-file-earmark-spreadsheet" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-file-csv" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x um-faicon-file-csv" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
@@ -630,22 +630,22 @@ class Icons
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
-			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/search.png" alt="' . $title . '" title="' . $title . '" />';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/search.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-search" data-icon="fa fa-search" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fa fa-search" data-icon="fa fa-search" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-search" data-icon="fas fa-search" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon fas fa-search" data-icon="fas fa-search" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-search" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x bi bi-search" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-search" aria-hidden="true" title="' . $title . '"></i>'; // Added UM icon support
+			return '<i class="ctToolBarIcon2x um-faicon-search" aria-hidden="true" title="' . $title . '"></i>'; // Added UM icon support
 
 		// Default fallback
 		else
@@ -668,18 +668,18 @@ class Icons
 
 		// Font Awesome 4
 		elseif ($type == 'font-awesome-4')
-			return '<i class="fa fa-file" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fa fa-file" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Font Awesome 5
 		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
-			return '<i class="fas fa-file" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x fas fa-file" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Bootstrap Icons
 		elseif ($type == 'bootstrap')
-			return '<i class="bi bi-file-earmark" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x bi bi-file-earmark" aria-hidden="true" title="' . $title . '"></i>';
 
 		elseif ($type == 'ultimate-member')
-			return '<i class="um-faicon-file" aria-hidden="true" title="' . $title . '"></i>';
+			return '<i class="ctToolBarIcon2x um-faicon-file" aria-hidden="true" title="' . $title . '"></i>';
 
 		// Default fallback
 		else
