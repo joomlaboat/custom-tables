@@ -50,7 +50,11 @@ class InputBox_text extends BaseInputBox
 				}
 			}
 
-			if (in_array('rich', $this->field->params)) {
+			$editorType = $this->field->params[0] ?? '';
+			if (isset($this->option_list[4]))
+				$editorType = $this->option_list[4];
+
+			if ($editorType == 'rich') {
 				$w = $this->option_list[2] ?? '100%';
 				$h = $this->option_list[3] ?? '300';
 				$c = 0;

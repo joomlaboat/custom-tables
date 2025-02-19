@@ -1526,6 +1526,15 @@
 					   default="100%" example="100%" type="string"/>
 				<param name="height" label="Editor Height" description="Editor Height in Pixels or %"
 					   default="" example="300px" type="string"/>
+				<param name="texteditor" label="Text Editor"
+					   description="Choose the type of editor to use for the text area. Options include no editor or a rich text editor."
+					   hidden="false" default=""
+					   type="list">
+					<option value="" label=" - As defined in the field settings" wordpress="true"/>
+					<option value="textarea" label="No Editor (Text Area)" wordpress="true"/>
+					<option value="rich" label="Rich Text Editor" wordpress="false"/>
+					<!--<option value="codemirror" label="Code Mirror (Code Editor)" />-->
+				</param>
 			</params>
 		</editparams>
 	</type>
