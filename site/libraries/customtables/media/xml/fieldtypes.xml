@@ -1463,7 +1463,7 @@
 				   hidden="false" default=""
 				   type="list">
 				<option value="" label="No Editor" wordpress="true"/>
-				<option value="rich" label="Rich Text Editor" wordpress="false"/>
+				<option value="rich" label="Rich Text Editor" wordpress="true"/>
 				<!--<option value="codemirror" label="Code Mirror (Code Editor)" />-->
 			</param>
 			<param name="spellcheck" label="Spell Checker"
@@ -1532,7 +1532,7 @@
 					   type="list">
 					<option value="" label=" - As defined in the field settings" wordpress="true"/>
 					<option value="textarea" label="No Editor (Text Area)" wordpress="true"/>
-					<option value="rich" label="Rich Text Editor" wordpress="false"/>
+					<option value="rich" label="Rich Text Editor" wordpress="true"/>
 					<!--<option value="codemirror" label="Code Mirror (Code Editor)" />-->
 				</param>
 			</params>

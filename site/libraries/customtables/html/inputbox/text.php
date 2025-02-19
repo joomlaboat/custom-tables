@@ -66,7 +66,25 @@ class InputBox_text extends BaseInputBox
 				return '<textarea ' . self::attributes2String($this->attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>';
 			}
 		} elseif (defined('WPINC')) {
-			return '<textarea ' . self::attributes2String($this->attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>';
+			// WordPress Handling
+			$editorType = $this->field->params[0] ?? '';
+			if (isset($this->option_list[4])) {
+				$editorType = $this->option_list[4];
+			}
+
+			if ($editorType == 'rich') {
+				ob_start();
+				$editor_settings = [
+					'textarea_name' => $this->attributes['id'],
+					'media_buttons' => true,
+					'textarea_rows' => 10,
+					'tinymce' => true,
+				];
+				wp_editor($value, $this->attributes['id'], $editor_settings);
+				return ob_get_clean();
+			} else {
+				return '<textarea ' . self::attributes2String($this->attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>';
+			}
 		}
 	}
 }
