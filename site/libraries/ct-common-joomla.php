@@ -660,28 +660,33 @@ if (typeof window.CTEditHelper === "undefined") {
 
 		$document->addCustomTag('
 <style>
-	:root {--ctToolBarIconSize: 16px;--ctToolBarIconFontSize: 16px;}
+:root {--ctToolBarIconSize: 16px;--ctToolBarIconFontSize: 16px;}
+	
+	.toolbarIcons{
+		text-decoration: none;
+	}
+	
+	.toolbarIcons a{
+		text-decoration: none;
+	}
 	
 	.ctToolBarIcon{
 		width: var(--ctToolBarIconSize);
 		height: var(--ctToolBarIconSize);
-		//font-size: var(--ctToolBarIconFontSize);
-		text-decoration: none;
 	}
 	
 	.ctToolBarIcon + span {
-    	margin-left:10px;
+		margin-left:10px;
 	}
 	
 	.ctToolBarIcon2x{
 		width: calc(var(--ctToolBarIconSize) * 2);
 		height: calc(var(--ctToolBarIconSize) * 2);
-		font-size: 2em;
-		text-decoration: none;
+		font-size: 1.5em;
 	}
 	
 	.ctToolBarIcon2x + span {
-    	margin-left:15px;
+		margin-left:15px;
 	}
 </style>
 ');

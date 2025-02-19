@@ -1306,7 +1306,12 @@ class Layouts
 		try {
 			$pageLayout = $twig->process();
 		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+			if ($this->ct->Env->debug)
+				$message = $e->getMessage() . '<br/>' . $e->getFile() . '<br/>' . $e->getLine();// . $e->getTraceAsString();
+			else
+				$message = $e->getMessage();
+
+			throw new Exception($message);
 		}
 
 		if (defined('_JEXEC')) {

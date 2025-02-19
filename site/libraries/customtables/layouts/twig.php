@@ -35,7 +35,7 @@ class TwigProcessor
 	var string $itemLayoutName;
 	var string $itemLayoutLineStart;
 	var bool $parseParams;
-	var bool $debug;
+
 
 	/**
 	 * @throws Exception
@@ -43,8 +43,6 @@ class TwigProcessor
 	 */
 	public function __construct(CT $ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
 	{
-		$this->debug = false;
-
 		$this->parseParams = $parseParams;
 		$this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
 		$this->ct = $ct;
@@ -215,7 +213,7 @@ class TwigProcessor
 			$result = '';
 		} else {
 
-			if ($this->debug) {
+			if ($this->ct->Env->debug) {
 				$result = $this->twig->render($this->pageLayoutName, $this->variables);
 			} else {
 				try {
@@ -242,7 +240,7 @@ class TwigProcessor
 
 					$this->ct->Table->record = $blockRow;
 
-					if ($this->debug) {
+					if ($this->ct->Env->debug) {
 						$row_result = $this->twig->render($this->itemLayoutName, $this->variables);
 					} else {
 						try {
