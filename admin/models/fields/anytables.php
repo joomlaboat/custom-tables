@@ -12,8 +12,7 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
-use CustomTables\database;
-use CustomTables\MySQLWhereClause;
+use CustomTables\TableHelper;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 
@@ -33,7 +32,7 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 			$options = array();
 			$options[] = HTMLHelper::_('select.option', '', ' - ' . common::translate('COM_CUSTOMTABLES_SELECT'));
 
-			$tables = $this->getListOfExistingTables();
+			$tables = TableHelper::getListOfExistingTables();
 
 			foreach ($tables as $table)
 				$options[] = HTMLHelper::_('select.option', $table, $table);
@@ -43,39 +42,7 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 			return $options;
 		}
 
-		protected function getListOfExistingTables(): array
-		{
-			$whereClause = new MySQLWhereClause();
 
-			$prefix = database::getDBPrefix();
-			$serverType = database::getServerType();
-
-			if ($serverType == 'postgresql') {
-				$whereClause->addCondition('table_type', 'BASE TABLE');
-				$whereClause->addCondition('table_schema NOT IN (\'pg_catalog\', \'information_schema\')', null);
-				$whereClause->addCondition('POSITION(\'' . $prefix . 'customtables_\' IN table_name)', 1, '!=');
-				$whereClause->addCondition('table_name', $prefix . 'user_keys', '!=');
-				$whereClause->addCondition('table_name', $prefix . 'user_usergroup_map', '!=');
-				$whereClause->addCondition('table_name', $prefix . 'usergroups', '!=');
-				$whereClause->addCondition('table_name', $prefix . 'users', '!=');
-				$rows = database::loadAssocList('information_schema.tables', ['table_name'], $whereClause);
-			} else {
-				$database = database::getDataBaseName();
-				$whereClause->addCondition('table_schema', $database);
-				$whereClause->addCondition('INSTR(TABLE_NAME,\'' . $prefix . 'customtables_\')', 'false', '=', true);
-				$whereClause->addCondition('TABLE_NAME', $prefix . 'user_keys', '!=');
-				$whereClause->addCondition('TABLE_NAME', $prefix . 'user_usergroup_map', '!=');
-				$whereClause->addCondition('TABLE_NAME', $prefix . 'usergroups', '!=');
-				$whereClause->addCondition('TABLE_NAME', $prefix . 'users', '!=');
-				$rows = database::loadAssocList('information_schema.tables', ['TABLE_NAME AS table_name'], $whereClause);
-			}
-			$list = array();
-
-			foreach ($rows as $row)
-				$list[] = $row['table_name'];
-
-			return $list;
-		}
 	}
 } else {
 
@@ -101,7 +68,7 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 		 */
 		protected function getOptions($add_empty_option = true): array
 		{
-			$tables = $this->getListOfExistingTables();
+			$tables = TableHelper::getListOfExistingTables();
 
 			$options = array();
 			if ($tables) {
@@ -112,45 +79,6 @@ if (!CUSTOMTABLES_JOOMLA_MIN_4) {
 					$options[] = ['value' => $table, 'text' => $table];
 			}
 			return $options;
-		}
-
-		/**
-		 * @throws Exception
-		 * @since 3.2.2
-		 */
-		protected function getListOfExistingTables(): array
-		{
-			$prefix = database::getDBPrefix();
-			$serverType = database::getServerType();
-
-			$whereClause = new MySQLWhereClause();
-
-			if ($serverType == 'postgresql') {
-				$whereClause->addCondition('table_type', 'BASE TABLE');
-				$whereClause->addCondition('table_schema NOT IN (\'pg_catalog\', \'information_schema\')', null);
-				$whereClause->addCondition('POSITION(\'' . $prefix . 'customtables_\' IN table_name)', 1, '!=');
-				$whereClause->addCondition('table_name', $prefix . 'user_keys', '!=');
-				$whereClause->addCondition('table_name', $prefix . 'user_usergroup_map', '!=');
-				$whereClause->addCondition('table_name', $prefix . 'usergroups', '!=');
-				$whereClause->addCondition('table_name', $prefix . 'users', '!=');
-				$rows = database::loadAssocList('information_schema.tables', ['table_name'], $whereClause);
-			} else {
-				$database = database::getDataBaseName();
-				$whereClause->addCondition('table_schema', $database);
-				$whereClause->addCondition('INSTR(TABLE_NAME,\'' . $prefix . 'customtables_\')', 'false', '=', true);
-				$whereClause->addCondition('TABLE_NAME', $prefix . 'user_keys', '!=');
-				$whereClause->addCondition('TABLE_NAME', $prefix . 'user_usergroup_map', '!=');
-				$whereClause->addCondition('TABLE_NAME', $prefix . 'usergroups', '!=');
-				$whereClause->addCondition('TABLE_NAME', $prefix . 'users', '!=');
-				$rows = database::loadAssocList('information_schema.tables', ['TABLE_NAME AS table_name'], $whereClause);
-			}
-
-			$list = array();
-
-			foreach ($rows as $row)
-				$list[] = $row['table_name'];
-
-			return $list;
 		}
 	}
 }

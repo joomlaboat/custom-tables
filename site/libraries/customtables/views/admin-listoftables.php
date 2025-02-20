@@ -102,7 +102,7 @@ class ListOfTables
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function save(?int $tableId): ?array
+	function save(?int $tableId): void
 	{
 		$data = [];
 		// Check if running in WordPress context
@@ -110,13 +110,8 @@ class ListOfTables
 			check_admin_referer('create-edit-table');
 
 			// Check user capabilities
-			if (!current_user_can('install_plugins')) {
-				wp_die(
-					'<h1>' . __('You need a higher level of permission.') . '</h1>' .
-					'<p>' . __('Sorry, you are not allowed to create custom tables.') . '</p>',
-					403
-				);
-			}
+			if (!current_user_can('install_plugins'))
+				throw new Exception('You need a higher level of permission.');
 		}
 
 		// Get database name and prefix
@@ -143,7 +138,7 @@ class ListOfTables
 		$data ['customfieldprefix'] = common::inputPostString('customfieldprefix', null, 'create-edit-table');
 
 		if ($newTableName == "")
-			return ['Please provide the table name.'];
+			throw new Exception('Please provide the table name.');
 
 		// Save as Copy
 		$old_tablename = '';
@@ -154,9 +149,8 @@ class ListOfTables
 
 				// Handle copy table name
 				$copyTableName = $newTableName;
-				if ($old_tablename == $newTableName) {
+				if ($old_tablename == $newTableName)
 					$copyTableName = 'copy_of_' . $newTableName;
-				}
 
 				while (TableHelper::getTableID($newTableName) != 0) {
 					$copyTableName = 'copy_of_' . $newTableName;
@@ -201,13 +195,13 @@ class ListOfTables
 			if ($already_exists == 0) {
 				$data ['tablename'] = $newTableName;
 			} else {
-				return ['Table with this name already exists.'];
+				throw new Exception('Table with this name already exists.');
 			}
 
 			try {
 				database::insert('#__customtables_tables', $data);
 			} catch (Exception $e) {
-				return [$e->getMessage()];
+				throw new Exception($e->getMessage());
 			}
 
 		} else {
@@ -216,9 +210,8 @@ class ListOfTables
 			$this->ct->getTable($tableId);
 			if ($newTableName != $this->ct->Table->tablename) {
 				$already_exists = TableHelper::getTableID($newTableName);
-				if ($already_exists != 0) {
-					return ['Table rename aborted. Table with this name already exists.'];
-				}
+				if ($already_exists != 0)
+					throw new Exception('Table rename aborted. Table with this name already exists.');
 			}
 
 			if (common::inputPostString('customtablename', null, 'create-edit-table') == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
@@ -233,12 +226,11 @@ class ListOfTables
 				$whereClauseUpdate->addCondition('id', $tableId);
 				database::update('#__customtables_tables', $data, $whereClauseUpdate);
 			} catch (Exception $e) {
-				return [$e->getMessage()];
+				throw new Exception($e->getMessage());
 			}
 		}
 
 		//Create MySQLTable
-		$messages = array();
 		$customTableName = common::inputPostString('customtablename', null, 'create-edit-table');
 		if ($customTableName == '-new-') {
 			// Case: Creating a new third-party table
@@ -259,6 +251,5 @@ class ListOfTables
 				TableHelper::createTableIfNotExists($dbPrefix, $newTableName, $tableTitle, $customTableName ?? '');
 			}
 		}
-		return $messages;
 	}
 }
