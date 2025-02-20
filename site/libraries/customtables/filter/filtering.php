@@ -15,8 +15,6 @@ defined('_JEXEC') or die();
 use DateTime;
 use Exception;
 
-//use LayoutProcessor;
-
 class Filtering
 {
 	var CT $ct;

@@ -115,13 +115,10 @@ class Environment
 		if (defined('_JEXEC')) {
 			$path = CUSTOMTABLES_PRO_PATH . 'protagprocessor' . DIRECTORY_SEPARATOR;
 
-			if (file_exists($path . 'phptags.php')) {
+			if (file_exists($path . 'customphp.php')) {
 				$this->advancedTagProcessor = true;
-				require_once($path . 'phptags.php');
-			}
-
-			if (file_exists($path . 'customphp.php'))
 				require_once($path . 'customphp.php');
+			}
 
 			if (file_exists($path . 'helpers.php'))
 				require_once($path . 'helpers.php');

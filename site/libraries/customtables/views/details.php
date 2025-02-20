@@ -15,12 +15,6 @@ defined('_JEXEC') or die();
 
 use Exception;
 
-//use LayoutProcessor;
-//use tagProcessor_PHP;
-//use Twig\Error\LoaderError;
-//use Twig\Error\RuntimeError;
-//use Twig\Error\SyntaxError;
-
 class Details
 {
 	var CT $ct;
@@ -83,21 +77,5 @@ class Details
 	}
 	*/
 
-
-	/*
-	protected function UpdatePHPOnView(): bool
-	{
-		if (!isset($row[$this->ct->Table->realidfieldname]))
-			return false;
-
-		foreach ($this->ct->Table->fields as $field) {
-			if ($field['type'] == 'phponview') {
-				$fieldname = $field['fieldname'];
-				tagProcessor_PHP::processTempValue($this->ct, $this->ct->Table->record, $fieldname, $field->params);
-			}
-		}
-		return true;
-	}
-	*/
 
 }

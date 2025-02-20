@@ -16,11 +16,6 @@ defined('_JEXEC') or die();
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
 
-//use LayoutProcessor;
-//use tagProcessor_Value;
-
-//use CustomTables\ProInputBoxTableJoin;
-
 class Search_tablejoin extends BaseSearch
 {
 	function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)

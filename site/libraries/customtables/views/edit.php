@@ -16,9 +16,6 @@ defined('_JEXEC') or die();
 use Exception;
 use Joomla\CMS\HTML\HTMLHelper;
 
-//use LayoutProcessor;
-
-//use tagProcessor_Edit;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
