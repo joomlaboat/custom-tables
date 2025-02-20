@@ -344,7 +344,7 @@ class TableHelper
 		//get ID of new table
 		$new_table_id = self::getTableID($new_table);
 
-		if ($customTableName === null) {
+		if (empty($customTableName)) {
 			//Do not copy real third-party tables
 			database::copyCTTable($new_table, $old_table);
 		}

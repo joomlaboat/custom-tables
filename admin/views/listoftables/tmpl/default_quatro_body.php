@@ -136,7 +136,7 @@ foreach ($this->items as $i => $item): ?>
 			<?php
 			if (!$table_exists)
 				echo common::translate('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
-			elseif (($item->customtablename !== null and $item->customtablename != '') and ($item->customidfield === null or $item->customidfield == ''))
+			elseif (!empty($item->customtablename) and empty($item->customidfield))
 				echo common::translate('COM_CUSTOMTABLES_TABLES_ID_FIELD_NOT_SET');
 			else {
 				echo '<a class="btn btn-secondary" aria-describedby="tip-tablerecords' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'

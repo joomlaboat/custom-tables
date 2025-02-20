@@ -43,7 +43,7 @@ class CustomtablesTableRecords extends Table
 			return null;
 		}
 
-		if ($table->customtablename != '')
+		if (!empty($table->customtablename))
 			$realtablename = $table->customtablename;
 		else
 			$realtablename = '#__customtables_table_' . $table->tablename;

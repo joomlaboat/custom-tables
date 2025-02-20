@@ -16,7 +16,6 @@ use CustomTables\database;
 use CustomTables\TableHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 
-//jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
 class JFormFieldAnyTableFields extends JFormFieldList
@@ -32,12 +31,11 @@ class JFormFieldAnyTableFields extends JFormFieldList
 		$tableid = common::inputGetInt('tableid', 0);
 		if ($tableid != 0) {
 			$table_row = TableHelper::getTableRowByID($tableid);
-			if ($table_row->customtablename != '') {
+			if (!empty($table_row->customtablename)) {
 				$fields = database::getExistingFields($table_row->customtablename, false);
 
-				foreach ($fields as $field) {
+				foreach ($fields as $field)
 					$options[] = HTMLHelper::_('select.option', $field['column_name'], $field['column_name'] . ' (' . $field['data_type'] . ')');
-				}
 			}
 		}
 		return $options;

@@ -380,10 +380,10 @@ class fieldObject
 	public function value()
 	{
 		if (!isset($this->field))
-			return 'Field not initialized.';
+			throw new Exception('{{ fieldname.value }} - Field not initialized.');
 
 		if ($this->ct->Table->record === null)
-			return '';
+			return null;
 
 		$options = func_get_args();
 		$rfn = $this->field->realfieldname;
@@ -450,9 +450,11 @@ class fieldObject
 				$vlu = null;
 			}
 		} else {
-			$vlu = $this->ct->Table->record[$rfn];
+			if (isset($this->ct->Table->record[$rfn]))
+				$vlu = $this->ct->Table->record[$rfn];
+			else
+				return null;
 		}
-
 
 		if ($this->DoHTMLSpecialChars)
 			$vlu = $this->escapeJsonCharacters($vlu);

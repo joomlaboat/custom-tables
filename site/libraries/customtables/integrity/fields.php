@@ -41,7 +41,7 @@ class IntegrityFields extends IntegrityChecks
 		$result = '';
 
 		//Do not check third-party tables
-		if ($ct->Table->customtablename != '')
+		if (!empty($ct->Table->customtablename))
 			return $result;
 
 		$dbPrefix = database::getDBPrefix();

@@ -132,6 +132,8 @@ class ListOfTables
 		$newTableName = strtolower(trim(preg_replace("/\W/", "", $newTableName)));
 
 		$data ['customphp'] = common::inputPostString('customphp', null, 'create-edit-table');;
+		$customTableName = common::inputPostString('customtablename', null, 'create-edit-table');
+		$data ['customtablename'] = $customTableName;
 		$data ['customidfield'] = common::inputPostString('customidfield', null, 'create-edit-table');
 		$data ['customidfieldtype'] = common::inputPostString('customidfieldtype', null, 'create-edit-table');
 		$data ['primarykeypattern'] = stripcslashes(common::inputPostString('primarykeypattern', null, 'create-edit-table'));
@@ -214,7 +216,7 @@ class ListOfTables
 					throw new Exception('Table rename aborted. Table with this name already exists.');
 			}
 
-			if (common::inputPostString('customtablename', null, 'create-edit-table') == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
+			if (empty($customTableName))//do not rename real table if it's a third-party table - not part of the Custom Tables
 			{
 				//This function will find the old Table Name of existing table and rename MySQL table.
 				TableHelper::renameTableIfNeeded($tableId, $newTableName);
@@ -231,7 +233,6 @@ class ListOfTables
 		}
 
 		//Create MySQLTable
-		$customTableName = common::inputPostString('customtablename', null, 'create-edit-table');
 		if ($customTableName == '-new-') {
 			// Case: Creating a new third-party table
 			$customTableName = $newTableName;
@@ -249,6 +250,11 @@ class ListOfTables
 			} else {
 				// Creating a new custom table (without copying)
 				TableHelper::createTableIfNotExists($dbPrefix, $newTableName, $tableTitle, $customTableName ?? '');
+
+				//Add fields if it's a third-party table and no fields added yet.
+				if (!empty($customTableName)) {
+					TableHelper::addThirdPartyTableFieldsIfNeeded($database, $newTableName, $customTableName);
+				}
 			}
 		}
 	}
