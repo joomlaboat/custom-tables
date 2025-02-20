@@ -94,10 +94,10 @@ class Forms
 		if (!$allowSortBy or $field->type != 'ordering')
 			$field_label .= $field->title;
 
-		if (isset($this->ct->LayoutVariables['layout_type']) and
+		if ($allowSortBy and isset($this->ct->LayoutVariables['layout_type']) and
 			($this->ct->LayoutVariables['layout_type'] == CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG or
 				$this->ct->LayoutVariables['layout_type'] == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE)) {
-			
+
 			if ($OrderingField == $field->fieldname) {
 				if ($OrderingDirection == 'desc')
 					$field_label .= Icons::iconDescendingOrder($this->ct->Env->toolbarIcons);
