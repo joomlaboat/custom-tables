@@ -76,16 +76,19 @@
 			   message="COM_CUSTOMTABLES_TABLES_TABLETITLE_MESSAGE"
 			   hint="COM_CUSTOMTABLES_TABLES_TABLETITLE_HINT"
 			   autocomplete="on"/>
+
 		<field type="text"
 			   name="tablename"
 			   label="COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL"
 			   required="true"
 			   filter="CMD"
 			   hint="COM_CUSTOMTABLES_TABLES_TABLENAME_HINT"/>
+
 		<field type="filelist"
 			   name="customphp"
 			   label="COM_CUSTOMTABLES_TABLES_CUSTOMPHP_LABEL"
-			   directory="/components/com_customtables/customphp"/>
+			   directory="/components/com_customtables/customphp"
+			   description="Custom Tables allows you to execute custom PHP code when users perform specific actions on records (save, refresh, publish, or unpublish). This is accomplished through a custom PHP file with a process() function."/>
 		<field type="radio"
 			   name="allowimportcontent"
 			   label="COM_CUSTOMTABLES_FIELDS_ALLOWCONTENTIMPORT"
@@ -107,16 +110,18 @@
 		<field type="text"
 			   name="customidfield"
 			   label="Primary Key Field"
-			   description="Primary key field name"
+			   description="Defaults to id, but this can be customized for tables with different key naming conventions."
 			   required="false"
 			   filter="CMD"
 			   hint=""
-			   default="id"/>
+			   default="id"
+		/>
 
 		<field type="text"
 			   name="customidfieldtype"
 			   label="Primary Key Field Type"
-			   description="Primary key field type"
+			   description="Determines how the primary key field is created in the database.
+Defaults to AUTO_INCREMENT for MySQL, but supports any valid SQL type and constraints."
 			   required="false"
 			   filter="STRING"
 			   default="int UNSIGNED NOT NULL AUTO_INCREMENT"
