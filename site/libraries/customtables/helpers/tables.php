@@ -235,13 +235,11 @@ class TableHelper
 
 				//TODO: check how it works
 
-				if ($ct_field_type['type'] === null) {
-					common::enqueueMessage('third-party table field type "' . $field->data_type . '" is unknown.');
-					return false;
-				}
+				if ($ct_field_type['type'] === null)
+					throw new Exception('Add Third-Party Table Fields: third-party table field type "' . $field->data_type . '" is unknown.');
 
 				$data['tableid'] = $ct->Table->tableid;
-				$data['fieldname'] = $field->column_name;//strtolower();
+				$data['fieldname'] = $field->column_name;
 				$data['fieldtitle'] = ucwords(strtolower($field->column_name));
 				$data['type'] = $ct_field_type['type'];
 

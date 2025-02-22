@@ -43,22 +43,22 @@ class Twig_Document_Tags
 	 */
 	function setpagetitle($pageTitle): void
 	{
-		if (defined('_JEXEC')) {
+		if (defined('_JEXEC'))
 			Factory::getApplication()->getDocument()->setTitle(common::translate($pageTitle));
-		} elseif (defined('WPINC')) {
-			common::enqueueMessage('Warning: The {{ document.setpagetitle }} tag is not supported in the current version of the Custom Tables for WordPress.');
-		} else
-			common::enqueueMessage('Warning: The {{ document.setpagetitle }} tag is not supported in the current version of the Custom Tables.');
+		elseif (defined('WPINC'))
+			throw new Exception('Warning: The {{ document.setpagetitle }} tag is not supported in the current version of the Custom Tables for WordPress.');
+		else
+			throw new Exception('Warning: The {{ document.setpagetitle }} tag is not supported in the current version of the Custom Tables.');
 	}
 
 	function setheadtag($tag): void
 	{
-		if (defined('_JEXEC')) {
+		if (defined('_JEXEC'))
 			Factory::getApplication()->getDocument()->addCustomTag($tag);
-		} elseif (defined('WPINC')) {
-			common::enqueueMessage('Warning: The {{ document.setheadtag }} tag is not supported in the current version of the Custom Tables for WordPress.');
-		} else
-			common::enqueueMessage('Warning: The {{ document.setheadtag }} tag is not supported in the current version of the Custom Tables.');
+		elseif (defined('WPINC'))
+			throw new Exception('Warning: The {{ document.setheadtag }} tag is not supported in the current version of the Custom Tables for WordPress.');
+		else
+			throw new Exception('Warning: The {{ document.setheadtag }} tag is not supported in the current version of the Custom Tables.');
 	}
 
 	/**
@@ -204,10 +204,8 @@ class Twig_Document_Tags
 	{
 		//TODO: the use if this tag must be reflected in the dependence tab of the layout used.
 
-		if ($layoutName == '') {
-			common::enqueueMessage('Warning: The {{ document.layout("layout_name") }} layout name is required.');
-			return null;
-		}
+		if ($layoutName == '')
+			throw new Exception('Warning: The {{ document.layout("layout_name") }} layout name is required.');
 
 		if (!isset($this->ct->Table)) {
 			$this->ct->errors[] = '{{ document.layout }} - Table not loaded.';

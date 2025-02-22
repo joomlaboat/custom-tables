@@ -41,8 +41,7 @@ class Twig_URL_Tags
 		if (defined('_JEXEC')) {
 			return $this->ct->Env->encoded_current_url;
 		} else {
-			common::enqueueMessage('Warning: The {{ url.base64() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
-			return null;
+			throw new Exception('Warning: The {{ url.base64() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
 		}
 	}
 
@@ -52,10 +51,8 @@ class Twig_URL_Tags
 	 */
 	function root(): ?string
 	{
-		if (!$this->ct->Env->advancedTagProcessor) {
-			common::enqueueMessage('Warning: The {{ url.root }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
-			return null;
-		}
+		if (!$this->ct->Env->advancedTagProcessor)
+			throw new Exception('Warning: The {{ url.root }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
 
 		$include_host = false;
 
@@ -144,12 +141,10 @@ class Twig_URL_Tags
 	 */
 	function getstringandencode($param, $default = ''): ?string
 	{
-		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers')) {
+		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
 			return ctProHelpers::getstringandencode($param, $default);
-		} else {
-			common::enqueueMessage('Warning: The {{ url.getstringandencode() }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
-			return null;
-		}
+		else
+			throw new Exception('Warning: The {{ url.getstringandencode() }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
 	}
 
 	/**
@@ -187,12 +182,10 @@ class Twig_URL_Tags
 	 */
 	function getstringanddecode($param, $default = ''): ?string
 	{
-		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers')) {
+		if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
 			return ctProHelpers::getstringanddecode($param, $default);
-		} else {
-			common::enqueueMessage('Warning: The {{ url.getstringanddecode() }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
-			return null;
-		}
+		else
+			throw new Exception('Warning: The {{ url.getstringandencode() }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
 	}
 
 	/**
@@ -203,10 +196,8 @@ class Twig_URL_Tags
 	{
 		if (defined('_JEXEC'))
 			return $this->ct->Params->ItemId;
-		else {
-			common::enqueueMessage('Warning: The {{ url.itemid }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
-			return null;
-		}
+		else
+			throw new Exception('Warning: The {{ url.itemid }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
 	}
 
 	/**
@@ -227,7 +218,7 @@ class Twig_URL_Tags
 		if (defined('_JEXEC'))
 			common::inputSet($option, $param);
 		else
-			common::enqueueMessage('Warning: The {{ url.set() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
+			throw new Exception('Warning: The {{ url.set() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
 	}
 
 	/**
@@ -236,10 +227,9 @@ class Twig_URL_Tags
 	 */
 	function server($param): ?string
 	{
-		if (!$this->ct->Env->advancedTagProcessor) {
-			common::enqueueMessage('Warning: The {{ url.server }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
-			return null;
-		}
+		if (!$this->ct->Env->advancedTagProcessor)
+			throw new Exception('Warning: The {{ url.server }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
+
 		return common::getServerParam($param);
 	}
 
@@ -300,8 +290,7 @@ class Twig_URL_Tags
 			}
 			return '';
 		} else {
-			common::enqueueMessage('Warning: The {{ url.format() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
-			return null;
+			throw new Exception('Warning: The {{ url.format() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
 		}
 	}
 }

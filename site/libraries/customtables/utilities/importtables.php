@@ -95,10 +95,7 @@ class ImportTables
 				if (isset($table['records']))
 					ImportTables::processRecords($table['table']['tablename'], $table['records']);
 			} else {
-				$msg = 'Could not Add or Update table "' . $table['table']['tablename'] . '"';
-				common::enqueueMessage($msg);
-
-				return false;
+				throw new Exception('Could not Add or Update table "' . $table['table']['tablename'] . '"');
 			}
 		}
 		return true;
@@ -671,18 +668,15 @@ class ImportTables
 			//Try to find id by name
 
 			$access_row = ImportTables::getRecordByField('#__viewlevels', 'title', $access_, false);
-			if (!is_array($access_row) or count($access_row) == 0) {
-				common::enqueueMessage('Cannot find access level "' . $access_ . '"');
-				return false;
-			}
+			if (!is_array($access_row) or count($access_row) == 0)
+				throw new Exception('Cannot find access level "' . $access_ . '"');
+
 			$access = $access_row['id'];
 		} else
 			$access = $access_;
 
-		if ($access == 0) {
-			common::enqueueMessage('Cannot find access level "' . $access_ . '", found 0.');
-			return false;
-		}
+		if ($access == 0)
+			throw new Exception('Cannot find access level "' . $access_ . '", found 0.');
 
 		$menuitem_new = array();
 		$menuitem_new['title'] = $title;
@@ -769,9 +763,9 @@ class ImportTables
 
 		// save is the shortcut method for bind, check and store
 		$menuTable->save($menuitem_new);
-		if ($menuTable->getError() != '') {
-			common::enqueueMessage($menuTable->getError());
-		}
+		if ($menuTable->getError() != '')
+			throw new Exception($menuTable->getError());
+
 		return $menuTable->id;
 	}
 }

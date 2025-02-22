@@ -188,8 +188,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
 				$msg = '';
 				if (!Fields::fixMYSQLField($realtablename, $realfieldname, $PureFieldType, $msg, $field_title)) {
-					common::enqueueMessage($msg);
-					return false;
+					throw new Exception($msg);
 				}
 			}
 		}

@@ -54,10 +54,8 @@ class ListOfFields
 			return null;
 
 		$this->ct->getTable($tableId);
-		if ($this->ct->Table === null) {
-			common::enqueueMessage('Table not found');
-			return null;
-		}
+		if ($this->ct->Table === null)
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
 
 		$selects = [
 			'a.*',

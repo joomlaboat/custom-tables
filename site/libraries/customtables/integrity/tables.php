@@ -81,9 +81,8 @@ class IntegrityTables extends IntegrityChecks
 					throw new Exception('checkIfTablesExists: tablename value cannot be null');
 
 				if ($row['customtablename'] === null or $row['customtablename'] == '') {
-					if (TableHelper::createTableIfNotExists($dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'] ?? '')) {
-						common::enqueueMessage('Table "' . $row['tabletitle'] . '" created.', 'notice');
-					}
+					if (TableHelper::createTableIfNotExists($dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'] ?? ''))
+						throw new Exception('Table "' . $row['tabletitle'] . '" created.', 'notice');
 				}
 			}
 		}

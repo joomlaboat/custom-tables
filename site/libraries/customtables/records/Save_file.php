@@ -177,20 +177,15 @@ class Save_file
 
 		if ($success === false) {
 			$error = curl_error($ch);
-			error_log('Error downloading file from Google Drive: ' . $error);
-			common::enqueueMessage('Error downloading file from Google Drive: ' . $error);
 			curl_close($ch);
-			return null;
+			throw new Exception('Error downloading file from Google Drive: ' . $error);
 		}
 
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 
-		if ($httpCode !== 200) {
-			error_log('HTTP Error: ' . $httpCode);
-			common::enqueueMessage('Error downloading file from Google Drive. HTTP Code: ' . $httpCode);
-			return null;
-		}
+		if ($httpCode !== 200)
+			throw new Exception('Error downloading file from Google Drive. HTTP Code: ' . $httpCode);
 
 		return $completePathToFile;
 	}

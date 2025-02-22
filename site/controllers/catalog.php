@@ -114,16 +114,14 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 				return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
 
 			$listing_id = common::inputGetInt("listing_id");
-			if (CTUser::ResetPassword($ct, $listing_id)) {
-				if ($ct->Env->clean == 1)
-					die('password has been reset');
-				else
-					return (object)array('link' => $link, 'msg' => 'Password has been reset.', 'status' => null);
-			} else {
+
+			try {
+				CTUser::ResetPassword($ct, $listing_id);
+			} catch (Exception $e) {
 				if ($ct->Env->clean == 1)
 					die('error');
 				else
-					return (object)array('link' => $link, 'msg' => common::translate('COM_USERS_RESET_COMPLETE_ERROR'), 'status' => 'error');
+					return (object)array('link' => $link, 'msg' => common::translate('COM_USERS_RESET_COMPLETE_ERROR') . ':' . $e->getMessage(), 'status' => 'error');
 			}
 
 		case 'copycontent':

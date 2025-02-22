@@ -47,13 +47,11 @@ class Twig_User_Tags
 			} elseif (defined('WPINC')) {
 				return $userRow['display_name'];
 			} else {
-				common::enqueueMessage('Warning: The {{ user.name }} tag is not supported in the current version of the Custom Tables.');
-				return null;
+				throw new Exception('Warning: The {{ user.name }} tag is not supported in the current version of the Custom Tables.');
 			}
 		}
 
-		common::enqueueMessage('Warning: User: ' . $user_id . ' not found.');
-		return null;
+		throw new Exception('Warning: User: ' . $user_id . ' not found.');
 	}
 
 	/**
@@ -70,18 +68,15 @@ class Twig_User_Tags
 
 		$userRow = CTUser::GetUserRow($user_id);
 		if ($userRow !== null) {
-			if (defined('_JEXEC')) {
+			if (defined('_JEXEC'))
 				return $userRow['username'];
-			} elseif (defined('WPINC')) {
+			elseif (defined('WPINC'))
 				return $userRow['user_login'];
-			} else {
-				common::enqueueMessage('Warning: The {{ user.username }} tag is not supported in the current version of the Custom Tables.');
-				return null;
-			}
+			else
+				throw new Exception('Warning: The {{ user.username }} tag is not supported in the current version of the Custom Tables.');
 		}
 
-		common::enqueueMessage('Warning: User: ' . $user_id . ' not found.');
-		return null;
+		throw new Exception('Warning: User: ' . $user_id . ' not found.');
 	}
 
 	/**
@@ -94,21 +89,19 @@ class Twig_User_Tags
 			$user_id = $this->user_id;
 
 		if ($user_id == 0)
-			return '';
+			throw new Exception('Warning: The {{ user.email }} tag: User not logged in.');
 
 		$userRow = CTUser::GetUserRow($user_id);
 		if ($userRow !== null) {
-			if (defined('_JEXEC')) {
+			if (defined('_JEXEC'))
 				return $userRow['email'];
-			} elseif (defined('WPINC')) {
+			elseif (defined('WPINC'))
 				return $userRow['user_email'];
-			} else {
-				common::enqueueMessage('Warning: The {{ user.email }} tag is not supported in the current version of the Custom Tables.');
-				return null;
-			}
+			else
+				throw new Exception('Warning: The {{ user.email }} tag is not supported in the current version of the Custom Tables.');
 		}
 
-		return 'user: ' . $user_id . ' not found.';
+		throw new Exception('Warning: The {{ user.email }} tag: User: ' . $user_id . ' not found.');
 	}
 
 	function id(): int
@@ -175,8 +168,7 @@ class Twig_User_Tags
 			if (!$found)
 				return 'Probably never';
 		} else {
-			common::enqueueMessage('Warning: The {{ user.lastvisitdate }} tag is not supported in the current version of the Custom Tables.');
-			return null;
+			throw new Exception('Warning: The {{ user.lastvisitdate }} tag is not supported in the current version of the Custom Tables.');
 		}
 
 		if ($format === 'timestamp')
@@ -210,14 +202,12 @@ class Twig_User_Tags
 			$isJoomla = defined('_JEXEC');
 			$isWordPress = defined('WPINC');
 
-			if ($isJoomla) {
+			if ($isJoomla)
 				$date = $userRow['registerDate'];
-			} elseif ($isWordPress) {
+			elseif ($isWordPress)
 				$date = $userRow['user_registered'];
-			} else {
-				common::enqueueMessage('Warning: The {{ user.registerdate }} tag is not supported in the current version of the Custom Tables.');
-				return null;
-			}
+			else
+				throw new Exception('Warning: The {{ user.registerdate }} tag is not supported in the current version of the Custom Tables.');
 
 			if ($date == '0000-00-00 00:00:00') {
 				return 'Never';

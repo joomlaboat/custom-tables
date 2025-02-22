@@ -30,8 +30,7 @@ class ListOfTables
 			$whereClause = new MySQLWhereClause();
 			$rows = database::loadObjectList($realtablename, ['COUNT_ROWS'], $whereClause, null, null, 1);
 		} catch (Exception $e) {
-			common::enqueueMessage('Table "' . $realtablename . '" - ' . $e->getMessage());
-			return 0;
+			throw new Exception('Get Number of Record: Table "' . $realtablename . '" - ' . $e->getMessage());
 		}
 		return $rows[0]->record_count;
 	}

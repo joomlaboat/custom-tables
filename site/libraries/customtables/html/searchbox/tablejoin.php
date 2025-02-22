@@ -97,22 +97,16 @@ class Search_tablejoin extends BaseSearch
 	{
 		$typeParams = $this->field->params;
 
-		if (count($typeParams) < 1) {
-			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'));
-			return common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED');
-		}
+		if (count($typeParams) < 1)
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'));
 
-		if (count($typeParams) < 2) {
-			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'));
-			return common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT');
-		}
+		if (count($typeParams) < 2)
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'));
 
 		$tableName = $typeParams[0];
 
-		if (empty($tableName)) {
-			common::enqueueMessage('Table not set.');
-			return 'Table not set.';
-		}
+		if (empty($tableName))
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'));
 
 		$value_field = $typeParams[1] ?? '';
 		$filter = $typeParams[2] ?? '';
@@ -124,10 +118,8 @@ class Search_tablejoin extends BaseSearch
 		else
 			$allowUnpublished = false;
 
-		if (TableHelper::getTableID($tableName) == '') {
-			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
-			return common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
-		}
+		if (TableHelper::getTableID($tableName) == '')
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
 
 		if ($order_by_field == '')
 			$order_by_field = $value_field;
@@ -208,18 +200,14 @@ class Search_tablejoin extends BaseSearch
 		$pair = explode(':', $field);
 		if (count($pair) == 2) {
 			$layout_mode = true;
-			if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout') {
-				common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' search_tablejoin.php' . $field . '"');
-				return array();
-			}
+			if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout')
+				throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' search_tablejoin.php' . $field . '"');
 
 			$Layouts = new Layouts($ct);
 			$layoutcode = $Layouts->getLayout($pair[1]);
 
-			if (!isset($layoutcode) or $layoutcode == '') {
-				common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' search_tablejoin.php' . $pair[1] . '"');
-				return array();
-			}
+			if (!isset($layoutcode) or $layoutcode == '')
+				throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' search_tablejoin.php' . $pair[1] . '"');
 		}
 
 		$list_values = [];

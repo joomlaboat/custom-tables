@@ -90,9 +90,8 @@ class Save_imagegallery
 
 		//Check file
 		if (!CustomTablesImageMethods::CheckImage($uploadedFile)) {
-			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'));
 			unlink($uploadedFile);
-			return false;
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'));
 		}
 
 		//Save to DB

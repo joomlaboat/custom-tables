@@ -146,12 +146,11 @@ class Save_image
 				$ImageFolderArray['path'], $this->field->params, $this->field->ct->Table->realtablename, $this->field->ct->Table->realidfieldname);
 		}
 
-		if ($value == "-1" or $value == "2") {
-			// -1 if file extension not supported
-			// 2 if file already exists
-			common::enqueueMessage('Could not upload image file.');
-			$value = null;
-		}
+		if ($value == "-1")
+			throw new Exception('Could not upload image file: File extension not supported.');
+		elseif ($value == "2")
+			throw new Exception('Could not upload image file: File already exists.');
+			
 		return $value;
 	}
 }

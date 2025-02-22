@@ -92,8 +92,7 @@ class Layouts
 				try {
 					@unlink($path);
 				} catch (Exception $e) {
-					common::enqueueMessage($path . ': ' . $e->getMessage());
-					return false;
+					throw new Exception($path . ': ' . $e->getMessage());
 				}
 			}
 		}
@@ -128,8 +127,7 @@ class Layouts
 				try {
 					unlink($path);
 				} catch (Exception $e) {
-					common::enqueueMessage($path . ': ' . $e->getMessage());
-					return false;
+					throw new Exception($path . ': ' . $e->getMessage());
 				}
 
 			return true;
@@ -137,20 +135,17 @@ class Layouts
 
 		$msg = common::saveString2File($path, $layoutCode);
 		if ($msg !== null) {
-			common::enqueueMessage($path . ': ' . $msg);
-			return false;
+			throw new Exception($path . ': ' . $msg);
 		}
 
 		try {
 			@$file_ts = filemtime($path);
 		} catch (Exception $e) {
-			common::enqueueMessage($path . ': ' . $e->getMessage());
-			return false;
+			throw new Exception($path . ': ' . $e->getMessage());
 		}
 
 		if ($file_ts == '') {
-			common::enqueueMessage($path . ': No permission -  file not saved');
-			return false;
+			throw new Exception($path . ': No permission -  file not saved');
 		} else {
 
 			$data = ['modified' => common::formatDateFromTimeStamp($file_ts)];

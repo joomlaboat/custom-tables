@@ -423,7 +423,7 @@ class Fields
 		try {
 			database::dropForeignKey($realtablename, $constrance);
 		} catch (Exception $e) {
-			common::enqueueMessage($e->getMessage());
+			throw new Exception($e->getMessage());
 		}
 	}
 
@@ -476,10 +476,8 @@ class Fields
 
 		$ct = new CT([], true);
 		$ct->getTable($tableId);
-		if ($ct->Table === null) {
-			common::enqueueMessage('Table not found');
-			return null;
-		}
+		if ($ct->Table === null)
+			throw new Exception('Save Field: Table not found');
 
 		if ($data === null) {
 			if (defined('_JEXEC')) {

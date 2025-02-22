@@ -98,31 +98,25 @@ class CTUser
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
+	 *
+	 * Exception Catch Implemented
 	 */
-	public static function ResetPassword(CT $ct, ?string $listing_id): bool
+	public static function ResetPassword(CT $ct, ?string $listing_id): void
 	{
-		if (empty($listing_id)) {
-			common::enqueueMessage('Table record selected.');
-			return false;
-		}
+		if (empty($listing_id))
+			throw new Exception('Reset Password: Table record selected.');
 
 		if ($ct->Env->clean)
 			if (ob_get_contents()) ob_end_clean();
 
-		if ($ct->Table->useridrealfieldname === null or $ct->Table->useridrealfieldname == '') {
-			common::enqueueMessage('User ID field not found.');
-			return false;
-		}
+		if ($ct->Table->useridrealfieldname === null or $ct->Table->useridrealfieldname == '')
+			throw new Exception('Reset Password: User ID field not found.');
 
-		if (!empty($listing_id)) {
-			$ct->Params->listing_id = $listing_id;
-			$ct->getRecord();
-		}
+		$ct->Params->listing_id = $listing_id;
+		$ct->getRecord();
 
-		if ($ct->Table->record === null) {
-			common::enqueueMessage('User record ID: "' . $listing_id . '" not found.');
-			return false;
-		}
+		if ($ct->Table->record === null)
+			throw new Exception('Reset Password: User record ID: "' . $listing_id . '" not found.');
 
 		$password = strtolower(JUserHelper::genRandomPassword());
 		$realUserId = $ct->Table->record[$ct->Table->useridrealfieldname];
@@ -135,8 +129,9 @@ class CTUser
 			$user_name = $userRow['username'];
 			$user_email = $userRow['email'];
 		} else {
-			return false;
+			throw new Exception('Reset Password: User row ID: "' . $listing_id . '" not found.');
 		}
+
 		$subject = 'Your {SITENAME} password reset request';
 
 		$subject = str_replace('{SITENAME}', $sitename, $subject);
@@ -155,17 +150,10 @@ class CTUser
 		$messageBody = str_replace('{USERNAME}', $user_name, $messageBody);
 		$messageBody = str_replace('{PASSWORD_CLEAR}', $password, $messageBody);
 
-		if ($ct->Env->clean)
-			die;//Clean Exit
-
 		if (common::sendEmail($user_email, $subject, $messageBody)) {
 			//clean exit
-			common::enqueueMessage(sprintf("User password has been reset and sent to the email '%s'", $user_email));
-			return true;
+			common::enqueueMessage(sprintf("User password has been reset and sent to the email '%s'", $user_email), 'notice');
 		}
-
-		//clean exit
-		return true;
 	}
 
 	/**
@@ -177,6 +165,8 @@ class CTUser
 	 * @return int Returns the ID of the user for whom the password was set.
 	 * @throws Exception If there's an issue setting the user password.
 	 * @since 3.2.1
+	 *
+	 * Exception Catch Implemented
 	 */
 	static protected function SetUserPassword(int $userid, string $password): int
 	{
@@ -198,14 +188,12 @@ class CTUser
 	{
 		$whereClause = new MySQLWhereClause();
 
-		if (defined('_JEXEC')) {
+		if (defined('_JEXEC'))
 			$whereClause->addCondition('ID', $userid);
-		} elseif (defined('WPINC')) {
+		elseif (defined('WPINC'))
 			$whereClause->addCondition('id', $userid);
-		} else {
-			echo 'GetUserRow not supported.';
-			return null;
-		}
+		else
+			throw new Exception('GetUserRow not supported.');
 
 		$rows = database::loadAssocList('#__users', ['*'], $whereClause, null, null, 1);
 		if (count($rows) == 0)
@@ -258,6 +246,8 @@ class CTUser
 	/**
 	 * @throws Exception
 	 * @since 3.2.3
+	 *
+	 * Exception Catch Implemented
 	 */
 	public static function CreateUser(string $realtablename, string $realidfieldname, string $email, string $name, string $usergroups, string $listing_id, string $useridfieldname): bool
 	{
@@ -270,34 +260,40 @@ class CTUser
 		if (!@CTMiscHelper::checkEmail($email))
 			throw new Exception(common::translate('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"');
 
-		$realUserId = CTUser::CreateUserAccount($name, $email, $password, $email, $usergroups, $msg);
+		try {
+			$realUserId = CTUser::CreateUserAccount($name, $email, $password, $email, $usergroups);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 
 		if ($msg != '')
 			throw new Exception($msg);
 
 		if ($realUserId !== null) {
 			CTUser::UpdateUserField($realtablename, $realidfieldname, $useridfieldname, $realUserId, $listing_id);
-			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'));
+			throw new Exception(common::translate('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'));
 		} else {
-			$msg = common::translate('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED');
-			common::enqueueMessage($msg);
+			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'));
 		}
-		return true;
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
+	 *
+	 * Exception Catch Implemented
 	 */
-	static public function CreateUserAccount(string $fullName, string $username, string $password, string $email, string $group_names, string &$msg): ?int
+	static public function CreateUserAccount(string $fullName, string $username, string $password, string $email, string $group_names): ?int
 	{
-		if ($fullName == '') {
-			$msg = common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET');
-			return null;
-		}
+		if ($fullName == '')
+			throw new Exception(common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET'));
 
 		//Get group IDs
-		$group_ids = CTUser::getUserGroupIDsByName($group_names);
+		try {
+			$group_ids = CTUser::getUserGroupIDsByName($group_names);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 
 		if ($group_ids === null)
 			return null;
@@ -330,25 +326,20 @@ class CTUser
 
 		// Bind the data.
 		if (!$user->bind($data)) {
-
 			if (defined('_JEXEC')) {
 				if (!CUSTOMTABLES_JOOMLA_MIN_4)
-					$msg = common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_BIND_FAILED') . ': ' . $user->getError() ?? '';
+					throw new Exception(common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_BIND_FAILED') . ': ' . $user->getError() ?? '');
 				else
-					$msg = common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_BIND_FAILED') . ': ' . implode(',', $user->getErrors());
+					throw new Exception(common::translate('COM_CUSTOMTABLES_USERS_REGISTRATION_BIND_FAILED') . ': ' . implode(',', $user->getErrors()));
 			}
-
-			return null;
 		}
 
 		// Store the data.
 		if (!$user->save()) {
 			if (!CUSTOMTABLES_JOOMLA_MIN_4)
-				$msg = $user->getError() ?? '';
+				throw new Exception($user->getError() ?? '');
 			else
-				$msg = implode(',', $user->getErrors());
-
-			return null;
+				throw new Exception(implode(',', $user->getErrors()));
 		}
 
 		//Apply group
@@ -395,6 +386,8 @@ class CTUser
 	/**
 	 * @throws Exception
 	 * @since 3.3.3
+	 *
+	 * Exception Catch Implemented
 	 */
 	static protected function getUserGroupIDsByName(string $group_names): ?array
 	{
@@ -413,7 +406,7 @@ class CTUser
 		try {
 			$rows = database::loadObjectList('#__usergroups', ['id'], $whereClause);
 		} catch (Exception $e) {
-			return null;
+			throw new Exception($e->getMessage());
 		}
 
 		$usergroup_ids = array();

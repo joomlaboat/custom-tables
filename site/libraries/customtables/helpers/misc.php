@@ -273,10 +273,8 @@ class CTMiscHelper
 			while (1) {
 
 				$count++;
-				if ($count > 1000) {
-					common::enqueueMessage('Quote count > 1000');
-					return [];
-				}
+				if ($count > 1000)
+					throw new Exception('getListToReplace: Quote count > 1000');
 
 				if ($quote_char == '')
 					$peq = false;
@@ -367,10 +365,8 @@ class CTMiscHelper
 			while (1) {
 
 				$count++;
-				if ($count > 1000) {
-					common::enqueueMessage('Too many quotes.');
-					return [];
-				}
+				if ($count > 1000)
+					throw new Exception('getListToReplaceAdvanced: Quote count > 1000');
 
 				$peq = strpos($text, '"', $ps1);
 				$pe = strpos($text, $ending_tag, $ps1);

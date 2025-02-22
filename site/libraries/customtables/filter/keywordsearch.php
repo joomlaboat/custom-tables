@@ -217,7 +217,7 @@ class CustomTablesKeywordSearch
 						break;
 
 					case 'sqljoin':
-						common::enqueueMessage('Search box not ready yet.');
+						common::enqueueMessage('Search box not ready yet.', 'notice');
 
 						$typeParamsArrayy = explode(',', $fieldrow['typeparams']);
 						$esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
@@ -284,7 +284,7 @@ class CustomTablesKeywordSearch
 				break;
 
 			case 'sqljoin':
-				common::enqueueMessage('Search box not ready yet.');
+				common::enqueueMessage('Search box not ready yet.', 'notice');
 				break;
 
 			case 'userid':
