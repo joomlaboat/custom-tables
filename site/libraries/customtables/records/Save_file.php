@@ -47,9 +47,9 @@ class Save_file
 		if (!empty($fileData) and $fileData[0] == '{') {
 
 			if (defined('_JEXEC'))
-				$CompletePathToFile = $this->downloadGoogleDriveFile($fileData, CUSTOMTABLES_TEMP_PATH);
+				$CompletePathToFile = $this->downloadGoogleDriveFile($fileData);
 			elseif (defined('WPINC'))
-				$CompletePathToFile = $this->downloadGoogleDriveFile(stripslashes($fileData), CUSTOMTABLES_TEMP_PATH);
+				$CompletePathToFile = $this->downloadGoogleDriveFile(stripslashes($fileData));
 
 			if ($CompletePathToFile === null)
 				return null;
@@ -119,7 +119,7 @@ class Save_file
 	 * @since 3.4.1
 	 */
 
-	private function downloadGoogleDriveFile(string $temporaryFile, string $path): ?string
+	private function downloadGoogleDriveFile(string $temporaryFile): ?string
 	{
 		try {
 			$data = json_decode($temporaryFile, true);
@@ -144,7 +144,7 @@ class Save_file
 		$parts = explode('.', $fileName);
 		$fileExtension = end($parts);
 		$uniqueFileName = common::generateRandomString() . '.' . $fileExtension;
-		$completePathToFile = $path . DIRECTORY_SEPARATOR . $uniqueFileName;
+		$completePathToFile = CUSTOMTABLES_TEMP_PATH . DIRECTORY_SEPARATOR . $uniqueFileName;
 
 		// Set up the cURL request to download the file from Google Drive
 		$url = 'https://www.googleapis.com/drive/v3/files/' . $fileId . '?alt=media';

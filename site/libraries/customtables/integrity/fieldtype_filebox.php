@@ -19,9 +19,14 @@ use CustomTables\database;
 use CustomTables\TableHelper;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
+use Exception;
 
 class IntegrityFieldType_FileBox extends IntegrityChecks
 {
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
 	public static function checkFileBox(CT &$ct, $fieldname)
 	{
 		$filebox_table_name = '#__customtables_filebox_' . $ct->Table->tablename . '_' . $fieldname;

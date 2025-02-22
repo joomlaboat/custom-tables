@@ -329,7 +329,7 @@ class SaveFieldQuerySet
 
 				require_once 'Save_blob.php';
 				$image = new Save_blob($this->ct, $this->field, $this->row_new);
-				$value = $image->saveFieldSet($listing_id);
+				$value = $image->saveFieldSet();
 
 				//This way it will be clear if the value changed or not. If $this->newValue = null means that value not changed.
 				if ($value !== null and is_array($value))

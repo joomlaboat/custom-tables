@@ -67,7 +67,6 @@ class InputBox_filebox extends BaseInputBox
 	}
 
 	/**
-	 * @throws Exception
 	 * @since 3.2.2
 	 */
 	public static function renderFileBoxIcon(CT $ct, string $listing_id, string $fileBoxName, string $title): string

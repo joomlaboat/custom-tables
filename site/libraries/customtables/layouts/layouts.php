@@ -944,8 +944,8 @@ class Layouts
 			}
 
 			if (count($listing_ids) == 0) {
-				if (common::inputGetCmd('listing_id', null) !== null) {
-					$listing_id_ = common::inputGetCmd('listing_id', null);
+				if (common::inputGetCmd('listing_id') !== null) {
+					$listing_id_ = common::inputGetCmd('listing_id');
 					$listing_id = trim(preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id_));
 
 					if ($listing_id !== '')
@@ -988,6 +988,11 @@ class Layouts
 		return ['success' => false, 'message' => 'Records not selected', 'short' => 'error'];
 	}
 
+	/**
+	 * @throws Exception
+	 *
+	 * @since 3.2.
+	 */
 	private function doTask_copy(): array
 	{
 		$listing_id = common::inputGetCmd('listing_id');
@@ -1031,7 +1036,7 @@ class Layouts
 				$message = ($count == 1 ? common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED_1') :
 					common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED', $count));
 
-				$statusMessage = ($status == 1 ? 'published' : 'unpublished');
+				$statusMessage = 'published';
 			} else {
 				$message = ($count == 1 ? common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED_1') :
 					common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED', $count));
@@ -1140,6 +1145,10 @@ class Layouts
 		return $output;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.
+	 */
 	private function doTask_createuser(): array
 	{
 		$listing_ids = $this->getListingIds();
@@ -1189,7 +1198,7 @@ class Layouts
 	 * @throws Exception
 	 * @since 3.5.4
 	 */
-	private function doTask_setorderby()
+	private function doTask_setorderby(): array
 	{
 		$order_by = common::inputGetString('orderby', '');
 		$order_by = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $order_by));
@@ -1213,7 +1222,7 @@ class Layouts
 	 * @throws Exception
 	 * @since 3.5.4
 	 */
-	private function doTask_setlimit()
+	private function doTask_setlimit(): array
 	{
 		$limit = common::inputGetInt('limit', 0);
 

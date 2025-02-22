@@ -282,7 +282,7 @@ class Search_tablejoin extends BaseSearch
 		}
 
 		HTMLHelper::_('formbehavior.chosen', '.ct_improved_selectbox');
-		return $this->renderDropdownSelector_Box_simple($list_values, (string)$current_value, $control_name, $dynamic_filter, $addNoValue);
+		return $this->renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $dynamic_filter, $addNoValue);
 	}
 
 	protected function renderDropdownSelector_Box_simple($list_values, string $current_value, $control_name, $dynamic_filter, $addNoValue = false): string

@@ -233,7 +233,7 @@ class Twig_HTML_Tags
 	 * @return  string   The HTML for the limit # input box.
 	 * @since   3.5.4
 	 */
-	protected function getLimitBox(int $the_step, string $CSS_Class)
+	protected function getLimitBox(int $the_step, string $CSS_Class): string
 	{
 		$all = false;
 
@@ -508,7 +508,7 @@ class Twig_HTML_Tags
 		return $this->renderButtonOrIcon($linkType, $label, $class, $icon, $onClick);
 	}
 
-	protected function renderButtonOrIcon($linkType, $label, $class, $icon, $onClick)
+	protected function renderButtonOrIcon($linkType, $label, $class, $icon, $onClick): string
 	{
 		if ($linkType == 'linkicon')
 			return '<a href="#" onclick=\'' . $onClick . '\'>' . $icon . '</a>';

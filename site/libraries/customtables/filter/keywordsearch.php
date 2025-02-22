@@ -251,6 +251,10 @@ class CustomTablesKeywordSearch
 		return $result_rows;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getRowsByKeywords_ProcessTypes($fieldType, $fieldname, $typeParams, $regExpression, &$inner): MySQLWhereClause
 	{
 		$whereClause = new MySQLWhereClause();

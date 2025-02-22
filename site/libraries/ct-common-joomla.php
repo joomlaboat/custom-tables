@@ -10,6 +10,7 @@
 
 namespace CustomTables;
 
+use DateInvalidTimeZoneException;
 use DateTimeZone;
 use Exception;
 use Joomla\CMS\Component\ComponentHelper;
@@ -21,6 +22,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Throwable;
 
 class common
 {
@@ -68,6 +70,10 @@ class common
 		return $input->getString($parameter, $default);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.
+	 */
 	protected static function inputPostVariable()
 	{
 		$app = Factory::getApplication();
@@ -158,12 +164,15 @@ class common
 	}
 
 	/**
-	 * @throws Exception
 	 * @since 3.2.9
 	 */
 	public static function inputGetCmd(string $parameter, $default = null): ?string
 	{
-		return Factory::getApplication()->input->getCmd($parameter, $default);
+		try {
+			return Factory::getApplication()->input->getCmd($parameter, $default);
+		} catch (Throwable $e) {
+			return $default;
+		}
 	}
 
 	/**
@@ -381,13 +390,16 @@ class common
 	}
 
 	/**
-	 * @throws Exception
 	 * @since 3.2.9
 	 */
 	public static function getReturnToURL(bool $decode = true): ?string
 	{
-		$returnto = self::inputGet('returnto', null, 'BASE64');
-
+		try {
+			$returnto = self::inputGet('returnto', null, 'BASE64');
+		} catch (Exception $e) {
+			return null;
+		}
+		
 		if ($returnto === null)
 			return null;
 
@@ -785,7 +797,7 @@ if (typeof window.CTEditHelper === "undefined") {
 	}
 
 	/**
-	 * @throws \DateInvalidTimeZoneException
+	 * @throws DateInvalidTimeZoneException
 	 *
 	 * @since 3.0.0
 	 */
@@ -805,7 +817,7 @@ if (typeof window.CTEditHelper === "undefined") {
 	}
 
 	/**
-	 * @throws \DateInvalidTimeZoneException
+	 * @throws DateInvalidTimeZoneException
 	 *
 	 * @since 3.0.0
 	 */
@@ -829,7 +841,7 @@ if (typeof window.CTEditHelper === "undefined") {
 	}
 
 	/**
-	 * @throws \DateInvalidTimeZoneException
+	 * @throws DateInvalidTimeZoneException
 	 *
 	 * @since 3.0.0
 	 */

@@ -278,6 +278,10 @@ class ListOfFields
 		return true;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getFieldTypesFromXML(bool $onlyWordpress = false): ?array
 	{
 		/* file example:

@@ -124,6 +124,9 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 					return (object)array('link' => $link, 'msg' => common::translate('COM_USERS_RESET_COMPLETE_ERROR') . ':' . $e->getMessage(), 'status' => 'error');
 			}
 
+			$msg = 'Password reset completed.';
+			return (object)array('link' => $link, 'msg' => common::translate($msg), 'status' => null);
+
 		case 'copycontent':
 
 			$frmt = common::inputGetCmd('frmt', '');

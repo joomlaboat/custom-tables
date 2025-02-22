@@ -86,10 +86,8 @@ class Value_file extends BaseValue
 	{
 		$parts = explode('.', $filename);
 
-		if (count($parts) < 2) {
-			self::wrong();
-			return;
-		}
+		if (count($parts) < 2)
+			throw new Exception('File name does not contain the extension type.');
 
 		array_splice($parts, count($parts) - 1);
 		$filename_without_ext = implode('.', $parts);
@@ -99,10 +97,8 @@ class Value_file extends BaseValue
 
 		$key_parts = explode('c', $this->key);
 
-		if (count($key_parts) == 1) {
-			self::wrong();
-			return;
-		}
+		if (count($key_parts) == 1)
+			throw new Exception('The key format is invalid.');
 
 		$key_params = $key_parts[count($key_parts) - 1];
 
@@ -120,10 +116,8 @@ class Value_file extends BaseValue
 		$this->security = $security;
 
 		$key_params_a = explode($security, $key_params);
-		if (count($key_params_a) != 3) {
-			self::wrong();
-			return;
-		}
+		if (count($key_params_a) != 3)
+			throw new Exception('The key security format is invalid.');
 
 		$this->listing_id = $key_params_a[0];
 
@@ -132,15 +126,6 @@ class Value_file extends BaseValue
 
 		if (isset($key_params_a[2]))
 			$this->tableid = $key_params_a[2];
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function wrong(): bool
-	{
-		throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
 	}
 
 	/**
@@ -440,6 +425,10 @@ class Value_file extends BaseValue
 
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function getFilePath(): string
 	{
 		if (!isset($this->row[$this->field->realfieldname]))
