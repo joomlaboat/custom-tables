@@ -135,7 +135,7 @@ class CustomTablesImageMethods
 					$tableId,
 					$fieldName,
 					$photoRow->photoid,
-					$image_parameters,
+					$image_parameters ?? '',
 					$deleteOriginals
 				);
 			}
