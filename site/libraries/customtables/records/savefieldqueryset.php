@@ -206,10 +206,15 @@ class SaveFieldQuerySet
 				break;
 
 			case 'int':
-				$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (!is_null($value)) // always check with isset(). null doesn't work as 0 is null somehow in PHP
 				{
+					if ($value === '')
+						$value = null;
+					else
+						$value = common::inputPostInt($this->field->comesfieldname, null, 'create-edit-record');
+
 					$this->setNewValue($value);
 					return;
 				}
@@ -293,9 +298,14 @@ class SaveFieldQuerySet
 				return;
 
 			case 'float':
-				$value = common::inputPostFloat($this->field->comesfieldname, null, 'create-edit-record');
+				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
 				if (isset($value)) {
+					if ($value === '')
+						$value = null;
+					else
+						$value = common::inputPostFloat($this->field->comesfieldname, null, 'create-edit-record');
+
 					$this->setNewValue($value);
 					return;
 				}
