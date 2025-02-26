@@ -32,9 +32,8 @@ class Search_user extends BaseSearch
 		if ($this->ct->Env->user->id != 0) {
 
 			//$this->getOnChangeAttributeString();
-
-			$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
-			require_once($path . 'user.php');
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
+				. DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'user.php');
 
 			$this->attributes['id'] = $this->objectName;
 			$this->attributes['name'] = $this->objectName;

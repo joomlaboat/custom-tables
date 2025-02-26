@@ -22,7 +22,7 @@ class CustomTablesViewFileUploader extends HtmlView
 {
 	function display($tpl = null)
 	{
-		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
 
 		if (ob_get_contents()) ob_end_clean();
 

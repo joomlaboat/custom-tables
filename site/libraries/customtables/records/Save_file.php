@@ -211,7 +211,7 @@ class Save_file
 	 */
 	private function UploadSingleFile(?string $ExistingFile, string $CompletePathToFile, string $fileName, string $FileFolder): ?string
 	{
-		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'uploader.php');
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
 
 		if ($this->field->type == 'file')
 			$fileExtensions = $this->field->params[2] ?? '';

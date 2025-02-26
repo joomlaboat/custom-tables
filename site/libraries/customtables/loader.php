@@ -204,11 +204,14 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 
 	$path_helpers = $path . 'helpers' . DIRECTORY_SEPARATOR;
 
-	require_once($path_helpers . 'imagemethods.php');
-	require_once($path_helpers . 'user.php');
-	require_once($path_helpers . 'misc.php');
+	require_once($path_helpers . 'CustomTablesImageMethods.php');
+	require_once($path_helpers . 'CTUser.php');
+	require_once($path_helpers . 'CTMiscHelper.php');
 	require_once($path_helpers . 'Fields.php');
 	require_once($path_helpers . 'Icons.php');
+	require_once($path_helpers . 'FindSimilarImage.php');
+	require_once($path_helpers . 'TableHelper.php');
+	require_once($path_helpers . 'compareimages.php');
 
 	if (defined('_JEXEC')) {
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');
@@ -219,10 +222,6 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-wp.php');
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-database-wp.php');
 	}
-
-	require_once($path_helpers . 'tables.php');
-	require_once($path_helpers . 'compareimages.php');
-	require_once($path_helpers . 'findsimilarimage.php');
 
 	if ($include_utilities) {
 		$path_utilities = $path . 'utilities' . DIRECTORY_SEPARATOR;
