@@ -42,7 +42,7 @@ class InputBox_multilingualtext extends BaseInputBox
 
 			$fieldname = $this->field->fieldname . $postfix;
 
-			$value = null;
+			$value = null; // Because the value has to be read from the field with the postfix depending on the language
 			if (isset($this->row) and array_key_exists($this->ct->Table->fieldPrefix . $fieldname, $this->row)) {
 				$value = $this->row[$this->ct->Table->fieldPrefix . $fieldname];
 			} else {
@@ -86,8 +86,9 @@ class InputBox_multilingualtext extends BaseInputBox
 			} elseif (defined('WPINC')) {
 				$input = '<textarea ' . self::attributes2String($attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>'
 					. '<span class="language_label">' . $lang->caption . '</span>';
+			} else {
+				throw new Exception('Multilingual textarea not supported in the current version of the Custom Tables');
 			}
-
 
 			$result .= '<div id="' . $fieldname . '_div" class="multilangtext">' . $input . '</div>';
 			$result .= '</div>';

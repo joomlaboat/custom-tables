@@ -104,6 +104,8 @@ class Inputbox
 				$input['value'] = $value;
 				break;
 
+			case 'time':
+			case 'signature':
 			case 'blob':
 				$input['value'] = $value;
 				break;
@@ -113,11 +115,13 @@ class Inputbox
 				$input['value'] = $value;
 				break;
 
+			case 'image':
 			case 'file':
 				$input["renderAs"] = "file";
 				$input['value'] = $value;
 				break;
 
+			case 'imagegallery':
 			case 'filebox':
 				$input["renderAs"] = "file";
 				$input["multiple"] = true;
@@ -136,20 +140,10 @@ class Inputbox
 				$input['value'] = array_map('floatval', $valueArray);
 				break;
 
+			case 'ordering':
 			case 'int':
 				$input["renderAs"] = "number";
 				$input['value'] = (int)$value;
-				break;
-
-			case 'image':
-				$input["renderAs"] = "file";
-				$input['value'] = $value;
-				break;
-
-			case 'imagegallery':
-				$input["renderAs"] = "file";
-				$input["multiple"] = true;
-				$input['value'] = $value;
 				break;
 
 			case 'multilangstring':
@@ -164,11 +158,6 @@ class Inputbox
 				$input['value'] = $value;
 				break;
 
-			case 'ordering':
-				$input["renderAs"] = "number";
-				$input['value'] = (int)$value;
-				break;
-
 			case 'text':
 				$input["renderAs"] = "textarea";
 				$input['value'] = $value;
@@ -179,12 +168,9 @@ class Inputbox
 				$input['value'] = $value;
 				break;
 
-			case 'signature':
-			case 'time':
-				$input['value'] = $value;
-				break;
-
 			case 'user':
+			case 'article':
+			case 'usergroup':
 			case 'userid':
 				$input["renderAs"] = "select";
 				$input['value'] = (int)$value;
@@ -200,19 +186,9 @@ class Inputbox
 				$input['value'] = $value;
 				break;
 
-			case 'article':
-				$input["renderAs"] = "select";
-				$input['value'] = (int)$value;
-				break;
-
 			case 'radio':
 				$input["renderAs"] = "radio";
 				$input['value'] = $value;
-				break;
-
-			case 'usergroup':
-				$input["renderAs"] = "select";
-				$input['value'] = (int)$value;
 				break;
 
 			case 'usergroups':

@@ -13,6 +13,8 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use Exception;
+
 class InputBox_language extends BaseInputBox
 {
 	function __construct(CT &$ct, Field $field, ?array $row, array $option_list = [], array $attributes = [])
@@ -37,6 +39,10 @@ class InputBox_language extends BaseInputBox
 		return $options;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($value === null or $value === '') {

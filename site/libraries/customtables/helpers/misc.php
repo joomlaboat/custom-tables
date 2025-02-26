@@ -568,7 +568,7 @@ class CTMiscHelper
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function FindMenuItemRowByAlias($alias): ?int
+	public static function FindMenuItemRowByAlias($alias): ?array
 	{
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('published', 1);
@@ -1392,7 +1392,7 @@ class CTMiscHelper
 			// Remove any runs of periods (thanks falstro!)
 			$filename = mb_ereg_replace("([\.]{2,})", '', $filename);
 		} else {
-			$filename = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
+			$filename = preg_replace("([^\w\s\-_~,;\[\]\(\).])", '', $filename);
 			// Remove any runs of periods (thanks falstro!)
 			$filename = preg_replace("(\.{2,})", '', $filename);
 		}
