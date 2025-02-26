@@ -207,23 +207,17 @@ class Twig_Document_Tags
 		if ($layoutName == '')
 			throw new Exception('Warning: The {{ document.layout("layout_name") }} layout name is required.');
 
-		if (!isset($this->ct->Table)) {
-			$this->ct->errors[] = '{{ document.layout }} - Table not loaded.';
-			return '';
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ document.layout }} - Table not loaded.');
 
 		$layouts = new Layouts($this->ct);
 		$layout = $layouts->getLayout($layoutName);
 
-		if (is_null($layouts->tableId)) {
-			$this->ct->errors[] = '{{ document.layout("' . $layoutName . '") }} - Layout "' . $layoutName . ' not found.';
-			return '';
-		}
+		if (is_null($layouts->tableId))
+			throw new Exception('{{ document.layout("' . $layoutName . '") }} - Layout "' . $layoutName . ' not found.');
 
-		if ($layouts->tableId != $this->ct->Table->tableid) {
-			$this->ct->errors[] = '{{ document.layout("' . $layoutName . '") }} - Layout Table ID and Current Table ID do not match.';
-			return '';
-		}
+		if ($layouts->tableId != $this->ct->Table->tableid)
+			throw new Exception('{{ document.layout("' . $layoutName . '") }} - Layout Table ID and Current Table ID do not match.');
 
 		if (!empty($layouts->layoutCodeCSS))
 			$this->ct->LayoutVariables['style'] = ($this->ct->LayoutVariables['style'] ?? '') . $layouts->layoutCodeCSS;

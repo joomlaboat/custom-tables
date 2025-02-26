@@ -143,22 +143,18 @@ class CustomtablesControllerListOfRecords extends AdminController
 		}
 
 		$cid = common::inputPostArray('cid', []);
-
 		$ct = new CT(null, false);
 		$ct->Params->constructJoomlaParams();
 		$ct->Env->frmt = 'csv';
 
 		$ct->getTable($tableid);
-		if ($ct->Table === null) {
-			$ct->errors[] = 'Export to CSV: Table not selected.';
-			return false;
-		}
+		if ($ct->Table === null)
+			throw new Exception('Export to CSV: Table not selected.');
 
 		$wheres = [];
 		foreach ($cid as $id) {
-			if ($id != '') {
+			if ($id != '')
 				$wheres[] = '_id=' . $id;
-			}
 		}
 
 		$ct->Params->filter = implode('or', $wheres);

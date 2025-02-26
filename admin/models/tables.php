@@ -330,7 +330,7 @@ class CustomtablesModelTables extends AdminModel
 					if (!in_array($id_desc, $fields))
 						Fields::addLanguageField('#__customtables_tables', 'description', $id_desc);
 				} catch (Exception $e) {
-					$this->ct->errors[] = $e->getMessage();
+					throw new Exception($e->getMessage());
 				}
 			}
 

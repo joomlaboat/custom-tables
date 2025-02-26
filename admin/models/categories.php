@@ -182,8 +182,7 @@ class CustomtablesModelCategories extends AdminModel
 		try {
 			$menu_rows = database::loadObjectList('#__menu', ['id', 'alias'], $whereClause);
 		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
+			throw new Exception($e->getMessage());
 		}
 
 		$whereClause = new MySQLWhereClause();
@@ -193,8 +192,7 @@ class CustomtablesModelCategories extends AdminModel
 		try {
 			$category_rows = database::loadObjectList('#__customtables_categories', ['id', 'categoryname'], $whereClause);
 		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
+			throw new Exception($e->getMessage());
 		}
 
 		$db = database::getDB();
@@ -229,8 +227,7 @@ class CustomtablesModelCategories extends AdminModel
 		try {
 			$extension_rows = database::loadObjectList('#__extensions', ['extension_id'], $whereClause, null, null, 1);
 		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
+			throw new Exception($e->getMessage());
 		}
 
 		if (count($extension_rows) == 0)
@@ -243,8 +240,7 @@ class CustomtablesModelCategories extends AdminModel
 			$whereClause = new MySQLWhereClause();
 			$rgt_rows = database::loadObjectList('#__menu', [['MAX', '#__menu', 'rgt', 'vlu']], $whereClause, null, null, 1);
 		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return false;
+			throw new Exception($e->getMessage());
 		}
 
 		if (count($rgt_rows) == 0)

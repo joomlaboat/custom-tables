@@ -167,11 +167,8 @@ class Search_tablejoin extends BaseSearch
 		// -------------------- Table
 		$ct->getTable($ct->Params->tableName);
 
-		if ($ct->Table === null) {
-			$ct->errors[] = 'Catalog View: Table "' . $ct->Params->tableName . '" not found.';
-			echo 'Catalog View: Table "' . $ct->Params->tableName . '" not found.';
-			return false;
-		}
+		if ($ct->Table === null)
+			throw new Exception('Catalog View: Table "' . $ct->Params->tableName . '" not found.');
 
 		// --------------------- Filter
 		$ct->setFilter($ct->Params->filter, $ct->Params->showPublished);

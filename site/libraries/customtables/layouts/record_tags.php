@@ -129,17 +129,16 @@ class Twig_Record_Tags
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	function published(string $type = '', string $customTextPositive = "Published", string $customTextNegative = "Unpublished")
 	{
-		if (!isset($this->ct->Table)) {
-			$this->ct->errors[] = '{{ record.published }} - Table not loaded.';
-			return null;
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ record.published }} - Table not loaded.');
 
-		if (!isset($this->ct->Table->record)) {
-			$this->ct->errors[] = '{{ record.published }} - Record not loaded.';
-			return null;
-		}
+		if (!isset($this->ct->Table->record))
+			throw new Exception('{{ record.published }} - Record not loaded.');
 
 		if ($type == 'bool' or $type == 'boolean')
 			return ((int)$this->ct->Table->record['listing_published'] ? 'true' : 'false');
@@ -153,20 +152,14 @@ class Twig_Record_Tags
 
 	function number(): ?int
 	{
-		if (!isset($this->ct->Table)) {
-			$this->ct->errors[] = '{{ record.number }} - Table not loaded.';
-			return null;
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ record.number }} - Table not loaded.');
 
-		if (!isset($this->ct->Table->record)) {
-			$this->ct->errors[] = '{{ record.number }} - Record not loaded.';
-			return null;
-		}
+		if (!isset($this->ct->Table->record))
+			throw new Exception('{{ record.number }} - Record not loaded.');
 
-		if (!isset($this->ct->Table->record['_number'])) {
-			$this->ct->errors[] = '{{ record.number }} - Record number not set.';
-			return null;
-		}
+		if (!isset($this->ct->Table->record['_number']))
+			throw new Exception('{{ record.number }} - Record number not set.');
 
 		return (int)$this->ct->Table->record['_number'];
 	}
@@ -177,24 +170,18 @@ class Twig_Record_Tags
 	 */
 	function joincount(string $join_table = '', string $filter = ''): ?int
 	{
-		if ($join_table == '') {
-			$this->ct->errors[] = '{{ record.joincount("' . $join_table . '") }} - Table not specified.';
-			return null;
-		}
+		if ($join_table == '')
+			throw new Exception('{{ record.joincount("' . $join_table . '") }} - Table not specified.');
 
-		if (!isset($this->ct->Table)) {
-			$this->ct->errors[] = '{{ record.joincount("' . $join_table . '") }} - Parent table not loaded.';
-			return null;
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ record.joincount("' . $join_table . '") }} - Parent table not loaded.');
 
 		$join_ct = new CT([], true);
 		$join_ct->getTable($join_table);
 		$join_table_fields = $join_ct->Table->fields;
 
-		if (count($join_table_fields) == 0) {
-			$this->ct->errors[] = '{{ record.joincount("' . $join_table . '") }} - Table not found or it has no fields.';
-			return null;
-		}
+		if (count($join_table_fields) == 0)
+			throw new Exception('{{ record.joincount("' . $join_table . '") }} - Table not found or it has no fields.');
 
 		foreach ($join_table_fields as $join_table_field) {
 			if ($join_table_field['type'] == 'sqljoin') {
@@ -205,8 +192,7 @@ class Twig_Record_Tags
 			}
 		}
 
-		$this->ct->errors[] = '{{ record.joincount("' . $join_table . '") }} - Table found but the field that links to this table not found.';
-		return null;
+		throw new Exception('{{ record.joincount("' . $join_table . '") }} - Table found but the field that links to this table not found.');
 	}
 
 	/**
@@ -250,8 +236,7 @@ class Twig_Record_Tags
 			$rows = $this->join_buildQuery($sj_function, $newCt->Table, $field1_findWhat_realName, $field1_type, $field2_lookWhere_realName,
 				$field2_type, $field3_readValue_realName, $f->whereClause, $order_by_option_realName);
 		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return null;
+			throw new Exception($e->getMessage());
 		}
 
 		if (count($rows) == 0) {
@@ -289,16 +274,15 @@ class Twig_Record_Tags
 			if ($table->published_field_found)
 				return ['listing_published', '_published'];
 			else
-				$this->ct->errors[] = '{{ record.join... }} - Table does not have "published" field.';
+				throw new Exception('{{ record.join... }} - Table does not have "published" field.');
 		} else {
 			$field1_row = $table->getFieldByName($fieldName);
 
 			if (is_array($field1_row)) {
 				return [$field1_row['realfieldname'], $field1_row['type']];
 			} else
-				$this->ct->errors[] = '{{ record.join... }} - Field "' . $fieldName . '" not found.';
+				throw new Exception('{{ record.join... }} - Field "' . $fieldName . '" not found.');
 		}
-		return null;
 	}
 
 	/**
@@ -379,29 +363,21 @@ class Twig_Record_Tags
 	 */
 	protected function simple_join($function, $join_table, $value_field, $tag, string $filter = '')
 	{
-		if ($join_table == '') {
-			$this->ct->errors[] = '{{ ' . $tag . '("' . $join_table . '",value_field_name) }} - Table not specified.';
-			return '';
-		}
+		if ($join_table == '')
+			throw new Exception('{{ ' . $tag . '("' . $join_table . '",value_field_name) }} - Table not specified.');
 
-		if ($value_field == '') {
-			$this->ct->errors[] = '{{ ' . $tag . '("' . $join_table . '",value_field_name) }} - Value field not specified.';
-			return '';
-		}
+		if ($value_field == '')
+			throw new Exception('{{ ' . $tag . '("' . $join_table . '",value_field_name) }} - Value field not specified.');
 
-		if (!isset($this->ct->Table)) {
-			$this->ct->errors[] = '{{ ' . $tag . '() }} - Table not loaded.';
-			return '';
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ ' . $tag . '() }} - Table not loaded.');
 
 		$tempCT = new CT([], true);
 		$tempCT->getTable($join_table);
 		$join_table_fields = $tempCT->Table->fields;
 
-		if (count($join_table_fields) == 0) {
-			$this->ct->errors[] = '{{ ' . $tag . '("' . $join_table . '",value_field_name) }} - Table "' . $join_table . '" not found or it has no fields.';
-			return '';
-		}
+		if (count($join_table_fields) == 0)
+			throw new Exception('{{ ' . $tag . '("' . $join_table . '",value_field_name) }} - Table "' . $join_table . '" not found or it has no fields.');
 
 		$value_field_found = false;
 		foreach ($join_table_fields as $join_table_field) {
@@ -411,10 +387,8 @@ class Twig_Record_Tags
 			}
 		}
 
-		if (!$value_field_found) {
-			$this->ct->errors[] = '{{ ' . $tag . '("' . $join_table . '","' . $value_field . '") }} - Value field "' . $value_field . '" not found.';
-			return '';
-		}
+		if (!$value_field_found)
+			throw new Exception('{{ ' . $tag . '("' . $join_table . '","' . $value_field . '") }} - Value field "' . $value_field . '" not found.');
 
 		foreach ($join_table_fields as $join_table_field) {
 			if ($join_table_field['type'] == 'sqljoin') {
@@ -425,8 +399,7 @@ class Twig_Record_Tags
 			}
 		}
 
-		$this->ct->errors[] = '{{ ' . $tag . '("' . $join_table . '") }} - Table found but the field that links to this table not found.';
-		return '';
+		throw new Exception('{{ ' . $tag . '("' . $join_table . '") }} - Table found but the field that links to this table not found.');
 	}
 
 	/**
@@ -475,18 +448,14 @@ class Twig_Record_Tags
 	{
 		//Example {{ record.tablejoin("InvoicesPage","_published=1","name") }}
 
-		if ($layoutname == '') {
-			$this->ct->errors[] = '{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout name not specified.';
-			return '';
-		}
+		if ($layoutname == '')
+			throw new Exception('{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout name not specified.');
 
 		$layouts = new Layouts($this->ct);
 
 		$pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
-		if ($layouts->tableId === null) {
-			$this->ct->errors[] = '{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.';
-			return '';
-		}
+		if ($layouts->tableId === null)
+			throw new Exception('{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.');
 
 		$layoutsCT = new CT([], true);
 		$layoutsCT->getTable($layouts->tableId);
@@ -509,10 +478,8 @@ class Twig_Record_Tags
 
 		$join_ct = new CT([], true);
 		$join_ct->getTable($layouts->tableId);
-		if ($join_ct->Table === null) {
-			$this->ct->errors[] = '{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.';
-			return '';
-		}
+		if ($join_ct->Table === null)
+			throw new Exception('{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Table "' . $layouts->tableId . ' not found.');
 
 		$join_ct->setFilter($complete_filter, CUSTOMTABLES_SHOWPUBLISHED_ANY);
 		if ($join_ct->getRecords(false, $limit, $orderby)) {
@@ -536,10 +503,8 @@ class Twig_Record_Tags
 	 */
 	function min(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
-		if ($value_field == '') {
-			$this->ct->errors[] = '{{ record.min(table_name,value_field) }} - Value Field not specified.';
-			return null;
-		}
+		if ($value_field == '')
+			throw new Exception('{{ record.min(table_name,value_field) }} - Value Field not specified.');
 
 		return $this->countOrSumRecords('min', $tableName, $value_field, $filter);
 	}
@@ -550,27 +515,19 @@ class Twig_Record_Tags
 	 */
 	protected function countOrSumRecords(string $function, string $tableName, string $fieldName, string $filter = ''): ?int
 	{
-		if ($tableName == '') {
-			$this->ct->errors[] = 'countOrSumRecords - Table not specified.';
-			return null;
-		}
+		if ($tableName == '')
+			throw new Exception('countOrSumRecords - Table not specified.');
 
 		$newCT = new CT([], true);
 		$newCT->getTable($tableName);
-		if ($newCT->Table === null) {
-			$this->ct->errors[] = '{{ record.count("' . $tableName . '") }} - Table not found.';
-			return null;
-		}
+		if ($newCT->Table === null)
+			throw new Exception('{{ record.count("' . $tableName . '") }} - Table not found.');
 
-		if ($fieldName == '') {
-			$this->ct->errors[] = 'countOrSumRecords - Field not specified.';
-			return null;
-		}
+		if ($fieldName == '')
+			throw new Exception('countOrSumRecords - Field not specified.');
 
-		if (!isset($this->ct->Table)) {
-			$this->ct->errors[] = '{{ record.count("' . $tableName . '","' . $fieldName . '","' . $filter . '") }} - Parent table not loaded.';
-			return null;
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ record.count("' . $tableName . '","' . $fieldName . '","' . $filter . '") }} - Parent table not loaded.');
 
 		if ($fieldName == '_id') {
 			$fieldRealFieldName = $newCT->Table->realidfieldname;
@@ -578,10 +535,8 @@ class Twig_Record_Tags
 			$fieldRealFieldName = 'listing_published';
 		} else {
 
-			if (count($newCT->Table->fields) == 0) {
-				$this->ct->errors[] = '{{ record.count("' . $tableName . '") }} - Table not found or it has no fields.';
-				return null;
-			}
+			if (count($newCT->Table->fields) == 0)
+				throw new Exception('{{ record.count("' . $tableName . '") }} - Table not found or it has no fields.');
 
 			$field = null;
 			foreach ($newCT->Table->fields as $tableField) {
@@ -591,10 +546,9 @@ class Twig_Record_Tags
 				}
 			}
 
-			if ($field === null) {
-				$this->ct->errors[] = '{{ record.count("' . $tableName . '") }} - Table found but the field that links to this table not found.';
-				return null;
-			}
+			if ($field === null)
+				throw new Exception('{{ record.count("' . $tableName . '") }} - Table found but the field that links to this table not found.');
+
 			$fieldRealFieldName = $field->realfieldname;
 		}
 
@@ -605,8 +559,7 @@ class Twig_Record_Tags
 		try {
 			$rows = $this->count_buildQuery($function, $newCT->Table->realtablename, $fieldRealFieldName, $f->whereClause);
 		} catch (Exception $e) {
-			$this->ct->errors[] = $e->getMessage();
-			return null;
+			throw new Exception($e->getMessage());
 		}
 
 		if (count($rows) == 0)
@@ -651,10 +604,8 @@ class Twig_Record_Tags
 	 */
 	function max(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
-		if ($value_field == '') {
-			$this->ct->errors[] = '{{ record.max(table_name,value_field) }} - Value Field not specified.';
-			return null;
-		}
+		if ($value_field == '')
+			throw new Exception('{{ record.max(table_name,value_field) }} - Value Field not specified.');
 
 		return $this->countOrSumRecords('max', $tableName, $value_field, $filter);
 	}
@@ -665,10 +616,8 @@ class Twig_Record_Tags
 	 */
 	function avg(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
-		if ($value_field == '') {
-			$this->ct->errors[] = '{{ record.avg(table_name,value_field) }} - Value Field not specified.';
-			return null;
-		}
+		if ($value_field == '')
+			throw new Exception('{{ record.avg(table_name,value_field) }} - Value Field not specified.');
 
 		return $this->countOrSumRecords('avg', $tableName, $value_field, $filter);
 	}
@@ -679,10 +628,8 @@ class Twig_Record_Tags
 	 */
 	function sum(string $tableName = '', string $value_field = '', string $filter = ''): ?int
 	{
-		if ($value_field == '') {
-			$this->ct->errors[] = '{{ record.sum(table_name,value_field) }} - Value Field not specified.';
-			return null;
-		}
+		if ($value_field == '')
+			throw new Exception('{{ record.sum(table_name,value_field) }} - Value Field not specified.');
 
 		return $this->countOrSumRecords('sum', $tableName, $value_field, $filter);
 	}
@@ -693,10 +640,8 @@ class Twig_Record_Tags
 	 */
 	function count(string $tableName = '', string $filter = ''): ?int
 	{
-		if ($tableName == '') {
-			$this->ct->errors[] = '{{ record.min(table_name) }} - Table Name not specified.';
-			return null;
-		}
+		if ($tableName == '')
+			throw new Exception('{{ record.min(table_name) }} - Table Name not specified.');
 
 		return $this->countOrSumRecords('count', $tableName, '_id', $filter);
 	}
@@ -733,20 +678,14 @@ class Twig_Record_Tags
 
 	function isLast(): bool
 	{
-		if (!isset($this->ct->Table)) {
-			$this->ct->errors[] = '{{ record.islast }} - Table not loaded.';
-			return false;
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ record.islast }} - Table not loaded.');
 
-		if (!isset($this->ct->Table->record)) {
-			$this->ct->errors[] = '{{ record.islast }} - Record not loaded.';
-			return false;
-		}
+		if (!isset($this->ct->Table->record))
+			throw new Exception('{{ record.islast }} - Record not loaded.');
 
-		if (!isset($this->ct->Table->record['_islast'])) {
-			$this->ct->errors[] = '{{ record.islast }} - Record number not set.';
-			return false;
-		}
+		if (!isset($this->ct->Table->record['_islast']))
+			throw new Exception('{{ record.islast }} - Record number not set.');
 
 		return (bool)$this->ct->Table->record['_islast'];
 	}

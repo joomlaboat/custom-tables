@@ -727,12 +727,10 @@ class Fields
 			if ($PureFieldType !== null) {
 				try {
 					if (!Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldTitle)) {
-						$ct->errors[] = 'Field cannot be converted to new type.';
-						return false;
+						throw new Exception('Field cannot be converted to new type.');
 					}
 				} catch (Exception $e) {
-					$ct->errors[] = 'Cannot convert the type: ' . $e->getMessage();
-					return false;
+					throw new Exception('Cannot convert the type: ' . $e->getMessage());
 				}
 			}
 

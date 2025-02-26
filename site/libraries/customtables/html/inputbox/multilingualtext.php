@@ -49,8 +49,7 @@ class InputBox_multilingualtext extends BaseInputBox
 				Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Table->fieldPrefix . $this->field->fieldname,
 					$this->ct->Table->fieldPrefix . $fieldname);
 
-				$this->ct->errors[] = 'Field "' . $this->ct->Table->fieldPrefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.';
-				$value = '';
+				throw new Exception('Field "' . $this->ct->Table->fieldPrefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.');
 			}
 
 			if ($value === null) {

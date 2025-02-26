@@ -140,8 +140,7 @@ class CustomTablesModelEditItem extends BaseDatabaseModel
 			try {
 				database::update($this->ct->Table->realtablename, $data, $whereClauseUpdate);
 			} catch (Exception $e) {
-				$this->ct->errors[] = $e->getMessage();
-				return false;
+				throw new Exception($e->getMessage());
 			}
 			return true;
 		}

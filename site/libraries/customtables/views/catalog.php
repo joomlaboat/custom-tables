@@ -171,9 +171,6 @@ class Catalog
 
 		try {
 			$twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
-			if (count($this->ct->errors) > 0)
-				throw new Exception('TwigProcessor: ' . implode(', ', $this->ct->errors));
-
 			$pageLayout = $twig->process();
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());

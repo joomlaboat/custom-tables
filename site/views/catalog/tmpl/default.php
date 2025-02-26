@@ -48,10 +48,6 @@ echo $this->content;
 if (common::inputGetInt('clean', 0) == 1 or !empty(common::inputGetCmd('listing_id')))
 	exit;//Clean exit, single record loaded.
 
-if (count($this->catalog->ct->errors)) {
-	Factory::getApplication()->enqueueMessage(implode(',', $this->catalog->ct->errors), 'error');
-}
-
 if ($this->ct->Env->frmt == 'html') {
 	if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
 

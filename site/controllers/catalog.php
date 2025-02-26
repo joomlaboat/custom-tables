@@ -62,7 +62,7 @@ if (in_array($task, $updatedTask)) {
 			$edit_model = $this->getModel('edititem');
 			$redirect = doTheTask($ct, $task, $edit_model, $this);
 			if (is_null($redirect))
-				$ct->errors[] = 'Unknown task';
+				common::enqueueMessage('Unknown task');
 			else {
 				$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
 			}

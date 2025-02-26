@@ -11,6 +11,8 @@
 namespace CustomTables;
 
 // no direct access
+use Exception;
+
 defined('_JEXEC') or die();
 
 class Twig_Fields_Tags
@@ -29,14 +31,15 @@ class Twig_Fields_Tags
 		return common::ctJsonEncode(Fields::shortFieldObjects($this->ct->Table->fields));
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	function list($param = 'fieldname'): array
 	{
 		$available_params = ['fieldname', 'title', 'defaultvalue', 'description', 'isrequired', 'isdisabled', 'type', 'typeparams', 'valuerule', 'valuerulecaption'];
 
-		if (!in_array($param, $available_params)) {
-			$this->ct->errors[] = '{{ fields.array("' . $param . '") }} - Unknown parameter.';
-			return [];
-		}
+		if (!in_array($param, $available_params))
+			throw new Exception('{{ fields.array("' . $param . '") }} - Unknown parameter.');
 
 		$fields = Fields::shortFieldObjects($this->ct->Table->fields);
 		$list = [];

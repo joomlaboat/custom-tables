@@ -39,15 +39,11 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != '')
 			return '';
 
-		if (!isset($this->ct->Table)) {
-			$this->ct->errors[] = '{{ html.recordcount }} - Table not loaded.';
-			return '';
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ html.recordcount }} - Table not loaded.');
 
-		if (!isset($this->ct->Records)) {
-			$this->ct->errors[] = '{{ html.recordcount }} - Records not loaded.';
-			return '';
-		}
+		if (!isset($this->ct->Records))
+			throw new Exception('{{ html.recordcount }} - Records not loaded.');
 
 		return '<span class="ctCatalogRecordCount">' . common::translate('COM_CUSTOMTABLES_FOUND') . ': ' . $this->ct->Table->recordcount
 			. ' ' . common::translate('COM_CUSTOMTABLES_RESULT_S') . '</span>';
@@ -551,10 +547,8 @@ class Twig_HTML_Tags
 		else
 			$list_of_fields_string_array = explode(',', $list_of_fields_string_or_array);
 
-		if (count($list_of_fields_string_array) == 0) {
-			$this->ct->errors[] = 'Search box: Please specify a field name.';
-			return '';
-		}
+		if (count($list_of_fields_string_array) == 0)
+			throw new Exception('Search box: Please specify a field name.');
 
 		$first_fld_layout = null;
 
@@ -577,10 +571,8 @@ class Twig_HTML_Tags
 				//Check if field name is exist in selected table
 				$fld = $this->ct->Table->getFieldByName($field_name_string);
 
-				if (!is_array($fld)) {
-					$this->ct->errors[] = 'Search box: Field name "' . $field_name_string . '" not found.';
-					return '';
-				}
+				if (!is_array($fld))
+					throw new Exception('Search box: Field name "' . $field_name_string . '" not found.');
 
 				if (count($fld) > 0)
 					$list_of_fields[] = $field_name_pair[0];
@@ -589,10 +581,8 @@ class Twig_HTML_Tags
 			}
 		}
 
-		if (count($list_of_fields) == 0) {
-			$this->ct->errors[] = 'Search box: Field' . (count($wrong_list_of_fields) > 0 ? 's' : '') . ' "' . implode(',', $wrong_list_of_fields) . '" not found.';
-			return '';
-		}
+		if (count($list_of_fields) == 0)
+			throw new Exception('Search box: Field' . (count($wrong_list_of_fields) > 0 ? 's' : '') . ' "' . implode(',', $wrong_list_of_fields) . '" not found.');
 
 		$vlu = 'Search field name is wrong';
 
@@ -777,7 +767,7 @@ class Twig_HTML_Tags
 		}
 	}
 
-	function message($text, $type = 'Message'): ?string
+	function message($text, $type = 'notice'): ?string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
@@ -785,11 +775,7 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
 			return '';
 
-		if ($type === 'error')
-			$this->ct->errors[] = $text;
-		else
-			$this->ct->messages[] = $text;
-
+		common::enqueueMessage($text, $type);
 		return null;
 	}
 
@@ -1116,15 +1102,11 @@ class Twig_HTML_Tags
 
 	protected function id_list(): string
 	{
-		if (!isset($this->ct->Table)) {
-			$this->ct->errors[] = '{{ record.list }} - Table not loaded.';
-			return '';
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ record.list }} - Table not loaded.');
 
-		if (!isset($this->ct->Records)) {
-			$this->ct->errors[] = '{{ record.list }} - Records not loaded.';
-			return '';
-		}
+		if (!isset($this->ct->Records))
+			throw new Exception('{{ record.list }} - Records not loaded.');
 
 		if ($this->ct->Table->recordlist === null)
 			$this->ct->getRecordList();
@@ -1178,20 +1160,17 @@ class Twig_HTML_Tags
 		$functionParams = func_get_args();
 
 		if (!isset($functionParams[0]) or $functionParams[0] == '') {
-			$this->ct->errors[] = '{{ html.paypal(email) }} business email address is required.';
-			return null;
+			throw new Exception('{{ html.paypal(email) }} business email address is required.');
 		} else
 			$business_email = $functionParams[0];
 
 		if (!isset($functionParams[1]) or $functionParams[1] == '') {
-			$this->ct->errors[] = '{{ html.paypal(email,item_name) }} item name is required.';
-			return null;
+			throw new Exception('{{ html.paypal(email,item_name) }} item name is required.');
 		} else
 			$item_name = $functionParams[1];
 
 		if (!isset($functionParams[2]) or $functionParams[2] == '') {
-			$this->ct->errors[] = '{{ html.paypal(email,item_name,price) }} price must be more than zero.';
-			return null;
+			throw new Exception('{{ html.paypal(email,item_name,price) }} price must be more than zero.');
 		} else
 			$price = (float)$functionParams[2];
 

@@ -796,10 +796,8 @@ class SaveFieldQuerySet
 		else
 			$value = $parsed_condition;
 
-		if ($error != '') {
-			$this->ct->errors[] = $error;
-			return false;
-		}
+		if ($error != '')
+			throw new Exception($error);
 
 		if ((int)$value == 1)
 			return true;
@@ -909,8 +907,7 @@ class SaveFieldQuerySet
 
 			if ($sent !== true) {
 				//Something went wrong. Email not sent.
-				$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL') . ': ' . $EmailTo . ' (' . $Subject . ')';
-				$status = 0;
+				throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL') . ': ' . $EmailTo . ' (' . $Subject . ')');
 			} else {
 				$this->ct->messages[] = common::translate('COM_CUSTOMTABLES_EMAIL_SENT_TO') . ': ' . $EmailTo . ' (' . $Subject . ')';
 				$status = 1;

@@ -363,10 +363,8 @@ class Value_file extends BaseValue
 		$this->ct = new CT([], true);
 		$this->ct->getTable($this->tableid);
 
-		if ($this->ct->Table === null) {
-			$this->ct->errors[] = 'Table not selected (79).';
-			return;
-		}
+		if ($this->ct->Table === null)
+			throw new Exception('Table not selected (79).');
 
 		$fieldRow = null;
 		foreach ($this->ct->Table->fields as $f) {
@@ -376,10 +374,8 @@ class Value_file extends BaseValue
 			}
 		}
 
-		if (is_null($fieldRow)) {
-			$this->ct->errors[] = 'File View: Field not found.';
-			return;
-		}
+		if (is_null($fieldRow))
+			throw new Exception('File View: Field not found.');
 
 		if (!empty($this->listing_id)) {
 			$this->ct->Params->listing_id = $this->listing_id;
@@ -403,10 +399,8 @@ class Value_file extends BaseValue
 		} else {
 			$filepath = $this->getFilePath();
 
-			if ($filepath == '') {
-				$this->ct->errors[] = 'File path not set.';
-				return;
-			}
+			if ($filepath == '')
+				throw new Exception('File path not set.');
 		}
 
 		$test_key = self::makeTheKey($filepath, $this->security, $this->listing_id, $this->fieldid, $this->tableid);
@@ -420,7 +414,7 @@ class Value_file extends BaseValue
 			} else
 				$this->render_file_output($filepath);
 		} else {
-			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED');
+			throw new Exception(common::translate('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED'));
 		}
 
 	}
@@ -432,7 +426,7 @@ class Value_file extends BaseValue
 	protected function getFilePath(): string
 	{
 		if (!isset($this->row[$this->field->realfieldname]))
-			$this->ct->errors[] = 'Real field name not set';
+			throw new Exception('Real field name not set');
 
 		$rowValue = $this->row[$this->field->realfieldname];
 
@@ -462,10 +456,8 @@ class Value_file extends BaseValue
 
 		$rows = database::loadAssocList($this->ct->Table->realtablename, [$this->field->realfieldname], $whereClause, null, null, 1);
 
-		if (count($rows) < 1) {
-			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND');
-			return;
-		}
+		if (count($rows) < 1)
+			throw new Exception(common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND'));
 
 		$content = stripslashes($rows[0][$this->field->realfieldname]);
 		$content = $this->ProcessContentWithCustomPHP($content, $this->row);
@@ -541,10 +533,8 @@ class Value_file extends BaseValue
 	 */
 	function render_file_output(string $filePath): bool
 	{
-		if (!file_exists($filePath)) {
-			$this->ct->errors[] = common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND') . ': \'' . $filePath . '\'';
-			return false;
-		}
+		if (!file_exists($filePath))
+			throw new Exception(common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND') . ': \'' . $filePath . '\'');
 
 		$content = common::getStringFromFile($filePath);
 

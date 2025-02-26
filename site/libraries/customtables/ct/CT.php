@@ -43,7 +43,6 @@ class CT
 	 */
 	function __construct(?array $menuParams = [], bool $blockExternalVars = true)
 	{
-		$this->errors = [];
 		$this->messages = [];
 
 		$this->Languages = new Languages;
@@ -295,12 +294,10 @@ class CT
 						$this->LimitStart = 0;
 
 					try {
-						//$this->Limit = $the_limit;
 						$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
 							(count($ordering) > 0 ? implode(',', $ordering) : null), null, $the_limit, $this->LimitStart, $this->GroupBy);
 					} catch (Exception $e) {
-						$this->errors[] = $e->getMessage();
-						return false;
+						throw new Exception($e->getMessage());
 					}
 				}
 			}
@@ -609,9 +606,19 @@ class CT
 		if ($this->Params->onRecordAddSendEmail == 3 and !empty($this->Params->onRecordSaveSendEmailTo)) {
 			//check conditions
 
-			if ($saveField->checkSendEmailConditions($listing_id, $this->Params->sendEmailCondition)) {
+			try {
+				$conditions = $saveField->checkSendEmailConditions($listing_id, $this->Params->sendEmailCondition);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
+
+			if ($conditions) {
 				//Send email conditions met
-				$saveField->sendEmailIfAddressSet($listing_id, $row, $this->Params->onRecordSaveSendEmailTo);
+				try {
+					$saveField->sendEmailIfAddressSet($listing_id, $row, $this->Params->onRecordSaveSendEmailTo);
+				} catch (Exception $e) {
+					throw new Exception($e->getMessage());
+				}
 			}
 		}
 	}
@@ -758,16 +765,12 @@ class CT
 			} else {
 				//example: parents(children).user
 				$statement_parts = explode('.', $item['equation']);
-				if (count($statement_parts) != 2) {
-					$this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_USERID_FIELD_ERROR');
-					return $whereClause;
-				}
+				if (count($statement_parts) != 2)
+					throw new Exception(common::translate('COM_CUSTOMTABLES_MENUITEM_USERID_FIELD_ERROR'));
 
 				$table_parts = explode('(', $statement_parts[0]);
-				if (count($table_parts) != 2) {
-					$this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_USERID_FIELD_ERROR');
-					return $whereClause;
-				}
+				if (count($table_parts) != 2)
+					throw new Exception(common::translate('COM_CUSTOMTABLES_MENUITEM_USERID_FIELD_ERROR'));
 
 				$parent_tablename = $table_parts[0];
 				$parent_join_field = str_replace(')', '', $table_parts[1]);
@@ -775,37 +778,27 @@ class CT
 
 				$parent_table_row = TableHelper::getTableRowByName($parent_tablename);
 
-				if (!is_object($parent_table_row)) {
-					$this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR');
-					return $whereClause;
-				}
+				if (!is_object($parent_table_row))
+					throw new Exception(common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR'));
 
 				$tempTable = new Table($this->Languages, $this->Env, $parent_table_row->id);
 
 				$parent_join_field_row = $tempTable->getFieldByName($parent_join_field);
 
-				if (count($parent_join_field_row) == 0) {
-					$this->errors[] = common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR');
-					return $whereClause;
-				}
+				if (count($parent_join_field_row) == 0)
+					throw new Exception(common::translate('COM_CUSTOMTABLES_MENUITEM_TABLENOTFOUND_ERROR'));
 
-				if ($parent_join_field_row['type'] != 'sqljoin' and $parent_join_field_row['type'] != 'records') {
-					$this->errors[] = sprintf("Menu Item - 'UserID Field name' parameter has an error: Wrong join field type '%s'. Accepted types: 'sqljoin' and 'records'.", $parent_join_field_row['type']);
-					return $whereClause;
-				}
+				if ($parent_join_field_row['type'] != 'sqljoin' and $parent_join_field_row['type'] != 'records')
+					throw new Exception(sprintf("Menu Item - 'UserID Field name' parameter has an error: Wrong join field type '%s'. Accepted types: 'sqljoin' and 'records'.", $parent_join_field_row['type']));
 
 				//User field
 				$parent_user_field_row = $tempTable->getFieldByName($parent_user_field);
 
-				if (count($parent_user_field_row) == 0) {
-					$this->errors[] = sprintf("Menu Item - 'UserID Field name' parameter has an error: User field '%s' not found.", $parent_user_field);
-					return $whereClause;
-				}
+				if (count($parent_user_field_row) == 0)
+					throw new Exception(sprintf("Menu Item - 'UserID Field name' parameter has an error: User field '%s' not found.", $parent_user_field));
 
-				if ($parent_user_field_row['type'] != 'userid' and $parent_user_field_row['type'] != 'user') {
-					$this->errors[] = sprintf("Menu Item - 'UserID Field name' parameter has an error: Wrong user field type '%s'. Accepted types: 'userid' and 'user'.", $parent_join_field_row['type']);
-					return $whereClause;
-				}
+				if ($parent_user_field_row['type'] != 'userid' and $parent_user_field_row['type'] != 'user')
+					throw new Exception(sprintf("Menu Item - 'UserID Field name' parameter has an error: Wrong user field type '%s'. Accepted types: 'userid' and 'user'.", $parent_join_field_row['type']));
 
 				$whereClauseParent = new MySQLWhereClause();
 

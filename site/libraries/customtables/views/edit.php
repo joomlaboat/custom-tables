@@ -53,16 +53,13 @@ class Edit
 				$this->layoutType = $Layouts->layoutType;
 				$this->pageLayoutNameString = $this->ct->Params->editLayout;
 			} else {
-				$this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found.';
-				return false;
+				throw new Exception('Layout "' . $this->ct->Params->editLayout . '" not found.');
 			}
 
 			$this->pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
-			if ($Layouts->layoutType === null) {
-				$this->ct->errors[] = 'Layout "' . $this->ct->Params->editLayout . '" not found or the type is not set.';
-				return false;
-			}
+			if ($Layouts->layoutType === null)
+				throw new Exception('Layout "' . $this->ct->Params->editLayout . '" not found or the type is not set.');
 
 		} else {
 			$Layouts = new Layouts($this->ct);

@@ -26,12 +26,12 @@ class CustomTablesController extends BaseController
 			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
 				. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'file.php');
 
-			$fileOutput = new Value_file();
-			$fileOutput->process_file_link($file);
-			$fileOutput->display();
-
-			if (count($fileOutput->ct->errors) > 0) {
-				echo '<p>File Error: ' . implode(', ', $fileOutput->ct->errors) . '</p>';
+			try {
+				$fileOutput = new Value_file();
+				$fileOutput->process_file_link($file);
+				$fileOutput->display();
+			} catch (Exception $e) {
+				common::enqueueMessage($e->getMessage());
 			}
 		}
 
