@@ -616,7 +616,7 @@ class SaveFieldQuerySet
 	 */
 	protected function get_customtables_type_language(): ?string
 	{
-		$value = common::inputPostCmd($this->field->comesfieldname, null, 'create-edit-record');
+		$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
 		if (isset($value))
 			return $value;

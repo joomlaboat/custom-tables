@@ -883,10 +883,10 @@
 	</type>
 
 	<!-- WordPress Ready 37 -->
-	<type ct_name="language" label="Language" description="Provides a language selection box." priority="2">
+	<type ct_name="language" label="Language" description="Provides a language selection box." priority="2"
+		  wordpress="true">
 		<editparams name="language" label="Input Element Parameters"
-					description="Parameters for configuring the input element for language selection." wordpress="false"
-					order="37">
+					description="Parameters for configuring the input element for language selection." order="37">
 			<params>
 				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(es)."/>
 				<param name="attributes" label="Attributes"
@@ -920,12 +920,13 @@
 			<params>
 				<param name="limit" label="Limit Output" type="list"
 					   description="Limits the output text: first number of characters, first number of words, or returns the link to the first image found in the text.">
-					<option value="" label="Returns text as it is"/>
-					<option value="chars"
+					<option value="" label="Returns text as it is" wordpress="true"/>
+					<option value="chars" wordpress="true"
 							label="Returns first number of characters from trimmed, sanitized text with HTML tags stripped."/>
-					<option value="words"
+					<option value="words" wordpress="true"
 							label="Returns first number of words from trimmed, sanitized text with HTML tags stripped."/>
-					<option value="firstimage" label="Returns the link to the first image found in the text."/>
+					<option value="firstimage" label="Returns the link to the first image found in the text."
+							wordpress="true"/>
 				</param>
 				<param name="length" label="Length" description="Number of characters or words to limit the output."
 					   hidden="false" default="" type="number" min="1" max="1024"/>
