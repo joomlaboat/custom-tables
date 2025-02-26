@@ -27,11 +27,19 @@ class Twig_Document_Tags
 		$this->ct = &$ct;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function setmetakeywords($metakeywords): void
 	{
 		Factory::getApplication()->getDocument()->setMetaData('keywords', $metakeywords);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function setmetadescription($metadescription): void
 	{
 		Factory::getApplication()->getDocument()->setMetaData('description', $metadescription);
@@ -51,6 +59,10 @@ class Twig_Document_Tags
 			throw new Exception('Warning: The {{ document.setpagetitle }} tag is not supported in the current version of the Custom Tables.');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function setheadtag($tag): void
 	{
 		if (defined('_JEXEC'))
@@ -80,7 +92,7 @@ class Twig_Document_Tags
 	 *
 	 * @since 3.5.0
 	 */
-	function script($linkOrScript): string
+	function script(string $linkOrScript): string
 	{
 		//TODO: Consider using defer or async attributes for external scripts when appropriate (currently managed by the browser/CMS defaults)
 
@@ -118,7 +130,7 @@ class Twig_Document_Tags
 	 * it's added to the 'styles' array.
 	 * If it's CSS content, it's concatenated to the 'style' variable.
 	 *
-	 * @param string $linkOrScript Either a URL to a .css file or CSS code
+	 * @param $linkOrStyle
 	 * @return string Empty string as the content is stored in layout variables
 	 *
 	 * @example

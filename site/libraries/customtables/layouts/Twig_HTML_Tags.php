@@ -34,6 +34,10 @@ class Twig_HTML_Tags
 		$this->button_objects = [];//Not clear where and how this variable used.
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function recordcount(): string
 	{
 		if ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != '')
@@ -1095,11 +1099,19 @@ class Twig_HTML_Tags
 		return $result;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function recordlist(): string
 	{
 		return $this->id_list();
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function id_list(): string
 	{
 		if (!isset($this->ct->Table))

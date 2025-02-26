@@ -18,7 +18,11 @@ use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 
-$document = Factory::getApplication()->getDocument();
+try {
+	$document = Factory::getApplication()->getDocument();
+} catch (Exception $e) {
+	echo $e->getMessage();
+}
 
 $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
@@ -120,8 +124,12 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 					
 					<h3>' . common::translate('COM_CUSTOMTABLES_TABLES_DESCRIPTION') . ' -  <b>' . $lang->title . '</b></h3>';
 
-			$editor_name = Factory::getApplication()->get('editor');
-			$editor = Editor::getInstance($editor_name);
+			try {
+				$editor_name = Factory::getApplication()->get('editor');
+				$editor = Editor::getInstance($editor_name);
+			} catch (Exception $e) {
+				echo $e->getMessage();
+			}
 
 			$item_array = (array)$this->item;
 			$vlu = '';

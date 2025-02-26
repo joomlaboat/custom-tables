@@ -16,15 +16,19 @@ use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\CTUser;
 
-$view = common::inputGetCmd('view');
+try {
+	$view = common::inputGetCmd('view');
+	$task = common::inputGetCmd('task');
 
-if ($view == 'home') {
-	common::inputSet('homeparent', 'home');
-	common::inputSet('view', 'catalog');
-	parent::display();
+	if ($view == 'home') {
+		common::inputSet('homeparent', 'home');
+		common::inputSet('view', 'catalog');
+		parent::display();
+	}
+
+} catch (Exception $e) {
+	echo $e->getMessage();
 }
-
-$task = common::inputGetCmd('task');
 
 $updatedTask = ['delete', 'refresh', 'publish', 'unpublish', 'copy', 'createuser', 'setorderby', 'setlimit'];
 if (in_array($task, $updatedTask)) {

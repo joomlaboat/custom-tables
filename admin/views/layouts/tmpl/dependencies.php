@@ -16,7 +16,6 @@ use CustomTables\MySQLWhereClause;
 defined('_JEXEC') or die();
 
 /**
- * @throws Exception
  * @since 3.2.2
  */
 function renderDependencies(object $layout_row): string
@@ -40,7 +39,11 @@ function renderDependencies(object $layout_row): string
 	$w2 = '(' . $w2a . ' OR ' . $w2b . ')';
 	$wF = 'f.published=1 AND f.tableid=t.id AND ' . $w1 . ' AND ' . $w2;
 
-	$rows = _getTablesThatUseThisLayout($wF);
+	try {
+		$rows = _getTablesThatUseThisLayout($wF);
+	} catch (Exception $e) {
+		common::enqueueMessage($e->getMessage(), 'error');
+	}
 
 	if (count($rows) > 0) {
 		$count += count($rows);
@@ -59,7 +62,13 @@ function renderDependencies(object $layout_row): string
 	}
 
 	$wF = '(' . $w2a . ' OR ' . $w2b . ')';
-	$rows = _getTablesThatUseThisLayout($wF);
+
+	try {
+		$rows = _getTablesThatUseThisLayout($wF);
+	} catch (Exception $e) {
+		common::enqueueMessage($e->getMessage(), 'error');
+		return '';
+	}
 
 	if (count($rows) > 0) {
 		$count += count($rows);
@@ -67,7 +76,12 @@ function renderDependencies(object $layout_row): string
 		$result .= _renderTableList($rows);
 	}
 
-	$menus = _getMenuItemsThatUseThisLayout($layout_row->layoutname);
+	try {
+		$menus = _getMenuItemsThatUseThisLayout($layout_row->layoutname);
+	} catch (Exception $e) {
+		common::enqueueMessage($e->getMessage(), 'error');
+		return '';
+	}
 
 	if (count($menus) > 0) {
 		$count += count($menus);
@@ -75,7 +89,13 @@ function renderDependencies(object $layout_row): string
 		$result .= _renderMenuList($menus);
 	}
 
-	$modules = _getModulesThatUseThisLayout($layout_row->layoutname);
+	try {
+		$modules = _getModulesThatUseThisLayout($layout_row->layoutname);
+	} catch (Exception $e) {
+		common::enqueueMessage($e->getMessage(), 'error');
+		return '';
+	}
+
 	if (count($modules) > 0) {
 		$count += count($modules);
 		$result .= '<h3>' . common::translate('COM_CUSTOMTABLES_LAYOUTS_MODULES') . '</h3>';
@@ -83,7 +103,13 @@ function renderDependencies(object $layout_row): string
 
 	}
 
-	$layouts = _getLayoutsThatUseThisLayout($layout_row->layoutname);
+	try {
+		$layouts = _getLayoutsThatUseThisLayout($layout_row->layoutname);
+	} catch (Exception $e) {
+		common::enqueueMessage($e->getMessage(), 'error');
+		return '';
+	}
+
 	if (count($layouts) > 0) {
 		$count += count($layouts);
 		$result .= '<h3>' . common::translate('COM_CUSTOMTABLES_DASHBOARD_LISTOFLAYOUTS') . '</h3>';

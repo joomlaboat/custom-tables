@@ -399,7 +399,7 @@ class common
 		} catch (Exception $e) {
 			return null;
 		}
-		
+
 		if ($returnto === null)
 			return null;
 
@@ -672,7 +672,7 @@ if (typeof window.CTEditHelper === "undefined") {
 
 		$document->addCustomTag('
 <style>
-:root {--ctToolBarIconSize: 16px;--ctToolBarIconFontSize: 16px;}
+	:root {--ctToolBarIconSize: 16px;--ctToolBarIconFontSize: 16px;}
 	
 	.toolbarIcons{
 		text-decoration: none;

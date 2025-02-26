@@ -40,13 +40,21 @@ try {
 	}
 
 } catch (Exception $e) {
-	Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+	try {
+		Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
 }
 
 echo $this->content;
 
-if (common::inputGetInt('clean', 0) == 1 or !empty(common::inputGetCmd('listing_id')))
-	exit;//Clean exit, single record loaded.
+try {
+	if (common::inputGetInt('clean', 0) == 1 or !empty(common::inputGetCmd('listing_id')))
+		exit;//Clean exit, single record loaded.
+} catch (Exception $e) {
+	echo $e->getMessage();
+}
 
 if ($this->ct->Env->frmt == 'html') {
 	if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {

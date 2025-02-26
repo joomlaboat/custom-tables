@@ -429,7 +429,7 @@ class CT
 
 			if ($this->Limit > 0) {
 				$this->LimitStart = common::inputGetInt('start', 0);
-				$this->LimitStart = ($this->Limit != 0 ? (floor($this->LimitStart / $this->Limit) * $this->Limit) : 0);
+				$this->LimitStart = floor($this->LimitStart / $this->Limit) * $this->Limit;
 			} else {
 				$this->Limit = 0;
 				$this->LimitStart = 0;
@@ -701,7 +701,7 @@ class CT
 
 			if (in_array($authorUserGroupName, $userGroups))//3 is Author in Joomla
 			{
-				if ($this->Table !== null and $this->Table->useridrealfieldname !== null and $this->Table->record !== null) {
+				if ($this->Table->useridrealfieldname !== null and $this->Table->record !== null) {
 					if (in_array($authorUserGroupName, $userGroups))//3 is Author in Joomla
 					{
 						if ($this->checkIfItemBelongsToUser())

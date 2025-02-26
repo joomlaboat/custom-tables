@@ -17,7 +17,12 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
-$document = Factory::getApplication()->getDocument();
+try {
+	$document = Factory::getApplication()->getDocument();
+} catch (Exception $e) {
+	echo $e->getMessage();
+	exit;
+}
 
 if (CUSTOMTABLES_JOOMLA_MIN_4) {
 	$wa = $document->getWebAssetManager();

@@ -124,6 +124,10 @@ class TwigProcessor
 		$this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function addFieldValueMethods(): void
 	{
 		if (isset($this->ct->Table->fields)) {
@@ -304,6 +308,10 @@ class fieldObject
 	var bool $getEditFieldNamesOnly;
 	var bool $parseParams;
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function __construct(CT &$ct, $fieldRow, $DoHTMLSpecialChars = false, $getEditFieldNamesOnly = false, $parseParams = true)
 	{
 		$this->parseParams = $parseParams;
@@ -530,6 +538,10 @@ class fieldObject
 		return $this->field->params;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public function input(): ?array
 	{
 		if (!isset($this->field->fieldrow))

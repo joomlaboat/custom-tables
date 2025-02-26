@@ -119,6 +119,10 @@ class record
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function copy(?string $listing_id): void
 	{
 		if (empty($listing_id))
@@ -158,6 +162,13 @@ class record
 		}
 	}
 
+	/**
+	 * @throws SyntaxError
+	 * @throws RuntimeError
+	 * @throws LoaderError
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected function insert(array $row): void
 	{
 		if (!empty($this->ct->Table->tablerow['primarykeypattern']) and $this->ct->Table->tablerow['primarykeypattern'] != 'AUTO_INCREMENT') {

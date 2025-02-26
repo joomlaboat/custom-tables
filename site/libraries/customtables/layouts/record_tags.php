@@ -131,6 +131,7 @@ class Twig_Record_Tags
 
 	/**
 	 * @throws Exception
+	 * @since 3.2.2
 	 */
 	function published(string $type = '', string $customTextPositive = "Published", string $customTextNegative = "Unpublished")
 	{
@@ -150,6 +151,10 @@ class Twig_Record_Tags
 			return (int)$this->ct->Table->record['listing_published'] == 1 ? common::translate('COM_CUSTOMTABLES_YES') : common::translate('COM_CUSTOMTABLES_NO');
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function number(): ?int
 	{
 		if (!isset($this->ct->Table))
@@ -676,6 +681,10 @@ class Twig_Record_Tags
 		return $fieldTitles;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function isLast(): bool
 	{
 		if (!isset($this->ct->Table))
@@ -700,6 +709,10 @@ class Twig_Table_Tags
 		$this->ct = &$ct;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function recordstotal(): int
 	{
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)

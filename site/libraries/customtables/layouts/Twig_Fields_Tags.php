@@ -33,6 +33,7 @@ class Twig_Fields_Tags
 
 	/**
 	 * @throws Exception
+	 * @since 3.2.2
 	 */
 	function list($param = 'fieldname'): array
 	{
