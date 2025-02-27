@@ -286,9 +286,9 @@ class RecordToolbar
 	{
 		$deleteLabel = $this->firstFieldValueLabel();
 		$icon = Icons::iconDelete($this->ct->Env->toolbarIcons);
-		$msg = 'Do you want to delete (' . $deleteLabel . ')?';
+		$message = 'Do you want to delete (' . $deleteLabel . ')?';
 		$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
-		$href = 'javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . $moduleIDString . ');';
+		$href = 'javascript:ctDeleteRecord(\'' . $message . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . $moduleIDString . ');';
 		return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $icon . '</a></div>';
 	}
 

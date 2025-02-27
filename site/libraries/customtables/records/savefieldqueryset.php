@@ -754,12 +754,9 @@ class SaveFieldQuerySet
 
 				$this->ct->messages[] = common::translate('COM_CUSTOMTABLES_RECORD_USER_UPDATED');
 			} else {
-				$msg =
-					common::translate('COM_CUSTOMTABLES_ERROR_USER_WITH_EMAIL')
+				throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_USER_WITH_EMAIL')
 					. ' "' . $user_email . '" '
-					. common::translate('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS');
-
-				throw new Exception($msg);
+					. common::translate('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS'));
 			}
 		} else {
 			try {

@@ -221,12 +221,12 @@ class TwigProcessor
 				try {
 					$result = @$this->twig->render($this->pageLayoutName, $this->variables);
 				} catch (Exception $e) {
-					$msg = $e->getMessage();// . $e->getFile() . $e->getLine();// . $e->getTraceAsString();
+					$message = $e->getMessage();// . $e->getFile() . $e->getLine();// . $e->getTraceAsString();
 
 					if ($this->pageLayoutLink !== null)
-						$msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
+						$message = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $message);
 
-					throw new Exception($msg);
+					throw new Exception($message);
 				}
 			}
 		}
@@ -248,20 +248,20 @@ class TwigProcessor
 						try {
 							$row_result = @$this->twig->render($this->itemLayoutName, $this->variables);
 						} catch (Exception $e) {
-							$msg = $e->getMessage();
-							$pos = strpos($msg, '" at line ');
+							$message = $e->getMessage();
+							$pos = strpos($message, '" at line ');
 
 							if ($pos !== false) {
-								$lineNumber = intval(substr($msg, $pos + 10, -1));
-								$msg = str_replace('" at line ' . $lineNumber, '" at line ' . ($lineNumber + $this->itemLayoutLineStart), $msg);
+								$lineNumber = intval(substr($message, $pos + 10, -1));
+								$message = str_replace('" at line ' . $lineNumber, '" at line ' . ($lineNumber + $this->itemLayoutLineStart), $message);
 							}
 
-							$msg = str_replace($this->itemLayoutName, $this->pageLayoutName, $msg);
+							$message = str_replace($this->itemLayoutName, $this->pageLayoutName, $message);
 
 							if ($this->pageLayoutLink !== null)
-								$msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
+								$message = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $message);
 
-							return 'Error: ' . $msg;
+							throw new Exception($message);
 						}
 					}
 

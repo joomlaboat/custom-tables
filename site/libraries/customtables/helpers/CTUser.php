@@ -254,7 +254,6 @@ class CTUser
 		if ($name == '')
 			throw new Exception(common::translate('COM_CUSTOMTABLES_USERACCOUNT_NAME_NOT_SET'));
 
-		$msg = '';
 		$password = strtolower(JUserHelper::genRandomPassword());
 
 		if (!@CTMiscHelper::checkEmail($email))
@@ -265,9 +264,6 @@ class CTUser
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
-
-		if ($msg != '')
-			throw new Exception($msg);
 
 		if ($realUserId !== null) {
 			CTUser::UpdateUserField($realtablename, $realidfieldname, $useridfieldname, $realUserId, $listing_id);
