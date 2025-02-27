@@ -239,7 +239,7 @@ class ListOfTables
 		if ($customTableName == '-new-') {
 			// Case: Creating a new third-party table
 			$customTableName = $newTableName;
-			TableHelper::createTableIfNotExists($dbPrefix, $newTableName, $tableTitle, $customTableName ?? '');
+			TableHelper::createTableIfNotExists($dbPrefix, $newTableName, $tableTitle, $customTableName);
 
 			//Add fields if it's a third-party table and no fields added yet.
 			TableHelper::addThirdPartyTableFieldsIfNeeded($database, $newTableName, $customTableName);

@@ -15,7 +15,6 @@ defined('_JEXEC') or die();
 jimport('joomla.installer.installer');
 jimport('joomla.installer.helper');
 
-use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\IntegrityChecks;
@@ -250,7 +249,7 @@ class com_customtablesInstallerScript
 			}
 
 		} catch (Exception $e) {
-			JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 			return false;
 		}
 		return true;

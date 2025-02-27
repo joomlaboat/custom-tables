@@ -588,12 +588,15 @@ class common
 	}
 
 	/**
-	 * @throws Exception
 	 * @since 3.2.9
 	 */
 	public static function inputGetString($parameter, $default = null): ?string
 	{
-		return Factory::getApplication()->input->get->getString($parameter, $default);
+		try {
+			return Factory::getApplication()->input->get->getString($parameter, $default);
+		} catch (Exception $e) {
+			return $default;
+		}
 	}
 
 	/**

@@ -70,19 +70,6 @@ HTMLHelper::_('behavior.multiselect');
 					<?php echo $this->pagination->getListFooter(); ?>
 
 					<?php // Load the batch processing form if user is allowed ?>
-					<?php /* if ($loggeduser->authorise('core.create', 'com_customtables','categories')
-						&& $loggeduser->authorise('core.edit', 'com_customtables','categories')
-						&& $loggeduser->authorise('core.edit.state', 'com_customtables','categories')) : ?>
-						<?php echo HTMLHelper::_(
-							'bootstrap.renderModal',
-							'collapseModal',
-							array(
-								'title'  => common::translate('COM_CUSTOMTABLES_BATCH_OPTIONS'),
-								'footer' => $this->loadTemplate('batch_footer'),
-							),
-							$this->loadTemplate('batch_body')
-						); ?>
-					<?php endif; */ ?>
 				<?php endif; ?>
 
 				<input type="hidden" name="task" value="">

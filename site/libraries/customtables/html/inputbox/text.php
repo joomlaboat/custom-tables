@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use Exception;
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -25,6 +26,10 @@ class InputBox_text extends BaseInputBox
 		self::inputBoxAddCSSClass($this->attributes);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.9.9
+	 */
 	function render(?string $value, ?string $defaultValue): string
 	{
 		if ($value === null) {
@@ -85,6 +90,8 @@ class InputBox_text extends BaseInputBox
 			} else {
 				return '<textarea ' . self::attributes2String($this->attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>';
 			}
+		} else {
+			throw new Exception('Multilingual textarea not supported in the current version of the Custom Tables');
 		}
 	}
 }

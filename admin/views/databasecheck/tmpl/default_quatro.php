@@ -17,17 +17,22 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
-$document = Factory::getApplication()->getDocument();
-$document->addCustomTag('<script src="' . common::UriRoot(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
-$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/raphael.min.js"></script>');
-$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagram.js"></script>');
-$document->addCustomTag('<style>
+try {
+	$document = Factory::getApplication()->getDocument();
+	$document->addCustomTag('<script src="' . common::UriRoot(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
+	$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/raphael.min.js"></script>');
+	$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagram.js"></script>');
+	$document->addCustomTag('<style>
         #canvas_container {
             width: 100%;
             min-height: ' . (count($this->diagram->tables) > 50 ? '4000' : '2000') . 'px;
             border: 1px solid #aaa;
         }
     </style>');
+} catch (Exception $e) {
+	common::enqueueMessage($e->getMessage());
+}
+
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"

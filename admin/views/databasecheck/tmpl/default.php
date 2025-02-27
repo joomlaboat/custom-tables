@@ -17,11 +17,15 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 
-$document = Factory::getApplication()->getDocument();
+try {
+	$document = Factory::getApplication()->getDocument();
 
 //https://github.com/DmitryBaranovskiy/raphael/releases
-$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/raphael.min.js"></script>');
-$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagram.js"></script>');
+	$document->addCustomTag('<script src="' . CUSTOMTABLES_PLUGIN_WEBPATH . 'js/raphael.min.js"></script>');
+	$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagram.js"></script>');
+} catch (Exception $e) {
+	common::enqueueMessage($e->getMessage());
+}
 
 ?>
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"
