@@ -142,7 +142,10 @@ class Edit
 		try {
 			$pageLayout = @$twig->process($this->row);
 		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+			if ($this->ct->Env->debug)
+				throw new Exception($e->getMessage() . '<br/>' . $e->getFile() . '<br/>' . $e->getLine());
+			else
+				throw new Exception($e->getMessage());
 		}
 
 		if ($this->ct->Params->allowContentPlugins)

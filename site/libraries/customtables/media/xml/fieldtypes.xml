@@ -884,7 +884,7 @@
 
 	<!-- WordPress Ready 37 -->
 	<type ct_name="language" label="Language" description="Provides a language selection box." priority="2"
-		  wordpress="true">
+		  wordpress="true" order="37">
 		<editparams name="language" label="Input Element Parameters"
 					description="Parameters for configuring the input element for language selection." order="37">
 			<params>
@@ -909,7 +909,7 @@
 	<!-- WordPress NOT Ready 14 -->
 	<type ct_name="multilangstring" name="multilangstring" label="Multilingual Text String (Single Line)"
 		  description="Provides a set of text boxes for data entry. One inputbox for each language."
-		  ct_alias="multilangstring" disabled="false" ct_special="false" priority="1" wordpress="false" order="14">
+		  ct_alias="multilangstring" disabled="false" ct_special="false" priority="1" wordpress="true" order="14">
 		<params>
 			<param name="length" label="Length"
 				   description="Number of characters. This limits the maximum number of characters that can be entered (not bytes)."
@@ -954,13 +954,13 @@
 	<!-- WordPress NOT Ready 15 -->
 	<type ct_name="multilangtext" name="multilangtext" label="Multilingual Text Area (Multiple Lines)"
 		  description="Provides a set of textarea boxes for data entry. One textarea box for each language."
-		  ct_alias="multilangtext" disabled="false" ct_special="false" priority="1" wordpress="false" order="15">
+		  ct_alias="multilangtext" disabled="false" ct_special="false" priority="1" wordpress="true" order="15">
 		<params>
 			<param name="texteditor" label="Text Editor"
 				   description="Select the type of text editor for input."
 				   hidden="false" default="" type="list">
-				<option value="" label="No Editor"/>
-				<option value="rich" label="Rich Text Editor"/>
+				<option value="" label="No Editor" wordpress="true"/>
+				<option value="rich" label="Rich Text Editor" wordpress="true"/>
 				<!--<option value="codemirror" label="Code Mirror (Code Editor)" />-->
 			</param>
 
@@ -972,16 +972,16 @@
 				   description="Select the maximum length for the textarea input. The actual maximum length is determined by the database column type (e.g., TINYTEXT, TEXT, MEDIUMTEXT, LONGTEXT)."
 				   default="" type="list">
 				<option value="tiny"
-						label="Up to 255 Bytes - 63 characters (TINYTEXT)"
+						label="Up to 255 Bytes - 63 characters (TINYTEXT)" wordpress="true"
 						description="TINYTEXT can store up to 63 Unicode characters, i.e., 255 bytes. Suitable for short comments, captions, titles, etc."/>
 				<option value=""
-						label="Up to 64KB - 16,383 characters (TEXT)"
+						label="Up to 64KB - 16,383 characters (TEXT)" wordpress="true"
 						description="TEXT can store up to 16,383 Unicode characters, i.e., 64KB. Suitable for summaries of articles, short notices, captions, etc."/>
 				<option value="medium"
-						label="Up to 16MB - 4.2 million characters (MEDIUMTEXT)"
+						label="Up to 16MB - 4.2 million characters (MEDIUMTEXT)" wordpress="true"
 						description="MEDIUMTEXT can store up to 4,194,303 Unicode characters, i.e., 16MB. Suitable for larger text strings like books, research papers, and code backup."/>
 				<option value="long"
-						label="Up to 4GB - 10.7 billion characters (LONGTEXT)"
+						label="Up to 4GB - 10.7 billion characters (LONGTEXT)" wordpress="true"
 						description="LONGTEXT can store up to 1,073,741,822 Unicode characters, i.e., 4GB. Suitable for storing extensive text such as books, long articles, etc."/>
 			</param>
 		</params>
@@ -990,12 +990,13 @@
 			<params>
 				<param name="limit" label="Limit Output" type="list"
 					   description="Limits the output text: first number of characters, first number of words, or returns the link to the first image found in the text.">
-					<option value="" label="Returns text as it is"/>
-					<option value="chars"
+					<option value="" label="Returns text as it is" wordpress="true"/>
+					<option value="chars" wordpress="true"
 							label="Returns first number of characters from trimmed, sanitized text with HTML tags stripped."/>
-					<option value="words"
+					<option value="words" wordpress="true"
 							label="Returns first number of words from trimmed, sanitized text with HTML tags stripped."/>
-					<option value="firstimage" label="Returns the link to the first image found in the text."/>
+					<option value="firstimage" label="Returns the link to the first image found in the text."
+							wordpress="true"/>
 				</param>
 				<param name="length" label="Length" example="50"
 					   description="Number of characters or words to limit the output."
@@ -1017,6 +1018,19 @@
 				<param name="attributes" label="Attributes"
 					   description="Optional attributes like: disabled, onclick, onchange etc." default=""
 					   type="string"/>
+				<param name="width" label="Editor Width" description="Editor Width in Pixels or %"
+					   default="100%" example="100%" type="string"/>
+				<param name="height" label="Editor Height" description="Editor Height in Pixels or %"
+					   default="" example="300px" type="string"/>
+				<param name="texteditor" label="Text Editor"
+					   description="Choose the type of editor to use for the text area. Options include no editor or a rich text editor."
+					   hidden="false" default=""
+					   type="list">
+					<option value="" label=" - As defined in the field settings" wordpress="true"/>
+					<option value="textarea" label="No Editor (Text Area)" wordpress="true"/>
+					<option value="rich" label="Rich Text Editor" wordpress="true"/>
+					<!--<option value="codemirror" label="Code Mirror (Code Editor)" />-->
+				</param>
 			</params>
 		</editparams>
 	</type>

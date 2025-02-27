@@ -42,14 +42,17 @@ class InputBox_multilingualtext extends BaseInputBox
 
 			$fieldname = $this->field->fieldname . $postfix;
 
-			$value = null; // Because the value has to be read from the field with the postfix depending on the language
-			if (isset($this->row) and array_key_exists($this->ct->Table->fieldPrefix . $fieldname, $this->row)) {
-				$value = $this->row[$this->ct->Table->fieldPrefix . $fieldname];
+			if ($this->ct->isRecordNull($this->row)) {
+				$value = null; // Because the value has to be read from the field with the postfix depending on the language
 			} else {
-				Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Table->fieldPrefix . $this->field->fieldname,
-					$this->ct->Table->fieldPrefix . $fieldname);
+				if (isset($this->row) and array_key_exists($this->ct->Table->fieldPrefix . $fieldname, $this->row)) {
+					$value = $this->row[$this->ct->Table->fieldPrefix . $fieldname];
+				} else {
+					Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Table->fieldPrefix . $this->field->fieldname,
+						$this->ct->Table->fieldPrefix . $fieldname);
 
-				throw new Exception('Field "' . $this->ct->Table->fieldPrefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.');
+					throw new Exception('Field "' . $this->ct->Table->fieldPrefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.');
+				}
 			}
 
 			if ($value === null) {
@@ -84,8 +87,27 @@ class InputBox_multilingualtext extends BaseInputBox
 						. '<span class="language_label">' . $lang->caption . '</span>';
 				}
 			} elseif (defined('WPINC')) {
-				$input = '<textarea ' . self::attributes2String($attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>'
-					. '<span class="language_label">' . $lang->caption . '</span>';
+				// WordPress Handling
+				$editorType = $this->field->params[0] ?? '';
+				if (isset($this->option_list[4]))
+					$editorType = $this->option_list[4];
+
+				if ($editorType == 'rich') {
+					$result .= '<span class="language_label_rich">' . $lang->caption . '</span>';
+					ob_start();
+					$editor_settings = [
+						'textarea_name' => $attributes['id'],
+						'media_buttons' => true,
+						'textarea_rows' => 10,
+						'tinymce' => true,
+					];
+					wp_editor($value, $attributes['id'], $editor_settings);
+					$input = ob_get_clean();
+				} else {
+					$input = '<textarea ' . self::attributes2String($attributes) . '>' . htmlspecialchars($value ?? '') . '</textarea>'
+						. '<span class="language_label">' . $lang->caption . '</span>';
+				}
+
 			} else {
 				throw new Exception('Multilingual textarea not supported in the current version of the Custom Tables');
 			}

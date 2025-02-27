@@ -110,7 +110,7 @@ class Languages
 		} // WordPress detection
 		elseif (defined('WPINC')) {
 			// Get WordPress locale (e.g., 'en_US', 'sk_SK')
-			$languageTag = get_locale();
+			$languageTag = is_user_logged_in() ? get_user_locale() : get_locale();
 		}
 
 		// Process language list
