@@ -57,8 +57,16 @@ use Joomla\CMS\Router\Route;
 			<?php else : ?>
 
 				<?php
-				$result = IntegrityChecks::check($this->ct, true, false);
-				//table-bordered
+
+				try {
+					$result = IntegrityChecks::check($this->ct, true, false);
+				} catch (Exception $e) {
+					$result = [$e->getMessage()];
+				}
+
+				if (count($result) > 0)
+					echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
+
 				?>
 				<table class="table table-striped table-hover" id="itemList" style="position: relative;">
 					<thead><?php echo $this->loadTemplate('head'); ?></thead>

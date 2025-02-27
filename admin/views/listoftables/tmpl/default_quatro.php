@@ -38,7 +38,12 @@ HTMLHelper::_('behavior.multiselect');
 				<?php else : ?>
 
 					<?php
-					$result = IntegrityChecks::check($this->ct, true, false);
+
+					try {
+						$result = IntegrityChecks::check($this->ct, true, false);
+					} catch (Exception $e) {
+						$result = [$e->getMessage()];
+					}
 
 					if (count($result) > 0)
 						echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';

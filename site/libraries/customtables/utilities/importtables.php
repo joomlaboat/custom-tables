@@ -90,7 +90,11 @@ class ImportTables
 				if ($importmenu and is_array($table['menu']))
 					ImportTables::processMenu($table['menu'], $menuType, $msg);
 
-				IntegrityChecks::check($ct, false);
+				try {
+					IntegrityChecks::check($ct, false);
+				} catch (Exception $e) {
+					throw new Exception($e->getMessage());
+				}
 
 				if (isset($table['records']))
 					ImportTables::processRecords($table['table']['tablename'], $table['records']);

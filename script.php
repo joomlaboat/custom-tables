@@ -15,6 +15,7 @@ defined('_JEXEC') or die();
 jimport('joomla.installer.installer');
 jimport('joomla.installer.helper');
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\IntegrityChecks;
@@ -119,7 +120,7 @@ class com_customtablesInstallerScript
 	}
 
 	/**
-	 * method to run after an install/update/uninstall method
+	 * method to run after an installation/update/uninstall method
 	 *
 	 * @return void
 	 * @throws Exception
@@ -144,7 +145,12 @@ class com_customtablesInstallerScript
 			CustomTablesLoader(true);
 			$ct = new CT([], true);
 
-			$result = IntegrityChecks::check($ct, true, false);
+			try {
+				$result = IntegrityChecks::check($ct, true, false);
+			} catch (Exception $e) {
+				$result = $e->getMessage();
+			}
+
 			if (count($result) > 0)
 				echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
 

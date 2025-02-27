@@ -141,11 +141,13 @@ class Fields
 			}
 		}
 
-		foreach ($realFieldNames as $realfieldname) {
-			if ($field->type != 'dummy' and !Fields::isVirtualField($fieldRow)) {
-				$msg = '';
-				Fields::deleteMYSQLField($tableRow['realtablename'], $realfieldname, $msg);
+		try {
+			foreach ($realFieldNames as $realfieldname) {
+				if ($field->type != 'dummy' and !Fields::isVirtualField($fieldRow))
+					Fields::deleteMYSQLField($tableRow['realtablename'], $realfieldname);
 			}
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
 		}
 
 		//Delete field from the list
@@ -252,15 +254,14 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function deleteMYSQLField($realtablename, $realfieldname, &$msg): bool
+	public static function deleteMYSQLField($realtablename, $realfieldname): bool
 	{
 		if (Fields::checkIfFieldExists($realtablename, $realfieldname)) {
 			try {
 				database::dropColumn($realtablename, $realfieldname);
 				return true;
 			} catch (Exception $e) {
-				$msg = '<p style="color:#ff0000;">Caught exception: ' . $e->getMessage() . '</p>';
-				return false;
+				throw new exception($e->getMessage());
 			}
 		}
 		return false;
@@ -374,14 +375,13 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function fixMYSQLField(string $realtablename, string $fieldname, array $PureFieldType, string &$msg, string $title): bool
+	public static function fixMYSQLField(string $realtablename, string $fieldname, array $PureFieldType, string $title): void
 	{
 		if ($fieldname == 'id') {
 			try {
 				$constrances = Fields::getTableConstrances($realtablename, '');
 			} catch (Exception $e) {
-				$msg = 'Caught exception fixMYSQLField->Fields::getTableConstrances: ' . $e->getMessage();
-				return false;
+				throw new Exception('Caught exception fixMYSQLField->Fields::getTableConstrances: ' . $e->getMessage());
 			}
 
 			//Delete same table child-parent constrances
@@ -395,23 +395,17 @@ class Fields
 			try {
 				database::changeColumn($realtablename, 'id', 'id', $PureFieldType, 'Primary Key');
 			} catch (Exception $e) {
-				$msg = 'Caught exception fixMYSQLField 1: ' . $e->getMessage();
+				throw new Exception('Caught exception fixMYSQLField 1: ' . $e->getMessage());
 			}
-
-			$msg = '';
-			return true;
 		} elseif ($fieldname == 'published') {
 			try {
 				database::changeColumn($realtablename, 'published', 'published', $PureFieldType, 'Publish Status');
 			} catch (Exception $e) {
-				$msg = 'Caught exception fixMYSQLField 2: ' . $e->getMessage();
+				throw new Exception('Caught exception fixMYSQLField 2: ' . $e->getMessage());
 			}
 		} else {
 			database::changeColumn($realtablename, $fieldname, $fieldname, $PureFieldType, $title);
 		}
-
-		$msg = '';
-		return true;
 	}
 
 	/**

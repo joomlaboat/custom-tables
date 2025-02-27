@@ -49,7 +49,11 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagr
 
 		echo HTMLHelper::_('bootstrap.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS'));
 
-		$result = IntegrityChecks::check($this->ct);
+		try {
+			$result = IntegrityChecks::check($this->ct);
+		} catch (Exception $e) {
+			$result = [$e->getMessage()];
+		}
 
 		if (count($result) > 0)
 			echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';

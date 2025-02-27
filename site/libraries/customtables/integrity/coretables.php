@@ -159,7 +159,11 @@ class IntegrityCoreTables extends IntegrityChecks
 			if (isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams'] != '')
 				$typeParams = $projected_field['ct_typeparams'];
 
-			IntegrityCoreTables::checkCoreTableFields($realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeParams, $projected_field['name']);
+			try {
+				IntegrityCoreTables::checkCoreTableFields($realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeParams, $projected_field['name']);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
 		}
 	}
 
@@ -178,7 +182,7 @@ class IntegrityCoreTables extends IntegrityChecks
 		}
 
 		if ($existingFieldFound === null)
-			die('field not created ' . $realfieldname);
+			throw new Exception('Field not created ' . $realfieldname);
 
 		if ($ct_fieldType !== null and $ct_fieldType != '') {
 			$projected_data_type = Fields::getProjectedFieldType($ct_fieldType, $ct_typeparams);
@@ -186,13 +190,13 @@ class IntegrityCoreTables extends IntegrityChecks
 			if (!IntegrityFields::compareFieldTypes($existingFieldFound, $projected_data_type)) {
 				$PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
-				$msg = '';
-				if (!Fields::fixMYSQLField($realtablename, $realfieldname, $PureFieldType, $msg, $field_title)) {
-					throw new Exception($msg);
+				try {
+					Fields::fixMYSQLField($realtablename, $realfieldname, $PureFieldType, $field_title);
+				} catch (Exception $e) {
+					throw new Exception($e->getMessage());
 				}
 			}
 		}
-		return true;
 	}
 
 	protected static function getCoreTableFields_Tables(array $fieldTypes): object

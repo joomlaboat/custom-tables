@@ -164,12 +164,12 @@ class IntegrityFields extends IntegrityChecks
 					if ($ct->Table->tableid == $taskTableId and $task == 'deleteurfield' and $taskFieldName == $existingFieldName) {
 						Fields::removeForeignKey($ct->Table->realtablename, $existingFieldName);
 
-						$msg = '';
-						if (Fields::deleteMYSQLField($ct->Table->realtablename, $existingFieldName, $msg))
-							$result .= '<p>Field <span style="color:green;">' . $existingFieldName . '</span> not registered. <span style="color:green;">Deleted.</span></p>';
-
-						if ($msg != '')
-							$result .= $msg;
+						try {
+							if (Fields::deleteMYSQLField($ct->Table->realtablename, $existingFieldName))
+								$result .= '<p>Field <span style="color:green;">' . $existingFieldName . '</span> not registered. <span style="color:green;">Deleted.</span></p>';
+						} catch (Exception $e) {
+							$result .= '<p>Field <span style="color:red;">' . $existingFieldName . '</span>: ' . $e->getMessage() . '</p>';
+						}
 					} else
 						$result .= '<p>Field <span style="color:red;">' . $existingFieldName . '</span> not registered. <a href="' . $link . 'task=deleteurfield&fieldname=' . $existingFieldName . '">Delete?</a></p>';
 				}
@@ -189,7 +189,6 @@ class IntegrityFields extends IntegrityChecks
 					}
 
 					if ($ct->Table->tableid == $taskTableId and $task == 'fixfieldtype' and ($taskFieldName == $existingFieldName or $taskFieldName == 'all_fields')) {
-						$msg = '';
 
 						if ($found_field == '_id')
 							$real_field_name = 'id';
@@ -200,15 +199,15 @@ class IntegrityFields extends IntegrityChecks
 
 						$PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
-						if (Fields::fixMYSQLField($ct->Table->realtablename, $real_field_name, $PureFieldType, $msg, $projected_field['fieldtitle'])) {
+						try {
+							Fields::fixMYSQLField($ct->Table->realtablename, $real_field_name, $PureFieldType, $projected_field['fieldtitle']);
 							$result .= '<p>' . common::translate('COM_CUSTOMTABLES_FIELD') . ' <span style="color:green;">'
 								. $nice_field_name . '</span> ' . common::translate('COM_CUSTOMTABLES_FIELD_FIXED') . '.</p>';
-						} else {
-							throw new Exception($msg);
+
+						} catch (Exception $e) {
+							$result .= $e->getMessage();
 						}
 
-						if ($msg != '')
-							$result .= $msg;
 					} else {
 
 						$length = self::parse_column_type($ExistingField['column_type']);

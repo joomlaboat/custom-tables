@@ -53,7 +53,12 @@ $document->addCustomTag('<style>
 				<?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'checks', common::translate('COM_CUSTOMTABLES_TABLES_CHECKS')); ?>
 
 				<?php
-				$result = IntegrityChecks::check($this->ct);
+
+				try {
+					$result = IntegrityChecks::check($this->ct);
+				} catch (Exception $e) {
+					$result = [$e->getMessage()];
+				}
 
 				if (count($result) > 0)
 					echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
