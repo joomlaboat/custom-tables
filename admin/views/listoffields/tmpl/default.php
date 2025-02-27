@@ -26,10 +26,15 @@ if ($this->saveOrder && !empty($this->items)) {
 	HTMLHelper::_('sortablelist.sortable', 'fieldList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
 }
 
-if (common::inputGetCmd('extratask', '') == 'updateimages') {
-	require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
-	extraTasks::prepareJS($this->ct->Table);
+try {
+	if (common::inputGetCmd('extratask', '') == 'updateimages') {
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
+		extraTasks::prepareJS($this->ct->Table);
+	}
+} catch (Exception $e) {
+	common::enqueueMessage($e->getMessage());
 }
+
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid); ?>"
@@ -55,7 +60,11 @@ if (common::inputGetCmd('extratask', '') == 'updateimages') {
 				<?php
 				if ($this->ct->Table->tableid != 0) {
 					$link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid;
-					echo IntegrityFields::checkFields($this->ct, $link);
+					try {
+						echo IntegrityFields::checkFields($this->ct, $link);
+					} catch (Exception $e) {
+						common::enqueueMessage($e->getMessage());
+					}
 				}
 				//table-bordered
 				?>

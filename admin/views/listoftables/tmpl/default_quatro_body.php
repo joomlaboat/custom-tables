@@ -140,7 +140,7 @@ foreach ($this->items as $i => $item): ?>
 				echo common::translate('COM_CUSTOMTABLES_TABLES_ID_FIELD_NOT_SET');
 			else {
 				echo '<a class="btn btn-secondary" aria-describedby="tip-tablerecords' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
-					. listOfTables::getNumberOfRecords($item->realtablename, $item->realidfieldname) . '</a>'
+					. listOfTables::getNumberOfRecords($item->realtablename) . '</a>'
 					. '<div role="tooltip" id="tip-tablerecords' . $item->id . '">' . common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL') . '</div>';
 			}
 			?>

@@ -25,9 +25,16 @@ $dbPrefix = database::getDBPrefix();
 foreach ($this->items as $i => $item): ?>
 	<?php
 	$user = new CTUser();
-	$canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || $item->checked_out == 0;
-	$userChkOut = new CTUser($item->checked_out);
-	$table_exists = TableHelper::checkIfTableExists($item->realtablename);
+
+	try {
+		$canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $user->id || $item->checked_out == 0;
+		$userChkOut = new CTUser($item->checked_out);
+		$table_exists = TableHelper::checkIfTableExists($item->realtablename);
+	} catch (Exception $e) {
+		common::enqueueMessage($e->getMessage());
+		break;
+	}
+
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
 		<td class="nowrap center">
@@ -82,12 +89,20 @@ foreach ($this->items as $i => $item): ?>
 							$tableDescription .= '_' . $lang->sef;
 
 							if (!array_key_exists($tableTitle, $item_array)) {
-								Fields::addLanguageField('#__customtables_tables', 'tabletitle', $tableTitle);
+								try {
+									Fields::addLanguageField('#__customtables_tables', 'tabletitle', $tableTitle);
+								} catch (Exception $e) {
+									common::enqueueMessage($e->getMessage());
+								}
 								$item_array[$tableTitle] = '';
 							}
 
 							if (!array_key_exists($tableTitle, $item_array)) {
-								Fields::addLanguageField('#__customtables_tables', 'description', $tableDescription);
+								try {
+									Fields::addLanguageField('#__customtables_tables', 'description', $tableDescription);
+								} catch (Exception $e) {
+									common::enqueueMessage($e->getMessage());
+								}
 								$item_array[$tableDescription] = '';
 							}
 						}
@@ -113,9 +128,13 @@ foreach ($this->items as $i => $item): ?>
 			if (!$table_exists)
 				echo common::translate('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
 			else {
-				echo '<a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
-					. common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
-					. ' (' . listOfTables::getNumberOfRecords($item->realtablename, $item->realidfieldname) . ')</a>';
+				try {
+					echo '<a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
+						. common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
+						. ' (' . listOfTables::getNumberOfRecords($item->realtablename) . ')</a>';
+				} catch (Exception $e) {
+					common::enqueueMessage($e->getMessage());
+				}
 			}
 			?>
 		</td>
