@@ -71,10 +71,12 @@ class ExportTables
 			$webLink = str_replace(DIRECTORY_SEPARATOR, '/', $webLink);
 
 			$link = common::UriRoot(false, true) . $webLink . $filename_available;
-			$msg = common::saveString2File($tmp_path . $filename_available, $output_str);
 
-			if ($msg !== null)
-				throw new Exception($tmp_path . $filename_available . ': ' . $msg);
+			try {
+				common::saveString2File($tmp_path . $filename_available, $output_str);
+			} catch (Exception $e) {
+				throw new Exception($tmp_path . $filename_available . ': ' . $e->getMessage());
+			}
 
 			return ['link' => $link, 'filename' => $filename_available];
 		}

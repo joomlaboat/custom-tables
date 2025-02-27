@@ -133,12 +133,8 @@ class Layouts
 			return true;
 		}
 
-		$msg = common::saveString2File($path, $layoutCode);
-		if ($msg !== null) {
-			throw new Exception($path . ': ' . $msg);
-		}
-
 		try {
+			common::saveString2File($path, $layoutCode);
 			@$file_ts = filemtime($path);
 		} catch (Exception $e) {
 			throw new Exception($path . ': ' . $e->getMessage());

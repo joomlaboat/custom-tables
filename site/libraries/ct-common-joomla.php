@@ -491,14 +491,17 @@ class common
 		return $randomString;
 	}
 
-	public static function saveString2File(string $filePath, string $content): ?string
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function saveString2File(string $filePath, string $content)
 	{
 		try {
 			@file_put_contents($filePath, $content);
 		} catch (Exception $e) {
-			return $e->getMessage();
+			throw new Exception($e->getMessage());
 		}
-		return null;
 	}
 
 	/**
