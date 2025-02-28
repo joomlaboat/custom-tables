@@ -150,8 +150,7 @@ class CustomtablesModelTables extends AdminModel
 				$table_row = TableHelper::deleteTable((int)$tableid);
 
 				// Add to activity log if you have one
-				$msg = common::translate('COM_CUSTOMTABLES_TABLE_DELETED') . ' ' . $table_row->tablename;
-				Factory::getApplication()->enqueueMessage($msg);
+				Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_TABLE_DELETED') . ' ' . $table_row->tablename);
 			}
 
 			// Commit transaction

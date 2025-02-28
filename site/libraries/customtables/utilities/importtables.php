@@ -23,25 +23,28 @@ class ImportTables
 	 * @since 3.2.2
 	 */
 	public static function processFile($filename, $menuType, &$msg, $category = '',
-									   $importFields = true, $importLayouts = true, $importMenu = true, string $fieldPrefix = null): bool
+									   $importFields = true, $importLayouts = true, $importMenu = true, string $fieldPrefix = null): void
 	{
 		$ct = new CT([], true);
 
 		if (file_exists($filename)) {
 			$data = common::getStringFromFile($filename);
-			if ($data == '') {
-				$msg = 'Uploaded file "' . $filename . '" is empty.';
-				return false;
-			}
+			if ($data == '')
+				throw new Exception('Uploaded file "' . $filename . '" is empty.');
+
 			$ct->Env->folderToSaveLayouts = null;
 
 			if ($fieldPrefix === null)
 				$fieldPrefix = $ct->Env->field_prefix;
 
-			return ImportTables::processContent($ct, $data, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu, $fieldPrefix);
+			try {
+				ImportTables::processContent($ct, $data, $menuType, $category, $importFields, $importLayouts, $importMenu, $fieldPrefix);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
+
 		} else {
-			$msg = 'Uploaded file "' . $filename . '" not found.';
-			return false;
+			throw new Exception('Uploaded file "' . $filename . '" not found.');
 		}
 	}
 
@@ -49,8 +52,8 @@ class ImportTables
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function processContent(CT   &$ct, string $data, string $menuType, string &$msg, string $category = '',
-										  bool $importFields = true, bool $importLayouts = true, bool $importMenu = true, string $fieldPrefix = 'ct_'): bool
+	public static function processContent(CT   &$ct, string $data, string $menuType, string $category = '',
+										  bool $importFields = true, bool $importLayouts = true, bool $importMenu = true, string $fieldPrefix = 'ct_'): void
 	{
 		$keyword = '<customtablestableexport>';
 		if (!str_contains($data, $keyword)) {
