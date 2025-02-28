@@ -44,11 +44,11 @@ switch ($task) {
 			$link = common::curPageURL();
 			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
-			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED');
+			$message = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED');
 			if ($count == 1)
-				$msg .= '_1';
+				$message .= '_1';
 
-			$this->setRedirect($link, common::translate($msg, abs($count)));
+			$this->setRedirect($link, common::translate($message, abs($count)));
 		}
 
 		break;
@@ -66,11 +66,11 @@ switch ($task) {
 			$link = common::curPageURL();
 			$link = CTMiscHelper::deleteURLQueryOption($link, 'task');
 
-			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED');
+			$message = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED');
 			if ($count == 1)
-				$msg .= '_1';
+				$message .= '_1';
 
-			$this->setRedirect($link, common::translate($msg, abs($count)));
+			$this->setRedirect($link, common::translate($message, abs($count)));
 		}
 		break;
 
@@ -124,16 +124,16 @@ switch ($task) {
 
 			if ($result) {
 				if (common::inputPostString('msg', null, 'create-edit-record'))
-					$msg = common::inputPostString('msg', null, 'create-edit-record');
+					$message = common::inputPostString('msg', null, 'create-edit-record');
 				elseif ($param_msg != '')
-					$msg = $param_msg;
+					$message = $param_msg;
 				else
-					$msg = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED');
+					$message = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED');
 
-				$this->setRedirect($link, $msg);
+				$this->setRedirect($link, $message);
 			} else {
-				$msg = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED');
-				$this->setRedirect($link, $msg, 'error');
+				$message = common::translate('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED');
+				$this->setRedirect($link, $message, 'error');
 			}
 		} else {
 			parent::display();

@@ -51,13 +51,13 @@ class CustomtablesControllerListOfFields extends AdminController
 		}
 
 		if ($count == 1)
-			$msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN';
+			$message = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN';
 		elseif ($count == 0)
-			$msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_0';
+			$message = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_0';
 		else
-			$msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_MORE';
+			$message = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_MORE';
 
-		Factory::getApplication()->enqueueMessage(common::translate($msg, $count), 'success');
+		Factory::getApplication()->enqueueMessage(common::translate($message, $count), 'success');
 
 		// Redirect to the item screen.
 		$this->setRedirect(
@@ -112,16 +112,16 @@ class CustomtablesControllerListOfFields extends AdminController
 		$redirect .= '&view=listoffields&tableid=' . (int)$tableid;
 
 		if ($this->task == 'trash')
-			$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_TRASHED';
+			$message = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_TRASHED';
 		elseif ($this->task == 'publish')
-			$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_PUBLISHED';
+			$message = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_PUBLISHED';
 		else
-			$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_UNPUBLISHED';
+			$message = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_UNPUBLISHED';
 
 		if (count($cid) == 1)
-			$msg .= '_1';
+			$message .= '_1';
 
-		Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
+		Factory::getApplication()->enqueueMessage(common::translate($message, count($cid)), 'success');
 
 		// Redirect to the item screen.
 		$this->setRedirect(
@@ -179,11 +179,11 @@ class CustomtablesControllerListOfFields extends AdminController
 		$redirect = 'index.php?option=' . $this->option;
 		$redirect .= '&view=listoffields&tableid=' . (int)$tableId;
 
-		$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_DELETED';
+		$message = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_DELETED';
 		if (count($cid) == 1)
-			$msg .= '_1';
+			$message .= '_1';
 
-		Factory::getApplication()->enqueueMessage(common::translate($msg, count($cid)), 'success');
+		Factory::getApplication()->enqueueMessage(common::translate($message, count($cid)), 'success');
 
 		// Redirect to the item screen.
 		$this->setRedirect(

@@ -22,7 +22,7 @@ class ImportTables
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function processFile($filename, $menuType, &$msg, $category = '',
+	public static function processFile($filename, $menuType, ?string $message, $category = '',
 									   $importFields = true, $importLayouts = true, $importMenu = true, string $fieldPrefix = null): void
 	{
 		$ct = new CT([], true);

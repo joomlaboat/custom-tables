@@ -128,8 +128,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 					return (object)array('link' => $link, 'msg' => common::translate('COM_USERS_RESET_COMPLETE_ERROR') . ':' . $e->getMessage(), 'status' => 'error');
 			}
 
-			$msg = 'Password reset completed.';
-			return (object)array('link' => $link, 'msg' => common::translate($msg), 'status' => null);
+			return (object)array('link' => $link, 'msg' => common::translate('Password reset completed.'), 'status' => null);
 
 		case 'copycontent':
 
@@ -145,8 +144,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 					else
 						die('copied');
 				} else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_COPIED';
-					return (object)array('link' => $link, 'msg' => common::translate($msg), 'status' => null);
+					return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_COPIED'), 'status' => null);
 				}
 			} else {
 				if ($ct->Env->clean == 1) {
@@ -155,8 +153,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 					else
 						die('error');
 				} else {
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_NOT_COPIED';
-					return (object)array('link' => $link, 'msg' => common::translate($msg), 'status' => 'error');
+					return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_NOT_COPIED'), 'status' => 'error');
 				}
 			}
 
@@ -228,9 +225,9 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 				}
 
 				if ($result != "") {
-					$msg = common::inputPostString('msg', null, 'create-edit-record');
+					$message = common::inputPostString('msg', null, 'create-edit-record');
 
-					if ($msg === null)
+					if ($message === null)
 						return (object)array('link' => $link, 'msg' => common::translate('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);
 					elseif ($param_msg != '')
 						return (object)array('link' => $link, 'msg' => $param_msg, 'status' => null);

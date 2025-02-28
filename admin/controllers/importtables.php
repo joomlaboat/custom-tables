@@ -39,7 +39,7 @@ class CustomTablesControllerImportTables extends FormController
 			$category = '';
 
 			try {
-				ImportTables::processFile($filename, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu);
+				ImportTables::processFile($filename, $menuType, null, $category, $importFields, $importLayouts, $importMenu);
 			} catch (Exception $e) {
 				$this->setRedirect($link, common::translate('Tables was Unable to Import: ' . $e->getMessage()), 'error');
 			}

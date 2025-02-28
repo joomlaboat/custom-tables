@@ -36,9 +36,9 @@ switch (common::inputGetCmd('task')) {
 		$model->load($ct);
 
 		if ($model->add()) {
-			$msg = common::translate('COM_CUSTOMTABLES_IMAGE_ADDED');
+			$message = common::translate('COM_CUSTOMTABLES_IMAGE_ADDED');
 		} else {
-			$msg = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_ADDED');
+			$message = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_ADDED');
 		}
 
 		$tableName = common::inputGetCmd('establename');
@@ -54,7 +54,7 @@ switch (common::inputGetCmd('task')) {
 			. '&returnto=' . $returnToEncoded
 			. '&Itemid=' . $Itemid;
 
-		$this->setRedirect($link, $msg);
+		$this->setRedirect($link, $message);
 		break;
 
 	case 'delete' :
@@ -62,9 +62,9 @@ switch (common::inputGetCmd('task')) {
 		$model->load($ct);
 
 		if ($model->delete()) {
-			$msg = common::translate('COM_CUSTOMTABLES_IMAGE_DELETED');
+			$message = common::translate('COM_CUSTOMTABLES_IMAGE_DELETED');
 		} else {
-			$msg = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_DELETED');
+			$message = common::translate('COM_CUSTOMTABLES_IMAGE_NOT_DELETED');
 		}
 
 		$tableName = common::inputGetCmd('establename');
@@ -80,7 +80,7 @@ switch (common::inputGetCmd('task')) {
 			. '&returnto=' . $returnToEncoded
 			. '&Itemid=' . $Itemid;
 
-		$this->setRedirect($link, $msg);
+		$this->setRedirect($link, $message);
 		break;
 
 	case 'saveorder' :
@@ -88,19 +88,19 @@ switch (common::inputGetCmd('task')) {
 		$model->load($ct);
 
 		if ($model->reorder()) {
-			$msg = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_SAVED');
+			$message = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_SAVED');
 		} else {
-			$msg = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_NOT_SAVED');
+			$message = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_NOT_SAVED');
 		}
 
 		$returnto = common::getReturnToURL();
-		$this->setRedirect($returnto, $msg);
+		$this->setRedirect($returnto, $message);
 		break;
 
 	case 'cancel' :
-		$msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
+		$message = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
 		$returnto = common::getReturnToURL();
-		$this->setRedirect($returnto, $msg);
+		$this->setRedirect($returnto, $message);
 		break;
 	default:
 		parent::display();

@@ -42,9 +42,9 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 			$model = $this->getModel('editfiles');
 
 			if ($model->add()) {
-				$msg = common::translate('COM_CUSTOMTABLES_FILE_ADDED');
+				$message = common::translate('COM_CUSTOMTABLES_FILE_ADDED');
 			} else {
-				$msg = common::translate('COM_CUSTOMTABLES_FILE_NOT_ADDED');
+				$message = common::translate('COM_CUSTOMTABLES_FILE_NOT_ADDED');
 			}
 
 			$fileBoxName = common::inputGetCmd('fileboxname');
@@ -59,7 +59,7 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 				. '&returnto=' . $returntoEncoded //base64 encoded url in Joomla and Sessions ReturnTo variable reference in WP
 				. '&Itemid=' . $Itemid;
 
-			$this->setRedirect($link, $msg);
+			$this->setRedirect($link, $message);
 
 			break;
 
@@ -68,9 +68,9 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 			$model = $this->getModel('editfiles');
 
 			if ($model->delete()) {
-				$msg = common::translate('COM_CUSTOMTABLES_FILE_DELETED');
+				$message = common::translate('COM_CUSTOMTABLES_FILE_DELETED');
 			} else {
-				$msg = common::translate('COM_CUSTOMTABLES_FILE_NOT_DELETED');
+				$message = common::translate('COM_CUSTOMTABLES_FILE_NOT_DELETED');
 			}
 
 			$fileBoxName = common::inputGetCmd('fileboxname');
@@ -85,7 +85,7 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 				. '&returnto=' . $returnToEncoded
 				. '&Itemid=' . $Itemid;
 
-			$this->setRedirect($link, $msg);
+			$this->setRedirect($link, $message);
 
 			break;
 
@@ -95,19 +95,19 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 
 
 			if ($model->reorder()) {
-				$msg = common::translate('COM_CUSTOMTABLES_FILE_ORDER_SAVED');
+				$message = common::translate('COM_CUSTOMTABLES_FILE_ORDER_SAVED');
 			} else {
-				$msg = common::translate('COM_CUSTOMTABLES_FILE_ORDER_NOT_SAVED');
+				$message = common::translate('COM_CUSTOMTABLES_FILE_ORDER_NOT_SAVED');
 			}
 
 			$returnto = common::getReturnToURL();
-			$this->setRedirect($returnto, $msg);
+			$this->setRedirect($returnto, $message);
 			break;
 
 		case 'cancel' :
-			$msg = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
+			$message = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
 			$returnto = common::getReturnToURL();
-			$this->setRedirect($returnto, $msg);
+			$this->setRedirect($returnto, $message);
 			break;
 		default:
 

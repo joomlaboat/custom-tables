@@ -54,18 +54,18 @@ class CustomtablesControllerListOfTables extends AdminController
 		$download_file = ExportTables::export($cid, CUSTOMTABLES_ABSPATH . 'images' . DIRECTORY_SEPARATOR);
 
 		if ($download_file !== null) {
-			$msg = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';
+			$message = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';
 
 			if (count($cid) == 1)
-				$msg .= '_1';
+				$message .= '_1';
 
-			$msg = common::translate($msg, count($cid));
-			$msg .= '&nbsp;&nbsp;<a href="' . $download_file['link'] . '" title="File: ' . $download_file['filename'] . '" download="' . $download_file['filename'] . '" data-download="' . $download_file['filename'] . '" target="_blank">Download (Click Save Link As...)</a>';
+			$message = common::translate($message, count($cid));
+			$message .= '&nbsp;&nbsp;<a href="' . $download_file['link'] . '" title="File: ' . $download_file['filename'] . '" download="' . $download_file['filename'] . '" data-download="' . $download_file['filename'] . '" target="_blank">Download (Click Save Link As...)</a>';
 		} else {
-			$msg = common::translate('COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT');
+			$message = common::translate('COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT');
 		}
 
-		Factory::getApplication()->enqueueMessage($msg, 'success');
+		Factory::getApplication()->enqueueMessage($message, 'success');
 
 		$redirect = 'index.php?option=' . $this->option;
 		$redirect .= '&view=listoftables';
