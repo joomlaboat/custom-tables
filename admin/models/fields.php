@@ -17,8 +17,8 @@ use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\Fields;
-
 use CustomTables\MySQLWhereClause;
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
@@ -26,9 +26,9 @@ use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\CMS\MVC\Model\AdminModel;
 
-
 /**
  * Customtables Fields Model
+ * @since 1.0.0
  */
 class CustomtablesModelFields extends AdminModel
 {
@@ -412,6 +412,7 @@ class CustomtablesModelFields extends AdminModel
 	 *
 	 * @return  string  New value.
 	 *
+	 * @throws Exception
 	 * @since   3.0
 	 */
 	protected function generateUnique($field, $value): string
@@ -509,6 +510,7 @@ class CustomtablesModelFields extends AdminModel
 	 *
 	 * @return  boolean  True if allowed to delete the record. Defaults to the permission set in the component.
 	 *
+	 * @throws Exception
 	 * @since   1.6
 	 */
 	protected function canDelete($record)
@@ -532,6 +534,7 @@ class CustomtablesModelFields extends AdminModel
 	 *
 	 * @return  boolean  True if allowed to change the state of the record. Defaults to the permission set in the component.
 	 *
+	 * @throws Exception
 	 * @since   1.6
 	 */
 	protected function canEditState($record)
@@ -557,6 +560,7 @@ class CustomtablesModelFields extends AdminModel
 	 * @param string $key The name of the key for the primary key.
 	 *
 	 * @return    boolean
+	 * @throws Exception
 	 * @since    2.5
 	 */
 	protected function allowEdit($data = array(), $key = 'id'): bool
@@ -573,6 +577,7 @@ class CustomtablesModelFields extends AdminModel
 	 *
 	 * @return  void
 	 *
+	 * @throws DateInvalidTimeZoneException
 	 * @since   1.6
 	 */
 	protected function prepareTable($table): void
@@ -608,6 +613,7 @@ class CustomtablesModelFields extends AdminModel
 	 *
 	 * @return  mixed  The data for the form.
 	 *
+	 * @throws Exception
 	 * @since   1.6
 	 */
 	protected function loadFormData()
@@ -627,7 +633,7 @@ class CustomtablesModelFields extends AdminModel
 	 *
 	 * @param integer $pk The id of the primary key.
 	 *
-	 * @return  mixed  Object on success, false on failure.
+	 * @return  false|stdClass  Object on success, false on failure.
 	 *
 	 * @since   1.6
 	 */
