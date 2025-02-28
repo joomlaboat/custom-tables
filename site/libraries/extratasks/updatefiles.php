@@ -97,7 +97,7 @@ class updateFiles
 
 			$field_old = new Field($ct, $field_row_old, $file);
 			$field_old->params = $old_params;
-			$field_old->parseParams($file, $field_old->type);
+			$field_old->processParams($file, $field_old->type);
 
 			$old_FileFolderArray = CustomTablesImageMethods::getImageFolder($field_old->params, $field_old->type);
 
@@ -109,7 +109,7 @@ class updateFiles
 
 			$field_new = new Field($ct, $field_row_new, $file);
 			$field_new->params = $new_params;
-			$field_new->parseParams($file, $field_old->type);
+			$field_new->processParams($file, $field_old->type);
 
 			$new_FileFolderArray = CustomTablesImageMethods::getImageFolder($field_new->params, $field_new->type);
 			//$new_FileFolder = FileUtils::getOrCreateDirectoryPath($field_new->params[1]);

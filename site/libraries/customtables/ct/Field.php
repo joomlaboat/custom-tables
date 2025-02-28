@@ -112,7 +112,7 @@ class Field
 				$this->params = null;
 
 			if ($parseParams and $this->type != 'virtual')
-				$this->parseParams($row, $this->type);
+				$this->processParams($row, $this->type);
 		} else
 			$this->type = null;
 	}
@@ -124,9 +124,12 @@ class Field
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function parseParams(?array $row, string $type): void
+	function processParams(?array $row, string $type): void
 	{
 		$new_params = [];
+
+		if ($this->params === null)
+			return;
 
 		$index = 0;
 		foreach ($this->params as $type_param) {
