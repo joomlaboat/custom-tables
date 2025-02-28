@@ -395,7 +395,7 @@ class CustomtablesModelFields extends AdminModel
 	/**
 	 * Method to get the unique fields of this table.
 	 *
-	 * @return  mixed  An array of field names, boolean false if none is set.
+	 * @return  false  An array of field names, boolean false if none is set.
 	 *
 	 * @since   3.0
 	 */
@@ -414,7 +414,7 @@ class CustomtablesModelFields extends AdminModel
 	 *
 	 * @since   3.0
 	 */
-	protected function generateUnique($field, $value)
+	protected function generateUnique($field, $value): string
 	{
 		// set field value unique
 		$table = $this->getTable();
@@ -559,7 +559,7 @@ class CustomtablesModelFields extends AdminModel
 	 * @return    boolean
 	 * @since    2.5
 	 */
-	protected function allowEdit($data = array(), $key = 'id')
+	protected function allowEdit($data = array(), $key = 'id'): bool
 	{
 		// Check specific edit permission then general edit permission.
 		$user = new CTUser();

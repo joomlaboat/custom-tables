@@ -152,7 +152,7 @@ class Inputbox
 				$input['value'] = $value;
 				break;
 
-			case 'multilangstring':
+			case 'multilangtext':
 				$input["renderAs"] = "textarea";
 				$input["multiple"] = true;
 				$input['value'] = $value;

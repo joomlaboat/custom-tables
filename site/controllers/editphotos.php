@@ -14,7 +14,6 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
-use Joomla\CMS\Router\Route;
 
 $ct = new CT(null, false);
 $ct->Params->constructJoomlaParams();

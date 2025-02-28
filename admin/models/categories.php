@@ -379,7 +379,7 @@ class CustomtablesModelCategories extends AdminModel
 	 * @param array $pks An array of row IDs.
 	 * @param array $contexts An array of item contexts.
 	 *
-	 * @return  mixed  An array of new IDs on success, boolean false on failure.
+	 * @return  array|false  An array of new IDs on success, boolean false on failure.
 	 *
 	 * @throws Exception
 	 * @since 12.2
@@ -496,7 +496,7 @@ class CustomtablesModelCategories extends AdminModel
 	/**
 	 * Method to get the unique fields of this table.
 	 *
-	 * @return  mixed  An array of field names, boolean false if none is set.
+	 * @return  false  An array of field names, boolean false if none is set.
 	 *
 	 * @since   3.0
 	 */
@@ -516,7 +516,7 @@ class CustomtablesModelCategories extends AdminModel
 	 * @throws Exception
 	 * @since   3.0
 	 */
-	protected function generateUnique($field, $value)
+	protected function generateUnique($field, $value): string
 	{
 		// set field value unique
 		$table = $this->getTable();
@@ -688,7 +688,7 @@ class CustomtablesModelCategories extends AdminModel
 	 * @throws Exception
 	 * @since    2.5
 	 */
-	protected function allowEdit($data = array(), $key = 'id')
+	protected function allowEdit($data = array(), $key = 'id'): bool
 	{
 		// Check specific edit permission then general edit permission.
 		$user = new CTUser();
@@ -702,6 +702,7 @@ class CustomtablesModelCategories extends AdminModel
 	 *
 	 * @return  void
 	 *
+	 * @throws DateInvalidTimeZoneException
 	 * @since   1.6
 	 */
 	protected function prepareTable($table)

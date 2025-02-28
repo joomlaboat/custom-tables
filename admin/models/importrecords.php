@@ -12,10 +12,7 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
-use CustomTables\CT;
-use CustomTables\FileUploader;
-use CustomTables\ImportCSV;
+
 use Joomla\CMS\MVC\Model\ListModel;
 
 class CustomTablesModelImportRecords extends ListModel

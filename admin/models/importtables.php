@@ -12,13 +12,6 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
-use CustomTables\CT;
-use CustomTables\database;
-use CustomTables\FileUploader;
-use CustomTables\ImportTables;
-use CustomTables\MySQLWhereClause;
-
 use Joomla\CMS\MVC\Model\ListModel;
 
 class CustomTablesModelImportTables extends ListModel
