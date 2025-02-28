@@ -660,19 +660,24 @@ class Twig_HTML_Tags
 			$cssClass .= ($cssClass == '' ? '' : ' ') . ' ct_virtualselect_selectbox';
 
 		$onchange = $reload ? 'ctSearchBoxDo();' : null;//action should be a space not empty or this.value=this.value
-
 		$objectName = $first_fld['fieldname'];
 
 		if (count($first_fld) == 0)
 			return 'Unsupported field type or field not found.';
 
-		$vlu = $SearchBox->renderFieldBox($this->ct->Table->fieldInputPrefix . 'search_box_', $objectName, $first_fld,
-			$cssClass, '0',
-			'', '', $onchange, $field_title, $matchType, $stringLength);//action should be a space not empty or
-		//0 because it's not an edit box, and we pass onChange value even " " is the value;
+		try {
+			$vlu = $SearchBox->renderFieldBox($this->ct->Table->fieldInputPrefix . 'search_box_', $objectName, $first_fld,
+				$cssClass, '0',
+				'', '', $onchange, $field_title, $matchType, $stringLength);//action should be a space not empty or
+			//0 because it's not an edit box, and we pass onChange value even " " is the value;
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 
-		$field2search = $this->prepareSearchElement($first_fld);
-		$vlu .= '<input type=\'hidden\' ctSearchBoxField=\'' . $field2search . '\' />';
+		if ($vlu !== '') {
+			$field2search = $this->prepareSearchElement($first_fld);
+			$vlu .= '<input type=\'hidden\' ctSearchBoxField=\'' . $field2search . '\' />';
+		}
 
 		return $vlu;
 	}

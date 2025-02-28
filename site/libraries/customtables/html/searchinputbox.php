@@ -127,7 +127,7 @@ class SearchInputBox
 			return $searchBoxRenderer->render($value);
 		}
 
-		return 'SearchBox: Type "' . $this->field->type . '" is unknown or unsupported.';
+		throw new Exception('SearchBox: Type "' . $this->field->type . '" is unknown or unsupported.');
 	}
 }
 
