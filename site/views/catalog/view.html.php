@@ -63,15 +63,13 @@ class CustomTablesViewCatalog extends HtmlView
 	function renderCatalog($tpl): bool
 	{
 		if (!function_exists('mb_convert_encoding')) {
-			$msg = '"mbstring" PHP extension not installed.<br/>
+			common::enqueueMessage('"mbstring" PHP extension not installed.<br/>
 				You need to install this extension. It depends on of your operating system, here are some examples:<br/><br/>
 				sudo apt-get install php-mbstring  # Debian, Ubuntu<br/>
 				sudo yum install php-mbstring  # RedHat, Fedora, CentOS<br/><br/>
 				Uncomment the following line in php.ini, and restart the Apache server:<br/>
 				extension=mbstring<br/><br/>
-				Then restart your webs\' server. Example:<br/>service apache2 restart';
-
-			common::enqueueMessage($msg);
+				Then restart your webs\' server. Example:<br/>service apache2 restart');
 			return false;
 		}
 

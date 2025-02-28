@@ -79,16 +79,13 @@ class FileUploader
 						move_uploaded_file($file["tmp_name"], $newFileName);
 
 						try {
-							$message = ImportCSV::importCSVFile($newFileName, common::inputGetInt('tableid', 0));
-						} catch (Exception $e) {
-							$message = ['error' => $e->getMessage()];
-						}
+							ImportCSV::importCSVFile($newFileName, common::inputGetInt('tableid', 0));
 
-						if ($message !== null)
-							$ret = ['error' => $message];
-						else
 							$ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileId . '_' . $fileName
 								, 'originalfilename' => $file['name']];
+						} catch (Exception $e) {
+							$ret = ['error' => $e->getMessage()];
+						}
 
 						unlink($newFileName);
 

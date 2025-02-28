@@ -12,16 +12,12 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
-
+use CustomTables\FileUploader;
+use CustomTables\ImportCSV;
 use Joomla\CMS\MVC\Controller\FormController;
 
 class CustomTablesControllerImportRecords extends FormController
 {
-	function __construct()
-	{
-		parent::__construct();
-	}
-
 	function display($cachable = false, $urlparams = array())
 	{
 		$task = common::inputGetCmd('task', '');
@@ -36,16 +32,28 @@ class CustomTablesControllerImportRecords extends FormController
 
 	function importrecords()
 	{
-		$model = $this->getModel('importrecords');
-		$tableId = common::inputGetInt('tableid', 0);
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+			. 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
 
-		$msg = '';
-		if ($model->importRecords($msg)) {
+		try {
+			$tableId = common::inputGetInt('tableid', 0);
+			$fileId = common::inputGetCmd('fileid', '');
+			$filename = FileUploader::getFileNameByID($fileId);
+		} catch (Exception $e) {
+			$link = 'index.php?option=com_customtables';
+			$this->setRedirect($link, common::translate('Records was Unable to Import: ' . $e->getMessage()), 'error');
+			return;
+		}
+
+		try {
+			ImportCSV::importCSVFile($filename, $tableId);
+
 			$link = 'index.php?option=com_customtables&view=listofrecords&tableid=' . $tableId;
 			$this->setRedirect($link, common::translate('Records Imported Successfully'));
-		} else {
+		} catch (Exception $e) {
+			unlink($filename);
 			$link = 'index.php?option=com_customtables&view=importrecords&tableid=' . $tableId;
-			$this->setRedirect($link, common::translate('Records was Unable to Import: ' . $msg), 'error');
+			$this->setRedirect($link, common::translate('Records was Unable to Import: ' . $e->getMessage()), 'error');
 		}
 	}
 }
