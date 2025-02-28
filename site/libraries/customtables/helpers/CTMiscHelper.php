@@ -1135,13 +1135,23 @@ class CTMiscHelper
 	}
 
 	/**
-	 * @throws Exception
 	 * @since 3.4.8
 	 */
 	static public function fireError(int $code = 500, ?string $title = null, ?string $message = null): void
 	{
 		if (defined('_JEXEC')) {
-			$app = Factory::getApplication();
+
+			try {
+				$app = Factory::getApplication();
+			} catch (Exception $e) {
+				echo json_encode([
+					'success' => false,
+					'data' => null,
+					'message' => $e->getMessage()
+				], JSON_PRETTY_PRINT);
+				exit;
+			}
+
 			$app->setHeader('status', $code);
 			$app->setHeader('Content-Type', 'application/vnd.api+json');
 			$app->sendHeaders();
@@ -1162,7 +1172,7 @@ class CTMiscHelper
 			],
 			'message' => $message ?? ($title ?? 'Error')
 		], JSON_PRETTY_PRINT);
-		die;
+		exit;
 	}
 
 	static public function fireSuccess(?string $id = null, $dataVariable = null, ?string $message = null, ?array $metadata = null): void

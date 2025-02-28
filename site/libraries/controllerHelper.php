@@ -20,15 +20,20 @@ class controllerHelper
 {
 	public static function doTheTask(string $task)
 	{
-		$link = common::getReturnToURL() ?? '';
-		$ct = new CT(null, false);
-		$ct->Params->constructJoomlaParams();
+		try {
+			$link = common::getReturnToURL() ?? '';
+			$ct = new CT(null, false);
+			$ct->Params->constructJoomlaParams();
 
-		if (!empty($ct->Params->tableName))
-			$ct->getTable($ct->Params->tableName);
+			if (!empty($ct->Params->tableName))
+				$ct->getTable($ct->Params->tableName);
 
-		$layout = new Layouts($ct);
-		$result = $layout->renderMixedLayout($ct->Params->editLayout, null, $task);
+			$layout = new Layouts($ct);
+			$result = $layout->renderMixedLayout($ct->Params->editLayout, null, $task);
+
+		} catch (Exception $e) {
+			return ['link' => null, 'message' => $e->getMessage(), 'success' => false];
+		}
 
 		if ($result['success']) {
 			if ($ct->Env->clean) {
@@ -42,7 +47,7 @@ class controllerHelper
 				$link = $result['redirect'];
 
 			//This is to redirect to new record, if returnto contains $get_listing_id value
-			$link = str_replace('$get_listing_id', common::inputGet("listing_id", 0, 'INT'), $link);
+			$link = str_replace('$get_listing_id', common::inputGetInt("listing_id", 0), $link);
 
 			return ['link' => $link, 'message' => $result['message'], 'success' => true];
 		} else {

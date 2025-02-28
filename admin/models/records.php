@@ -93,6 +93,7 @@ class CustomtablesModelRecords extends AdminModel
 	 *
 	 * @return  boolean  True if allowed to delete the record. Defaults to the permission set in the component.
 	 *
+	 * @throws Exception
 	 * @since   1.6
 	 */
 	protected function canDelete($record)
@@ -122,6 +123,7 @@ class CustomtablesModelRecords extends AdminModel
 	 *
 	 * @return  boolean  True if allowed to change the state of the record. Defaults to the permission set in the component.
 	 *
+	 * @throws Exception
 	 * @since   1.6
 	 */
 	protected function canEditState($record)
@@ -147,13 +149,14 @@ class CustomtablesModelRecords extends AdminModel
 	 * @param string $key The name of the key for the primary key.
 	 *
 	 * @return    boolean
+	 * @throws Exception
 	 * @since    2.5
 	 */
 	protected function allowEdit($data = array(), $key = 'id')
 	{
 		// Check specific edit permission then general edit permission.
 		$user = new CTUser();
-		return $user->authorise('core.edit', 'com_customtables.records.' . (isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+		return $user->authorise('core.edit', 'com_customtables.records.' . ($data[$key] ?? 0)) or parent::allowEdit($data, $key);
 	}
 
 	/**

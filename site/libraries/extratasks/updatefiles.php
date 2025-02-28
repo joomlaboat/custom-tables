@@ -126,6 +126,10 @@ class updateFiles
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processFile(string $filename, string $old_FileFolder, string $new_FileFolder): ?string
 	{
 		$filepath_old = $old_FileFolder . DIRECTORY_SEPARATOR . $filename;

@@ -18,24 +18,31 @@ use Joomla\CMS\HTML\HTMLHelper;
 HTMLHelper::_('jquery.framework');
 jimport('joomla.html.html.bootstrap');
 
-common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+try {
+	common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
-if (!empty($this->result['style']))
-	Factory::getApplication()->getDocument()->addCustomTag('<style>' . $this->result['style'] . '</style>');
+	if (!empty($this->result['style']))
+		Factory::getApplication()->getDocument()->addCustomTag('<style>' . $this->result['style'] . '</style>');
 
-if (!empty($this->result['script']))
-	Factory::getApplication()->getDocument()->addCustomTag('<script>' . $this->result['script'] . '</script>');
+	if (!empty($this->result['script']))
+		Factory::getApplication()->getDocument()->addCustomTag('<script>' . $this->result['script'] . '</script>');
+
+} catch (Exception $e) {
+	common::enqueueMessage($e->getMessage());
+}
 
 if ($this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
-
 	echo '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
 		. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
 }
 
 if ($this->result['success']) {
-	echo $this->result['html'];
+	if (isset($this->result['html']))
+		echo $this->result['html'];
+	else
+		common::enqueueMessage('HTML Output is empty');
 } else {
-	common::enqueueMessage($this->result['message'], 'error');
+	common::enqueueMessage($this->result['message']);
 }
 
 ?>

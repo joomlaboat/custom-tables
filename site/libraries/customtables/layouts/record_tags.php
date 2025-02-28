@@ -25,6 +25,10 @@ class Twig_Record_Tags
 		$this->ct = &$ct;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function id()
 	{
 		if (!isset($this->ct->Table))
@@ -739,6 +743,10 @@ class Twig_Table_Tags
 		return count($this->ct->Table->fields);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function description()
 	{
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
@@ -751,6 +759,10 @@ class Twig_Table_Tags
 			return $this->ct->Table->tablerow['description'];
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function title(): string
 	{
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
@@ -759,6 +771,10 @@ class Twig_Table_Tags
 		return $this->ct->Table->tabletitle;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function name(): ?string
 	{
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)

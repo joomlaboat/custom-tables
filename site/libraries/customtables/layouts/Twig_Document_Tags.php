@@ -173,6 +173,10 @@ class Twig_Document_Tags
 		return '';
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
 	function jslibrary($library): string
 	{
 		if (defined('_JEXEC')) {
@@ -289,6 +293,10 @@ class Twig_Document_Tags
 		$this->ct->LayoutVariables['globalVariables'][$variable] = $value;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.5.0
+	 */
 	public function config(string $parameter)
 	{
 		if (defined('_JEXEC')) {

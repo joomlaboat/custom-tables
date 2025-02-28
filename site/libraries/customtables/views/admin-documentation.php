@@ -11,6 +11,8 @@
 namespace CustomTables;
 
 // no direct access
+use Exception;
+
 defined('_JEXEC') or die();
 
 class Documentation
@@ -26,6 +28,10 @@ class Documentation
 		$this->hideProVersion = $hideProVersion;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	function getFieldTypes(): string
 	{
 		$xml = CTMiscHelper::getXMLData('fieldtypes.xml');

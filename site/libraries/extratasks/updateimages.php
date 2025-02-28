@@ -123,6 +123,10 @@ class updateImages
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processImage($imgMethods, $old_imageSizes, $new_imageSizes, string $rowValue, string $old_ImageFolder, string $new_ImageFolder): ?string
 	{
 		$original_image_file = '';
@@ -196,6 +200,10 @@ class updateImages
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processImage_Thumbnail(string $rowValue, string $old_ImageFolder, string $new_ImageFolder): ?string
 	{
 		//Check thumbnail
@@ -215,6 +223,10 @@ class updateImages
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processImage_CustomSizes($imgMethods, $imageSizes, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file): ?string
 	{
 		//Move files if necessary
@@ -226,6 +238,10 @@ class updateImages
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processImage_CustomSize_MoveFile($imgMethods, $old_imageSize, $rowValue, $old_ImageFolder, $new_ImageFolder, $prefix, string $imageFile_ext, string $original_image_file): ?string
 	{
 		if ($imageFile_ext == '')
@@ -308,6 +324,10 @@ class updateImages
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processImage_CustomSize_createFile($imgMethods, $new_imageSize, $rowValue, $new_ImageFolder, $prefix, string $imageFile_ext, string $original_image_file): ?string
 	{
 		if ($imageFile_ext == '')
