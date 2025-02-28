@@ -308,10 +308,10 @@ class record
 		if ($this->isItNewRecord) {// or $isCopy
 			if (!empty($this->listing_id)) {
 				$this->ct->Params->listing_id = $this->listing_id;
-				$this->ct->getRecord();
-				$this->row_new = $this->ct->Table->record;
+				$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
 
-				if ($this->row_new !== null) {
+				if ($this->ct->getRecord()) {
+					$this->row_new = $this->ct->Table->record;
 
 					if ($this->ct->Env->advancedTagProcessor) {
 						if ($phpOnAddFound)
@@ -326,6 +326,9 @@ class record
 					} catch (Exception $e) {
 						throw new Exception($e->getMessage());
 					}
+
+				} else {
+					throw new Exception('Could not read the record #' . $this->listing_id);
 				}
 			}
 		} else {
@@ -337,6 +340,7 @@ class record
 			}
 
 			$this->ct->Params->listing_id = $this->listing_id;
+			$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
 
 			if ($this->ct->getRecord()) {
 				$this->row_new = $this->ct->Table->record;
@@ -352,7 +356,7 @@ class record
 					}
 				}
 			} else {
-				$this->row_new = null;
+				throw new Exception('Could not read the record #' . $this->listing_id);
 			}
 		}
 

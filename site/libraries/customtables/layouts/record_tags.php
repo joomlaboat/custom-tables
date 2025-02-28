@@ -27,9 +27,8 @@ class Twig_Record_Tags
 
 	function id()
 	{
-		if (!isset($this->ct->Table)) {
-			return '{{ record.id }} - Table not loaded.';
-		}
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ record.id }} - Table not loaded.');
 
 		if (is_null($this->ct->Table->record))
 			return '';
@@ -60,7 +59,7 @@ class Twig_Record_Tags
 			return '';
 
 		if (count($this->ct->Table->record) == 0)
-			return 'record.link tag cannot be used on empty record.';
+			throw new Exception('record.link tag cannot be used on empty record.');
 
 		$menu_item_id = 0;
 		$view_link = '';
@@ -743,7 +742,7 @@ class Twig_Table_Tags
 	function description()
 	{
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
-			return 'Table not selected';
+			throw new Exception('Table not selected');
 
 		if (isset($this->ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix])
 			and $this->ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix] !== '') {
@@ -755,7 +754,7 @@ class Twig_Table_Tags
 	function title(): string
 	{
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
-			return 'Table not selected';
+			throw new Exception('Table not selected');
 
 		return $this->ct->Table->tabletitle;
 	}
@@ -763,7 +762,7 @@ class Twig_Table_Tags
 	function name(): ?string
 	{
 		if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
-			return 'Table not selected';
+			throw new Exception('Table not selected');
 
 		return $this->ct->Table->tablename;
 	}

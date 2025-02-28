@@ -398,7 +398,7 @@ class Inputbox
 
 			case 'sqljoin':
 				if (!$this->isTwig)
-					return 'Old Table Join tags no longer supported';
+					throw new Exception('Old Table Join tags no longer supported');
 
 				$path = CUSTOMTABLES_PRO_PATH . 'inputbox' . DIRECTORY_SEPARATOR;
 

@@ -614,7 +614,7 @@ class CTUser
 		} elseif (defined('WPINC')) {
 			return $this->resolveUserGroups_WordPress($valueArrayString);
 		} else {
-			return 'User Groups field type is not supported in this environment.';
+			throw new Exception('User Groups field type is not supported in this environment.');
 		}
 	}
 

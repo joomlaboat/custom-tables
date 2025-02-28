@@ -165,6 +165,10 @@ class updateImages
 		return null;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processImage_Original($imgMethods, string $rowValue, string $old_ImageFolder, string $new_ImageFolder, &$original_image_file): ?string
 	{
 		//Check original image file
@@ -179,15 +183,15 @@ class updateImages
 			if (file_exists($old_imageFile)) {
 				if ($old_ImageFolder != $new_ImageFolder) {
 					if (!@rename($old_imageFile, $new_imageFile))
-						return 'cannot move file to ' . $new_imageFile;
+						throw new Exception('cannot move file to ' . $new_imageFile);
 					else
 						$original_image_file = $new_imageFile;
 				} else
 					$original_image_file = $old_imageFile;
 			} else
-				return 'file not found';
+				throw new Exception('file not found');
 		} else
-			return 'file not found';
+			throw new Exception('file not found');
 
 		return null;
 	}
@@ -203,10 +207,10 @@ class updateImages
 		if (file_exists($old_imageFile)) {
 			if ($old_ImageFolder != $new_ImageFolder) {
 				if (!@rename($old_imageFile, $new_imageFile))
-					return 'cannot move file to ' . $new_imageFile;
+					throw new Exception('cannot move file to ' . $new_imageFile);
 			}
 		} else
-			return 'file not found';
+			throw new Exception('file not found');
 
 		return null;
 	}
@@ -241,17 +245,17 @@ class updateImages
 				$r = $imgMethods->ProportionalResize($original_image_file, $old_imageFile, $width, $height, 1, $color, $watermark);
 
 				if ($r != 1)
-					return 'cannot create file: ' . $old_imageFile;
+					throw new Exception('cannot create file: ' . $old_imageFile);
 			}
 
 			if (file_exists($old_imageFile)) {
 				if ($old_ImageFolder != $new_ImageFolder) {
 					//Move exiting custom size file to new folder
 					if (!@rename($old_imageFile, $new_imageFile))
-						return 'cannot move file to ' . $new_imageFile;
+						throw new Exception('cannot move file to ' . $new_imageFile);
 				}
 			} else {
-				return 'cannot create and move file: ' . $old_imageFile;
+				throw new Exception('cannot create and move file: ' . $old_imageFile);
 			}
 		}
 
@@ -284,6 +288,10 @@ class updateImages
 		return $image_sizes_to_delete;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function processImage_CustomSize_deleteFile($imgMethods, $rowValue, $old_ImageFolder, $prefix, string $imageFile_ext, string $original_image_file): ?string
 	{
 		if ($imageFile_ext == '')
@@ -294,7 +302,7 @@ class updateImages
 
 			if (file_exists($old_imageFile)) {
 				if (!@unlink($old_imageFile))
-					return 'cannot delete old file: ' . $old_imageFile;
+					throw new Exception('cannot delete old file: ' . $old_imageFile);
 			}
 		}
 		return null;
@@ -319,7 +327,7 @@ class updateImages
 					$width, $height, 1, $color, $watermark);
 
 				if ($r != 1)
-					return 'cannot create file: ' . $new_imageFile;
+					throw new Exception('cannot create file: ' . $new_imageFile);
 			}
 		}
 		return null;

@@ -167,7 +167,7 @@ class Value
 			case 'signature':
 
 				if (defined('WPINC'))
-					return 'CustomTables for WordPress: "signature" field type is not available yet.';
+					throw new Exception('CustomTables for WordPress: "signature" field type is not available yet.');
 
 				$siteName = common::getSiteName();
 				$ImageFolderArray = CustomTablesImageMethods::getImageFolder($this->field->params);
@@ -195,7 +195,7 @@ class Value
 			case 'filebox':
 
 				if (defined('WPINC'))
-					return 'CustomTables for WordPress: "filebox" field type is not available yet.';
+					throw new Exception('CustomTables for WordPress: "filebox" field type is not available yet.');
 
 				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
 					. 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR . 'filebox.php');
@@ -271,7 +271,7 @@ class Value
 	protected function orderingProcess($value): string
 	{
 		if (defined('WPINC')) {
-			return 'orderingProcess not yet supported by WordPress version of the Custom Tables.';
+			throw new Exception('orderingProcess not yet supported by WordPress version of the Custom Tables.');
 		}
 
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))

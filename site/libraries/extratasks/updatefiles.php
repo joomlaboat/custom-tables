@@ -134,10 +134,10 @@ class updateFiles
 		if (file_exists($filepath_old)) {
 			if ($filepath_old != $filepath_new) {
 				if (!@rename($filepath_old, $filepath_new))
-					return 'cannot move file to ' . $filepath_new;
+					throw new Exception('cannot move file to ' . $filepath_new);
 			}
 		} else
-			return 'file "' . $old_FileFolder . DIRECTORY_SEPARATOR . $filename . '" not found';
+			throw new Exception('file "' . $old_FileFolder . DIRECTORY_SEPARATOR . $filename . '" not found');
 
 		return null;
 	}

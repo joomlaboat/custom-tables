@@ -126,7 +126,7 @@ class ListOfFields
 	protected function renderBodyLine(object $item, int $i, $canCheckin, $userChkOut): string
 	{
 		if (defined('WPINC')) {
-			return 'renderBodyLine is meant for Joomla only. WordPress has another method to show the list of fields.';
+			throw new Exception('renderBodyLine is meant for Joomla only. WordPress has another method to show the list of fields.');
 		}
 
 		$hashRealTableName = database::realTableName($this->ct->Table->realtablename);

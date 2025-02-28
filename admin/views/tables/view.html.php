@@ -155,7 +155,7 @@ class CustomtablesViewTables extends HtmlView
 		$tableCreateQuery = database::showCreateTable($this->ct->Table->realtablename);
 
 		if (count($tableCreateQuery) == 0) {
-			return '<p>Table not found</p>';
+			common::enqueueMessage('Table not found');
 		} else {
 			$createTableSql = $tableCreateQuery[0];
 

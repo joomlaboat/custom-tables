@@ -333,7 +333,7 @@ class fieldObject
 	public function __toString()
 	{
 		if (!isset($this->field))
-			return 'Field not initialized.';
+			throw new Exception('Field not initialized.');
 
 		$valueProcessor = new Value($this->ct);
 		$vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, [], $this->parseParams);

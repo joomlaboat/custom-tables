@@ -218,9 +218,6 @@ class Layouts
 	 */
 	function renderMixedLayout($layoutId, ?int $layoutType = null, ?string $task = null): array
 	{
-		if ($layoutType === null and ($task == 'saveandcontinue' or $task == 'save' or $task == 'saveascopy'))
-			$layoutType = CUSTOMTABLES_ACTION_EDIT;
-
 		if (!empty($layoutId)) {
 			$this->getLayout($layoutId);
 			if ($this->layoutType === null)
@@ -230,6 +227,11 @@ class Layouts
 		} elseif ($task !== 'cancel') {
 			if ($this->ct->Table === null)
 				return ['success' => false, 'message' => 'CustomTable: Table not selected', 'short' => 'error'];
+
+			if ($layoutType === null) {
+				if ($task == 'saveandcontinue' or $task == 'save' or $task == 'saveascopy')
+					$layoutType = CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM;
+			}
 
 			if ($layoutType == CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG or $layoutType == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE)
 				$this->layoutCode = $this->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
@@ -1076,7 +1078,12 @@ class Layouts
 			$ok = $record->save($listing_id, $task == 'saveascopy');
 		} catch (Exception $e) {
 
-			$output = ['success' => false, 'message' => $e->getMessage(), 'short' => 'error'];
+			if ($this->ct->Env->debug)
+				$message = $e->getMessage() . '<br/>' . $e->getFile() . '<br/>' . $e->getLine();// . $e->getTraceAsString();
+			else
+				$message = $e->getMessage();
+
+			$output = ['success' => false, 'message' => $message, 'short' => 'error'];
 			if ($record->unauthorized) {
 				$returnToEncoded = common::makeReturnToURL();
 				$output['redirect'] = $this->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $returnToEncoded;
