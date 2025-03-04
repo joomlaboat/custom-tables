@@ -209,6 +209,7 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	require_once($path_helpers . 'CTMiscHelper.php');
 	require_once($path_helpers . 'Fields.php');
 	require_once($path_helpers . 'Icons.php');
+	require_once($path_helpers . 'Pagination.php');
 	require_once($path_helpers . 'FindSimilarImage.php');
 	require_once($path_helpers . 'TableHelper.php');
 	require_once($path_helpers . 'compareimages.php');

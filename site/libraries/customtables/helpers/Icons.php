@@ -550,6 +550,138 @@ class Icons
 			return 'Photo Manager';
 	}
 
+	public static function iconStart(string $type, string $title = ''): string
+	{
+		if (empty($title))
+			$title = common::translate('COM_CUSTOMTABLES_START');
+
+		// Image Icons (default)
+		if ($type == '') {
+			$img = '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/down.png" style="transform: rotate(90deg);" alt="' . $title . '" title="' . $title . '" />';
+			return $img . $img;
+		} // Not So Pixelly
+		elseif ($type == 'not-so-pixelly') {
+			$img = '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/down.png" style="transform: rotate(90deg);" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
+			return $img . $img;
+		} // Font Awesome 4
+		elseif ($type == 'font-awesome-4')
+			return '<i class="ctToolBarIcon2x fa fa-angle-double-left" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Font Awesome 5
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
+			return '<i class="ctToolBarIcon2x fas fa-angle-double-left" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Bootstrap Icons
+		elseif ($type == 'bootstrap')
+			return '<i class="ctToolBarIcon2x bi bi-" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="ctToolBarIcon2x um-faicon-angle-double-left" aria-hidden="true" title="' . $title . '"></i>';//checked
+
+		// Default fallback
+		else
+			return 'Start';
+	}
+
+	public static function iconPrev(string $type, string $title = ''): string
+	{
+		if (empty($title))
+			$title = common::translate('JPREV');
+
+		// Image Icons (default)
+		if ($type == '')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/down.png" style="transform: rotate(90deg);" alt="' . $title . '" title="' . $title . '" />';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/down.png" style="transform: rotate(90deg);" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
+
+		// Font Awesome 4
+		elseif ($type == 'font-awesome-4')
+			return '<i class="ctToolBarIcon2x fa fa-plus-circle" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Font Awesome 5
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
+			return '<i class="ctToolBarIcon2x fas fa-angle-left" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Bootstrap Icons
+		elseif ($type == 'bootstrap')
+			return '<i class="ctToolBarIcon2x bi bi- ms-1" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="ctToolBarIcon2x um-faicon-angle-left" aria-hidden="true" title="' . $title . '"></i>';//checked
+
+		// Default fallback
+		else
+			return 'Prev';
+	}
+
+	public static function iconNext(string $type, string $title = ''): string
+	{
+		if (empty($title))
+			$title = common::translate('COM_CUSTOMTABLES_NEXT');
+
+		// Image Icons (default)
+		if ($type == '')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/down.png" style="transform: rotate(-90deg);" alt="' . $title . '" title="' . $title . '" />';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/down.png" style="transform: rotate(-90deg);" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
+
+		// Font Awesome 4
+		elseif ($type == 'font-awesome-4')
+			return '<i class="ctToolBarIcon2x fa fa-angle-right" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Font Awesome 5
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
+			return '<i class="ctToolBarIcon2x fas fa-angle-right" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Bootstrap Icons
+		elseif ($type == 'bootstrap')
+			return '<i class="ctToolBarIcon2x bi bi-" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="ctToolBarIcon2x um-faicon-angle-right" aria-hidden="true" title="' . $title . '"></i>';//checked
+
+		// Default fallback
+		else
+			return 'New';
+	}
+
+	public static function iconEnd(string $type, string $title = ''): string
+	{
+		if (empty($title))
+			$title = common::translate('COM_CUSTOMTABLES_END');
+
+		// Image Icons (default)
+		if ($type == '') {
+			$img = '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/down.png" style="transform: rotate(-90deg);" alt="' . $title . '" title="' . $title . '" />';
+			return $img . $img;
+		} // Not So Pixelly
+		elseif ($type == 'not-so-pixelly') {
+			$img = '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/down.png" style="transform: rotate(-90deg);" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
+			return $img . $img;
+		} // Font Awesome 4
+		elseif ($type == 'font-awesome-4')
+			return '<i class="ctToolBarIcon2x fa fa-angle-double-right" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Font Awesome 5
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
+			return '<i class="ctToolBarIcon2x fas fa-angle-double-right" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Bootstrap Icons
+		elseif ($type == 'bootstrap')
+			return '<i class="ctToolBarIcon2x bi bi-" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="ctToolBarIcon2x um-faicon-angle-double-right" aria-hidden="true" title="' . $title . '"></i>';//checked
+
+		// Default fallback
+		else
+			return 'New';
+	}
+
 	public static function iconGoBack(string $type, string $title = '', ?string $iconFile = null): string
 	{
 		if (empty($title))
