@@ -195,7 +195,7 @@
 		</tag>
 
 		<tag name="pagination" label="Pagination Bar" startchar="{" endchar="}"
-			 description="renders HTML Pagination Bar." twigclass="html">
+			 description="renders HTML Pagination Bar." twigclass="html" wordpress="true">
 			<params>
 				<param type="radio" name="icons" label="Show arrow icons" default="list"
 					   options="false|Buttons with text,true|Arrow Icons"/>
