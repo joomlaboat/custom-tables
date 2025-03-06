@@ -34,7 +34,8 @@ function createLayout_SimpleCatalog(array $fields, bool $addToolbar = true): str
 
 	$fieldTypes_to_skip = ['log', 'filebox', 'dummy'];
 	$fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox', 'radio'];
-	$fieldTypes_allowed_to_orderBy = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'userid', 'user', 'virtual'];
+	$fieldTypes_allowed_to_orderBy = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime',
+		'date', 'multilangstring', 'userid', 'user', 'virtual'];
 
 	$result .= PHP_EOL . '<table>' . PHP_EOL;
 
