@@ -14,6 +14,7 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Uri\Uri;
 
 if ($this->ct->Env->frmt == 'html') {
 	if (empty($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
@@ -32,11 +33,25 @@ try {
 	if (empty($this->ct->Params->listing_id)) {
 		common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
+		$document = Factory::getApplication()->getDocument();
+
+		if (is_array($this->ct->LayoutVariables['styles'] ?? null)) {
+			foreach ($this->ct->LayoutVariables['styles'] as $style) {
+				$document->addCustomTag('<link rel="stylesheet" href="' . $style . '" type="text/css" />');
+			}
+		}
+
+		if (is_array($this->ct->LayoutVariables['scripts'] ?? null)) {
+			foreach ($this->ct->LayoutVariables['scripts'] as $script) {
+				$document->addCustomTag('<script src="' . $script . '"></script>');
+			}
+		}
+
 		if (!empty($this->catalog->layoutCodeCSS))
-			Factory::getApplication()->getDocument()->addCustomTag('<style>' . $this->catalog->layoutCodeCSS . '</style>');
+			$document->addCustomTag('<style>' . $this->catalog->layoutCodeCSS . '</style>');
 
 		if (!empty($this->catalog->layoutCodeJS))
-			Factory::getApplication()->getDocument()->addCustomTag('<script>' . $this->catalog->layoutCodeJS . '</script>');
+			$document->addCustomTag('<script>' . $this->catalog->layoutCodeJS . '</script>');
 	}
 
 } catch (Exception $e) {
