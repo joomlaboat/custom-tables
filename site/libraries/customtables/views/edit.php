@@ -105,7 +105,6 @@ class Edit
 			$this->row = $row;
 
 		if ($this->ct->Env->clean == 0) {
-			//common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
 			if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
 

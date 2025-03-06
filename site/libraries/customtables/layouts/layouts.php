@@ -980,9 +980,6 @@ class Layouts
 				throw new Exception('Catalog View: Table not selected.');
 		}
 
-		//if ($this->ct->Env->frmt == 'html' and !$this->ct->Env->clean)
-		//common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
-
 		// --------------------- Filter
 		$this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 		$this->ct->Filter->addQueryWhereFilter();

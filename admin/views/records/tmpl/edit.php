@@ -28,6 +28,20 @@ if (CUSTOMTABLES_JOOMLA_MIN_4) {
 
 common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
+$document = Factory::getApplication()->getDocument();
+
+if (is_array($this->ct->LayoutVariables['styles'] ?? null)) {
+	foreach ($this->ct->LayoutVariables['styles'] as $style) {
+		$document->addCustomTag('<link rel="stylesheet" href="' . $style . '" type="text/css" />');
+	}
+}
+
+if (is_array($this->ct->LayoutVariables['scripts'] ?? null)) {
+	foreach ($this->ct->LayoutVariables['scripts'] as $script) {
+		$document->addCustomTag('<script src="' . $script . '"></script>');
+	}
+}
+
 $editForm = new Edit($this->ct);
 $editForm->layoutContent = $this->pageLayout;
 echo $editForm->render($this->row, $this->formLink, 'adminForm');

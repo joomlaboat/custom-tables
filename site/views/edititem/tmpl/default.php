@@ -21,11 +21,25 @@ jimport('joomla.html.html.bootstrap');
 try {
 	common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
 
+	$document = Factory::getApplication()->getDocument();
+
+	if (is_array($this->ct->LayoutVariables['styles'] ?? null)) {
+		foreach ($this->ct->LayoutVariables['styles'] as $style) {
+			$document->addCustomTag('<link rel="stylesheet" href="' . $style . '" type="text/css" />');
+		}
+	}
+
+	if (is_array($this->ct->LayoutVariables['scripts'] ?? null)) {
+		foreach ($this->ct->LayoutVariables['scripts'] as $script) {
+			$document->addCustomTag('<script src="' . $script . '"></script>');
+		}
+	}
+
 	if (!empty($this->result['style']))
-		Factory::getApplication()->getDocument()->addCustomTag('<style>' . $this->result['style'] . '</style>');
+		$document->addCustomTag('<style>' . $this->result['style'] . '</style>');
 
 	if (!empty($this->result['script']))
-		Factory::getApplication()->getDocument()->addCustomTag('<script>' . $this->result['script'] . '</script>');
+		$document->addCustomTag('<script>' . $this->result['script'] . '</script>');
 
 } catch (Exception $e) {
 	common::enqueueMessage($e->getMessage());

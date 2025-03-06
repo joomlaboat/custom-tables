@@ -34,7 +34,6 @@ class CT
 	var array $editFields;
 	var array $editFieldTypes;
 	var array $LayoutVariables;
-	var array $errors;
 	var array $messages;
 
 	/**

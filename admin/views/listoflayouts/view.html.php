@@ -280,5 +280,4 @@ class CustomtablesViewListoflayouts extends HtmlView
 
 		return ['original' => $original_ct_matches, 'twig' => $twig_matches, 'errors' => $errors];
 	}
-
 }
