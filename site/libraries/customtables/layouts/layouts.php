@@ -530,321 +530,43 @@ class Layouts
 	function createDefaultLayout_SimpleCatalog(array $fields, bool $addToolbar = true): string
 	{
 		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG;
-
-		$result = '<style>' . PHP_EOL . '.datagrid th{text-align:left;}' . PHP_EOL . '.datagrid td{text-align:left;}' . PHP_EOL . '</style>' . PHP_EOL;
-		$result .= '<div style="float:right;">{{ html.recordcount }}</div>' . PHP_EOL;
-
-		if ($addToolbar) {
-			$result .= '<div style="float:left;">{{ html.add }}</div>' . PHP_EOL;
-
-			if (defined('_JEXEC'))
-				$result .= '<div style="text-align:center;">{{ html.print }}</div>' . PHP_EOL;
-		}
-
-		$result .= '<div class="datagrid">' . PHP_EOL;
-
-		if ($addToolbar)
-			$result .= '<div>{{ html.batch(\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
-
-		$result .= PHP_EOL;
-
-		$fieldTypes_to_skip = ['log', 'filebox', 'dummy'];
-		$fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox', 'radio'];
-		$fieldTypes_allowed_to_orderBy = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'userid', 'user', 'virtual'];
-
-		$result .= PHP_EOL . '<table>' . PHP_EOL;
-
-		$result .= self::renderTableHead($fields, $addToolbar, $fieldTypes_to_skip, $fieldTypesWithSearch, $fieldTypes_allowed_to_orderBy);
-
-		$result .= PHP_EOL . '<tbody>';
-		$result .= PHP_EOL . '{% block record %}';
-		$result .= PHP_EOL . '<tr>' . PHP_EOL;
-
-		//Look for ordering field type
-		if ($addToolbar) {
-			foreach ($fields as $field) {
-				if ((int)$field['published'] === 1 and $field['type'] == 'ordering') {
-					$result .= '<td style="text-align:center;">{{ ' . $field['fieldname'] . ' }}</td>' . PHP_EOL;
-				}
-			}
-		}
-
-		if ($addToolbar)
-			$result .= '<td style="text-align:center;">{{ html.toolbar("checkbox") }}</td>' . PHP_EOL;
-
-		$result .= '<td style="text-align:center;"><a href="{{ record.link(true) }}">{{ record.id }}</a></td>' . PHP_EOL;
-
-		$imageGalleryFound = false;
-		$fileBoxFound = false;
-
-		foreach ($fields as $field) {
-			if ((int)$field['published'] === 1) {
-				if ($field['type'] == 'imagegallery')
-					$imageGalleryFound = true;
-
-				if ($field['type'] == 'filebox') {
-					$fileBoxFound = true;
-				} elseif ($field['type'] != 'ordering' && !in_array($field['type'], $fieldTypes_to_skip)) {
-
-					if ($field['type'] == 'url')
-						$fieldValue = '<a href="{{ ' . $field['fieldname'] . ' }}" target="_blank">{{ ' . $field['fieldname'] . ' }}</a>';
-					else
-						$fieldValue = '{{ ' . $field['fieldname'] . ' }}';
-
-					$result .= '<td>' . $fieldValue . '</td>' . PHP_EOL;
-				}
-			}
-		}
-
-		if ($addToolbar) {
-
-			$toolbarButtons = ['edit', 'publish', 'refresh', 'delete'];
-
-			if ($imageGalleryFound)
-				$toolbarButtons [] = 'gallery';
-
-			if ($fileBoxFound)
-				$toolbarButtons [] = 'filebox';
-
-			$result .= '<td>{{ html.toolbar("' . implode('","', $toolbarButtons) . '") }}</td>' . PHP_EOL;
-		}
-
-		$result .= '</tr>';
-
-		$result .= PHP_EOL . '{% endblock %}';
-		$result .= PHP_EOL . '</tbody>';
-		$result .= PHP_EOL . '</table>' . PHP_EOL;
-
-		$result .= PHP_EOL;
-		$result .= '</div>' . PHP_EOL;
-
-		if (defined('_JEXEC')) {
-			if ($addToolbar)
-				$result .= '<br/><div style="text-align:center;">{{ html.pagination }}</div>' . PHP_EOL;
-		}
-
-		return $result;
-	}
-
-	protected function renderTableHead(array $fields, bool $addToolbar, array $fieldtypes_to_skip, array $fieldTypesWithSearch, array $fieldtypes_allowed_to_orderby): string
-	{
-		$result = '<thead><tr>' . PHP_EOL;
-
-		//Look for ordering field type
-		if ($addToolbar) {
-			foreach ($fields as $field) {
-				if ((int)$field['published'] === 1 and $field['type'] == 'ordering')
-					$result .= '<th class="short">{{ ' . $field['fieldname'] . '.label(true) }}</th>' . PHP_EOL;
-			}
-		}
-
-		if ($addToolbar)
-			$result .= '<th class="short">{{ html.batch("checkbox") }}</th>' . PHP_EOL;
-
-		if ($addToolbar)
-			$result .= '<th class="short">{{ record.label(true) }}</th>' . PHP_EOL;
-		else
-			$result .= '<th class="short">{{ record.label(false) }}</th>' . PHP_EOL;
-
-		foreach ($fields as $field) {
-			if ((int)$field['published'] === 1) {
-				$result .= self::renderTableColumnHeader($field, $addToolbar, $fieldtypes_to_skip, $fieldTypesWithSearch, $fieldtypes_allowed_to_orderby);
-			}
-		}
-
-		if ($addToolbar)
-			$result .= '<th>Action<br/>{{ html.searchbutton }}</th>' . PHP_EOL;
-
-		$result .= '</tr></thead>' . PHP_EOL . PHP_EOL;
-
-		return $result;
-	}
-
-	function renderTableColumnHeader(array $field, bool $addToolbar, array $fieldtypes_to_skip, array $fieldtypesWithSearch, array $fieldtypes_allowed_to_orderby): string
-	{
-		$result = '';
-
-		if ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip)) {
-
-			$result .= '<th>';
-
-			if (in_array($field['type'], $fieldtypes_allowed_to_orderby)) {
-				if (Fields::isVirtualField($field))
-					$result .= '{{ ' . $field['fieldname'] . '.title }}';
-				else
-					$result .= '{{ ' . $field['fieldname'] . '.label(true) }}';
-			} else
-				$result .= '{{ ' . $field['fieldname'] . '.title }}';
-
-			if ($addToolbar and in_array($field['type'], $fieldtypesWithSearch)) {
-
-				if ($field['type'] == 'checkbox' || $field['type'] == 'sqljoin' || $field['type'] == 'records')
-					$result .= '<br/>{{ html.search("' . $field['fieldname'] . '","","reload") }}';
-				else
-					$result .= '<br/>{{ html.search("' . $field['fieldname'] . '") }}';
-			}
-
-			$result .= '</th>' . PHP_EOL;
-		}
-
-		return $result;
+		require_once('defaults' . DIRECTORY_SEPARATOR . 'simple_catalog.php');
+		return createLayout_SimpleCatalog($fields, $addToolbar, $addToolbar);
 	}
 
 	function createDefaultLayout_Edit(array $fields, bool $addToolbar = true): string
 	{
 		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM;
-		$result = '<legend>{{ table.title }}</legend>{{ html.goback() }}<div class="form-horizontal">';
-		//, 'imagegallery'
-		$fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy', 'virtual'];
-
-		foreach ($fields as $field) {
-			if ((int)$field['published'] === 1) {
-				if (!in_array($field['type'], $fieldTypes_to_skip)) {
-					$result .= '<div class="control-group">';
-					$result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.label }}</div><div class="controls">{{ ' . $field['fieldname'] . '.edit }}</div>';
-					$result .= '</div>';
-				}
-			}
-		}
-
-		$result .= '</div>';
-
-		foreach ($fields as $field) {
-			if ((int)$field['published'] === 1) {
-				if ($field['type'] === "dummy") {
-					$result .= '<p><span style="color: #FB1E3D; ">*</span>' . ' {{ ' . $field['fieldname'] . '.title }}</p>';
-					break;
-				}
-			}
-		}
-
-		if ($addToolbar)
-			$result .= '<div style="text-align:center;">{{ html.button("save") }} {{ html.button("saveandclose") }} {{ html.button("saveascopy") }} {{ html.button("cancel") }}</div>';
-		return $result;
+		require_once('defaults' . DIRECTORY_SEPARATOR . 'edit.php');
+		return createLayout_Edit($fields, $addToolbar);
 	}
 
 	function createDefaultLayout_Edit_WP(array $fields, bool $addToolbar = true, bool $addLegend = true, bool $addGoBack = true): string
 	{
 		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM;
-
-		$result = '';
-
-		if ($addLegend)
-			$result .= '<legend>{{ table.title }}</legend>';
-
-		if ($addGoBack)
-			$result .= '{{ html.goback() }}';
-
-		$result .= '<table class="form-table" role="presentation">';
-
-		//, 'imagegallery'
-		$fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy', 'virtual'];
-
-		foreach ($fields as $field) {
-			if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {
-
-				$attribute = 'for="' . $this->ct->Table->fieldInputPrefix . $field['fieldname'] . '"';
-				$label = '<th scope="row">
-                            <label ' . $attribute . '>'
-					. '{{ ' . $field['fieldname'] . '.title }}'
-					. ((int)$field['isrequired'] == 1 ? '<span class="description">(' . __('required', 'customtables') . ')</span>' : '')//WP version
-					. '</label>
-                        </th>';
-
-				$input = '<td>
-                            {{ ' . $field['fieldname'] . '.edit }}
-                        </td>';
-
-				$result .= '<tr class="form-field ' . ((int)$field['isrequired'] == 1 ? 'form-required' : 'form') . '">'
-					. $label
-					. $input
-					. '</tr>';
-			}
-		}
-
-		$result .= '</table>';
-
-		if ($addToolbar)
-			$result .= '<div style="text-align:center;">{{ html.button("save") }} {{ html.button("saveandclose") }} {{ html.button("saveascopy") }} {{ html.button("cancel") }}</div>
-';
-		return $result;
+		require_once('defaults' . DIRECTORY_SEPARATOR . 'edit_wp.php');
+		return createLayout_Edit_WP($fields, $addToolbar, $addLegend, $addGoBack, $this->ct->Table->fieldInputPrefix);
 	}
 
 	function createDefaultLayout_Details(array $fields): string
 	{
 		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_DETAILS;
-		$result = '<legend>{{ table.title }}</legend>{{ html.goback() }}<div class="form-horizontal">';
-		$fieldTypes_to_skip = ['dummy'];
-
-		foreach ($fields as $field) {
-			if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {
-				$result .= '<div class="control-group">';
-
-				//if ($field['type'] == 'creationtime' or $field['type'] == 'changetime' or $field['type'] == 'lastviewtime')
-				$fieldTag = '{{ ' . $field['fieldname'] . ' }}';
-
-				$result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.title }}</div><div class="controls"> ' . $fieldTag . ' </div>';
-
-
-				$result .= '</div>';
-			}
-		}
-
-		$result .= '</div>';
-
-		return $result;
+		require_once('defaults' . DIRECTORY_SEPARATOR . 'details.php');
+		return createLayout_Details($fields);
 	}
 
 	function createDefaultLayout_Email(array $fields): string
 	{
 		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_DETAILS;
-		$result = 'Dear ...<br/>A new records has been added to {{ table.title }} table.<br/><br/>Details below:<br/>';
-
-		$fieldTypes_to_skip = ['log', 'filebox', 'dummy'];
-
-		foreach ($fields as $field) {
-			if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1)
-				$result .= '{{ ' . $field['fieldname'] . '.title }}: {{ ' . $field['fieldname'] . ' }}<br/>';
-		}
-		return $result;
+		require_once('defaults' . DIRECTORY_SEPARATOR . 'email.php');
+		return createLayout_Email($fields);
 	}
 
 	function createDefaultLayout_CSV($fields): string
 	{
 		$this->layoutType = CUSTOMTABLES_LAYOUT_TYPE_CSV;
-
-		$result = '';
-
-		$fieldTypes_to_skip = ['log', 'filebox', 'dummy', 'ordering'];
-		$fieldTypes_to_pureValue = ['image', 'filebox', 'file'];
-
-		foreach ($fields as $field) {
-			if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {
-				if ($result !== '')
-					$result .= ',';
-
-				$result .= '"{{ ' . $field['fieldname'] . '.title }}"';
-			}
-		}
-
-		$result .= PHP_EOL . "{% block record %}";
-
-		$firstField = true;
-		foreach ($fields as $field) {
-			if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {
-
-				if (!$firstField)
-					$result .= ',';
-
-				if (!in_array($field['type'], $fieldTypes_to_pureValue))
-					$result .= '"{{ ' . $field['fieldname'] . ' }}"';
-				else
-					$result .= '"{{ ' . $field['fieldname'] . '.value }}"';
-
-				$firstField = false;
-			}
-		}
-		return $result . PHP_EOL . "{% endblock %}";
+		require_once('defaults' . DIRECTORY_SEPARATOR . 'csv.php');
+		return createLayout_CSV($fields);
 	}
 
 	/**
