@@ -35,6 +35,7 @@ class LayoutEditor
 
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/layoutwizard.js"></script>');
 			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/layouteditor.js"></script>');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/edit.js"></script>');
 			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/layouteditor.css" rel="stylesheet">');
 
 			$document->addCustomTag('<link rel="stylesheet" href="' . common::UriRoot(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
@@ -172,6 +173,11 @@ class LayoutEditor
 			$version = 3;
 
 		$result_js = '
+		
+	if (typeof window.CTEditHelper === "undefined") {
+		window.CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',null);
+	}
+		
 	joomlaVersion =' . $version . ';
 	define_cmLayoutEditor();
 
