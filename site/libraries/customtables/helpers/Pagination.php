@@ -25,7 +25,7 @@ class Pagination
 	private bool $showArrowIcons;
 	private string $toolbarIcons;
 
-	public function __construct(int $total, int $limitStart, int $limit, string $prefix = '', bool $showArrowIcons = false, string $toolbarIcons)
+	public function __construct(int $total, int $limitStart, int $limit, string $prefix = '', bool $showArrowIcons = false, string $toolbarIcons = '')
 	{
 		$this->total = max(0, $total);
 		$this->limit = max(1, $limit);

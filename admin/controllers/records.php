@@ -214,7 +214,7 @@ class CustomtablesControllerRecords extends FormController
 		if ($listing_id === null) {
 			$cid = common::inputPostArray('cid', []);
 			$cid = ArrayHelper::toInteger($cid);
-			$listing_id = $cid[0];
+			$listing_id = $cid[0] ?? null;
 		}
 
 		$tableid = common::inputGetInt('tableid', 0);

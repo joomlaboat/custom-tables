@@ -984,6 +984,8 @@ function getLayout_Page() {
 	let fieldtypes_to_skip = ['log', 'filebox', 'dummy'];
 	let fieldtypes_withsearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
 	let fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user'];
+	fieldtypes_allowed_to_orderby.push('virtual');
+
 	let fields_to_skip = getFieldsToSkip();
 
 	result += renderTableHead(fieldtypes_to_skip, fields_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby);
@@ -1167,6 +1169,7 @@ function getLayout_SimpleCatalog() {
 	let fieldtypes_to_skip = ['log', 'filebox', 'dummy'];
 	let fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
 	let fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user'];
+	fieldtypes_allowed_to_orderby.push('virtual');
 	let fields_to_skip = getFieldsToSkip();
 
 	result += '<table>\r\n';
@@ -1450,18 +1453,29 @@ function renderTableColumnHeader(field, fieldtypes_to_skip, fields_to_skip, fiel
 
 	let result = '';
 
-	if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
+	if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
 
 		result += '<th>';
 
-		if (field.allowordering && fieldtypes_allowed_to_orderby.indexOf(field.type) !== -1)
+		let allowOrdering = fieldtypes_allowed_to_orderby.indexOf(field.type) !== -1;
+
+		if (allowOrdering && field.type === 'virtual') {
+
+			let fieldTypeParamsClean = field.typeparams.replaceAll('"', '').replaceAll('****quote****', '"');
+			let fieldTypeParametersList = parseQuote(fieldTypeParamsClean, ",", true);
+
+			if (fieldTypeParametersList.length > 1 && fieldTypeParametersList[1] === 'virtual')
+				allowOrdering = false;
+		}
+
+		if (allowOrdering)
 			result += '{{ ' + field.fieldname + '.label(true) }}';
 		else
 			result += '{{ ' + field.fieldname + '.title }}';
 
 		if (addSearch && fieldtypes_withsearch.indexOf(field.type) !== -1) {
 
-			if (field.type == 'checkbox' || field.type == 'sqljoin' || field.type == 'records')
+			if (field.type === 'checkbox' || field.type === 'sqljoin' || field.type === 'records')
 				result += '<br/>{{ html.search("' + field.fieldname + '","","reload") }}';
 			else
 				result += '<br/>{{ html.search("' + field.fieldname + '") }}';
