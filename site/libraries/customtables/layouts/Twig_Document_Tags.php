@@ -154,7 +154,7 @@ class Twig_Document_Tags
 			$urlParts = parse_url($input);
 			$path = $urlParts['path'];
 
-			// Check if the path ends with .js, ignoring any URL parameters
+			// Check if the path ends with .css, ignoring any URL parameters
 			if (preg_match('/\.css($|\?)/', $path)) {
 
 				if (!isset($this->ct->LayoutVariables['styles']))

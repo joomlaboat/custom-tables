@@ -106,7 +106,7 @@
 		<valueparams name="userid" label="User Details Format" description="Information about the user to display."
 					 example="registerdate">
 			<params>
-				<param type="list" name="userAccountField" default="name"
+				<param type="user" name="userAccountField" default="name"
 					   label="Information about the user to display."
 					   description="Information about the user to display." example="registerdate">
 					<option value="id" label="User ID" wordpress="true"/>

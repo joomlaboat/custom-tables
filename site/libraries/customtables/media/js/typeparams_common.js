@@ -843,11 +843,12 @@ function renderInput_User(id, param, value, onchange) {
 	for (let o = 0; o < options.length; o++) {
 		const opt = options[o]["@attributes"];
 
-		if (window.Joomla instanceof Object || (typeof (opt.wordpress) !== "undefined" && opt.wordpress === "true"))
+		if (CTEditHelper.cmsName === "Joomla" || (CTEditHelper.cmsName === "WordPress" && opt.wordpress === "true"))
 			selectOptions.push([opt.value, opt.label]);
 	}
 
-	if (window.Joomla instanceof Object) {
+	if (CTEditHelper.cmsName === "Joomla") {
+
 		for (let i = 0; i < custom_fields.length; i++) {
 			if (custom_fields[i][0] === 'com_users.user')
 				selectOptions.push([custom_fields[i][2], custom_fields[i][1]]);
