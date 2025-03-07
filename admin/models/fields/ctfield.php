@@ -33,7 +33,7 @@ class JFormFieldCTField extends JFormFieldList
 	 */
 	public $type = 'ctfield';
 
-	public function getOptions($add_empty_option = true)
+	public function getOptions($add_empty_option = true): array
 	{
 		$whereClause = new MySQLWhereClause();
 		$results = database::loadColumn('#__customtables_fields', ['type'], $whereClause, 'type');

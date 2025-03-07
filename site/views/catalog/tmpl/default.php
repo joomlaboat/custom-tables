@@ -14,7 +14,6 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Uri\Uri;
 
 if ($this->ct->Env->frmt == 'html') {
 	if (empty($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.

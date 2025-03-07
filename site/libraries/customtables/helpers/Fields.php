@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTablesFileMethods;
 use CustomTablesImageMethods;
 use Exception;
 
@@ -99,7 +98,7 @@ class Fields
 				//Delete all files belongs to the filebox
 
 				$fileBoxTableName = '#__customtables_filebox_' . $tableRow['tablename'] . '_' . $field->fieldname;
-				CustomTablesFileMethods::DeleteFileBoxFiles($fileBoxTableName, (string)$field->fieldrow['tableid'], $field->fieldname, $field->params);
+				FileMethods::DeleteFileBoxFiles($fileBoxTableName, (string)$field->fieldrow['tableid'], $field->fieldname, $field->params);
 
 				//Delete gallery table
 				database::dropTableIfExists($tableRow['tablename'] . '_' . $field->fieldname, 'filebox');

@@ -8,12 +8,15 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+namespace CustomTables;
+
+// no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\database;
-use CustomTables\MySQLWhereClause;
+use CustomTablesImageMethods;
+use Exception;
 
-class CustomTablesFileMethods
+class FileMethods
 {
 	static public function FileExtension($src, $allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx png jpg jpeg gif webp mp3 pages'): string
 	{
@@ -48,6 +51,10 @@ class CustomTablesFileMethods
 		return $rec->file_ext;
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	static public function DeleteFileBoxFiles($fileBoxTableName, string $tableId, string $fileBoxName, array $params): void
 	{
 		$fileFolderArray = CustomTablesImageMethods::getImageFolder($params, 'filebox');
@@ -55,7 +62,7 @@ class CustomTablesFileMethods
 		$fileRows = database::loadObjectList($fileBoxTableName, ['fileid'], $whereClause);
 
 		foreach ($fileRows as $fileRow) {
-			CustomTablesFileMethods::DeleteExistingFileBoxFile(
+			self::DeleteExistingFileBoxFile(
 				$fileFolderArray['path'],
 				$tableId,
 				$fileBoxName,

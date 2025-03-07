@@ -16,6 +16,7 @@ use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\database;
 use CustomTables\Field;
+use CustomTables\FileMethods;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -24,7 +25,6 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 {
 	var CT $ct;
 	var ?array $row;
-	var CustomTablesFileMethods $filemethods;
 	var string $fileBoxName;
 	var string $FileBoxTitle;
 	var array $fileBoxFolderArray;
@@ -41,11 +41,8 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 		parent::__construct();
 
 		$this->allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb pages';
-
 		$this->maxfilesize = CTMiscHelper::file_upload_max_size();
-		$this->filemethods = new CustomTablesFileMethods;
-
-		$this->ct->getTable($this->ct->Params->tableName, null);
+		$this->ct->getTable($this->ct->Params->tableName);
 
 		if ($this->ct->Table === null) {
 			Factory::getApplication()->enqueueMessage('Table not selected (63).', 'error');
@@ -106,8 +103,8 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 
 		foreach ($file_arr as $fileid) {
 			if ($fileid != '') {
-				$file_ext = CustomTablesFileMethods::getFileExtByID($this->ct->Table->tablename, $this->fileBoxName, $fileid);
-				CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileBoxFolderArray['path'], $this->ct->Table->tableid, $this->fileBoxName, $fileid, $file_ext);
+				$file_ext = FileMethods::getFileExtByID($this->ct->Table->tablename, $this->fileBoxName, $fileid);
+				FileMethods::DeleteExistingFileBoxFile($this->fileBoxFolderArray['path'], $this->ct->Table->tableid, $this->fileBoxName, $fileid, $file_ext);
 				database::deleteRecord($this->fileboxtablename, 'fileid', $fileid);
 			}
 		}
@@ -139,7 +136,7 @@ class CustomTablesModelEditFiles extends BaseDatabaseModel
 		}
 
 		//Save to DB
-		$file_ext = CustomTablesFileMethods::FileExtension($uploadedFile, $this->allowedExtensions);
+		$file_ext = FileMethods::FileExtension($uploadedFile, $this->allowedExtensions);
 		if ($file_ext == '') {
 			//unknown file extension (type)
 			unlink($uploadedFile);
