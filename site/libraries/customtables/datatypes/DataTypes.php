@@ -15,9 +15,9 @@ defined('_JEXEC') or die();
 
 class DataTypes
 {
-	public static function fieldTypeTranslation()
+	public static function fieldTypeTranslation(): array
 	{
-		$typeArray = array(
+		return array(
 			'string' => 'COM_CUSTOMTABLES_FIELDS_STRING',
 			'multilangstring' => 'COM_CUSTOMTABLES_FIELDS_MULTILANGSTRING',
 			'text' => 'COM_CUSTOMTABLES_FIELDS_TEXT',
@@ -65,7 +65,6 @@ class DataTypes
 			'blob' => 'COM_CUSTOMTABLES_FIELDS_BLOB',
 			'language' => 'COM_CUSTOMTABLES_FIELDS_LANGUAGE'
 		);
-		return $typeArray;
 	}
 
 	public static function isrequiredTranslation(): array
