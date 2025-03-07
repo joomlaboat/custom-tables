@@ -15,8 +15,8 @@ jimport('joomla.application.component.modellist');
 
 use CustomTables\common;
 use CustomTables\CT;
-use CustomTables\ListOfFields;
 use CustomTables\DataTypes;
+use CustomTables\ListOfFields;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;

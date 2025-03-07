@@ -213,6 +213,7 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	require_once($path_helpers . 'FindSimilarImage.php');
 	require_once($path_helpers . 'TableHelper.php');
 	require_once($path_helpers . 'compareimages.php');
+	require_once($path_helpers . 'DataTypes.php');
 
 	if (defined('_JEXEC')) {
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'ct-common-joomla.php');
@@ -239,7 +240,6 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 	require_once($pathDataTypes . 'Table.php');
 
 	$pathDataTypes = $path . 'datatypes' . DIRECTORY_SEPARATOR;
-	require_once($pathDataTypes . 'datatypes.php');
 	require_once($pathDataTypes . 'filemethods.php');
 
 	$pathDataTypes = $path . 'layouts' . DIRECTORY_SEPARATOR;
