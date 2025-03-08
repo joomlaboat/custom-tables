@@ -1671,7 +1671,7 @@
 	<!-- WordPress Ready 34 -->
 	<type ct_name="user" label="User"
 		  description="Provides User Selection box. It can also create a New User account if all necessary fields are set: Name, Email and User Group(s)"
-		  priority="2" wordpress="false" order="34">
+		  priority="2" wordpress="true" order="34">
 		<params>
 			<param name="usergroups" label="User Groups"
 				   description="Limit selection to certain User Group(s). Or used as default User Group(s) when creating a new user account."

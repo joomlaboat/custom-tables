@@ -799,6 +799,10 @@ class Fields
 		return Fields::makeProjectedFieldType($ct_fieldTypeArray);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getProjectedFieldType(string $ct_fieldType, ?string $typeParams): ?array
 	{
 		//Returns an array of mysql column parameters
@@ -884,6 +888,14 @@ class Fields
 
 			case 'userid':
 			case 'user':
+				if (defined('_JEXEC')) {
+					return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null];
+				} elseif (defined('WPINC')) {
+					return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null];
+				} else {
+					throw new Exception("User field tyoe not supported");
+				}
+
 			case 'sqljoin':
 			case 'article':
 				return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null];
