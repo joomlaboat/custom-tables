@@ -465,6 +465,8 @@ class database
 
 				if ($select[0] == 'COUNT')
 					$selects[] = 'COUNT(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
+				elseif ($select[0] == 'DISTINCT')
+					$selects[] = 'DISTINCT `' . $selectTable_safe . '`.`' . $selectField . '` AS ' . $asValue;
 				elseif ($select[0] == 'SUM')
 					$selects[] = 'SUM(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
 				elseif ($select[0] == 'AVG')
@@ -655,7 +657,7 @@ class database
 			return true;
 
 		$db = self::getDB();
-		
+
 		$db->setQuery("SET NAMES 'utf8mb4'");
 		$db->execute();
 
@@ -767,9 +769,21 @@ class database
 		$db->execute();
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function addForeignKey(string $realTableName, string $columnName, string $join_with_table_name, string $join_with_table_field): void
 	{
 		$db = self::getDB();
+
+		$db->setQuery("SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = " . $db->quote($realTableName));
+		$engine = $db->loadResult();
+
+		if (strtoupper($engine) !== 'INNODB') {
+			throw new Exception("Foreign Keys require InnoDB, but table '{$realTableName}' is using {$engine}.");
+		}
+
 		$db->setQuery('ALTER TABLE ' . $db->quoteName($realTableName) . ' ADD FOREIGN KEY (' . $db->quoteName($columnName) . ') REFERENCES '
 			. $db->quoteName(self::getDataBaseName() . '.' . $join_with_table_name) . ' (' . $db->quoteName($join_with_table_field) . ') ON DELETE RESTRICT ON UPDATE RESTRICT');
 		$db->execute();

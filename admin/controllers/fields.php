@@ -114,11 +114,18 @@ class CustomtablesControllerFields extends FormController
 		$this->ref = common::inputGet('ref', 0, 'word');
 		$this->refid = common::inputGet('refid', 0, 'int');
 
-		$fieldId = Fields::saveField($tableId, $fieldId);
+		try {
+			$fieldId = Fields::saveField($tableId, $fieldId);
+		} catch (Exception $e) {
+			$app = Factory::getApplication();
+			$app->enqueueMessage($e->getMessage());
+			return false;
+		}
 
 		if ($fieldId == null) {
 			$app = Factory::getApplication();
 			$app->enqueueMessage('Could not save the field.', 'error');
+			return false;
 		}
 
 		$redirect = 'index.php?option=' . $this->option;

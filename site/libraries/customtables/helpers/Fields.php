@@ -468,7 +468,7 @@ class Fields
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'utilities' . DIRECTORY_SEPARATOR . 'importtables.php');
 
 		$ct = new CT([], true);
-		$ct->getTable($tableId);
+		$ct->getTable($tableId, null, true);
 		if ($ct->Table === null)
 			throw new Exception('Save Field: Table not found');
 
@@ -576,7 +576,6 @@ class Fields
 		if ($fieldId !== null) {
 
 			try {
-
 				$whereClauseUpdate = new MySQLWhereClause();
 				$whereClauseUpdate->addCondition('id', $fieldId);
 
@@ -593,13 +592,14 @@ class Fields
 				throw new Exception('Add field details: ' . $e->getMessage());
 			}
 
-			$ct->getTable($tableId);//reload table to include new field
+			$ct->getTable($tableId, null, true);//reload table to include new field
 
 		}
 
-		if (!self::update_physical_field($ct, $fieldId, $data)) {
-			//Cannot create
-			return null;
+		try {
+			self::update_physical_field($ct, $fieldId, $data);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
 		}
 
 		self::findAndFixFieldOrdering();
@@ -643,8 +643,8 @@ class Fields
 	 */
 	public static function AddMySQLFieldNotExist(string $realtablename, string $realfieldname, string $fieldType, string $options): void
 	{
-		if ($realfieldname == '')
-			throw new Exception('Add New Field: Field name cannot be empty.');
+		if (empty($realfieldname))
+			throw new Exception('Add MySQL Field IF Not Exists: Field name cannot be empty.');
 
 		if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
 
@@ -674,12 +674,16 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected static function update_physical_field(CT $ct, int $fieldId, array $data): bool
+	protected static function update_physical_field(CT $ct, int $fieldId, array $data): void
 	{
 		$realtablename = $ct->Table->realtablename;
 
 		if ($fieldId != 0) {
 			$fieldRow = $ct->Table->getFieldById($fieldId);
+			if ($fieldRow === null) {
+				throw new Exception('Update Physical Field: Field not found: ' . $fieldId);
+			}
+
 			$ex_type = $fieldRow['type'];
 			$ex_typeparams = $fieldRow['typeparams'];
 			$realfieldname = $fieldRow['realfieldname'];
@@ -694,8 +698,8 @@ class Fields
 				$realfieldname = $data['fieldname'];
 		}
 
-		if ($realfieldname === '')
-			throw new Exception('Add New Field: Field name cannot be empty.');
+		if (empty($realfieldname))
+			throw new Exception('Update Physical Field: Field name cannot be empty.');
 
 		$new_typeparams = $data['typeparams'];
 		$fieldTitle = $data['fieldtitle'];
@@ -704,7 +708,7 @@ class Fields
 
 		$new_type = $data['type'];
 		if ($new_type === null)
-			return false;
+			throw new Exception('Update Physical Field: New Field Type Cannot be NUL');
 
 		$PureFieldType = null;
 		if ($new_typeparams !== null)
@@ -743,7 +747,7 @@ class Fields
 
 			//Add Foreign Key
 			try {
-				Fields::addForeignKey($realtablename, $realfieldname, $new_typeparams, '', 'id');
+				Fields::addForeignKey_FieldParams($realtablename, $realfieldname, $new_typeparams);
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
@@ -755,12 +759,11 @@ class Fields
 
 			//Add Foreign Key
 			try {
-				Fields::addForeignKey($realtablename, $realfieldname, '', '#__users', 'id');
+				Fields::addForeignKey_Users($realtablename, $realfieldname, '', '#__users', 'id');
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
 		}
-		return true;
 	}
 
 	public static function getPureFieldType(string $ct_fieldType, string $typeParams): array
@@ -1206,42 +1209,38 @@ class Fields
 
 	/**
 	 * @throws Exception
-	 * @since 3.2.2
+	 * @since 3.5.8
 	 */
-	public static function addForeignKey($realtablename_, $realfieldname, string $new_typeparams, string $join_with_table_name, string $join_with_table_field): void
+	private static function addForeignKey_FieldParams($RealTableName, $realfieldname, string $new_typeparams): void
 	{
-		$realtablename = database::realTableName($realtablename_);
 		$serverType = database::getServerType();
 		if ($serverType == 'postgresql')
 			throw new Exception('addForeignKey PostgreSql not supported.');
 
+		$RealTableNameWithPrefix = database::realTableName($RealTableName);
+		Fields::removeForeignKey($RealTableNameWithPrefix, $realfieldname);
+
 		//Create Key only if possible
-		$typeParams = explode(',', $new_typeparams);
+		$typeParams = CTMiscHelper::csv_explode(',', $new_typeparams);
 
-		if ($join_with_table_name == '') {
-			if ($new_typeparams == '')
-				throw new Exception('Parameters not set.');
+		if ($new_typeparams == '')
+			throw new Exception('Add Foreign Key: Parameters not set.');
 
-			if (count($typeParams) < 2)
-				throw new Exception('Parameters not complete.');
+		if (count($typeParams) < 2)
+			throw new Exception('Add Foreign Key: Parameters not complete.');
 
-			$tableRow = TableHelper::getTableRowByName($typeParams[0]); //[0] - is tablename
-			if (!is_object($tableRow))
-				throw new Exception('Join with table "' . $join_with_table_name . '" not found.');
+		$tableRow = TableHelper::getTableRowByName($typeParams[0]);
+		if (!is_object($tableRow))
+			throw new Exception('Add Foreign Key: Table "' . $typeParams[0] . '" not found.');
 
-			$join_with_table_name = $tableRow->realtablename;
-			$join_with_table_field = $tableRow->realidfieldname;
-		}
-
-		$join_with_table_name = database::realTableName($join_with_table_name);
-
-		Fields::removeForeignKey($realtablename, $realfieldname);
+		$join_with_real_table_name_with_prefix = database::realTableName($tableRow->realtablename);
+		$join_with_table_field = $tableRow->realidfieldname;
 
 		if (isset($typeParams[7]) and $typeParams[7] == 'addforeignkey') {
-			Fields::cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field);
+			Fields::cleanTableBeforeNormalization($RealTableNameWithPrefix, $realfieldname, $join_with_real_table_name_with_prefix, $join_with_table_field);
 
 			try {
-				database::addForeignKey($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field);
+				database::addForeignKey($RealTableNameWithPrefix, $realfieldname, $join_with_real_table_name_with_prefix, $join_with_table_field);
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
@@ -1250,7 +1249,7 @@ class Fields
 
 	/**
 	 * @throws Exception
-	 * @since 3.2.2
+	 * @since 3.5.8
 	 */
 	public static function cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field): void
 	{
@@ -1263,7 +1262,7 @@ class Fields
 
 		$whereClause = new MySQLWhereClause();
 		$whereClause->addCondition('b.' . $join_with_table_field, null, 'NULL');
-		$rows = database::loadAssocList($from, ['DISTINCT a.' . $realfieldname . ' AS customtables_distinct_temp_id'], $whereClause);
+		$rows = database::loadAssocList($from, [['DISTINCT', 'a', $realfieldname, 'customtables_distinct_temp_id']], $whereClause);
 
 		$whereClauseUpdate = new MySQLWhereClause();
 		$whereClauseUpdate->addOrCondition($realfieldname, 0);
@@ -1273,6 +1272,35 @@ class Fields
 				$whereClauseUpdate->addOrCondition($realfieldname, $row['customtables_distinct_temp_id']);
 		}
 		database::update($realtablename, [$realfieldname => null], $whereClauseUpdate);
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.5.8
+	 */
+	private static function addForeignKey_Users($RealTableName, $realfieldname): void
+	{
+		$serverType = database::getServerType();
+		if ($serverType == 'postgresql')
+			throw new Exception('addForeignKey PostgreSql not supported.');
+
+		if (defined('_JEXEC'))
+			$join_with_table_field = 'id';
+		elseif (defined('WPINC'))
+			$join_with_table_field = 'ID';
+		else
+			throw new Exception('Add Foreign Key for Users not supported in this CMS.');
+
+		$RealTableNameWithPrefix = database::realTableName($RealTableName);
+		Fields::removeForeignKey($RealTableNameWithPrefix, $realfieldname);
+		$join_with_real_table_name_with_prefix = database::realTableName('#__users');
+		Fields::cleanTableBeforeNormalization($RealTableNameWithPrefix, $realfieldname, $join_with_real_table_name_with_prefix, $join_with_table_field);
+
+		try {
+			database::addForeignKey($RealTableNameWithPrefix, $realfieldname, $join_with_real_table_name_with_prefix, $join_with_table_field);
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
 	}
 
 	/**

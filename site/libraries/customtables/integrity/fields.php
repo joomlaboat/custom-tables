@@ -322,7 +322,7 @@ class IntegrityFields extends IntegrityChecks
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected static function addField($realtablename, $realfieldname, string $fieldType, string $typeParams)
+	protected static function addField(string $realtablename, string $realfieldname, string $fieldType, string $typeParams)
 	{
 		$PureFieldType = Fields::getPureFieldType($fieldType, $typeParams);
 		$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
