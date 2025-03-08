@@ -141,7 +141,14 @@ class Ordering
 
 		switch ($field->type) {
 			case 'user':
-				return '(SELECT #__users.name FROM #__users WHERE #__users.id=' . $Table->realtablename . '.' . $field->realfieldname . ')';
+
+				if (defined('_JEXEC')) {
+					return '(SELECT #__users.name FROM #__users WHERE #__users.id=' . $Table->realtablename . '.' . $field->realfieldname . ')';
+				} elseif (defined('WPINC')) {
+					return '(SELECT #__users.display_name FROM #__users WHERE #__users.ID=' . $Table->realtablename . '.' . $field->realfieldname . ')';
+				} else {
+					throw new Exception('User field type not supported');
+				}
 
 			case 'sqljoin':
 
