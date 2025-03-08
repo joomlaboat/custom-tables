@@ -152,7 +152,7 @@ class CustomtablesControllerListOfFields extends AdminController
 		$ct = new CT([], true);
 
 		if ($tableId !== null) {
-			$ct->getTable($tableId);
+			$ct->getTable($tableId, null, true);
 
 			if ($ct->Table === null) {
 				Factory::getApplication()->enqueueMessage('Table not found', 'error');
@@ -166,18 +166,26 @@ class CustomtablesControllerListOfFields extends AdminController
 		$cid = common::inputPostArray('cid', []);
 		$cid = ArrayHelper::toInteger($cid);
 
+		$redirect = 'index.php?option=' . $this->option;
+		$redirect .= '&view=listoffields&tableid=' . (int)$tableId;
+
 		foreach ($cid as $id) {
 			if ((int)$id != 0) {
 				$id = (int)$id;
-				$ok = Fields::deleteField_byID($ct, $id);
 
-				if (!$ok)
-					break;
+				try {
+					Fields::deleteField_byID($ct, $id);
+				} catch (Exception $e) {
+					Factory::getApplication()->enqueueMessage($e->getMessage());
+					$this->setRedirect(
+						Route::_(
+							$redirect, false
+						)
+					);
+					return;
+				}
 			}
 		}
-
-		$redirect = 'index.php?option=' . $this->option;
-		$redirect .= '&view=listoffields&tableid=' . (int)$tableId;
 
 		$message = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_DELETED';
 		if (count($cid) == 1)

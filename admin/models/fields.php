@@ -150,17 +150,11 @@ class CustomtablesModelFields extends AdminModel
 	 * @throws Exception
 	 * @since   12.2
 	 */
-	public function delete(&$pks): bool
+	public function delete(&$pks): void
 	{
-		if (!parent::delete($pks)) {
-			return false;
-		}
-
 		foreach ($pks as $fieldid) {
 			Fields::deleteField_byID($this->ct, $fieldid);
 		}
-
-		return true;
 	}
 
 	/**

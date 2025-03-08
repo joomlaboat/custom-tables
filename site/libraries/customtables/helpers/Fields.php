@@ -68,17 +68,16 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function deleteField_byID(CT $ct, int $fieldId): bool
+	public static function deleteField_byID(CT $ct, int $fieldId): void
 	{
-		if ($ct->Table === null) {
-			die('deleteField_byID: Table not selected.');
-		}
+		if ($ct->Table === null)
+			throw new Exception('Delete Field by ID: Table not selected.');
 
 		$ImageFolder = CUSTOMTABLES_IMAGES_PATH;
 		$fieldRow = $ct->Table->getFieldById($fieldId);
 
 		if (is_null($fieldRow))
-			return false;
+			throw new Exception('Field ' . $fieldId . ' not found.');
 
 		$field = new Field($ct, $fieldRow);
 		$tableRow = $ct->Table->tablerow;
@@ -115,7 +114,11 @@ class Fields
 					}
 				}
 			} elseif ($field->type == 'user' or $field->type == 'userid' or $field->type == 'sqljoin') {
-				Fields::removeForeignKey($tableRow['realtablename'], $field->realfieldname);
+				try {
+					Fields::removeForeignKey($tableRow['realtablename'], $field->realfieldname);
+				} catch (Exception $e) {
+					throw new Exception($e->getMessage());
+				}
 			} elseif ($field->type == 'file') {
 				// TODO: delete all files
 				//if(file_exists($filename))
@@ -151,7 +154,6 @@ class Fields
 
 		//Delete field from the list
 		database::deleteRecord('#__customtables_fields', 'id', $fieldId);
-		return true;
 	}
 
 	/**
@@ -192,12 +194,12 @@ class Fields
 	 */
 	public static function removeForeignKey($realtablename, $realfieldname): bool
 	{
-		$constrances = Fields::getTableConstrances($realtablename, $realfieldname);
+		$constrances = Fields::getTableConstraints($realtablename, $realfieldname);
 
 		if (!is_null($constrances)) {
-			foreach ($constrances as $constrance) {
-				Fields::removeForeignKey($realtablename, $constrance);
-			}
+			foreach ($constrances as $constrance)
+				database::dropForeignKey($realtablename, $constrance);
+
 			return true;
 		}
 		return false;
@@ -207,35 +209,60 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected static function getTableConstrances($realtablename, $realfieldname): ?array
+	protected static function getTableConstraints(string $realtablename, string $realfieldname): ?array
 	{
+		if (empty($realtablename)) {
+			return null;
+		}
+
 		$serverType = database::getServerType();
-		if ($serverType == 'postgresql')
+		if ($serverType === 'postgresql') {
 			return null;
+		}
 
-		//get constrant name
-		$tableCreateQuery = database::showCreateTable($realtablename);//::loadAssocList($query, ['', '', '', ''], $whereClause, null, null);
-
-		if (count($tableCreateQuery) == 0)
+		// Get table creation query
+		$tableCreateQuery = database::showCreateTable($realtablename);
+		if (empty($tableCreateQuery) || !isset($tableCreateQuery[0]['Create Table'])) {
 			return null;
+		}
 
-		$rec = $tableCreateQuery[0];
-		$constrances = array();
-		$q = $rec['Create Table'];
-		$lines = explode(',', $q);
+		$createTableSQL = $tableCreateQuery[0]['Create Table'];
+		$constraints = [];
 
-		foreach ($lines as $line_) {
-			$line = trim(str_replace('`', '', $line_));
-			if (str_contains($line, 'CONSTRAINT')) {
-				$pair = explode(' ', $line);
+		/*
+		$createTableSQL example:
 
-				if ($realfieldname == '')
-					$constrances[] = $pair;
-				elseif ($pair[4] == '(' . $realfieldname . ')')
-					$constrances[] = $pair[1];
+		CREATE TABLE `eas39_customtables_table_states` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `published` tinyint(1) NOT NULL DEFAULT '1',
+  `es_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `es_user` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `es_user` (`es_user`),
+  CONSTRAINT `eas39_customtables_table_states_ibfk_1` FOREIGN KEY (`es_user`) REFERENCES `eas39_users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='States'
+
+		*/
+		// Extract lines from the query
+		$lines = explode(',', $createTableSQL);
+
+		foreach ($lines as $line) {
+			$line = trim(str_replace('`', '', $line));
+
+			if (stripos($line, 'CONSTRAINT') !== false) {
+				// Match constraint name and field name using regex
+				if (preg_match('/CONSTRAINT\s+(\S+)\s+FOREIGN KEY\s*\((\S+)\)/i', $line, $matches)) {
+					$constraintName = $matches[1] ?? '';
+					$fieldName = $matches[2] ?? '';
+
+					if ($realfieldname === '' || $fieldName === $realfieldname) {
+						$constraints[] = $constraintName;
+					}
+				}
 			}
 		}
-		return $constrances;
+
+		return $constraints;
 	}
 
 	public static function isVirtualField(array $fieldRow): bool
@@ -378,7 +405,7 @@ class Fields
 	{
 		if ($fieldname == 'id') {
 			try {
-				$constrances = Fields::getTableConstrances($realtablename, '');
+				$constrances = Fields::getTableConstraints($realtablename, '');
 			} catch (Exception $e) {
 				throw new Exception('Caught exception fixMYSQLField->Fields::getTableConstrances: ' . $e->getMessage());
 			}
