@@ -103,10 +103,8 @@ function createLayout_SimpleCatalog(array $fields, bool $addToolbar = true): str
 	$result .= PHP_EOL;
 	$result .= '</div>' . PHP_EOL;
 
-	if (defined('_JEXEC')) {
-		if ($addToolbar)
-			$result .= '<br/><div style="text-align:center;">{{ html.pagination }}</div>' . PHP_EOL;
-	}
+	if ($addToolbar)
+		$result .= '<br/><div style="text-align:center;">{{ html.pagination }}</div>' . PHP_EOL;
 
 	return $result;
 }

@@ -1002,8 +1002,7 @@ function getLayout_Page() {
 
 	obj = document.getElementById("wizardGuide_add_pagination");
 	if (!obj || obj.checked) {
-		if (window.Joomla instanceof Object)
-			result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+		result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
 	}
 
 	return result;
@@ -1236,8 +1235,7 @@ function getLayout_SimpleCatalog() {
 
 	obj = document.getElementById("wizardGuide_add_pagination");
 	if (!obj || obj.checked) {
-		if (window.Joomla instanceof Object)
-			result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+		result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
 	}
 
 	return result;
