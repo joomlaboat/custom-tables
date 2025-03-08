@@ -151,53 +151,56 @@ class CustomtablesControllerListOfFields extends AdminController
 		$tableId = common::inputGetInt('tableid');
 		$ct = new CT([], true);
 
+		$redirect = 'index.php?option=' . $this->option;
+		$safeRedirect = 'index.php?option=com_customtables'; // Fallback redirect
+
 		if ($tableId !== null) {
-			$ct->getTable($tableId, null, true);
+
+			try {
+				$ct->getTable($tableId, null, true);
+			} catch (Exception $e) {
+				Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+				$this->setRedirect(Route::_($safeRedirect, false));
+				return;
+			}
 
 			if ($ct->Table === null) {
 				Factory::getApplication()->enqueueMessage('Table not found', 'error');
+				$this->setRedirect(Route::_($safeRedirect, false));
 				return;
 			}
 		} else {
 			Factory::getApplication()->enqueueMessage('Table not set', 'error');
+			$this->setRedirect(Route::_($safeRedirect, false));
 			return;
 		}
 
 		$cid = common::inputPostArray('cid', []);
 		$cid = ArrayHelper::toInteger($cid);
 
-		$redirect = 'index.php?option=' . $this->option;
 		$redirect .= '&view=listoffields&tableid=' . (int)$tableId;
 
 		foreach ($cid as $id) {
-			if ((int)$id != 0) {
-				$id = (int)$id;
-
+			if ((int)$id !== 0) {
 				try {
-					Fields::deleteField_byID($ct, $id);
+					Fields::deleteField_byID($ct, (int)$id);
 				} catch (Exception $e) {
-					Factory::getApplication()->enqueueMessage($e->getMessage());
-					$this->setRedirect(
-						Route::_(
-							$redirect, false
-						)
-					);
+					//Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+					$this->setRedirect($redirect, $e->getMessage(), 'error');
 					return;
 				}
 			}
 		}
 
+		// Display success message
 		$message = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_DELETED';
-		if (count($cid) == 1)
+		if (count($cid) === 1) {
 			$message .= '_1';
+		}
 
 		Factory::getApplication()->enqueueMessage(common::translate($message, count($cid)), 'success');
 
 		// Redirect to the item screen.
-		$this->setRedirect(
-			Route::_(
-				$redirect, false
-			)
-		);
+		$this->setRedirect(Route::_($redirect, false));
 	}
 }

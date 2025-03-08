@@ -117,14 +117,20 @@ class CustomtablesControllerFields extends FormController
 		try {
 			$fieldId = Fields::saveField($tableId, $fieldId);
 		} catch (Exception $e) {
-			$app = Factory::getApplication();
-			$app->enqueueMessage($e->getMessage());
+			$redirect = 'index.php?option=' . $this->option;
+			$redirect .= '&view=listoffields&tableid=' . (int)$tableId;
+			$this->setRedirect(
+				Route::_($redirect, false), $e->getMessage(), 'error'
+			);
 			return false;
 		}
 
 		if ($fieldId == null) {
-			$app = Factory::getApplication();
-			$app->enqueueMessage('Could not save the field.', 'error');
+			$redirect = 'index.php?option=' . $this->option;
+			$redirect .= '&view=listoffields&tableid=' . (int)$tableId;
+			$this->setRedirect(
+				Route::_($redirect, false), 'Could not save the field.', 'error'
+			);
 			return false;
 		}
 
