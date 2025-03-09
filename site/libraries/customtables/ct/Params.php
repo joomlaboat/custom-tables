@@ -321,7 +321,8 @@ class Params
 		$this->forceSortBy = $menu_params['forcesortby'] ?? null;
 
 		//Limit
-		$this->limit = common::inputGetInt('limit', (int)($menu_params['limit'] ?? 20));
+		if (is_null($this->limit))
+			$this->limit = common::inputGetInt('limit', (int)($menu_params['limit'] ?? 20));
 
 		//Layouts
 		$this->pageLayout = $menu_params['escataloglayout'] ?? null;
@@ -509,7 +510,8 @@ class Params
 		$this->forceSortBy = $menu_params['forcesortby'] ?? null;
 
 		//Limit
-		$this->limit = common::inputGetInt('limit', (int)($menu_params['limit'] ?? 20));
+		if (is_null($this->limit))
+			$this->limit = common::inputGetInt('limit', (int)($menu_params['limit'] ?? 20));
 
 		//Layouts
 		$this->pageLayout = $menu_params['escataloglayout'] ?? null;
