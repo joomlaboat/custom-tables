@@ -15,6 +15,8 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
+use CustomTables\Integrity\IntegrityFields;
+use CustomTables\TableHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -150,13 +152,57 @@ class CustomtablesViewTables extends HtmlView
 		}
 	}
 
-	public function getTableSchema(): string
+	public function getTableSchema($item): string
 	{
-		$tableCreateQuery = database::showCreateTable($this->ct->Table->realtablename);
+		if ($this->ct->Table === null)
+			return '';
+
+		try {
+			$tableExists = TableHelper::checkIfTableExists($this->ct->Table->realtablename);
+		} catch (Exception $e) {
+			common::enqueueMessage($e->getMessage());
+			return '';
+		}
+
+		$content = '';
+
+		if (!$tableExists) {
+			if ($this->ct->Table->published_field_found) {
+				$columns = [
+					'published tinyint(1) NOT NULL DEFAULT 1'
+				];
+			} else {
+				$columns = [];
+			}
+
+			$primaryKeyType = $item->customidfieldtype;
+			if ($item->primarykeypattern == '' or str_contains('AUTO_INCREMENT', $item->primarykeypattern)) {
+				$primaryKeyType .= ' AUTO_INCREMENT';
+			}
+
+			database::createTable($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $columns,
+				$this->ct->Table->tabletitle, null, $primaryKeyType);
+
+			common::enqueueMessage('DataBase table created.', 'notice');
+
+			$link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid;
+			try {
+				$content = IntegrityFields::checkFields($this->ct, $link);
+			} catch (Exception $e) {
+				common::enqueueMessage('DataBase table created.');
+			}
+		}
+
+		try {
+			$tableCreateQuery = database::showCreateTable($this->ct->Table->realtablename);
+		} catch (Exception $e) {
+			common::enqueueMessage($e->getMessage());
+			return $content;
+		}
 
 		if (count($tableCreateQuery) == 0) {
 			common::enqueueMessage('Table not found');
-			return '';
+			return $content;
 		} else {
 			$createTableSql = $tableCreateQuery[0];
 
@@ -175,7 +221,7 @@ class CustomtablesViewTables extends HtmlView
 				$createStatement
 			);
 
-			return '<pre><code>' . $createStatement . '</code></pre>';
+			return $content . '<pre><code>' . $createStatement . '</code></pre>';
 		}
 	}
 }

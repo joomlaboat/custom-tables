@@ -13,8 +13,10 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
+use CustomTables\CT;
 use CustomTables\CTUser;
-
+use CustomTables\ListOfTables;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 
@@ -66,6 +68,81 @@ class CustomtablesControllerTables extends FormController
 	}
 
 	/**
+	 * Method to save a record.
+	 *
+	 * @param string $key The name of the primary key of the URL variable.
+	 * @param string $urlVar The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
+	 *
+	 * @return  boolean  True if successful, false otherwise.
+	 *
+	 * @throws Exception
+	 * @since   12.2
+	 */
+	public function save($key = null, $urlVar = null)
+	{
+		$app = Factory::getApplication();
+		$input = $app->input;
+		$user = Factory::getUser(); // Get current user ID
+		$db = Factory::getDbo();
+
+		require_once CUSTOMTABLES_LIBRARIES_PATH . '/customtables/views/admin-listoftables.php';
+
+		$data = $input->get('jform', [], 'array');
+		$tableId = $input->getInt('id', 0);
+
+		$ct = new CT([], true);
+		$helperListOfTables = new ListOfTables($ct);
+		$task = $input->getCmd('task');
+
+
+		// 🔹 Step 2: MANUAL CHECK-IN (Unlock record)
+		if ($tableId) {
+			$query = $db->getQuery(true)
+				->update($db->quoteName('#__customtables_tables'))
+				->set($db->quoteName('checked_out') . ' = 0')
+				->set($db->quoteName('checked_out_time') . ' = ' . $db->quote('0000-00-00 00:00:00'))
+				->where($db->quoteName('id') . ' = ' . $tableId);
+			$db->setQuery($query);
+			$db->execute();
+		}
+
+		try {
+			$tableId = $helperListOfTables->saveWithData($tableId, $data, $task);
+		} catch (Exception $e) {
+			$this->setRedirect(
+				Route::_('index.php?option=com_customtables&view=Listoftables', false),
+				$e->getMessage(),
+				'error'
+			);
+			return false;
+		}
+
+		$redirect = 'index.php?option=' . $this->option;
+
+		if ($this->task == 'apply') {
+			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_TABLE_SAVED'), 'success');
+			$redirect .= '&view=tables&layout=edit&id=' . $tableId;
+		} elseif ($this->task == 'save2copy') {
+			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_TABLE_COPIED'), 'success');
+			$redirect .= '&view=tables&task=tables.edit&id=' . $tableId;
+		} elseif ($this->task == 'save2new') {
+			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_TABLE_SAVED'), 'success');
+			$redirect .= '&view=tables&task=tables.edit&id=' . $tableId;
+		} else {
+			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_TABLE_SAVED'), 'success');
+			$redirect .= '&view=Listoftables';
+		}
+
+		// Redirect to the item screen.
+		$this->setRedirect(
+			Route::_($redirect, false)
+		);
+
+		return true;
+	}
+
+
+	/**
 	 * Method to cancel an edit.
 	 *
 	 * @param string $key The name of the primary key of the URL variable.
@@ -112,52 +189,6 @@ class CustomtablesControllerTables extends FormController
 			);
 		}
 		return $cancel;
-	}
-
-	/**
-	 * Method to save a record.
-	 *
-	 * @param string $key The name of the primary key of the URL variable.
-	 * @param string $urlVar The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
-	 *
-	 * @return  boolean  True if successful, false otherwise.
-	 *
-	 * @throws Exception
-	 * @since   12.2
-	 */
-	public function save($key = null, $urlVar = null)
-	{
-		// get the referral details
-		$this->ref = common::inputGet('ref', 0, 'word');
-		$this->refid = common::inputGet('refid', 0, 'int');
-
-		if ($this->ref || $this->refid) {
-			// to make sure the item is checkedin on redirect
-			$this->task = 'save';
-		}
-
-		$saved = parent::save($key, $urlVar);
-
-		if ($this->refid && $saved) {
-			$redirect = '&view=' . (string)$this->ref . '&layout=edit&id=' . (int)$this->refid;
-
-			// Redirect to the item screen.
-			$this->setRedirect(
-				Route::_(
-					'index.php?option=' . $this->option . $redirect, false
-				)
-			);
-		} elseif ($this->ref && $saved) {
-			$redirect = '&view=' . $this->ref;
-
-			// Redirect to the list screen.
-			$this->setRedirect(
-				Route::_(
-					'index.php?option=' . $this->option . $redirect, false
-				)
-			);
-		}
-		return $saved;
 	}
 
 	/**

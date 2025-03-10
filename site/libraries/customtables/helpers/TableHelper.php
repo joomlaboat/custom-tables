@@ -154,7 +154,7 @@ class TableHelper
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function renameTableIfNeeded($tableid, $tablename): void
+	public static function renameTableIfNeeded(int $tableid, string $tablename): void
 	{
 		$old_tablename = self::getTableName($tableid);
 
@@ -171,13 +171,13 @@ class TableHelper
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function getTableName($tableid = 0): ?string
+	public static function getTableName(int $tableid = 0): ?string
 	{
 		if ($tableid == 0)
 			$tableid = common::inputGetInt('tableid', 0);
 
 		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('id', (int)$tableid);
+		$whereClause->addCondition('id', $tableid);
 		$rows = database::loadObjectList('#__customtables_tables AS s', ['tablename'], $whereClause, null, null, 1);
 		if (count($rows) != 1)
 			return null;
@@ -197,9 +197,8 @@ class TableHelper
 		if (count($ct->Table->fields) > 0)
 			return false;
 
-		//Add third-party fields
+		// Add third-party fields
 		$whereClause = new MySQLWhereClause();
-
 		$serverType = database::getServerType();
 
 		if ($serverType == 'postgresql') {
@@ -218,39 +217,43 @@ class TableHelper
 			];
 			$whereClause->addCondition('table_schema', $database);
 		}
+
 		$whereClause->addCondition('table_name', $realtablename);
 		$fields = database::loadObjectList('information_schema.columns', $selects, $whereClause);
 
 		$primary_key_column = '';
 		$primary_key_column_type = '';
-		$primary_key_column_type_is_nullable = null;
 		$ordering = 1;
+
 		foreach ($fields as $field) {
-			if ($primary_key_column == '' and strtolower($field->column_key) == 'pri') {
+			if ($primary_key_column == '' && strtolower($field->column_key) == 'pri') {
+				if (strtolower($field->is_nullable) == 'yes') {
+					throw new Exception('Primary key column "' . $field->column_name . '" cannot be NULL.');
+				}
 				$primary_key_column = $field->column_name;
 				$primary_key_column_type = $field->column_type;
-				$primary_key_column_type_is_nullable = $field->is_nullable;
 			} else {
 				$ct_field_type = Fields::convertMySQLFieldTypeToCT($field->column_type);
 
-				//TODO: check how it works
-
-				if ($ct_field_type['type'] === null)
+				if ($ct_field_type['type'] === null) {
+					error_log('Unknown MySQL field type: ' . print_r($field, true));
 					throw new Exception('Add Third-Party Table Fields: third-party table field type "' . $field->data_type . '" is unknown.');
+				}
 
-				$data['tableid'] = $ct->Table->tableid;
-				$data['fieldname'] = $field->column_name;
-				$data['fieldtitle'] = ucwords(strtolower($field->column_name));
-				$data['type'] = $ct_field_type['type'];
+				$data = [
+					'tableid' => $ct->Table->tableid,
+					'fieldname' => $field->column_name,
+					'fieldtitle' => str_replace('_', ' ', ucwords(strtolower($field->column_name), '_')),
+					'type' => $ct_field_type['type'],
+					'ordering' => $ordering,
+					'defaultvalue' => isset($field->column_default) ? $field->column_default : null,
+					'description' => isset($field->column_comment) && $field->column_comment !== '' ? $field->column_comment : null,
+					'isrequired' => (strtolower($field->is_nullable) == 'no') ? 1 : 0
+				];
 
-				if (key_exists('typeparams', $ct_field_type))
+				if (key_exists('typeparams', $ct_field_type)) {
 					$data['typeparams'] = $ct_field_type['typeparams'];
-
-				$data['ordering'] = $ordering;
-				$data['defaultvalue'] = $field->column_default != '' ? $field->column_default : null;
-				$data['description'] = $field->column_comment != '' ? $field->column_comment : null;
-				//$data['customfieldname'] = $field->column_name;
-				$data['isrequired'] = 0;
+				}
 
 				database::insert('#__customtables_fields', $data);
 				$ordering += 1;
@@ -258,13 +261,13 @@ class TableHelper
 		}
 
 		if ($primary_key_column != '') {
-			//Update primary key column
-
+			// Update primary key column
 			$data = [
 				'customidfield' => $primary_key_column,
-				'customidfieldtype' => $primary_key_column_type . ($primary_key_column_type_is_nullable ? ' NULL' : ' NOT NULL'), //TODO Add more details
+				'customidfieldtype' => $primary_key_column_type . ' NOT NULL',
 				'customfieldprefix' => null
 			];
+
 			$whereClauseUpdate = new MySQLWhereClause();
 			$whereClauseUpdate->addCondition('id', $ct->Table->tableid);
 			database::update('#__customtables_tables', $data, $whereClauseUpdate);
@@ -370,9 +373,6 @@ class TableHelper
 		$whereClause->addCondition('tableid', $originalTableId);
 
 		$rows = database::loadAssocList('#__customtables_fields', ['*'], $whereClause);
-
-		if (count($rows) == 0)
-			die('Original table has no fields.');
 
 		foreach ($rows as $row) {
 

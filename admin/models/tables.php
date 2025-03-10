@@ -17,8 +17,6 @@ use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\database;
 use CustomTables\TableHelper;
-use CustomTables\Fields;
-
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
@@ -137,8 +135,10 @@ class CustomtablesModelTables extends AdminModel
 	public function delete(&$pks)
 	{
 		// Ensure the pks is an array
-		if (!is_array($pks) || empty($pks))
-			throw new Exception(common::translate('COM_CUSTOMTABLES_NO_ITEM_SELECTED'));
+		if (!is_array($pks) || empty($pks)) {
+			common::enqueueMessage(common::translate('COM_CUSTOMTABLES_NO_ITEM_SELECTED'));
+			return false;
+		}
 
 		$db = database::getDB();
 
@@ -150,8 +150,13 @@ class CustomtablesModelTables extends AdminModel
 				$table_row = TableHelper::deleteTable((int)$tableid);
 
 				// Add to activity log if you have one
-				Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_TABLE_DELETED') . ' ' . $table_row->tablename);
+				//Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_TABLE_DELETED') . ' ' . $table_row->tablename);
 			}
+
+			//if (count($pks) == 1)
+			//	common::enqueueMessage(common::translate('COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_DELETED_1'), 'success');
+			//else
+			//common::enqueueMessage(common::translate('COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_DELETED', count($pks)), 'success');
 
 			// Commit transaction
 			$db->transactionCommit();
@@ -303,123 +308,6 @@ class CustomtablesModelTables extends AdminModel
 		die;//Batch table move not implemented
 	}
 
-	/**
-	 * @throws Exception
-	 * @since 3.2.8
-	 */
-	public function save($data): bool
-	{
-		$database = database::getDataBaseName();
-		$dbPrefix = database::getDBPrefix();
-		$data_extra = common::inputGet('jform', array(), 'ARRAY');
-		$moreThanOneLanguage = false;
-
-		$fields = Fields::getListOfExistingFields('#__customtables_tables', false);
-		foreach ($this->ct->Languages->LanguageList as $lang) {
-			$id_title = 'tabletitle';
-			$id_desc = 'description';
-			if ($moreThanOneLanguage) {
-				$id_title .= '_' . $lang->sef;
-				$id_desc .= '_' . $lang->sef;
-
-				try {
-					if (!in_array($id_title, $fields))
-						Fields::addLanguageField('#__customtables_tables', 'tabletitle', $id_title);
-
-					if (!in_array($id_desc, $fields))
-						Fields::addLanguageField('#__customtables_tables', 'description', $id_desc);
-				} catch (Exception $e) {
-					throw new Exception($e->getMessage());
-				}
-			}
-
-			$data[$id_title] = $data_extra[$id_title];
-			$data[$id_desc] = $data_extra[$id_desc];
-			$moreThanOneLanguage = true; //More than one language installed
-		}
-
-		$tabletitle = $data['tabletitle'];
-		$tableid = (int)$data['id'];
-
-		if (function_exists("transliterator_transliterate"))
-			$tablename = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $data['tablename']);
-		else
-			$tablename = $data['tablename'];
-
-		$tablename = strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $tablename)));
-
-		//If it's a new table, check if field name is unique or add number "_1" if it's not.
-		if ($tableid == 0)
-			$tablename = TableHelper::checkTableName($tablename);
-
-		$data['tablename'] = $tablename;
-
-		if ($tableid != 0 and (string)$data['customtablename'] == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
-		{
-			TableHelper::renameTableIfNeeded($tableid, $tablename);
-		}
-
-		$old_tablename = '';
-
-		// Alter the unique field for save as copy
-		if (common::inputGetCmd('task') === 'save2copy') {
-			$originalTableId = common::inputGetInt('originaltableid', 0);
-
-			if ($originalTableId != 0) {
-				$old_tablename = TableHelper::getTableName($originalTableId);
-
-				if ($old_tablename == $tablename)
-					$tablename = 'copy_of_' . $tablename;
-
-				while (TableHelper::getTableID($tablename) != 0)
-					$tablename = 'copy_of_' . $tablename;
-
-				$data['tablename'] = $tablename;
-			}
-		}
-
-		$data['tablecategory'] = (int)$data['tablecategory'];
-
-		if ($data['customidfield'] === null)
-			$data['customidfield'] = 'id';
-
-		if ($data['customidfieldtype'] === null)
-			$data['customidfieldtype'] = 'int UNSIGNED NOT NULL AUTO_INCREMENT';
-
-		$customFieldPrefix = trim(preg_replace("/[^a-zA-Z-_\d]/", "_", ($data['customfieldprefix'] ?? null)));
-		if ($customFieldPrefix === "")
-			$customFieldPrefix = null;
-
-		$data['customfieldprefix'] = $customFieldPrefix;
-
-		if ($data['customtablename'] == '-new-') {
-			$data['customtablename'] = $tablename;
-
-			if (parent::save($data)) {
-
-				TableHelper::createTableIfNotExists($dbPrefix, $tablename, $tabletitle,
-					$data['customtablename'] ?? '', $data['customidfield'], $data['customidfieldtype']);
-				return true;
-			}
-		} else {
-			if (parent::save($data)) {
-				$originalTableId = common::inputGetInt('originaltableid', 0);
-
-				if ($originalTableId != 0 and $old_tablename != '')
-					TableHelper::copyTable($this->ct, $originalTableId, $tablename, $old_tablename, $data['customtablename']);
-
-				TableHelper::createTableIfNotExists($dbPrefix, $tablename, $tabletitle,
-					$data['customtablename'] ?? '', $data['customidfield'], $data['customidfieldtype']);
-
-				//Add fields if it's a third-party table and no fields added yet.
-				if ($data['customtablename'] !== null and $data['customtablename'] != '')
-					TableHelper::addThirdPartyTableFieldsIfNeeded($database, $tablename, $data['customtablename']);
-
-				return true;
-			}
-		}
-		return false;
-	}
 
 	public function copyTable($originaltableid, $new_table, $old_table)
 	{

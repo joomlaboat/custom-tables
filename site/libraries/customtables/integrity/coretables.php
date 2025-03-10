@@ -375,4 +375,30 @@ class IntegrityCoreTables extends IntegrityChecks
 			'indexes' => $categories_projected_indexes,
 			'comment' => 'Custom Tables Categories'];
 	}
+
+	public static function addMultilingualTablesFields($LanguageList): void
+	{
+		$moreThanOneLanguage = false;
+		$fields = Fields::getListOfExistingFields('#__customtables_tables', false);
+		foreach ($LanguageList as $lang) {
+			$id_title = 'tabletitle';
+			$id_desc = 'description';
+			if ($moreThanOneLanguage) {
+				$id_title .= '_' . $lang->sef;
+				$id_desc .= '_' . $lang->sef;
+			}
+
+			try {
+				if (!in_array($id_title, $fields))
+					Fields::addLanguageField('#__customtables_tables', $id_title, $id_title, 'null');
+
+				if (!in_array($id_desc, $fields))
+					Fields::addLanguageField('#__customtables_tables', $id_desc, $id_desc, 'null');
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
+
+			$moreThanOneLanguage = true; //More than one language installed
+		}
+	}
 }

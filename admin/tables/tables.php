@@ -51,4 +51,5 @@ class CustomtablesTableTables extends Table
 	{
 		parent::__construct('#__customtables_tables', 'id', $db);
 	}
+
 }

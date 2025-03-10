@@ -264,7 +264,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 			<?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'schema', common::translate('COM_CUSTOMTABLES_SUBMENU_DATABASECHECK')); ?>
 
 			<?php if ($this->ct->Env->advancedTagProcessor): ?>
-				<?php echo $this->getTableSchema(); ?>
+				<?php echo $this->getTableSchema($this->item); ?>
 			<?php else: ?>
 				<div class="ct_doc_pro_label">
 					<a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">
