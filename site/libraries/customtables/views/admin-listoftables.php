@@ -107,7 +107,7 @@ class ListOfTables
 	 * @throws Exception
 	 * @since 3.5.8
 	 */
-	function save(?int $tableId): void
+	function save(int $tableId): void
 	{
 		// Check if running in WordPress context
 		if (defined('WPINC')) {
@@ -127,7 +127,7 @@ class ListOfTables
 		$data ['primarykeypattern'] = stripcslashes(common::inputPostString('primarykeypattern', null, 'create-edit-table'));
 		$data ['customfieldprefix'] = common::inputPostString('customfieldprefix', null, 'create-edit-table');
 
-		$task = common::inputPostCmd('task', null, 'create-edit-table');
+		$task = 'save';//common::inputPostCmd('task', null, 'create-edit-table');
 
 		// Process multilingual fields
 		$moreThanOneLanguage = false;
