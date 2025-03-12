@@ -228,8 +228,8 @@ function CustomTablesLoader($include_utilities = false, $include_html = false, $
 
 	if ($include_utilities) {
 		$path_utilities = $path . 'utilities' . DIRECTORY_SEPARATOR;
-		require_once($path_utilities . 'importtables.php');
-		require_once($path_utilities . 'exporttables.php');
+		require_once($path_utilities . 'ImportTables.php');
+		require_once($path_utilities . 'ExportTables.php');
 	}
 
 	$pathDataTypes = $path . 'ct' . DIRECTORY_SEPARATOR;
