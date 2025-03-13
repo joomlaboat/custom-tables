@@ -492,7 +492,7 @@ class Fields
 		if ($fieldId == 0)
 			$fieldId = null; // new field
 
-		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'utilities' . DIRECTORY_SEPARATOR . 'importtables.php');
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'utilities' . DIRECTORY_SEPARATOR . 'ImportTables.php');
 
 		$ct = new CT([], true);
 		$ct->getTable($tableId, null, true);
