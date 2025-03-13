@@ -49,6 +49,10 @@ class ExportTables
 			}
 		}
 
+		if (substr($tmp_path, strlen($tmp_path) - 1) !== DIRECTORY_SEPARATOR) {
+			$tmp_path .= DIRECTORY_SEPARATOR;
+		}
+
 		//Save the array to file
 		if (count($output) > 0) {
 			//Prepare output string with data
