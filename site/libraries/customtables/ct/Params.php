@@ -367,7 +367,7 @@ class Params
 
 		//Form Saved
 		if (!$this->blockExternalVars and common::inputGetCmd('returnto'))
-			$this->returnTo = common::getReturnToURL();//base 64 decode "returnto" value
+			$this->returnTo = common::getReturnToURL(true, null, 'create-edit-record');//base 64 decode "returnto" value
 		else {
 
 			if (empty($this->ModuleId)) {
@@ -557,7 +557,7 @@ class Params
 
 		//Form Saved
 		if (!$this->blockExternalVars and common::inputGetCmd('returnto'))
-			$this->returnTo = common::getReturnToURL();
+			$this->returnTo = common::getReturnToURL(true, null, 'create-edit-record');
 		else {
 			$this->returnTo = $menu_params['returnto'] ?? null;
 		}

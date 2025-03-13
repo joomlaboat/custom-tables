@@ -43,7 +43,7 @@ switch (common::inputGetCmd('task')) {
 		$tableName = common::inputGetCmd('establename');
 		$galleryName = common::inputGet('galleryname', '', 'CMD');
 		$listing_id = common::inputGet("listing_id", 0, 'INT');
-		$returnToEncoded = common::getReturnToURL(false);
+		$returnToEncoded = common::getReturnToURL(false, null, 'create-edit-record');
 		$Itemid = common::inputGet('Itemid', 0, 'INT');
 
 		$link = 'index.php?option=com_customtables&view=editphotos'
@@ -69,7 +69,7 @@ switch (common::inputGetCmd('task')) {
 		$tableName = common::inputGetCmd('establename');
 		$galleryName = common::inputGet('galleryname', '', 'CMD');
 		$listing_id = common::inputGet("listing_id", 0, 'INT');
-		$returnToEncoded = common::getReturnToURL(false);
+		$returnToEncoded = common::getReturnToURL(false, null, 'create-edit-record');
 		$Itemid = common::inputGet('Itemid', 0, 'INT');
 
 		$link = 'index.php?option=com_customtables&view=editphotos'
@@ -92,13 +92,13 @@ switch (common::inputGetCmd('task')) {
 			$message = common::translate('COM_CUSTOMTABLES_IMAGE_ORDER_NOT_SAVED');
 		}
 
-		$returnto = common::getReturnToURL();
+		$returnto = common::getReturnToURL(true, null, 'create-edit-record');
 		$this->setRedirect($returnto, $message);
 		break;
 
 	case 'cancel' :
 		$message = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
-		$returnto = common::getReturnToURL();
+		$returnto = common::getReturnToURL(true, null, 'create-edit-record');
 		$this->setRedirect($returnto, $message);
 		break;
 	default:

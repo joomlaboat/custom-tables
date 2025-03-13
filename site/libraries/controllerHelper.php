@@ -21,7 +21,7 @@ class controllerHelper
 	public static function doTheTask(string $task)
 	{
 		try {
-			$link = common::getReturnToURL() ?? '';
+			$link = common::getReturnToURL(true, null, 'create-edit-record') ?? '';
 			$ct = new CT(null, false);
 			$ct->Params->constructJoomlaParams();
 

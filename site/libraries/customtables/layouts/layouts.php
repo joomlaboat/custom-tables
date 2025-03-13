@@ -262,7 +262,7 @@ class Layouts
 
 				$output = $this->doTasks($task);
 
-				$link = common::getReturnToURL();
+				$link = common::getReturnToURL(true, null, 'create-edit-record');
 				if ($link === null)
 					$link = $this->ct->Params->returnTo;
 
@@ -776,7 +776,7 @@ class Layouts
 	 */
 	private function doTask_cancel(): array
 	{
-		$link = common::getReturnToURL();
+		$link = common::getReturnToURL(true, null, 'create-edit-record');
 		if ($link === null)
 			$link = $this->ct->Params->returnTo;
 
@@ -835,7 +835,8 @@ class Layouts
 				}
 			}
 
-			$link = common::getReturnToURL();
+			$link = common::getReturnToURL(true, null, 'create-edit-record');
+
 			if ($link === null)
 				$link = $this->ct->Params->returnTo;
 

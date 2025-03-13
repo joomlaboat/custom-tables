@@ -358,7 +358,7 @@ class Twig_HTML_Tags
 			return '';
 
 		if ($returnto == '')
-			$returnto = common::getReturnToURL() ?? '';
+			$returnto = common::getReturnToURL(true, null, 'create-edit-record') ?? '';
 
 		if ($returnto == '')
 			$returnto = $this->ct->Params->returnTo;

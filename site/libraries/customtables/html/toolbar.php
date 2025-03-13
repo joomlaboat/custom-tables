@@ -113,7 +113,7 @@ class RecordToolbar
 				$editLink .= '&amp;returnto=' . $tmp_current_url;
 				$link = 'javascript:ctEditModal(\'' . $editLink . '\',null)';
 			} else {
-				$returnToEncoded = base64_encode(common::curPageURL());//common::getReturnToURL(false);
+				$returnToEncoded = base64_encode(common::curPageURL());
 				$link = $editLink . '&amp;returnto=' . $returnToEncoded;
 			}
 		} elseif (defined('WPINC')) {

@@ -49,7 +49,7 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 
 			$fileBoxName = common::inputGetCmd('fileboxname');
 			$listing_id = common::inputGet("listing_id", 0, 'INT');
-			$returntoEncoded = common::getReturnToURL(false);
+			$returntoEncoded = common::getReturnToURL(false, null, 'create-edit-record');
 			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
 			$link = 'index.php?option=com_customtables&view=editfiles'
@@ -75,7 +75,7 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 
 			$fileBoxName = common::inputGetCmd('fileboxname');
 			$listing_id = common::inputGet("listing_id", 0, 'INT');
-			$returnToEncoded = common::getReturnToURL(false);
+			$returnToEncoded = common::getReturnToURL(false, null, 'create-edit-record');
 			$Itemid = common::inputGet('Itemid', 0, 'INT');
 
 			$link = 'index.php?option=com_customtables&view=editfiles'
@@ -100,13 +100,13 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 				$message = common::translate('COM_CUSTOMTABLES_FILE_ORDER_NOT_SAVED');
 			}
 
-			$returnto = common::getReturnToURL();
+			$returnto = common::getReturnToURL(true, null, 'create-edit-record');
 			$this->setRedirect($returnto, $message);
 			break;
 
 		case 'cancel' :
 			$message = common::translate('COM_CUSTOMTABLES_EDIT_CANCELED');
-			$returnto = common::getReturnToURL();
+			$returnto = common::getReturnToURL(true);
 			$this->setRedirect($returnto, $message);
 			break;
 		default:

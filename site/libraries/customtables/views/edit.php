@@ -155,7 +155,7 @@ class Edit
 		$returnTo = '';
 
 		if (common::inputGetBase64('returnto'))
-			$returnTo = common::getReturnToURL();
+			$returnTo = common::getReturnToURL(true, null, 'create-edit-record');
 		elseif ($this->ct->Params->returnTo)
 			$returnTo = $this->ct->Params->returnTo;
 
