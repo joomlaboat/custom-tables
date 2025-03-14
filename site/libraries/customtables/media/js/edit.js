@@ -862,20 +862,11 @@ function doFilters(obj, label, filters_string) {
 				alert(TranslateText('COM_CUSTOMTABLES_JS_URL_INVALID', label, value));
 				return false;
 			}
-			console.log("hostname: " + hostname);
-			console.log("domain: " + domain);
 
-			/*
-			let found = false;
-			for (let f = 0; f < domains.length; f++) {
+			hostname = hostname.trim().replaceAll('www.', '').toLowerCase();
+			domain = domain.toString().trim().replaceAll('www.', '').toLowerCase();
 
-				if (domains[f] === hostname) {
-					found = true;
-					break;
-				}
-			}
-*/
-			if (domain !== hostname && 'www.' + domain !== hostname && domain !== 'www.' + hostname) {
+			if (domain !== hostname) {
 				alert(TranslateText('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID', value, label, filter_parts[1]));
 				return false;
 			}
