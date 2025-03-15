@@ -545,18 +545,30 @@ abstract class BaseInputBox
 		}
 	}
 
-	public static function addOnChange(array &$attributes, string $onchange): void
+	public static function addOnChange(array &$attributes, string $onchange, bool $addBefore = false): void
 	{
-		if (empty($onchange))
+		// Ensure the onchange string is not empty after trimming
+		$onchange = trim($onchange);
+		if ($onchange === '') {
 			return;
+		}
 
-		if (isset($attributes['onchange']) and $attributes['onchange'] !== '') {
-			if (substr($attributes['onchange'], strlen($attributes['onchange']) - 1, 1) == ';')
-				$attributes['onchange'] .= $onchange;
-			else
-				$attributes['onchange'] .= ';' . $onchange;
+		// Ensure 'onchange' exists and trim it
+		$attributes['onchange'] = trim($attributes['onchange'] ?? '');
+
+		// Ensure proper semicolon separation
+		if (substr($onchange, -1) !== ';') {
+			$onchange .= ';';
+		}
+		if (substr($attributes['onchange'], -1) !== ';') {
+			$attributes['onchange'] .= ';';
+		}
+
+		// Prepend or append onchange event
+		if ($addBefore) {
+			$attributes['onchange'] = $onchange . $attributes['onchange'];
 		} else {
-			$attributes['onchange'] = $onchange;
+			$attributes['onchange'] .= $onchange;
 		}
 	}
 

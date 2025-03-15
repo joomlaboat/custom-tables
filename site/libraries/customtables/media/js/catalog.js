@@ -471,7 +471,7 @@ function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, pos
 	const fieldname = fieldname_.split('_')[0];
 
 	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
-	let addParams = [];
+	let addParams = ['clean=1', 'frmt=json'];
 
 	if (CTEditHelper.cmsName === 'Joomla') {
 		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
@@ -479,6 +479,8 @@ function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, pos
 			addParams.push('view=edititem');
 			addParams.push('ModuleId=' + ModuleId);
 		} else {
+			addParams.push('option=com_customtables');
+			addParams.push('view=edititem');
 			addParams.push('Itemid=' + CTEditHelper.itemId);
 		}
 	}
@@ -497,32 +499,36 @@ function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, pos
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
 
 	if (http) {
-		http.open("POST", url + "&clean=1", true);
+		http.open("POST", url, true);
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		http.onreadystatechange = function () {
 			if (http.readyState === 4) {
 
 				let response;
-
+				console.warn(url);
+				console.warn(params);
 				try {
 					response = JSON.parse(http.response.toString());
 				} catch (e) {
-					return console.error(e);
-				}
 
-				if (response.status === "saved") {
-					obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
-				} else if (response.status === "error") {
-					obj.className = "ct_checkmark_err";
-					alert(response.message);
-				} else {
-					obj.className = "ct_checkmark_err ";
 
 					if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
 						alert(TranslateText('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE'));
 					else if (http.response.indexOf('view-login') !== -1)
 						alert(TranslateText('COM_CUSTOMTABLES_JS_SESSION_EXPIRED'));
-					else alert(http.response);
+					else {
+						console.warn(http.response.toString());
+					}
+
+					return console.error(e);
+				}
+
+				if (response.success) {
+					console.warn(http.response.toString());
+					obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
+				} else {
+					obj.className = "ct_checkmark_err";
+					alert(response.message);
 				}
 			}
 		};

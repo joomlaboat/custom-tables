@@ -85,14 +85,22 @@ class InputBox_checkbox extends BaseInputBox
 			BaseInputBox::removeCSSClass($this->attributes, 'form-control');
 			$cssClass = $this->attributes['class'] ?? '';
 
-			return '<div class="' . $cssClass . '">' . $input1 . $input2 . $span . $hidden . '</div><script>
-							document.getElementById("' . $element_id . '0").onchange = function(){if(this.checked === true)' . $element_id . '_off.value=1;' . ($this->attributes['onchange'] ?? '') . '};
-							document.getElementById("' . $element_id . '1").onchange = function(){if(this.checked === true)' . $element_id . '_off.value=0;' . ($this->attributes['onchange'] ?? '') . '};
-						</script>';
+			$element = '<div class="' . $cssClass . '">' . $input1 . $input2 . $span . $hidden . '</div><script>
+			document.getElementById("' . $element_id . '0").addEventListener("change", function() {
+				if (this.checked === true) ' . $element_id . '_off.value = 1;
+    }, true); // "true" enables event capturing (runs before bubbling events)
+
+    document.getElementById("' . $element_id . '1").addEventListener("change", function() {
+		if (this.checked === true) ' . $element_id . '_off.value = 0;
+    }, true);
+			';
+
+			return $element . '</script>';
+
 		} else {
 
 			$onchange = $element_id . '_off.value=(this.checked === true ? 0 : 1);';// this is to save unchecked value as well.
-			BaseInputBox::addOnChange($this->attributes, $onchange);
+			BaseInputBox::addOnChange($this->attributes, $onchange, true);
 
 			if ($value == 1)
 				$this->attributes['checked'] = 'checked';
