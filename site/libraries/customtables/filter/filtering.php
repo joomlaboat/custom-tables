@@ -497,9 +497,11 @@ class Filtering
 
 				$storage = $field->params[1] ?? null;
 
+				$storedNumberTypes = ['storedintegersigned', 'storedintegerunsigned', 'storeddecimal'];
+
 				if ($storage == 'storedstring')
 					$isNumber = false;
-				elseif ($storage == 'storedintegersigned' or $storage == 'storedintegerunsigned')
+				elseif (in_array($storage, $storedNumberTypes))
 					$isNumber = true;
 				else {
 					$this->PathValue[] = 'Virtual not stored fields cannot be used in filters';

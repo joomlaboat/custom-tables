@@ -1796,6 +1796,7 @@
 				<option value="storedstring" label="Stored String" wordpress="true"/>
 				<option value="storedintegersigned" label="Stored Integer Signed" wordpress="true"/>
 				<option value="storedintegerunsigned" label="Stored Integer Unsigned" wordpress="true"/>
+				<option value="storeddecimal" label="Stored Decimal" wordpress="true"/>
 			</param>
 
 			<param name="length" label="Length"

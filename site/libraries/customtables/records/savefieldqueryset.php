@@ -668,7 +668,9 @@ class SaveFieldQuerySet
 
 			$storage = $this->field->params[1] ?? '';
 
-			if ($storage == "storedintegersigned" or $storage == "storedintegerunsigned" or $storage == "storedstring") {
+			$storedTypes = ['storedstring', 'storedintegersigned', 'storedintegerunsigned', 'storeddecimal'];
+
+			if (in_array($storage, $storedTypes)) {
 
 				try {
 					$code = str_replace('****quote****', '"', ($this->field->params !== null and count($this->field->params) > 0) ? $this->field->params[0] : '');
@@ -683,6 +685,9 @@ class SaveFieldQuerySet
 
 				if ($storage == "storedintegersigned" or $storage == "storedintegerunsigned") {
 					$this->setNewValue((int)$value);
+					return;
+				} elseif ($storage == "storeddecimal") {
+					$this->setNewValue((float)$value);
 					return;
 				}
 

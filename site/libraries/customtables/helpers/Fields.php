@@ -953,6 +953,15 @@ class Fields
 				if ($storage == 'storedstring') {
 					$l = (int)$typeParamsArray[2] ?? 255;
 					return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 4069))), 'default' => null];
+				} elseif ($storage == 'storeddecimal') {
+					$l = abs((int)$typeParamsArray[2] ?? 2);
+					if ($l > 65)
+						$l = 65;
+
+					$length = '20,' . $l;
+
+					return ['data_type' => 'decimal', 'is_nullable' => true, 'is_unsigned' => false, 'length' => $length, 'default' => null];
+
 				} elseif ($storage == 'storedintegersigned')
 					return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null];
 				elseif ($storage == 'storedintegerunsigned')
