@@ -933,8 +933,8 @@ class Filtering
 					. common::translate('COM_CUSTOMTABLES_DATE_FROM') . ' ' . $titleStart . ' '
 					. common::translate('COM_CUSTOMTABLES_DATE_TO') . ' ' . $titleEnd;
 
-				$whereClause->addCondition($fieldRow1['realfieldname'] . ' 00:00:00', $valueStart, '>=');
-				$whereClause->addCondition($fieldRow1['realfieldname'] . ' 23:59:59', $valueEnd, '<=');
+				$whereClause->addCondition($fieldRow1['realfieldname'], $valueStart . ' 00:00:00', '>=');
+				$whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd . ' 23:59:59', '<=');
 			}
 
 		} elseif ($valueStart and $valueEnd === null) {

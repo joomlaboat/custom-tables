@@ -961,6 +961,17 @@
 			</params>
 		</tag>
 
+		<tag name="getwhere" label="Query Where" startchar="{" endchar="}"
+			 description="Generates and returns a URL query string segment for the 'where' parameter. This tag is useful when constructing URLs dynamically based on specific conditions or filtering criteria. For example, to retrieve entries created on a particular date, you can use: ?view=catalog&#38;where=CreatedAt%3D2025-03-20."
+			 twigclass="url"
+			 wordpress="true">
+			<params>
+				<param name="parameter" label="Parameter" type="string"
+					   description="The name of the field to filter by within the URL query. This parameter should match the field name used in your database or catalog."
+					   example="CreatedAt"/>
+			</params>
+		</tag>
+
 		<tag name="getuint" label="Unsigned Integer" startchar="{" endchar="}" description="Returns an unsigned int."
 			 twigclass="url" proversion="1" wordpress="true">
 			<params>
