@@ -933,23 +933,21 @@ class Filtering
 					. common::translate('COM_CUSTOMTABLES_DATE_FROM') . ' ' . $titleStart . ' '
 					. common::translate('COM_CUSTOMTABLES_DATE_TO') . ' ' . $titleEnd;
 
-				$whereClause->addCondition($fieldRow1['realfieldname'], $valueStart, '>=');
-				$whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd, '<=');
+				$whereClause->addCondition($fieldRow1['realfieldname'] . ' 00:00:00', $valueStart, '>=');
+				$whereClause->addCondition($fieldRow1['realfieldname'] . ' 23:59:59', $valueEnd, '<=');
 			}
 
 		} elseif ($valueStart and $valueEnd === null) {
 			$this->PathValue[] = $title1 . ' '
 				. common::translate('COM_CUSTOMTABLES_FROM') . ' ' . $titleStart;
 
-			$whereClause->addCondition($fieldRow1['realfieldname'], $valueStart, '>=');
+			$whereClause->addCondition($fieldRow1['realfieldname'] . ' 00:00:00', $valueStart, '>=');
 		} elseif ($valueStart === null and $valueEnd) {
 			$this->PathValue[] = $title1 . ' '
 				. common::translate('COM_CUSTOMTABLES_TO') . ' ' . $valueEnd;
 
-			$whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd, '<=');
+			$whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd . ' 23:59:59', '<=');
 		}
-
-		echo '$whereClause:' . $whereClause->getWhereClause() . '<br/>';
 
 		return $whereClause;
 	}
