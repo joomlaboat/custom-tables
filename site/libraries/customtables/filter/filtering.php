@@ -949,6 +949,8 @@ class Filtering
 			$whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd, '<=');
 		}
 
+		echo '$whereClause:' . $whereClause->getWhereClause() . '<br/>';
+
 		return $whereClause;
 	}
 
