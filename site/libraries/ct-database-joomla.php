@@ -283,6 +283,51 @@ class MySQLWhereClause
 	{
 		return count($this->conditions) + count($this->orConditions) + count($this->nestedConditions) + count($this->nestedOrConditions);
 	}
+
+	public function getWhereParamValue(string $searchParam): array
+	{
+		// Process regular conditions
+		if (count($this->conditions)) {
+			$result = self::getWhereClauseMergeConditionValue($this->conditions, $searchParam);
+
+			if ($result['value'] !== null)
+				return $result;
+		}
+
+		// Process OR conditions
+		if (count($this->orConditions) > 0) {
+			$result = self::getWhereClauseMergeConditionValue($this->conditions, $searchParam);
+
+			if ($result['value'] !== null)
+				return $result;
+		}
+		// Process nested conditions
+		foreach ($this->nestedConditions as $nestedCondition) {
+			$result = $nestedCondition->getWhereParamValue($searchParam);
+
+			if ($result['value'] !== null)
+				return $result;
+		}
+
+		foreach ($this->nestedOrConditions as $nestedOrCondition) {
+
+			$result = $nestedOrCondition->getWhereParamValue($searchParam);
+
+			if ($result['value'] !== null)
+				return $result;
+		}
+
+		return ['value' => null];
+	}
+
+	protected function getWhereClauseMergeConditionValue($conditions, string $searchParam): array
+	{
+		foreach ($conditions as $condition) {
+			if ($condition['field'] == $searchParam)
+				return ['value' => $condition['value']];
+		}
+		return ['value' => null];
+	}
 }
 
 class database

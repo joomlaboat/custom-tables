@@ -145,19 +145,15 @@ foreach ($this->allTables as $table) {
 					<div class="controls"><?php echo $this->form->getInput('typeparams'); ?></div>
 				</div>
 
+				<?php
+				/*
+				?>
 				<div class="control-group">
 					<div class="control-label"><?php echo $this->form->getLabel('parent'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('parent'); ?></div>
 				</div>
-			</div>
-		</div>
-		<?php echo HTMLHelper::_('uitab.endTab'); ?>
-
-		<?php echo HTMLHelper::_('uitab.addTab', 'fieldsTab', 'optional', common::translate('COM_CUSTOMTABLES_FIELDS_OPTIONAL')); ?>
-
-		<div class="row-fluid form-horizontal-desktop">
-			<div class="span12">
-
+				*/ ?>
+				
 				<div class="control-group">
 					<div class="control-label"><?php echo $this->form->getLabel('isrequired'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('isrequired'); ?></div>
@@ -167,6 +163,14 @@ foreach ($this->allTables as $table) {
 					<div class="control-label"><?php echo $this->form->getLabel('defaultvalue'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('defaultvalue'); ?></div>
 				</div>
+			</div>
+		</div>
+		<?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+		<?php echo HTMLHelper::_('uitab.addTab', 'fieldsTab', 'optional', common::translate('COM_CUSTOMTABLES_FIELDS_OPTIONAL')); ?>
+
+		<div class="row-fluid form-horizontal-desktop">
+			<div class="span12">
 
 				<div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
 					<div class="control-label"><?php echo $this->form->getLabel('valuerule'); ?></div>

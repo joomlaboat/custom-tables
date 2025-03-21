@@ -28,12 +28,18 @@ class Search_date extends BaseSearch
 	{
 		common::loadJQueryUI();
 
+		if (empty($value)) {
+			$result = $this->ct->Filter->whereClause->getWhereParamValue($this->ct->Table->fieldPrefix . 'CreatedAt');
+			if ($result['value'] !== null)
+				$value = explode(' ', $result['value'])[0]; // Extracts only the date part
+
+		}
+
 		$matchType = $this->attributes['data-match'];
 
 		$valueParts = explode('-to-', $value);
 
 		$valueStart = isset($valueParts[0]) ? trim($valueParts[0]) : '';
-
 
 		// Sanitize and validate date format
 		$dateFormat = 'Y-m-d'; // Adjust the format according to your needs
