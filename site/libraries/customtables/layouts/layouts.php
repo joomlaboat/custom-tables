@@ -221,12 +221,12 @@ class Layouts
 		if (!empty($layoutId)) {
 			$this->getLayout($layoutId);
 			if ($this->layoutType === null)
-				return ['success' => false, 'message' => 'CustomTable: Layout "' . $layoutId . '" not found', 'short' => 'error'];
+				return ['success' => false, 'message' => 'Layout "' . $layoutId . '" not found', 'short' => 'error'];
 			if ($this->ct->Table->fields === null)
-				return ['success' => false, 'message' => 'CustomTable: Table not selected or not found', 'short' => 'error'];
+				return ['success' => false, 'message' => 'Table not selected or not found', 'short' => 'error'];
 		} elseif ($task !== 'cancel') {
 			if ($this->ct->Table === null)
-				return ['success' => false, 'message' => 'CustomTable: Table not selected', 'short' => 'error'];
+				return ['success' => false, 'message' => 'Table not selected', 'short' => 'error'];
 
 			if ($layoutType === null) {
 				if ($task == 'saveandcontinue' or $task == 'save' or $task == 'saveascopy')
@@ -332,7 +332,7 @@ class Layouts
 		} elseif ($this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_DETAILS or $this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM) {
 			$output['html'] = $this->renderDetailedLayout();
 		} else {
-			return ['success' => false, 'message' => 'CustomTable: Unknown Layout Type', 'short' => 'error'];
+			return ['success' => false, 'message' => 'Unknown Layout Type', 'short' => 'error'];
 		}
 
 		if ($this->ct->Env->clean == 0) {
