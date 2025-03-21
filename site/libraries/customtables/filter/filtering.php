@@ -918,13 +918,25 @@ class Filtering
 		}
 
 		if ($valueStart and $valueEnd) {
-			//Breadcrumbs
-			$this->PathValue[] = $title1 . ' '
-				. common::translate('COM_CUSTOMTABLES_DATE_FROM') . ' ' . $titleStart . ' '
-				. common::translate('COM_CUSTOMTABLES_DATE_TO') . ' ' . $titleEnd;
 
-			$whereClause->addCondition($fieldRow1['realfieldname'], $valueStart, '>=');
-			$whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd, '<=');
+			if ($valueStart == $valueEnd) {
+				//Breadcrumbs
+				$this->PathValue[] = $title1 . ' '
+					. common::translate('COM_CUSTOMTABLES_DATE') . ' ' . $titleStart;
+
+				$whereClause->addCondition($fieldRow1['realfieldname'], $valueStart . ' 00:00:00', '>=');
+				$whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd . ' 23:59:59', '<=');
+
+			} else {
+				//Breadcrumbs
+				$this->PathValue[] = $title1 . ' '
+					. common::translate('COM_CUSTOMTABLES_DATE_FROM') . ' ' . $titleStart . ' '
+					. common::translate('COM_CUSTOMTABLES_DATE_TO') . ' ' . $titleEnd;
+
+				$whereClause->addCondition($fieldRow1['realfieldname'], $valueStart, '>=');
+				$whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd, '<=');
+			}
+
 		} elseif ($valueStart and $valueEnd === null) {
 			$this->PathValue[] = $title1 . ' '
 				. common::translate('COM_CUSTOMTABLES_FROM') . ' ' . $titleStart;
@@ -936,6 +948,7 @@ class Filtering
 
 			$whereClause->addCondition($fieldRow1['realfieldname'], $valueEnd, '<=');
 		}
+
 		return $whereClause;
 	}
 
