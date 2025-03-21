@@ -28,7 +28,56 @@ class Search_date extends BaseSearch
 	{
 		common::loadJQueryUI();
 
-		$js = '
+		$matchType = $this->attributes['data-match'];
+
+		$valueParts = explode('-to-', $value);
+
+		$valueStart = isset($valueParts[0]) ? trim($valueParts[0]) : '';
+
+
+		// Sanitize and validate date format
+		$dateFormat = 'Y-m-d'; // Adjust the format according to your needs
+
+		if ($valueStart) {
+			$startDateTime = DateTime::createFromFormat($dateFormat, $valueStart);
+
+			if ($startDateTime !== false) {
+				$valueStart = $startDateTime->format($dateFormat);
+			} else {
+				// Invalid date format, handle the error or set a default value
+				$valueStart = ''; // Set to default or perform error handling
+			}
+		}
+
+		if ($matchType == 'exact') {
+
+			$js = '
+
+jQuery(document).ready(function($) {
+    $("#' . $this->objectName . '_exact").datepicker({
+        dateFormat: "yy-mm-dd",
+        onSelect: function(selectedDate) {
+            //$("#' . $this->objectName . '").datepicker("option", "minDate", selectedDate);
+        }
+    });
+});
+
+';
+
+			$this->ct->LayoutVariables['script'] .= $js;
+
+			$hidden = '<input type="hidden" name="' . $this->objectName . '" id="' . $this->objectName . '" value="' . $valueStart . '">';
+			$jsOnChange = 'ctSearchBarDateUpdate(\'' . $this->field->fieldname . '\')';
+
+			$start = '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueStart . '" type="text"'
+				. ' class="' . ($this->attributes['class'] ?? '') . '" id="' . $this->objectName . '_exact"'
+				. ' placeholder="' . $this->field->title . ' - ' . common::translate('COM_CUSTOMTABLES_DATE') . '"'
+				. ' style="display:inline-block;width:49%;margin-left:0;margin-right:0;float:left;">';
+
+			return $hidden . '<div style="position: relative;">' . $start . '</div>';
+		} else {
+
+			$js = '
 
 jQuery(document).ready(function($) {
     $("#' . $this->objectName . '_start").datepicker({
@@ -48,52 +97,34 @@ jQuery(document).ready(function($) {
 
 ';
 
-		$this->ct->LayoutVariables['script'] .= $js;
+			$this->ct->LayoutVariables['script'] .= $js;
 
-		$valueParts = explode('-to-', $value);
+			$valueEnd = isset($valueParts[1]) ? trim($valueParts[1]) : '';
+			if ($valueEnd) {
+				$endDateTime = DateTime::createFromFormat($dateFormat, $valueEnd);
 
-		$valueStart = isset($valueParts[0]) ? trim($valueParts[0]) : '';
-		$valueEnd = isset($valueParts[1]) ? trim($valueParts[1]) : '';
-
-		// Sanitize and validate date format
-		$dateFormat = 'Y-m-d'; // Adjust the format according to your needs
-
-		if ($valueStart) {
-			$startDateTime = DateTime::createFromFormat($dateFormat, $valueStart);
-
-			if ($startDateTime !== false) {
-				$valueStart = $startDateTime->format($dateFormat);
-			} else {
-				// Invalid date format, handle the error or set a default value
-				$valueStart = ''; // Set to default or perform error handling
+				if ($endDateTime !== false) {
+					$valueEnd = $endDateTime->format($dateFormat);
+				} else {
+					// Invalid date format, handle the error or set a default value
+					$valueEnd = ''; // Set to default or perform error handling
+				}
 			}
+
+			$hidden = '<input type="hidden" name="' . $this->objectName . '" id="' . $this->objectName . '" value="' . $valueStart . '-to-' . $valueEnd . '">';
+			$jsOnChange = 'ctSearchBarDateRangeUpdate(\'' . $this->field->fieldname . '\')';
+
+			$start = '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueStart . '" type="text"'
+				. ' class="' . ($this->attributes['class'] ?? '') . '" id="' . $this->objectName . '_start"'
+				. ' placeholder="' . $this->field->title . ' - ' . common::translate('COM_CUSTOMTABLES_START') . '"'
+				. ' style="display:inline-block;width:49%;margin-left:0;margin-right:0;float:left;">';
+
+			$end = '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueEnd . '" type="text"'
+				. ' class="' . ($this->attributes['class'] ?? '') . '" id="' . $this->objectName . '_end"'
+				. ' placeholder="' . $this->field->title . ' - ' . common::translate('COM_CUSTOMTABLES_END') . '"'
+				. ' style="display:inline-block;width:49%;margin-left:0;margin-right:0;float:right;">';
+
+			return $hidden . '<div style="position: relative;">' . $start . $end . '</div>';
 		}
-
-		if ($valueEnd) {
-			$endDateTime = DateTime::createFromFormat($dateFormat, $valueEnd);
-
-			if ($endDateTime !== false) {
-				$valueEnd = $endDateTime->format($dateFormat);
-			} else {
-				// Invalid date format, handle the error or set a default value
-				$valueEnd = ''; // Set to default or perform error handling
-			}
-		}
-
-		$jsOnChange = 'ctSearchBarDateRangeUpdate(\'' . $this->field->fieldname . '\')';
-
-		$hidden = '<input type="hidden" name="' . $this->objectName . '" id="' . $this->objectName . '" value="' . $valueStart . '-to-' . $valueEnd . '">';
-
-		$start = '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueStart . '" type="text"'
-			. ' class="' . ($this->attributes['class'] ?? '') . '" id="' . $this->objectName . '_start"'
-			. ' placeholder="' . $this->field->title . ' - ' . common::translate('COM_CUSTOMTABLES_START') . '"'
-			. ' style="display:inline-block;width:49%;margin-left:0;margin-right:0;float:left;">';
-
-		$end = '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueEnd . '" type="text"'
-			. ' class="' . ($this->attributes['class'] ?? '') . '" id="' . $this->objectName . '_end"'
-			. ' placeholder="' . $this->field->title . ' - ' . common::translate('COM_CUSTOMTABLES_END') . '"'
-			. ' style="display:inline-block;width:49%;margin-left:0;margin-right:0;float:right;">';
-
-		return $hidden . '<div style="position: relative;">' . $start . $end . '</div>';
 	}
 }

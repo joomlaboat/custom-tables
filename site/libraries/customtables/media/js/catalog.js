@@ -734,3 +734,10 @@ function ctSearchBarDateRangeUpdate(fieldName) {
 		obj.value = date_start + "-to-" + date_end;
 	}, 300)
 }
+
+function ctSearchBarDateUpdate(fieldName) {
+	setTimeout(function () {
+		let obj = document.getElementById(ctFieldInputPrefix + "search_box_" + fieldName);
+		obj.value = document.getElementById(ctFieldInputPrefix + "search_box_" + fieldName + "_exact").value;
+	}, 300)
+}

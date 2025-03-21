@@ -986,9 +986,11 @@ class Filtering
 		if ($fieldRow2 !== null) {
 			$value2 = $value;
 			$title2 = $fieldRow2['fieldtitle' . $this->ct->Languages->Postfix];
+			$value2isFieldName = true;
 		} else {
 			$value2 = $value;
 			$title2 = $value;
+			$value2isFieldName = false;
 		}
 
 		//Breadcrumbs
@@ -999,8 +1001,15 @@ class Filtering
 			$whereClause->addCondition($value1, null, 'NULL');
 		elseif ($value2 == 'NULL' and $comparison_operator == '!=')
 			$whereClause->addCondition($value1, null, 'NOT NULL');
-		else
-			$whereClause->addCondition($value1, $value2, $comparison_operator);
+		else {
+			if ($value2isFieldName or ($comparison_operator != '=' and $comparison_operator != '==')) {
+				$whereClause->addCondition($value1, $value2, $comparison_operator);
+			} else {
+				$whereClause->addCondition($value1, $value2 . ' 00:00:00', '>=');
+				$whereClause->addCondition($value1, $value2 . ' 23:59:59', '<=');
+			}
+		}
+
 		return $whereClause;
 	}
 
