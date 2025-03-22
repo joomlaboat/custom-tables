@@ -57,7 +57,7 @@ class InputBox_signature extends BaseInputBox
 		$ctInputbox_signature = $elementId . '",' . ((int)$width) . ',' . ((int)$height) . ',"' . $format;
 		$result .= '
 <script>
-	ctInputbox_signature("' . $ctInputbox_signature . '")
+	CTEditHelper.ctInputbox_signature("' . $ctInputbox_signature . '")
 </script>';
 		return $result;
 	}

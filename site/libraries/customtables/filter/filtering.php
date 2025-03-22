@@ -1160,7 +1160,7 @@ class LinkJoinFilters
 		$selects[] = $ct->Table->realtablename . '.' . $fieldRow['realfieldname'];
 		$rows = database::loadAssocList($ct->Table->realtablename, $selects, $whereClause, $fieldRow['realfieldname']);
 
-		$result .= '<select id="' . $control_name . 'SQLJoinLink" class="' . common::convertClassString('form-select') . '" onchange="ctInputbox_UpdateSQLJoinLink(\'' . $control_name . '\',\'' . $control_name_postfix . '\')">';
+		$result .= '<select id="' . $control_name . 'SQLJoinLink" class="' . common::convertClassString('form-select') . '" onchange="CTEditHelper.ctInputbox_UpdateSQLJoinLink(\'' . $control_name . '\',\'' . $control_name_postfix . '\')">';
 		$result .= '<option value="">- ' . common::translate('COM_CUSTOMTABLES_SELECT') . '</option>';
 
 		foreach ($rows as $row) {

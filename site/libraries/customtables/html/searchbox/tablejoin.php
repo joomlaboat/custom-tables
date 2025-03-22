@@ -348,7 +348,7 @@ class Search_tablejoin extends BaseSearch
 			    	(function checkAndRun_ctInputbox_removeEmptyParents() {
     			    	if (typeof ctInputbox_removeEmptyParents === "function") {
                             ctInputbox_removeEmptyParents("' . $control_name . '","");
-				            ctInputbox_UpdateSQLJoinLink("' . $control_name . '","");            
+				            CTEditHelper.ctInputbox_UpdateSQLJoinLink("' . $control_name . '","");            
 ';
 			if (str_contains(($this->attributes['class'] ?? ''), ' ct_virtualselect_selectbox'))
 				$htmlResult .= '

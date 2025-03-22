@@ -7,7 +7,9 @@
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-const uploaderParams = [];
+if (!window.uploaderParams) { // This works only if uploaderParams is defined globally.
+	window.uploaderParams = [];
+}
 
 function updateUploadedFileBox(index) {
 	if (uploaderParams[index].uploadedFileBox != null) {

@@ -147,6 +147,7 @@ function insertAndExecute(id) {
 	const scripts = Array.prototype.slice.call(document.getElementById(id).getElementsByTagName("script"));
 	for (let i = 0; i < scripts.length; i++) {
 		if (scripts[i].src === "") {
+			console.warn(scripts[i].innerHTML);
 			eval(scripts[i].innerHTML);
 		}
 	}
