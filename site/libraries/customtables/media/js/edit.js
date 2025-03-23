@@ -23,6 +23,8 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 			this.ct_signaturePad_formats = [];
 
 			this.ctInputBoxRecords_dynamic_filter = [];
+
+			this.ctLinkLoading = false;
 		}
 
 		GoogleDriveInitClient(fieldName, GoogleDriveAPIKey, GoogleDriveClientId) {

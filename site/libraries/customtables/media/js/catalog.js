@@ -7,8 +7,6 @@
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-let ctLinkLoading = false;
-
 function ctCreateUser(msg, listing_id, toolbarBoxId, ModuleId) {
 	if (confirm(msg)) {
 		document.getElementById(toolbarBoxId).innerHTML = '';
@@ -71,9 +69,9 @@ function esPrepareLink(deleteParams, addParams) {
 }
 
 function esEditObject(objId, toolbarBoxId, Itemid, tmpl, returnto) {
-	if (ctLinkLoading) return;
+	if (CTEditHelper.ctLinkLoading) return;
 
-	ctLinkLoading = true;
+	CTEditHelper.ctLinkLoading = true;
 	document.getElementById(toolbarBoxId).innerHTML = '';
 
 	let return_to = btoa(window.location.href);
@@ -127,7 +125,7 @@ function runTheTask(task, tableid, recordId, responses, last, reload, ModuleId) 
 						window.location.reload();
 					}
 
-					ctLinkLoading = false;
+					CTEditHelper.ctLinkLoading = false;
 
 					if (last) {
 						let toolbarBoxId = 'esToolBar_' + task + '_box_' + tableid;
@@ -143,15 +141,15 @@ function runTheTask(task, tableid, recordId, responses, last, reload, ModuleId) 
 }
 
 function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
-	if (ctLinkLoading) return;
-	ctLinkLoading = true;
+	if (CTEditHelper.ctLinkLoading) return;
+	CTEditHelper.ctLinkLoading = true;
 	runTheTask('refresh', tableid, recordId, ['refreshed'], false, false, ModuleId);
 }
 
 function ctCopyRecord(tableid, listing_id, toolbarBoxId, ModuleId) {
-	if (ctLinkLoading) return;
+	if (CTEditHelper.ctLinkLoading) return;
 
-	ctLinkLoading = true;
+	CTEditHelper.ctLinkLoading = true;
 
 	if (document.getElementById(toolbarBoxId))
 		document.getElementById(toolbarBoxId).innerHTML = '';
@@ -206,9 +204,9 @@ function ctLimitChanged(objectValue, ModuleId) {
 }
 
 function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
-	if (ctLinkLoading) return;
+	if (CTEditHelper.ctLinkLoading) return;
 
-	ctLinkLoading = true;
+	CTEditHelper.ctLinkLoading = true;
 	document.getElementById(toolbarBoxId).innerHTML = '';
 	runTheTask((publish === 0 ? 'unpublish' : 'publish'), tableid, recordId, ['published', 'unpublished'], false, false, ModuleId);
 }
@@ -227,14 +225,14 @@ function findRowIndexById(tableid, rowId) {
 }
 
 function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
-	if (ctLinkLoading) return;
+	if (CTEditHelper.ctLinkLoading) return;
 
-	ctLinkLoading = true;
+	CTEditHelper.ctLinkLoading = true;
 
 	if (confirm(msg)) {
 		runTheTask('delete', tableid, recordId, ['deleted'], false, false, ModuleId);
 	} else {
-		ctLinkLoading = false;
+		CTEditHelper.ctLinkLoading = false;
 	}
 }
 
@@ -244,9 +242,9 @@ function es_SearchBoxKeyPress(e) {
 }
 
 function ctSearchBoxDo() {
-	if (ctLinkLoading) return;
+	if (CTEditHelper.ctLinkLoading) return;
 
-	ctLinkLoading = true;
+	CTEditHelper.ctLinkLoading = true;
 	let w = [];
 	let allSearchElements = document.querySelectorAll('[ctSearchBoxField]');
 
@@ -264,7 +262,7 @@ function ctSearchBoxDo() {
 				if (l > 0) {
 					if (objValue.length < l) {
 						alert(obj.dataset.label + ": " + TranslateText('COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH', l));
-						ctLinkLoading = false;
+						CTEditHelper.ctLinkLoading = false;
 						return;
 					}
 				}
@@ -303,9 +301,9 @@ function ctSearchBoxDo() {
 }
 
 function ctSearchReset() {
-	if (ctLinkLoading) return;
+	if (CTEditHelper.ctLinkLoading) return;
 
-	ctLinkLoading = true;
+	CTEditHelper.ctLinkLoading = true;
 
 	window.location.href = esPrepareLink(['where', 'task', "listing_id", 'returnto'], []);
 }
@@ -346,14 +344,14 @@ function getListOfSelectedRecords(tableid) {
 
 function ctToolBarDO(task, tableid, ModuleId) {
 
-	if (ctLinkLoading) return;
+	if (CTEditHelper.ctLinkLoading) return;
 
-	ctLinkLoading = true;
+	CTEditHelper.ctLinkLoading = true;
 	const elements = getListOfSelectedRecords(tableid);
 
 	if (elements.length === 0) {
 		alert(TranslateText('COM_CUSTOMTABLES_JS_SELECT_RECORDS'));
-		ctLinkLoading = false;
+		CTEditHelper.ctLinkLoading = false;
 		return;
 	}
 
@@ -363,7 +361,7 @@ function ctToolBarDO(task, tableid, ModuleId) {
 		if (elements.length === 1) msg = TranslateText('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1'); else msg = TranslateText('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE').replace('%s', elements.length);
 
 		if (!confirm(msg)) {
-			ctLinkLoading = false;
+			CTEditHelper.ctLinkLoading = false;
 			return;
 		}
 	}
