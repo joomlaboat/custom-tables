@@ -857,11 +857,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 					let r = http.response.toString();
 					if (r.indexOf('view-login') !== -1) {
 						alert('Session expired. Please login again.');
-						//alert(TranslateText('COM_CUSTOMTABLES_JS_SESSION_EXPIRED'));
-
-						//if (returnLinkEncoded !== "")
-						location.href = CTEditHelper.websiteRoot;//stripInvalidCharacters(Base64.decode(returnLinkEncoded));
-						//else
+						location.reload();
 						return;
 					} else {
 						console.log(clean_url);

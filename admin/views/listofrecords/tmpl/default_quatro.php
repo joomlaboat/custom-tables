@@ -76,22 +76,27 @@ if ($this->saveOrder and $this->ordering_realfieldname != '') {
 						<?php echo common::translate('JGLOBAL_NO_MATCHING_RESULTS'); ?>
 					</div>
 				<?php else : ?>
-					<table class="table" id="userList">
-						<caption class="visually-hidden">
-							<?php echo common::translate('COM_USERS_USERS_TABLE_CAPTION'); ?>,
-							<span id="orderedBy"><?php echo common::translate('JGLOBAL_SORTED_BY'); ?> </span>,
-							<span id="filteredBy"><?php echo common::translate('JGLOBAL_FILTERED_BY'); ?></span>
-						</caption>
-						<thead>
-						<?php include('default_quatro_head.php'); ?>
-						</thead>
-						<tbody<?php if ($this->saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($this->listDirn); ?>" data-nested="true"<?php endif; ?>>
-						<?php echo $this->loadTemplate('quatro_body'); ?>
-						</tbody>
-					</table>
+
+					<div style="width: 100%;overflow-x: auto;position:relative;">
+						<div style="width: auto;max-width: 700px;">
+							<table class="table" id="userList">
+								<caption class="visually-hidden">
+									<?php echo common::translate('COM_USERS_USERS_TABLE_CAPTION'); ?>,
+									<span id="orderedBy"><?php echo common::translate('JGLOBAL_SORTED_BY'); ?> </span>,
+									<span id="filteredBy"><?php echo common::translate('JGLOBAL_FILTERED_BY'); ?></span>
+								</caption>
+								<thead>
+								<?php include('default_quatro_head.php'); ?>
+								</thead>
+								<tbody<?php if ($this->saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($this->listDirn); ?>" data-nested="true"<?php endif; ?>>
+								<?php echo $this->loadTemplate('quatro_body'); ?>
+								</tbody>
+							</table>
+						</div>
+					</div>
 
 					<?php // load the pagination. ?>
-					<?php echo $this->pagination->getListFooter(); ?>
+
 
 					<?php // Load the batch processing form if user is allowed ?>
 					<?php /* if ($loggeduser->authorise('core.create', 'com_customtables','categories')
@@ -113,6 +118,8 @@ if ($this->saveOrder and $this->ordering_realfieldname != '') {
 				<input type="hidden" name="boxchecked" value="0">
 				<?php echo HTMLHelper::_('form.token'); ?>
 			</div>
+
+			<?php echo $this->pagination->getListFooter(); ?>
 		</div>
 	</div>
 </form>
