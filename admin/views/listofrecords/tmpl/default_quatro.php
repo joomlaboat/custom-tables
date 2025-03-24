@@ -77,9 +77,9 @@ if ($this->saveOrder and $this->ordering_realfieldname != '') {
 					</div>
 				<?php else : ?>
 
-					<div style="width: 100%;overflow-x: auto;position:relative;">
-						<div style="width: auto;max-width: 700px;">
-							<table class="table" id="userList">
+					<div style="width: 100%; overflow-x: auto; position: relative; white-space: nowrap;">
+						<div style="display: inline-block; max-width: 700px;">
+							<table class="table" id="userList" style="width: 100%;">
 								<caption class="visually-hidden">
 									<?php echo common::translate('COM_USERS_USERS_TABLE_CAPTION'); ?>,
 									<span id="orderedBy"><?php echo common::translate('JGLOBAL_SORTED_BY'); ?> </span>,
@@ -88,12 +88,24 @@ if ($this->saveOrder and $this->ordering_realfieldname != '') {
 								<thead>
 								<?php include('default_quatro_head.php'); ?>
 								</thead>
-								<tbody<?php if ($this->saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($this->listDirn); ?>" data-nested="true"<?php endif; ?>>
-								<?php echo $this->loadTemplate('quatro_body'); ?>
+								<tbody<?php if ($this->saveOrder) : ?> class="js-draggable"
+									data-url="<?php echo $saveOrderingUrl; ?>"
+									data-direction="<?php echo strtolower($this->listDirn); ?>"
+									data-nested="true"<?php endif; ?>>
+								<?php
+								if ($this->ct->Table !== null) {
+									try {
+										echo $this->loadTemplate('quatro_body');
+									} catch (Exception $e) {
+										echo $e->getMessage();
+									}
+								}
+								?>
 								</tbody>
 							</table>
 						</div>
 					</div>
+
 
 					<?php // load the pagination. ?>
 
