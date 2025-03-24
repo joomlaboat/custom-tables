@@ -249,23 +249,16 @@ class RecordToolbar
 			}
 		}
 		if ($min_ordering_field !== null) {
-			$fieldTitleValue = $this->getFieldCleanValue4RDI($min_ordering_field);
-			return substr($fieldTitleValue, -100);
+
+			//$fieldRow = $this->ct->Table->getFieldByName()
+
+			$valueProcessor = new Value($this->ct);
+			$fieldTitleValue = $valueProcessor->renderValue($min_ordering_field, $this->ct->Table->record, [], true);
+
+			//$fieldTitleValue = $this->getFieldCleanValue4RDI($min_ordering_field);
+			return $fieldTitleValue;//substr($fieldTitleValue, -100);
 		}
 		return null;
-	}
-
-	protected function getFieldCleanValue4RDI($mFld): string
-	{
-		$titleField = $mFld['realfieldname'];
-		if (str_contains($mFld['type'], 'multi'))
-			$titleField .= $this->ct->Languages->Postfix;
-
-		$fieldTitleValue = $this->row[$titleField];
-		$deleteLabel = common::ctStripTags($fieldTitleValue ?? '');
-
-		$deleteLabel = trim(preg_replace("/[^a-zA-Z\d ,.]/", "", $deleteLabel));
-		return preg_replace('/\s{3,}/', ' ', $deleteLabel);
 	}
 
 	protected function renderCopyIcon(): string
@@ -285,11 +278,15 @@ class RecordToolbar
 	protected function renderDeleteIcon(): string
 	{
 		$deleteLabel = $this->firstFieldValueLabel();
-		$icon = Icons::iconDelete($this->ct->Env->toolbarIcons);
-		$message = 'Do you want to delete (' . $deleteLabel . ')?';
 		$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
-		$href = 'javascript:ctDeleteRecord(\'' . $message . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . $moduleIDString . ');';
-		return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $icon . '</a></div>';
+
+		$href = 'javascript:ctDeleteRecord(\'' . $this->rid . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', ' . $moduleIDString . ');';
+
+		$messageDiv = '<div id="ctDeleteMessage' . $this->rid . '" style="display:none;">Do you want to delete ' . $deleteLabel . '?</div>';
+		$a = '<a href="' . $href . '">' . Icons::iconDelete($this->ct->Env->toolbarIcons) . '</a>';
+		$result = '<div id="ctDeleteIcon' . $this->rid . '" class="toolbarIcons">' . $messageDiv . $a . '</div>';;
+
+		return $result;
 	}
 
 	protected function renderPublishIcon(): string
@@ -312,5 +309,18 @@ class RecordToolbar
 				return common::translate('COM_CUSTOMTABLES_PUBLISHED');
 		}
 		return '';
+	}
+
+	protected function getFieldCleanValue4RDI($mFld): string
+	{
+		$titleField = $mFld['realfieldname'];
+		if (str_contains($mFld['type'], 'multi'))
+			$titleField .= $this->ct->Languages->Postfix;
+
+		$fieldTitleValue = $this->row[$titleField];
+		$deleteLabel = common::ctStripTags($fieldTitleValue ?? '');
+
+		$deleteLabel = trim(preg_replace("/[^a-zA-Z\d ,.]/", "", $deleteLabel));
+		return preg_replace('/\s{3,}/', ' ', $deleteLabel);
 	}
 }

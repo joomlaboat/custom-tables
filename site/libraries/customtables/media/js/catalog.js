@@ -224,15 +224,21 @@ function findRowIndexById(tableid, rowId) {
 	return -1;
 }
 
-function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
+function ctDeleteRecord(rid, tableid, recordId, ModuleId) {
 	if (CTEditHelper.ctLinkLoading) return;
 
 	CTEditHelper.ctLinkLoading = true;
 
-	if (confirm(msg)) {
-		runTheTask('delete', tableid, recordId, ['deleted'], false, false, ModuleId);
-	} else {
-		CTEditHelper.ctLinkLoading = false;
+	let msgObj = document.getElementById('ctDeleteMessage' + rid);
+	if (msgObj) {
+		// Strip HTML tags and sanitize the message
+		let msg = msgObj.textContent || msgObj.innerText || "";
+
+		if (confirm(msg)) {
+			runTheTask('delete', tableid, recordId, ['deleted'], false, false, ModuleId);
+		} else {
+			CTEditHelper.ctLinkLoading = false;
+		}
 	}
 }
 

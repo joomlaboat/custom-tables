@@ -96,7 +96,7 @@ class CustomTablesViewCatalog extends HtmlView
 		try {
 			$this->content = $this->catalog->render($this->ct->Params->pageLayout);
 			$code = 200;
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
 			$this->content = '';
 			$code = 500;
