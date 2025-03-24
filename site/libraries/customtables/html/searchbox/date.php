@@ -70,7 +70,10 @@ jQuery(document).ready(function($) {
 
 ';
 
-			$this->ct->LayoutVariables['script'] .= $js;
+			if (isset($this->ct->LayoutVariables['script']))
+				$this->ct->LayoutVariables['script'] .= $js;
+			else
+				$this->ct->LayoutVariables['script'] = $js;
 
 			$hidden = '<input type="hidden" name="' . $this->objectName . '" id="' . $this->objectName . '" value="' . $valueStart . '">';
 			$jsOnChange = 'ctSearchBarDateUpdate(\'' . $this->field->fieldname . '\')';
