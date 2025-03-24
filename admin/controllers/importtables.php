@@ -44,7 +44,7 @@ class CustomTablesControllerImportTables extends FormController
 				$this->setRedirect($link, common::translate('Tables was Unable to Import: ' . $e->getMessage()), 'error');
 			}
 
-			$this->setRedirect($link, common::translate('Tables Imported Successfully'));
+			$this->setRedirect($link, common::translate('Tables Imported Successfully'), 'success');
 
 		} else {
 			common::inputSet('view', 'importtables');

@@ -782,7 +782,8 @@ function stripInvalidCharacters(str) {
 function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField, returnLinkEncoded, ModuleId) {
 
 	let fieldsProcessed = [];
-	let params = "";
+	let params = new URLSearchParams();
+
 	let opt;
 	for (let i = 0; i < elements.length; i++) {
 		if (elements[i].name && elements[i].name !== '' && elements[i].name !== 'returnto' && fieldsProcessed.indexOf(elements[i].name) === -1) {
@@ -794,12 +795,12 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 				for (let x = 0; x < options.length; x++) {
 					opt = options[x];
 					if (opt.selected)
-						params += "&" + elements[i].name + "=" + opt.value;
+						params.append(elements[i].name, opt.value);
 				}
 
 			} else if (elements[i].type === "checkbox") {
 				// Handle checkboxes: add "true" if checked, "false" if unchecked
-				params += "&" + elements[i].name + "=" + (elements[i].checked ? "true" : "false");
+				params.append(elements[i].name, (elements[i].checked ? "true" : "false"));
 			} else if (elements[i].type === "radio") {
 				// Handle radio buttons: Check if any radio button with the same name is selected
 				const radios = document.getElementsByName(elements[i].name);
@@ -807,7 +808,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 
 				for (let r = 0; r < radios.length; r++) {
 					if (radios[r].checked) {
-						params += "&" + radios[r].name + "=" + radios[r].value;
+						params.append(radios[r].name, radios[r].value);
 						radioChecked = true;
 						break;  // No need to check further once one is selected
 					}
@@ -815,10 +816,10 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 
 				// If no radio button is selected, set a default value (if desired)
 				if (!radioChecked) {
-					params += "&" + elements[i].name + "=none";  // You can set "none" or another default value
+					params.append(elements[i].name, "none");
 				}
 			} else {
-				params += "&" + elements[i].name + "=" + elements[i].value;
+				params.append(elements[i].name, elements[i].value);
 			}
 			fieldsProcessed.push(elements[i].name);
 		}
@@ -827,22 +828,35 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
 
 	if (http) {
+		params.append('task', "save");
+		params.append('clean', "1");
+		params.append('frmt', "json");
+		params.append('ctmodalform', "1");
+		params.append('load', "1");
 
-		http.open("POST", url + "&clean=1&ctmodalform=1&load=1", true);
+		let clean_url = url.replace('%addRecord%', '');
+		console.log("clean_url:", clean_url)
+		console.log("params:", params.toString())
+
+		http.open("POST", clean_url, true);
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		http.setRequestHeader("X-Requested-With", "XMLHttpRequest"); // Prevent full-page redirects
+
 		http.onreadystatechange = function () {
 			if (http.readyState === 4) {
 				let response;
 
 				try {
+					let responseString = http.response.toString();
+					console.log('responseString:', responseString);
 					response = JSON.parse(http.response.toString());
 				} catch (e) {
-					console.log(url + "&clean=1&ctmodalform=1&load=1");
+					console.log(clean_url);
 					console.log(http.response.toString());
 					return console.error(e);
 				}
 
-				if (response.status === "saved") {
+				if (response.success) {
 					let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
 					let table_object = document.getElementById("ctTable_" + tableid);
 
@@ -857,8 +871,10 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 						refreshTableJoinField(parentField, response);
 					}
 
-					if (hideModelOnSave)
+					if (hideModelOnSave) {
 						ctHidePopUp();
+						return;
+					}
 
 					if (returnLinkEncoded !== "")
 						location.href = stripInvalidCharacters(Base64.decode(returnLinkEncoded));
@@ -873,7 +889,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 				}
 			}
 		};
-		http.send(params);
+		http.send(params.toString());
 	}
 }
 
@@ -1299,7 +1315,7 @@ function ctTableJoinAddRecordModalForm(control_name, sub_index) {
 
 	let wrapper = document.getElementById(control_name + "Wrapper");
 
-	let query = ctWebsiteRoot + 'index.php/' + wrapper.dataset.addrecordmenualias;
+	let query = ctWebsiteRoot + 'index.php' + (wrapper.dataset.addrecordmenualias.indexOf('/') === -1 ? '/' : '') + wrapper.dataset.addrecordmenualias;
 	if (wrapper.dataset.addrecordmenualias.indexOf('?') === -1)
 		query += '?';
 	else
@@ -1415,8 +1431,6 @@ function ctRenderTableJoinSelectBoxLoadRecords(url, control_name, index, execute
 				try {
 					response = JSON.parse(http.response.toString());
 				} catch (e) {
-					console.log(http.response.toString());
-					console.log(url);
 					return console.error(e);
 				}
 				ctRenderTableJoinSelectBox(control_name, response, index, execute_all, sub_index, object_id, formId, forceValue);
