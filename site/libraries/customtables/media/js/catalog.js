@@ -677,7 +677,7 @@ function ctEditModal(url, parentFieldToUpdate = null) {
 
 				if (res.indexOf('view-login') !== -1) {
 					alert('Session expired. Please login again.');
-					location.href = CTEditHelper.websiteRoot;
+					location.reload();
 					return;
 				} else {
 					ctShowPopUp(res, true);
