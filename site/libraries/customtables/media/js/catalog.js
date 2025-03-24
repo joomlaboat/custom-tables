@@ -75,7 +75,7 @@ function esEditObject(objId, toolbarBoxId, Itemid, tmpl, returnto) {
 	document.getElementById(toolbarBoxId).innerHTML = '';
 
 	let return_to = btoa(window.location.href);
-	let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=edititem&listing_id=' + objId + '&Itemid=' + Itemid + '&returnto=' + return_to;
+	let link = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=edititem&listing_id=' + objId + '&Itemid=' + Itemid + '&returnto=' + return_to;
 
 	if (tmpl !== '') link += '&tmpl=' + tmpl;
 
@@ -403,7 +403,7 @@ function removeURLParameter(url, parameter) {
 	}
 }
 
-function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, postfix, ModuleId) {
+function ct_UpdateAllRecordsValues(Itemid, fieldname_, record_ids, postfix, ModuleId) {
 	let ids = record_ids.split(',');
 	const obj_checkbox_off = document.getElementById(ctFieldInputPrefix + "_" + fieldname_ + "_off");
 	if (obj_checkbox_off) {
@@ -415,7 +415,7 @@ function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, 
 			let objectName = ctFieldInputPrefix + ids[i] + "_" + fieldname_;
 			document.getElementById(objectName).checked = parseInt(obj_checkbox_off.value) === 1;
 
-			ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, ids[i], postfix, ModuleId);
+			ct_UpdateSingleValue(Itemid, fieldname_, ids[i], postfix, ModuleId);
 		}
 
 	} else {
@@ -426,7 +426,7 @@ function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, 
 			let objectName = ctFieldInputPrefix + "_" + ids[i] + "_" + fieldname_;
 			let obj = document.getElementById(objectName);
 			obj.value = value;
-			ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, ids[i], postfix, ModuleId);
+			ct_UpdateSingleValue(Itemid, fieldname_, ids[i], postfix, ModuleId);
 			if (obj.dataset.type === "sqljoin") {
 
 				let tableid = obj.dataset.tableid;
@@ -442,7 +442,7 @@ function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, 
 	}
 }
 
-function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId) {
+function ct_UpdateSingleValue(Itemid, fieldname_, record_id, postfix, ModuleId) {
 
 	let params = "";
 
@@ -461,10 +461,10 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
 		let objectName = ctFieldInputPrefix + record_id + "_" + fieldname_;
 		params += "&" + ctFieldInputPrefix + fieldname_ + "=" + document.getElementById(objectName).value;
 	}
-	ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId, params);
+	ct_UpdateSingleValueSet(Itemid, fieldname_, record_id, postfix, ModuleId, params);
 }
 
-function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId, valueParam) {
+function ct_UpdateSingleValueSet(Itemid, fieldname_, record_id, postfix, ModuleId, valueParam) {
 
 	const fieldname = fieldname_.split('_')[0];
 
@@ -675,7 +675,13 @@ function ctEditModal(url, parentFieldToUpdate = null) {
 			if (http.readyState === 4) {
 				let res = http.response;
 
-				ctShowPopUp(res, true);
+				if (res.indexOf('view-login') !== -1) {
+					alert('Session expired. Please login again.');
+					location.href = CTEditHelper.websiteRoot;
+					return;
+				} else {
+					ctShowPopUp(res, true);
+				}
 
 				//Activate Calendars if found
 				let elements = document.querySelectorAll(".field-calendar");

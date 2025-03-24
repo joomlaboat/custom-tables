@@ -11,7 +11,7 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 	class CustomTablesEdit {
 
 		//Always used as "CTEditHelper"
-		constructor(cmsName = 'Joomla', cmsVersion = 5, itemId = 0) {
+		constructor(cmsName = 'Joomla', cmsVersion = 5, itemId = null, websiteRoot = null) {
 			this.GoogleDriveTokenClient = [];
 			this.GoogleDriveAccessToken = null;
 			this.cmsName = cmsName;
@@ -25,6 +25,8 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 			this.ctInputBoxRecords_dynamic_filter = [];
 
 			this.ctLinkLoading = false;
+
+			this.websiteRoot = websiteRoot;//With trailing front slash /
 		}
 
 		GoogleDriveInitClient(fieldName, GoogleDriveAPIKey, GoogleDriveClientId) {
@@ -851,9 +853,21 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 					console.log('responseString:', responseString);
 					response = JSON.parse(http.response.toString());
 				} catch (e) {
-					console.log(clean_url);
-					console.log(http.response.toString());
-					return console.error(e);
+
+					let r = http.response.toString();
+					if (r.indexOf('view-login') !== -1) {
+						alert('Session expired. Please login again.');
+						//alert(TranslateText('COM_CUSTOMTABLES_JS_SESSION_EXPIRED'));
+
+						//if (returnLinkEncoded !== "")
+						location.href = CTEditHelper.websiteRoot;//stripInvalidCharacters(Base64.decode(returnLinkEncoded));
+						//else
+						return;
+					} else {
+						console.log(clean_url);
+						console.log(http.response.toString());
+						return console.error(e);
+					}
 				}
 
 				if (response.success) {
@@ -880,12 +894,14 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 						location.href = stripInvalidCharacters(Base64.decode(returnLinkEncoded));
 
 				} else {
+					/*
 					if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
 						alert('Nothing to save. Check Edit From layout.');
 					else if (http.response.indexOf('view-login') !== -1)
 						alert(TranslateText('COM_CUSTOMTABLES_JS_SESSION_EXPIRED'));
 					else
-						alert(http.response);
+						*/
+					alert(response.message);
 				}
 			}
 		};
@@ -1253,7 +1269,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 			if (typeof wrapper.dataset.addrecordmenualias !== 'undefined' && wrapper.dataset.addrecordmenualias !== '') {
 				let js = 'ctTableJoinAddRecordModalForm(\'' + control_name + '\',' + sub_index + ');';
 				let addText = TranslateText('COM_CUSTOMTABLES_ADD');
-				NoItemsText = addText + '<a href="javascript:' + js + '" className="toolbarIcons"><img src="' + ctWebsiteRoot + 'components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="' + addText + '" title="' + addText + '"></a>';
+				NoItemsText = addText + '<a href="javascript:' + js + '" className="toolbarIcons"><img src="' + CTEditHelper.websiteRoot + 'components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="' + addText + '" title="' + addText + '"></a>';
 			} else
 				NoItemsText = TranslateText('COM_CUSTOMTABLES_SELECT_NOTHING')
 
@@ -1315,7 +1331,7 @@ function ctTableJoinAddRecordModalForm(control_name, sub_index) {
 
 	let wrapper = document.getElementById(control_name + "Wrapper");
 
-	let query = ctWebsiteRoot + 'index.php' + (wrapper.dataset.addrecordmenualias.indexOf('/') === -1 ? '/' : '') + wrapper.dataset.addrecordmenualias;
+	let query = CTEditHelper.websiteRoot + 'index.php' + (wrapper.dataset.addrecordmenualias.indexOf('/') === -1 ? '/' : '') + wrapper.dataset.addrecordmenualias;
 	if (wrapper.dataset.addrecordmenualias.indexOf('?') === -1)
 		query += '?';
 	else
@@ -1341,12 +1357,12 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
 		let link = location.href.split('administrator/index.php?option=com_customtables');
 
 		if (link.length === 2)//to make sure that it will work in the back-end
-			url = ctWebsiteRoot + 'administrator/index.php?option=com_customtables&view=records&frmt=json&key=' + wrapper.dataset.key + '&index=' + index;
+			url = CTEditHelper.websiteRoot + 'administrator/index.php?option=com_customtables&view=records&frmt=json&key=' + wrapper.dataset.key + '&index=' + index;
 		else
-			url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&frmt=json&key=' + wrapper.dataset.key + '&index=' + index;
+			url = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&frmt=json&key=' + wrapper.dataset.key + '&index=' + index;
 
 	} else if (CTEditHelper.cmsName === "WordPress") {
-		url = ctWebsiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + wrapper.dataset.key + '&index=' + index;
+		url = CTEditHelper.websiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + wrapper.dataset.key + '&index=' + index;
 	}
 
 	let filters = [];
@@ -1534,9 +1550,9 @@ function ctInputBoxRecords_showMultibox(control_name, control_name_postfix) {
 		let deleteImage;
 
 		if (CTEditHelper.cmsName === "Joomla")
-			deleteImage = ctWebsiteRoot + 'components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
+			deleteImage = CTEditHelper.websiteRoot + 'components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
 		else if (CTEditHelper.cmsName === "WordPress")
-			deleteImage = ctWebsiteRoot + 'wp-content/plugins/customtables/libraries/customtables/media/images/icons/cancel.png';
+			deleteImage = CTEditHelper.websiteRoot + 'wp-content/plugins/customtables/libraries/customtables/media/images/icons/cancel.png';
 
 		v += '<td style="border-bottom:1px dotted grey;min-width:16px;">';
 		let onClick = "ctInputBoxRecords_deleteItem('" + control_name + "','" + control_name_postfix + "'," + i + ")";
@@ -1830,12 +1846,12 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
 		let link = location.href.split('administrator/index.php?option=com_customtables');
 
 		if (link.length === 2)//to make sure that it will work in the back-end
-			url = ctWebsiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
+			url = CTEditHelper.websiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
 		else
-			url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
+			url = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
 
 	} else if (CTEditHelper.cmsName === "WordPress") {
-		url = ctWebsiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + key + '&index=0&where=' + encodeURIComponent(where);
+		url = CTEditHelper.websiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + key + '&index=0&where=' + encodeURIComponent(where);
 		console.error(url);
 		console.error("updateChildTableJoinField is going to be supported by WP yet.");
 		alert("updateChildTableJoinField is going to be supported by WP yet.")
@@ -1899,9 +1915,9 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 		let link = location.href.split('administrator/index.php?option=com_customtables');
 
 		if (link.length === 2)//to make sure that it will work in the back-end
-			url = ctWebsiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
+			url = CTEditHelper.websiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
 		else
-			url = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
+			url = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
 
 	} else if (CTEditHelper.cmsName === "WordPress") {
 		console.error("onCTVirtualSelectServerSearch is not supported by WP yet.");

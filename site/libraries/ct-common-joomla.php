@@ -460,21 +460,6 @@ class common
 		return $_SERVER[$param] ?? null;
 	}
 
-	public static function UriRoot(bool $pathOnly = false, bool $addTrailingSlash = false): string
-	{
-		//Uri::root() returns the string http://www.mydomain.org/mysite (or https if you're using SSL, etc.).
-		//self::UriRoot(true) returns the string /mysite
-
-		$url = Uri::root($pathOnly);
-		if (strlen($url) > 0 and $url[strlen($url) - 1] == '/')
-			$url = substr($url, 0, strlen($url) - 1);
-
-		if ($addTrailingSlash and ($url == "" or $url[strlen($url) - 1] != '/'))
-			$url .= '/';
-
-		return $url;
-	}
-
 	public static function ctParseUrl($argument)
 	{
 		return parse_url($argument);
@@ -659,13 +644,15 @@ class common
 		}
 
 		$js = [];
-		$js[] = 'let ctWebsiteRoot = "' . $env->WebsiteRoot . '";';
+		//$js[] = 'let ctWebsiteRoot = "' . $env->WebsiteRoot . '";';
 		$js[] = 'let ctFieldInputPrefix = "' . $fieldInputPrefix . '";';
 		$js[] = 'let gmapdata = [];';
 		$js[] = 'let gmapmarker = [];';
+
+		//$env->WebsiteRoot must have a trailing front slash /
 		$js[] = '
 if (typeof window.CTEditHelper === "undefined") {
-	window.CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',' . ($params->ItemId ?? 0) . ');
+	window.CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',' . ($params->ItemId ?? 0) . ',"' . $env->WebsiteRoot . '");
 }
 ';
 
@@ -769,6 +756,21 @@ if (typeof window.CTEditHelper === "undefined") {
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
+	}
+
+	public static function UriRoot(bool $pathOnly = false, bool $addTrailingSlash = false): string
+	{
+		//Uri::root() returns the string http://www.mydomain.org/mysite (or https if you're using SSL, etc.).
+		//self::UriRoot(true) returns the string /mysite
+
+		$url = Uri::root($pathOnly);
+		if (strlen($url) > 0 and $url[strlen($url) - 1] == '/')
+			$url = substr($url, 0, strlen($url) - 1);
+
+		if ($addTrailingSlash and ($url == "" or $url[strlen($url) - 1] != '/'))
+			$url .= '/';
+
+		return $url;
 	}
 
 	public static function filterText(?string $text): string

@@ -31,7 +31,7 @@ class Environment
 	var bool $print;
 	var bool $clean;
 	var string $frmt;
-	var string $WebsiteRoot;
+	var string $WebsiteRoot;//With trailing front slash /
 	var bool $advancedTagProcessor;
 	var bool $isMobile;
 	var bool $isModal;

@@ -175,7 +175,7 @@ class LayoutEditor
 		$result_js = '
 		
 	if (typeof window.CTEditHelper === "undefined") {
-		window.CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',null);
+		window.CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',null,"' . common::UriRoot(false, true) . '");
 	}
 		
 	joomlaVersion =' . $version . ';

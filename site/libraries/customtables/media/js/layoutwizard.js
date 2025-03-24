@@ -62,8 +62,7 @@ function loadFieldsData(tableid) {
 
 	if (window.Joomla instanceof Object) {
 		const parts = location.href.split("/administrator/");
-		const websiteRoot = parts[0] + "/administrator/";
-		url = websiteRoot + "index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid=" + tableid;
+		url = parts[0] + "/administrator/index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid=" + tableid;
 	} else if (document.body.classList.contains('wp-admin') || document.querySelector('#wpadminbar')) {
 		let parts = location.href.split("wp-admin/admin.php?");
 		url = parts[0] + 'wp-admin/admin.php?page=customtables-api-fields&table=' + tableid;
