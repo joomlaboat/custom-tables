@@ -325,7 +325,8 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 					let trId = 'ctTable_' + tableId + '_' + listing_id;
 					const records = table.querySelectorAll('tr[id^="' + trId + '"]');
 					if (records.length == 1) {
-						let index = findRowIndexById(table.id, trId);
+						let table_object = findTableByRowId(tableid + '_' + listing_id);
+						let index = findRowIndexById(table_object, tableId, listing_id, 'ctEditIcon');
 						ctCatalogUpdate(tableId, listing_id, index, ModuleId);
 					}
 				}
@@ -867,11 +868,11 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 				}
 
 				if (response.success) {
-					let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
+					//let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
 					let table_object = document.getElementById("ctTable_" + tableid);
 
 					if (table_object) {
-						let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
+						let index = findRowIndexById(table_object, tableid, recordId, 'ctEditIcon');
 						ctCatalogUpdate(tableid, recordId, index, ModuleId);
 					}
 

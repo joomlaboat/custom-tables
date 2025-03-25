@@ -55,7 +55,7 @@ class RecordToolbar
 					return $this->renderEditIcon(true);
 
 				case 'refresh':
-					$rid = 'esRefreshIcon' . $this->rid;
+					$rid = 'ctRefreshIcon' . $this->rid;
 					$icon = Icons::iconRefresh($this->ct->Env->toolbarIcons);
 					$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 					$href = 'javascript:ctRefreshRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',' . $moduleIDString . ');';
@@ -133,7 +133,7 @@ class RecordToolbar
 		$icon = Icons::iconEdit($this->ct->Env->toolbarIcons);
 		$a = '<a href="' . $link . '">' . $icon . '</a>';
 
-		return '<div id="esEditIcon' . $this->rid . '" class="toolbarIcons">' . $a . '</div>';
+		return '<div id="ctEditIcon' . $this->rid . '" class="toolbarIcons">' . $a . '</div>';
 	}
 
 	protected function renderImageGalleryIcon(): string
@@ -280,7 +280,7 @@ class RecordToolbar
 		$deleteLabel = $this->firstFieldValueLabel();
 		$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 
-		$href = 'javascript:ctDeleteRecord(\'' . $this->rid . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', ' . $moduleIDString . ');';
+		$href = 'javascript:ctDeleteRecord(' . $this->Table->tableid . ', \'' . $this->listing_id . '\', ' . $moduleIDString . ');';
 
 		$messageDiv = '<div id="ctDeleteMessage' . $this->rid . '" style="display:none;">Do you want to delete ' . $deleteLabel . '?</div>';
 		$a = '<a href="' . $href . '">' . Icons::iconDelete($this->ct->Env->toolbarIcons) . '</a>';
@@ -292,7 +292,7 @@ class RecordToolbar
 	protected function renderPublishIcon(): string
 	{
 		if ($this->isPublishable) {
-			$rid = 'esPublishIcon' . $this->rid;
+			$rid = 'ctPublishIcon' . $this->rid;
 
 			$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 

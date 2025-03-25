@@ -96,11 +96,8 @@ function runTheTask(task, tableid, recordId, responses, last, reload, ModuleId) 
 	}
 
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
-
 	let addParams = ['clean=1'];
 	let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], addParams);
-
-	console.warn(url);
 
 	if (http) {
 		http.open("POST", url, true);
@@ -108,19 +105,32 @@ function runTheTask(task, tableid, recordId, responses, last, reload, ModuleId) 
 		http.onreadystatechange = function () {
 
 			if (http.readyState === 4) {
+
 				let res = http.response.replace(/(\r\n|\n|\r)/gm, "");
 
 				if (responses.indexOf(res) !== -1) {
 
-					let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
-
-					let table_object = document.getElementById("ctTable_" + tableid);
+					let table_object = findTableByRowId(tableid + '_' + recordId);
 					if (!reload && table_object && CTEditHelper.cmsName === 'Joomla') {
-						let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
-						if (task === 'delete')
+
+						if (task === 'delete') {
+							let index = findRowIndexById(table_object, tableid, recordId, "ctDeleteIcon");
 							table_object.deleteRow(index);
-						else
+						} else {
+
+							let icon = 'ctEditIcon';
+
+							if (task === 'copy') {
+								window.location.reload();
+								return;
+							} else if (task === 'refresh')
+								icon = 'ctRefreshIcon';
+							else if (task === 'publish' || task === 'unpublish')
+								icon = 'ctPublishIcon';
+
+							let index = findRowIndexById(table_object, tableid, recordId, icon);
 							ctCatalogUpdate(tableid, recordId, index, ModuleId);
+						}
 					} else {
 						window.location.reload();
 					}
@@ -211,25 +221,36 @@ function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
 	runTheTask((publish === 0 ? 'unpublish' : 'publish'), tableid, recordId, ['published', 'unpublished'], false, false, ModuleId);
 }
 
-function findRowIndexById(tableid, rowId) {
+function findTableByRowId(rowId) {
+	let row = document.getElementById(`ctTable_${rowId}`);
+	return row ? row.closest("table") : null;
+}
 
-	let table_object = document.getElementById(tableid);
+function findRowIndexById(table, tableid, id, icon) {
 
-	if (table_object) {
-		let rows = table_object.rows;
-		for (let i = 0; i < rows.length; i++) {
-			if (rows.item(i).id === rowId) return i;
+	//icon = "ctDeleteIcon"
+	if (!table) return -2;
+	let lookingFor = '#' + icon + tableid + "x" + id;
+	console.warn("lookingFor", lookingFor)
+	let rows = table.rows;
+	console.log("count:", rows.length)
+	for (let i = 0; i < rows.length; i++) {
+
+		let deleteIcon = rows[i].querySelector(lookingFor);
+		if (deleteIcon) {
+			return i;
 		}
 	}
+
 	return -1;
 }
 
-function ctDeleteRecord(rid, tableid, recordId, ModuleId) {
+function ctDeleteRecord(tableid, recordId, ModuleId) {
 	if (CTEditHelper.ctLinkLoading) return;
 
 	CTEditHelper.ctLinkLoading = true;
 
-	let msgObj = document.getElementById('ctDeleteMessage' + rid);
+	let msgObj = document.getElementById('ctDeleteMessage' + tableid + 'x' + recordId);
 	if (msgObj) {
 		// Strip HTML tags and sanitize the message
 		let msg = msgObj.textContent || msgObj.innerText || "";
@@ -436,11 +457,11 @@ function ct_UpdateAllRecordsValues(Itemid, fieldname_, record_ids, postfix, Modu
 			if (obj.dataset.type === "sqljoin") {
 
 				let tableid = obj.dataset.tableid;
-				let table_object = document.getElementById("ctTable_" + tableid);
+				//let table_object = document.getElementById("ctTable_" + tableid);
+				let table_object = findTableByRowId(tableid + '_' + ids[i]);
 
 				if (table_object) {
-					let element_tableid_tr = "ctTable_" + tableid + '_' + ids[i];
-					let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
+					let index = findRowIndexById(table_object, tableid, ids[i], 'ctEditIcon');
 					ctCatalogUpdate(tableid, ids[i], index, ModuleId);
 				}
 			}
@@ -540,12 +561,12 @@ function ct_UpdateSingleValueSet(Itemid, fieldname_, record_id, postfix, ModuleI
 	}
 }
 
-function ctCatalogUpdate(tableid, recordsId, row_index, ModuleId) {
+function ctCatalogUpdate(tableid, listing_id, row_index, ModuleId) {
 
-	let element_tableid = "ctTable_" + tableid;
+	//let element_tableid = "ctTable_" + tableid;
 
 	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view', 'clean', 'component', 'frmt'];
-	let addParams = ['listing_id=' + recordsId, 'number=' + row_index, 'clean=1'];
+	let addParams = ['listing_id=' + listing_id, 'number=' + row_index, 'clean=1'];
 
 	if (CTEditHelper.cmsName === 'Joomla') {
 		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
@@ -569,7 +590,10 @@ function ctCatalogUpdate(tableid, recordsId, row_index, ModuleId) {
 
 			if (http.readyState === 4) {
 				let res = http.response;
-				let tableObj = document.getElementById(element_tableid);
+
+				//let tableObj = document.getElementById(element_tableid);
+				let tableObj = findTableByRowId(tableid + '_' + listing_id);
+
 				if (tableObj) {
 					let rows = tableObj.rows;
 					if (rows) {
@@ -617,10 +641,11 @@ function ctCatalogOnDrop(event, ModuleId) {
 		let to = to_parts[2] + '_' + to_parts[3];
 		let element_tableid_tr = "ctTable_" + to_parts[1] + '_' + to_parts[2];
 
-		let table_object = document.getElementById("ctTable_" + to_parts[1]);
+		//let table_object = document.getElementById("ctTable_" + to_parts[1]);
+		let table_object = findTableByRowId(to_parts[1] + '_' + to_parts[2]);
 
 		let index;
-		if (table_object) index = findRowIndexById("ctTable_" + to_parts[1], element_tableid_tr);
+		if (table_object) index = findRowIndexById(table_object, to_parts[1], to_parts[2], 'ctEditIcon');
 
 		let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view', 'clean', 'component', 'frmt'];
 		let addParams = ['task=copycontent', 'from=' + from, 'to=' + to, 'clean=1', 'tmpl=component', 'frmt=json'];
