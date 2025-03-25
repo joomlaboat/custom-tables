@@ -97,7 +97,9 @@ class IntegrityCoreTables extends IntegrityChecks
 		if (!$tableExists)
 			database::createTable($table->realtablename, 'id', $fields_sql, $table->comment, $indexes_sql);
 
-		CustomTables\common::enqueueMessage('Table "' . $table->realtablename . '" added.', 'notice');
+		$dbPrefix = database::getDBPrefix();
+		$tableNameSafe = str_replace($dbPrefix, '#__', $table->realtablename);
+		CustomTables\common::enqueueMessage('Table "' . $tableNameSafe . '" created.', 'notice');
 		return true;
 	}
 
