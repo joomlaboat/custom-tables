@@ -76,7 +76,7 @@ jQuery(document).ready(function($) {
 				$this->ct->LayoutVariables['script'] = $js;
 
 			$hidden = '<input type="hidden" name="' . $this->objectName . '" id="' . $this->objectName . '" value="' . $valueStart . '">';
-			$jsOnChange = 'ctSearchBarDateUpdate(\'' . $this->field->fieldname . '\')';
+			$jsOnChange = 'ctSearchBarDateUpdate(\'' . $this->field->fieldname . '\',function () {' . $this->attributes['onchange'] . '});';
 
 			$start = '<input onblur="' . $jsOnChange . '" onchange="' . $jsOnChange . '" value="' . $valueStart . '" type="text"'
 				. ' class="' . ($this->attributes['class'] ?? '') . '" id="' . $this->objectName . '_exact"'

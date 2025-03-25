@@ -770,9 +770,21 @@ function ctSearchBarDateRangeUpdate(fieldName) {
 	}, 300)
 }
 
-function ctSearchBarDateUpdate(fieldName) {
+function ctSearchBarDateUpdate(fieldName, callback) {
 	setTimeout(function () {
 		let obj = document.getElementById(ctFieldInputPrefix + "search_box_" + fieldName);
-		obj.value = document.getElementById(ctFieldInputPrefix + "search_box_" + fieldName + "_exact").value;
-	}, 300)
+
+		// Store the previous value in dataset
+		let v = document.getElementById(ctFieldInputPrefix + "search_box_" + fieldName + "_exact").value;
+
+		if (obj.value !== v) {
+
+			obj.value = v;
+
+			// Execute callback if provided
+			if (typeof callback === "function") {
+				callback();
+			}
+		}
+	}, 300);
 }

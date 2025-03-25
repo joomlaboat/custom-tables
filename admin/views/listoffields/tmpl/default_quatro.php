@@ -59,7 +59,12 @@ if ($this->ct->Table === null): ?>
 
 						if ($this->ct->Table->tableid != 0) {
 							$link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $this->ct->Table->tableid;
-							echo IntegrityFields::checkFields($this->ct, $link);
+
+							try {
+								echo IntegrityFields::checkFields($this->ct, $link);
+							} catch (Exception $e) {
+								common::enqueueMessage($e->getMessage());
+							}
 						}
 						?>
 

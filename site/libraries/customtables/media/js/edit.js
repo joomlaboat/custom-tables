@@ -1882,8 +1882,14 @@ function refreshTableJoinField(fieldName, response) {
 
 	for (let i = 0; i < valueFiltersNames.length; i++) {
 		if (valueFiltersNames[i] !== null) {
-			let value = response['record']['es_' + valueFiltersNames[i]];
-			NewValueFilters.push(value);
+			console.warn("response", response['record']);
+			console.warn("valueFiltersNames[i]", valueFiltersNames[i]);
+
+			let value = "";
+			if (response['record']) {
+				value = response['record']['es_' + valueFiltersNames[i]];
+				NewValueFilters.push(value);
+			}
 
 			let index = i - 1;
 			let selectorID = ctFieldInputPrefix + fieldName + index;

@@ -560,7 +560,8 @@ abstract class BaseInputBox
 		if (substr($onchange, -1) !== ';') {
 			$onchange .= ';';
 		}
-		if (substr($attributes['onchange'], -1) !== ';') {
+
+		if (!empty($attributes['onchange']) and substr($attributes['onchange'], -1) !== ';') {
 			$attributes['onchange'] .= ';';
 		}
 
