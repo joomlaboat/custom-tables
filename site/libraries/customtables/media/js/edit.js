@@ -412,8 +412,9 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 			}
 		}
 
-		checkRequiredFields(formObject) {
-			if (!checkFilters())
+		checkRequiredFields(formObject, fieldInputPrefix) {
+
+			if (!checkFilters(fieldInputPrefix))
 				return false;
 
 			if (this.ct_signaturePad_fields.length > 0) {
@@ -428,12 +429,12 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 
 			for (let i = 0; i < requiredFields.length; i++) {
 				if (typeof requiredFields[i].id != "undefined") {
-					if (requiredFields[i].id.indexOf("sqljoin_table_" + ctFieldInputPrefix) !== -1) {
-						if (!CheckSQLJoinRadioSelections(requiredFields[i].id))
+					if (requiredFields[i].id.indexOf("sqljoin_table_" + fieldInputPrefix) !== -1) {
+						if (!CheckSQLJoinRadioSelections(requiredFields[i].id, fieldInputPrefix))
 							return false;
 					}
 					if (requiredFields[i].id.indexOf("ct_uploadfile_box_") !== -1) {
-						if (!CheckImageUploader(requiredFields[i].id)) {
+						if (!CheckImageUploader(requiredFields[i].id, fieldInputPrefix)) {
 							let d = requiredFields[i].dataset;
 							if (d.label)
 								label = d.label;
@@ -455,7 +456,7 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 				if (typeof requiredFields[i].name != "undefined") {
 					let n = requiredFields[i].name.toString();
 
-					if (n.indexOf(ctFieldInputPrefix) !== -1) {
+					if (n.indexOf(fieldInputPrefix) !== -1) {
 
 						let objName = n.replace('_selector', '');
 
@@ -728,7 +729,7 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 	globalThis.CustomTablesEdit = CustomTablesEdit; // Store globally
 }
 
-function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField, ModuleId) {
+function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField, ModuleId, fieldInputPrefix) {
 
 	event.preventDefault();
 
@@ -756,19 +757,19 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
 				hideModelOnSave = false;
 
 			if (tasks_with_validation.includes(task)) {
-				if (CTEditHelper.checkRequiredFields(objForm)) {
+				if (CTEditHelper.checkRequiredFields(objForm, fieldInputPrefix)) {
 					CTEditHelper.convertDateTypeValues(objForm.elements);
-					submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink, ModuleId)
+					submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink, ModuleId, fieldInputPrefix)
 				}
 			} else {
 				CTEditHelper.convertDateTypeValues(objForm.elements);
-				submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink, ModuleId)
+				submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink, ModuleId, fieldInputPrefix)
 			}
 
 			return false;
 		} else {
 			if (tasks_with_validation.includes(task)) {
-				if (CTEditHelper.checkRequiredFields(objForm)) {
+				if (CTEditHelper.checkRequiredFields(objForm, fieldInputPrefix)) {
 					CTEditHelper.convertDateTypeValues(objForm.elements);
 					objForm.submit();
 				}
@@ -786,7 +787,7 @@ function stripInvalidCharacters(str) {
 	return str.replace(/[^\x20-\x7E]/g, '');
 }
 
-function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField, returnLinkEncoded, ModuleId) {
+function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField, returnLinkEncoded, ModuleId, fieldInputPrefix) {
 
 	let fieldsProcessed = [];
 	let params = new URLSearchParams();
@@ -883,7 +884,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 					if (modalFormParentField !== null) {
 						let parts = modalFormParentField.split('.');
 						let parentField = parts[1];
-						refreshTableJoinField(parentField, response);
+						refreshTableJoinField(parentField, response, fieldInputPrefix);
 					}
 
 					if (hideModelOnSave) {
@@ -910,19 +911,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 	}
 }
 
-/*
-function recaptchaCallback() {
-    let obj1 = document.getElementById("customtables_submitbutton");
-    if (typeof obj1 != "undefined")
-        obj1.removeAttribute('disabled');
-
-    let obj2 = document.getElementById("customtables_submitbuttonasnew");
-    if (typeof obj2 != "undefined")
-        obj2.removeAttribute('disabled');
-}
-*/
-
-function checkFilters() {
+function checkFilters(fieldInputPrefix) {
 
 	let passed = true;
 	let inputs = document.getElementsByTagName('input');
@@ -952,7 +941,7 @@ function checkFilters() {
 				if (d.valuerulecaption)
 					caption = d.valuerulecaption;
 
-				passed = doValueRules(inputs[i], label, d.valuerule, caption);
+				passed = doValueRules(inputs[i], label, d.valuerule, caption, fieldInputPrefix);
 				if (!passed)
 					return false;
 			}
@@ -967,9 +956,9 @@ function isValidURL(str) {
 	return regex.test(str);
 }
 
-function doValueRules(obj, label, valueRules, caption) {
-	let ct_fieldName = obj.name.replaceAll(ctFieldInputPrefix, '');
-	let value_rules_and_arguments = doValuerules_ParseValues(valueRules, ct_fieldName);
+function doValueRules(obj, label, valueRules, caption, fieldInputPrefix) {
+	let ct_fieldName = obj.name.replaceAll(fieldInputPrefix, '');
+	let value_rules_and_arguments = doValuerules_ParseValues(valueRules, ct_fieldName, fieldInputPrefix);
 
 	if (value_rules_and_arguments === null)
 		return true;
@@ -995,7 +984,7 @@ function doValueRules(obj, label, valueRules, caption) {
 	return false;
 }
 
-function doValuerules_ParseValues(valuerules, ct_fieldName) {
+function doValuerules_ParseValues(valuerules, ct_fieldName, fieldInputPrefix) {
 	//let matches=valuerules.match(/(?<=\[)[^\][]*(?=])/g);  Doesn't work on Safari
 	let matches = valuerules.match(/\[(.*?)\]/g); // return example: ["[subject]","[date]"]
 
@@ -1011,7 +1000,7 @@ function doValuerules_ParseValues(valuerules, ct_fieldName) {
 
 	for (let i = 0; i < matches.length; i++) {
 		let fieldname = matches[i].replace("[", "").replace("]", "");
-		let objID = ctFieldInputPrefix + fieldname;
+		let objID = fieldInputPrefix + fieldname;
 
 		let obj = document.getElementById(objID);
 
@@ -1123,7 +1112,7 @@ function SetUnsetInvalidClass(id, isValid) {
 	}
 }
 
-function CheckImageUploader(id) {
+function CheckImageUploader(id, fieldInputPrefix) {
 
 	let obj1 = document.getElementById(id);
 
@@ -1137,7 +1126,7 @@ function CheckImageUploader(id) {
 		return true;
 	}
 
-	let objId = id.replace("ct_uploadfile_box_", ctFieldInputPrefix);
+	let objId = id.replace("ct_uploadfile_box_", fieldInputPrefix);
 
 	let obj2 = document.getElementById(objId);
 
@@ -1152,9 +1141,9 @@ function CheckImageUploader(id) {
 	}
 }
 
-function CheckSQLJoinRadioSelections(id) {
-	let field_name = id.replace('sqljoin_table_' + ctFieldInputPrefix, '');
-	let obj_name = ctFieldInputPrefix + field_name;
+function CheckSQLJoinRadioSelections(id, fieldInputPrefix) {
+	let field_name = id.replace('sqljoin_table_' + fieldInputPrefix, '');
+	let obj_name = fieldInputPrefix + field_name;
 	let radios = document.getElementsByName(obj_name);
 
 	let selected = false;
@@ -1829,16 +1818,18 @@ function activateJoomla3Tabs() {
 	});
 }
 
+// Looks like this method is unused
 function setUpdateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName) {
 	document.getElementById(ctFieldInputPrefix + parentFieldName + '0').addEventListener('change', function () {
-		updateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName);
+		updateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName, fieldInputPrefix);
 	});
 }
 
-function updateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName) {
+// Looks like this method is unused
+function updateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName, fieldInputPrefix) {
 	//This function updates the list of items in Table Join field based on its parent value;
-	let parentValue = document.getElementById(ctFieldInputPrefix + parentFieldName).value;
-	let wrapper = document.getElementById(ctFieldInputPrefix + childFieldName + 'Wrapper');
+	let parentValue = document.getElementById(fieldInputPrefix + parentFieldName).value;
+	let wrapper = document.getElementById(fieldInputPrefix + childFieldName + 'Wrapper');
 	let key = wrapper.dataset.key;
 	let where = childFilterFieldName + '=' + parentValue;
 	let url;
@@ -1862,20 +1853,20 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
 
 		.then(r => r.json())
 		.then(r => {
-			ctRenderTableJoinSelectBox(ctFieldInputPrefix + childFieldName, r, 0, false, 0, ctFieldInputPrefix + childFieldName + '0', wrapper.dataset.formname, null);
+			ctRenderTableJoinSelectBox(fieldInputPrefix + childFieldName, r, 0, false, 0, fieldInputPrefix + childFieldName + '0', wrapper.dataset.formname, null);
 		})
 		.catch(error => console.error("Error", error));
 }
 
-function refreshTableJoinField(fieldName, response) {
+function refreshTableJoinField(fieldName, response, fieldInputPrefix) {
 
-	let valueObject = document.getElementById(ctFieldInputPrefix + fieldName);
+	let valueObject = document.getElementById(fieldInputPrefix + fieldName);
 	valueObject.value = response['id'];
 	if (valueObject.onchange) {
 		valueObject.dispatchEvent(new Event('change'));
 	}
 
-	let wrapper = document.getElementById(ctFieldInputPrefix + fieldName + 'Wrapper');
+	let wrapper = document.getElementById(fieldInputPrefix + fieldName + 'Wrapper');
 	if (wrapper === null)
 		return;
 
@@ -1896,7 +1887,7 @@ function refreshTableJoinField(fieldName, response) {
 			}
 
 			let index = i - 1;
-			let selectorID = ctFieldInputPrefix + fieldName + index;
+			let selectorID = fieldInputPrefix + fieldName + index;
 			let selector = document.getElementById(selectorID);
 			selector.value = value;
 		} else {
@@ -1907,7 +1898,7 @@ function refreshTableJoinField(fieldName, response) {
 	wrapper.dataset.valuefilters = Base64.encode(newValueFiltersStr);
 
 	let index = NewValueFilters.length - 1;
-	ctUpdateTableJoinLink(ctFieldInputPrefix + fieldName, index, true, 0, ctFieldInputPrefix + fieldName + '0', wrapper.dataset.formname, true, response.id);
+	ctUpdateTableJoinLink(fieldInputPrefix + fieldName, index, true, 0, fieldInputPrefix + fieldName + '0', wrapper.dataset.formname, true, response.id);
 }
 
 //Virtual Select

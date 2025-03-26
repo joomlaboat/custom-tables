@@ -103,7 +103,7 @@ function ct_getUploader(index, URL_String, maxFileSize, allowedTypes, UploaderFo
 
 							if (typeof CTEditHelper !== 'undefined') {
 								let formObject = document.getElementById(UploaderForm);
-								CTEditHelper.checkRequiredFields(formObject);
+								CTEditHelper.checkRequiredFields(formObject, ctFieldInputPrefix);
 							}
 
 							document.getElementById(p.esUploaderFormID).submit();
@@ -146,7 +146,7 @@ function ct_getUploader(index, URL_String, maxFileSize, allowedTypes, UploaderFo
 
 				if (typeof CTEditHelper !== 'undefined') {
 					let formObject = document.getElementById(UploaderForm);
-					CTEditHelper.checkRequiredFields(formObject);
+					CTEditHelper.checkRequiredFields(formObject, ctFieldInputPrefix);
 				}
 			}
 		});
