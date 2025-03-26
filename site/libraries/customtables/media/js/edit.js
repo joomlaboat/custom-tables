@@ -1084,14 +1084,7 @@ function TranslateText() {
 	let str;
 	const key = arguments[0];
 
-	if (CTEditHelper.cmsName === "Joomla")
-		str = Joomla.JText._(key);
-	else if (CTEditHelper.cmsName === "WordPress") {
-		str = ctTranslationScriptObject[key];
-	} else {
-		// Fallback
-		str = key; // Return the key itself if no translation found
-	}
+	str = ctTranslationScriptObject[key];
 
 	// Handle placeholders
 	if (arguments.length === 1)

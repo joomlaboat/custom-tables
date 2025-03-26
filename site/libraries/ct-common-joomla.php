@@ -32,35 +32,6 @@ class common
 		return $class_string;
 	}
 
-	public static function translate(string $text, $value = null): string
-	{
-		if (is_null($value))
-			$new_text = Text::_($text);
-		else
-			$new_text = Text::sprintf($text, $value);
-
-		if ($new_text == $text) {
-			$parts = explode('_', $text);
-			if (count($parts) > 1) {
-				$type = $parts[0];
-				if ($type == 'PLG' and count($parts) > 2) {
-					$extension = strtolower($parts[0] . '_' . $parts[1] . '_' . $parts[2]);
-				} else
-					$extension = strtolower($parts[0] . '_' . $parts[1]);
-
-				$lang = Factory::getLanguage();
-				$lang->load($extension, JPATH_SITE);
-
-				if (is_null($value))
-					return Text::_($text);
-				else
-					return Text::sprintf($text, $value);
-			} else
-				return $text;
-		} else
-			return $new_text;
-	}
-
 	/**
 	 * @throws Exception
 	 * @since 3.2.9
@@ -124,15 +95,6 @@ class common
 	{
 		$input = self::inputPostVariable();
 		return $input->getInt($parameter, $default);
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.9
-	 */
-	public static function inputGetInt(string $parameter, ?int $default = null): ?int
-	{
-		return Factory::getApplication()->input->getInt($parameter, $default);
 	}
 
 	/**
@@ -436,8 +398,6 @@ class common
 		return base64_encode($currentURL);
 	}
 
-	//Returns base64 encoded/decoded url in Joomla and Sessions ReturnTo variable reference in WP or reference converted to URL
-
 	public static function curPageURL(): string
 	{
 		//Uri::root() returns the string http://www.mydomain.org/mysite/ (or https if you're using SSL, etc.).
@@ -460,6 +420,8 @@ class common
 	{
 		return $_SERVER[$param] ?? null;
 	}
+
+	//Returns base64 encoded/decoded url in Joomla and Sessions ReturnTo variable reference in WP or reference converted to URL
 
 	public static function ctParseUrl($argument)
 	{
@@ -650,6 +612,10 @@ class common
 		$js[] = 'let gmapdata = [];';
 		$js[] = 'let gmapmarker = [];';
 
+		$modal = common::inputGetInt('modal', 0);
+		if ($modal === 0)
+			$js[] = 'let ctTranslationScriptObject = ' . json_encode(common::getLocalizeScriptArray()) . ';';
+
 		//$env->WebsiteRoot must have a trailing front slash /
 		$js[] = '
 if (typeof window.CTEditHelper === "undefined") {
@@ -706,22 +672,27 @@ if (typeof window.CTEditHelper === "undefined") {
 		$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar-locales/date/gregorian/date-helper.min.js" defer></script>');
 		$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar.min.js" defer></script>');
 
-		Text::script('COM_CUSTOMTABLES_JS_SELECT_RECORDS');
-		Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1');
-		Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
-		Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
-		Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
-		Text::script('COM_CUSTOMTABLES_SELECT');
-		Text::script('COM_CUSTOMTABLES_SELECT_NOTHING');
-		Text::script('COM_CUSTOMTABLES_ADD');
-		Text::script('COM_CUSTOMTABLES_REQUIRED');
-		Text::script('COM_CUSTOMTABLES_NOT_SELECTED');
-		Text::script('COM_CUSTOMTABLES_JS_EMAIL_INVALID');
-		Text::script('COM_CUSTOMTABLES_JS_URL_INVALID');
-		Text::script('COM_CUSTOMTABLES_JS_SECURE_URL_INVALID');
-		Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
-		Text::script('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID');
-		Text::script('COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH');
+		/*
+		$modal = common::inputGetInt('modal', 0);
+		if ($modal === 0) {
+			Text::script('COM_CUSTOMTABLES_JS_SELECT_RECORDS');
+			Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1');
+			Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
+			Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
+			Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
+			Text::script('COM_CUSTOMTABLES_SELECT');
+			Text::script('COM_CUSTOMTABLES_SELECT_NOTHING');
+			Text::script('COM_CUSTOMTABLES_ADD');
+			Text::script('COM_CUSTOMTABLES_REQUIRED');
+			Text::script('COM_CUSTOMTABLES_NOT_SELECTED');
+			Text::script('COM_CUSTOMTABLES_JS_EMAIL_INVALID');
+			Text::script('COM_CUSTOMTABLES_JS_URL_INVALID');
+			Text::script('COM_CUSTOMTABLES_JS_SECURE_URL_INVALID');
+			Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
+			Text::script('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID');
+			Text::script('COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH');
+		}
+		*/
 
 		if ($env->toolbarIcons == 'font-awesome-4' or $env->toolbarIcons == 'font-awesome-5' or $env->toolbarIcons == 'font-awesome-6') {
 			$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
@@ -745,6 +716,65 @@ if (typeof window.CTEditHelper === "undefined") {
 				common::enqueueMessage('Bootstrap icons have been selected for the toolbar, but the Bootstrap Icons library is not loaded in your template. Please ensure the library is included for proper icon display.');
 			}
 		}
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.9
+	 */
+	public static function inputGetInt(string $parameter, ?int $default = null): ?int
+	{
+		return Factory::getApplication()->input->getInt($parameter, $default);
+	}
+
+	public static function getLocalizeScriptArray()
+	{
+		return [
+			'COM_CUSTOMTABLES_JS_SELECT_RECORDS' => self::translate('COM_CUSTOMTABLES_JS_SELECT_RECORDS'),
+			'COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1' => self::translate('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1'),
+			'COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE' => self::translate('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE'),
+			'COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE' => self::translate('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE'),
+			'COM_CUSTOMTABLES_JS_SESSION_EXPIRED' => self::translate('COM_CUSTOMTABLES_JS_SESSION_EXPIRED'),
+			'COM_CUSTOMTABLES_SELECT' => self::translate('COM_CUSTOMTABLES_SELECT'),
+			'COM_CUSTOMTABLES_SELECT_NOTHING' => self::translate('COM_CUSTOMTABLES_SELECT_NOTHING'),
+			'COM_CUSTOMTABLES_ADD' => self::translate('COM_CUSTOMTABLES_ADD'),
+			'COM_CUSTOMTABLES_REQUIRED' => self::translate('COM_CUSTOMTABLES_REQUIRED'),
+			'COM_CUSTOMTABLES_NOT_SELECTED' => self::translate('COM_CUSTOMTABLES_NOT_SELECTED'),
+			'COM_CUSTOMTABLES_JS_EMAIL_INVALID' => self::translate('COM_CUSTOMTABLES_JS_EMAIL_INVALID'),
+			'COM_CUSTOMTABLES_JS_URL_INVALID' => self::translate('COM_CUSTOMTABLES_JS_URL_INVALID'),
+			'COM_CUSTOMTABLES_JS_SECURE_URL_INVALID' => self::translate('COM_CUSTOMTABLES_JS_SECURE_URL_INVALID'),
+			'COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED' => self::translate('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED'),
+			'COM_CUSTOMTABLES_JS_HOSTNAME_INVALID' => self::translate('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID')
+		];
+	}
+
+	public static function translate(string $text, $value = null): string
+	{
+		if (is_null($value))
+			$new_text = Text::_($text);
+		else
+			$new_text = Text::sprintf($text, $value);
+
+		if ($new_text == $text) {
+			$parts = explode('_', $text);
+			if (count($parts) > 1) {
+				$type = $parts[0];
+				if ($type == 'PLG' and count($parts) > 2) {
+					$extension = strtolower($parts[0] . '_' . $parts[1] . '_' . $parts[2]);
+				} else
+					$extension = strtolower($parts[0] . '_' . $parts[1]);
+
+				$lang = Factory::getLanguage();
+				$lang->load($extension, JPATH_SITE);
+
+				if (is_null($value))
+					return Text::_($text);
+				else
+					return Text::sprintf($text, $value);
+			} else
+				return $text;
+		} else
+			return $new_text;
 	}
 
 	/**

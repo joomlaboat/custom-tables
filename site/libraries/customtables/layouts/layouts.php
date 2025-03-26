@@ -276,6 +276,8 @@ class Layouts
 			}
 		}
 
+		$this->ct->LayoutVariables['layout_type'] = $this->layoutType;
+
 		if (in_array($this->layoutType, [
 			CUSTOMTABLES_LAYOUT_TYPE_SIMPLE_CATALOG,
 			CUSTOMTABLES_LAYOUT_TYPE_CATALOG_PAGE,
@@ -283,6 +285,7 @@ class Layouts
 			CUSTOMTABLES_LAYOUT_TYPE_CSV,
 			CUSTOMTABLES_LAYOUT_TYPE_JSON
 		])) {
+
 			$output['html'] = $this->renderCatalog();
 		} elseif ($this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM) {
 
