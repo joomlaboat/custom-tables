@@ -17,6 +17,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Mail\MailerFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
@@ -912,12 +913,11 @@ if (typeof window.CTEditHelper === "undefined") {
 	{
 		try {
 			if (Version::MAJOR_VERSION >= 5)
-				$mailer = Factory::getContainer()->get('mailer');
+				$mailer = Factory::getContainer()->get(MailerFactoryInterface::class)->createMailer();
 			else
 				$mailer = Factory::getMailer();
-		} catch (Exception $e) {
-			self::enqueueMessage($e->getMessage());
-			return false;
+		} catch (Throwable $e) {
+			throw new Exception('Mailer service error: ' . $e->getMessage());
 		}
 
 		$sender = array(
@@ -925,20 +925,27 @@ if (typeof window.CTEditHelper === "undefined") {
 			self::getEmailFromName()
 		);
 
-		$mailer->setSender($sender);
-		$mailer->addRecipient($email);
-		$mailer->setSubject($emailSubject);
-		$mailer->setBody($emailBody);
-		$mailer->isHTML($isHTML);
-
-		foreach ($attachments as $attachment)
-			$mailer->addAttachment($attachment);
+		try {
+			$mailer->setSender($sender);
+			$mailer->addRecipient($email);
+			$mailer->setSubject($emailSubject);
+			$mailer->setBody($emailBody);
+			$mailer->isHtml($isHTML);
+		} catch (Exception $e) {
+			throw new Exception('Mailer Set Sender:  ' . $e->getMessage());
+		}
 
 		try {
-			$send = @$mailer->Send();
+			foreach ($attachments as $attachment)
+				$mailer->addAttachment($attachment);
 		} catch (Exception $e) {
-			self::enqueueMessage($e->getMessage());
-			return false;
+			throw new Exception('Mailer Add Attachment:  ' . $e->getMessage());
+		}
+
+		try {
+			$send = $mailer->send();
+		} catch (Exception $e) {
+			throw new Exception('Mailer send:  ' . $e->getMessage());
 		}
 
 		if ($send !== true)

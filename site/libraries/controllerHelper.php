@@ -20,9 +20,10 @@ class controllerHelper
 {
 	public static function doTheTask(string $task)
 	{
+		$ct = new CT(null, false);
+		
 		try {
 			$link = common::getReturnToURL(true, null, 'create-edit-record') ?? '';
-			$ct = new CT(null, false);
 			$ct->Params->constructJoomlaParams();
 
 			if (!empty($ct->Params->tableName))
@@ -32,7 +33,12 @@ class controllerHelper
 			$result = $layout->renderMixedLayout($ct->Params->editLayout, null, $task);
 
 		} catch (Exception $e) {
-			return ['link' => null, 'message' => $e->getMessage(), 'success' => false];
+			if ($ct->Env->debug)
+				$message = $e->getMessage() . '<br/>' . $e->getFile() . '<br/>' . $e->getLine();// . $e->getTraceAsString();
+			else
+				$message = $e->getMessage();
+
+			return ['link' => null, 'message' => $message, 'success' => false];
 		}
 
 		if ($result['success']) {

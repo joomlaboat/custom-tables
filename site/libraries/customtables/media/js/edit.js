@@ -234,6 +234,8 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 						errorCallback({
 							status: 'error',
 							message: 'An error occurred during the request.',
+							error: error,
+							url: completeURL
 						});
 					} else {
 						console.error('Error', error);
@@ -305,6 +307,8 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 						errorCallback({
 							status: 'error',
 							message: 'An error occurred during the request.',
+							error: error,
+							url: completeURL
 						});
 					} else {
 						console.error('Error 145:', error);
