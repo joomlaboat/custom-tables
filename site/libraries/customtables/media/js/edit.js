@@ -882,9 +882,12 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 					}
 
 					if (modalFormParentField !== null) {
+						console.warn("modalFormParentField:", modalFormParentField)
 						let parts = modalFormParentField.split('.');
 						let parentField = parts[1];
-						refreshTableJoinField(parentField, response, fieldInputPrefix);
+						let parentFieldInputPrefix = parts[2];
+						location.reload();
+						//refreshTableJoinField(parentField, response, parentFieldInputPrefix);
 					}
 
 					if (hideModelOnSave) {
@@ -1247,6 +1250,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 			}
 		} else {
 
+			/*
 			let NoItemsText;
 
 			if (typeof wrapper.dataset.addrecordmenualias !== 'undefined' && wrapper.dataset.addrecordmenualias !== '') {
@@ -1257,6 +1261,8 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 				NoItemsText = TranslateText('COM_CUSTOMTABLES_SELECT_NOTHING')
 
 			document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = NoItemsText;
+
+			*/
 			return false;
 		}
 	}
@@ -1328,7 +1334,7 @@ function ctTableJoinAddRecordModalForm(control_name, sub_index) {
 		parentObjectValue = sub_indexObject.value;
 		query += '&es_' + sub_indexObject.dataset.childtablefield + '=' + parentObjectValue;
 	}
-	ctEditModal(query, wrapper.dataset.formname + '.' + wrapper.dataset.fieldname)
+	ctEditModal(query, wrapper.dataset.formname + '.' + wrapper.dataset.fieldname + '.' + ctFieldInputPrefix)
 }
 
 function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue, forceValue) {
@@ -1400,7 +1406,9 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
 				document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '';//"Not selected";
 				return false;
 			} else if (obj.value === "%addRecord%") {
+				obj.value = '';
 				ctTableJoinAddRecordModalForm(control_name, sub_index);
+				return;
 			}
 		}
 
@@ -1852,6 +1860,9 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
 }
 
 function refreshTableJoinField(fieldName, response, fieldInputPrefix) {
+
+	console.log("fieldInputPrefix:", fieldInputPrefix)
+	console.log("fieldName:", fieldName)
 
 	let valueObject = document.getElementById(fieldInputPrefix + fieldName);
 	valueObject.value = response['id'];
