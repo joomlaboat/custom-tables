@@ -110,6 +110,7 @@ class Inputbox
 				$input['value'] = $value;
 				break;
 
+			case 'creationtime':
 			case 'date':
 				$input["renderAs"] = "date";
 				$input['value'] = $value;
@@ -253,6 +254,7 @@ class Inputbox
 			case 'blob':
 			case 'color':
 			case 'date':
+			case 'creationtime':
 			case 'email':
 			case 'file':
 			case 'filebox':
@@ -366,6 +368,7 @@ class Inputbox
 			case 'checkbox':
 			case 'color':
 			case 'date':
+			case 'creationtime':
 			case 'email':
 			case 'file':
 			case 'filebox':

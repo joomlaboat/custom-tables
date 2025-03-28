@@ -543,9 +543,12 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 			for (let i = 0; i < elements.length; i++) {
 				if (elements[i].name && elements[i].name !== '' && elements[i].name !== 'returnto') {
 					if (elements[i].dataset.type === "date") {
-						if (elements[i].dataset.format !== "%Y-%m-%d") {
+						if (elements[i].dataset.format !== "%Y-%m-%d" && elements[i].dataset.format !== "%Y-%m-%d %H:%M:%S") {
 							//convert date to %Y-%m-%d
 							let dateValue = elements[i].value;
+							// Remove time if present (keep only date part)
+							dateValue = dateValue.split(" ")[0];
+
 							if (dateValue) {
 								// Parse the format string
 								let format = elements[i].dataset.format;
@@ -553,7 +556,10 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 
 								// Convert Joomla's format to parts
 								let parts = dateValue.split(/[-/.]/);
-								let formatParts = format.split(/[-/.]/);
+								// Remove time if present (keep only date part)
+								let formatWithoutTime = format.split(" ")[0];
+
+								let formatParts = formatWithoutTime.split(/[-/.]/);
 
 								// Map the parts to corresponding values
 								formatParts.forEach((part, index) => {

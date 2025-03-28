@@ -429,6 +429,28 @@ class SaveFieldQuerySet
 				}
 				return;
 
+			case 'creationtime':
+
+				if ($this->row_old[$this->ct->Table->realidfieldname] == 0 or $this->row_old[$this->ct->Table->realidfieldname] == '' or $this->isCopy) {
+					$this->setNewValue(common::currentDate());
+				} else {
+					$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+
+					if (isset($value)) {
+						if ($value == '' or $value == '0000-00-00') {
+
+							if (Fields::isFieldNullable($this->ct->Table->realtablename, $this->field->realfieldname)) {
+								$this->setNewValue(null);
+							} else {
+								$this->setNewValue('0000-00-00 00:00:00');
+							}
+						} else {
+							$this->setNewValue($value);
+						}
+					}
+				}
+				return;
+
 			case 'time':
 				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 				if (isset($value)) {
