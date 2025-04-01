@@ -509,7 +509,7 @@ class Twig_Record_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function min(string $tableName = '', string $value_field = '', string $filter = ''): ?int
+	function min(string $tableName = '', string $value_field = '', string $filter = ''): ?float
 	{
 		if ($value_field == '')
 			throw new Exception('{{ record.min(table_name,value_field) }} - Value Field not specified.');
@@ -521,7 +521,7 @@ class Twig_Record_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function countOrSumRecords(string $function, string $tableName, string $fieldName, string $filter = ''): ?int
+	protected function countOrSumRecords(string $function, string $tableName, string $fieldName, string $filter = ''): ?float
 	{
 		if ($tableName == '')
 			throw new Exception('countOrSumRecords - Table not specified.');
@@ -610,7 +610,7 @@ class Twig_Record_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function max(string $tableName = '', string $value_field = '', string $filter = ''): ?int
+	function max(string $tableName = '', string $value_field = '', string $filter = ''): ?float
 	{
 		if ($value_field == '')
 			throw new Exception('{{ record.max(table_name,value_field) }} - Value Field not specified.');
@@ -622,7 +622,7 @@ class Twig_Record_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function avg(string $tableName = '', string $value_field = '', string $filter = ''): ?int
+	function avg(string $tableName = '', string $value_field = '', string $filter = ''): ?float
 	{
 		if ($value_field == '')
 			throw new Exception('{{ record.avg(table_name,value_field) }} - Value Field not specified.');
@@ -634,7 +634,7 @@ class Twig_Record_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function sum(string $tableName = '', string $value_field = '', string $filter = ''): ?int
+	function sum(string $tableName = '', string $value_field = '', string $filter = ''): ?float
 	{
 		if ($value_field == '')
 			throw new Exception('{{ record.sum(table_name,value_field) }} - Value Field not specified.');

@@ -245,7 +245,7 @@ function findRowIndexById(table, tableid, id, icon) {
 	return -1;
 }
 
-function ctDeleteRecord(tableid, recordId, ModuleId) {
+function ctDeleteRecord(tableid, recordId, ModuleId, reload = false) {
 	if (CTEditHelper.ctLinkLoading) return;
 
 	CTEditHelper.ctLinkLoading = true;
@@ -256,7 +256,7 @@ function ctDeleteRecord(tableid, recordId, ModuleId) {
 		let msg = msgObj.textContent || msgObj.innerText || "";
 
 		if (confirm(msg)) {
-			runTheTask('delete', tableid, recordId, ['deleted'], false, false, ModuleId);
+			runTheTask('delete', tableid, recordId, ['deleted'], false, reload, ModuleId);
 		} else {
 			CTEditHelper.ctLinkLoading = false;
 		}

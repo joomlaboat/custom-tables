@@ -1158,7 +1158,34 @@ class Twig_HTML_Tags
 
 		$icons = [];
 		foreach ($modes as $mode)
-			$icons[] = $RecordToolbar->render($this->ct->Table->record, $mode);
+			$icons[] = $RecordToolbar->render($this->ct->Table->record, $mode, false);
+
+		return implode('', $icons);
+	}
+
+	function toolbar_with_reload(): string
+	{
+		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
+			return '';
+
+		$modes = func_get_args();
+
+		$isAddable = $this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_ADD);
+		$isEditable = $this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT);
+		$isPublishable = $this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_PUBLISH);
+		$isDeletable = $this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_DELETE);
+
+		$RecordToolbar = new RecordToolbar($this->ct, $isAddable, $isEditable, $isPublishable, $isDeletable);
+
+		if (count($modes) == 0)
+			$modes = ['edit', 'refresh', 'publish', 'delete'];
+
+		if ($this->ct->Table->record === null)
+			return '';
+
+		$icons = [];
+		foreach ($modes as $mode)
+			$icons[] = $RecordToolbar->render($this->ct->Table->record, $mode, true);
 
 		return implode('', $icons);
 	}

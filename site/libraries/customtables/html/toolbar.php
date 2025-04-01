@@ -40,7 +40,7 @@ class RecordToolbar
 	 * @throws Exception
 	 * @since 3.2.7
 	 */
-	public function render(array $row, $mode): string
+	public function render(array $row, string $mode, bool $reload = false): string
 	{
 		$this->listing_id = $row[$this->Table->realidfieldname];
 		$this->rid = $this->Table->tableid . 'x' . $this->listing_id;
@@ -82,7 +82,7 @@ class RecordToolbar
 		if ($this->isAddable and $mode == 'copy')
 			return $this->renderCopyIcon();
 		elseif ($this->isDeletable and $mode == 'delete')
-			return $this->renderDeleteIcon();
+			return $this->renderDeleteIcon($reload);
 		elseif ($this->isPublishable and $mode == 'publish')
 			return $this->renderPublishIcon();
 		elseif ($mode == 'checkbox')
@@ -275,12 +275,12 @@ class RecordToolbar
 		return '';
 	}
 
-	protected function renderDeleteIcon(): string
+	protected function renderDeleteIcon(bool $reload = false): string
 	{
 		$deleteLabel = $this->firstFieldValueLabel();
 		$moduleIDString = $this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId;
 
-		$href = 'javascript:ctDeleteRecord(' . $this->Table->tableid . ', \'' . $this->listing_id . '\', ' . $moduleIDString . ');';
+		$href = 'javascript:ctDeleteRecord(' . $this->Table->tableid . ', \'' . $this->listing_id . '\', ' . $moduleIDString . ',' . ($reload ? ' true' : ' false') . ');';
 
 		$messageDiv = '<div id="ctDeleteMessage' . $this->rid . '" style="display:none;">Do you want to delete ' . $deleteLabel . '?</div>';
 		$a = '<a href="' . $href . '">' . Icons::iconDelete($this->ct->Env->toolbarIcons) . '</a>';
