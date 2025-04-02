@@ -14,6 +14,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\CTMiscHelper;
 use CustomTables\Layouts;
 use CustomTables\ProInputBoxTableJoin;
 use Joomla\CMS\Factory;
@@ -51,7 +52,9 @@ class CustomtablesViewRecords extends HtmlView
 				require_once($path . 'tablejoinlist.php');
 
 				$this->ct = new CT([], true);
-				ProInputBoxTableJoin::renderTableJoinSelectorJSON($this->ct, $key);//Inputbox
+				$result = ProInputBoxTableJoin::renderTableJoinSelectorJSON($this->ct, $key, false);//Inputbox
+				CTMiscHelper::fireSuccess(null, $result, 'Lookup Table records loaded');
+
 			}
 		} else {
 			$tableId = common::inputGetInt('tableid');

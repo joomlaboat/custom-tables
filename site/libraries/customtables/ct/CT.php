@@ -16,6 +16,7 @@ defined('_JEXEC') or die();
 use CustomTablesImageMethods;
 use CustomTablesKeywordSearch;
 use Exception;
+use Throwable;
 
 class CT
 {
@@ -240,7 +241,11 @@ class CT
 	 */
 	function getRecords(bool $all = false, int $limit = 0, ?string $orderby = null, string $groupBy = null): bool
 	{
-		$count = $this->getNumberOfRecords($this->Filter->whereClause);
+		try {
+			$count = $this->getNumberOfRecords($this->Filter->whereClause);
+		} catch (Throwable $e) {
+			throw new Exception($e->getMessage());
+		}
 
 		if ($count === null)
 			return false;
@@ -315,8 +320,9 @@ class CT
 	 */
 	function getNumberOfRecords(MySQLWhereClause $whereClause): ?int
 	{
-		if ($this->Table === null or $this->Table->tablerow === null or $this->Table->tablerow['realidfieldname'] === null)
+		if ($this->Table === null or $this->Table->tablerow === null or $this->Table->tablerow['realidfieldname'] === null) {
 			throw new Exception('getNumberOfRecords: Table not selected.');
+		}
 
 		try {
 			$rows = database::loadObjectList($this->Table->realtablename, ['COUNT_ROWS'], $whereClause);

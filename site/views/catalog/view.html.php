@@ -50,7 +50,12 @@ class CustomTablesViewCatalog extends HtmlView
 				require_once($path . 'tablejoin.php');
 				require_once($path . 'tablejoinlist.php');
 
-				ProInputBoxTableJoin::renderTableJoinSelectorJSON($this->ct, $key);//Inputbox
+				try {
+					$result = ProInputBoxTableJoin::renderTableJoinSelectorJSON($this->ct, $key, false);//Inputbox
+					CTMiscHelper::fireSuccess(null, $result, 'Lookup Table records loaded');
+				} catch (Throwable $e) {
+					CTMiscHelper::fireError(500, $e->getMessage());
+				}
 			}
 		} else
 			$this->renderCatalog($tpl);

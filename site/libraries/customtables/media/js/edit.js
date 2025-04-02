@@ -1923,9 +1923,9 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 		let link = location.href.split('administrator/index.php?option=com_customtables');
 
 		if (link.length === 2)//to make sure that it will work in the back-end
-			url = CTEditHelper.websiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
+			url = CTEditHelper.websiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&clean=1&from=json&key=' + key + '&index=0&limit=20&';
 		else
-			url = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
+			url = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&clean=1&from=json&key=' + key + '&index=0&limit=20&';
 
 	} else if (CTEditHelper.cmsName === "WordPress") {
 		console.error("onCTVirtualSelectServerSearch is not supported by WP yet.");
@@ -1938,26 +1938,42 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 
 	let newList = [];
 
-	try {
-		const response = await fetch(url);
-		const contentType = response.headers.get("content-type");
-		if (!contentType || !contentType.includes("application/json")) {
-			throw new TypeError("Oops, we haven't got JSON!");
-		}
-		const jsonData = await response.json();
-
-		for (let i = 0; i < jsonData.length; i++) {
-
-			let doc = new DOMParser().parseFromString(jsonData[i].label, 'text/html');
-			let label = doc.documentElement.textContent;
-
-			newList.push({value: jsonData[i].value, label: decodeURI(label)});
-		}
-		virtualSelect.setServerOptions(newList);
-	} catch (error) {
-		alert(error);
-		console.error("Error:", error);
+	const response = await fetch(url);
+	const contentType = response.headers.get("content-type");
+	if (!contentType || !contentType.includes("application/json")) {
+		console.warn(url);
+		console.warn(contentType);
+		console.warn(response);
+		console.warn(response.toString());
+		throw new TypeError("Oops, we haven't got JSON!");
 	}
+
+	let jsonData;
+	
+	try {
+		jsonData = await response.json();
+	} catch (error) {
+		console.warn("Error:  SyntaxError: JSON.parse");
+		console.warn(response);
+		return;
+	}
+
+	if (jsonData.success) {
+		for (let i = 0; i < jsonData.data.length; i++) {
+			let item = jsonData.data[i];
+
+			//let doc = new DOMParser().parseFromString(item.label, 'text/html');
+			//let label = doc.documentElement.textContent;
+			//newList.push({value: item.value, label: decodeURI(label)});
+
+			newList.push({value: item.value, label: item.label});
+		}
+
+		virtualSelect.setServerOptions(newList);
+	} else {
+		console.warn("Error:", jsonData.errors);
+	}
+
 }
 
 

@@ -196,7 +196,7 @@ class CustomTablesKeywordSearch
 					case 'phponchange':
 					case 'text':
 					case 'email':
-						$whereClause->addCondition($fieldrow['realfieldname'], $kw, 'INSTR');
+						$whereClause->addCondition($fieldrow['realfieldname'], $kw, 'LIKE');//INSTR
 						break;
 
 					case 'multilangtext':
@@ -209,7 +209,7 @@ class CustomTablesKeywordSearch
 						$esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
 						$esr_field = $typeParamsArrayy[1];
 
-						$inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . $fieldrow['realfieldname'] . ',concat(",",' . $esr_table . '.' . $this->ct->Table->realidfieldname . ',","))';//TODO
+						$inner = 'INNER JOIN ' . $esr_table . ' ON INSTR(#__customtables_table_' . $this->ct->Table->tablename . $fieldrow['realfieldname'] . ',concat(",",' . $esr_table . '.' . $this->ct->Table->realidfieldname . ',","))';//TODO
 						if (!in_array($inner, $inner_arr))
 							$inner_arr[] = $inner;
 
@@ -223,11 +223,11 @@ class CustomTablesKeywordSearch
 						$esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
 						$esr_field = $typeParamsArrayy[1];
 
-						$inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . $fieldrow['realfieldname'] . ',concat(",",' . $esr_table . '.' . $this->ct->Table->realidfieldname . ',","))';
+						$inner = 'INNER JOIN ' . $esr_table . ' ON INSTR(#__customtables_table_' . $this->ct->Table->tablename . $fieldrow['realfieldname'] . ',concat(",",' . $esr_table . '.' . $this->ct->Table->realidfieldname . ',","))';
 						if (!in_array($inner, $inner_arr))
 							$inner_arr[] = $inner;
 
-						$whereClause->addCondition($esr_table . '.es_' . $esr_field, $kw, 'INSTR');
+						$whereClause->addCondition($esr_table . '.es_' . $esr_field, $kw, 'LIKE');//INSTR
 						break;
 
 					case 'userid':
@@ -283,7 +283,7 @@ class CustomTablesKeywordSearch
 				$esr_table = '#__customtables_table_' . $typeParamsArray[0];
 				$esr_field = $typeParamsArray[1];
 
-				$inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldname . ',concat(",",' . $esr_table . '.id,","))';//TODO
+				$inner = 'INNER JOIN ' . $esr_table . ' ON INSTR(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldname . ',concat(",",' . $esr_table . '.id,","))';//TODO
 				$whereClause->addCondition($esr_table . '.es_' . $esr_field, $regExpression, 'REGEXP');
 				break;
 

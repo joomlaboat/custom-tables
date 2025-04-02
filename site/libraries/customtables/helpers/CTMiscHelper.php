@@ -1153,12 +1153,12 @@ class CTMiscHelper
 			}
 
 			$app->setHeader('status', $code);
-			$app->setHeader('Content-Type', 'application/vnd.api+json');
+			$app->setHeader('Content-Type', 'application/json');
 			$app->sendHeaders();
 		} elseif (defined('WPINC')) {
 			// Set headers
 			status_header($code);
-			header('Content-Type: application/vnd.api+json');
+			header('Content-Type: application/application/json');
 		}
 
 		echo json_encode([
@@ -1197,12 +1197,12 @@ class CTMiscHelper
 		if (defined('_JEXEC')) {
 			$app = Factory::getApplication();
 			$app->setHeader('status', 200);
-			$app->setHeader('Content-Type', 'application/vnd.api+json');
+			$app->setHeader('Content-Type', 'application/json');
 			$app->sendHeaders();
 		} elseif (defined('WPINC')) {
 			// Set headers
 			status_header(200);
-			header('Content-Type: application/vnd.api+json');
+			header('Content-Type: application/json');
 		}
 
 		$result = [
@@ -1349,7 +1349,7 @@ class CTMiscHelper
 		} elseif (defined('WPINC')) {
 			// Set headers
 			status_header($code);
-			//header('Content-Type: application/vnd.api+json');
+			//header('Content-Type: application/json');
 		}
 
 		if ($format == 'text/html')
