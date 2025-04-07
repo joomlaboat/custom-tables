@@ -32,23 +32,34 @@ class EditController
 	 *
 	 * @since 3.5.0
 	 */
-	function execute()
+	function execute(bool $checkToken = true, string $task = 'save')
 	{
-		$userId = CustomTablesAPIHelpers::checkToken();
+		if ($checkToken) {
+			$userId = CustomTablesAPIHelpers::checkToken();
 
-		if (!$userId)
-			die;
+			if (!$userId)
+				die;
+		}
 
 		switch ($_SERVER['REQUEST_METHOD']) {
 			case 'POST':
 				// Handle POST request
-				$this->executePOST();//$postData
+				try {
+					$this->executePOST($task);//$postData
+				} catch (Throwable $e) {
+					CTMiscHelper::fireError(502, $e->getMessage());
+				}
 				// or use $_POST if data is form-encoded
 				break;
 
 			case 'GET':
 				// Handle GET request
-				$this->executeGET();
+				try {
+					$this->executeGET();
+				} catch (Throwable $e) {
+					CTMiscHelper::fireError(500, $e->getMessage());
+				}
+
 				break;
 
 			default:
@@ -60,19 +71,34 @@ class EditController
 	 * @throws Exception
 	 * @since 3.4.8
 	 */
-	function executePOST()
+	function executePOST(string $task = 'save')
 	{
+		try {
+			$ct = new CT([], true);
+			$ct->Env->clean = true;
+		} catch (Exception $e) {
+			CTMiscHelper::fireError(501, $e->getMessage());
+		}
+
 		$layoutName = common::inputGetCmd('layout');
 
-		$ct = new CT([], true);
-		$ct->Env->clean = true;
+		if (empty($layoutName)) {
+			$Itemid = Factory::getApplication()->input->get('Itemid');
+			if ($Itemid > 0) {
+				$ct->Params->constructJoomlaParams();
+				$ct->getTable($ct->Params->tableName);
+			} else {
+				CTMiscHelper::fireError(500, common::translate('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND'));
+			}
+		} else {
+			$ct->Params->editLayout = $layoutName;
+		}
 
 		$layout = new Layouts($ct);
-		$layout->getLayout($layoutName);
 
 		$result = null;
 		try {
-			$result = @$layout->renderMixedLayout($layoutName, CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM, 'save');
+			$result = @$layout->renderMixedLayout($layoutName, CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM, $task);
 		} catch (Throwable $e) {
 			CTMiscHelper::fireError(500, $e->getMessage());
 		}
@@ -93,24 +119,47 @@ class EditController
 	 */
 	function executeGET()
 	{
-		$layoutName = Factory::getApplication()->input->get('layout');
-		$listing_id = Factory::getApplication()->input->get('id');
-
 		$ct = null;
+		$listing_id = common::inputGetCmd('id');
+		$layoutName = common::inputGetCmd('layout');
+
+		$params['listingid'] = $listing_id;
 
 		try {
-			$params['listingid'] = $listing_id;
-
 			$ct = @ new CT($params, false);
 			$ct->Env->clean = true;
 			$ct->Params->blockExternalVars = false;
-			$ct->Params->editLayout = $layoutName;
 		} catch (Exception $e) {
 			CTMiscHelper::fireError(500, $e->getMessage());
 		}
 
+		$layoutName = common::inputGetCmd('layout');
+		echo '$layoutName:' . $layoutName . '<br/>';
+		if (empty($layoutName)) {
+			$Itemid = Factory::getApplication()->input->get('Itemid');
+			$ct->Params->constructJoomlaParams();
+			$ct->getTable($ct->Params->tableName);
+			print_r($ct->Table->fields);
+
+
+			//echo 'Itemid:' . $Itemid . '<br/>';
+
+
+			//echo '$ct->Params->tableName:' . $ct->Params->tableName . '<br/>';
+			//echo '$ct->Params->editLayout:' . $ct->Params->editLayout . '<br/>';
+
+			//die;
+		} else {
+			$ct->Params->editLayout = $layoutName;
+		}
+
 		$editForm = new Edit($ct);
 		$editForm->load();
+
+		$isEditable = $ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT);
+		if (!$isEditable) {
+			CTMiscHelper::fireError(401, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+		}
 
 		if (!empty($ct->Params->listing_id) or !empty($ct->Params->filter))
 			$ct->getRecord();

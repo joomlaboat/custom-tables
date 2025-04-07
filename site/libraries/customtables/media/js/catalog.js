@@ -49,9 +49,10 @@ function ctResetPassword(msg, listing_id, toolbarBoxId, ModuleId) {
 	}
 }
 
-function esPrepareLink(deleteParams, addParams) {
+function esPrepareLink(deleteParams, addParams, link = null) {
 
-	let link = window.location.href;
+	if (link === null)
+		link = window.location.href;
 
 	const pair = link.split('#');
 	link = pair[0];

@@ -33,7 +33,7 @@ class CustomTablesViewEditItem extends HtmlView
 		$this->ct->Params->constructJoomlaParams();
 
 		$app = Factory::getApplication();
-		$menuParams = $app->getParams();
+		$menuParams = $app->getParams();//TODO: Probably unnecessary
 		$frmt = $menuParams->get('frmt') ?? null;
 		if ($frmt !== null) {
 			$this->ct->Env->frmt = $frmt;

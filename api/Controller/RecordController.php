@@ -15,6 +15,7 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTMiscHelper;
 use CustomTables\Layouts;
+use Joomla\CMS\Factory;
 
 class RecordController
 {
@@ -23,17 +24,34 @@ class RecordController
 	 *
 	 * @since 3.5.0
 	 */
-	function execute()
+	function execute(bool $checkToken = true)
 	{
-		$userId = CustomTablesAPIHelpers::checkToken();
+		if ($checkToken) {
+			$userId = CustomTablesAPIHelpers::checkToken();
 
-		if (!$userId)
-			die;
+			if (!$userId)
+				die;
+		}
 
-		$ct = new CT([], true);
-		$ct->Env->clean = true;
+		try {
+			$ct = new CT([], true);
+			$ct->Env->clean = true;
+		} catch (Exception $e) {
+			CTMiscHelper::fireError(501, $e->getMessage());
+		}
+
 		$layoutName = common::inputGetCmd('layout');
-		$ct->Env->clean = true;
+
+		if (empty($layoutName)) {
+			$Itemid = Factory::getApplication()->input->get('Itemid');
+			if ($Itemid > 0) {
+				$ct->Params->constructJoomlaParams();
+				$ct->getTable($ct->Params->tableName);
+			} else {
+				CTMiscHelper::fireError(500, common::translate('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND'));
+			}
+		}
+
 		$layout = new Layouts($ct);
 		$result = $layout->renderMixedLayout($layoutName, CUSTOMTABLES_LAYOUT_TYPE_DETAILS, 'none');
 

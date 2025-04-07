@@ -12,7 +12,9 @@
 defined('_JEXEC') or die();
 
 use CustomTables\common;
+use CustomTables\CTMiscHelper;
 use CustomTables\Value_file;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 class CustomTablesController extends BaseController
@@ -43,6 +45,39 @@ class CustomTablesController extends BaseController
 			$view = common::inputGetCmd('view');
 
 			switch ($view) {
+				case 'edit' :
+				case 'lookuptable' :
+				case 'record' :
+				case 'records' :
+					$controller = ucwords($view);
+					$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR
+						. 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
+						. 'Controller' . DIRECTORY_SEPARATOR . $controller . 'Controller.php';
+
+					if (file_exists($path)) {
+
+						require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR
+							. 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'Helpers' . DIRECTORY_SEPARATOR . 'CustomTablesAPIHelpers.php';
+
+						require_once $path;
+						$className = $controller . 'Controller';
+
+						$do = new $className;
+
+						try {
+							$task = common::inputGetCmd('task');
+							$do->execute(false, $task);
+						} catch (Throwable $e) {
+							echo $e->getFile() . '<br/>' . $e->getLine() . '<br/>' . $e->getMessage() . '<br/>' . $e->getTraceAsString();
+							CTMiscHelper::fireError(500, $e->getMessage());
+						}
+					} else {
+						$app = Factory::getApplication();
+						CTMiscHelper::fireError(404, 'Controller [' . $controller . '] not found.', $app->get('offline_message', 'Controller not found.'));
+					}
+
+					die;
+
 				case 'log' :
 					require_once('controllers/log.php');
 					break;

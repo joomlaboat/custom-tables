@@ -19,7 +19,7 @@ HTMLHelper::_('jquery.framework');
 jimport('joomla.html.html.bootstrap');
 
 try {
-	common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix);
+	common::loadJSAndCSS($this->ct->Params, $this->ct->Env, $this->ct->Table->fieldInputPrefix ?? '');
 
 	$document = Factory::getApplication()->getDocument();
 

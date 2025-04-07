@@ -23,12 +23,14 @@ class RecordsController
 	 *
 	 * @since 3.5.0
 	 */
-	function execute()
+	function execute(bool $checkToken = true)
 	{
-		$userId = CustomTablesAPIHelpers::checkToken();
+		if ($checkToken) {
+			$userId = CustomTablesAPIHelpers::checkToken();
 
-		if (!$userId)
-			die;
+			if (!$userId)
+				die;
+		}
 
 		$layoutName = Factory::getApplication()->input->get('layout');
 

@@ -1180,7 +1180,7 @@ class CTMiscHelper
 		if (is_array($dataVariable)) {
 			$data = $dataVariable;
 		} else {
-			if ($dataVariable === null) {
+			if ($dataVariable === null or $dataVariable === "") {
 				$data = null;
 			} else {
 				try {
