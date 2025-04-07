@@ -88,6 +88,10 @@
 			   name="customphp"
 			   label="COM_CUSTOMTABLES_TABLES_CUSTOMPHP_LABEL"
 			   directory="/components/com_customtables/customphp"
+			   filter="php"
+			   hide_none="true"
+			   defaultlabel="-"
+			   default="-"
 			   description="Custom Tables allows you to execute custom PHP code when users perform specific actions on records (save, refresh, publish, or unpublish). This is accomplished through a custom PHP file with a process() function."/>
 		<field type="radio"
 			   name="allowimportcontent"

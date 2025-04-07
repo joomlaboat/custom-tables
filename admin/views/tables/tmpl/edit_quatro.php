@@ -28,11 +28,36 @@ $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
 $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" rel="stylesheet">');
+$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base64.js"></script>');
 
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
 	  method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
+
+	<script>
+		function updateCustomPHPFileLink() {
+			console.warn('updateCustomPHPFileLink');
+			const select = document.getElementById('jform_customphp');
+			let file = select.value;
+			console.warn('file:', file);
+
+			const editPHPFileObj = document.getElementById('editPHPFile');
+
+			let link = '<?php echo common::UriRoot(true); ?>/administrator/index.php?option=com_customtables&view=editphp&tablename=<?php echo $this->item->tablename; ?>';
+			let content = '';
+
+			if (file === "") {
+				content = '<a href="' + link + '" target="_blank">Create New PHP File</a>';
+			} else {
+				link += '&file=' + Base64.encode(file);
+				content = '<a href="' + link + '" target="_blank">Edit</a>';
+			}
+
+			document.getElementById('editPHPFile').innerHTML = content;
+		}
+	</script>
+
 	<div id="jform_title"></div>
 	<div class="form-horizontal">
 
@@ -161,7 +186,18 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 						else
 							echo $this->form->getInput('customphp');
 						?>
-						<p><?php echo common::translate($this->form->getField('customphp')->description); ?></p>
+						<p><?php echo common::translate($this->form->getField('customphp')->description); ?>
+							<?php
+
+							$link = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=editphp&tablename=' . $this->item->tablename;
+
+							if (empty($this->item->customphp)) {
+								echo '<span id="editPHPFile"><a href="' . $link . '" target="_blank">Create New PHP File</a></span>';
+							} else {
+								$link .= '&file=' . base64_encode($this->item->customphp);
+								echo '<span id="editPHPFile"><a href="' . $link . '" target="_blank">Edit</a></span>';
+							}
+							?></p>
 					</div>
 				</div>
 
@@ -296,4 +332,12 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 		</script>
 	<?php endif; ?>
 
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const select = document.getElementById('jform_customphp');
+			if (select) {
+				select.addEventListener('change', updateCustomPHPFileLink);
+			}
+		});
+	</script>
 </form>
