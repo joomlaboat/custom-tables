@@ -433,7 +433,7 @@ class SaveFieldQuerySet
 
 				$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
 
-				if ($value === null or $this->isCopy) {
+				if (($this->ct->isRecordNull($this->row_old) or $this->isCopy) and $value === null) {
 					$this->setNewValue(common::currentDate());
 				} else {
 					$value = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
