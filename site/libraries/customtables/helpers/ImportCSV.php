@@ -61,7 +61,7 @@ class ImportCSV
 				$result = self::prepareSQLQuery($fieldList, $fields, $arrayOfLines[$i]);
 				$listing_id = self::findRecord($ct->Table->realtablename, $ct->Table->realidfieldname, $ct->Table->published_field_found, $result->where);
 
-				if (is_null($listing_id)) {
+				if (is_null($listing_id) and count($result->data) > 0) {
 					try {
 						database::insert($ct->Table->realtablename, $result->data);
 					} catch (Exception $e) {

@@ -50,7 +50,7 @@ class CustomTablesControllerImportRecords extends FormController
 
 			$link = 'index.php?option=com_customtables&view=listofrecords&tableid=' . $tableId;
 			$this->setRedirect($link, common::translate('Records Imported Successfully'));
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			unlink($filename);
 			$link = 'index.php?option=com_customtables&view=importrecords&tableid=' . $tableId;
 			$this->setRedirect($link, common::translate('Records was Unable to Import: ' . $e->getMessage()), 'error');
