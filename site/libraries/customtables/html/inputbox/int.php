@@ -30,9 +30,8 @@ class InputBox_int extends BaseInputBox
 		}
 
 		$this->attributes['type'] = 'text';
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
+		$this->attributes['value'] = $value ?? '';
 		$this->attributes['maxlength'] = 32;
-
 		return '<input ' . self::attributes2String($this->attributes) . ' />';
 	}
 }

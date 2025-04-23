@@ -48,11 +48,9 @@ class InputBox_string extends BaseInputBox
 				. '</datalist>';
 		}
 		$this->attributes['type'] = 'text';
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
+		$this->attributes['value'] = $value ?? '';
 		$this->attributes['maxlength'] = (($this->field->params !== null and count($this->field->params) > 0 and (int)$this->field->params[0] > 0) ? (int)$this->field->params[0] : 255);
-
 		$input = '<input ' . self::attributes2String($this->attributes) . ' />';
-
 		return $input . $dataset;
 	}
 }

@@ -135,7 +135,7 @@ class Edit
 				$result .= (CUSTOMTABLES_JOOMLA_MIN_4 ? '<fieldset class="options-form">' : '<fieldset>');
 		}
 
-		//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
+		//Calendars of the child should be built again, because when Dom was ready, they didn't exist yet.
 
 		$this->ct->isEditForm = true; //These changes input box prefix
 		$pageLayout = $this->layoutContent;

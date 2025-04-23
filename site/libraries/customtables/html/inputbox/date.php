@@ -78,7 +78,7 @@ class InputBox_date extends BaseInputBox
 			}
 
 			$this->attributes['type'] = 'text';
-			$this->attributes['value'] = htmlspecialchars($value ?? '');
+			$this->attributes['value'] = $value ?? '';
 
 			return '<input ' . self::attributes2String($this->attributes) . ' />'
 				. '<script>jQuery(function($){ $("#' . sanitize_title($this->attributes['id']) . '").datetimepicker({ ' . implode(',', $datePickerParams) . ' }); });</script>';

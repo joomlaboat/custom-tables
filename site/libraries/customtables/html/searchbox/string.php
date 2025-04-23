@@ -27,7 +27,7 @@ class Search_string extends BaseSearch
 		$this->attributes['type'] = 'text';
 		$this->attributes['id'] = $this->objectName;
 		$this->attributes['name'] = $this->objectName;
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
+		$this->attributes['value'] = $value ?? '';
 		$this->attributes['placeholder'] = $this->attributes['data-label'];
 		$this->attributes['onkeypress'] = 'es_SearchBoxKeyPress(event)';
 		return '<input ' . BaseInputBox::attributes2String($this->attributes) . ' />';

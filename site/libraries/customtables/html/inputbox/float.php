@@ -38,8 +38,7 @@ class InputBox_float extends BaseInputBox
 		if (isset($this->field->params[2]) and $this->field->params[2] == 'smart')
 			$this->attributes['onkeypress'] = 'ESsmart_float(this,event,' . $decimals . ')';
 
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
-
+		$this->attributes['value'] = $value ?? '';
 		return '<input ' . self::attributes2String($this->attributes) . ' />';
 	}
 }

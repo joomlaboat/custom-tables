@@ -34,7 +34,7 @@ class InputBox_alias extends BaseInputBox
 		}
 
 		$this->attributes['type'] = 'text';
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
+		$this->attributes['value'] = $value ?? '';
 		$this->attributes['maxlength'] = ($maxlength > 0 ? 'maxlength="' . $maxlength . '"' : 'maxlength="255"');
 
 		return '<input ' . self::attributes2String($this->attributes) . ' />';

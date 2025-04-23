@@ -42,11 +42,10 @@ class InputBox_url extends BaseInputBox
 			$filters[] = 'domain:' . $this->field->params[2];
 
 		$this->attributes['type'] = 'text';
-		$this->attributes['value'] = htmlspecialchars($value ?? '');
+		$this->attributes['value'] = $value ?? '';
 		$this->attributes['maxlength'] = 1024;
 		$this->attributes['data-sanitizers'] = 'trim';
 		$this->attributes['data-filters'] = implode(',', $filters);
-
 		return '<input ' . self::attributes2String($this->attributes) . ' />';
 	}
 }
