@@ -637,6 +637,10 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 							if (dateValue) {
 								// Parse the format string
 								let format = elements[i].dataset.format;
+
+								if (typeof format === "undefined")
+									format = "%Y-%m-%d";
+
 								let day, month, year;
 
 								// Convert Joomla's format to parts

@@ -604,7 +604,11 @@ class CT
 
 		if ($this->Env->advancedTagProcessor and $this->Table->tablerow['customphp'] !== null) {
 			$customPHP = new CustomPHP($this, $action);
-			$customPHP->executeCustomPHPFile($this->Table->tablerow['customphp'], $row, $row);
+			try {
+				$customPHP->executeCustomPHPFile($this->Table->tablerow['customphp'], $row, $row);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
 		}
 
 		//Send email note if applicable
