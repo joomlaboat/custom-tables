@@ -431,7 +431,7 @@ function removeURLParameter(url, parameter) {
 	}
 }
 
-function ct_UpdateAllRecordsValues(Itemid, fieldname_, record_ids, postfix, ModuleId) {
+function ct_UpdateAllRecordsValues(tableId, fieldname_, record_ids, postfix, ModuleId) {
 	let ids = record_ids.split(',');
 	const obj_checkbox_off = document.getElementById(ctFieldInputPrefix + "_" + fieldname_ + "_off");
 	if (obj_checkbox_off) {
@@ -443,7 +443,7 @@ function ct_UpdateAllRecordsValues(Itemid, fieldname_, record_ids, postfix, Modu
 			let objectName = ctFieldInputPrefix + ids[i] + "_" + fieldname_;
 			document.getElementById(objectName).checked = parseInt(obj_checkbox_off.value) === 1;
 
-			ct_UpdateSingleValue(Itemid, fieldname_, ids[i], postfix, ModuleId);
+			ct_UpdateSingleValue(tableId, fieldname_, ids[i], postfix, ModuleId);
 		}
 
 	} else {
@@ -454,7 +454,7 @@ function ct_UpdateAllRecordsValues(Itemid, fieldname_, record_ids, postfix, Modu
 			let objectName = ctFieldInputPrefix + "_" + ids[i] + "_" + fieldname_;
 			let obj = document.getElementById(objectName);
 			obj.value = value;
-			ct_UpdateSingleValue(Itemid, fieldname_, ids[i], postfix, ModuleId);
+			ct_UpdateSingleValue(tableId, fieldname_, ids[i], postfix, ModuleId);
 			if (obj.dataset.type === "sqljoin") {
 
 				let tableid = obj.dataset.tableid;
@@ -470,7 +470,7 @@ function ct_UpdateAllRecordsValues(Itemid, fieldname_, record_ids, postfix, Modu
 	}
 }
 
-function ct_UpdateSingleValue(Itemid, fieldname_, record_id, postfix, ModuleId) {
+function ct_UpdateSingleValue(tableId, fieldname_, record_id, postfix, ModuleId) {
 
 	let params = "";
 
@@ -487,40 +487,57 @@ function ct_UpdateSingleValue(Itemid, fieldname_, record_id, postfix, ModuleId) 
 
 	} else {
 		let objectName = ctFieldInputPrefix + record_id + "_" + fieldname_;
+		console.warn("objectName2:", objectName);
 		params += "&" + ctFieldInputPrefix + fieldname_ + "=" + document.getElementById(objectName).value;
 	}
-	ct_UpdateSingleValueSet(Itemid, fieldname_, record_id, postfix, ModuleId, params);
+	ct_UpdateSingleValueSet(tableId, fieldname_, record_id, postfix, ModuleId, params);
 }
 
-function ct_UpdateSingleValueSet(Itemid, fieldname_, record_id, postfix, ModuleId, valueParam) {
+function ct_UpdateSingleValueSet(tableId, fieldname_, record_id, postfix, ModuleId, valueParam) {
 
-	const fieldname = fieldname_.split('_')[0];
+	console.warn("valueParam:", valueParam);
+	//let fieldname_parts = fieldname_.split('_')[0];
 
-	let deleteParams = ['task', "listing_id", 'returnto', 'ids', 'option', 'view'];
+	//let fieldname = fieldname_parts[0];
+	let objName = ctFieldInputPrefix + record_id + "_" + fieldname_ + postfix + "_div";
+	let obj = document.getElementById(objName);
+	/*
+	if (!obj) {
+		if (fieldname_parts.length() > 1)
+			fieldname = fieldname_;
+
+		objName = ctFieldInputPrefix + record_id + "_" + fieldname + postfix + "_div";
+		obj = document.getElementById(objName);
+	}
+*/
+	if (obj) obj.className = "ct_loader";
+
+	let deleteParams = ['task', "listing_id", "listingid", 'returnto', 'ids', 'option', 'view'];
 	let addParams = ['clean=1', 'frmt=json'];
+
+	let params = "";
 
 	if (CTEditHelper.cmsName === 'Joomla') {
 		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0) {
 			addParams.push('option=com_customtables');
-			addParams.push('view=edititem');
 			addParams.push('ModuleId=' + ModuleId);
 		} else {
 			addParams.push('option=com_customtables');
-			addParams.push('view=edititem');
 			addParams.push('Itemid=' + CTEditHelper.itemId);
 		}
+
+		addParams.push('view=edititem');
+		params += "&listing_id=" + record_id;
+	} else if (CTEditHelper.cmsName === 'WordPress') {
+		addParams.push('view' + tableId + '=edit');
+		addParams.push('id=' + record_id);
 	}
 
 	const url = esPrepareLink(deleteParams, addParams);
 
-	let params = "";
-
 	params += valueParam;
 	params += "&task=save";
-	params += "&listing_id=" + record_id;
 
-	const obj = document.getElementById(ctFieldInputPrefix + record_id + "_" + fieldname + postfix + "_div");
-	if (obj) obj.className = "ct_loader";
 
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
 
@@ -531,12 +548,11 @@ function ct_UpdateSingleValueSet(Itemid, fieldname_, record_id, postfix, ModuleI
 			if (http.readyState === 4) {
 
 				let response;
-				console.warn(url);
-				console.warn(params);
+				//console.warn(url);
+				//console.warn(params);
 				try {
 					response = JSON.parse(http.response.toString());
 				} catch (e) {
-
 
 					if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
 						alert(TranslateText('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE'));
@@ -550,10 +566,11 @@ function ct_UpdateSingleValueSet(Itemid, fieldname_, record_id, postfix, ModuleI
 				}
 
 				if (response.success) {
-					console.warn(http.response.toString());
-					obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
+					if (obj)
+						obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
 				} else {
-					obj.className = "ct_checkmark_err";
+					if (obj)
+						obj.className = "ct_checkmark_err";
 					alert(response.message);
 				}
 			}

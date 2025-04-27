@@ -414,6 +414,7 @@ class Layouts
 
 		$this->layoutId = (int)$row['id'];
 		$this->layoutType = (int)$row['layouttype'];
+		$this->ct->LayoutVariables['layout_type'] = $this->layoutId;
 
 		if (!empty($row['params'])) {
 			try {

@@ -630,11 +630,11 @@ class fieldObject
 					$this->ct->getRecordList();
 
 				$listOfRecords = implode(',', $this->ct->Table->recordlist);
-				$onchange = 'ct_UpdateAllRecordsValues(' . $this->ct->Params->ItemId . ',\''
+				$onchange = 'ct_UpdateAllRecordsValues(' . $this->ct->Table->tableid . ',\''
 					. $this->field->fieldname . '\',\'' . $listOfRecords . '\',\''
 					. $postfix . '\',' . ($this->ct->Params->ModuleId ?? 0) . ');';
 			} else {
-				$onchange = 'ct_UpdateSingleValue(' . $this->ct->Params->ItemId . ',\''
+				$onchange = 'ct_UpdateSingleValue(' . $this->ct->Table->tableid . ',\''
 					. $this->field->fieldname . '\',\'' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . '\',\''
 					. $postfix . '\',' . ($this->ct->Params->ModuleId ?? 0) . ');';
 			}

@@ -89,7 +89,7 @@ class InputBox_multilingualstring extends BaseInputBox
 		if (str_contains(($this->attributes['onchange'] ?? ''), 'ct_UpdateSingleValue(')) {
 
 			$attributes['onchange'] = 'ct_UpdateSingleValue('
-				. $this->ct->Params->ItemId . ",'" . $this->field->fieldname . $postfix . "',"
+				. $this->ct->Table->tableid . ",'" . $this->field->fieldname . $postfix . "',"
 				. "'" . $this->row[$this->ct->Table->realidfieldname] . "',"
 				. "'" . $langSEF . "',"
 				. (int)$this->ct->Params->ModuleId . ")";
