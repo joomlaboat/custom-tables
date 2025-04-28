@@ -86,13 +86,13 @@ class Filtering
 	protected function sanitizeAndParseFilter($paramWhere, $parse = false): string
 	{
 		if ($parse) {
-			//Parse using layout, has no effect to layout itself
+			//Parse using layout has no effect to layout itself
 
 			try {
 				$twig = new TwigProcessor($this->ct, $paramWhere);
 				$paramWhere = $twig->process();
 			} catch (Exception $e) {
-				throw new Exception($e->getMessage());
+				throw new Exception('Params: "' . $paramWhere . '"' . $e->getMessage());
 			}
 
 			if ($this->ct->Params->allowContentPlugins)

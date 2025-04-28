@@ -408,8 +408,17 @@ class Inputbox
 				if (file_exists($path . 'tablejoin.php')) {
 					require_once($path . 'tablejoin.php');
 
-					$inputBoxRenderer = new ProInputBoxTableJoin($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
-					return $inputBoxRenderer->render($value, $this->defaultValue);
+					try {
+						$inputBoxRenderer = new ProInputBoxTableJoin($this->ct, $this->field, $this->row, $this->option_list, $this->attributes);
+						return $inputBoxRenderer->render($value, $this->defaultValue);
+					} catch (Exception $e) {
+						if ($this->ct->Env->debug)
+							$message = $e->getMessage() . ', ' . $e->getFile() . ', ' . $e->getLine() . $e->getTraceAsString();
+						else
+							$message = $e->getMessage();
+						return $message;
+					}
+
 				} else {
 					return common::translate('COM_CUSTOMTABLES_AVAILABLE');
 				}

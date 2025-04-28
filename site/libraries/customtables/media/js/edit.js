@@ -1934,12 +1934,12 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
 		let link = location.href.split('administrator/index.php?option=com_customtables');
 
 		if (link.length === 2)//to make sure that it will work in the back-end
-			url = CTEditHelper.websiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
+			url = CTEditHelper.websiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where_base64=' + encodeURIComponent(where);
 		else
-			url = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + encodeURIComponent(where);
+			url = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where_base64=' + encodeURIComponent(where);
 
 	} else if (CTEditHelper.cmsName === "WordPress") {
-		url = CTEditHelper.websiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + key + '&index=0&where=' + encodeURIComponent(where);
+		url = CTEditHelper.websiteRoot + 'index.php?page=customtables-api-tablejoin&key=' + key + '&index=0&where_base64=' + encodeURIComponent(where);
 		console.error(url);
 		console.error("updateChildTableJoinField is going to be supported by WP yet.");
 		alert("updateChildTableJoinField is going to be supported by WP yet.")
