@@ -179,13 +179,13 @@
 			 hidedefaultexample="1" repetitive="1" twigclass="html" wordpress="true">
 			<params>
 				<param name="button" label="Button" type="list" example="edit">
-					<option value="" label="- None"/>
+					<option value="" label="- None" wordpress="true"/>
 					<option value="checkbox" label="Checkbox"/>
 					<option value="edit" label="Edit" wordpress="true"/>
 					<option value="editmodal" label="Edit Modal Form"/>
-					<option value="refresh" label="Refresh"/>
+					<option value="refresh" label="Refresh" wordpress="true"/>
 					<option value="delete" label="Delete" wordpress="true"/>
-					<option value="publish" label="Publish/Unpublish"/>
+					<option value="publish" label="Publish/Unpublish" wordpress="true"/>
 					<option value="gallery" label="Image Gallery"/>
 					<option value="filebox" label="File Box"/>
 					<option value="copy" label="Copy" proversion="1"/>
