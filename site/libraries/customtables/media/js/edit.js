@@ -275,6 +275,36 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 			this.postRequest(url, postData, successCallback, errorCallback);
 		}
 
+		loadRecord(listing_id, successCallback, errorCallback, url = null) {
+
+			let deleteParams = ['view', 'task', 'tmpl', 'clean'];
+			let addParams = ['view=record'];
+			if (Array.isArray(listing_id))
+				addParams.push('ids=' + listing_id.join(","));
+			else
+				addParams.push('listing_id=' + listing_id);
+
+			url = esPrepareLink(deleteParams, addParams, url);
+			let postData = new URLSearchParams();
+
+			this.postRequest(url, postData, successCallback, errorCallback);
+		}
+
+		loadRecordLayout(listing_id, layout, successCallback, errorCallback) {
+
+			let deleteParams = ['view', 'task', 'tmpl', 'clean', 'layout'];
+			let addParams = ['view=record', 'layout=' + layout];
+			if (Array.isArray(listing_id))
+				addParams.push('ids=' + listing_id.join(","));
+			else
+				addParams.push('listing_id=' + listing_id);
+
+			let url = esPrepareLink(deleteParams, addParams);
+			let postData = new URLSearchParams();
+
+			this.postRequest(url, postData, successCallback, errorCallback);
+		}
+
 		//A method to create or update table records using JavaScript. CustomTables handles data sanitization and validation.
 		saveRecord(fieldsAndValues, listing_id, successCallback, errorCallback, url = null) {
 
@@ -294,11 +324,11 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 			this.postRequest(url, postData, successCallback, errorCallback);
 		}
 
-		publishRecord(listing_id, successCallback, errorCallback, url) {
+		publishRecord(listing_id, successCallback, errorCallback, url = null) {
 			this.setTaskRecord(listing_id, 'publish', successCallback, errorCallback, url);
 		}
 
-		unpublishRecord(listing_id, successCallback, errorCallback, url) {
+		unpublishRecord(listing_id, successCallback, errorCallback, url = null) {
 			this.setTaskRecord(listing_id, 'unpublish', successCallback, errorCallback, url);
 		}
 

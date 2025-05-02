@@ -1177,6 +1177,7 @@ class CTMiscHelper
 
 	static public function fireSuccess(?string $id = null, $dataVariable = null, ?string $message = null, ?array $metadata = null): void
 	{
+		$html = null;
 		if (is_array($dataVariable)) {
 			$data = $dataVariable;
 		} else {
@@ -1189,7 +1190,8 @@ class CTMiscHelper
 					if ($id === null and $data !== null and is_array($data) and !empty($data['id']))
 						$id = $data['id'];
 				} catch (Exception $e) {
-					$data = ['error' => $e->getMessage(), 'result' => $dataVariable];
+					$data = null;//['error' => $e->getMessage(), 'result' => $dataVariable];
+					$html = $dataVariable;
 				}
 			}
 		}
@@ -1208,6 +1210,7 @@ class CTMiscHelper
 		$result = [
 			'success' => true,
 			'data' => $data,
+			'html' => $html,
 			'message' => $message
 		];
 
