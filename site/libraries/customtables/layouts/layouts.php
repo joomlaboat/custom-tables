@@ -1074,6 +1074,9 @@ class Layouts
 			$this->ct->getRecord();
 		}
 
+		if ($this->ct->Table->record === null)
+			throw new Exception(common::translate('COM_CUSTOMTABLES_NOTFOUND'));
+
 		return $this->renderDetailedLayoutDO();
 	}
 

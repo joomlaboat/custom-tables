@@ -260,7 +260,6 @@ class Params
 
 		if (is_null($menu_params)) {
 			if (method_exists(Factory::getApplication(), 'getParams')) {
-
 				try {
 					$menu_params_registry = Factory::getApplication()->getParams();
 					$menu_params = self::menuParamsRegistry2Array($menu_params_registry);
@@ -268,11 +267,16 @@ class Params
 					$menu_params = [];
 				}
 			}
-		} else
+		} else {
 			$menu_params = $this->getForceItemId($menu_params);
+		}
 
-		if (!$this->blockExternalVars and common::inputGetString('alias', ''))
-			$this->alias = CTMiscHelper::slugify(common::inputGetString('alias'));
+		if ($menu_params === null) {
+			$menu_params = [];
+		}
+
+		if (!$this->blockExternalVars and Factory::getApplication()->input->getCmd('alias'))
+			$this->alias = CTMiscHelper::slugify(Factory::getApplication()->input->getCmd('alias'));//Alias is set in router, it's important to use Factory::getApplication()->input->getCmd
 		else
 			$this->alias = null;
 

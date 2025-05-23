@@ -868,7 +868,11 @@ if (typeof window.CTEditHelper === "undefined") {
 		if ($dateString === null or $dateString == '0000-00-00 00:00:00')
 			return $emptyValue;
 
-		$config = Factory::getContainer()->get('config');
+		if (CUSTOMTABLES_JOOMLA_MIN_4)
+			$config = Factory::getContainer()->get('config');
+		else
+			$config = Factory::getConfig();
+
 		$timezone = new DateTimeZone($config->get('offset'));
 		$date = Factory::getDate($dateString, $timezone);
 
@@ -887,7 +891,12 @@ if (typeof window.CTEditHelper === "undefined") {
 	public static function currentDate(string $format = 'Y-m-d H:i:s'): string
 	{
 		$date = Factory::getDate();
-		$config = Factory::getContainer()->get('config');
+
+		if (CUSTOMTABLES_JOOMLA_MIN_4)
+			$config = Factory::getContainer()->get('config');
+		else
+			$config = Factory::getConfig();
+
 		$timezone = new DateTimeZone($config->get('offset'));
 		$date->setTimezone($timezone);
 

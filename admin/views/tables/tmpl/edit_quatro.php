@@ -198,6 +198,9 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base6
 								echo '<span id="editPHPFile"><a href="' . $link . '" target="_blank">Edit</a></span>';
 							}
 							?></p>
+						<br/>More
+						<a href="https://ct4.us/docs/custom-php-event-handler-for-custom-tables-in-joomla/"
+						   target="_blank">here</a>
 					</div>
 				</div>
 
