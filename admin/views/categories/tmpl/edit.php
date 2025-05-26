@@ -37,12 +37,13 @@ if (CUSTOMTABLES_JOOMLA_MIN_4) {
 					<div class="controls"><?php echo $this->form->getInput('categoryname'); ?></div>
 				</div>
 			</div>
+			<?php /*
 			<div class="span12">
 				<div class="control-group">
 					<div class="control-label"><?php echo $this->form->getLabel('admin_menu'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('admin_menu'); ?></div>
 				</div>
-			</div>
+			</div> */ ?>
 		</div>
 
 		<input type="hidden" name="task" value="categories.edit"/>

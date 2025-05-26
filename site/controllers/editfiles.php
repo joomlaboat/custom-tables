@@ -20,10 +20,12 @@ use Joomla\CMS\Router\Route;
 $ct = new CT(null, false);
 $ct->Params->constructJoomlaParams();
 
+/*
 $model = $this->getModel('edititem');
 $model->load($ct);
 $model->params = Factory::getApplication()->getParams();
 $model->listing_id = common::inputGetCmd('listing_id');
+*/
 $user = new CTUser();
 
 if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {

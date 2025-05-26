@@ -695,10 +695,25 @@ if (typeof window.CTEditHelper === "undefined") {
 		*/
 
 		if ($env->toolbarIcons == 'font-awesome-4' or $env->toolbarIcons == 'font-awesome-5' or $env->toolbarIcons == 'font-awesome-6') {
-			$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-			// Check if Font Awesome is loaded
-			$isFontAwesomeLoaded = $wa->assetExists('style', 'fontawesome');
+			if (CUSTOMTABLES_JOOMLA_MIN_4) {
+				$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+
+				// Check if Font Awesome is loaded
+				$isFontAwesomeLoaded = $wa->assetExists('style', 'fontawesome');
+			} else {
+				$doc = Factory::getApplication()->getDocument();
+				$styleSheets = $doc->_styleSheets;
+
+				$isFontAwesomeLoaded = false;
+
+				foreach ($styleSheets as $url => $attributes) {
+					if (strpos($url, 'font-awesome') !== false || strpos($url, 'fontawesome') !== false) {
+						$isFontAwesomeLoaded = true;
+						break;
+					}
+				}
+			}
 
 			if (!$isFontAwesomeLoaded) {
 				common::enqueueMessage('Font Awesome icons have been selected for the toolbar, but the Font Awesome library is not loaded in your template.'
@@ -707,10 +722,23 @@ if (typeof window.CTEditHelper === "undefined") {
 		}
 
 		if ($env->toolbarIcons == 'bootstrap') {
-			$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+			if (CUSTOMTABLES_JOOMLA_MIN_4) {
+				$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-			// Check if Bootstrap Icons are loaded
-			$isBootstrapLoaded = $wa->assetExists('style', 'bootstrap-icons');
+				// Check if Bootstrap Icons are loaded
+				$isBootstrapLoaded = $wa->assetExists('style', 'bootstrap-icons');
+			} else {
+				$doc = Factory::getApplication()->getDocument();
+				$styleSheets = $doc->_styleSheets;
+				$isBootstrapLoaded = false;
+
+				foreach ($styleSheets as $url => $attributes) {
+					if (strpos($url, 'bootstrap-icons') !== false) {
+						$isBootstrapLoaded = true;
+						break;
+					}
+				}
+			}
 
 			if (!$isBootstrapLoaded) {
 				common::enqueueMessage('Bootstrap icons have been selected for the toolbar, but the Bootstrap Icons library is not loaded in your template. Please ensure the library is included for proper icon display.');
