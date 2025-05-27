@@ -20,15 +20,32 @@ use Joomla\CMS\Router\Route;
 $ct = new CT(null, false);
 $ct->Params->constructJoomlaParams();
 
-/*
-$model = $this->getModel('edititem');
-$model->load($ct);
-$model->params = Factory::getApplication()->getParams();
-$model->listing_id = common::inputGetCmd('listing_id');
-*/
-$user = new CTUser();
+if (empty($ct->Params->tableName)) {
+	Factory::getApplication()->enqueueMessage('Table not specified', 'error');
 
-if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
+	$returnToEncoded = common::makeReturnToURL();
+	$link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
+	$this->setRedirect($link, common::translate('Table not specified'), 'error');
+	return;
+}
+
+try {
+	$ct->getTable($ct->Params->tableName, null, true);
+} catch (Exception $e) {
+	$returnToEncoded = common::makeReturnToURL();
+	$link = Route::_('index.php?option=com_users&view=login&return=' . $returnToEncoded);
+	$this->setRedirect($link, common::translate('Table not loaded'), 'error');
+	return;
+}
+
+try {
+	$authorized = $ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT);
+} catch (Exception $e) {
+	echo $e->getMessage();
+	die;
+}
+
+if (!$authorized) {
 	//not authorized
 	Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 
@@ -37,6 +54,7 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 	$this->setRedirect($link, common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
 	return;
 } else {
+
 	switch (common::inputGetCmd('task')) {
 
 		case 'add' :
@@ -112,7 +130,6 @@ if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_FORCE_EDIT)) {
 			$this->setRedirect($returnto, $message);
 			break;
 		default:
-
 			parent::display();
 	}
 }
