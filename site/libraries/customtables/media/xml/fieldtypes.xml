@@ -738,10 +738,10 @@
 						   default="" type="string"/>
 				<sizeparam name="format" label="Image Format" description="New image file format." style="width:150px;"
 						   default="jpg" type="list">
-					<option value="jpg" label="JPEG"/>
-					<option value="gif" label="GIF"/>
-					<option value="png" label="PNG"/>
-					<option value="webp" label="WEBP"/>
+					<option value="jpg" label="JPEG" wordpress="true"/>
+					<option value="gif" label="GIF" wordpress="true"/>
+					<option value="png" label="PNG" wordpress="true"/>
+					<option value="webp" label="WEBP" wordpress="true"/>
 				</sizeparam>
 			</param>
 			<param name="additionalparams" label="Image Processing Methods"

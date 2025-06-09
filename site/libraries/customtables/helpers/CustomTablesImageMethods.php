@@ -71,6 +71,8 @@ class CustomTablesImageMethods
 
 				if ($ImageFolder[0] != '/')
 					$ImageFolder = 'wp-content/uploads/' . $ImageFolder;
+				else
+					$ImageFolder = 'wp-content/uploads' . $ImageFolder;
 
 			} else
 				$ImageFolder = 'wp-content/uploads';
@@ -443,33 +445,9 @@ class CustomTablesImageMethods
 			return $duplicateImageID;
 		//--------- end of compare thumbnails
 
-		//custom images
-		if ($isOk) {
-			$customSizes = $this->getCustomImageOptions($params[0] ?? '');
-
-			foreach ($customSizes as $imageSize) {
-				$prefix = $imageSize[0];
-				$width = (int)$imageSize[1];
-				$height = (int)$imageSize[2];
-				$color = (int)$imageSize[3];
-				$watermark = $imageSize[5];
-
-				//save as extension
-				if ($imageSize[4] != '')
-					$ext = $imageSize[4];
-				else
-					$ext = $new_photo_ext;
-
-				$r = $this->ProportionalResize($uploadedFile, $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $ImageID . '.' . $ext, $width, $height, 1, $color, $watermark);
-				if ($r != 1)
-					$isOk = false;
-			}
-		}
-
 		if ($isOk) {
 			copy($uploadedFile, $original_image_file);
 			unlink($uploadedFile);
-			return $ImageID;
 		} else {
 			if (file_exists($original_image_file))
 				unlink($original_image_file);
@@ -477,12 +455,32 @@ class CustomTablesImageMethods
 			if (file_exists($uploadedFile))
 				unlink($uploadedFile);
 
-			if ($fileNameType == '') {
-				return '-1';
-			} else {
-				return '';
-			}
+			return '-1';
 		}
+
+		//custom images
+
+		$customSizes = $this->getCustomImageOptions($params[0] ?? '');
+
+		foreach ($customSizes as $imageSize) {
+			$prefix = $imageSize[0];
+			$width = (int)$imageSize[1];
+			$height = (int)$imageSize[2];
+			$color = (int)$imageSize[3];
+			$watermark = $imageSize[5];
+
+			//save as extension
+			if ($imageSize[4] != '')
+				$ext = $imageSize[4];
+			else
+				$ext = $new_photo_ext;
+
+			$r = $this->ProportionalResize($original_image_file, $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $ImageID . '.' . $ext, $width, $height, 1, $color, $watermark);
+			if ($r != 1)
+				return '-1';
+		}
+
+		return $ImageID;
 	}
 
 	function FileExtension($src): string
