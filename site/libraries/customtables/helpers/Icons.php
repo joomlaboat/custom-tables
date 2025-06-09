@@ -785,6 +785,39 @@ class Icons
 			return 'Search';
 	}
 
+	public static function iconSearchReset(string $type, string $title = ''): string
+	{
+		if (empty($title))
+			$title = common::translate('COM_CUSTOMTABLES_SEARCH');
+
+		// Image Icons (default)
+		if ($type == '')
+			return '';
+
+		// Not So Pixelly
+		elseif ($type == 'not-so-pixelly')
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/notsopixelly/48px/cancel.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '" />';
+
+		// Font Awesome 4
+		elseif ($type == 'font-awesome-4')
+			return '<i class="ctToolBarIcon2x fa fa-cancel" data-icon="fa fa-cancel" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Font Awesome 5
+		elseif ($type == 'font-awesome-5' or $type == 'font-awesome-6')
+			return '<i class="ctToolBarIcon fas fa-cancel" data-icon="fas fa-cancel" aria-hidden="true" title="' . $title . '"></i>';
+
+		// Bootstrap Icons
+		elseif ($type == 'bootstrap')
+			return '<i class="ctToolBarIcon2x bi bi-cancel" aria-hidden="true" title="' . $title . '"></i>';
+
+		elseif ($type == 'ultimate-member')
+			return '<i class="ctToolBarIcon2x um-faicon-cancel" aria-hidden="true" title="' . $title . '"></i>'; // Added UM icon support
+
+		// Default fallback
+		else
+			return 'Search';
+	}
+
 
 	public static function iconDownload(string $type, string $title = '', ?string $iconFile = null, int $imageSize = 32): string
 	{

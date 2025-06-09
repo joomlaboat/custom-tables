@@ -168,6 +168,14 @@
 			 description="A button to resets search parameters"
 			 twigclass="html" image="https://joomlaboat.com/images/components/ct/tags/search-reset.png">
 			<params>
+				<param name="listtype" label="Link Type" type="list" default="buttoniconlabel">
+					<option value="buttoniconlabel" label="Button with Icon and Label" wordpress="true"/>
+					<option value="buttonicon" label="Button with Icon" wordpress="true"/>
+					<option value="buttonlabel" label="Button with Label" wordpress="true"/>
+					<option value="linkiconlabel" label="Link with Icon and Label" wordpress="true"/>
+					<option value="linkicon" label="Link with Icon" wordpress="true"/>
+					<option value="linklabel" label="Link with Label" wordpress="true"/>
+				</param>
 				<param name="label" label="Button Label" type="string" example="Search"
 					   description="The label of the button. Leaving the label parameter empty will produce an icon only (a magnifying glass). You can also pass HTML code as the label argument to control the button look completely. "/>
 				<param type="string" name="cssclass" label="CSS Class"

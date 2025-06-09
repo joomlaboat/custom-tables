@@ -544,8 +544,8 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
-			return '';
+		//if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
+		//return '';
 
 		if (is_array($list_of_fields_string_or_array))
 			$list_of_fields_string_array = $list_of_fields_string_or_array;
@@ -721,8 +721,8 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
-			return '';
+		//if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
+		//return '';
 
 		$class = 'ctSearchBox';
 
@@ -737,19 +737,18 @@ class Twig_HTML_Tags
 			$label = $defaultLabel;
 
 		$icon = Icons::iconSearch($this->ct->Env->toolbarIcons, $label);
-
 		$onClick = 'ctSearchBoxDo()';
 
 		return $this->renderButtonOrIcon($linkType, $label, $class, $icon, $onClick);
 	}
 
-	function searchreset($label = '', $class_ = ''): string
+	function searchreset($linkType = '', $label = '', $class_ = ''): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
-			return '';
+		//if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
+		//return '';
 
 		$class = 'ctSearchBox';
 
@@ -758,23 +757,15 @@ class Twig_HTML_Tags
 		else
 			$class .= ' btn button-apply btn-primary';
 
-		$default_Label = common::translate('COM_CUSTOMTABLES_SEARCHRESET');
-		if ($label == common::ctStripTags($label)) {
-			if ($this->ct->Env->toolbarIcons != '') {
-				$img = '<i class=\'' . $this->ct->Env->toolbarIcons . ' fa-times\' data-icon=\'' . $this->ct->Env->toolbarIcons . ' fa-times\' title=\'' . $label . '\'></i>';
-				$labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
-			} else {
-				$img = '';
+		if (empty($defaultLabel))
+			$label = common::translate('COM_CUSTOMTABLES_SEARCHRESET');
+		else
+			$label = $defaultLabel;
 
-				if ($label == '')
-					$label = $default_Label;
+		$icon = Icons::iconSearchReset($this->ct->Env->toolbarIcons, $label);
+		$onClick = 'ctSearchReset()';
 
-				$labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
-			}
-			return '<button class=\'' . $class . '\' onClick=\'ctSearchReset()\' title=\'' . $default_Label . '\'>' . $img . $labelHtml . '</button>';
-		} else {
-			return '<button class=\'' . $class . '\' onClick=\'ctSearchReset()\' title=\'' . $default_Label . '\'>' . $label . '</button>';
-		}
+		return $this->renderButtonOrIcon($linkType, $label, $class, $icon, $onClick);
 	}
 
 	function message($text, $type = 'notice'): ?string
