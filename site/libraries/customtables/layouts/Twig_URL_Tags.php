@@ -38,11 +38,7 @@ class Twig_URL_Tags
 	 */
 	function base64(): ?string
 	{
-		if (defined('_JEXEC')) {
-			return $this->ct->Env->encoded_current_url;
-		} else {
-			throw new Exception('Warning: The {{ url.base64() }} tag is not supported in the current version of the Custom Tables for WordPress plugin.');
-		}
+		return $this->ct->Env->encoded_current_url;
 	}
 
 	/**

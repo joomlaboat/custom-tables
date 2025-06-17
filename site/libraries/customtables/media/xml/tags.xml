@@ -1039,7 +1039,7 @@
 		</tag>
 
 		<tag name="base64" label="Base64 Encode URL" startchar="{" endchar="}"
-			 description="Returns base64 encoded current URL." twigclass="url" proversion="1" wordpress="false"/>
+			 description="Returns base64 encoded current URL." twigclass="url" proversion="1" wordpress="true"/>
 
 		<tag name="root" label="Website Root URI" startchar="{" endchar="}"
 			 description="Returns the root URI for the request." twigclass="url"
