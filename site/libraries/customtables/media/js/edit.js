@@ -574,6 +574,7 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 					if (n.indexOf(fieldInputPrefix) !== -1) {
 
 						let objName = n.replace('_selector', '');
+						let objId = objName.replace('[]', '');
 
 						let d = requiredFields[i].dataset;
 						if (d.label)
@@ -583,7 +584,7 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 
 						if (d.type === 'sqljoin') {
 							if (requiredFields[i].type === "hidden") {
-								let obj = document.getElementById(objName);
+								let obj = document.getElementById(objId);
 
 								if (obj.value === '') {
 									alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
@@ -592,20 +593,21 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 							}
 
 						} else if (requiredFields[i].type === "text") {
-							let obj = document.getElementById(objName);
+							let obj = document.getElementById(objId);
 							if (obj.value === '') {
 								alert(TranslateText('COM_CUSTOMTABLES_REQUIRED', label));
 								return false;
 							}
 						} else if (requiredFields[i].type === "select-one") {
-							let obj = document.getElementById(objName);
+							let obj = document.getElementById(objId);
 
 							if (obj.value === null || obj.value === '') {
 								alert(TranslateText('COM_CUSTOMTABLES_NOT_SELECTED', label));
 								return false;
 							}
 						} else if (requiredFields[i].type === "select-multiple") {
-							let count_multiple_obj = document.getElementById(lbln);
+
+							let count_multiple_obj = document.getElementById(objId);
 							let options = count_multiple_obj.options;
 							let count_multiple = 0;
 
@@ -1007,7 +1009,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 					}
 
 					if (modalFormParentField !== null) {
-						console.warn("modalFormParentField:", modalFormParentField)
+
 						let parts = modalFormParentField.split('.');
 						let parentField = parts[1];
 						let parentFieldInputPrefix = parts[2];
@@ -2006,8 +2008,6 @@ function refreshTableJoinField(fieldName, response, fieldInputPrefix) {
 
 	for (let i = 0; i < valueFiltersNames.length; i++) {
 		if (valueFiltersNames[i] !== null) {
-			console.warn("response", response['record']);
-			console.warn("valueFiltersNames[i]", valueFiltersNames[i]);
 
 			let value = "";
 			if (response['record']) {
