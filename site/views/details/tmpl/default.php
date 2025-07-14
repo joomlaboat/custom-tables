@@ -65,18 +65,18 @@ if ($this->ct->Env->frmt == 'csv') {
 	 */
 	$filename = CTMiscHelper::makeNewFileName(Factory::getApplication()->getDocument()->getTitle(), 'xml');
 
-	ob_end_clean();
+	//ob_end_clean();
 
-	if (ob_get_contents())
-		ob_end_clean();
+	//if (ob_get_contents())
+	//	ob_end_clean();
 
-	header('Content-Disposition: attachment; filename="' . $filename . '"');
-	header('Content-Type: text/xml; charset=utf-8');
-	header("Pragma: no-cache");
-	header("Expires: 0");
-	ob_start();
+	//header('Content-Disposition: attachment; filename="' . $filename . '"');
+	//header('Content-Type: text/xml; charset=utf-8');
+	//header("Pragma: no-cache");
+	//header("Expires: 0");
+	//ob_start();
 	echo $this->result['html'];
-	ob_flush();
+	//ob_flush();
 	die;//clean exit
 } elseif ($this->ct->Env->clean) {
 	/**

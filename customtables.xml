@@ -133,7 +133,7 @@
 
 	<updateservers>
 		<server type="extension" enabled="1" element="com_customtables" priority="2" name="Custom Tables">
-			https://joomlaboat.com/free-update/custom-tables
+			https://joomlaboat.com/free-update/custom-tables.xml
 		</server>
 	</updateservers>
 

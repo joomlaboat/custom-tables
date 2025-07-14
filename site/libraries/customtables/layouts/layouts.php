@@ -419,6 +419,17 @@ class Layouts
 		if (!empty($row['params'])) {
 			try {
 				$params = json_decode($row['params'], true);
+				if (isset($params['mimetype'])) {
+					if ($params['mimetype'] == 'txt')
+						$this->ct->Env->frmt = 'txt';
+					elseif ($params['mimetype'] == 'csv')
+						$this->ct->Env->frmt = 'csv';
+					elseif ($params['mimetype'] == 'json')
+						$this->ct->Env->frmt = 'json';
+					elseif ($params['mimetype'] == 'xml')
+						$this->ct->Env->frmt = 'xml';
+				}
+
 				$this->ct->Params->setParams($params);
 			} catch (Exception $e) {
 

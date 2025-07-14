@@ -173,5 +173,14 @@
 			<option value="0">Not Published</option>
 		</field>
 
+		<field type="list" name="mimetype" default="html" label="Output Format (MIME Type)"
+			   description="Select the MIME type for the content output. This determines the format used in the HTTP response.">
+			<option value="html">HTML (text/html)</option>
+			<option value="csv">CSV (text/csv)</option>
+			<option value="xml">XML (application/xml)</option>
+			<option value="json">JSON (application/json)</option>
+			<option value="txt">Plain Text (text/plain)</option>
+		</field>
+
 	</fieldset>
 </form>

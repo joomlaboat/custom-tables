@@ -163,7 +163,7 @@ foreach ($this->allTables as $table) {
 
 	echo HTMLHelper::_('bootstrap.endTab');
 
-	echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'params-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_PARAMS'));
+	echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'filters-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_FILTERS'));
 
 	if ($this->ct->Env->advancedTagProcessor): ?>
 
@@ -175,8 +175,27 @@ foreach ($this->allTables as $table) {
 					<div class="controls"><?php echo $this->form->getInput('filter'); ?></div>
 				</div>
 
-				<hr/>
-				<h2>Permissions</h2>
+			</div>
+		</div>
+
+	<?php else: ?>
+		<div class="ct_doc_pro_label">
+			<a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">
+				<?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?>
+			</a>
+		</div>';
+	<?php endif; ?>
+
+	<?php
+
+	echo HTMLHelper::_('bootstrap.endTab');
+
+	echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'permissions-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_PERMISSIONS'));
+
+	if ($this->ct->Env->advancedTagProcessor): ?>
+
+		<div class="row-fluid form-horizontal-desktop">
+			<div class="span12">
 
 				<div class="control-group">
 					<div class="control-label"><?php echo $this->form->getLabel('addusergroups'); ?></div>
@@ -198,10 +217,6 @@ foreach ($this->allTables as $table) {
 					<div class="controls"><?php echo $this->form->getInput('deleteusergroups'); ?></div>
 				</div>
 
-				<div class="control-group">
-					<div class="control-label"><?php echo $this->form->getLabel('publishstatus'); ?></div>
-					<div class="controls"><?php echo $this->form->getInput('publishstatus'); ?></div>
-				</div>
 			</div>
 		</div>
 
@@ -214,26 +229,60 @@ foreach ($this->allTables as $table) {
 	<?php endif; ?>
 
 	<?php
-	echo HTMLHelper::_('bootstrap.endTabSet');
-	echo HTMLHelper::_('form.token');
-	echo $this->layoutEditor->render_onPageLoads($onPageLoads);
 
-	$this->getMenuItems();
-	?>
-	<input type="hidden" name="task" value="layouts.edit"/>
+	echo HTMLHelper::_('bootstrap.endTab');
 
-	<div id="allLayoutRaw"
-		 style="display:none;"><?php echo common::ctJsonEncode(ListOfLayouts::getLayouts()); ?></div>
-	<div id="dependencies_content" style="display:none;">
-		<h3><?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT'); ?></h3>
-		<div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">
-			<?php
+	echo HTMLHelper::_('bootstrap.addTab', 'layoutsTab', 'params-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_PARAMS'));
 
-			if ($this->item !== null and $this->item->layoutname !== null) {
-				require('dependencies.php');
-				echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
-			}
-			?>
+	if ($this->ct->Env->advancedTagProcessor): ?>
+
+	<div class="row-fluid form-horizontal-desktop">
+		<div class="span12">
+
+			<div class="control-group">
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('publishstatus'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('publishstatus'); ?></div>
+				</div>
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('mimetype'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('mimetype'); ?></div>
+				</div>
+
+			</div>
 		</div>
-	</div>
+
+		<?php else: ?>
+			<div class="ct_doc_pro_label">
+				<a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">
+					<?php echo common::translate('COM_CUSTOMTABLES_AVAILABLE'); ?>
+				</a>
+			</div>';
+		<?php endif; ?>
+
+		<?php
+		echo HTMLHelper::_('bootstrap.endTabSet');
+		echo HTMLHelper::_('form.token');
+		echo $this->layoutEditor->render_onPageLoads($onPageLoads);
+
+		$this->getMenuItems();
+		?>
+		<input type="hidden" name="task" value="layouts.edit"/>
+
+		<div id="allLayoutRaw"
+			 style="display:none;"><?php echo common::ctJsonEncode(ListOfLayouts::getLayouts()); ?></div>
+		<div id="dependencies_content" style="display:none;">
+			<h3><?php echo common::translate('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT'); ?></h3>
+			<div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">
+				<?php
+
+				if ($this->item !== null and $this->item->layoutname !== null) {
+					require('dependencies.php');
+					echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
+				}
+				?>
+			</div>
+		</div>
 </form>

@@ -52,8 +52,16 @@ class CustomTablesRouter implements RouterInterface
 
 			$vars['option'] = 'com_customtables';
 			$vars['view'] = 'details';
-			$vars['alias'] = $segments[0];
-			$segments[0] = null;
+
+			if (strpos($segments[0], '.') !== false) {
+				$pair = explode('.', $segments[0], 2);
+				$vars['alias'] = $pair[0];
+				$vars['frmt'] = $pair[1];
+			} else {
+				$vars['alias'] = $segments[0];
+			}
+
+			unset($segments[0]);
 		}
 		return $vars;
 	}

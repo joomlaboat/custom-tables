@@ -173,7 +173,7 @@ foreach ($this->allTables as $table) {
 	?>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-	<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'params-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_PARAMS')); ?>
+	<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'params-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_FILTERS')); ?>
 	<?php
 	if ($this->ct->Env->advancedTagProcessor) {
 		?>
@@ -189,9 +189,22 @@ foreach ($this->allTables as $table) {
 					</div>
 
 				</div>
+			</div>
+		</div>
+		<?php
+	} else {
+		echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+	}
+	?>
+	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-				<hr/>
-				<h2>Permissions</h2>
+
+	<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'params-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_PERMISSIONS')); ?>
+	<?php
+	if ($this->ct->Env->advancedTagProcessor) {
+		?>
+		<div class="row-fluid form-horizontal-desktop">
+			<div class="span12">
 
 				<div class="control-group">
 					<div class="control-label"><?php echo $this->form->getLabel('addusergroups'); ?></div>
@@ -226,11 +239,37 @@ foreach ($this->allTables as $table) {
 						</p>
 					</div>
 				</div>
+
+			</div>
+		</div>
+		<?php
+	} else {
+		echo '<div class="ct_doc_pro_label"><a href="https://ct4.us/product/custom-tables-pro-for-joomla/" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+	}
+	?>
+	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+	<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'params-tab', common::translate('COM_CUSTOMTABLES_LAYOUTS_PARAMS')); ?>
+	<?php
+	if ($this->ct->Env->advancedTagProcessor) {
+		?>
+		<div class="row-fluid form-horizontal-desktop">
+			<div class="span12">
+
 				<div class="control-group">
 					<div class="control-label"><?php echo $this->form->getLabel('publishstatus'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('publishstatus'); ?>
 						<p class="field-description">
 							<?php echo common::translate($this->form->getField('publishstatus')->description); ?>
+						</p>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('mimetype'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('mimetype'); ?>
+						<p class="field-description">
+							<?php echo common::translate($this->form->getField('mimetype')->description); ?>
 						</p>
 					</div>
 				</div>
@@ -242,8 +281,6 @@ foreach ($this->allTables as $table) {
 	}
 	?>
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
-
-
 
 	<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
