@@ -1165,7 +1165,7 @@ function getLayout_SimpleCatalog() {
 	}
 
 	let fieldtypes_to_skip = ['log', 'filebox', 'dummy'];
-	let fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
+	let fieldTypesWithSearch = ['email', 'string', 'radio', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
 	let fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user'];
 	fieldtypes_allowed_to_orderby.push('virtual');
 	let fields_to_skip = getFieldsToSkip();
