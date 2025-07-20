@@ -51,8 +51,8 @@ if ($this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null
 }
 
 if ($this->result['success']) {
-	if (isset($this->result['html']))
-		echo $this->result['html'];
+	if (isset($this->result['content']))
+		echo $this->result['content'];
 	else
 		common::enqueueMessage('HTML Output is empty');
 } else {

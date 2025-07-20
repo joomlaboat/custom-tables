@@ -106,7 +106,7 @@ class EditController
 		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false)
 			CTMiscHelper::fireError(500, $result['message'] ?? 'Record not saved');
 
-		CTMiscHelper::fireSuccess($result['id'], $result['data'], $result['message'] ?? 'Done');
+		CTMiscHelper::fireSuccess($result['id'], $result['content'], $result['message'] ?? 'Done');
 	}
 
 	/**

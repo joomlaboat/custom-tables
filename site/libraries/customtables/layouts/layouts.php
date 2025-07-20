@@ -286,7 +286,7 @@ class Layouts
 			CUSTOMTABLES_LAYOUT_TYPE_JSON
 		])) {
 
-			$output['html'] = $this->renderCatalog();
+			$output['content'] = $this->renderCatalog();
 		} elseif ($this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM) {
 
 			if ($task == 'new') {
@@ -320,7 +320,7 @@ class Layouts
 				$formName .= $this->ct->Params->ModuleId;
 
 			if ($this->ct->CheckAuthorization($this->ct->Table->record === null ? CUSTOMTABLES_ACTION_ADD : CUSTOMTABLES_ACTION_EDIT)) {
-				$output['html'] = $editForm->render($this->ct->Table->record,
+				$output['content'] = $editForm->render($this->ct->Table->record,
 					$formLink,
 					$formName,
 					$this->ct->Env->clean == 0);
@@ -333,7 +333,7 @@ class Layouts
 
 			$output['fieldtypes'] = $this->ct->editFieldTypes;
 		} elseif ($this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_DETAILS or $this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_CATALOG_ITEM) {
-			$output['html'] = $this->renderDetailedLayout();
+			$output['content'] = $this->renderDetailedLayout();
 		} else {
 			return ['success' => false, 'message' => 'Unknown Layout Type', 'short' => 'error'];
 		}
@@ -428,6 +428,9 @@ class Layouts
 						$this->ct->Env->frmt = 'json';
 					elseif ($params['mimetype'] == 'xml')
 						$this->ct->Env->frmt = 'xml';
+
+					if ($this->ct->Env->frmt != 'html' and $params['mimetype'] != '')
+						$this->ct->Env->clean = true;
 				}
 
 				$this->ct->Params->setParams($params);
@@ -879,7 +882,7 @@ class Layouts
 			$output['success'] = true;
 			$output['action'] = $action;
 			$output['id'] = $this->ct->Table->record[$this->ct->Table->realidfieldname];
-			$output['data'] = $data;
+			$output['content'] = $data;
 			$output['short'] = $action == 'create' ? 'created' : 'updated';
 		} else {
 			if ($record->incorrectCaptcha)

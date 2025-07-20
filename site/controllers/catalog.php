@@ -36,8 +36,8 @@ if (in_array($task, $updatedTask)) {
 	require_once CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'controllerHelper.php';
 	$result = controllerHelper::doTheTask($task);
 
-	if (isset($result['html']))
-		echo $result['html'];
+	if (isset($result['content']))
+		echo $result['content'];
 
 	if ($result['link'] !== null) {
 		$this->setRedirect($result['link'], $result['message'] ?? null, $result['success'] ? 'success' : 'error');

@@ -55,10 +55,10 @@ class RecordController
 		$layout = new Layouts($ct);
 		$result = $layout->renderMixedLayout($layoutName, CUSTOMTABLES_LAYOUT_TYPE_DETAILS, 'none');
 
-		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false or !isset($result['html'])) {
+		if (isset($result['error']) or !isset($result['success']) or $result['success'] === false or !isset($result['content'])) {
 			CTMiscHelper::fireError(500, $result['message'] ?? 'Error');
 		}
 
-		CTMiscHelper::fireSuccess(null, $result['html'], $result['message'] ?? 'Details page ready');
+		CTMiscHelper::fireSuccess(null, $result['content'], $result['message'] ?? 'Details page ready');
 	}
 }

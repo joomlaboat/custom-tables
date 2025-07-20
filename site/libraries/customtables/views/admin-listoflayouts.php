@@ -169,6 +169,7 @@ class ListOfLayouts
 		$params['publishusergroups'] = common::inputPostArray('publishusergroups', null, 'create-edit-layout');
 		$params['deleteusergroups'] = common::inputPostArray('deleteusergroups', null, 'create-edit-layout');
 		$params['publishstatus'] = common::inputPostInt('publishstatus', null, 'create-edit-layout');
+		$params['mimetype'] = common::inputPostString('mimetype', null, 'create-edit-layout');
 
 		$data['params'] = json_encode($params);
 

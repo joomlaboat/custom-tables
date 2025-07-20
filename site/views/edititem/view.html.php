@@ -59,7 +59,7 @@ class CustomTablesViewEditItem extends HtmlView
 			$code = 500;
 		} elseif ($this->result['success']) {
 			if ($this->ct->Env->isModal)
-				$content = $this->result['html'];
+				$content = $this->result['content'];
 			elseif ($this->ct->Env->clean)
 				$content = $this->result['short'];
 

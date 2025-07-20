@@ -24,8 +24,8 @@ if ($task !== null and $task !== 'new') {
 	if ($result['link'] !== null) {
 		$this->setRedirect($result['link'], $result['message'], !$result['success'] ? 'error' : 'success');
 	} else {
-		if (isset($result['html']))
-			echo $result['html'];
+		if (isset($result['content']))
+			echo $result['content'];
 
 		if (!empty($result['message']))
 			common::enqueueMessage($result['message'], $result['success'] ? 'success' : 'error');

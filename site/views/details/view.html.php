@@ -61,7 +61,7 @@ class CustomTablesViewDetails extends HtmlView
 			$content = common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND');
 			$code = 500;
 		} elseif ($this->result['success']) {
-			$content = $this->result['html'];
+			$content = $this->result['content'];
 			$code = 200;
 		} else {
 			if ($this->ct->Env->clean)

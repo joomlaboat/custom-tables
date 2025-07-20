@@ -21,7 +21,7 @@ class controllerHelper
 	public static function doTheTask(string $task)
 	{
 		$ct = new CT(null, false);
-		
+
 		try {
 			$link = common::getReturnToURL(true, null, 'create-edit-record') ?? '';
 			$ct->Params->constructJoomlaParams();
@@ -44,7 +44,7 @@ class controllerHelper
 		if ($result['success']) {
 			if ($ct->Env->clean) {
 				if ($ct->Env->frmt == 'json')
-					CTMiscHelper::fireSuccess($result['id'] ?? null, $result['data'] ?? null, $ct->Params->msgItemIsSaved);
+					CTMiscHelper::fireSuccess($result['id'] ?? null, $result['content'] ?? null, $ct->Params->msgItemIsSaved);
 				else
 					die($result['short'] ?? $task);
 			}

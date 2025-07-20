@@ -55,7 +55,7 @@ if ($this->ct->Env->frmt == 'csv') {
 	header('Content-Type: text/csv; charset=utf-8');
 	header("Pragma: no-cache");
 	header("Expires: 0");
-	echo mb_convert_encoding($this->result['html'], 'UTF-16LE', 'UTF-8');
+	echo mb_convert_encoding($this->result['content'], 'UTF-16LE', 'UTF-8');
 	die;//clean exit
 } elseif ($this->ct->Env->frmt == 'xml') {
 	/**
@@ -75,7 +75,7 @@ if ($this->ct->Env->frmt == 'csv') {
 	//header("Pragma: no-cache");
 	//header("Expires: 0");
 	//ob_start();
-	echo $this->result['html'];
+	echo $this->result['content'];
 	//ob_flush();
 	die;//clean exit
 } elseif ($this->ct->Env->clean) {
@@ -83,7 +83,7 @@ if ($this->ct->Env->frmt == 'csv') {
 	 * Sends raw rendered output directly to the browser:
 	 * - Used for clean, machine-readable data output.
 	 */
-	echo $this->result['html'];
+	echo $this->result['content'];
 	die;//clean exit
 }
 
@@ -103,7 +103,7 @@ if ($this->ct->Params->showPageHeading) {
 
 // Output the final results
 if ($this->result['success']) {
-	echo $this->result['html'];
+	echo $this->result['content'];
 } else {
 	common::enqueueMessage($this->result['message']);
 }
