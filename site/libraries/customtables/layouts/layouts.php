@@ -433,6 +433,17 @@ class Layouts
 						$this->ct->Env->clean = true;
 				}
 
+				if (!$this->ct->Env->advancedTagProcessor) {
+					//Do not apply Layout params in Free version as they are inaccessible.
+					$params['filter'] = null;
+					$params['addusergroups'] = null;
+					$params['editusergroups'] = null;
+					$params['publishusergroups'] = null;
+					$params['deleteusergroups'] = null;
+					$params['publishstatus'] = null;
+					$params['mimetype'] = null;
+				}
+
 				$this->ct->Params->setParams($params);
 			} catch (Exception $e) {
 

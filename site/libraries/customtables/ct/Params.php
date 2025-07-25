@@ -360,7 +360,7 @@ class Params
 		//Permissions
 		$this->setPermissions($menu_params);
 
-		$this->publishStatus = $menu_params['publishstatus'] ?? 1;
+		$this->publishStatus = $menu_params['publishstatus'] ?? ($this->publishStatus ?? 1);// Update if the is a new value.
 
 		//Emails
 		$this->onRecordAddSendEmail = (int)($menu_params['onrecordaddsendemail'] ?? null);
