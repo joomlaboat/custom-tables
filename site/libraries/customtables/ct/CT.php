@@ -145,11 +145,11 @@ class CT
 		else
 			$this->Table->record = $records[0];
 
+		if (!empty($this->Params->recordsTable) and !empty($this->Params->recordsUserIdField) and !empty($this->Params->recordsField)) {
 
-		if (!is_null($this->Params->recordsTable) and !is_null($this->Params->recordsUserIdField) and !is_null($this->Params->recordsField)) {
 			if (!$this->checkRecordUserJoin($this->Params->recordsTable, $this->Params->recordsUserIdField, $this->Params->recordsField, $this->Params->listing_id)) {
 				//YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE;
-				throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+				throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED') . ' ONLY USER CREATED THIS RECORD ALLOWED TO EDIT IT.');
 			}
 		}
 
@@ -684,6 +684,7 @@ class CT
 			if ($action == CUSTOMTABLES_ACTION_EDIT and $this->Table->record === null)
 				$action = CUSTOMTABLES_ACTION_ADD; //add new
 		}
+
 
 		//check is authorized or not
 		if ($action == CUSTOMTABLES_ACTION_EDIT)

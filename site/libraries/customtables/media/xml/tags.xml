@@ -25,11 +25,19 @@
 	<tagset name="html" label="HTML" description="HTML Tags to render HTML code." priority="2">
 
 		<tag name="add" label="Add New" startchar="{" endchar="}"
-			 description="Renders 'Add New Record' button" twigclass="html" wordpress="true">
+			 description="Renders an 'Add New Record' button that links to the input form."
+			 twigclass="html" wordpress="true">
 
 			<params>
 				<param type="string" name="alias" label="Menu Alias or Itemid in Joomla"
-					   description="To redirect to a specific Menu Item."/>
+					   description="Optional. Enter a Joomla Menu Alias or numeric Itemid to redirect the user to a specific menu item after clicking the button."/>
+
+				<param name="modal" label="Open Form in Modal"
+					   description="Display the form in a popup modal window instead of navigating to a new page."
+					   type="radio"
+					   default=""
+					   example="true"
+					   options="|No,true|Yes"/>
 			</params>
 		</tag>
 

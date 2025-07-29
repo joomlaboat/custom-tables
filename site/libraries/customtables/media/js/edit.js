@@ -1017,13 +1017,13 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 						//refreshTableJoinField(parentField, response, parentFieldInputPrefix);
 					}
 
-					if (hideModelOnSave) {
+					if (hideModelOnSave)
 						ctHidePopUp();
-						return;
-					}
 
 					if (returnLinkEncoded !== "")
 						location.href = stripInvalidCharacters(Base64.decode(returnLinkEncoded));
+
+					return;
 
 				} else {
 					/*
@@ -1034,6 +1034,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 					else
 						*/
 					alert(response.message);
+					return;
 				}
 			}
 		};
@@ -1387,7 +1388,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 				NoItemsText = TranslateText('COM_CUSTOMTABLES_SELECT_NOTHING')
 
 			document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = NoItemsText;
-			
+
 			return false;
 		}
 	}
