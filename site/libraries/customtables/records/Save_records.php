@@ -58,7 +58,7 @@ class Save_records
 					$value = common::inputPostInt($field->comesfieldname, null, 'create-edit-record');
 
 					if (isset($value))
-						return $value;
+						return ($value == 0 ? '' : ',' . $value . ',');
 
 					break;
 
@@ -100,6 +100,10 @@ class Save_records
 			if ((int)$a != 0)
 				$values[] = (int)$a;
 		}
+
+		if (count($values) == 0)
+			return '';
+
 		return ',' . implode(',', $values) . ',';
 	}
 
