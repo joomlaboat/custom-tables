@@ -27,6 +27,20 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 			this.ctLinkLoading = false;
 
 			this.websiteRoot = websiteRoot;//With trailing front slash /
+
+			this.dragDropStr = TranslateText('COM_CUSTOMTABLES_DRAG_DROP_FILES');
+			this.uploadStr = TranslateText('COM_CUSTOMTABLES_UPLOAD_FILE');
+			this.abortStr = TranslateText('COM_CUSTOMTABLES_ABORT');
+			this.cancelStr = TranslateText('COM_CUSTOMTABLES_CANCEL');
+			this.deleteStr = TranslateText('COM_CUSTOMTABLES_DELETE');
+			this.doneStr = TranslateText('COM_CUSTOMTABLES_DONE');
+			this.multiDragErrorStr = TranslateText('COM_CUSTOMTABLES_MULTIPLE_DRAG_DROP_FILES');
+			this.extErrorStr = TranslateText('COM_CUSTOMTABLES_ALLOWED_EXTENSIONS');
+			this.duplicateErrorStr = TranslateText('COM_CUSTOMTABLES_FILE_ALREADY_EXISTS');
+			this.sizeErrorStr = TranslateText('COM_CUSTOMTABLES_ALLOWED_MAX_SIZE');
+			this.uploadErrorStr = TranslateText('COM_CUSTOMTABLES_UPLOAD_NOT_ALLOWED');
+			this.maxFileCountErrorStr = TranslateText('COM_CUSTOMTABLES_MAX_ALLOWED_FILES');
+			this.downloadStr = TranslateText('COM_CUSTOMTABLES_DOWNLOAD');
 		}
 
 		GoogleDriveInitClient(fieldName, GoogleDriveAPIKey, GoogleDriveClientId) {
@@ -1212,10 +1226,14 @@ function TranslateText() {
 	if (arguments.length === 0)
 		return 'Nothing to translate';
 
-	let str;
 	const key = arguments[0];
+	let str;
 
-	str = ctTranslationScriptObject[key];
+	if (typeof ctTranslationScriptObject !== "undefined" && key in ctTranslationScriptObject) {
+		str = ctTranslationScriptObject[key];
+	} else {
+		str = key;
+	}
 
 	// Handle placeholders
 	if (arguments.length === 1)

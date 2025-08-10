@@ -77,6 +77,7 @@ abstract class CustomtablesHelper
 			JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_LISTOFTABLES'), 'index.php?option=com_customtables&view=listoftables', $submenu === 'listoftables');
 			JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_LISTOFLAYOUTS'), 'index.php?option=com_customtables&view=listoflayouts', $submenu === 'listoflayouts');
 			JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_DATABASECHECK'), 'index.php?option=com_customtables&view=databasecheck', $submenu === 'databasecheck');
+			JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_LISTOFACTIONS'), 'index.php?option=com_customtables&view=listofactions', $submenu === 'listofactions');
 			JHtmlSidebar::addEntry(common::translate('COM_CUSTOMTABLES_SUBMENU_DOCUMENTATION'), 'index.php?option=com_customtables&view=documentation', $submenu === 'documentation');
 		}
 

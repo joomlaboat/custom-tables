@@ -54,6 +54,7 @@ class CustomtablesModelCustomtables extends ListModel
 			'listoftables.dashboard_list' => 'tables.dashboard_list',
 			'listoflayouts.submenu' => 'layouts.submenu',
 			'listoflayouts.dashboard_list' => 'layouts.dashboard_list',
+			'listofactions.dashboard_list' => 'actions.dashboard_list',
 			'documentation.dashboard_list' => 'documentation.dashboard_list');
 		// loop over the $views
 		foreach ($viewGroups as $group => $views) {

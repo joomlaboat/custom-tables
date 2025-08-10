@@ -99,7 +99,7 @@ class InputBox_file extends BaseInputBox
 
 		if ($this->field->isrequired !== 1)
 			$result .= '<input type="checkbox" name="' . $this->field->prefix . $this->field->fieldname . '_delete" id="' . $this->field->prefix . $this->field->fieldname . '_delete" value="true">'
-				. ' Delete File';
+				. ' ' . common::translate('COM_CUSTOMTABLES_DELETE_FILE');
 
 		$result .= '</div>';
 
@@ -198,7 +198,10 @@ class InputBox_file extends BaseInputBox
 			$result .= '<div style="vertical-align: top;">';
 
 			if (!empty($GoogleDriveAPIKey) and !empty($GoogleDriveClientId))
-				$result .= '<br/><button class="ajax-file-upload" data-prefix="' . $this->field->prefix . '" data-accept="' . $accepted_file_types . '" id="CustomTablesGoogleDrivePick_' . $this->field->fieldname . '">Load from Google Drive</button>';
+				$result .= '<br/>'
+					. '<button class="ajax-file-upload" data-prefix="' . $this->field->prefix . '" data-accept="' . $accepted_file_types . '" id="CustomTablesGoogleDrivePick_' . $this->field->fieldname . '">'
+					. common::translate('COM_CUSTOMTABLES_LOAD_FROM_GOOGLE_DRIVE')
+					. '</button>';
 
 			$result .= $ct_fileuploader;
 			$result .= '</div>';
@@ -236,7 +239,10 @@ class InputBox_file extends BaseInputBox
 			$GoogleDriveClientId = get_option('customtables-googledriveclientid') ?? '';
 
 			if ($GoogleDriveAPIKey !== '' and $GoogleDriveClientId !== '') {
-				$result .= '<br/><button type="button" class="" data-prefix="' . $this->field->prefix . '" data-accept="' . $accepted_file_types . '" id="CustomTablesGoogleDrivePick_' . $this->field->fieldname . '">Load from Google Drive</button>';
+				$result .= '<br/>'
+					. '<button type="button" class="" data-prefix="' . $this->field->prefix . '" data-accept="' . $accepted_file_types . '" id="CustomTablesGoogleDrivePick_' . $this->field->fieldname . '">'
+					. common::translate('COM_CUSTOMTABLES_LOAD_FROM_GOOGLE_DRIVE')
+					. '</button>';
 
 				$result .= '<div id="ct_eventsmessage_' . $this->field->fieldname . '" style="display: inline;"></div>';
 

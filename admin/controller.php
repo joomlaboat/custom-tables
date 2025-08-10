@@ -84,6 +84,7 @@ class CustomtablesController extends BaseController
 				'records' => 'listofrecords',
 				'documentation' => 'documentation',
 				'databasecheck' => 'databasecheck',
+				'actions' => 'listofactions',
 				'editphp' => 'editphp'
 			);
 			// check if this is a list view

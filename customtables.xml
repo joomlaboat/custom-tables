@@ -65,6 +65,7 @@
 			<menu option="com_customtables" view="listoflayouts">COM_CUSTOMTABLES_SUBMENU_LISTOFLAYOUTS</menu>
 			<menu option="com_customtables" view="listofcategories">COM_CUSTOMTABLES_SUBMENU_LISTOFCATEGORIES</menu>
 			<menu option="com_customtables" view="databasecheck">COM_CUSTOMTABLES_SUBMENU_DATABASECHECK</menu>
+			<menu option="com_customtables" view="listofactions">COM_CUSTOMTABLES_SUBMENU_LISTOFACTIONS</menu>
 			<menu option="com_customtables" view="documentation">COM_CUSTOMTABLES_SUBMENU_DOCUMENTATION</menu>
 		</submenu>
 		<files folder="admin">
