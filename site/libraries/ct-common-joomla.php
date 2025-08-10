@@ -613,7 +613,7 @@ class common
 		$js[] = 'let gmapmarker = [];';
 
 		$modal = common::inputGetInt('modal', 0);
-		echo '$modal:' . $modal . '<br/>';
+
 		if ($modal === 0)
 			$js[] = 'let ctTranslationScriptObject = ' . json_encode(common::getLocalizeScriptArray()) . ';';
 
