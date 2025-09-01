@@ -1306,9 +1306,15 @@
 		<tag name="languagepostfix" label="Language Postfix" startchar="{" endchar="}"
 			 description="Current page Language Postfix." proversion="1" twigclass="document" wordpress="false"/>
 
-		<tag name="attachment" label="Email file attachment" startchar="{" endchar="}" layouttypes="7"
-			 description="The link to a file that will be attached to an email. Works in Email Layout Type."
+		<tag name="attachment" label="Email File Attachment" startchar="{" endchar="}" layouttypes="7"
+			 description="Inserts a link to a file that will be attached to an outgoing email. This tag is only supported in Email Layout Type."
 			 proversion="1" twigclass="document" wordpress="false">
+
+			<params>
+				<param name="file" label="File" type="string"
+					   example="images/logo.png"
+					   description="Path to the file you want to attach to the email. The path should be relative to your website root."/>
+			</params>
 		</tag>
 
 		<tag name="sitename" label="Site Name" startchar="{" endchar="}" layouttypes="1,2,4,5,6"

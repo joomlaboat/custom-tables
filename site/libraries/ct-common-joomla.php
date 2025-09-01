@@ -144,7 +144,8 @@ class common
 	 */
 	public static function inputPostRaw(string $parameter, $default = null)
 	{
-		return Factory::getApplication()->input->get($parameter, $default, "RAW");
+		$input = self::inputPostVariable();
+		return $input->get($parameter, $default, "RAW");
 	}
 
 	/**

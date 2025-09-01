@@ -254,6 +254,13 @@ class record
 
 		$fieldsToSave = $this->getFieldsToSave($this->row_old); //will Read page Layout to find fields to save
 
+
+		if ($_GET['layout'] == 'saveresponse') {
+			echo '879';
+			print_r($fieldsToSave);
+			//die;
+		}
+
 		if (($this->ct->LayoutVariables['captcha'] ?? null)) {
 			if (!$this->check_captcha()) {
 				$this->incorrectCaptcha = true;
@@ -264,6 +271,7 @@ class record
 		$phpOnChangeFound = false;
 		$phpOnAddFound = false;
 		$saveField = new SaveFieldQuerySet($this->ct, $this->row_old, $isCopy);
+
 
 		foreach ($this->ct->Table->fields as $fieldRow) {
 
@@ -281,6 +289,7 @@ class record
 			if ($fieldRow['type'] == 'phponchange')
 				$phpOnChangeFound = true;
 		}
+
 
 		if (empty($this->listing_id) or $isCopy) {
 			$this->isItNewRecord = true;
