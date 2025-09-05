@@ -16,15 +16,22 @@ defined('_JEXEC') or die();
 jimport('joomla.application.component.view');
 
 use CustomTables\common;
+use CustomTables\CT;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 class CustomTablesViewImportRecords extends HtmlView
 {
+	var string $fieldInputPrefix;
+
 	function display($tpl = null)
 	{
 		ToolbarHelper::title(common::translate('Custom Tables - Import Records'), 'joomla');
 		$tableId = common::inputGetInt('tableid', 0);
+		$ct = new CT;
+		$ct->getTable($tableId);
+		$this->fieldInputPrefix = $ct->Table->fieldInputPrefix;
+
 		ToolbarHelper::back('Back to Records', 'index.php?option=com_customtables&view=listofrecords&tableid=' . $tableId);
 		parent::display($tpl);
 	}

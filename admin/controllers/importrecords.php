@@ -33,6 +33,8 @@ class CustomTablesControllerImportRecords extends FormController
 	function importrecords()
 	{
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+			. 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
+		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
 			. 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
 
 		try {

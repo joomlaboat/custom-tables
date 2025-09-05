@@ -1343,6 +1343,8 @@ class CTMiscHelper
 				$fileExtension = 'json';
 			elseif ($format == 'xml')
 				$fileExtension = 'xml';
+			elseif ($format == 'csv')
+				$fileExtension = 'csv';
 
 			$filename = CTMiscHelper::makeNewFileName($pageTitle, $fileExtension);
 			if (is_null($filename))

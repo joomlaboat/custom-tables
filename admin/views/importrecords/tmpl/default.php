@@ -52,6 +52,7 @@ echo '
 
 	<script>
 		let ctTranslationScriptObject = ' . json_encode(common::getLocalizeScriptArray()) . ';
+		let ctFieldInputPrefix = "' . $this->fieldInputPrefix . '";
 	
 		if (typeof window.CTEditHelper === "undefined") {
 			window.CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',null,"' . common::UriRoot(false, true) . '");
