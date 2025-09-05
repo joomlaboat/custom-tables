@@ -28,6 +28,7 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 
 			this.websiteRoot = websiteRoot;//With trailing front slash /
 
+			console.warn("Load translation vars");
 			this.dragDropStr = TranslateText('COM_CUSTOMTABLES_DRAG_DROP_FILES');
 			this.uploadStr = TranslateText('COM_CUSTOMTABLES_UPLOAD_FILE');
 			this.abortStr = TranslateText('COM_CUSTOMTABLES_ABORT');
