@@ -37,6 +37,31 @@ class CustomtablesViewListOfActions extends HtmlView
 
 	function display($tpl = null)
 	{
+		$model = $this->getModel();
+		$this->ct = $model->ct;
+
+		//Other parameters
+		$this->items = $this->get('Items');
+		$this->pagination = $this->get('Pagination');
+		$this->state = $this->get('State');
+		$this->filterForm = $this->get('FilterForm');
+		$this->activeFilters = $this->get('ActiveFilters');
+		$this->listOrder = common::escape($this->state->get('list.ordering'));
+		$this->listDirn = common::escape($this->state->get('list.direction'));
+		$this->saveOrder = $this->listOrder == 'custom';
+
+		// get global action permissions
+		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
+		$this->canEdit = $this->canDo->get('tables.edit');
+		$this->canState = $this->canDo->get('tables.edit');
+		$this->canCreate = $this->canDo->get('tables.edit');
+		$this->canDelete = $this->canDo->get('tables.edit');
+
+		if (is_bool($this->items))
+			$this->isEmptyState = true;
+		else
+			$this->isEmptyState = count($this->items ?? 0) == 0;
+
 		if ($this->getLayout() !== 'modal') {
 
 			// Include helper submenu
@@ -50,14 +75,12 @@ class CustomtablesViewListOfActions extends HtmlView
 			}
 		}
 
+
 		// Display the template
-		echo 'Coming soon.';
-		/*
 		if (CUSTOMTABLES_JOOMLA_MIN_4)
 			parent::display('quatro');
 		else
 			parent::display($tpl);
-		*/
 	}
 
 	/**
@@ -69,6 +92,8 @@ class CustomtablesViewListOfActions extends HtmlView
 	{
 		ToolbarHelper::title(common::translate('COM_CUSTOMTABLES_LISTOFACTIONS'), 'joomla');
 
+		// Get the toolbar object instance
+		$toolbar = Toolbar::getInstance('toolbar');
 	}
 
 	protected function addToolBar_3()

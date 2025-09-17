@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="filter">
+		<field
+				name="search"
+				type="text"
+				inputmode="search"
+				label="COM_CUSTOMTABLES_TABLES_SEARCH_USER_NAME"
+				hint="JSEARCH_FILTER"
+		/>
+
+		<field
+				name="tableid"
+				type="cttable"
+				label="COM_CUSTOMTABLES_LAYOUTS_TABLE_SELECT"
+				onchange="this.form.submit();"
+				extension="com_customtables"
+				addfieldpath="/components/com_customtables/models/fields"
+		>
+		</field>
+
+	</fields>
+	<fields name="list">
+		<field
+				name="fullordering"
+				type="list"
+				label="JGLOBAL_SORT_BY"
+				onchange="this.form.submit();"
+				default="a.datetime desc"
+				validate="options"
+		>
+			<option value="">JGLOBAL_SORT_BY</option>
+			<option value="u.username ASC">COM_CUSTOMTABLES_ACTIONS_USER_ASC</option>
+			<option value="u.username DESC">COM_CUSTOMTABLES_ACTIONS_USER_DESC</option>
+			<option value="a.datetime ASC">COM_CUSTOMTABLES_ACTIONS_TIME_ASC</option>
+			<option value="a.datetime DESC">COM_CUSTOMTABLES_ACTIONS_TIME_DESC</option>
+			<option value="t.tabletitle ASC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_ASC</option>
+			<option value="t.tabletitle DESC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_DESC</option>
+		</field>
+		<field
+				name="limit"
+				type="limitbox"
+				label="JGLOBAL_LIST_LIMIT"
+				default="25"
+				onchange="this.form.submit();"
+		/>
+	</fields>
+</form>

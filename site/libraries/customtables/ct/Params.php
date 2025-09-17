@@ -305,9 +305,9 @@ class Params
 		if (common::inputGetInt("ctmodalform", 0) == 1)
 			$this->tableName = common::inputGetInt("tableid");//Used in Save Modal form content.
 
-		if ($this->tableName === null) {
+		if (empty($this->tableName)) {
 			$this->tableName = $menu_params['establename'] ?? null; //Table name or id not sanitized
-			if ($this->tableName === null)
+			if (empty($this->tableName))
 				$this->tableName = $menu_params['tableid'] ?? null; //Used in the back-end
 		}
 
