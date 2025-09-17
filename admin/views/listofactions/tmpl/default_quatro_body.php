@@ -19,7 +19,13 @@ use CustomTables\common;
 	<tr class="row<?php echo $i % 2; ?>">
 
 		<td>
-			<?php echo $item->USER_NAME; ?>
+			<?php
+
+			if (empty($item->USER_NAME) and $item->userid !== 0)
+				echo '<span style="color:red;">' . $item->userid . '</span>';
+			else
+				echo $item->USER_NAME;
+			?>
 		</td>
 
 		<td>

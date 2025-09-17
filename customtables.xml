@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" method="upgrade">
 	<name>COM_CUSTOMTABLES</name>
-	<creationDate>July 2025</creationDate>
+	<creationDate>September 2025</creationDate>
 	<author>JoomlaBoat.com</author>
 	<authorEmail>support@joomlaboat.com</authorEmail>
 	<authorUrl>https://joomlaboat.com</authorUrl>
 	<copyright>Copyright (C) 2018-2025 Ivan Komlev</copyright>
 	<license>GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html</license>
-	<version>3.6.3</version>
+	<version>3.6.4</version>
 	<description><![CDATA[
 		<h1>Custom Tables</h1>
 		<div style="clear: both;"></div>
 		<p>Personalized Database Tables for Joomla! This component creates custom tables with custom fields and shows it in front-end in following formats: Catalog, Detailed page, Edit form.</p>
 		<p>Created by <a href="https://joomlaboat.com" target="_blank">Ivan Komlev</a><br />
 		<small>Development started in 2010</small><br/>
-		<small>Current Version 3.6.3 (July 2025)</small>
+		<small>Current Version 3.6.4 (September 2025)</small>
 		</p>
 	]]></description>
 
@@ -25,7 +25,6 @@
 		<filename>index.html</filename>
 		<filename>router.php</filename>
 		<filename>customtables.php</filename>
-		<!--<filename>provider.php</filename>-->
 		<folder>controllers</folder>
 		<folder>customphp</folder>
 		<folder>fields</folder>
@@ -51,11 +50,6 @@
 		<language tag="sl-SI">language/sl-SI/sl-SI.com_customtables.ini</language>
 		<language tag="uk-UA">language/uk-UA/uk-UA.com_customtables.ini</language>
 	</languages>
-	<!--
-		<services>
-			<file>provider.php</file>
-		</services>
-		-->
 
 	<administration>
 		<menu>COM_CUSTOMTABLES_MENU</menu>

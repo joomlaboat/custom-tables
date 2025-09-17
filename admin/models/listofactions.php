@@ -71,7 +71,7 @@ class CustomtablesModelListOfActions extends ListModel
 
 		$orderCol = $this->state->get('list.ordering', 'a.datetime');
 		$orderDirection = $this->state->get('list.direction', 'desc');
-		if ($orderDirection !== 'desc')
+		if (strtolower($orderDirection) !== 'desc')
 			$orderDirection = 'asc';
 
 		$selects = ['*'];
