@@ -31,7 +31,13 @@ class CustomTablesViewCatalog extends HtmlView
 	function display($tpl = null)
 	{
 		$this->ct = new CT(null, false);
-		$this->ct->Params->constructJoomlaParams();
+
+		try {
+			$this->ct->Params->constructJoomlaParams();
+		} catch (Throwable $e) {
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			return;
+		}
 
 		$app = Factory::getApplication();
 		$menuParams = $app->getParams();
@@ -108,11 +114,12 @@ class CustomTablesViewCatalog extends HtmlView
 		}
 
 		//Save view log
-		//$allowed_fields = $this->SaveViewLog_CheckIfNeeded();
-		//if (count($allowed_fields) > 0 and $this->ct->Records !== null) {
-		//	foreach ($this->ct->Records as $rec)
-		//		$this->SaveViewLogForRecord($rec, $allowed_fields);
-		//}
+		$allowed_fields = $this->SaveViewLog_CheckIfNeeded();
+
+		if (count($allowed_fields) > 0 and $this->ct->Records !== null) {
+			foreach ($this->ct->Records as $rec)
+				$this->SaveViewLogForRecord($rec, $allowed_fields);
+		}
 
 		if ($this->ct->Env->frmt === '' or $this->ct->Env->frmt === 'html') {
 			parent::display($tpl);
@@ -138,21 +145,38 @@ class CustomTablesViewCatalog extends HtmlView
 			return [];
 
 		foreach ($this->ct->Table->fields as $mFld) {
-			if ($mFld['type'] == 'lastviewtime' or $mFld['type'] == 'viewcount' or $mFld['type'] == 'phponview') {
-				$pair = explode(',', $mFld['typeparams']);
-				$user_group = '';
+			if ($mFld['type'] == 'lastviewtime' or $mFld['type'] == 'viewcount' or $mFld['type'] == 'server') { //phponview obsolete
 
-				if (isset($pair[1])) {
-					if ($pair[1] == 'catalog')
-						$user_group = $pair[0];
-				} else
-					$user_group = $pair[0];
+				if ($mFld['type'] == 'server') {
+					$pair = CTMiscHelper::csv_explode(',', $mFld['typeparams']);
+					if (isset($pair[1])) {
+						$updateAction = $pair[1];
+						if ($updateAction == 'view')
+							$allowed_fields[] = $mFld['fieldname'];
 
-				$group_id = CTMiscHelper::getGroupIdByTitle($user_group);
+						//echo '$allowed_fields:' . implode(',', $allowed_fields) . '.';
+					}
 
-				if ($user_group != '') {
-					if (in_array($group_id, $this->ct->Env->user->groups))
+				} else {
+					if (!empty($mFld['typeparams'])) {
+						$pair = CTMiscHelper::csv_explode(',', $mFld['typeparams']);
+						$user_group = '';
+
+						if (isset($pair[1])) {
+							if ($pair[1] == 'catalog')
+								$user_group = $pair[0];
+						} else
+							$user_group = $pair[0];
+
+						$group_id = CTMiscHelper::getGroupIdByTitle($user_group);
+
+						if ($user_group != '') {
+							if (in_array($group_id, $this->ct->Env->user->groups))
+								$allowed_fields[] = $mFld['fieldname'];
+						}
+					} else {
 						$allowed_fields[] = $mFld['fieldname'];
+					}
 				}
 			}
 		}
@@ -176,6 +200,18 @@ class CustomTablesViewCatalog extends HtmlView
 
 				if ($mFld['type'] == 'viewcount')
 					$data[$mFld['realfieldname']] = ((int)($rec[$this->ct->Table->fieldPrefix . $mFld['fieldname']]) + 1);
+
+				if ($mFld['type'] == 'server') {
+
+					$fieldParams = ctMiscHelper::csv_explode(',', $mFld['typeparams']);
+
+					if (empty($fieldParams))
+						$value = ctMiscHelper::getUserIP(); //Try to get client real IP
+					else
+						$value = common::inputServer($fieldParams[0], '', 'STRING');
+
+					$data[$mFld['realfieldname']] = $value;
+				}
 			}
 		}
 

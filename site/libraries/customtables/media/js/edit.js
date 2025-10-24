@@ -28,7 +28,7 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 
 			this.websiteRoot = websiteRoot;//With trailing front slash /
 
-			console.warn("Load translation vars");
+			//console.warn("Load translation vars");
 			this.dragDropStr = TranslateText('COM_CUSTOMTABLES_DRAG_DROP_FILES');
 			this.uploadStr = TranslateText('COM_CUSTOMTABLES_UPLOAD_FILE');
 			this.abortStr = TranslateText('COM_CUSTOMTABLES_ABORT');
@@ -1015,6 +1015,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 				}
 
 				if (response.success) {
+
 					//let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
 					let table_object = document.getElementById("ctTable_" + tableid);
 
@@ -2060,9 +2061,9 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 		let link = location.href.split('administrator/index.php?option=com_customtables');
 
 		if (link.length === 2)//to make sure that it will work in the back-end
-			url = CTEditHelper.websiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&clean=1&from=json&key=' + key + '&index=0&limit=20&';
+			url = CTEditHelper.websiteRoot + 'administrator/index.php?option=com_customtables&view=catalog&tmpl=component&clean=1&frmt=json&key=' + key + '&index=0&limit=20&';
 		else
-			url = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&clean=1&from=json&key=' + key + '&index=0&limit=20&';
+			url = CTEditHelper.websiteRoot + 'index.php?option=com_customtables&view=catalog&tmpl=component&clean=1&frmt=json&key=' + key + '&index=0&limit=20&';
 
 	} else if (CTEditHelper.cmsName === "WordPress") {
 		console.error("onCTVirtualSelectServerSearch is not supported by WP yet.");

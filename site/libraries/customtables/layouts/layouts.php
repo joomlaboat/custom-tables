@@ -869,7 +869,13 @@ class Layouts
 					$customPHP = new CustomPHP($this->ct, $action);
 					$customPHP->executeCustomPHPFile($this->ct->Table->tablerow['customphp'], $record->row_new, $record->row_old);
 				} catch (Exception $e) {
-					$output['message'] = 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . ' (' . $e->getMessage() . ')';
+					$output['message'] = $e->getMessage();
+					$output['success'] = false;
+					$output['action'] = $action;
+					$output['id'] = $this->ct->Table->record[$this->ct->Table->realidfieldname];
+					$output['content'] = null;
+					$output['short'] = $action == 'create' ? 'created' : 'updated';
+					return $output;
 				}
 			}
 

@@ -1175,6 +1175,15 @@
 						description="Original version of 'PATH_INFO' before processed by PHP."
 						wordpress="true"/>
 			</param>
+			<param type="list" name="updateaction" label="Update on Action"
+				   description="Update field value when action occurs.">
+				<option value="add" label="Record added" wordpress="true"/>
+				<option value="edit" label="Record edited" wordpress="false"/>
+				<option value="refreshed" label="Record refreshed" wordpress="false"/>
+				<option value="published" label="Record published" wordpress="false"/>
+				<option value="unpublished" label="Record unpublished" wordpress="false"/>
+				<option value="view" label="Record viewed" wordpress="false"/>
+			</param>
 		</params>
 		<editparams name="server" label="Input Element Parameters" description="">
 			<params>

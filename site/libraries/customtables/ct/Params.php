@@ -175,7 +175,10 @@ class Params
 					$establename = $menu_params_registry->get('establename');
 					if (empty($establename)) {
 						$Itemid = common::inputGetInt('Itemid');
-						$menu_paramsArray = CTMiscHelper::getMenuParams($Itemid);
+						if ($Itemid !== null)
+							$menu_paramsArray = CTMiscHelper::getMenuParams($Itemid);
+						else
+							$menu_paramsArray = self::menuParamsRegistry2Array($menu_params_registry);
 					} else
 						$menu_paramsArray = self::menuParamsRegistry2Array($menu_params_registry);
 
