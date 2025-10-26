@@ -436,6 +436,10 @@ class database
 		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'ARRAY_A', $groupBy, $returnQueryString);
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.0
+	 */
 	public static function loadObjectList(string  $table, array $selectsRaw, MySQLWhereClause $whereClause,
 										  ?string $order = null, ?string $orderBy = null,
 										  ?int    $limit = null, ?int $limitStart = null,
@@ -486,6 +490,10 @@ class database
 			return $db->loadAssocList();
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.0
+	 */
 	public static function sanitizeSelects(array $selectsRaw, string $realTableName): string
 	{
 		$serverType = database::getServerType();
@@ -493,13 +501,20 @@ class database
 
 		foreach ($selectsRaw as $select) {
 
-			if (is_array($select) and count($select) == 2 and $select[0] == 'REAL_FIELD_NAME') {
-				$fieldPrefix = preg_replace('/[^a-zA-Z0-9_#]/', '', $select[1]);
+			if (is_array($select) and count($select) == 2) {
 
-				if ($serverType == 'postgresql') {
-					$selects[] = 'CONCAT("' . $fieldPrefix . '",fieldname) AS realfieldname';
+				if ($select[0] == 'REAL_FIELD_NAME') {
+					$fieldPrefix = preg_replace('/[^a-zA-Z0-9_#]/', '', $select[1]);
+
+					if ($serverType == 'postgresql') {
+						$selects[] = 'CONCAT("' . $fieldPrefix . '",fieldname) AS realfieldname';
+					} else {
+						$selects[] = 'CONCAT("' . $fieldPrefix . '",fieldname) AS realfieldname';
+					}
+				} elseif ($select[0] == 'COUNT_DISTINCT_ROWS') {
+					$selects[] = 'COUNT(DISTINCT ' . $select[1] . ') AS record_count';
 				} else {
-					$selects[] = 'CONCAT("' . $fieldPrefix . '",fieldname) AS realfieldname';
+					throw new Exception('Unsupported Select query type: ' . $select[0]);
 				}
 
 			} elseif (is_array($select) and count($select) >= 3) {

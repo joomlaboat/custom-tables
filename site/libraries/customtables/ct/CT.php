@@ -241,21 +241,32 @@ class CT
 	 */
 	function getRecords(bool $all = false, int $limit = 0, ?string $orderby = null, string $groupBy = null): bool
 	{
+		//Grouping
+		$realGroupByFieldNames = [];
+
+		if (!empty($groupBy)) {
+
+			$fieldNames = explode(',', $groupBy);
+			$fieldNamesClean = array_map('trim', $fieldNames);
+
+			foreach ($fieldNamesClean as $fieldName) {
+				$tempFieldRow = $this->Table->getFieldByName($fieldName);
+				if ($tempFieldRow !== null and !in_array($tempFieldRow['realfieldname'], $realGroupByFieldNames))
+					$realGroupByFieldNames[] = $tempFieldRow['realfieldname'];
+			}
+			$this->GroupBy = implode(',', $realGroupByFieldNames);
+		} elseif (!empty($this->GroupBy)) {
+			$realGroupByFieldNames = explode(',', $this->GroupBy);
+		}
+
 		try {
-			$count = $this->getNumberOfRecords($this->Filter->whereClause);
+			$count = $this->getNumberOfRecords($this->Filter->whereClause, $realGroupByFieldNames);
 		} catch (Throwable $e) {
 			throw new Exception($e->getMessage());
 		}
 
 		if ($count === null)
 			return false;
-
-		//Grouping
-		if (!empty($groupBy)) {
-			$tempFieldRow = $this->Table->getFieldByName($groupBy);
-			if ($tempFieldRow !== null)
-				$this->GroupBy = $tempFieldRow['realfieldname'];
-		}
 
 		//Ordering
 		if ($orderby != null)
@@ -278,6 +289,7 @@ class CT
 		if ($this->Table->recordcount > 0) {
 
 			if ($limit > 0) {
+				//orderBy parameter is NULL because order direction is already included in $ordering
 				$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
 					(count($ordering) > 0 ? implode(',', $ordering) : null), null, $limit, null, $this->GroupBy);
 				$this->Limit = $limit;
@@ -285,6 +297,7 @@ class CT
 				$the_limit = $this->Limit;
 
 				if ($all) {
+					//orderBy parameter is NULL because order direction is already included in $ordering
 					$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
 						(count($ordering) > 0 ? implode(',', $ordering) : null), null, 20000, null, $this->GroupBy);
 				} else {
@@ -298,6 +311,7 @@ class CT
 						$this->LimitStart = 0;
 
 					try {
+						//orderBy parameter is NULL because order direction is already included in $ordering
 						$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
 							(count($ordering) > 0 ? implode(',', $ordering) : null), null, $the_limit, $this->LimitStart, $this->GroupBy);
 					} catch (Exception $e) {
@@ -318,14 +332,21 @@ class CT
 	 * @throws Exception
 	 * @since 3.2.0
 	 */
-	function getNumberOfRecords(MySQLWhereClause $whereClause): ?int
+	function getNumberOfRecords(MySQLWhereClause $whereClause, ?array $GroupBy = null): ?int
 	{
 		if ($this->Table === null or $this->Table->tablerow === null or $this->Table->tablerow['realidfieldname'] === null) {
 			throw new Exception('getNumberOfRecords: Table not selected.');
 		}
 
 		try {
-			$rows = database::loadObjectList($this->Table->realtablename, ['COUNT_ROWS'], $whereClause);
+			if ($GroupBy === null)
+				$rows = database::loadObjectList($this->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, null, null, 'OBJECT', null);
+			else {
+				if (count($GroupBy) == 1)
+					$rows = database::loadObjectList($this->Table->realtablename, [['COUNT_DISTINCT_ROWS', implode(',', $GroupBy)]], $whereClause, null, null, null, null, 'OBJECT', null);
+				else
+					$rows = database::loadObjectList($this->Table->realtablename, [['COUNT_DISTINCT_ROWS', 'JSON_ARRAY(' . implode(',', $GroupBy) . ')']], $whereClause, null, null, null, null, 'OBJECT', null);
+			}
 		} catch (Exception $e) {
 			throw new Exception('getNumberOfRecords:' . $e->getMessage());
 		}
@@ -422,9 +443,17 @@ class CT
 		//Grouping
 		$this->GroupBy = null;
 		if (!empty($this->Params->groupBy)) {
-			$tempFieldRow = $this->Table->getFieldByName($this->Params->groupBy);
-			if ($tempFieldRow !== null)
-				$this->GroupBy = $tempFieldRow['realfieldname'];
+
+			$fieldNames = explode(',', $this->Params->groupBy);
+			$fieldNamesClean = array_map('trim', $fieldNames);
+			$realGroupByFieldNames = [];
+			foreach ($fieldNamesClean as $fieldName) {
+				$tempFieldRow = $this->Table->getFieldByName($fieldName);
+
+				if ($tempFieldRow !== null and !in_array($tempFieldRow['realfieldname'], $realGroupByFieldNames))
+					$realGroupByFieldNames[] = $tempFieldRow['realfieldname'];
+			}
+			$this->GroupBy = implode(',', $realGroupByFieldNames);
 		}
 
 		if ($this->Params->blockExternalVars) {

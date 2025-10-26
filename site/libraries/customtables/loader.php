@@ -30,7 +30,7 @@ if (!function_exists('str_contains')) {
 		return $needle === '' || strpos($haystack, $needle) !== false;
 	}
 }
-
+/*
 if (class_exists('\Symfony\Polyfill\Mbstring\Mbstring') && !method_exists('\Symfony\Polyfill\Mbstring\Mbstring', 'mb_trim')) {
 	class_alias('\Symfony\Polyfill\Mbstring\Mbstring', '__MbstringTemp__');
 
@@ -45,7 +45,7 @@ if (class_exists('\Symfony\Polyfill\Mbstring\Mbstring') && !method_exists('\Symf
 	// Replace the original class reference
 	class_alias('MbstringFixed', '\Symfony\Polyfill\Mbstring\Mbstring');
 }
-
+*/
 function CustomTablesLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', bool $loadTwig = true): void
 {
 	if (!defined('CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY'))
