@@ -144,6 +144,9 @@ class Twig_Record_Tags
 		if (!isset($this->ct->Table->record))
 			throw new Exception('{{ record.published }} - Record not loaded.');
 
+		if (!isset($this->ct->Table->record['listing_published']))
+			throw new Exception('{{ record.published }} - Published field does not exist.');
+
 		if ($type == 'bool' or $type == 'boolean')
 			return ((int)$this->ct->Table->record['listing_published'] ? 'true' : 'false');
 		elseif ($type == 'number')
@@ -170,6 +173,20 @@ class Twig_Record_Tags
 			throw new Exception('{{ record.number }} - Record number not set.');
 
 		return (int)$this->ct->Table->record['_number'];
+	}
+
+	function group_count()
+	{
+		if (!isset($this->ct->Table))
+			throw new Exception('{{ record.group_count }} - Table not loaded.');
+
+		if (is_null($this->ct->Table->record))
+			return '';
+
+		if (!isset($this->ct->Table->record['ct_group_count']))
+			throw new Exception('{{ record.group_count }} - GROUP BY not set.');
+
+		return $this->ct->Table->record['ct_group_count'];
 	}
 
 	/**
@@ -509,19 +526,19 @@ class Twig_Record_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function min(string $tableName = '', string $value_field = '', string $filter = ''): ?float
+	function min(string $tableName = '', string $value_field = '', string $filter = '', ?string $groupBy = null): ?float
 	{
 		if ($value_field == '')
 			throw new Exception('{{ record.min(table_name,value_field) }} - Value Field not specified.');
 
-		return $this->countOrSumRecords('min', $tableName, $value_field, $filter);
+		return $this->countOrSumRecords('min', $tableName, $value_field, $filter, $groupBy);
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function countOrSumRecords(string $function, string $tableName, string $fieldName, string $filter = ''): ?float
+	protected function countOrSumRecords(string $function, string $tableName, string $fieldName, string $filter = '', ?string $groupBy = null): ?float
 	{
 		if ($tableName == '')
 			throw new Exception('countOrSumRecords - Table not specified.');
@@ -564,8 +581,13 @@ class Twig_Record_Tags
 		$f = new Filtering($newCT, 2);
 		$f->addWhereExpression($filter);
 
+		$realGroupByFieldNames = null;
+
+		if (!empty($groupBy))
+			$realGroupByFieldNames = $this->ct->getGroupByRealFieldNames($groupBy);
+
 		try {
-			$rows = $this->count_buildQuery($function, $newCT->Table->realtablename, $fieldRealFieldName, $f->whereClause);
+			$rows = $this->count_buildQuery($function, $newCT->Table->realtablename, $fieldRealFieldName, $f->whereClause, $realGroupByFieldNames);
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
@@ -585,73 +607,96 @@ class Twig_Record_Tags
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function count_buildQuery($sj_function, $realTableName, $realFieldName, MySQLWhereClause $whereClause): ?array
+	protected function count_buildQuery($sj_function, string $realTableName, $realFieldName, MySQLWhereClause $whereClause, ?array $realGroupByFieldNames = null): ?array
 	{
 		$selects = [];
 
-		if ($sj_function == 'count')
-			$selects[] = ['COUNT', $realTableName, $realFieldName];
-		elseif ($sj_function == 'sum')
-			$selects[] = ['SUM', $realTableName, $realFieldName];
-		elseif ($sj_function == 'avg')
-			$selects[] = ['AVG', $realTableName, $realFieldName];
-		elseif ($sj_function == 'min')
-			$selects[] = ['MIN', $realTableName, $realFieldName];
-		elseif ($sj_function == 'max')
-			$selects[] = ['MAX', $realTableName, $realFieldName];
-		else {
-			//need to resolve record value if it's "records" type
-			$selects[] = ['VALUE', $realTableName, $realFieldName];
+		if ($realGroupByFieldNames == null or count($realGroupByFieldNames) == 0) {
+
+			if ($sj_function == 'count')
+				$selects[] = ['COUNT', $realTableName, $realFieldName];
+			elseif ($sj_function == 'sum')
+				$selects[] = ['SUM', $realTableName, $realFieldName];
+			elseif ($sj_function == 'avg')
+				$selects[] = ['AVG', $realTableName, $realFieldName];
+			elseif ($sj_function == 'min')
+				$selects[] = ['MIN', $realTableName, $realFieldName];
+			elseif ($sj_function == 'max')
+				$selects[] = ['MAX', $realTableName, $realFieldName];
+			else {
+				//need to resolve record value if it's "records" type
+				$selects[] = ['VALUE', $realTableName, $realFieldName];
+			}
+		} else {
+
+			if ($sj_function == 'count') {
+				$selects[] = ['COUNT_DISTINCT', $realTableName, $realGroupByFieldNames];
+			} elseif ($sj_function == 'sum')
+				$selects[] = ['SUM', $realTableName, $realFieldName];
+			elseif ($sj_function == 'avg')
+				$selects[] = ['AVG', $realTableName, $realFieldName];
+			elseif ($sj_function == 'min')
+				$selects[] = ['MIN', $realTableName, $realFieldName];
+			elseif ($sj_function == 'max')
+				$selects[] = ['MAX', $realTableName, $realFieldName];
+			else {
+				//need to resolve record value if it's "records" type
+				$selects[] = ['VALUE', $realTableName, $realFieldName];
+			}
+
 		}
-		return database::loadAssocList($realTableName, $selects, $whereClause, null, null, 1);
+
+		//print_r($selects);
+
+		return database::loadAssocList($realTableName, $selects, $whereClause, null, null, 1, null);
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function max(string $tableName = '', string $value_field = '', string $filter = ''): ?float
+	function max(string $tableName = '', string $value_field = '', string $filter = '', ?string $groupBy = null): ?float
 	{
 		if ($value_field == '')
 			throw new Exception('{{ record.max(table_name,value_field) }} - Value Field not specified.');
 
-		return $this->countOrSumRecords('max', $tableName, $value_field, $filter);
+		return $this->countOrSumRecords('max', $tableName, $value_field, $filter, $groupBy);
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function avg(string $tableName = '', string $value_field = '', string $filter = ''): ?float
+	function avg(string $tableName = '', string $value_field = '', string $filter = '', ?string $groupBy = null): ?float
 	{
 		if ($value_field == '')
 			throw new Exception('{{ record.avg(table_name,value_field) }} - Value Field not specified.');
 
-		return $this->countOrSumRecords('avg', $tableName, $value_field, $filter);
+		return $this->countOrSumRecords('avg', $tableName, $value_field, $filter, $groupBy);
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function sum(string $tableName = '', string $value_field = '', string $filter = ''): ?float
+	function sum(string $tableName = '', string $value_field = '', string $filter = '', ?string $groupBy = null): ?float
 	{
 		if ($value_field == '')
 			throw new Exception('{{ record.sum(table_name,value_field) }} - Value Field not specified.');
 
-		return $this->countOrSumRecords('sum', $tableName, $value_field, $filter);
+		return $this->countOrSumRecords('sum', $tableName, $value_field, $filter, $groupBy);
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function count(string $tableName = '', string $filter = ''): ?int
+	function count(string $tableName = '', string $filter = '', ?string $groupBy = null): ?int
 	{
 		if ($tableName == '')
 			throw new Exception('{{ record.min(table_name) }} - Table Name not specified.');
 
-		return $this->countOrSumRecords('count', $tableName, '_id', $filter);
+		return $this->countOrSumRecords('count', $tableName, '_id', $filter, $groupBy);
 	}
 
 	function MissingFields($separator = ','): string

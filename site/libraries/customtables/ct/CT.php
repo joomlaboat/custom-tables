@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die();
 
+use api\components\com_customtables\Controller\LoginController;
 use CustomTablesImageMethods;
 use CustomTablesKeywordSearch;
 use Exception;
@@ -245,15 +246,7 @@ class CT
 		$realGroupByFieldNames = [];
 
 		if (!empty($groupBy)) {
-
-			$fieldNames = explode(',', $groupBy);
-			$fieldNamesClean = array_map('trim', $fieldNames);
-
-			foreach ($fieldNamesClean as $fieldName) {
-				$tempFieldRow = $this->Table->getFieldByName($fieldName);
-				if ($tempFieldRow !== null and !in_array($tempFieldRow['realfieldname'], $realGroupByFieldNames))
-					$realGroupByFieldNames[] = $tempFieldRow['realfieldname'];
-			}
+			$realGroupByFieldNames = $this->getGroupByRealFieldNames($groupBy);
 			$this->GroupBy = implode(',', $realGroupByFieldNames);
 		} elseif (!empty($this->GroupBy)) {
 			$realGroupByFieldNames = explode(',', $this->GroupBy);
@@ -267,7 +260,7 @@ class CT
 
 		if ($count === null)
 			return false;
-
+		
 		//Ordering
 		if ($orderby != null)
 			$this->Ordering->ordering_processed_string = $orderby;
@@ -285,6 +278,9 @@ class CT
 
 			$ordering[] = $this->Ordering->orderby;
 		}
+
+		if (count($realGroupByFieldNames) > 0)
+			$selects[] = ['COUNT', $this->Table->realtablename, $this->Table->realidfieldname, 'ct_group_count'];
 
 		if ($this->Table->recordcount > 0) {
 
@@ -328,6 +324,22 @@ class CT
 		return true;
 	}
 
+	function getGroupByRealFieldNames(string $groupBy): array
+	{
+		$fieldNames = explode(',', $groupBy);
+		$fieldNamesClean = array_map('trim', $fieldNames);
+
+		$realGroupByFieldNames = [];
+
+		foreach ($fieldNamesClean as $fieldName) {
+			$tempFieldRow = $this->Table->getFieldByName($fieldName);
+			if ($tempFieldRow !== null and !in_array($tempFieldRow['realfieldname'], $realGroupByFieldNames))
+				$realGroupByFieldNames[] = $tempFieldRow['realfieldname'];
+		}
+
+		return $realGroupByFieldNames;
+	}
+
 	/**
 	 * @throws Exception
 	 * @since 3.2.0
@@ -339,7 +351,7 @@ class CT
 		}
 
 		try {
-			if ($GroupBy === null)
+			if ($GroupBy === null or count($GroupBy) == 0)
 				$rows = database::loadObjectList($this->Table->realtablename, ['COUNT_ROWS'], $whereClause, null, null, null, null, 'OBJECT', null);
 			else {
 				if (count($GroupBy) == 1)
@@ -443,16 +455,7 @@ class CT
 		//Grouping
 		$this->GroupBy = null;
 		if (!empty($this->Params->groupBy)) {
-
-			$fieldNames = explode(',', $this->Params->groupBy);
-			$fieldNamesClean = array_map('trim', $fieldNames);
-			$realGroupByFieldNames = [];
-			foreach ($fieldNamesClean as $fieldName) {
-				$tempFieldRow = $this->Table->getFieldByName($fieldName);
-
-				if ($tempFieldRow !== null and !in_array($tempFieldRow['realfieldname'], $realGroupByFieldNames))
-					$realGroupByFieldNames[] = $tempFieldRow['realfieldname'];
-			}
+			$realGroupByFieldNames = $this->getGroupByRealFieldNames($this->Params->groupBy);
 			$this->GroupBy = implode(',', $realGroupByFieldNames);
 		}
 

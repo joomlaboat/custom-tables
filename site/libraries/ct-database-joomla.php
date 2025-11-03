@@ -519,13 +519,36 @@ class database
 
 			} elseif (is_array($select) and count($select) >= 3) {
 				$selectTable_safe = preg_replace('/[^a-zA-Z0-9_#]/', '', $select[1]);//Joomla way
-				$selectField = preg_replace('/[^a-zA-Z0-9_]/', '', $select[2]);
+
+				if (is_array($select[2])) {
+					$selectField = [];
+					foreach ($select[2] as $field) {
+						$selectField[] = preg_replace('/[^a-zA-Z0-9_]/', '', $field);
+					}
+				} else
+					$selectField = preg_replace('/[^a-zA-Z0-9_]/', '', $select[2]);
+
 				$asValue = preg_replace('/[^a-zA-Z0-9_]/', '', $select[3] ?? 'vlu');
 				$variable = preg_replace('/[^a-zA-Z0-9_]/', '', $select[4] ?? '');
 
 				if ($select[0] == 'COUNT')
 					$selects[] = 'COUNT(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
-				elseif ($select[0] == 'DISTINCT')
+				if ($select[0] == 'COUNT_DISTINCT') {
+
+					if (is_array($selectField)) {
+						if (count($selectField) == 1)
+							$selects[] = 'COUNT(DISTINCT `' . $selectTable_safe . '`.`' . $selectField[0] . '`) AS ' . $asValue;
+						else {
+							$fullFieldNames = [];
+							foreach ($selectField as $field) {
+								$fullFieldNames[] = '`' . $selectTable_safe . '`.`' . $field . '`';
+							}
+							$selects[] = 'COUNT(DISTINCT JSON_ARRAY(' . implode(',', $fullFieldNames) . ')) AS ' . $asValue;
+						}
+					} else
+						$selects[] = 'COUNT(DISTINCT `' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;
+
+				} elseif ($select[0] == 'DISTINCT')
 					$selects[] = 'DISTINCT `' . $selectTable_safe . '`.`' . $selectField . '` AS ' . $asValue;
 				elseif ($select[0] == 'SUM')
 					$selects[] = 'SUM(`' . $selectTable_safe . '`.`' . $selectField . '`) AS ' . $asValue;

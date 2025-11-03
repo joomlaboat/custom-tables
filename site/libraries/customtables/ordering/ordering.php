@@ -99,21 +99,28 @@ class Ordering
 		if ($this->ordering_processed_string === null or $this->ordering_processed_string == '')
 			return false;
 
-		$orderingStringPair = explode(' ', $this->ordering_processed_string);
-		$direction = '';
+		$orderByField = [];
+		$orderByFieldStrings = explode(',', $this->ordering_processed_string);
 
-		if (isset($orderingStringPair[1])) {
-			$direction = (strtolower($orderingStringPair[1]) == 'desc' ? ' DESC' : '');
+		foreach ($orderByFieldStrings as $orderByFieldString) {
+			$orderingStringPair = explode(' ', $orderByFieldString);
+			$direction = '';
+
+			if (isset($orderingStringPair[1])) {
+				$direction = (strtolower($orderingStringPair[1]) == 'desc' ? ' DESC' : '');
+			}
+
+			$this->fieldList = explode('.', $orderingStringPair[0]);
+			$this->index = 0;
+			$orderbyQuery = self::parseOrderByFieldName($this->fieldList[$this->index], $this->Table);
+
+			if ($orderbyQuery === null)
+				return false;
+
+			$orderByField[] = $orderbyQuery . $direction;
 		}
 
-		$this->fieldList = explode('.', $orderingStringPair[0]);
-		$this->index = 0;
-		$orderbyQuery = self::parseOrderByFieldName($this->fieldList[$this->index], $this->Table);
-
-		if ($orderbyQuery === null)
-			return false;
-
-		$this->orderby = $orderbyQuery . $direction;
+		$this->orderby = implode(',', $orderByField);
 		return true;
 	}
 
@@ -127,6 +134,8 @@ class Ordering
 			return $Table->realidfieldname;
 		elseif ($fieldName == '_published' and $Table->published_field_found)
 			return 'listing_published';
+		elseif ($fieldName == '_group_count')
+			return 'ct_group_count';
 
 		$fieldRow = $Table->getFieldByName($fieldName);
 		if ($fieldRow === null)
