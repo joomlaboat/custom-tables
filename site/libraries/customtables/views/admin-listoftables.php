@@ -161,11 +161,11 @@ class ListOfTables
 
 		// Process table name
 		if (function_exists("transliterator_transliterate"))
-			$newTableName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $data['tablename']);
+			$newTableName = transliterator_transliterate("Any-Latin; Latin-ASCII;", $data['tablename']);
 		else
 			$newTableName = $data['tablename'];
 
-		$newTableName = strtolower(trim(preg_replace("/\W/", "", $newTableName)));
+		$newTableName = trim(preg_replace("/\W/", "", $newTableName));
 
 		if ($newTableName == "")
 			throw new Exception('Please provide the table name.');
