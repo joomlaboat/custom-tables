@@ -32,6 +32,7 @@ $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style
 $document->addCustomTag('<script src="' . CUSTOMTABLES_LIBRARIES_WEBPATH . 'js/jquery.form.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_LIBRARIES_WEBPATH . 'js/jquery.uploadfile.min.js"></script>');
 $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/uploader.js"></script>');
+$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/edit.js"></script>');
 
 $fileId = common::generateRandomString();
 $max_file_size = CTMiscHelper::file_upload_max_size();
@@ -49,6 +50,14 @@ echo '
 	<div id="eventsmessage"></div>
 
 	<script>
+	
+		let ctTranslationScriptObject = ' . json_encode(common::getLocalizeScriptArray()) . ';
+		let ctFieldInputPrefix = "' . $this->fieldInputPrefix . '";
+	
+		if (typeof window.CTEditHelper === "undefined") {
+			window.CTEditHelper = new CustomTablesEdit("Joomla",' . (explode('.', CUSTOMTABLES_JOOMLA_VERSION)[0]) . ',null,"' . common::UriRoot(false, true) . '");
+		}
+	
 		ct_getUploader(1,"' . $urlString . '",' . $max_file_size . ',"txt html","esFileUploaderForm_Tables",true,"fileuploader","eventsmessage","' . $fileId . '","filetosubmit","ct_uploadedfile_box_file")
 	</script>
     <ul style="list-style: none;">

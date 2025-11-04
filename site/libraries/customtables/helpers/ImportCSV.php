@@ -58,7 +58,7 @@ class ImportCSV
 
 		for ($i = $offset; $i < count($arrayOfLines); $i++) {
 			if (count($arrayOfLines[$i]) > 0) {
-				$result = self::prepareSQLQuery($fieldList, $fields, $arrayOfLines[$i]);
+				$result = self::prepareSQLQuery($ct, $fieldList, $fields, $arrayOfLines[$i]);
 				$listing_id = self::findRecord($ct->Table->realtablename, $ct->Table->realidfieldname, $ct->Table->published_field_found, $result->where);
 
 				if (is_null($listing_id) and count($result->data) > 0) {
@@ -67,6 +67,8 @@ class ImportCSV
 					} catch (Exception $e) {
 						throw new Exception($e->getMessage());
 					}
+				} else {
+					database::update($ct->Table->realtablename, $result->data, $result->where);
 				}
 			}
 		}
@@ -195,12 +197,16 @@ class ImportCSV
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	private static function prepareSQLQuery(array $fieldList, array $fields, $line): object
+	private static function prepareSQLQuery(CT $ct, array $fieldList, array $fields, $line): object
 	{
 		$data = [];
 		$whereClause = new MySQLWhereClause();
 
 		$i = 0;
+
+		$idFieldIncluded = false;
+		if (in_array(-1, $fieldList))
+			$idFieldIncluded = true;
 
 		foreach ($fieldList as $f_index) {
 			if ($f_index >= 0) {
@@ -277,26 +283,43 @@ class ImportCSV
 
 						$dateString = CTMiscHelper::standardizeDate($line[$i]);
 
-						$whereClause->addCondition($fields[$f_index]['realfieldname'], $dateString);
+						if (!$idFieldIncluded)
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], $dateString);
+
 						$data[$fields[$f_index]['realfieldname']] = $dateString;
 					} else {
-						$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+
+						if (!$idFieldIncluded)
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+
 						$data[$fields[$f_index]['realfieldname']] = null;
 					}
 				} elseif ($fieldType == 'int' or $fieldType == 'user' or $fieldType == 'userid') {
 					if (isset($line[$i]) and $line[$i] != '') {
-						$whereClause->addCondition($fields[$f_index]['realfieldname'], (int)$line[$i]);
+
+						if (!$idFieldIncluded)
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], (int)$line[$i]);
+
 						$data[$fields[$f_index]['realfieldname']] = (int)$line[$i];
 					} else {
-						$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+
+						if (!$idFieldIncluded)
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+
 						$data[$fields[$f_index]['realfieldname']] = null;
 					}
 				} elseif ($fieldType == 'float') {
 					if (isset($line[$i]) and $line[$i] != '') {
-						$whereClause->addCondition($fields[$f_index]['realfieldname'], (float)$line[$i]);
+
+						if (!$idFieldIncluded)
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], (float)$line[$i]);
+
 						$data[$fields[$f_index]['realfieldname']] = (float)$line[$i];
 					} else {
-						$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+
+						if (!$idFieldIncluded)
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+
 						$data[$fields[$f_index]['realfieldname']] = null;
 					}
 				} elseif ($fieldType == 'checkbox') {
@@ -306,7 +329,9 @@ class ImportCSV
 						else
 							$vlu = 0;
 
-						$whereClause->addCondition($fields[$f_index]['realfieldname'], $vlu);
+						if (!$idFieldIncluded)
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], $vlu);
+
 						$data[$fields[$f_index]['realfieldname']] = $vlu;
 					}
 				} elseif ($fieldType == 'time') {
@@ -316,16 +341,27 @@ class ImportCSV
 					$seconds = InputBox_Time::formattedTime2Seconds($line[$i]);
 					$ticks = InputBox_Time::seconds2Ticks($seconds, $fieldParams);
 
-					$whereClause->addCondition($fields[$f_index]['realfieldname'], $ticks);
+					if (!$idFieldIncluded)
+						$whereClause->addCondition($fields[$f_index]['realfieldname'], $ticks);
+
 					$data[$fields[$f_index]['realfieldname']] = $ticks;
 
 				} else {
 
 					if (isset($line[$i])) {
 						$vlu = $line[$i];
-						$whereClause->addCondition($fields[$f_index]['realfieldname'], $vlu);
+
+						if (!$idFieldIncluded)
+							$whereClause->addCondition($fields[$f_index]['realfieldname'], $vlu);
+
 						$data[$fields[$f_index]['realfieldname']] = $vlu;
 					}
+				}
+			} elseif ($f_index == -1) {
+				if (isset($line[$i])) {
+					$vlu = $line[$i];
+					$whereClause->addCondition($ct->Table->realidfieldname, $vlu);
+					$data[$ct->Table->realidfieldname] = $vlu;
 				}
 			}
 			$i++;

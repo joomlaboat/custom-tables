@@ -16,13 +16,19 @@ defined('_JEXEC') or die();
 jimport('joomla.application.component.view');
 
 use CustomTables\common;
+use CustomTables\CT;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 class CustomTablesViewImportTables extends HtmlView
 {
+	var string $fieldInputPrefix;
+
 	function display($tpl = null)
 	{
+		$ct = new CT;
+		$this->fieldInputPrefix = $ct->Env->field_input_prefix ?? 'ct_';
+
 		ToolbarHelper::title(common::translate('Custom Tables - Import Tables'), 'generic.png');
 		parent::display($tpl);
 	}
