@@ -598,7 +598,7 @@ class ImportTables
 	public static function menuGetMaxRgt()
 	{
 		$whereClause = new MySQLWhereClause();
-		$rows = database::loadAssocList('#__menu', ['rgt'], $whereClause, 'rgt', null, 1);
+		$rows = database::loadAssocList('#__menu', ['rgt'], $whereClause, 'rgt', 'desc', 1);
 
 		if (count($rows) == 0)
 			return 0;

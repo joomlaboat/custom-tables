@@ -633,6 +633,8 @@ class Fields
 
 		if ($data['type'] == 'ordering')
 			self::findAndFixOrderingFieldRecords($ct, $data['realfieldname']);
+		elseif ($data['type'] == 'id')
+			self::findAndFixAutoIncrementFieldRecords($ct, $data);
 
 		return $fieldId;
 	}
@@ -1387,6 +1389,44 @@ class Fields
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
+	}
+
+	protected static function findAndFixAutoIncrementFieldRecords(CT $ct, array $data): void
+	{
+		$start_number = 1;
+
+		if (isset($data['typeparams'])) {
+			$params = CTMiscHelper::csv_explode(',', $data['typeparams']);
+			$start_number = ((count($params) > 0) ? (int)$params[0] : 0);
+		}
+
+		$fieldRow = $ct->Table->getFieldByName($data['fieldname']);
+		$realfieldname = $fieldRow['realfieldname'];
+
+		$whereClause = new MySQLWhereClause();
+		$rows = database::loadAssocList($ct->Table->realtablename, [$realfieldname], $whereClause, $realfieldname, 'desc', 1);
+
+		if (count($rows) > 0) {
+			$new_start_number = (int)($rows[0][$realfieldname]) + 1;
+			if ($new_start_number > $start_number)
+				$start_number = $new_start_number;
+		}
+
+		$db = database::getDB();
+
+		$query = 'WITH numbered AS (
+	SELECT
+        ' . $ct->Table->realidfieldname . ',
+        ROW_NUMBER() OVER (ORDER BY ' . $ct->Table->realidfieldname . ') AS new_' . $realfieldname . '
+    FROM ' . $ct->Table->realtablename . '
+    WHERE ' . $realfieldname . ' IS NULL
+)
+UPDATE ' . $ct->Table->realtablename . ' AS t
+JOIN numbered AS n ON t.' . $ct->Table->realidfieldname . ' = n.' . $ct->Table->realidfieldname . '
+SET t.' . $realfieldname . ' = n.new_' . $realfieldname . '+' . ($start_number - 1);
+
+		$db->setQuery($query);
+		$db->execute();
 	}
 
 	/**
