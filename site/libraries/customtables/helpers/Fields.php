@@ -632,7 +632,7 @@ class Fields
 		self::findAndFixFieldOrdering();
 
 		if ($data['type'] == 'ordering')
-			self::findAndFixOrderingFieldRecords($ct, $data['realfieldname']);
+			self::findAndFixOrderingFieldRecords($ct, $data);
 		elseif ($data['type'] == 'id')
 			self::findAndFixAutoIncrementFieldRecords($ct, $data);
 
@@ -1377,8 +1377,11 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.3
 	 */
-	protected static function findAndFixOrderingFieldRecords(CT $ct, string $realFieldName): void
+	protected static function findAndFixOrderingFieldRecords(CT $ct, array $data): void
 	{
+		$fieldRow = $ct->Table->getFieldByName($data['fieldname']);
+		$realFieldName = $fieldRow['realfieldname'];
+
 		$data = [$realFieldName => [$ct->Table->realidfieldname, 'sanitized']];
 		$whereClauseUpdate = new MySQLWhereClause();
 		$whereClauseUpdate->addOrCondition($realFieldName, null, 'NULL');
@@ -1413,17 +1416,30 @@ class Fields
 		}
 
 		$db = database::getDB();
+		/* Newer version of MySQL
+				$query = 'WITH numbered AS (
+			SELECT
+				' . $ct->Table->realidfieldname . ',
+				ROW_NUMBER() OVER (ORDER BY ' . $ct->Table->realidfieldname . ') AS new_' . $realfieldname . '
+			FROM ' . $ct->Table->realtablename . '
+			WHERE ' . $realfieldname . ' IS NULL
+		)
+		UPDATE ' . $ct->Table->realtablename . ' AS t
+		JOIN numbered AS n ON t.' . $ct->Table->realidfieldname . ' = n.' . $ct->Table->realidfieldname . '
+		SET t.' . $realfieldname . ' = n.new_' . $realfieldname . '+' . ($start_number - 1);
+		*/
 
-		$query = 'WITH numbered AS (
-	SELECT
-        ' . $ct->Table->realidfieldname . ',
-        ROW_NUMBER() OVER (ORDER BY ' . $ct->Table->realidfieldname . ') AS new_' . $realfieldname . '
-    FROM ' . $ct->Table->realtablename . '
-    WHERE ' . $realfieldname . ' IS NULL
-)
-UPDATE ' . $ct->Table->realtablename . ' AS t
-JOIN numbered AS n ON t.' . $ct->Table->realidfieldname . ' = n.' . $ct->Table->realidfieldname . '
-SET t.' . $realfieldname . ' = n.new_' . $realfieldname . '+' . ($start_number - 1);
+		//Compatible alternative:
+
+		// Initialize a counter variable
+		$db->setQuery("SET @cnt := " . ($start_number - 1) . ";");
+		$db->execute();
+
+		$query = '
+UPDATE ' . $ct->Table->realtablename . '
+SET ' . $realfieldname . ' = (@cnt := @cnt + 1)
+WHERE ' . $realfieldname . ' IS NULL
+ORDER BY ' . $ct->Table->realidfieldname . ';';
 
 		$db->setQuery($query);
 		$db->execute();
