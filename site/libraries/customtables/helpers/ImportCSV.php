@@ -113,30 +113,32 @@ class ImportCSV
 		$fieldList = array();
 		$fieldsFoundCount = 0;
 
-		foreach ($fieldNames as $fieldName_) {
-			$index = 0;
+		foreach ($fieldNames as $fieldName_raw) {
 
-			$fieldName = self::removeBomUtf8($fieldName_);
-			$fieldName = strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $fieldName));
+			$fieldName_ = self::removeBomUtf8($fieldName_raw);
 
-			$found = false;
-			foreach ($fields as $field) {
-				if ((int)$field['published'] === 1) {
-					$clean_field_name = strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $field['fieldtitle']));
+			if ($fieldName_ == '#') {
+				$fieldList[] = -1;//id field
+				$fieldsFoundCount += 1;
+				$found = true;
+			} else {
+				$index = 0;
+				$fieldName = strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $fieldName_));
+				$found = false;
 
-					if ($fieldName_ == '#' or $fieldName_ == '') {
-						$fieldList[] = -1;//id field
-						$fieldsFoundCount += 1;
-						$found = true;
-						break;
-					} elseif ($clean_field_name == $fieldName or (string)$field['fieldname'] == $fieldName or (string)$field['fieldtitle'] == $fieldName) {
-						$fieldList[] = $index;
-						$fieldsFoundCount += 1;
-						$found = true;
-						break;
+				foreach ($fields as $field) {
+					if ((int)$field['published'] === 1) {
+						$clean_field_name = strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $field['fieldtitle']));
+
+						if ($clean_field_name == $fieldName or (string)$field['fieldname'] == $fieldName or (string)$field['fieldtitle'] == $fieldName) {
+							$fieldList[] = $index;
+							$fieldsFoundCount += 1;
+							$found = true;
+							break;
+						}
 					}
+					$index++;
 				}
-				$index++;
 			}
 
 			if (!$found)
@@ -199,6 +201,9 @@ class ImportCSV
 	 */
 	private static function prepareSQLQuery(CT $ct, array $fieldList, array $fields, $line): object
 	{
+		echo '$fieldList:';
+		print_r($fieldList);
+		echo '<br>';
 		$data = [];
 		$whereClause = new MySQLWhereClause();
 
