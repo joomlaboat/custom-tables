@@ -104,6 +104,11 @@ class CustomTablesViewCatalog extends HtmlView
 
 		$this->catalog = new Catalog($this->ct);
 
+		$layoutName = common::inputGetCmd('layout');
+		if ($layoutName !== null) {
+			$this->ct->Params->pageLayout = $layoutName;
+		}
+
 		try {
 			$this->content = $this->catalog->render($this->ct->Params->pageLayout);
 			$code = 200;

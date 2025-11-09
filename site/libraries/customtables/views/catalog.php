@@ -169,6 +169,7 @@ class Catalog
 		if (!$recordsLoaded)
 			throw new Exception(common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'));
 
+
 		try {
 			$twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
 			$pageLayout = $twig->process();
