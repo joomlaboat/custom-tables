@@ -23,12 +23,8 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 			this.ct_signaturePad_formats = [];
 
 			this.ctInputBoxRecords_dynamic_filter = [];
-
 			this.ctLinkLoading = false;
-
 			this.websiteRoot = websiteRoot;//With trailing front slash /
-
-			//console.warn("Load translation vars");
 			this.dragDropStr = TranslateText('COM_CUSTOMTABLES_DRAG_DROP_FILES');
 			this.uploadStr = TranslateText('COM_CUSTOMTABLES_UPLOAD_FILE');
 			this.abortStr = TranslateText('COM_CUSTOMTABLES_ABORT');
@@ -458,10 +454,13 @@ if (typeof globalThis.CustomTablesEdit === 'undefined') {
 					let tableId = parts[1];
 					let trId = 'ctTable_' + tableId + '_' + listing_id;
 					const records = table.querySelectorAll('tr[id^="' + trId + '"]');
-					if (records.length == 1) {
-						let table_object = findTableByRowId(tableid + '_' + listing_id);
-						let index = findRowIndexById(table_object, tableId, listing_id, 'ctEditIcon');
-						ctCatalogUpdate(tableId, listing_id, index, ModuleId);
+					if (records.length === 1) {
+						let table_row_object = findTableByRowId(tableId + '_' + listing_id);
+						if (table_row_object) {
+							let index = findRowIndexById(table_row_object, tableId, listing_id, 'ctEditIcon');
+							let ModuleId = null;
+							ctCatalogUpdate(tableId, listing_id, index, ModuleId);
+						}
 					}
 				}
 			});

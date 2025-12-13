@@ -169,12 +169,14 @@ class record
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function insert(array $row): void
+	protected function insert(array $row, ?string $listing_id = null): void
 	{
 		if (!empty($this->ct->Table->tablerow['primarykeypattern']) and $this->ct->Table->tablerow['primarykeypattern'] != 'AUTO_INCREMENT') {
 			$twig = new TwigProcessor($this->ct, $this->ct->Table->tablerow['primarykeypattern']);
 			$this->listing_id = $twig->process($row);
 			$row[$this->ct->Table->realidfieldname] = $this->listing_id;
+		} elseif ($listing_id !== null) {
+			$row[$this->ct->Table->realidfieldname] = $listing_id;
 		} else {
 			$row[$this->ct->Table->realidfieldname] = null;
 		}
@@ -293,18 +295,27 @@ class record
 			$this->insert($saveField->row_new);
 
 		} else {
-			$this->isItNewRecord = false;
+
+			$this->ct->Params->listing_id = $this->listing_id;
+			$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
+
+			if ($this->ct->getRecord()) {
+				$this->isItNewRecord = false;
+
+				try {
+					$whereClauseUpdate = new MySQLWhereClause();
+					$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
+					database::update($this->ct->Table->realtablename, $saveField->row_new, $whereClauseUpdate);
+				} catch (Exception $e) {
+					throw new Exception($e->getMessage());
+				}
+			} else {
+				$this->isItNewRecord = true;
+				$this->insert($saveField->row_new, $this->listing_id);
+			}
 
 			if ($this->ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
 				ctProHelpers::updateLog($this->ct, $this->listing_id);
-
-			try {
-				$whereClauseUpdate = new MySQLWhereClause();
-				$whereClauseUpdate->addCondition($this->ct->Table->realidfieldname, $this->listing_id);
-				database::update($this->ct->Table->realtablename, $saveField->row_new, $whereClauseUpdate);
-			} catch (Exception $e) {
-				throw new Exception($e->getMessage());
-			}
 		}
 
 		if ($this->isItNewRecord) {// or $isCopy

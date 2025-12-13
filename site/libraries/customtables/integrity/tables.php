@@ -82,7 +82,7 @@ class IntegrityTables extends IntegrityChecks
 
 				if ($row['customtablename'] === null or $row['customtablename'] == '') {
 					if (TableHelper::createTableIfNotExists($dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'] ?? ''))
-						throw new Exception('Table "' . $row['tabletitle'] . '" created.', 'notice');
+						throw new Exception('Table "' . $row['tabletitle'] . '" created.');
 				}
 			}
 		}
