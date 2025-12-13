@@ -64,7 +64,8 @@ class Filtering
 
 		if (common::inputGetString('where')) {
 			$decodedURL = common::inputGetString('where', '');
-			$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));
+			$filter_string = urldecode($decodedURL);
+			//$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));
 
 			if ($filter_string != '')
 				$this->addWhereExpression($filter_string);
@@ -72,43 +73,12 @@ class Filtering
 
 		if (common::inputGetString('filter')) {
 			$decodedURL = common::inputGetString('filter', '');
-			$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));
+			$filter_string = urldecode($decodedURL);
+			//$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));
 
 			if ($filter_string != '')
 				$this->addWhereExpression($filter_string);
 		}
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.0.0
-	 */
-	protected function sanitizeAndParseFilter($paramWhere, $parse = false): string
-	{
-		if ($parse) {
-			//Parse using layout has no effect to layout itself
-
-			try {
-				$twig = new TwigProcessor($this->ct, $paramWhere);
-				$paramWhere = $twig->process();
-			} catch (Exception $e) {
-				throw new Exception('Params: "' . $paramWhere . '"' . $e->getMessage());
-			}
-
-			if ($this->ct->Params->allowContentPlugins)
-				$paramWhere = CTMiscHelper::applyContentPlugins($paramWhere);
-		}
-
-		//This is old and probably not needed any more because we use MySQLWhereClause class that sanitize individual values.
-		//I leave it here just in case
-		$paramWhere = str_ireplace('*', '%', $paramWhere);
-		$paramWhere = str_ireplace('\\', '', $paramWhere);
-		$paramWhere = str_ireplace('drop ', '', $paramWhere);
-		$paramWhere = str_ireplace('select ', '', $paramWhere);
-		$paramWhere = str_ireplace('delete ', '', $paramWhere);
-		$paramWhere = str_ireplace('update ', '', $paramWhere);
-		$paramWhere = str_ireplace('grant ', '', $paramWhere);
-		return str_ireplace('insert ', '', $paramWhere);
 	}
 
 	/**
@@ -121,6 +91,7 @@ class Filtering
 			return;
 
 		$param = $this->sanitizeAndParseFilter($param, true);
+
 		$items = CTMiscHelper::ExplodeSmartParamsArray($param);
 		$whereClauseExpression = new MySQLWhereClause();
 
@@ -128,14 +99,16 @@ class Filtering
 
 			$whereClauseTemp = new MySQLWhereClause();
 			$fieldNames = explode(';', $item['field']);
-			$value = $item['value'];
-
+			$value = $this->sanitizeAndParseFilter($item['value'], false);
+			/*
+			 * Double twig processing is unsafe
 			try {
 				$twig = new TwigProcessor($this->ct, $value);
 				$value = $twig->process();
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
+			*/
 
 			foreach ($fieldNames as $fieldname_) {
 				$fieldname_parts = explode(':', $fieldname_);
@@ -185,8 +158,38 @@ class Filtering
 
 		if ($whereClauseExpression->hasConditions())
 			$this->whereClause->addNestedCondition($whereClauseExpression);
+	}
 
-		//echo 'This what we have: ' . $this->whereClause . '<br/>';
+	/**
+	 * @throws Exception
+	 * @since 3.0.0
+	 */
+	protected function sanitizeAndParseFilter($paramWhere, $parse = false): string
+	{
+		if ($parse) {
+			//Parse using layout has no effect to layout itself
+
+			try {
+				$twig = new TwigProcessor($this->ct, $paramWhere);
+				$paramWhere = $twig->process();
+			} catch (Exception $e) {
+				throw new Exception('Params: "' . $paramWhere . '"' . $e->getMessage());
+			}
+
+			if ($this->ct->Params->allowContentPlugins)
+				$paramWhere = CTMiscHelper::applyContentPlugins($paramWhere);
+		}
+
+		//This is old and probably not needed any more because we use MySQLWhereClause class that sanitize individual values.
+		//I leave it here just in case
+		$paramWhere = str_ireplace('*', '%', $paramWhere);
+		$paramWhere = str_ireplace('\\', '', $paramWhere);
+		$paramWhere = str_ireplace('drop ', '', $paramWhere);
+		$paramWhere = str_ireplace('select ', '', $paramWhere);
+		$paramWhere = str_ireplace('delete ', '', $paramWhere);
+		$paramWhere = str_ireplace('update ', '', $paramWhere);
+		$paramWhere = str_ireplace('grant ', '', $paramWhere);
+		return str_ireplace('insert ', '', $paramWhere);
 	}
 
 	/**
@@ -206,7 +209,7 @@ class Filtering
 		$fieldname = $fieldNameParts[0];
 		$whereClause = new MySQLWhereClause();
 
-		switch ($fieldRow['type']) {
+		switch ($field->type) {
 			case '_id':
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
@@ -293,10 +296,16 @@ class Filtering
 			case 'changetime':
 			case 'creationtime':
 			case 'date':
-				if ($isRange)
+
+				if ($isRange) {
 					return $this->Search_DateRange($fieldname, $value);
-				else
-					return $this->Search_Date($fieldname, $value, $comparison_operator);
+				} else {
+					$dateFormat = 'Y-m-d';
+					if (count($field->params) > 0 and $field->params[0] == 'datetime')
+						$dateFormat = 'Y-m-d H:i:s';
+
+					return $this->Search_Date($fieldname, $value, $comparison_operator, $dateFormat);
+				}
 
 			case 'multilangtext':
 			case 'multilangstring':
@@ -952,7 +961,7 @@ class Filtering
 		return $whereClause;
 	}
 
-	protected function Search_Date(string $fieldname, string $valueRaw, string $comparison_operator): MySQLWhereClause
+	protected function Search_Date(string $fieldname, string $valueRaw, string $comparison_operator, $dateFormat = 'Y-m-d'): MySQLWhereClause
 	{
 		$whereClause = new MySQLWhereClause();
 
@@ -966,10 +975,7 @@ class Filtering
 			$title1 = $fieldname;
 		}
 
-		//field 2
 		// Sanitize and validate date format
-		$dateFormat = 'Y-m-d'; // Adjust the format according to your needs
-
 		if ($valueRaw) {
 			$valueDateTime = DateTime::createFromFormat($dateFormat, $valueRaw);
 
