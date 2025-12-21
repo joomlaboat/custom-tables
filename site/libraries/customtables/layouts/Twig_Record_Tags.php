@@ -694,7 +694,7 @@ class Twig_Record_Tags
 	function count(string $tableName = '', string $filter = '', ?string $groupBy = null): ?int
 	{
 		if ($tableName == '')
-			throw new Exception('{{ record.min(table_name) }} - Table Name not specified.');
+			throw new Exception('{{ record.count(table_name) }} - Table Name not specified.');
 
 		return $this->countOrSumRecords('count', $tableName, '_id', $filter, $groupBy);
 	}
