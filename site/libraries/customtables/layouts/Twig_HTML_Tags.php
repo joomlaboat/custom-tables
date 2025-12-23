@@ -877,7 +877,7 @@ class Twig_HTML_Tags
 	 * @throws Exception
 	 * @since 3.0.0
 	 */
-	function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')
+	function button($type = 'save', $title = '', $redirectLink = null, $optional_class = '')
 	{
 		if (defined('_JEXEC')) {
 			if (common::clientAdministrator())   //since   3.2
@@ -903,8 +903,8 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->isPlugin)
 			return '2';
 
-		if ($redirectlink === null and !is_null($this->ct->Params->returnTo))
-			$redirectlink = $this->ct->Params->returnTo;
+		if ($redirectLink === null and !is_null($this->ct->Params->returnTo))
+			$redirectLink = $this->ct->Params->returnTo;
 
 		switch ($type) {
 			case 'save':
@@ -912,11 +912,11 @@ class Twig_HTML_Tags
 				break;
 
 			case 'saveandclose':
-				$vlu = $this->renderSaveAndCloseButton($optional_class, $title, $redirectlink, $formName);
+				$vlu = $this->renderSaveAndCloseButton($optional_class, $title, $redirectLink, $formName);
 				break;
 
 			case 'saveandprint':
-				$vlu = $this->renderSaveAndPrintButton($optional_class, $title, $redirectlink, $formName);
+				$vlu = $this->renderSaveAndPrintButton($optional_class, $title, $redirectLink, $formName);
 				break;
 
 			case 'saveascopy':
@@ -924,16 +924,16 @@ class Twig_HTML_Tags
 				if (!isset($this->ct->Table->record[$this->ct->Table->realidfieldname]) or $this->ct->Table->record[$this->ct->Table->realidfieldname] == 0)
 					$vlu = '';
 				else
-					$vlu = $this->renderSaveAsCopyButton($optional_class, $title, $redirectlink, $formName);
+					$vlu = $this->renderSaveAsCopyButton($optional_class, $title, $redirectLink, $formName);
 				break;
 
 			case 'close':
 			case 'cancel':
-				$vlu = $this->renderCancelButton($optional_class, $title, $redirectlink, $formName);
+				$vlu = $this->renderCancelButton($optional_class, $title, $redirectLink, $formName);
 				break;
 
 			case 'delete':
-				$vlu = $this->renderDeleteButton($optional_class, $title, $redirectlink);
+				$vlu = $this->renderDeleteButton($optional_class, $title, $redirectLink);
 				break;
 
 			default:
@@ -943,7 +943,7 @@ class Twig_HTML_Tags
 
 		//Not clear where and how this variable used.
 		if ($this->ct->Env->frmt == 'json') {
-			$this->button_objects[] = ['type' => $type, 'title' => $title, 'redirectlink' => $redirectlink];
+			$this->button_objects[] = ['type' => $type, 'title' => $title, 'redirectlink' => $redirectLink];
 			return $title;
 		}
 
