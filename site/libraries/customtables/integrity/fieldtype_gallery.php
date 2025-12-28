@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component and WordPress 6.x Plugin
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component and WordPress 6.x Plugin
  * @package Custom Tables
  * @subpackage integrity/fields.php
  * @author Ivan Komlev <support@joomlaboat.com>

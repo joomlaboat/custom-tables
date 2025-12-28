@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -119,8 +119,8 @@ foreach ($this->items as $i => $item): ?>
 
 		<td class="hidden-phone">
 			<?php echo '<a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $item->id . '">'
-				. common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL')
-				. ' (' . $item->fieldcount . ')</a>'; ?>
+					. common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL')
+					. ' (' . $item->fieldcount . ')</a>'; ?>
 		</td>
 
 		<td class="hidden-phone">
@@ -130,8 +130,8 @@ foreach ($this->items as $i => $item): ?>
 			else {
 				try {
 					echo '<a href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
-						. common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
-						. ' (' . listOfTables::getNumberOfRecords($item->realtablename) . ')</a>';
+							. common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
+							. ' (' . listOfTables::getNumberOfRecords($item->realtablename) . ')</a>';
 				} catch (Exception $e) {
 					common::enqueueMessage($e->getMessage());
 				}

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @package Custom Tables
  * @subpackage administrator/components/com_customtables/views/layouts/tmpl/edit.php
  * @author Ivan Komlev <support@joomlaboat.com>
@@ -36,7 +36,7 @@ if (CUSTOMTABLES_JOOMLA_MIN_4) {
 }
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
-	. 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoflayouts.php');
+		. 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoflayouts.php');
 
 $onPageLoads = array();
 $typeBoxId = "jform_layouttype";

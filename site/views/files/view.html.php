@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @author Ivan Komlev <support@joomlaboat.com>
  * @copyright (C) 2018-2025. Ivan Komlev
  * @link https://joomlaboat.com

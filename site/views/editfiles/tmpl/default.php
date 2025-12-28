@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -35,9 +35,9 @@ defined('_JEXEC') or die();
 
 		if (confirm("<?php echo common::translate('COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE'); ?> " + count + " <?php
 
-			echo common::translate('COM_CUSTOMTABLES_FILE_S');
+				echo common::translate('COM_CUSTOMTABLES_FILE_S');
 
-			?>?")) {
+				?>?")) {
 
 			document.getElementById("fileedit_task").value = "delete";
 			document.getElementById("fileids").value = fileids;

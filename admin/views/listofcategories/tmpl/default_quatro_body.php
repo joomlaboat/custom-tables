@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -54,7 +54,7 @@ $user = new CTUser();
 
 		<td class="text-center btns d-none d-md-table-cell itemnumber">
 			<?php echo '<a class="btn btn-success" aria-describedby="tip-category-tables' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoftables&categoryid=' . $item->id . '">'
-				. $item->table_count . '</a>'; ?>
+					. $item->table_count . '</a>'; ?>
 			<div role="tooltip"
 				 id="tip-category-tables<?php echo $item->id; ?>"><?php echo common::translate('COM_CUSTOMTABLES_TABLES'); ?></div>
 		</td>
@@ -64,7 +64,7 @@ $user = new CTUser();
 			//' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listofmenus&categoryid=' . $item->id . '
 
 			echo '<a class="btn btn-secondary" aria-describedby="tip-tablefields' . $item->id . '" href="#">'
-				. ($item->menu_count) . '</a>'; ?>
+					. ($item->menu_count) . '</a>'; ?>
 			<div role="tooltip"
 				 id="tip-tablefields<?php echo $item->id; ?>"><?php echo common::translate('COM_CUSTOMTABLES_MENUS'); ?></div>
 		</td>

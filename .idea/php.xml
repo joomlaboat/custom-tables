@@ -19,6 +19,7 @@
       <path value="$PROJECT_DIR$/site/libraries/twig/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/site/libraries/twig/vendor/composer" />
       <path value="$PROJECT_DIR$/site/libraries/twig/vendor/twig/twig" />
+      <path value="$PROJECT_DIR$/site/libraries/twig/vendor/symfony/deprecation-contracts" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">

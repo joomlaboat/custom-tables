@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -207,7 +207,7 @@ class CustomTablesModelEditPhotos extends BaseDatabaseModel
 	{
 		if (!$this->ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT))
 			throw new Exception(common::translate('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
-		
+
 		$file = common::inputFiles('uploadedfile');
 		$this->imageGallery->uploadImageFile($file['name'], $file['tmp_name'], $this->listing_id);
 		return true;

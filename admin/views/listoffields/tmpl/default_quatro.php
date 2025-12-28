@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -82,7 +82,7 @@ if ($this->ct->Table === null): ?>
 
 							if ($this->ct->Table->realtablename != null) {
 								$ListOfFields = new ListOfFields($this->ct, $this->items, $this->canState,
-									$this->canDelete, $this->canEdit, $this->saveOrder);
+										$this->canDelete, $this->canEdit, $this->saveOrder);
 								echo $ListOfFields->renderBody();
 							}
 

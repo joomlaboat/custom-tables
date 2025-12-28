@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -47,7 +47,7 @@ try {
 
 if ($this->ct->Params->showPageHeading and $this->ct->Params->pageTitle !== null) {
 	echo '<div class="page-header' . common::ctStripTags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
-		. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
+			. common::translate($this->ct->Params->pageTitle) . '</h2></div>';
 }
 
 if ($this->result['success']) {

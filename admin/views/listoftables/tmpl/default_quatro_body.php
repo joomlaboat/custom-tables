@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
@@ -143,7 +143,7 @@ foreach ($this->items as $i => $item): ?>
 
 		<td class="text-center btns d-none d-md-table-cell itemnumber">
 			<?php echo '<a class="btn btn-success" aria-describedby="tip-tablefields' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $item->id . '">'
-				. $item->fieldcount . '</a>'; ?>
+					. $item->fieldcount . '</a>'; ?>
 			<div role="tooltip"
 				 id="tip-tablefields<?php echo $item->id; ?>"><?php echo common::translate('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?></div>
 		</td>
@@ -157,8 +157,8 @@ foreach ($this->items as $i => $item): ?>
 			else {
 				try {
 					echo '<a class="btn btn-secondary" aria-describedby="tip-tablerecords' . $item->id . '" href="' . common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
-						. listOfTables::getNumberOfRecords($item->realtablename) . '</a>'
-						. '<div role="tooltip" id="tip-tablerecords' . $item->id . '">' . common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL') . '</div>';
+							. listOfTables::getNumberOfRecords($item->realtablename) . '</a>'
+							. '<div role="tooltip" id="tip-tablerecords' . $item->id . '">' . common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL') . '</div>';
 				} catch (Exception $e) {
 					common::enqueueMessage($e->getMessage());
 				}

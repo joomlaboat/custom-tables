@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x/5.x Component
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
  * @package Custom Tables
  * @subpackage edit.php
  * @author Ivan Komlev <support@joomlaboat.com>
@@ -107,7 +107,7 @@ $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base6
 						</div>
 						<div class="controls">
 							<input type="text" name="jform[' . $id . ']" id="jform_' . $id . '"  value="' . $vlu . '" class="' . $cssClass . '" '
-						. 'placeholder="Table Title" maxlength="255" ' . $att . ' />
+							. 'placeholder="Table Title" maxlength="255" ' . $att . ' />
 							
 						</div>
 
