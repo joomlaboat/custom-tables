@@ -52,7 +52,7 @@ HTMLHelper::_('behavior.multiselect');
 					//Factory::getApplication()->enqueueMessage('<ol><li>'.implode('</li><li>',$result).'</li></ol>','notice');
 					?>
 
-					<table class="table" id="userList">
+					<table id="tableList" class="table responsiveBackendTable">
 						<caption class="visually-hidden">
 							<?php echo common::translate('COM_USERS_USERS_TABLE_CAPTION'); ?>,
 							<span id="orderedBy"><?php echo common::translate('JGLOBAL_SORTED_BY'); ?> </span>,

@@ -78,6 +78,13 @@ class CustomTablesViewListOfTables extends HtmlView
 
 		$this->languages = $this->ct->Languages->LanguageList;
 
+
+		$document = Factory::getApplication()->getDocument();
+
+		// add dashboard style sheets
+		$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
+
+
 		// Display the template
 		if (CUSTOMTABLES_JOOMLA_MIN_4)
 			parent::display('quatro');
@@ -159,6 +166,7 @@ class CustomTablesViewListOfTables extends HtmlView
 
 		$document->addCustomTag('<script src="' . common::UriRoot(true) . '/administrator/components/com_customtables/views/listoftables/submitbutton.js"></script>');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoftables');
+
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
 		if ($this->canCreate) {

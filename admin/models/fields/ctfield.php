@@ -18,6 +18,7 @@ use CustomTables\MySQLWhereClause;
 use Joomla\CMS\HTML\HTMLHelper;
 
 JFormHelper::loadFieldClass('list');
+//JFormHelper::loadFieldClass('list') loads the PHP class that implements the list form field type so it can be used (or extended) in Joomla forms.
 
 //https://docs.joomla.org/Creating_a_custom_form_field_type
 class JFormFieldCTField extends JFormFieldList

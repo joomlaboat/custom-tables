@@ -43,9 +43,11 @@ HTMLHelper::_('behavior.multiselect');
 		<?php echo common::translate('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
 	</th>
 
+	<?php /*
 	<th scope="col">
 		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL', 'a.tablecategory', $this->listDirn, $this->listOrder); ?>
 	</th>
+ */ ?>
 
 	<th scope="col" class="text-center d-none d-md-table-cell">
 		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
