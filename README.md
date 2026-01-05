@@ -42,5 +42,5 @@ Updates
 Credits, Copyright and License
 ----------
 
-* Copyright (C) 2018 - 2025 Ivan Komlev. All rights reserved.
+* Copyright (C) 2018 - 2026 Ivan Komlev. All rights reserved.
 * Distributed under the GNU General Public License version 2 or later

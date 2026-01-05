@@ -6,13 +6,12 @@
  * detailed records. It initializes and uses the `CT` and `Details` classes for handling the data
  * and rendering the output in various formats such as XML, CSV, and JSON.
  *
- * @package     CustomTables
- * @subpackage  Views
- * @author      Ivan Komlev <support@joomlaboat.com>
- * @link        https://joomlaboat.com
- * @copyright   (C) 2018-2025, Ivan Komlev
- * @license     GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
- * @since       1.0.0
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
+ * @package Custom Tables
+ * @author Ivan Komlev <support@joomlaboat.com>
+ * @link https://joomlaboat.com
+ * @copyright (C) 2018-2026. Ivan Komlev
+ * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 // no direct access

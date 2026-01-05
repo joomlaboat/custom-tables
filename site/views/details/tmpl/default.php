@@ -17,12 +17,12 @@
  * Constraints:
  * - This script ensures no direct access via `defined('_JEXEC')`.
  *
- * @package     CustomTables
- * @subpackage  Templates
- * @author      Ivan Komlev
- * @link        https://joomlaboat.com
- * @copyright   (C) 2018-2025
- * @license     GNU/GPL Version 2 - https://www.gnu.org/licenses/gpl-2.0.html
+ * CustomTables Joomla! 3.x/4.x/5.x/6.x Component
+ * @package Custom Tables
+ * @author Ivan Komlev <support@joomlaboat.com>
+ * @link https://joomlaboat.com
+ * @copyright (C) 2018-2026. Ivan Komlev
+ * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 defined('_JEXEC') or die();
@@ -94,10 +94,10 @@ if ($this->ct->Params->showPageHeading) {
 	 */
 	if (isset($this->ct->Params->pageClassSFX)) {
 		echo '<div class="page-header' . common::escape($this->ct->Params->pageClassSFX) . '"><h2 itemprop="headline">'
-			. common::translate(Factory::getApplication()->getDocument()->getTitle()) . '</h2></div>';
+				. common::translate(Factory::getApplication()->getDocument()->getTitle()) . '</h2></div>';
 	} else {
 		echo '<div class="page-header"><h2 itemprop="headline">'
-			. common::translate(Factory::getApplication()->getDocument()->getTitle()) . '</h2></div>';
+				. common::translate(Factory::getApplication()->getDocument()->getTitle()) . '</h2></div>';
 	}
 }
 

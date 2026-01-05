@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
- * @copyright (C) 2018-2025. Ivan Komlev
+ * @copyright (C) 2018-2026. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -23,7 +23,7 @@ class ImportTables
 	 * @since 3.2.2
 	 */
 	public static function processFile($filename, $menuType, ?string $message, $category = '',
-									   $importFields = true, $importLayouts = true, $importMenu = true, string $fieldPrefix = null): void
+									   $importFields = true, $importLayouts = true, $importMenu = true, ?string $fieldPrefix = null): void
 	{
 		$ct = new CT([], true);
 

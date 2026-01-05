@@ -257,12 +257,5 @@
 			   key_field="id"
 			   value_field="fieldtitle"/>
 
-		<field type="anytablefields"
-			   name="customfieldname"
-			   label="COM_CUSTOMTABLES_FIELDS_CUSTOMFIELDNAME_LABEL"
-			   description="COM_CUSTOMTABLES_FIELDS_CUSTOMFIELDNAME_DESCRIPTION"
-			   required="false"
-			   filter="CMD"
-			   hint="COM_CUSTOMTABLES_FIELDS_CUSTOMFIELDNAME_HINT"/>
 	</fieldset>
 </form>

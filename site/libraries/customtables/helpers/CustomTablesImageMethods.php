@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
- * @copyright (C) 2018-2025. Ivan Komlev
+ * @copyright (C) 2018-2026. Ivan Komlev
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -507,7 +507,7 @@ class CustomTablesImageMethods
 			CustomTablesImageMethods::DeleteCustomImage($ExistingImage, $ImageFolder, $customSize[0]);
 	}
 
-	function ProportionalResize(string $src, string $dst, int $dst_width, int $dst_height, int $LevelMax, int $backgroundColor, string $watermark, string $fileExtension = null): int
+	function ProportionalResize(string $src, string $dst, int $dst_width, int $dst_height, int $LevelMax, int $backgroundColor, string $watermark, ?string $fileExtension = null): int
 	{
 		//Returns:
 		// 1 if everything is ok
