@@ -552,6 +552,7 @@ class CustomtablesModelLayouts extends AdminModel
 		$params['deleteusergroups'] = $data['deleteusergroups'] ?? null;
 		$params['publishstatus'] = $data['publishstatus'] ?? null;
 		$params['mimetype'] = $data['mimetype'] ?? null;
+		$params['stealth'] = $data['stealth'] ?? null;
 
 		$data['params'] = json_encode($params);
 
@@ -693,6 +694,9 @@ class CustomtablesModelLayouts extends AdminModel
 
 			if (isset($data->params['mimetype']))
 				$data->mimetype = $data->params['mimetype'];
+
+			if (isset($data->params['stealth']))
+				$data->stealth = $data->params['stealth'];
 		}
 
 		return $data;

@@ -251,6 +251,11 @@ foreach ($this->allTables as $table) {
 					<div class="controls"><?php echo $this->form->getInput('mimetype'); ?></div>
 				</div>
 
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('stealth'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('stealth'); ?></div>
+				</div>
+
 			</div>
 		</div>
 

@@ -32,6 +32,7 @@ class Layouts
 	var ?string $layoutCode;
 	var ?string $layoutCodeCSS;
 	var ?string $layoutCodeJS;
+	var bool $stealth;
 
 	function __construct(&$ct)
 	{
@@ -43,6 +44,7 @@ class Layouts
 		$this->layoutCode = null;
 		$this->layoutCodeCSS = null;
 		$this->layoutCodeJS = null;
+		$this->stealth = false;
 	}
 
 	/**
@@ -422,6 +424,7 @@ class Layouts
 		$this->ct->LayoutVariables['layout_type'] = $this->layoutId;
 
 		if (!empty($row['params'])) {
+
 			try {
 				$params = json_decode($row['params'], true);
 				if (isset($params['mimetype'])) {
@@ -438,6 +441,11 @@ class Layouts
 						$this->ct->Env->clean = true;
 				}
 
+				if (isset($params['stealth'])) {
+					$this->stealth = (bool)intval($params['stealth']);
+				}
+
+
 				if (!$this->ct->Env->advancedTagProcessor) {
 					//Do not apply Layout params in Free version as they are inaccessible.
 					$params['filter'] = null;
@@ -447,6 +455,7 @@ class Layouts
 					$params['deleteusergroups'] = null;
 					$params['publishstatus'] = null;
 					$params['mimetype'] = null;
+					$params['stealth'] = null;
 				}
 
 				$this->ct->Params->setParams($params);
@@ -1135,7 +1144,7 @@ class Layouts
 		if ($this->ct->Params->allowContentPlugins)
 			$layoutDetailsContent = CTMiscHelper::applyContentPlugins($layoutDetailsContent);
 
-		if (!is_null($this->ct->Table->record)) {
+		if (!$this->stealth and !is_null($this->ct->Table->record)) {
 			//Save view log
 			$this->SaveViewLogForRecord();
 		}

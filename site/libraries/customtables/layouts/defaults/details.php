@@ -19,8 +19,6 @@ function createLayout_Details(array $fields): string
 	foreach ($fields as $field) {
 		if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {
 			$result .= '<div class="control-group">';
-
-			//if ($field['type'] == 'creationtime' or $field['type'] == 'changetime' or $field['type'] == 'lastviewtime')
 			$fieldTag = '{{ ' . $field['fieldname'] . ' }}';
 			$result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.title }}</div><div class="controls"> ' . $fieldTag . ' </div>';
 			$result .= '</div>';

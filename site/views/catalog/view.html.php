@@ -119,7 +119,10 @@ class CustomTablesViewCatalog extends HtmlView
 		}
 
 		//Save view log
-		$allowed_fields = $this->SaveViewLog_CheckIfNeeded();
+		if (!$this->catalog->stealth)
+			$allowed_fields = $this->SaveViewLog_CheckIfNeeded();
+		else
+			$allowed_fields = [];
 
 		if (count($allowed_fields) > 0 and $this->ct->Records !== null) {
 			foreach ($this->ct->Records as $rec)
@@ -158,8 +161,6 @@ class CustomTablesViewCatalog extends HtmlView
 						$updateAction = $pair[1];
 						if ($updateAction == 'view')
 							$allowed_fields[] = $mFld['fieldname'];
-
-						//echo '$allowed_fields:' . implode(',', $allowed_fields) . '.';
 					}
 
 				} else {

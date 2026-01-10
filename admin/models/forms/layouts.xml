@@ -182,5 +182,15 @@
 			<option value="txt">Plain Text (text/plain)</option>
 		</field>
 
+		<field
+				type="list"
+				name="stealth"
+				default="0"
+				label="Stealth Mode"
+				description="When enabled, this layout does not record view events. Page views are not logged, and fields such as Last View Time and visitor IP address are not updated. Useful for administrative or internal layouts where view tracking is not required.">
+			<option value="0">Disabled</option>
+			<option value="1">Enabled</option>
+		</field>
+
 	</fieldset>
 </form>

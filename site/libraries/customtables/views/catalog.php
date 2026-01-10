@@ -20,12 +20,14 @@ class Catalog
 	var CT $ct;
 	var ?string $layoutCodeCSS;
 	var ?string $layoutCodeJS;
+	var bool $stealth;
 
 	function __construct(CT &$ct)
 	{
 		$this->ct = &$ct;
 		$this->layoutCodeCSS = '';
 		$this->layoutCodeJS = '';
+		$this->stealth = false;
 	}
 
 	/**
@@ -45,6 +47,7 @@ class Catalog
 
 		if ($layoutName !== null) {
 			$pageLayout = $Layouts->getLayout($layoutName);
+
 			if (isset($Layouts->layoutId)) {
 				$pageLayoutNameString = ($layoutName == '' ? 'InlinePageLayout' : $layoutName);
 				$pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
@@ -55,6 +58,8 @@ class Catalog
 				throw new Exception('Layout "' . $layoutName . '" not found.');
 			}
 		}
+
+		$this->stealth = $Layouts->stealth;
 
 		// -------------------- Table
 		if ($this->ct->Table === null) {
