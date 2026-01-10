@@ -88,17 +88,6 @@ function esEditObject(objId, toolbarBoxId, Itemid, tmpl, returnto) {
 function runTheTask(task, tableid, recordId, responses, last, reload, ModuleId) {
 
 	let params = 'task=' + task + '&listing_id=' + recordId;
-
-	/*
-	if (CTEditHelper.cmsName === 'Joomla') {
-		if (typeof ModuleId !== 'undefined' && ModuleId !== null && ModuleId !== 0)
-			params += '&ModuleId=' + ModuleId;
-		else
-			params += '&Itemid=' + CTEditHelper.itemId;
-	}
-*/
-	console.log("params:", params);
-
 	let http = CreateHTTPRequestObject();   // defined in ajax.js
 	let addParams = ['option=com_customtables', 'view=edititem', 'clean=1', 'frmt=json'];
 
@@ -256,9 +245,8 @@ function findRowIndexById(table, tableid, id, icon) {
 	//icon = "ctDeleteIcon"
 	if (!table) return -2;
 	let lookingFor = '#' + icon + tableid + "x" + id;
-	console.warn("lookingFor", lookingFor)
 	let rows = table.rows;
-	console.log("count:", rows.length)
+
 	for (let i = 0; i < rows.length; i++) {
 
 		let deleteIcon = rows[i].querySelector(lookingFor);

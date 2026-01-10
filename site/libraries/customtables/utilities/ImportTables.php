@@ -79,7 +79,7 @@ class ImportTables
 										  bool $importfields = true, bool $importlayouts = true, bool $importmenu = true, string $fieldPrefix = 'ct_'): bool
 	{
 		foreach ($JSON_data as $table) {
-			$importedTableFieldPrefix = $table['table']['customfieldprefix'];
+			$importedTableFieldPrefix = $table['table']['customfieldprefix'] ?? 'ct_';
 			$importedTableRealIdFieldName = empty($table['table']['customidfield']) ? 'id' : $table['table']['customidfield'];
 
 			$table['table']['customfieldprefix'] = $fieldPrefix;
