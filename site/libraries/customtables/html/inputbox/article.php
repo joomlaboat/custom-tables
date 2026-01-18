@@ -77,7 +77,7 @@ class InputBox_article extends BaseInputBox
 
 		$whereClause = new MySQLWhereClause();
 
-		$catId = (int)((count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params : 0);
+		$catId = (int)((count($this->field->params) > 0 and $this->field->params[0] != '') ? $this->field->params[0] : 0);
 
 		if ($catId != 0)
 			$whereClause->addCondition('catid', $catId);

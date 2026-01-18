@@ -492,7 +492,7 @@ class TableHelper
 			$whereClause->addCondition('TABLE_NAME', $prefix . 'user_usergroup_map', '!=');
 			$whereClause->addCondition('TABLE_NAME', $prefix . 'usergroups', '!=');
 			$whereClause->addCondition('TABLE_NAME', $prefix . 'users', '!=');
-			$rows = database::loadAssocList('information_schema.tables', ['TABLE_NAME AS table_name'], $whereClause);
+			$rows = database::loadAssocList('information_schema.tables', ['TABLE_NAME AS table_name'], $whereClause, 'table_name');
 		}
 		$list = array();
 
