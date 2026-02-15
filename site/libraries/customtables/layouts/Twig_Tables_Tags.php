@@ -175,4 +175,32 @@ class Twig_Tables_Tags
 
 		throw new Exception('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.');
 	}
+
+	function sqlselect(string $query = '', string $mode = 'auto')
+	{
+		if (!defined('_JEXEC'))
+			throw new Exception('{{ tables.sqlselect() }} - Only supported in Joomla.');
+
+
+		$file_path = CUSTOMTABLES_PRO_PATH . 'protagprocessor' . DIRECTORY_SEPARATOR . 'sqlselect.php';
+		if (file_exists($file_path)) {
+			require_once($file_path);
+		} else {
+			throw new Exception('{{ tables.sqlselect() }} - ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
+		}
+
+		if (!$this->ct->Env->SQLSelectEnabled)
+			throw new Exception('{{ tables.sqlselect() }} - Disabled. Go to Plugins / Custom Tables to enable it.');
+
+		if (empty($query))
+			throw new Exception('{{ tables.sqlselect() }} - Requires a query.');
+
+		// Enforce SELECT-only queries
+		$trimmed = ltrim($query);
+		if (stripos($trimmed, 'SELECT') !== 0) {
+			throw new Exception('{{ tables.sqlselect() }} - Only SELECT queries are allowed.');
+		}
+
+		return SQLSelect::runQuery($query, $mode);
+	}
 }

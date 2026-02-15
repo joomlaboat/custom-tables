@@ -785,6 +785,29 @@
 					   repetitive="0"/>
 			</params>
 		</tag>
+
+		<tag name="sqlquery" label="SQL SELECT Query" startchar="{" endchar="}"
+			 description="Executes a custom SQL SELECT query using a read-only database connection. Only SELECT statements are allowed; UPDATE, DELETE, INSERT, and other write operations are blocked."
+			 twigclass="tables" proversion="1" wordpress="false">
+			<params>
+				<param name="query" label="Query" type="string"
+					   description="The SQL SELECT query to execute. Must be a valid SELECT statement. Use the #__ prefix for Joomla table names and concatenate Twig variables using '~'."
+					   example="SELECT COUNT(id) FROM #__users"
+				/>
+				<param name="mode"
+					   label="Result Mode"
+					   type="list"
+					   default="auto"
+					   description="Controls how the query result is returned"
+				>
+					<option value="auto" label="Auto detect"/>
+					<option value="scalar" label="Single value"/>
+					<option value="row" label="Single row"/>
+					<option value="list" label="Multiple rows"/>
+				</param>
+			</params>
+		</tag>
+
 	</tagset>
 
 	<!-- Fields Tags -->
