@@ -906,7 +906,7 @@ function renderTags(index, tagSet) {
 				fullTagName = tag.name;
 
 			if (tagSetAttributes.name === 'filters')
-				fullTagName = tag.examplevalue + ' | ' + fullTagName;
+				fullTagName = tag.examplevalue + ' | ' + tag.name;//fullTagName;
 
 
 			let isOk = true;
