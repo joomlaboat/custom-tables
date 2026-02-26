@@ -117,7 +117,12 @@ class ExportTables
 			$whereClause->addCondition('POSITION("establename":"' . $table['tablename'] . '" IN params)', 0, '>');
 		} else {
 			$whereClause->addCondition('link', 'index.php?option=com_customtables&view=', 'INSTR');
-			$whereClause->addCondition('params', '"establename":"' . $table['tablename'] . '"', 'INSTR');
+
+			$whereClauseOr = new MySQLWhereClause();
+			$whereClauseOr->addOrCondition('params', '"establename":"' . $table['tablename'] . '"', 'INSTR');
+			$whereClauseOr->addOrCondition('params', '"establename":"' . $table['id'] . '"', 'INSTR');
+
+			$whereClause->addNestedCondition($whereClauseOr);
 		}
 
 		if (defined('_JEXEC'))

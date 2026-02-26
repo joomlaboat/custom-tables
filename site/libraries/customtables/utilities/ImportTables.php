@@ -411,6 +411,7 @@ class ImportTables
 			ImportTables::updateRecords('fields', $field_new, $field_old);
 		} else {
 			//Create field record
+			$field_new['id'] = null; //This is important to prevent duplicate records.
 			$fieldid = ImportTables::insertRecords('#__customtables_fields', $field_new);
 			if ($fieldid != 0) {
 				//Field added
