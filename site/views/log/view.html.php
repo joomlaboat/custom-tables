@@ -15,7 +15,6 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\database;
-use CustomTables\Details;
 use CustomTables\MySQLWhereClause;
 use CustomTables\Params;
 use CustomTables\TwigProcessor;
@@ -24,7 +23,6 @@ use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewLog extends HtmlView
 {
-	var Details $details;
 	var int $limit;
 	var int $limitStart;
 	var int $record_count;
