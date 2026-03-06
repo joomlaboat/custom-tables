@@ -498,7 +498,7 @@ class Value_file extends BaseValue
 			if (defined('_JEXEC')) {
 
 				$serverTagProcessorFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR
-					. 'customtables' . DIRECTORY_SEPARATOR . 'protagprocessor' . DIRECTORY_SEPARATOR . 'servertags.php';
+					. 'customtables' . DIRECTORY_SEPARATOR . 'protagprocessor' . DIRECTORY_SEPARATOR . 'helpers.php';
 
 				if (!file_exists($serverTagProcessorFile))
 					return $content;

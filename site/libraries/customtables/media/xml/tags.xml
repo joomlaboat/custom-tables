@@ -1317,12 +1317,16 @@
 		</tag>
 
 		<tag name="layout" label="Extend Layout" startchar="{" endchar="}"
-			 description="Includes the content of selected layout." hidedefaultexample="0" proversion="1"
+			 description="Includes and renders the content of the selected layout file." hidedefaultexample="0"
+			 proversion="1"
 			 twigclass="document" wordpress="true">
 			<params>
-				<param name="layoutname" label="Layout Name" type="layout" description="Layout Name."
+				<param name="layoutname" label="Layout Name" type="layout"
+					   description="The name of the layout to include."
 					   examplenoquotes="0" table="current" example="my_script_layout"/>
-				<!-- <param name="process" label="Process content" description="Process content plugins such as Content - Email Cloaking etc." type="radio" default="" options="|No,process|Process"/> -->
+				<param name="process" label="Content plugins"
+					   description="If enabled, runs Joomla content plugins after rendering (e.g., Content - Email Cloaking)."
+					   type="radio" default="" options="false|False,true|True"/>
 			</params>
 		</tag>
 
@@ -1378,6 +1382,18 @@
 				</param>
 			</params>
 		</tag>
+
+		<tag name="cookie" label="Cookie" startchar="{" endchar="}" hidedefaultexample="1"
+			 description="Returns the value of an HTTP cookie sent with the current request."
+			 proversion="0" twigclass="document"
+			 layouttypes="1,2,4,5,6" wordpress="true">
+			<params>
+				<param name="text" label="Cookie name" type="string"
+					   example="token"
+					   description="The name of the cookie to read from the current request (same as PHP $_COOKIE)."/>
+			</params>
+		</tag>
+
 
 		<!-- Deprecated -->
 

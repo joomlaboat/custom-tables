@@ -742,13 +742,10 @@ class Twig_HTML_Tags
 		return $this->renderButtonOrIcon($linkType, $label, $class, $icon, $onClick);
 	}
 
-	function searchreset($linkType = '', $label = '', $class_ = ''): string
+	function searchreset($linkType = '', $defaultLabel = '', $class_ = ''): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
-
-		//if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
-		//return '';
 
 		$class = 'ctSearchBox';
 

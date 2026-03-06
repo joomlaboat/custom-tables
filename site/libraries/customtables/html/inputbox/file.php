@@ -11,10 +11,10 @@
 namespace CustomTables;
 
 // no direct access
+defined('_JEXEC') or die();
+
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-
-defined('_JEXEC') or die();
 
 class InputBox_file extends BaseInputBox
 {

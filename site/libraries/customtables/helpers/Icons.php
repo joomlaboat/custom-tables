@@ -759,7 +759,7 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/search.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '">';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')
@@ -792,7 +792,7 @@ class Icons
 
 		// Image Icons (default)
 		if ($type == '')
-			return '';
+			return '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/search-reset.png" class="ctToolBarIcon" alt="' . $title . '" title="' . $title . '">';
 
 		// Not So Pixelly
 		elseif ($type == 'not-so-pixelly')

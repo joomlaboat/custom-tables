@@ -127,8 +127,6 @@ class Environment
 			if (file_exists($path . 'helpers.php'))
 				require_once($path . 'helpers.php');
 
-			if (file_exists($path . 'servertags.php'))
-				require_once($path . 'servertags.php');
 		} elseif (defined('WPINC') and defined('CustomTablesWPPro\CTWPPRO')) {
 			$path = CUSTOMTABLES_PRO_PATH;
 			$path = str_replace('/', DIRECTORY_SEPARATOR, $path);

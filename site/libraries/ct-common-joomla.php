@@ -422,6 +422,11 @@ class common
 		return $_SERVER[$param] ?? null;
 	}
 
+	public static function getCookie(string $param)
+	{
+		return $_COOKIE[$param] ?? null;
+	}
+
 	//Returns base64 encoded/decoded url in Joomla and Sessions ReturnTo variable reference in WP or reference converted to URL
 
 	public static function ctParseUrl($argument)

@@ -216,7 +216,7 @@ class Twig_Document_Tags
 	 * @throws Exception
 	 * @since 3.2.9
 	 */
-	function layout(string $layoutName = ''): ?string
+	function layout(string $layoutName = '', bool $parseContentPlugins = false): ?string
 	{
 		//TODO: the use if this tag must be reflected in the dependence tab of the layout used.
 
@@ -266,6 +266,9 @@ class Twig_Document_Tags
 				throw new Exception($e->getMessage());
 			}
 		}
+
+		if ($parseContentPlugins and !empty($html_result))
+			CTMiscHelper::applyContentPlugins($html_result);
 
 		return $html_result;
 	}
@@ -356,5 +359,17 @@ class Twig_Document_Tags
 	public function get(string $variable)
 	{
 		return $this->ct->LayoutVariables['globalVariables'][$variable];
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.7.1
+	 */
+	function cookie($param): ?string
+	{
+		if (!$this->ct->Env->advancedTagProcessor)
+			throw new Exception('Warning: The {{ document.cookie }} ' . common::translate('COM_CUSTOMTABLES_AVAILABLE'));
+
+		return common::getCookie($param);
 	}
 }
