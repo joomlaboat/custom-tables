@@ -75,7 +75,8 @@ class CustomtablesViewRecords extends HtmlView
 			$this->ct->Params->setParams([
 				'tableid' => $this->tableId,
 				'publishstatus' => 1,//for new records
-				'listingid' => common::inputGetCmd('id')
+				'listingid' => common::inputGetCmd('id'),
+				'showpublished' => CUSTOMTABLES_SHOWPUBLISHED_ANY
 			]);
 			$this->ct->getTable($this->tableId);
 
