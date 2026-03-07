@@ -1073,14 +1073,14 @@ class database
 		$database = self::getDataBaseName();
 
 		if ($type == 'gallery') {
-			$oldTableName = '#__customtables_gallery_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $oldCTTableName)));
-			$newTableName = '#__customtables_gallery_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $newCTTableName)));
+			$oldTableName = '#__customtables_gallery_' . trim(preg_replace("/[^a-zA-Z_\d]/", "", $oldCTTableName));
+			$newTableName = '#__customtables_gallery_' . trim(preg_replace("/[^a-zA-Z_\d]/", "", $newCTTableName));
 		} elseif ($type == 'filebox') {
-			$oldTableName = '#__customtables_filebox_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $oldCTTableName)));
-			$newTableName = '#__customtables_filebox_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $newCTTableName)));
+			$oldTableName = '#__customtables_filebox_' . trim(preg_replace("/[^a-zA-Z_\d]/", "", $oldCTTableName));
+			$newTableName = '#__customtables_filebox_' . trim(preg_replace("/[^a-zA-Z_\d]/", "", $newCTTableName));
 		} else {
-			$oldTableName = '#__customtables_table_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $oldCTTableName)));
-			$newTableName = '#__customtables_table_' . strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $newCTTableName)));
+			$oldTableName = '#__customtables_table_' . trim(preg_replace("/[^a-zA-Z_\d]/", "", $oldCTTableName));
+			$newTableName = '#__customtables_table_' . trim(preg_replace("/[^a-zA-Z_\d]/", "", $newCTTableName));
 		}
 
 		$db->setQuery('RENAME TABLE ' . $db->quoteName($database . '.' . $oldTableName) . ' TO '
