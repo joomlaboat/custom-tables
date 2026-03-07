@@ -721,9 +721,6 @@ class Twig_HTML_Tags
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
 			return '';
 
-		//if ($this->ct->Env->isPlugin or !empty($this->ct->Params->ModuleId))
-		//return '';
-
 		$class = 'ctSearchBox';
 
 		if (!empty($class_))

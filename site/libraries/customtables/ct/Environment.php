@@ -58,6 +58,8 @@ class Environment
 				$this->CustomPHPEnabled = (int)($pluginParamsArray->phpPlugin ?? 0) == 1;
 				$this->SQLSelectEnabled = (int)($pluginParamsArray->sqlSelectTag ?? 0) == 1;
 			}
+		} elseif (defined('WPINC')) {
+			$this->SQLSelectEnabled = (int)get_option('customtables-sqlselecttag', '') == 1;
 		}
 
 		$this->current_url = common::curPageURL();

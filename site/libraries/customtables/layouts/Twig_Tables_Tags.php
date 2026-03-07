@@ -178,11 +178,14 @@ class Twig_Tables_Tags
 
 	function sqlselect(string $query = '', string $mode = 'auto')
 	{
-		if (!defined('_JEXEC'))
-			throw new Exception('{{ tables.sqlselect() }} - Only supported in Joomla.');
+		if (defined('_JEXEC')) {
+			$file_path = CUSTOMTABLES_PRO_PATH . 'protagprocessor' . DIRECTORY_SEPARATOR . 'sqlselect.php';
+		} elseif (defined('WPINC')) {
+			$file_path = CUSTOMTABLES_PRO_PATH . 'inputbox' . DIRECTORY_SEPARATOR . 'sqlselect.php';
+		} else {
+			throw new Exception('{{ tables.sqlselect() }} - not supported in this environment.');
+		}
 
-
-		$file_path = CUSTOMTABLES_PRO_PATH . 'protagprocessor' . DIRECTORY_SEPARATOR . 'sqlselect.php';
 		if (file_exists($file_path)) {
 			require_once($file_path);
 		} else {
