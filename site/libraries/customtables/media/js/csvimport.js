@@ -203,11 +203,16 @@ class CustomTablesCSVImport {
 						this.horizontalLines.pop();
 					else
 						this.horizontalLines.splice(this.deleteLineCandidate.index, 1);
+
+					this.saveHorizontalLines();
+
 				} else if (mouseY < 30 && this.deleteLineCandidate.type === this.VERTICAL) {
 					if (this.deleteLineCandidate.index === this.verticalLines.length - 1)
 						this.verticalLines.pop();
 					else
 						this.verticalLines.splice(this.deleteLineCandidate.index, 1);
+
+					this.saveVerticalLines();
 				}
 
 				this.deleteLineCandidate = null;
@@ -356,7 +361,10 @@ class CustomTablesCSVImport {
 		let lineAbove = null;
 		let lineBelow = null;
 
-		if (this.addLineCandidate.index === -1) {
+		if (this.horizontalLines.length === 0) {
+			lineAbove = [[0, 0], [this.canvas.width, 0]];
+			lineBelow = [[0, this.canvas.height], [this.canvas.width, this.canvas.height]];
+		} else if (this.addLineCandidate.index === -1) {
 			lineBelow = this.horizontalLines[this.addLineCandidate.index + 1];
 			lineAbove = this.horizontalLines[this.addLineCandidate.index + 1].map(p => [...p]);
 			lineAbove.forEach(p => p[1] = 0);
@@ -393,6 +401,7 @@ class CustomTablesCSVImport {
 
 		this.addLineCandidate = null;
 
+		this.saveHorizontalLines();
 		this.drawCanvas();
 	}
 
@@ -437,6 +446,7 @@ class CustomTablesCSVImport {
 
 		this.addLineCandidate = null;
 
+		this.saveVerticalLines();
 		this.drawCanvas();
 	}
 
@@ -525,7 +535,11 @@ class CustomTablesCSVImport {
 			}
 
 			let i = this.horizontalLines.length - 1;
-			let y1 = this.horizontalLines[i][0][1];
+
+			let y1 = 0;
+			if (this.horizontalLines.length > 0)
+				y1 = this.horizontalLines[i][0][1];
+
 			let y2 = this.canvas.height;
 
 			if (mouseY > y1 - this.BETWEEN_TOLERANCE) {
