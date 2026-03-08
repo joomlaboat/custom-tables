@@ -172,8 +172,7 @@ class CustomTablesCSVImport {
 			const mouseX = e.clientX - rect.left;
 			const mouseY = e.clientY - rect.top;
 
-			let line = null;
-			line = this.findHLineAtPosition(mouseX, mouseY);
+			let line = this.findHLineAtPosition(mouseX, mouseY);
 			if (line) {
 				this.draggingHLine = line[1];
 				this.lastMouseY = mouseY;
