@@ -66,7 +66,7 @@ echo '
 	<input type="hidden" name="fileid" value="' . $fileId . '" />
 	<input type="hidden" name="option" value="com_customtables" />
 	<!--<input type="hidden" name="controller" value="importtables" />-->
-	<input type="hidden" name="task" value="importrecords.importrecords" />
+	<input type="hidden" name="task" value="importrecords.preview_import" />
 ' . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . CTMiscHelper::formatSizeUnits($max_file_size) . '
     ' . HTMLHelper::_('form.token') . '
 	</form>

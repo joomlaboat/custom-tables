@@ -22,7 +22,7 @@ class CustomTablesControllerImportRecords extends FormController
 	{
 		$task = common::inputGetCmd('task', '');
 
-		if ($task == 'importrecords')
+		if ($task == 'import_ecords')
 			$this->importrecords();
 		else {
 			common::inputSet('view', 'importrecords');
@@ -48,8 +48,8 @@ class CustomTablesControllerImportRecords extends FormController
 		}
 
 		try {
-			ImportCSV::importCSVFile($filename, $tableId);
-
+			$response = ImportCSV::importCSVFile($filename, $tableId, false);
+			unlink($filename);
 			$link = 'index.php?option=com_customtables&view=listofrecords&tableid=' . $tableId;
 			$this->setRedirect($link, common::translate('Records Imported Successfully'));
 		} catch (Throwable $e) {

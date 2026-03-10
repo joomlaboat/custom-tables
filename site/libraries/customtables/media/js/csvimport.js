@@ -14,6 +14,9 @@ class CustomTablesCSVImport {
 	constructor(canvasElementId, img, horizontalLines = null, verticalLines = null,
 				horizontalEditBox = "comes_horizontal_lines", verticalEditBox = "comes_vertical_lines") {
 
+		if (!img)
+			return;
+
 		this.horizontalEditBox = horizontalEditBox;
 		this.verticalEditBox = verticalEditBox;
 

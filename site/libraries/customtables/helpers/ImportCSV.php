@@ -21,11 +21,14 @@ class ImportCSV
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	public static function importCSVFile($filename, $ct_tableid): void
+	public static function importCSVFile($filename, $ct_tableid, bool $sample = false): array
 	{
 		if (file_exists($filename)) {
 			try {
-				self::importCSVdata($filename, $ct_tableid);
+				if ($sample)
+					return self::importCSVdataSample($filename, $ct_tableid);
+				else
+					return self::importCSVdata($filename, $ct_tableid);
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
@@ -37,7 +40,7 @@ class ImportCSV
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	private static function importCSVData(string $filename, int $ct_tableid): void
+	private static function importCSVDataSample(string $filename, int $ct_tableid): array
 	{
 		$arrayOfLines = self::getLines($filename);
 
@@ -49,42 +52,50 @@ class ImportCSV
 		$line = $arrayOfLines[0];
 		$prepareFieldList = self::prepareFieldList($line, $ct->Table->fields);
 		$fieldList = $prepareFieldList['fieldList'];
-		$fields = self::processFieldParams($fieldList, $ct->Table->fields);//return associative array
+		//$fields = self::processFieldParams($fieldList, $ct->Table->fields);//return associative array
+
+		$fieldNames = [];
+		foreach ($fieldList as $field) {
+			if ($field == -2)
+				$fieldNames[] = null;
+			elseif ($field == -1)
+				$fieldNames[] = '#';
+			elseif ($field > -1)
+				$fieldNames[] = $ct->Table->fields[$field]['fieldname'];
+		}
+
+		$recordSample = [];
 
 		if ($prepareFieldList['header'])
 			$offset = 1;
 		else
 			$offset = 0;
 
+
+		$count = 0;
 		for ($i = $offset; $i < count($arrayOfLines); $i++) {
 			if (count($arrayOfLines[$i]) > 0) {
-				$result = self::prepareSQLQuery($ct, $fieldList, $fields, $arrayOfLines[$i]);
-				$listing_id = self::findRecord($ct->Table->realtablename, $ct->Table->realidfieldname, $ct->Table->published_field_found, $result->where);
-
-				if (is_null($listing_id) and count($result->data) > 0) {
-					try {
-						database::insert($ct->Table->realtablename, $result->data);
-					} catch (Exception $e) {
-						throw new Exception($e->getMessage());
-					}
-				} else {
-					database::update($ct->Table->realtablename, $result->data, $result->where);
-				}
+				//$result = self::prepareSQLQuery($ct, $fieldList, $fields, $arrayOfLines[$i]);
+				$recordSample[] = $arrayOfLines[$i];
+				$count += 1;
+				if ($count >= 20)
+					break;
 			}
 		}
+		return ['fields' => $fieldNames, 'records' => $recordSample];
 	}
-
-	//https://stackoverflow.com/questions/26717462/php-best-approach-to-detect-csv-delimiter/59581170
 
 	private static function getLines($filename): ?array
 	{
 		$delimiter = self::detectDelimiter($filename);
+		$enclosure = '"';
+		$escape = '\\';
 
 		if (($handle = fopen($filename, "r")) !== FALSE) {
 			$lines = [];
-			$enclosure = "\"";
 
-			while (($data = fgetcsv($handle, 0, $delimiter, $enclosure)) !== FALSE)
+
+			while (($data = fgetcsv($handle, 0, $delimiter, $enclosure, $escape)) !== FALSE)
 				$lines[] = $data;
 
 			fclose($handle);
@@ -93,19 +104,23 @@ class ImportCSV
 		return null;
 	}
 
+	//https://stackoverflow.com/questions/26717462/php-best-approach-to-detect-csv-delimiter/59581170
+
 	private static function detectDelimiter($csvFile): string
 	{
 		//first line is a list of field name, so this approach is ok here
-		$delimiters = [";" => 0, "," => 0, "\t" => 0, "|" => 0];
+		$separators = [";" => 0, "," => 0, "\t" => 0, "|" => 0];
+		$enclosure = '"';
+		$escape = '\\';
 
 		$handle = fopen($csvFile, "r");
 		$firstLine = fgets($handle);
 		fclose($handle);
-		foreach ($delimiters as $delimiter => &$count) {
-			$count = count(str_getcsv($firstLine, $delimiter));
+		foreach ($separators as $separator => &$count) {
+			$count = count(str_getcsv($firstLine, $separator, $enclosure, $escape));
 		}
 
-		return array_search(max($delimiters), $delimiters);
+		return array_search(max($separators), $separators);
 	}
 
 	private static function prepareFieldList(array $fieldNames, array $fields): array
@@ -158,6 +173,44 @@ class ImportCSV
 		}
 	}
 
+	private static function importCSVData(string $filename, int $ct_tableid): array
+	{
+		$arrayOfLines = self::getLines($filename);
+
+		if ($arrayOfLines === null)
+			throw new Exception(common::translate('COM_CUSTOMTABLES_CSV_FILE_EMPTY'));
+
+		$ct = new CT([], true);
+		$ct->getTable($ct_tableid);
+		$line = $arrayOfLines[0];
+		$prepareFieldList = self::prepareFieldList($line, $ct->Table->fields);
+		$fieldList = $prepareFieldList['fieldList'];
+		$fields = self::processFieldParams($fieldList, $ct->Table->fields);//return associative array
+
+		if ($prepareFieldList['header'])
+			$offset = 1;
+		else
+			$offset = 0;
+
+		for ($i = $offset; $i < count($arrayOfLines); $i++) {
+			if (count($arrayOfLines[$i]) > 0) {
+				$result = self::prepareSQLQuery($ct, $fieldList, $fields, $arrayOfLines[$i]);
+				$listing_id = self::findRecord($ct->Table->realtablename, $ct->Table->realidfieldname, $ct->Table->published_field_found, $result->where);
+
+				if (is_null($listing_id) and count($result->data) > 0) {
+					try {
+						database::insert($ct->Table->realtablename, $result->data);
+					} catch (Exception $e) {
+						throw new Exception($e->getMessage());
+					}
+				} else {
+					database::update($ct->Table->realtablename, $result->data, $result->where);
+				}
+			}
+		}
+		return [];
+	}
+
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
@@ -201,9 +254,6 @@ class ImportCSV
 	 */
 	private static function prepareSQLQuery(CT $ct, array $fieldList, array $fields, $line): object
 	{
-		echo '$fieldList:';
-		print_r($fieldList);
-		echo '<br>';
 		$data = [];
 		$whereClause = new MySQLWhereClause();
 
