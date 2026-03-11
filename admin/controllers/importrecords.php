@@ -22,7 +22,7 @@ class CustomTablesControllerImportRecords extends FormController
 	{
 		$task = common::inputGetCmd('task', '');
 
-		if ($task == 'import_ecords')
+		if ($task == 'import_records')
 			$this->importrecords();
 		else {
 			common::inputSet('view', 'importrecords');

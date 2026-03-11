@@ -31,16 +31,18 @@ class CustomTablesViewImportRecords extends HtmlView
 	var array $previewData;
 
 	var CT $ct;
+	var int $tableId;
+	var string $fileId;
 
 	function display($tpl = null)
 	{
 		//ToolbarHelper::title(common::translate('Custom Tables - Import Records'), 'joomla');
-		$tableId = common::inputGetInt('tableid', 0);
+		$this->tableId = common::inputGetInt('tableid', 0);
 		$this->ct = new CT;
-		$this->ct->getTable($tableId);
+		$this->ct->getTable($this->tableId);
 		$this->fieldInputPrefix = $this->ct->Table->fieldInputPrefix;
 
-		ToolbarHelper::back('Back to Records', 'index.php?option=com_customtables&view=listofrecords&tableid=' . $tableId);
+		ToolbarHelper::back('Back to Records', 'index.php?option=com_customtables&view=listofrecords&tableid=' . $this->tableId);
 		// First button (Create from Schema)
 
 		// Get the toolbar object instance
@@ -52,9 +54,11 @@ class CustomTablesViewImportRecords extends HtmlView
 		$task = common::inputGetCmd('task', '');
 		if ($task == 'preview_import') {
 			$this->previewData = $this->buildPreview();
+			$this->updateFieldMap();
+
 			$toolbar = Toolbar::getInstance('toolbar');
-			$toolbar->appendButton('Standard', 'upload', 'Import Records', 'listofrecords.importcsv', false, null);
-			$toolbar->appendButton('Standard', 'refresh', 'Refresh', 'listofrecords.importcsv', false, null);
+			$toolbar->appendButton('Standard', 'refresh', 'Refresh', 'importrecords.preview_import', false, null);
+			$toolbar->appendButton('Standard', 'upload', 'Import Records', 'importrecords.import_records', false, null);
 
 			$application = Factory::getApplication();
 			$document = $application->getDocument();
@@ -76,22 +80,40 @@ class CustomTablesViewImportRecords extends HtmlView
 			. 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
 
 		try {
-			$tableId = common::inputGetInt('tableid', 0);
-			$fileId = common::inputGetCmd('fileid', '');
-			$filename = FileUploader::getFileNameByID($fileId);
+			//$this->tableId = common::inputGetInt('tableid', 0);
+			$this->fileId = common::inputGetCmd('fileid', '');
+			$filename = FileUploader::getFileNameByID($this->fileId);
 		} catch (Exception $e) {
 			echo $e->getMessage();
 			die;
 		}
 
 		//try {
-		return ImportCSV::importCSVFile($filename, $tableId, true);
-
+		return ImportCSV::importCSVFile($filename, $this->tableId, true);
 
 		//} catch (Throwable $e) {
 		//	unlink($filename);
 		//	$link = 'index.php?option=com_customtables&view=importrecords&tableid=' . $tableId;
 		//	$this->setRedirect($link, common::translate('Records was Unable to Import: ' . $e->getMessage()), 'error');
 		//}
+	}
+
+	function updateFieldMap()
+	{
+		$index = 0;
+		$new_fields = [];
+
+		foreach ($this->previewData['fields'] as $field) {
+			$control_name = 'field_map_' . $index;
+			$f = common::inputGetCmd($control_name, '');
+
+			if (empty($f)) {
+				$new_fields[] = $field;
+			} else {
+				$new_fields[] = $f;
+			}
+			$index += 1;
+		}
+		$this->previewData['fields'] = $new_fields;
 	}
 }

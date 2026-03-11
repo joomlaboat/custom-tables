@@ -26,11 +26,11 @@ HTMLHelper::_('behavior.formvalidator');
 $document = Factory::getApplication()->getDocument();
 
 $fields = [];
-$fields[] = array('id' => "", 'fieldname' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT'));
+$fields[] = array('id' => "_ignore", 'fieldname' => ' - ' . Text::_('COM_CUSTOMTABLES_SELECT'));
 foreach ($this->ct->Table->fields as $field) {
 	$fields[] = array('id' => $field['fieldname'], 'fieldname' => $field['fieldtitle']);
 }
-$fields[] = array('id' => '#', 'fieldname' => ' - ' . Text::_('COM_CUSTOMTABLES_RECORDS_ID'));
+$fields[] = array('id' => '_id', 'fieldname' => ' - ' . Text::_('COM_CUSTOMTABLES_RECORDS_ID'));
 
 $default_class = 'form-select';
 $index = 0;
@@ -93,7 +93,7 @@ $index = 0;
 		let control_name = 'field_map_' + index;
 		let obj = document.getElementById(control_name);
 		if (obj) {
-			if (obj.value !== "") {
+			if (obj.value !== "" && obj.value !== "_ignore") {
 				document.querySelectorAll('td[data-column="' + index + '"]').forEach(function (el) {
 					el.classList.replace('field-disabled', 'field-enabled');
 				});
@@ -105,55 +105,62 @@ $index = 0;
 		}
 	}
 </script>
-<?php $divClass = count($this->previewData['records']) >= 20 ? "table-fade" : ""; ?>
-<div class="<?php echo $divClass; ?>">
-	<table class="table" id="recordPreview">
-		<thead>
-		<?php foreach ($this->previewData['fields'] as $field): ?>
+<form method="post" action="" name="adminForm" id="adminForm">
+	<?php $divClass = count($this->previewData['records']) >= 20 ? "table-fade" : ""; ?>
+	<div class="<?php echo $divClass; ?>">
+		<table class="table" id="recordPreview">
+			<thead>
+			<?php foreach ($this->previewData['fields'] as $field): ?>
 
-			<th class="nowrap">
-
-				<?php
-				$control_name = 'field_map_' . $index;
-
-
-				echo HTMLHelper::_('select.genericlist', $fields, $control_name, 'onchange="fieldChanged(' . $index . ')" class="' . $default_class . '"',
-						'id', 'fieldname', $field); ?>
-			</th>
-
-
-			<?php
-			$index += 1;
-		endforeach; ?>
-
-		</thead>
-		<tbody>
-		<?php
-
-		foreach ($this->previewData['records'] as $i => $record): ?>
-
-			<tr class="row<?php echo $i % 2; ?>">
-
-				<?php
-				$col = 0;
-				foreach ($record as $value):
-
-					$fileName = $this->previewData['fields'][$col];
-					if (empty($fileName))
-						$class = 'field-disabled';
-					else
-						$class = 'field-enabled';
-
-					?>
-					<td class="nowrap <?php echo $class; ?>"
-						data-column="<?php echo $col; ?>"><?php echo $value; ?></td>
+				<th class="nowrap">
 
 					<?php
-					$col += 1;
-				endforeach; ?>
-			</tr>
-		<?php endforeach; ?>
+					$control_name = 'field_map_' . $index;
 
-		</tbody>
-	</table>
-</div>
+
+					echo HTMLHelper::_('select.genericlist', $fields, $control_name, 'name="' . $control_name . '" onchange="fieldChanged(' . $index . ')" class="' . $default_class . '"',
+							'id', 'fieldname', $field); ?>
+				</th>
+
+
+				<?php
+				$index += 1;
+			endforeach; ?>
+
+			</thead>
+			<tbody>
+			<?php
+
+			foreach ($this->previewData['records'] as $i => $record): ?>
+
+				<tr class="row<?php echo $i % 2; ?>">
+
+					<?php
+					$col = 0;
+					foreach ($record as $value):
+
+						$fieldName = $this->previewData['fields'][$col];
+						if (empty($fieldName) or $fieldName == '_ignore')
+							$class = 'field-disabled';
+						else
+							$class = 'field-enabled';
+
+						?>
+						<td class="nowrap <?php echo $class; ?>"
+							data-column="<?php echo $col; ?>"><?php echo $value; ?></td>
+
+						<?php
+						$col += 1;
+					endforeach; ?>
+				</tr>
+			<?php endforeach; ?>
+
+			</tbody>
+		</table>
+	</div>
+
+	<input type="hidden" name="tableid" value="<?php echo $this->tableId; ?>"/>
+	<input type="hidden" name="fileid" value="<?php echo $this->fileId; ?>"/>
+	<input type="hidden" name="task" value="importrecords.preview_import"/>
+	<?php echo HTMLHelper::_('form.token'); ?>
+</form>

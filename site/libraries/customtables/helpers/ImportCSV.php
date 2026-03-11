@@ -59,7 +59,7 @@ class ImportCSV
 			if ($field == -2)
 				$fieldNames[] = null;
 			elseif ($field == -1)
-				$fieldNames[] = '#';
+				$fieldNames[] = '_id';
 			elseif ($field > -1)
 				$fieldNames[] = $ct->Table->fields[$field]['fieldname'];
 		}
@@ -186,6 +186,36 @@ class ImportCSV
 		$prepareFieldList = self::prepareFieldList($line, $ct->Table->fields);
 		$fieldList = $prepareFieldList['fieldList'];
 		$fields = self::processFieldParams($fieldList, $ct->Table->fields);//return associative array
+
+		$new_fieldList = [];
+
+		$index = 0;
+		foreach ($fieldList as $field) {
+			$control_name = 'field_map_' . $index;
+			$f = common::inputGetCmd($control_name, '');
+
+			if (empty($f)) {
+				$new_fieldList[] = $field;
+			} else {
+				if ($f == '_id')
+					$new_fieldList[] = -1;
+				elseif ($f == '_ignore')
+					$new_fieldList[] = -2;
+				else {
+					$p = 0;
+					foreach ($ct->Table->fields as $fieldRow) {
+						if ($fieldRow['fieldname'] == $f)
+							$new_fieldList[] = $p;
+
+						$p += 1;
+					}
+				}
+			}
+
+			$index += 1;
+		}
+
+		$fieldList = $new_fieldList;
 
 		if ($prepareFieldList['header'])
 			$offset = 1;
