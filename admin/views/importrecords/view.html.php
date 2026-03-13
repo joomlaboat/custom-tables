@@ -43,13 +43,6 @@ class CustomTablesViewImportRecords extends HtmlView
 		$this->fieldInputPrefix = $this->ct->Table->fieldInputPrefix;
 
 		ToolbarHelper::back('Back to Records', 'index.php?option=com_customtables&view=listofrecords&tableid=' . $this->tableId);
-		// First button (Create from Schema)
-
-		// Get the toolbar object instance
-
-//		$toolbar->standardButton('plus')
-//			->text('Create from Schema')
-//			->task('listoftables.createFromSchema');
 
 		$task = common::inputGetCmd('task', '');
 		if ($task == 'preview_import') {

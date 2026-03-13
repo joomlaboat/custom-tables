@@ -130,29 +130,6 @@ $index = 0;
 			const table = document.getElementById('recordPreview');
 
 			if (table) {
-				/*
-								console.log("table")
-								if (table) {
-									const rows = table.querySelectorAll('tr');
-									console.log("rows", rows.length)
-
-									for (let i = 0; i < 3 && i < rows.length; i++) {
-										const cells = rows[i].querySelectorAll('td');
-										console.log("cells", cells.length)
-										cells.forEach(el => {
-											el.classList.replace('field-disabled', 'field-enabled');
-										});
-									}
-
-									for (let i = 0; i < parseInt(startFrom) && i < rows.length; i++) {
-										const cells = rows[i].querySelectorAll('td');
-										console.log("cells", cells.length)
-										cells.forEach(el => {
-											el.classList.replace('field-enabled', 'field-disabled');
-										});
-									}
-								}
-								*/
 
 				let cols = <?php echo count($this->previewData['fields']); ?>;
 				for (let i = 0; i < cols; i++) {
@@ -177,7 +154,7 @@ $index = 0;
 			<?php
 			$control_name = 'separator';
 			$separators = [['id' => 'comma', 'label' => 'Comma ,'], ['id' => 'semicolon', 'label' => 'Semicolon ;'], ['id' => 'tab', 'label' => 'Tab'], ['id' => 'space', 'label' => 'Space']];
-			$separator = common::inputGetCmd('separator', ',');
+			$separator = common::inputGetCmd('separator', $this->previewData['separator'] ?? 'comma');
 
 			echo HTMLHelper::_('select.genericlist', $separators, $control_name, 'name="' . $control_name . '" class="' . $default_class . '"',
 					'id', 'label', $separator);
@@ -194,7 +171,7 @@ $index = 0;
 			<?php
 			$control_name = 'enclosure';
 			$enclosures = [['id' => 'quote', 'label' => 'Quote "'], ['id' => 'apostrophe', 'label' => 'Apostrophe \'']];
-			$enclosure = common::inputGetCmd('enclosure', '"');
+			$enclosure = common::inputGetCmd('enclosure', 'quote');
 
 			echo HTMLHelper::_('select.genericlist', $enclosures, $control_name, 'name="' . $control_name . '" class="' . $default_class . '"',
 					'id', 'label', $enclosure);
@@ -210,7 +187,7 @@ $index = 0;
 			<?php
 			$control_name = 'start_from';
 			$numbers = [['id' => 1, 'label' => '1'], ['id' => 2, 'label' => '2']];
-			$start_from = common::inputGetInt('start_from', 1);
+			$start_from = common::inputGetInt('start_from', $this->previewData['start_from'] ?? 1);
 
 			echo HTMLHelper::_('select.genericlist', $numbers, $control_name, 'name="' . $control_name . '" onchange="startFromChanged(' . $index . ')"  class="' . $default_class . '"',
 					'id', 'label', $start_from);

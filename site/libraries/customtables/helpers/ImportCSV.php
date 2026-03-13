@@ -26,7 +26,7 @@ class ImportCSV
 		if (file_exists($filename)) {
 			try {
 
-				$separator = common::inputGetCmd('separator', ',');
+				$separator = common::inputGetCmd('separator', null);
 
 				if ($separator == 'semicolon')
 					$separator = ";";
@@ -34,8 +34,6 @@ class ImportCSV
 					$separator = "\t";
 				elseif ($separator == 'space')
 					$separator = " ";
-				else
-					$separator = ",";
 
 				$enclosure = common::inputGetCmd('enclosure', '"');
 				if ($enclosure == 'apostrophe')
@@ -49,7 +47,7 @@ class ImportCSV
 				if ($sample)
 					return self::importCSVdataSample($filename, $ct_tableid, $separator, $enclosure, $start_from, $update_insert);
 				else
-					return self::importCSVdata($filename, $ct_tableid, $separator, $enclosure, $start_from, $update_insert);
+					return self::importCSVdata($filename, $ct_tableid, $separator ?? ',', $enclosure, $start_from, $update_insert);
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
@@ -61,8 +59,14 @@ class ImportCSV
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	private static function importCSVDataSample(string $filename, int $ct_tableid, string $separator, string $enclosure, int $start_from, string $update_insert): array
+	private static function importCSVDataSample(string $filename, int $ct_tableid, ?string $separator, string $enclosure, int $start_from, string $update_insert): array
 	{
+		if ($separator === null) {
+			$separator = self::detectDelimiter($filename);
+			if ($separator === null)
+				$separator = ',';
+		}
+
 		$arrayOfLines = self::getLines($filename, $separator, $enclosure);
 
 		if ($arrayOfLines === null)
@@ -86,12 +90,7 @@ class ImportCSV
 		}
 
 		$recordSample = [];
-
-		//if ($prepareFieldList['header'])
-		//	$offset = 1;
-		//else
 		$offset = 0;
-
 
 		$count = 0;
 		for ($i = $offset; $i < count($arrayOfLines); $i++) {
@@ -103,30 +102,18 @@ class ImportCSV
 					break;
 			}
 		}
-		return ['fields' => $fieldNames, 'records' => $recordSample];
+
+		if ($separator == ',')
+			$separator_id = "comma";
+		if ($separator == ';')
+			$separator_id = "semicolon";
+		elseif ($separator == "\t")
+			$separator_id = 'tab';
+		elseif ($separator == '')
+			$separator_id = "space";
+
+		return ['fields' => $fieldNames, 'records' => $recordSample, 'start_from' => ($prepareFieldList['header'] ? 2 : 0), 'separator' => $separator_id];
 	}
-
-	private static function getLines($filename, ?string $separator, string $enclosure = '"', string $escape = '\\'): ?array
-	{
-		if ($separator === null) {
-			$separator = self::detectDelimiter($filename);
-			if ($separator === null)
-				$separator = '"';
-		}
-
-		if (($handle = fopen($filename, "r")) !== FALSE) {
-			$lines = [];
-
-			while (($data = fgetcsv($handle, 0, $separator, $enclosure, $escape)) !== FALSE)
-				$lines[] = $data;
-
-			fclose($handle);
-			return $lines;
-		}
-		return null;
-	}
-
-	//https://stackoverflow.com/questions/26717462/php-best-approach-to-detect-csv-delimiter/59581170
 
 	private static function detectDelimiter($csvFile, string $enclosure = '"'): ?string
 	{
@@ -145,6 +132,22 @@ class ImportCSV
 			return null;
 
 		return array_search(max($separators), $separators);
+	}
+
+	//https://stackoverflow.com/questions/26717462/php-best-approach-to-detect-csv-delimiter/59581170
+
+	private static function getLines($filename, ?string $separator, string $enclosure = '"', string $escape = '\\'): ?array
+	{
+		if (($handle = fopen($filename, "r")) !== FALSE) {
+			$lines = [];
+
+			while (($data = fgetcsv($handle, 0, $separator, $enclosure, $escape)) !== FALSE)
+				$lines[] = $data;
+
+			fclose($handle);
+			return $lines;
+		}
+		return null;
 	}
 
 	private static function prepareFieldList(array $fieldNames, array $fields): array
@@ -199,6 +202,12 @@ class ImportCSV
 
 	private static function importCSVData(string $filename, int $ct_tableid, string $separator, string $enclosure, int $start_from, string $update_insert): array
 	{
+		if ($separator === null) {
+			$separator = self::detectDelimiter($filename);
+			if ($separator === null)
+				$separator = '"';
+		}
+
 		$arrayOfLines = self::getLines($filename, $separator, $enclosure);
 
 		if ($arrayOfLines === null)
