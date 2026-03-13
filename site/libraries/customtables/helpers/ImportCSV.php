@@ -25,10 +25,31 @@ class ImportCSV
 	{
 		if (file_exists($filename)) {
 			try {
-				if ($sample)
-					return self::importCSVdataSample($filename, $ct_tableid);
+
+				$separator = common::inputGetCmd('separator', ',');
+
+				if ($separator == 'semicolon')
+					$separator = ";";
+				elseif ($separator == 'tab')
+					$separator = "\t";
+				elseif ($separator == 'space')
+					$separator = " ";
 				else
-					return self::importCSVdata($filename, $ct_tableid);
+					$separator = ",";
+
+				$enclosure = common::inputGetCmd('enclosure', '"');
+				if ($enclosure == 'apostrophe')
+					$enclosure = '\'';
+				else
+					$enclosure = '"';
+
+				$start_from = common::inputGetInt('start_from', 1);
+				$update_insert = common::inputGetCmd('update_insert', 'insert');
+
+				if ($sample)
+					return self::importCSVdataSample($filename, $ct_tableid, $separator, $enclosure, $start_from, $update_insert);
+				else
+					return self::importCSVdata($filename, $ct_tableid, $separator, $enclosure, $start_from, $update_insert);
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
@@ -40,9 +61,9 @@ class ImportCSV
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	private static function importCSVDataSample(string $filename, int $ct_tableid): array
+	private static function importCSVDataSample(string $filename, int $ct_tableid, string $separator, string $enclosure, int $start_from, string $update_insert): array
 	{
-		$arrayOfLines = self::getLines($filename);
+		$arrayOfLines = self::getLines($filename, $separator, $enclosure);
 
 		if ($arrayOfLines === null)
 			throw new Exception(common::translate('COM_CUSTOMTABLES_CSV_FILE_EMPTY'));
@@ -66,10 +87,10 @@ class ImportCSV
 
 		$recordSample = [];
 
-		if ($prepareFieldList['header'])
-			$offset = 1;
-		else
-			$offset = 0;
+		//if ($prepareFieldList['header'])
+		//	$offset = 1;
+		//else
+		$offset = 0;
 
 
 		$count = 0;
@@ -85,17 +106,18 @@ class ImportCSV
 		return ['fields' => $fieldNames, 'records' => $recordSample];
 	}
 
-	private static function getLines($filename): ?array
+	private static function getLines($filename, ?string $separator, string $enclosure = '"', string $escape = '\\'): ?array
 	{
-		$delimiter = self::detectDelimiter($filename);
-		$enclosure = '"';
-		$escape = '\\';
+		if ($separator === null) {
+			$separator = self::detectDelimiter($filename);
+			if ($separator === null)
+				$separator = '"';
+		}
 
 		if (($handle = fopen($filename, "r")) !== FALSE) {
 			$lines = [];
 
-
-			while (($data = fgetcsv($handle, 0, $delimiter, $enclosure, $escape)) !== FALSE)
+			while (($data = fgetcsv($handle, 0, $separator, $enclosure, $escape)) !== FALSE)
 				$lines[] = $data;
 
 			fclose($handle);
@@ -106,11 +128,10 @@ class ImportCSV
 
 	//https://stackoverflow.com/questions/26717462/php-best-approach-to-detect-csv-delimiter/59581170
 
-	private static function detectDelimiter($csvFile): string
+	private static function detectDelimiter($csvFile, string $enclosure = '"'): ?string
 	{
 		//first line is a list of field name, so this approach is ok here
 		$separators = [";" => 0, "," => 0, "\t" => 0, "|" => 0];
-		$enclosure = '"';
 		$escape = '\\';
 
 		$handle = fopen($csvFile, "r");
@@ -119,6 +140,9 @@ class ImportCSV
 		foreach ($separators as $separator => &$count) {
 			$count = count(str_getcsv($firstLine, $separator, $enclosure, $escape));
 		}
+
+		if ($count == 0)
+			return null;
 
 		return array_search(max($separators), $separators);
 	}
@@ -173,9 +197,9 @@ class ImportCSV
 		}
 	}
 
-	private static function importCSVData(string $filename, int $ct_tableid): array
+	private static function importCSVData(string $filename, int $ct_tableid, string $separator, string $enclosure, int $start_from, string $update_insert): array
 	{
-		$arrayOfLines = self::getLines($filename);
+		$arrayOfLines = self::getLines($filename, $separator, $enclosure);
 
 		if ($arrayOfLines === null)
 			throw new Exception(common::translate('COM_CUSTOMTABLES_CSV_FILE_EMPTY'));

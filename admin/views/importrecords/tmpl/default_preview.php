@@ -90,23 +90,150 @@ $index = 0;
 	const CSVImport = new CustomTablesCSVImport("canvas", null, [], []);
 
 	function fieldChanged(index) {
+
+		let objStartFrom = document.getElementById('start_from');
+		let startFrom = objStartFrom.value;
+
 		let control_name = 'field_map_' + index;
 		let obj = document.getElementById(control_name);
 		if (obj) {
+
+			let rows = document.querySelectorAll('td[data-column="' + index + '"]');
+
 			if (obj.value !== "" && obj.value !== "_ignore") {
-				document.querySelectorAll('td[data-column="' + index + '"]').forEach(function (el) {
-					el.classList.replace('field-disabled', 'field-enabled');
-				});
+
+				for (let i = 0; i < rows.length; i++) {
+					let el = rows[i];
+					if (i < startFrom - 1)
+						el.classList.replace('field-enabled', 'field-disabled');
+					else
+						el.classList.replace('field-disabled', 'field-enabled');
+				}
+
 			} else {
-				document.querySelectorAll('td[data-column="' + index + '"]').forEach(function (el) {
+
+				for (let i = 0; i < rows.length; i++) {
+					let el = rows[i];
 					el.classList.replace('field-enabled', 'field-disabled');
-				});
+				}
+
 			}
 		}
 	}
+
+	function startFromChanged() {
+		let obj = document.getElementById('start_from');
+		if (obj) {
+			let startFrom = obj.value;
+			console.log("startFrom", startFrom);
+
+			const table = document.getElementById('recordPreview');
+
+			if (table) {
+				/*
+								console.log("table")
+								if (table) {
+									const rows = table.querySelectorAll('tr');
+									console.log("rows", rows.length)
+
+									for (let i = 0; i < 3 && i < rows.length; i++) {
+										const cells = rows[i].querySelectorAll('td');
+										console.log("cells", cells.length)
+										cells.forEach(el => {
+											el.classList.replace('field-disabled', 'field-enabled');
+										});
+									}
+
+									for (let i = 0; i < parseInt(startFrom) && i < rows.length; i++) {
+										const cells = rows[i].querySelectorAll('td');
+										console.log("cells", cells.length)
+										cells.forEach(el => {
+											el.classList.replace('field-enabled', 'field-disabled');
+										});
+									}
+								}
+								*/
+
+				let cols = <?php echo count($this->previewData['fields']); ?>;
+				for (let i = 0; i < cols; i++) {
+					fieldChanged(i);
+				}
+
+			}
+		}
+
+
+	}
+
 </script>
 <form method="post" action="" name="adminForm" id="adminForm">
 	<?php $divClass = count($this->previewData['records']) >= 20 ? "table-fade" : ""; ?>
+
+	<div class="control-group">
+		<div class="control-label">
+			<label id="jform_tabletitle-lbl" for="separator" class="required">Separator:</label>
+		</div>
+		<div class="controls">
+			<?php
+			$control_name = 'separator';
+			$separators = [['id' => 'comma', 'label' => 'Comma ,'], ['id' => 'semicolon', 'label' => 'Semicolon ;'], ['id' => 'tab', 'label' => 'Tab'], ['id' => 'space', 'label' => 'Space']];
+			$separator = common::inputGetCmd('separator', ',');
+
+			echo HTMLHelper::_('select.genericlist', $separators, $control_name, 'name="' . $control_name . '" class="' . $default_class . '"',
+					'id', 'label', $separator);
+			?>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="control-label">
+			<label id="jform_tabletitle-lbl" for="enclosure" class="required">String Delimiter
+				(Enclosure):</label>
+		</div>
+		<div class="controls">
+			<?php
+			$control_name = 'enclosure';
+			$enclosures = [['id' => 'quote', 'label' => 'Quote "'], ['id' => 'apostrophe', 'label' => 'Apostrophe \'']];
+			$enclosure = common::inputGetCmd('enclosure', '"');
+
+			echo HTMLHelper::_('select.genericlist', $enclosures, $control_name, 'name="' . $control_name . '" class="' . $default_class . '"',
+					'id', 'label', $enclosure);
+			?>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="control-label">
+			<label id="jform_tabletitle-lbl" for="start_from" class="required">Start from row:</label>
+		</div>
+		<div class="controls">
+			<?php
+			$control_name = 'start_from';
+			$numbers = [['id' => 1, 'label' => '1'], ['id' => 2, 'label' => '2']];
+			$start_from = common::inputGetInt('start_from', 1);
+
+			echo HTMLHelper::_('select.genericlist', $numbers, $control_name, 'name="' . $control_name . '" onchange="startFromChanged(' . $index . ')"  class="' . $default_class . '"',
+					'id', 'label', $start_from);
+			?>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="control-label">
+			<label id="jform_tabletitle-lbl" for="update_insert" class="required">Update / Insert Record:</label>
+		</div>
+		<div class="controls">
+			<?php
+			$control_name = 'update_insert';
+			$options = [['id' => 'insert', 'label' => 'Insert'], ['id' => 'update_by_id', 'label' => 'Update if Record ID matches'], ['id' => 'update_by_first_column', 'label' => 'Update if first column matches']];
+			$update_insert = common::inputGetCmd('update_insert', 'insert');
+
+			echo HTMLHelper::_('select.genericlist', $options, $control_name, 'name="' . $control_name . '" class="' . $default_class . '"',
+					'id', 'label', $update_insert);
+			?>
+		</div>
+	</div>
+
 	<div class="<?php echo $divClass; ?>">
 		<table class="table" id="recordPreview">
 			<thead>
@@ -116,7 +243,6 @@ $index = 0;
 
 					<?php
 					$control_name = 'field_map_' . $index;
-
 
 					echo HTMLHelper::_('select.genericlist', $fields, $control_name, 'name="' . $control_name . '" onchange="fieldChanged(' . $index . ')" class="' . $default_class . '"',
 							'id', 'fieldname', $field); ?>
@@ -131,6 +257,7 @@ $index = 0;
 			<tbody>
 			<?php
 
+			$row = 1;
 			foreach ($this->previewData['records'] as $i => $record): ?>
 
 				<tr class="row<?php echo $i % 2; ?>">
@@ -139,11 +266,15 @@ $index = 0;
 					$col = 0;
 					foreach ($record as $value):
 
-						$fieldName = $this->previewData['fields'][$col];
-						if (empty($fieldName) or $fieldName == '_ignore')
+						if ($row < $start_from) {
 							$class = 'field-disabled';
-						else
-							$class = 'field-enabled';
+						} else {
+							$fieldName = $this->previewData['fields'][$col];
+							if (empty($fieldName) or $fieldName == '_ignore')
+								$class = 'field-disabled';
+							else
+								$class = 'field-enabled';
+						}
 
 						?>
 						<td class="nowrap <?php echo $class; ?>"
@@ -153,7 +284,9 @@ $index = 0;
 						$col += 1;
 					endforeach; ?>
 				</tr>
-			<?php endforeach; ?>
+				<?php
+				$row += 1;
+			endforeach; ?>
 
 			</tbody>
 		</table>
