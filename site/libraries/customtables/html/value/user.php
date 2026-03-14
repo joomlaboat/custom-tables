@@ -17,6 +17,8 @@ use Exception;
 
 class Value_user extends BaseValue
 {
+	private static $uservalueCache = [];
+
 	function __construct(CT &$ct, Field $field, $rowValue, array $option_list = [])
 	{
 		parent::__construct($ct, $field, $rowValue, $option_list);
@@ -37,15 +39,21 @@ class Value_user extends BaseValue
 	 */
 	public static function renderUserValue(?int $value, string $field = '', ?string $format = null): ?string
 	{
-		if ($value === null)
-			return null;
+		$name = $value . '_' . $field . '_' . $format;
 
-		if (defined('_JEXEC'))
-			return self::renderUserValue_Joomla($value, $field, $format);
-		elseif (defined('WPINC'))
-			return self::renderUserValue_WordPress($value, $field, $format);
-		else
-			return null;
+		if (!isset(self::$uservalueCache[$name])) {
+			if ($value === null) {
+				self::$uservalueCache[$name] = null;
+			} else {
+				if (defined('_JEXEC'))
+					self::$uservalueCache[$name] = self::renderUserValue_Joomla($value, $field, $format);
+				elseif (defined('WPINC'))
+					self::$uservalueCache[$name] = self::renderUserValue_WordPress($value, $field, $format);
+				else
+					self::$uservalueCache[$name] = null;
+			}
+		}
+		return self::$uservalueCache[$name];
 	}
 
 	/**

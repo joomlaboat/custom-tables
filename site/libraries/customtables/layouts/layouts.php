@@ -23,6 +23,7 @@ use Twig\Error\SyntaxError;
 
 class Layouts
 {
+	private static $layoutsCache = [];
 	var CT $ct;
 	var ?int $tableId;
 	var ?int $layoutId;
@@ -46,41 +47,6 @@ class Layouts
 		$this->layoutCodeJS = null;
 		$this->stealth = false;
 	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	/*
-	function processLayoutTag(string &$htmlResult): bool
-	{
-		$options = array();
-		$fList = CTMiscHelper::getListToReplace('layout', $options, $htmlResult, '{}');
-
-		if (count($fList) == 0)
-			return false;
-
-		$i = 0;
-		foreach ($fList as $fItem) {
-			$parts = CTMiscHelper::csv_explode(',', $options[$i]);
-			$layoutname = $parts[0];
-
-			$ProcessContentPlugins = false;
-			if (isset($parts[1]) and $parts[1] == 'process')
-				$ProcessContentPlugins = true;
-
-			$layout = $this->getLayout($layoutname);
-
-			if ($ProcessContentPlugins)
-				CTMiscHelper::applyContentPlugins($layout);
-
-			$htmlResult = str_replace($fItem, $layout, $htmlResult);
-			$i++;
-		}
-
-		return true;
-	}
-	*/
 
 	public function deleteLayoutFiles(string $layoutName): bool
 	{
@@ -378,42 +344,11 @@ class Layouts
 	function getLayout($layoutNameOrId, bool $processLayoutTag = true, bool $checkLayoutFile = true): string
 	{
 		$this->layoutId = null;
-		$whereClause = new MySQLWhereClause();
 
-		if (is_int($layoutNameOrId)) {
-			if ($layoutNameOrId == 0)
-				return '';
-
-			$whereClause->addCondition('id', $layoutNameOrId);
-		} else {
-			if ($layoutNameOrId == '')
-				return '';
-
-			if (self::isLayoutContent($layoutNameOrId)) {
-				$this->layoutType = 0;
-				return $layoutNameOrId;
-			}
-			$whereClause->addCondition('layoutname', $layoutNameOrId);
-		}
-
-		$selects = [
-			'id',
-			'tableid',
-			'layoutname',
-			'layoutcode',
-			'layoutmobile',
-			'layoutcss',
-			'layoutjs',
-			'layouttype',
-			'MODIFIED_TIMESTAMP',
-			'params'
-		];
-
-		$rows = database::loadAssocList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
-		if (count($rows) != 1)
+		$row = $this->queryLayout($layoutNameOrId);
+		if ($row === null)
 			return '';
 
-		$row = $rows[0];
 		$this->tableId = (int)$row['tableid'];
 
 		if ($this->ct->Table === null)
@@ -491,6 +426,55 @@ class Layouts
 		$this->pageLayoutLink = common::UriRoot(true, true) . 'administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
 		$this->layoutCode = $layoutCode;
 		return $layoutCode;
+	}
+
+	function queryLayout($layoutNameOrId): ?array
+	{
+		if (!isset(self::$layoutsCache[$layoutNameOrId])) {
+
+			$whereClause = new MySQLWhereClause();
+
+			if (is_int($layoutNameOrId)) {
+				if ($layoutNameOrId == 0) {
+					self::$layoutsCache[$layoutNameOrId] = null;
+					return null;
+				}
+
+				$whereClause->addCondition('id', $layoutNameOrId);
+			} else {
+				if ($layoutNameOrId == '') {
+					self::$layoutsCache[$layoutNameOrId] = null;
+					return null;
+				}
+
+				if (self::isLayoutContent($layoutNameOrId)) {
+					$this->layoutType = 0;
+					return $layoutNameOrId;
+				}
+				$whereClause->addCondition('layoutname', $layoutNameOrId);
+			}
+
+			$selects = [
+				'id',
+				'tableid',
+				'layoutname',
+				'layoutcode',
+				'layoutmobile',
+				'layoutcss',
+				'layoutjs',
+				'layouttype',
+				'MODIFIED_TIMESTAMP',
+				'params'
+			];
+
+			$rows = database::loadAssocList('#__customtables_layouts', $selects, $whereClause, null, null, 1);
+			if (count($rows) != 1)
+				return null;
+
+			self::$layoutsCache[$layoutNameOrId] = $rows[0];
+		}
+
+		return self::$layoutsCache[$layoutNameOrId];
 	}
 
 	public static function isLayoutContent($layout): bool

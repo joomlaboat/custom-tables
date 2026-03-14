@@ -24,6 +24,7 @@ use Joomla\CMS\Access\Access;
 
 class CTUser
 {
+	private static $userGroupsCache = [];
 	var ?int $id;
 	var array $groups;
 	var ?string $email;
@@ -208,39 +209,43 @@ class CTUser
 	 */
 	static public function GetUserGroups(int $userid): array
 	{
-		if (defined('_JEXEC')) {
-			$groups = Access::getGroupsByUser($userid);
+		if (!isset(self::$userGroupsCache[$userid])) {
 
-			$whereClause = new MySQLWhereClause();
-			$whereClause->addCondition('id', '(' . implode(',', $groups) . ')', 'IN', true);
+			if (defined('_JEXEC')) {
+				$groups = Access::getGroupsByUser($userid);
 
-			$rows = database::loadRowList('#__usergroups', ['title'], $whereClause);
+				$whereClause = new MySQLWhereClause();
+				$whereClause->addCondition('id', '(' . implode(',', $groups) . ')', 'IN', true);
 
-			$groupList = array();
-			foreach ($rows as $group)
-				$groupList[] = $group[0];
+				$rows = database::loadRowList('#__usergroups', ['title'], $whereClause);
 
-			return $groupList;
+				$groupList = array();
+				foreach ($rows as $group)
+					$groupList[] = $group[0];
 
-		} elseif (defined('WPINC')) {
-			$user = get_userdata($userid); //This is WordPress method
-			$roles = $user->roles;
+				self::$userGroupsCache[$userid] = $groupList;
 
-			$role_names = array();
+			} elseif (defined('WPINC')) {
+				$user = get_userdata($userid); //This is WordPress method
+				$roles = $user->roles;
 
-			global $wp_roles;
-			$all_roles = $wp_roles->roles;
+				$role_names = array();
 
-			foreach ($roles as $role) {
-				if (isset($all_roles[$role]['name'])) {
-					$role_names[] = $all_roles[$role]['name'];
+				global $wp_roles;
+				$all_roles = $wp_roles->roles;
+
+				foreach ($roles as $role) {
+					if (isset($all_roles[$role]['name'])) {
+						$role_names[] = $all_roles[$role]['name'];
+					}
 				}
-			}
 
-			return $role_names;
-		} else {
-			return [];
+				self::$userGroupsCache[$userid] = $role_names;
+			} else {
+				self::$userGroupsCache[$userid] = [];
+			}
 		}
+		return self::$userGroupsCache[$userid];
 	}
 
 	/**
