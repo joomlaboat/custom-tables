@@ -19,6 +19,7 @@ class Table
 {
 	use Logs;
 
+	private static $fieldsCache = [];
 	var Languages $Languages;
 	var Environment $Env;
 	var int $tableid;
@@ -39,7 +40,6 @@ class Table
 	var ?array $imagegalleries;
 	var ?array $fileboxes;
 	var ?array $selects;
-
 	var string $fieldPrefix;
 	var string $fieldInputPrefix;
 
@@ -126,13 +126,26 @@ class Table
 		$this->fieldInputPrefix = 'com' . $this->fieldPrefix;
 
 		//Fields
-		$whereClause = new MySQLWhereClause();
+		//We will use static variables to cache fields to improve the speed
 
 		if (!$loadAllField)
-			$whereClause->addCondition('f.published', 1);
+			$table_fields_variable_name = -$this->tableid;
+		else
+			$table_fields_variable_name = $this->tableid;
 
-		$whereClause->addCondition('f.tableid', $this->tableid);
-		$this->fields = database::loadAssocList('#__customtables_fields AS f', ['*', ['REAL_FIELD_NAME', $this->fieldPrefix]], $whereClause, 'f.ordering, f.fieldname');
+		if (!isset(self::$fieldsCache[$table_fields_variable_name])) {
+
+			$whereClause = new MySQLWhereClause();
+
+			if (!$loadAllField)
+				$whereClause->addCondition('f.published', 1);
+
+			$whereClause->addCondition('f.tableid', $this->tableid);
+			self::$fieldsCache[$table_fields_variable_name] = database::loadAssocList('#__customtables_fields AS f', ['*', ['REAL_FIELD_NAME', $this->fieldPrefix]], $whereClause, 'f.ordering, f.fieldname');
+		}
+
+		$this->fields = self::$fieldsCache[$table_fields_variable_name];
+
 
 		foreach ($this->fields as $fld) {
 

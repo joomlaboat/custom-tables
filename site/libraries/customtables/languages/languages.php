@@ -18,17 +18,20 @@ use Joomla\CMS\Factory;
 
 class Languages
 {
+	private static $languageListCache = [];
 	var array $LanguageList;
 	var string $Postfix;
 	var string $tag;
 
 	function __construct()
 	{
-		if (!defined('CUSTOMTABLES_LANGUAGES'))
-			$this->LanguageList = self::queryLanguageList();
-		else
-			$this->LanguageList = CUSTOMTABLES_LANGUAGES;
+		//Language list request caching
+		if (count(self::$languageListCache) == 0) {
+			self::$languageListCache = self::queryLanguageList();
+		}
 
+		//Let's keep this $this->LanguageList variable for legacy support. It can be replaced later.
+		$this->LanguageList = self::$languageListCache;
 		$this->Postfix = $this->getLangPostfix();
 	}
 
