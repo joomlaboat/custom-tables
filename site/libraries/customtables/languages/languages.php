@@ -35,7 +35,7 @@ class Languages
 		$this->Postfix = $this->getLangPostfix();
 	}
 
-	public static function queryLanguageList(): array
+	protected static function queryLanguageList(): array
 	{
 		if (defined('_JEXEC')) {
 			$whereClause = new MySQLWhereClause();
@@ -86,7 +86,7 @@ class Languages
 		}
 	}
 
-	static protected function wp_findLanguageTranslation($translations, $lang_code)
+	protected static function wp_findLanguageTranslation($translations, $lang_code)
 	{
 		foreach ($translations as $translation) {
 			if ($translation['language'] == $lang_code)
