@@ -23,12 +23,16 @@ class ImportCSV
 	 */
 	public static function importCSVFile($filename, $ct_tableid, bool $sample = false): array
 	{
+		self::deleteOldTempCsvFiles(CUSTOMTABLES_TEMP_PATH);
+
 		if (file_exists($filename)) {
 			try {
 
 				$separator = common::inputGetCmd('separator', null);
 
-				if ($separator == 'semicolon')
+				if ($separator == 'comma')
+					$separator = ",";
+				elseif ($separator == 'semicolon')
 					$separator = ";";
 				elseif ($separator == 'tab')
 					$separator = "\t";
@@ -42,7 +46,7 @@ class ImportCSV
 					$enclosure = '"';
 
 				$start_from = common::inputGetInt('start_from', 1);
-				$update_insert = common::inputGetCmd('update_insert', 'insert');
+				$update_insert = common::inputGetCmd('update_insert', 'insert_match_id');
 
 				if ($sample)
 					return self::importCSVdataSample($filename, $ct_tableid, $separator, $enclosure, $start_from, $update_insert);
@@ -53,6 +57,21 @@ class ImportCSV
 			}
 		} else
 			throw new Exception(common::translate('COM_CUSTOMTABLES_FILE_NOT_FOUND'));
+	}
+
+	static protected function deleteOldTempCsvFiles(string $dir): void
+	{
+		$files = glob($dir . '/ct_*_*.csv');
+		$now = time();
+
+		foreach ($files as $file) {
+			if (is_file($file) && ($now - filemtime($file)) > 3600) {
+				echo 'to delete: ' . $file;
+
+				unlink($file);
+				die;
+			}
+		}
 	}
 
 	/**
@@ -103,17 +122,19 @@ class ImportCSV
 			}
 		}
 
-		if ($separator == ',')
-			$separator_id = "comma";
 		if ($separator == ';')
 			$separator_id = "semicolon";
 		elseif ($separator == "\t")
 			$separator_id = 'tab';
-		elseif ($separator == '')
+		elseif ($separator == ' ')
 			$separator_id = "space";
+		else
+			$separator_id = "comma";
 
 		return ['fields' => $fieldNames, 'records' => $recordSample, 'start_from' => ($prepareFieldList['header'] ? 2 : 0), 'separator' => $separator_id];
 	}
+
+	//https://stackoverflow.com/questions/26717462/php-best-approach-to-detect-csv-delimiter/59581170
 
 	private static function detectDelimiter($csvFile, string $enclosure = '"'): ?string
 	{
@@ -133,8 +154,6 @@ class ImportCSV
 
 		return array_search(max($separators), $separators);
 	}
-
-	//https://stackoverflow.com/questions/26717462/php-best-approach-to-detect-csv-delimiter/59581170
 
 	private static function getLines($filename, ?string $separator, string $enclosure = '"', string $escape = '\\'): ?array
 	{
@@ -257,17 +276,29 @@ class ImportCSV
 
 		for ($i = $offset; $i < count($arrayOfLines); $i++) {
 			if (count($arrayOfLines[$i]) > 0) {
-				$result = self::prepareSQLQuery($ct, $fieldList, $fields, $arrayOfLines[$i]);
-				$listing_id = self::findRecord($ct->Table->realtablename, $ct->Table->realidfieldname, $ct->Table->published_field_found, $result->where);
+				$result = self::prepareSQLQuery($ct, $fieldList, $fields, $arrayOfLines[$i], $update_insert);
 
-				if (is_null($listing_id) and count($result->data) > 0) {
+				if ($update_insert == 'insert_ignore_id') {
+					$result->data[$ct->Table->realidfieldname] = null;
+					$listing_id = null;
+				} else {
+					if ($update_insert == 'insert_match_id' and empty($result->data[$ct->Table->realidfieldname])) {
+						$listing_id = null;
+					} else {
+						$listing_id = self::findRecord($ct->Table->realtablename, $ct->Table->realidfieldname, $ct->Table->published_field_found, $result->where);
+					}
+				}
+
+				if (count($result->data) > 0) {
 					try {
-						database::insert($ct->Table->realtablename, $result->data);
+						if (is_null($listing_id))
+							database::insert($ct->Table->realtablename, $result->data);
+						else
+							database::update($ct->Table->realtablename, $result->data, $result->where);
+
 					} catch (Exception $e) {
 						throw new Exception($e->getMessage());
 					}
-				} else {
-					database::update($ct->Table->realtablename, $result->data, $result->where);
 				}
 			}
 		}
@@ -315,7 +346,7 @@ class ImportCSV
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	private static function prepareSQLQuery(CT $ct, array $fieldList, array $fields, $line): object
+	private static function prepareSQLQuery(CT $ct, array $fieldList, array $fields, array $line, string $update_insert): object
 	{
 		$data = [];
 		$whereClause = new MySQLWhereClause();
@@ -357,10 +388,14 @@ class ImportCSV
 						}
 
 						if ((int)$vlu > 0) {
-							$whereClause->addCondition($fields[$f_index]['realfieldname'], (int)$vlu);
+							if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
+								$whereClause->addCondition($fields[$f_index]['realfieldname'], (int)$vlu);
+
 							$data[$fields[$f_index]['realfieldname']] = (int)$vlu;
 						} else {
-							$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+							if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
+								$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+
 							$data[$fields[$f_index]['realfieldname']] = null;
 						}
 					}
@@ -389,10 +424,16 @@ class ImportCSV
 						}
 
 						if (!is_null($vlu) and $vlu != '') {
-							$whereClause->addCondition($fields[$f_index]['realfieldname'], '%,' . implode(',', $vlu) . ',%', 'LIKE');
+
+							if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
+								$whereClause->addCondition($fields[$f_index]['realfieldname'], '%,' . implode(',', $vlu) . ',%', 'LIKE');
+
 							$data[$fields[$f_index]['realfieldname']] = ',' . implode(',', $vlu) . ',';
 						} else {
-							$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+
+							if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
+								$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
+
 							$data[$fields[$f_index]['realfieldname']] = null;
 						}
 					}
@@ -401,13 +442,13 @@ class ImportCSV
 
 						$dateString = CTMiscHelper::standardizeDate($line[$i]);
 
-						if (!$idFieldIncluded)
+						if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
 							$whereClause->addCondition($fields[$f_index]['realfieldname'], $dateString);
 
 						$data[$fields[$f_index]['realfieldname']] = $dateString;
 					} else {
 
-						if (!$idFieldIncluded)
+						if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
 							$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
 
 						$data[$fields[$f_index]['realfieldname']] = null;
@@ -429,13 +470,13 @@ class ImportCSV
 				} elseif ($fieldType == 'float') {
 					if (isset($line[$i]) and $line[$i] != '') {
 
-						if (!$idFieldIncluded)
+						if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
 							$whereClause->addCondition($fields[$f_index]['realfieldname'], (float)$line[$i]);
 
 						$data[$fields[$f_index]['realfieldname']] = (float)$line[$i];
 					} else {
 
-						if (!$idFieldIncluded)
+						if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
 							$whereClause->addCondition($fields[$f_index]['realfieldname'], null);
 
 						$data[$fields[$f_index]['realfieldname']] = null;
@@ -447,7 +488,7 @@ class ImportCSV
 						else
 							$vlu = 0;
 
-						if (!$idFieldIncluded)
+						if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
 							$whereClause->addCondition($fields[$f_index]['realfieldname'], $vlu);
 
 						$data[$fields[$f_index]['realfieldname']] = $vlu;
@@ -459,7 +500,7 @@ class ImportCSV
 					$seconds = InputBox_Time::formattedTime2Seconds($line[$i]);
 					$ticks = InputBox_Time::seconds2Ticks($seconds, $fieldParams);
 
-					if (!$idFieldIncluded)
+					if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
 						$whereClause->addCondition($fields[$f_index]['realfieldname'], $ticks);
 
 					$data[$fields[$f_index]['realfieldname']] = $ticks;
@@ -469,7 +510,7 @@ class ImportCSV
 					if (isset($line[$i])) {
 						$vlu = $line[$i];
 
-						if (!$idFieldIncluded)
+						if (!$idFieldIncluded and $i == 0 and $update_insert == 'insert_match_column')
 							$whereClause->addCondition($fields[$f_index]['realfieldname'], $vlu);
 
 						$data[$fields[$f_index]['realfieldname']] = $vlu;
@@ -478,8 +519,12 @@ class ImportCSV
 			} elseif ($f_index == -1) {
 				if (isset($line[$i])) {
 					$vlu = $line[$i];
-					$whereClause->addCondition($ct->Table->realidfieldname, $vlu);
-					$data[$ct->Table->realidfieldname] = $vlu;
+
+					if ($update_insert == 'insert_match_id')
+						$whereClause->addCondition($ct->Table->realidfieldname, $vlu);
+
+					if ($update_insert !== 'insert_ignore_id')
+						$data[$ct->Table->realidfieldname] = $vlu;
 				}
 			}
 			$i++;

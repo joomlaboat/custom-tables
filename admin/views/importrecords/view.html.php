@@ -28,7 +28,7 @@ use Joomla\CMS\Toolbar\Toolbar;
 class CustomTablesViewImportRecords extends HtmlView
 {
 	var string $fieldInputPrefix;
-	var array $previewData;
+	var ?array $previewData;
 
 	var CT $ct;
 	var int $tableId;
@@ -47,25 +47,31 @@ class CustomTablesViewImportRecords extends HtmlView
 		$task = common::inputGetCmd('task', '');
 		if ($task == 'preview_import') {
 			$this->previewData = $this->buildPreview();
-			$this->updateFieldMap();
 
-			$toolbar = Toolbar::getInstance('toolbar');
-			$toolbar->appendButton('Standard', 'refresh', 'Refresh', 'importrecords.preview_import', false, null);
-			$toolbar->appendButton('Standard', 'upload', 'Import Records', 'importrecords.import_records', false, null);
+			if ($this->previewData === null) {
+				ToolbarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - Import Records', 'joomla');
+				parent::display($tpl);
+			} else {
+				$this->updateFieldMap();
 
-			$application = Factory::getApplication();
-			$document = $application->getDocument();
-			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/csvimport.js"></script>');
+				$toolbar = Toolbar::getInstance('toolbar');
+				$toolbar->appendButton('Standard', 'refresh', 'Refresh', 'importrecords.preview_import', false, null);
+				$toolbar->appendButton('Standard', 'upload', 'Import Records', 'importrecords.import_records', false, null);
 
-			ToolbarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - Import Records - Preview', 'joomla');
-			parent::display('preview');
+				$application = Factory::getApplication();
+				$document = $application->getDocument();
+				$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/csvimport.js"></script>');
+
+				ToolbarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - Import Records - Preview', 'joomla');
+				parent::display('preview');
+			}
 		} else {
 			ToolbarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - Import Records', 'joomla');
 			parent::display($tpl);
 		}
 	}
 
-	function buildPreview(): array
+	function buildPreview(): ?array
 	{
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
 			. 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
@@ -77,18 +83,16 @@ class CustomTablesViewImportRecords extends HtmlView
 			$this->fileId = common::inputGetCmd('fileid', '');
 			$filename = FileUploader::getFileNameByID($this->fileId);
 		} catch (Exception $e) {
-			echo $e->getMessage();
-			die;
+			common::enqueueMessage($e->getMessage(), 'error');
+			return null;
 		}
 
-		//try {
-		return ImportCSV::importCSVFile($filename, $this->tableId, true);
-
-		//} catch (Throwable $e) {
-		//	unlink($filename);
-		//	$link = 'index.php?option=com_customtables&view=importrecords&tableid=' . $tableId;
-		//	$this->setRedirect($link, common::translate('Records was Unable to Import: ' . $e->getMessage()), 'error');
-		//}
+		try {
+			return ImportCSV::importCSVFile($filename, $this->tableId, true);
+		} catch (Throwable $e) {
+			common::enqueueMessage($e->getMessage(), 'error');
+			return null;
+		}
 	}
 
 	function updateFieldMap()

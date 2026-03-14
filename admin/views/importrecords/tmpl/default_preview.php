@@ -202,7 +202,11 @@ $index = 0;
 		<div class="controls">
 			<?php
 			$control_name = 'update_insert';
-			$options = [['id' => 'insert', 'label' => 'Insert'], ['id' => 'update_by_id', 'label' => 'Update if Record ID matches'], ['id' => 'update_by_first_column', 'label' => 'Update if first column matches']];
+			$options = [
+					['id' => 'insert_match_id', 'label' => 'Insert / Update if Record ID matches'],
+					['id' => 'insert_match_column', 'label' => 'Insert / Update if first column matches'],
+					['id' => 'insert_ignore_id', 'label' => 'Insert / Ignore Record ID'],
+			];
 			$update_insert = common::inputGetCmd('update_insert', 'insert');
 
 			echo HTMLHelper::_('select.genericlist', $options, $control_name, 'name="' . $control_name . '" class="' . $default_class . '"',
