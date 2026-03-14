@@ -24,11 +24,15 @@ class Languages
 
 	function __construct()
 	{
-		$this->LanguageList = $this->getLanguageList();
+		if (!defined('CUSTOMTABLES_LANGUAGES'))
+			$this->LanguageList = self::queryLanguageList();
+		else
+			$this->LanguageList = CUSTOMTABLES_LANGUAGES;
+
 		$this->Postfix = $this->getLangPostfix();
 	}
 
-	function getLanguageList(): array
+	public static function queryLanguageList(): array
 	{
 		if (defined('_JEXEC')) {
 			$whereClause = new MySQLWhereClause();
@@ -36,13 +40,13 @@ class Languages
 
 			$rows = database::loadObjectList('#__languages', ['lang_id AS id', 'lang_code AS language', 'title AS caption', 'title', 'sef AS original_sef'], $whereClause, 'lang_id');
 
-			$this->LanguageList = array();
+			$LanguageList = array();
 			foreach ($rows as $row) {
 				$parts = explode('-', $row->original_sef);
 				$row->sef = $parts[0];
-				$this->LanguageList[] = $row;
+				$LanguageList[] = $row;
 			}
-			return $this->LanguageList;
+			return $LanguageList;
 		} else {
 
 			require_once ABSPATH . 'wp-admin/includes/translation-install.php';
@@ -60,7 +64,7 @@ class Languages
 
 			$i = 2;
 			foreach ($languages as $lang_code) {
-				$translation = $this->wp_findLanguageTranslation($translations, $lang_code);
+				$translation = self::wp_findLanguageTranslation($translations, $lang_code);
 
 				$parts = explode('_', $lang_code);
 				$sef = $parts[0];
@@ -79,7 +83,7 @@ class Languages
 		}
 	}
 
-	protected function wp_findLanguageTranslation($translations, $lang_code)
+	static protected function wp_findLanguageTranslation($translations, $lang_code)
 	{
 		foreach ($translations as $translation) {
 			if ($translation['language'] == $lang_code)
