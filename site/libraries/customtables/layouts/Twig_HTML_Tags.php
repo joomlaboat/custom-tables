@@ -716,6 +716,118 @@ class Twig_HTML_Tags
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.7.2
+	 */
+	function searchrange(?string $field = null, float $min = 0, float $max = 100, string $class = ''): string
+	{
+		$fld = null;
+
+		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
+			return '';
+
+		if (empty($field))
+			throw new Exception('Search range box: Please specify a field name.');
+
+		$vlu = 'Search field name is wrong';
+
+		require_once(CUSTOMTABLES_LIBRARIES_PATH
+			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'searchinputbox.php');
+
+		//$SearchBox = new SearchInputBox($this->ct, 'esSearchBox');
+
+		//Add control elements
+		$list_of_fields = [$field];
+		$fieldTitles = $this->getFieldTitles($list_of_fields);
+		if (count($fieldTitles) == 0)
+			throw new Exception('Search range box: Field ' . $field . ' not found.');
+
+		$field_title = $fieldTitles[0];
+		$cssClass = 'ctSearchBox';
+
+		if ($class != '')
+			$cssClass .= ' ' . $class;
+
+		$objectName = $field;
+
+		$vlu = '<style>
+  .range-container {
+    max-width: 500px;
+    margin: 50px;
+  }
+  .inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .inputs input {
+    width: 60px;
+  }
+  .slider {
+    position: relative;
+    height: 6px;
+    background: #ddd;
+    border-radius: 3px;
+  }
+  .slider-track {
+    position: absolute;
+    height: 6px;
+    background: #007bff;
+    border-radius: 3px;
+  }
+  input[type="range"] {
+    position: absolute;
+    width: 100%;
+    pointer-events: none; /* so only handles are draggable */
+    -webkit-appearance: none;
+    background: transparent;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    pointer-events: all;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    border: none;
+    -webkit-appearance: none;
+  }
+</style>
+<div class="range-container">
+  <div class="inputs">
+    <label>From: <input type="number" id="fromInput" value="20" min="0" max="100"></label>
+    <label>To: <input type="number" id="toInput" value="80" min="0" max="100"></label>
+  </div>
+
+  <div class="slider">
+    <div class="slider-track" id="sliderTrack"></div>
+    <input type="range" id="fromSlider" min="0" max="100" value="20">
+    <input type="range" id="toSlider" min="0" max="100" value="80">
+  </div>
+</div>
+
+<script>
+const ';
+
+		/*
+		try {
+			$vlu = $SearchBox->renderFieldBox($this->ct->Table->fieldInputPrefix . 'search_box_', $objectName, $first_fld,
+				$cssClass, '0',
+				'', '', $onchange, $field_title, $matchType, $stringLength);//action should be a space not empty or
+			//0 because it's not an edit box, and we pass onChange value even " " is the value;
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
+		}
+
+		if ($vlu !== '') {
+			$field2search = $this->prepareSearchElement($first_fld);
+			$vlu .= '<input type=\'hidden\' ctSearchBoxField=\'' . $field2search . '\' />';
+		}
+		*/
+
+		return $vlu;
+	}
+
 	function searchbutton($linkType = '', $defaultLabel = null, $class_ = ''): string
 	{
 		if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))

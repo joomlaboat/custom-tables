@@ -21,6 +21,7 @@ use Throwable;
 
 class CT
 {
+	private static $recordCache = [];
 	var Languages $Languages;
 	var Environment $Env;
 	var ?Params $Params;
@@ -131,27 +132,38 @@ class CT
 			$ordering[] = $this->Ordering->orderby;
 		}
 
-		$records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-			(count($ordering) > 0 ? implode(',', $ordering) : null), 1, null,
-			null, $this->Table->realtablename . '.' . $this->Table->realidfieldname
-		);
+		$cache_var = $this->Table->realtablename . '|' . $this->Filter->whereClause . '|' . implode(',', $ordering);
 
-		if (count($records) < 1) {
-			$this->Table->record = null;
-			return false;
-		}
+		if (!isset(self::$recordCache[$cache_var])) {
 
-		if (!$this->Params->blockExternalVars and $this->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-			$this->Table->record = ctProHelpers::getSpecificVersionIfSet($this, $records[0]);
-		else
-			$this->Table->record = $records[0];
+			$records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
+				(count($ordering) > 0 ? implode(',', $ordering) : null), 1, null,
+				null, $this->Table->realtablename . '.' . $this->Table->realidfieldname
+			);
 
-		if (!empty($this->Params->recordsTable) and !empty($this->Params->recordsUserIdField) and !empty($this->Params->recordsField)) {
-
-			if (!$this->checkRecordUserJoin($this->Params->recordsTable, $this->Params->recordsUserIdField, $this->Params->recordsField, $this->Params->listing_id)) {
-				//YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE;
-				throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED') . ' ONLY USER CREATED THIS RECORD ALLOWED TO EDIT IT.');
+			if (count($records) < 1) {
+				self::$recordCache[$cache_var] = null;
+				$this->Table->record = null;
+				return false;
 			}
+
+			if (!$this->Params->blockExternalVars and $this->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers')) {
+				$this->Table->record = ctProHelpers::getSpecificVersionIfSet($this, $records[0]);
+				self::$recordCache[$cache_var] = $this->Table->record;
+			} else {
+				$this->Table->record = $records[0];
+				self::$recordCache[$cache_var] = $this->Table->record;
+			}
+
+			if (!empty($this->Params->recordsTable) and !empty($this->Params->recordsUserIdField) and !empty($this->Params->recordsField)) {
+
+				if (!$this->checkRecordUserJoin($this->Params->recordsTable, $this->Params->recordsUserIdField, $this->Params->recordsField, $this->Params->listing_id)) {
+					//YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE;
+					throw new Exception(common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED') . ' ONLY USER CREATED THIS RECORD ALLOWED TO EDIT IT.');
+				}
+			}
+		} else {
+			$this->Table->record = self::$recordCache[$cache_var];
 		}
 
 		return true;
