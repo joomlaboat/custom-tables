@@ -153,6 +153,48 @@
 			</params>
 		</tag>
 
+		<tag name="searchrange" label="Range Search Slider" startchar="{" endchar="}"
+			 description="Creates a dual-handle range slider (from–to) that allows users to filter numeric table data within a selected range."
+			 twigclass="html" wordpress="true">
+
+			<params>
+
+				<param type="field" name="field" label="Field"
+					   description="Specifies the numeric table field to filter by range (e.g., {{ html.searchrange('price') }}). Only one field is supported."/>
+
+				<param type="number" name="min" label="Minimum Value"
+					   description="Defines the minimum value of the slider range."
+					   default="0"/>
+
+				<param type="number" name="max" label="Maximum Value"
+					   description="Defines the maximum value of the slider range."
+					   default="100"/>
+
+				<param type="number" name="step" label="Step"
+					   description="Defines the increment step between values (e.g., 1, 0.5, 10)."
+					   default="1"/>
+
+				<param type="string" name="color" label="Color"
+					   description="Defines the background color of the slider (e.g., 'grey', '#0000FF', 'green')."
+					   default="grey"/>
+
+				<param name="handlers" label="Handles Behavior"
+					   description="Controls how the slider handles interact with each other:"
+					   type="list" default="" example="fit"
+				>
+
+					<option value="" label="Default Styling - Standard independent handles"/>
+					<option value="fit" label="Fit Handles Within Slider - Handles stay within slider bounds"/>
+					<option value="no-overlap"
+							label="Don't Overlap Handles - Prevents handles from crossing each other"/>
+				</param>
+
+				<param type="string" name="class" label="CSS Class"
+					   description="Defines custom styling by specifying one or more CSS class names, separated by spaces."/>
+
+			</params>
+		</tag>
+
 		<tag name="searchbutton" label="Search Button" startchar="{" endchar="}" description="Renders a Search Button"
 			 twigclass="html" image="https://joomlaboat.com/images/components/ct/tags/search-button.png"
 			 wordpress="true">

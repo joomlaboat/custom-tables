@@ -728,22 +728,29 @@ class Twig_HTML_Tags
 			return '';
 
 		if (empty($field))
-			throw new Exception('Search range box: Please specify a field name.');
+			throw new Exception('{{ html.searchrange() }}: Please specify a field name.');
 
 		$vlu = 'Search field name is wrong';
 
 		require_once(CUSTOMTABLES_LIBRARIES_PATH
 			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'searchinputbox.php');
 
-		//$SearchBox = new SearchInputBox($this->ct, 'esSearchBox');
-
 		//Add control elements
 		$list_of_fields = [$field];
 		$fieldTitles = $this->getFieldTitles($list_of_fields);
 		if (count($fieldTitles) == 0)
-			throw new Exception('Search range box: Field ' . $field . ' not found.');
+			throw new Exception('{{ html.searchrange("' . $field . '") }}: Field ' . $field . ' not found.');
 
-		$field_title = $fieldTitles[0];
+		//$field_title = $fieldTitles[0];
+
+		if ($max < $min)
+			throw new Exception('{{ html.searchrange("' . $field . '",' . $min . ',' . $max . ') }}: Max is less than Min.');
+
+		if ($max == $min)
+			throw new Exception('{{ html.searchrange("' . $field . '",' . $min . ',' . $max . ') }}: Min = Max.');
+
+		if ($step == 0)
+			throw new Exception('{{ html.searchrange("' . $field . '",' . $min . ',' . $max . ',' . $step . ') }}: Step = 0.');
 
 		$where_name = $field;
 		$f = str_replace($this->ct->Table->fieldPrefix, '', $where_name);//legacy support
@@ -761,7 +768,6 @@ class Twig_HTML_Tags
 		Environment::$librariesToLoad['nouislider'] = true;
 
 		$objectName = 'comct_search_box_' . $field;
-		//width:500px;
 
 		if ($handlers == 'no-overlap') {
 			$style = '#' . $objectName . '_slider .noUi-handle-lower {
@@ -772,8 +778,10 @@ class Twig_HTML_Tags
 }';
 		} elseif ($handlers == 'fit') {
 			$style = '#' . $objectName . '_slider{padding: 0 16px;}';
-		} else {
+		} elseif ($handlers == '' or $handlers == 'default') {
 			$style = '';
+		} else {
+			throw new Exception('{{ html.searchrange("' . $field . '",' . $min . ',' . $max . ',' . $step . ',"' . $handlers . '") }}: Unknown handler type: .');
 		}
 
 		$vlu = '
