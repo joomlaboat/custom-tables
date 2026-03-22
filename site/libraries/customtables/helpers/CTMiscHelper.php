@@ -958,7 +958,6 @@ class CTMiscHelper
 	public static function ExplodeSmartParamsArray(string $param): array
 	{
 		$items = self::ExplodeSmartParams($param);
-
 		$new_items = array();
 
 		foreach ($items as $item) {
@@ -967,29 +966,53 @@ class CTMiscHelper
 			$comparison_operator = '';
 
 			if ($logic_operator == 'or' or $logic_operator == 'and') {
-				if (!(!str_contains($comparison_operator_str, '<=')))
+
+				$whr = [];
+
+				if (str_contains($comparison_operator_str, '<=')) {
 					$comparison_operator = '<=';
-				elseif (!(!str_contains($comparison_operator_str, '>=')))
+					$whr = CTMiscHelper::csv_explode('<=', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '_lte_')) {
+					$comparison_operator = '<=';
+					$whr = CTMiscHelper::csv_explode('_lte_', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '>=')) {
 					$comparison_operator = '>=';
-				elseif (str_contains($comparison_operator_str, '!=='))
+					$whr = CTMiscHelper::csv_explode('>=', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '_gte_')) {
+					$comparison_operator = '>=';
+					$whr = CTMiscHelper::csv_explode('_gte_', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '!==')) {
 					$comparison_operator = '!==';
-				elseif (!(!str_contains($comparison_operator_str, '!=')))
+					$whr = CTMiscHelper::csv_explode('!==', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '!=')) {
 					$comparison_operator = '!=';
-				elseif (str_contains($comparison_operator_str, '=='))
+					$whr = CTMiscHelper::csv_explode('!=', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '==')) {
 					$comparison_operator = '==';
-				elseif (str_contains($comparison_operator_str, '='))
+					$whr = CTMiscHelper::csv_explode('==', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '=')) {
 					$comparison_operator = '=';
-				elseif (!(!str_contains($comparison_operator_str, '<')))
+					$whr = CTMiscHelper::csv_explode('=', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '<')) {
 					$comparison_operator = '<';
-				elseif (!(!str_contains($comparison_operator_str, '>')))
+					$whr = CTMiscHelper::csv_explode('<', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '_lt_')) {
+					$comparison_operator = '<';
+					$whr = CTMiscHelper::csv_explode('_lt_', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '>')) {
 					$comparison_operator = '>';
+					$whr = CTMiscHelper::csv_explode('>', $comparison_operator_str, '"', false);
+				} elseif (str_contains($comparison_operator_str, '_gt_')) {
+					$comparison_operator = '>';
+					$whr = CTMiscHelper::csv_explode('_gt_', $comparison_operator_str, '"', false);
+				}
 
-				if ($comparison_operator != '') {
-					$whr = CTMiscHelper::csv_explode($comparison_operator, $comparison_operator_str, '"', false);
-
+				if (count($whr) > 0) {
 					if (count($whr) == 2) {
 						$fieldNamesString = trim(preg_replace("/[^a-zA-Z\d,:\-_;]/", "", trim($whr[0])));
 						$new_items[] = ['logic' => $logic_operator, 'comparison' => $comparison_operator, 'field' => $fieldNamesString, 'value' => trim($whr[1])];
+					} else {
+						//Error
 					}
 				} else {
 					//this to process boolean values.
@@ -1006,8 +1029,8 @@ class CTMiscHelper
 	private static function ExplodeSmartParams(string $param): array
 	{
 		$items = array();
-
 		$a = CTMiscHelper::csv_explode(' and ', $param, '"', true);
+
 		foreach ($a as $b) {
 			$c = CTMiscHelper::csv_explode(' or ', $b, '"', true);
 

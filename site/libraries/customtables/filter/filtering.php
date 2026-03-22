@@ -91,7 +91,6 @@ class Filtering
 			return;
 
 		$param = $this->sanitizeAndParseFilter($param, true);
-
 		$items = CTMiscHelper::ExplodeSmartParamsArray($param);
 		$whereClauseExpression = new MySQLWhereClause();
 
@@ -1005,6 +1004,30 @@ class Filtering
 
 		$whereClause = new MySQLWhereClause();
 
+		if (str_contains($value, '-to-') or $comparison_operator == '>' or $comparison_operator == '<' or $comparison_operator == '>=' or $comparison_operator == '<=') {
+
+			$valueArr = explode('-to-', $value);
+			if ($valueArr[0] == '' and $valueArr[1] == '')
+				return $whereClause;
+
+			$joinTableName = $field->params[0];
+			if (isset($field->params[1]))
+				$joinTableField = $field->params[1];
+			else
+				throw new Exception('TableJoin range Search: "' . implode(',', $field->params) . '" sqljoin: field not set');
+
+			$ct = new CT([], true);
+			$ct->getTable($joinTableName);
+
+			if ($ct->Table === null)
+				throw new Exception('TableJoin range Search: sqljoin: table "' . $joinTableName . '" not found');
+
+			$fieldRow = $ct->Table->getFieldByName($joinTableField);
+			if (!is_array($fieldRow))
+				throw new Exception('TableJoin range Search: sqljoin: field "' . $joinTableField . '" not found');
+		}
+
+
 		if (count($typeParamsArray) >= 2) {
 			foreach ($vList as $vL) {
 				$valueNew = $vL;
@@ -1022,27 +1045,14 @@ class Filtering
 						if ($valueArr[0] == '' and $valueArr[1] == '')
 							return $whereClause;
 
-						$joinTableName = $field->params[0];
-						if (isset($field->params[1]))
-							$joinTableField = $field->params[1];
-						else
-							throw new Exception('TableJoin range Search: "' . implode(',', $field->params) . '" sqljoin: field not set');
-
-						$ct = new CT([], true);
-						$ct->getTable($joinTableName);
-
-						if ($ct->Table === null)
-							throw new Exception('TableJoin range Search: sqljoin: table "' . $joinTableName . '" not found');
-
-						$fieldRow = $ct->Table->getFieldByName($joinTableField);
-						if (!is_array($fieldRow))
-							throw new Exception('TableJoin range Search: sqljoin: field "' . $joinTableField . '" not found');
+						$valueTitle = '';
 
 						if (!empty($valueArr[0])) {
 							$where_from = '(SELECT ' . $fieldRow['realfieldname'] . ' FROM ' . $ct->Table->realtablename . ' WHERE '
 								. $ct->Table->realtablename . '.' . $ct->Table->realidfieldname . '=' . $this->ct->Table->realtablename . '.' . $field->realfieldname . ')';
 
 							$whereClause->addCondition($where_from, floatval($valueArr[0]), '>=', true);
+							$valueTitle .= common::translate('COM_CUSTOMTABLES_FROM') . ' ' . floatval($valueArr[0]) . ' ';
 						}
 
 						if (!empty($valueArr[1])) {
@@ -1050,7 +1060,10 @@ class Filtering
 								. $ct->Table->realtablename . '.' . $ct->Table->realidfieldname . '=' . $this->ct->Table->realtablename . '.' . $field->realfieldname . ')';
 
 							$whereClause->addCondition($where_to, floatval($valueArr[1]), '<=', true);
+							$valueTitle .= common::translate('COM_CUSTOMTABLES_TO') . ' ' . floatval($valueArr[1]);
 						}
+
+						$this->PathValue[] = $field->title . ' / ' . $fieldRow['fieldtitle' . $this->ct->Languages->Postfix] . ': ' . $valueTitle;
 
 					} else {
 						if ($comparison_operator == '!=') {
@@ -1078,6 +1091,20 @@ class Filtering
 								. $opt_title
 								. ' '
 								. $filterTitle;
+						} elseif ($comparison_operator == '>' or $comparison_operator == '<' or $comparison_operator == '>=' or $comparison_operator == '<=') {
+							$opt_title = ' ' . $comparison_operator;
+
+							$where_from = '(SELECT ' . $fieldRow['realfieldname'] . ' FROM ' . $ct->Table->realtablename . ' WHERE '
+								. $ct->Table->realtablename . '.' . $ct->Table->realidfieldname . '=' . $this->ct->Table->realtablename
+								. '.' . $field->realfieldname . ')';
+
+							$whereClause->addCondition($where_from, floatval($valueNew), $comparison_operator, true);
+
+							$this->PathValue[] = $field->title . ' / ' . $fieldRow['fieldtitle' . $this->ct->Languages->Postfix]
+								. ' '
+								. $opt_title
+								. ' '
+								. floatval($valueNew);
 						}
 					}
 				}
