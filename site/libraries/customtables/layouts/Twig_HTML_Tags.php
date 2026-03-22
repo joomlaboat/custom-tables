@@ -760,6 +760,8 @@ class Twig_HTML_Tags
 			$value_min = isset($valueParts[0]) ? floatval($valueParts[0]) : $min;
 			if (isset($valueParts[1]))
 				$value_max = isset($valueParts[1]) ? floatval($valueParts[1]) : $max;
+			else
+				$value_max = $max;
 		} else {
 			$value_min = $min;
 			$value_max = $max;
