@@ -604,6 +604,11 @@ class common
 		$document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.js"></script>');
 		$document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.css" />');
 
+		if (isset(Environment::$librariesToLoad['nouislider'])) {
+			$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/nouislider.min.css" type="text/css" rel="stylesheet" >');
+			$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/nouislider.min.js"></script>');
+		}
+
 		$joomla_params = ComponentHelper::getParams('com_customtables');
 		$googleMapAPIKey = $joomla_params->get('googlemapapikey');
 

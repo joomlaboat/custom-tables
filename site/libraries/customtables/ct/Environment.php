@@ -20,26 +20,27 @@ use Joomla\CMS\Component\ComponentHelper;
 
 class Environment
 {
+	public static $librariesToLoad = [];
 	var string $current_url;
 	var string $current_sef_url;
 	var string $encoded_current_url;
-	var string $encoded_current_url_no_return;
 
 	//var int $userid;
+	var string $encoded_current_url_no_return;
 	var ?CTUser $user;
 	var bool $isUserAdministrator;
 	var bool $print;
 	var bool $clean;
-	var string $frmt;
-	var string $WebsiteRoot;//With trailing front slash /
+		var string $frmt;//With trailing front slash /
+var string $WebsiteRoot;
 	var bool $advancedTagProcessor;
 	var bool $isMobile;
 	var bool $isModal;
 	var string $field_prefix;
 	var bool $loadTwig;
 	var string $toolbarIcons;
-	var ?string $folderToSaveLayouts;
-	var bool $isPlugin; //this can be set by calling the class from the plugin
+		var ?string $folderToSaveLayouts; //this can be set by calling the class from the plugin
+var bool $isPlugin;
 	var bool $CustomPHPEnabled;
 	var bool $SQLSelectEnabled;
 	var bool $debug;

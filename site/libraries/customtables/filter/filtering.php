@@ -259,7 +259,10 @@ class Filtering
 				if ($comparison_operator == '==')
 					$comparison_operator = '=';
 
-				return $this->Search_Number($value, $fieldRow, $comparison_operator, true);
+				if (str_contains($value, '-to-'))
+					return $this->getRangeWhere($fieldRow, $value);
+				else
+					return $this->Search_Number($value, $fieldRow, $comparison_operator, true);
 
 			case 'checkbox':
 				$vList = explode(',', $value);
@@ -707,7 +710,7 @@ class Filtering
 
 		$fieldTitle = $fieldRow['fieldtitle' . $this->ct->Languages->Postfix];
 
-		if ($fieldRow['typeparams'] == 'date')
+		if ($fieldRow['typeparams'] == 'date' or str_contains($value, '-to-'))
 			$valueArr = explode('-to-', $value);
 		else
 			$valueArr = explode('-', $value);
@@ -716,8 +719,8 @@ class Filtering
 			return $whereClause;
 
 		$range = explode('_r_', $fieldRow['fieldname']);
-		if (count($range) == 1)
-			return $whereClause;
+		//if (count($range) == 1)
+		//return $whereClause;
 
 		$valueTitle = '';
 		$from_field = '';
