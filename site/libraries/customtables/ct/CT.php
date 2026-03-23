@@ -209,9 +209,9 @@ class CT
 	 * @throws Exception
 	 * @since 3.2.3
 	 */
-	function getTable($tableNameOrID, $userIdFieldName = null, bool $loadAllField = false): void
+	function getTable($tableNameOrID, $userIdFieldName = null, bool $loadAllField = false, bool $reloadFields = false): void
 	{
-		$this->Table = new Table($this->Languages, $this->Env, $tableNameOrID, $this->Params->userIdField, $loadAllField);
+		$this->Table = new Table($this->Languages, $this->Env, $tableNameOrID, $this->Params->userIdField, $loadAllField, $reloadFields);
 
 		if ($this->Table->tablename !== null) {
 			$this->Ordering = new Ordering($this->Table, $this->Params);

@@ -189,6 +189,12 @@
 							label="Don't Overlap Handles - Prevents handles from crossing each other"/>
 				</param>
 
+				<param name="reload" label="Reload"
+					   description="For select boxes only: Determines whether the page reloads automatically when a new option is selected. "
+					   type="radio"
+					   default="" example="reload"
+					   options="|Do nothing,reload|Reload Page"/>
+				
 				<param type="string" name="class" label="CSS Class"
 					   description="Defines custom styling by specifying one or more CSS class names, separated by spaces."/>
 

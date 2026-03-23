@@ -619,7 +619,7 @@ class Fields
 				throw new Exception('Add field details: ' . $e->getMessage());
 			}
 
-			$ct->getTable($tableId, null, true);//reload table to include new field
+			$ct->getTable($tableId, null, true, true);//reload table to include new field
 
 		}
 
@@ -737,7 +737,7 @@ class Fields
 
 		$new_type = $data['type'];
 		if ($new_type === null)
-			throw new Exception('Update Physical Field: New Field Type Cannot be NUL');
+			throw new Exception('Update Physical Field: New Field Type Cannot be NULL');
 
 		$PureFieldType = null;
 		if ($new_typeparams !== null)

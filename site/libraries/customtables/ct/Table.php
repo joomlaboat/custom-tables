@@ -47,7 +47,7 @@ class Table
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	function __construct($Languages, $Env, $tablename_or_id_not_sanitized, $useridfieldname = null, bool $loadAllField = true)
+	function __construct($Languages, $Env, $tablename_or_id_not_sanitized, $useridfieldname = null, bool $loadAllField = true, bool $reloadFields = false)
 	{
 		$this->Languages = $Languages;
 		$this->Env = $Env;
@@ -88,14 +88,14 @@ class Table
 		if (!isset($this->tablerow['id']))
 			return;
 
-		$this->setTable($this->tablerow, $useridfieldname, $loadAllField);
+		$this->setTable($this->tablerow, $useridfieldname, $loadAllField, $reloadFields);
 	}
 
 	/**
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function setTable(array $tableRow, $useridFieldName = null, bool $loadAllField = false): void
+	protected function setTable(array $tableRow, $useridFieldName = null, bool $loadAllField = false, bool $reloadFields = false): void
 	{
 		$this->tablerow = $tableRow;
 		$this->tablename = $this->tablerow['tablename'];
@@ -133,7 +133,7 @@ class Table
 		else
 			$table_fields_variable_name = $this->tableid;
 
-		if (!isset(self::$fieldsCache[$table_fields_variable_name])) {
+		if ($reloadFields or !isset(self::$fieldsCache[$table_fields_variable_name])) {
 
 			$whereClause = new MySQLWhereClause();
 

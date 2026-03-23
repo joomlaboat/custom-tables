@@ -720,7 +720,7 @@ class Twig_HTML_Tags
 	 * @throws Exception
 	 * @since 3.7.2
 	 */
-	function searchrange(?string $field = null, float $min = 0, float $max = 100, float $step = 1, string $color = "grey", string $handlers = "fit", string $class = ''): string
+	function searchrange(?string $field = null, float $min = 0, float $max = 100, float $step = 1, string $color = "grey", string $handlers = "fit", bool $reload = false, string $class = ''): string
 	{
 		$fld = null;
 
@@ -819,6 +819,10 @@ const ' . $objectName . ' = document.getElementById("' . $objectName . '");
 
 ' . $objectName . '_slider.noUiSlider.on("update", (values) => {
   ' . $objectName . '.value = Math.round(values[0]) + "-to-" + Math.round(values[1]);
+});
+
+' . $objectName . '_slider.noUiSlider.on("change", (values) => {
+  ' . ($reload ? 'ctSearchBoxDo();' : '') . '
 });
 
 mergeTooltips(' . $objectName . '_slider, 15, " - ");
