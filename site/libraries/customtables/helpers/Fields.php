@@ -724,12 +724,12 @@ class Fields
 		if (empty($new_realfieldname))
 			throw new Exception('Update Physical Field: Field name cannot be empty.');
 
-		if (Fields::checkIfFieldExists($realtablename, $new_realfieldname))
-			throw new Exception('Field "' . $new_realfieldname . '" already exists.');
-
 		$old_realfieldname = $data_old['realfieldname'];
 		if (!Fields::checkIfFieldExists($realtablename, $old_realfieldname))
 			throw new Exception('Original field "' . $old_realfieldname . '" not found');
+
+		if (strtolower($old_realfieldname) !== strtolower($new_realfieldname) and Fields::checkIfFieldExists($realtablename, $new_realfieldname))
+			throw new Exception('Field "' . $new_realfieldname . '" already exists.');
 
 		$new_type = $data['type'];
 		if ($new_type === null)
