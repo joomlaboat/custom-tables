@@ -499,6 +499,8 @@ class Fields
 		if ($ct->Table === null)
 			throw new Exception('Save Field: Table not found');
 
+		$data_old = null;
+
 		if ($data === null) {
 			if (defined('_JEXEC')) {
 				$data = common::inputGet('jform', array(), 'ARRAY');
@@ -547,6 +549,28 @@ class Fields
 
 		$data['fieldname'] = $newFieldName;
 
+		if ($fieldId !== null) {
+			$data_old = $ct->Table->getFieldById($fieldId);
+
+			//Check if convertable
+			$unconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'log');
+			if ($data_old['type'] !== $data['type'] and (in_array($data['type'], $unconvertible_types) or in_array($data_old['type'], $unconvertible_types))) {
+
+				//Checkout
+				try {
+					$update_data = ['checked_out' => 0, 'checked_out_time' => null];
+					$whereClauseUpdate = new MySQLWhereClause();
+					$whereClauseUpdate->addCondition('id', $fieldId);
+
+					database::update('#__customtables_fields', $update_data, $whereClauseUpdate);
+				} catch (Exception $e) {
+					throw new Exception('Update field checkout problem: ' . $e->getMessage());
+				}
+
+				throw new Exception('Cannot convert "' . $data_old['type'] . '" to "' . $data['type'] . '"');
+			}
+		}
+
 		if ($fieldId !== null and $task == 'save2copy') {
 			//Checkout
 			try {
@@ -567,7 +591,7 @@ class Fields
 			if ($already_exists === null) {
 				$data['fieldname'] = $newFieldName;
 			} else {
-				return null; //Abort if the table with this name already exists.
+				throw new Exception('Field "' . $newFieldName . '" already exist.');
 			}
 		}
 
@@ -601,6 +625,7 @@ class Fields
 		//}
 
 		if ($fieldId !== null) {
+			self::update_physical_field($ct, $fieldId, $data, $data_old);
 
 			try {
 				$whereClauseUpdate = new MySQLWhereClause();
@@ -608,25 +633,23 @@ class Fields
 
 				database::update('#__customtables_fields', $data, $whereClauseUpdate);
 			} catch (Exception $e) {
-				throw new Exception('Add field details: ' . $e->getMessage());
+				throw new Exception('Unable to update field details: ' . $e->getMessage());
 			}
+
+			common::enqueueMessage('Field updated', 'success');
+
 		} else {
+			self::add_physical_field($ct, $data);
+
 			$data['ordering'] = self::getMaxOrdering($tableId) + 1;
 
 			try {
 				$fieldId = database::insert('#__customtables_fields', $data);
 			} catch (Exception $e) {
-				throw new Exception('Add field details: ' . $e->getMessage());
+				throw new Exception('Unable to add a new field: ' . $e->getMessage());
 			}
 
-			$ct->getTable($tableId, null, true, true);//reload table to include new field
-
-		}
-
-		try {
-			self::update_physical_field($ct, $fieldId, $data);
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+			common::enqueueMessage('Field added', 'success');
 		}
 
 		self::findAndFixFieldOrdering();
@@ -689,94 +712,65 @@ class Fields
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected static function getMaxOrdering($tableid): int
-	{
-		$whereClause = new MySQLWhereClause();
-		$whereClause->addCondition('published', 1);
-		$whereClause->addCondition('tableid', (int)$tableid);
-
-		$rows = database::loadObjectList('#__customtables_fields', [['MAX', '#__customtables_fields', 'ordering']], $whereClause, null, null, 1);
-		return (int)$rows[0]->vlu;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	protected static function update_physical_field(CT $ct, int $fieldId, array $data): void
+	protected static function update_physical_field(CT $ct, int $fieldId, array $data, array $data_old): void
 	{
 		$realtablename = $ct->Table->realtablename;
 
-		if ($fieldId != 0) {
-			$fieldRow = $ct->Table->getFieldById($fieldId);
-			if ($fieldRow === null) {
-				throw new Exception('Update Physical Field: Field not found: ' . $fieldId);
-			}
+		if (empty($ct->Table->tablerow['customtablename']))//Just to be safe
+			$new_realfieldname = $ct->Table->fieldPrefix . $data['fieldname'];
+		elseif ($ct->Table->tablerow['customtablename'] == $ct->Table->tablerow['tablename'])
+			$new_realfieldname = $data['fieldname'];
 
-			$ex_type = $fieldRow['type'];
-			$ex_typeparams = $fieldRow['typeparams'];
-			$realfieldname = $fieldRow['realfieldname'];
-		} else {
-			$ex_type = '';
-			$ex_typeparams = '';
-			$realfieldname = '';
-
-			if (empty($ct->Table->tablerow['customtablename']))//Just to be safe
-				$realfieldname = $ct->Table->fieldPrefix . $data['fieldname'];
-			elseif ($ct->Table->tablerow['customtablename'] == $ct->Table->tablerow['tablename'])
-				$realfieldname = $data['fieldname'];
-		}
-
-		if (empty($realfieldname))
+		if (empty($new_realfieldname))
 			throw new Exception('Update Physical Field: Field name cannot be empty.');
 
-		$new_typeparams = $data['typeparams'];
-		$fieldTitle = $data['fieldtitle'];
+		if (Fields::checkIfFieldExists($realtablename, $new_realfieldname))
+			throw new Exception('Field "' . $new_realfieldname . '" already exists.');
 
-		//---------------------------------- Convert Field
+		$old_realfieldname = $data_old['realfieldname'];
+		if (!Fields::checkIfFieldExists($realtablename, $old_realfieldname))
+			throw new Exception('Original field "' . $old_realfieldname . '" not found');
 
 		$new_type = $data['type'];
 		if ($new_type === null)
 			throw new Exception('Update Physical Field: New Field Type Cannot be NULL');
 
+		$ex_type = $data_old['type'];
+		$ex_typeparams = $data_old['typeparams'];
+
+		//Check convert ability
+		$unconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'log');
+
+		if ($ex_type !== $new_type and (in_array($new_type, $unconvertible_types) or in_array($ex_type, $unconvertible_types)))
+			throw new Exception('Cannot convert "' . $ex_type . '" to "' . $new_type . '"');
+
+		$new_typeparams = $data['typeparams'];
+
+		//New Title
+		$fieldTitle = $data['fieldtitle'];
+
+		//New Pure Type
 		$PureFieldType = null;
 		if ($new_typeparams !== null)
 			$PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams);
 
-		if ($realfieldname != '')
-			$fieldFound = Fields::checkIfFieldExists($realtablename, $realfieldname);
-		else
-			$fieldFound = false;
+		if ($PureFieldType === null)
+			throw new Exception('Unknown field type "' . $new_type . '". Cannot convert.');
 
-		if ($fieldId != 0 and $fieldFound) {
+		if (!Fields::ConvertFieldType($realtablename, $old_realfieldname, $new_realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldTitle))
+			throw new Exception('Field cannot be converted to new type.');
 
-			if ($PureFieldType !== null) {
-				try {
-					if (!Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldTitle)) {
-						throw new Exception('Field cannot be converted to new type.');
-					}
-				} catch (Exception $e) {
-					throw new Exception('Cannot convert the type: ' . $e->getMessage());
-				}
-			}
+		if ($ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
+			ctProHelpers::update_physical_field_set_extra_tasks($ex_type, $new_type, $ex_typeparams, $new_typeparams, $fieldId);
 
-			if ($ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-				ctProHelpers::update_physical_field_set_extra_tasks($ex_type, $new_type, $ex_typeparams, $new_typeparams, $fieldId);
-		}
-		//---------------------------------- end convert field
-
-		if ($fieldId == 0 or !$fieldFound) {
-			//Add Field
-			Fields::addField($ct, $realtablename, $realfieldname, $PureFieldType, $fieldTitle, $data);
-		}
-
+		//Add indexes
 		if ($new_type == 'sqljoin') {
 			//Create Index if needed
-			Fields::addIndexIfNotExist($realtablename, $realfieldname);
+			Fields::addIndexIfNotExist($realtablename, $new_realfieldname);
 
 			//Add Foreign Key
 			try {
-				Fields::addForeignKey_FieldParams($realtablename, $realfieldname, $new_typeparams);
+				Fields::addForeignKey_FieldParams($realtablename, $new_realfieldname, $new_typeparams);
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
@@ -784,17 +778,21 @@ class Fields
 
 		if ($new_type == 'user' or $new_type == 'userid') {
 			//Create Index if needed
-			Fields::addIndexIfNotExist($realtablename, $realfieldname);
+			Fields::addIndexIfNotExist($realtablename, $new_realfieldname);
 
 			//Add Foreign Key
 			try {
-				Fields::addForeignKey_Users($realtablename, $realfieldname, '', '#__users', 'id');
+				Fields::addForeignKey_Users($realtablename, $new_realfieldname);
 			} catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	public static function getPureFieldType(string $ct_fieldType, string $typeParams): array
 	{
 		$ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldType, $typeParams);
@@ -1109,133 +1107,14 @@ class Fields
 	 * @throws Exception
 	 * @since 3.1.8
 	 */
-	public static function ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldtitle): bool
+	public static function ConvertFieldType(string $realtablename, string $old_realfieldname, string $new_realfieldname, string $ex_type, string $new_type,
+											string $ex_typeparams, string $new_typeparams, array $PureFieldType, string $fieldtitle): bool
 	{
-		if ($new_type == 'blob' or $new_type == 'text' or $new_type == 'multilangtext' or $new_type == 'image') {
-			if ($new_typeparams == $ex_typeparams)
-				return true; //no need to convert
-		} else {
-			if ($new_type == $ex_type)
-				return true; //no need to convert
-		}
-
-		$inconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'log');
-
-		if (in_array($new_type, $inconvertible_types) or in_array($ex_type, $inconvertible_types))
-			return false;
-
 		try {
-			database::changeColumn($realtablename, $realfieldname, $realfieldname, $PureFieldType, $fieldtitle);
+			database::changeColumn($realtablename, $old_realfieldname, $new_realfieldname, $PureFieldType, $fieldtitle);
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
 		}
-		return true;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function addField(CT $ct, string $realtablename, string $realfieldname, array $PureFieldType, string $fieldTitle, array $fieldRow): void
-	{
-		if (count($PureFieldType) == 0)
-			return;
-
-		if (!str_contains($PureFieldType['data_type'] ?? '', 'multilang')) {
-			$AdditionOptions = '';
-			$serverType = database::getServerType();
-			if ($serverType != 'postgresql')
-				$AdditionOptions = ' COMMENT ' . database::quote($fieldTitle);
-
-			if ($PureFieldType['data_type'] != 'dummy' and !Fields::isVirtualField($fieldRow)) {
-				$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
-				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldTypeString, $AdditionOptions);
-			}
-		} else {
-			$index = 0;
-			foreach ($ct->Languages->LanguageList as $lang) {
-				if ($index == 0)
-					$postfix = '';
-				else
-					$postfix = '_' . $lang->sef;
-
-				$AdditionOptions = '';
-				$serverType = database::getServerType();
-				if ($serverType != 'postgresql')
-					$AdditionOptions = ' COMMENT ' . database::quote($fieldTitle);
-
-				$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
-				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname . $postfix, $fieldTypeString, $AdditionOptions);
-
-				$index++;
-			}
-		}
-
-		if ($PureFieldType['data_type'] == 'imagegallery') {
-			//Create table
-			//get CT table name if possible
-
-			$tableName = str_replace(database::getDBPrefix() . 'customtables_table', '', $realtablename);
-			$fieldName = str_replace($ct->Table->fieldPrefix, '', $realfieldname);
-			Fields::CreateImageGalleryTable($tableName, $fieldName);
-		} elseif ($PureFieldType['data_type'] == 'filebox') {
-			//Create table
-			//get CT table name if possible
-			$tableName = str_replace(database::getDBPrefix() . 'customtables_table', '', $realtablename);
-			$fieldName = str_replace($ct->Table->fieldPrefix, '', $realfieldname);
-			Fields::CreateFileBoxTable($tableName, $fieldName);
-		}
-	}
-
-	public static function projectedFieldTypeToString(array $PureFieldType): string
-	{
-		if (key_exists('is_nullable', $PureFieldType) and is_string($PureFieldType['is_nullable']))
-			$is_nullable = $PureFieldType['is_nullable'] == 'YES';
-		else
-			$is_nullable = $PureFieldType['is_nullable'] ?? true;
-
-		return $PureFieldType['data_type']
-			. (($PureFieldType['length'] ?? null) !== null ? '(' . $PureFieldType['length'] . ')' : '')
-			. (($PureFieldType['is_unsigned'] ?? false) ? ' UNSIGNED' : '')
-			. ($is_nullable ? ' NULL' : ' NOT NULL')
-			. (($PureFieldType['default'] ?? null) !== null ? ' DEFAULT ' . $PureFieldType['default'] : '')
-			. (($PureFieldType['autoincrement'] ?? false) ? ' AUTO_INCREMENT' : '');
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function CreateImageGalleryTable($tablename, $fieldname): bool
-	{
-		$columns = [
-			'listingid bigint not null',
-			'ordering int not null',
-			'photo_ext varchar(10) not null',
-			'title varchar(100) null'
-		];
-
-		database::createTable('#__customtables_gallery_' . $tablename . '_' . $fieldname, 'photoid',
-			$columns, 'Image Gallery', null, 'BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
-
-		return true;
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.2
-	 */
-	public static function CreateFileBoxTable($tablename, $fieldname): bool
-	{
-		$columns = [
-			'listingid bigint not null',
-			'ordering int not null',
-			'file_ext varchar(10) not null',
-			'title varchar(100) null'
-		];
-		database::createTable('#__customtables_filebox_' . $tablename . '_' . $fieldname, 'fileid', $columns,
-			'File Box', null, 'BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
-
 		return true;
 	}
 
@@ -1355,6 +1234,195 @@ class Fields
 
 	/**
 	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected static function add_physical_field(CT $ct, array $data): void
+	{
+		$realtablename = $ct->Table->realtablename;
+
+		if (empty($ct->Table->tablerow['customtablename']))//Just to be safe
+			$new_realfieldname = $ct->Table->fieldPrefix . $data['fieldname'];
+		elseif ($ct->Table->tablerow['customtablename'] == $ct->Table->tablerow['tablename'])
+			$new_realfieldname = $data['fieldname'];
+
+		if (empty($new_realfieldname))
+			throw new Exception('Update Physical Field: Field name cannot be empty.');
+
+		if (Fields::checkIfFieldExists($realtablename, $new_realfieldname))
+			throw new Exception('Field "' . $new_realfieldname . '" already exists.');
+
+		$new_typeparams = $data['typeparams'];
+		$fieldTitle = $data['fieldtitle'];
+
+		$new_type = $data['type'];
+		if ($new_type === null)
+			throw new Exception('Update Physical Field: New Field Type Cannot be NULL');
+
+		$PureFieldType = null;
+		if ($new_typeparams !== null)
+			$PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams);
+
+		if ($PureFieldType === null)
+			throw new Exception('Unknown field type "' . $new_type . '". Cannot convert.');
+
+		try {
+			Fields::addField($ct, $realtablename, $new_realfieldname, $PureFieldType, $fieldTitle, $data);
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
+
+		//Add indexes
+		if ($new_type == 'sqljoin') {
+			//Create Index if needed
+			Fields::addIndexIfNotExist($realtablename, $new_realfieldname);
+
+			//Add Foreign Key
+			try {
+				Fields::addForeignKey_FieldParams($realtablename, $new_realfieldname, $new_typeparams);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
+		}
+
+		if ($new_type == 'user' or $new_type == 'userid') {
+			//Create Index if needed
+			Fields::addIndexIfNotExist($realtablename, $new_realfieldname);
+
+			//Add Foreign Key
+			try {
+				Fields::addForeignKey_Users($realtablename, $new_realfieldname);
+			} catch (Exception $e) {
+				throw new Exception($e->getMessage());
+			}
+		}
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function addField(CT $ct, string $realtablename, string $realfieldname, array $PureFieldType, string $fieldTitle, array $fieldRow): void
+	{
+		if (count($PureFieldType) == 0) {
+			echo '$PureFieldType=0';
+			die;
+			return;
+		}
+
+		if (!str_contains($PureFieldType['data_type'] ?? '', 'multilang')) {
+			$AdditionOptions = '';
+			$serverType = database::getServerType();
+			if ($serverType != 'postgresql')
+				$AdditionOptions = ' COMMENT ' . database::quote($fieldTitle);
+
+			if ($PureFieldType['data_type'] != 'dummy' and !Fields::isVirtualField($fieldRow)) {
+				$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
+				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldTypeString, $AdditionOptions);
+			}
+		} else {
+			$index = 0;
+			foreach ($ct->Languages->LanguageList as $lang) {
+				if ($index == 0)
+					$postfix = '';
+				else
+					$postfix = '_' . $lang->sef;
+
+				$AdditionOptions = '';
+				$serverType = database::getServerType();
+				if ($serverType != 'postgresql')
+					$AdditionOptions = ' COMMENT ' . database::quote($fieldTitle);
+
+				$fieldTypeString = fields::projectedFieldTypeToString($PureFieldType);
+				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname . $postfix, $fieldTypeString, $AdditionOptions);
+
+				$index++;
+			}
+		}
+
+		if ($PureFieldType['data_type'] == 'imagegallery') {
+			//Create table
+			//get CT table name if possible
+
+			$tableName = str_replace(database::getDBPrefix() . 'customtables_table', '', $realtablename);
+			$fieldName = str_replace($ct->Table->fieldPrefix, '', $realfieldname);
+			Fields::CreateImageGalleryTable($tableName, $fieldName);
+		} elseif ($PureFieldType['data_type'] == 'filebox') {
+			//Create table
+			//get CT table name if possible
+			$tableName = str_replace(database::getDBPrefix() . 'customtables_table', '', $realtablename);
+			$fieldName = str_replace($ct->Table->fieldPrefix, '', $realfieldname);
+			Fields::CreateFileBoxTable($tableName, $fieldName);
+		}
+	}
+
+	public static function projectedFieldTypeToString(array $PureFieldType): string
+	{
+		if (key_exists('is_nullable', $PureFieldType) and is_string($PureFieldType['is_nullable']))
+			$is_nullable = $PureFieldType['is_nullable'] == 'YES';
+		else
+			$is_nullable = $PureFieldType['is_nullable'] ?? true;
+
+		return $PureFieldType['data_type']
+			. (($PureFieldType['length'] ?? null) !== null ? '(' . $PureFieldType['length'] . ')' : '')
+			. (($PureFieldType['is_unsigned'] ?? false) ? ' UNSIGNED' : '')
+			. ($is_nullable ? ' NULL' : ' NOT NULL')
+			. (($PureFieldType['default'] ?? null) !== null ? ' DEFAULT ' . $PureFieldType['default'] : '')
+			. (($PureFieldType['autoincrement'] ?? false) ? ' AUTO_INCREMENT' : '');
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function CreateImageGalleryTable($tablename, $fieldname): bool
+	{
+		$columns = [
+			'listingid bigint not null',
+			'ordering int not null',
+			'photo_ext varchar(10) not null',
+			'title varchar(100) null'
+		];
+
+		database::createTable('#__customtables_gallery_' . $tablename . '_' . $fieldname, 'photoid',
+			$columns, 'Image Gallery', null, 'BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
+
+		return true;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	public static function CreateFileBoxTable($tablename, $fieldname): bool
+	{
+		$columns = [
+			'listingid bigint not null',
+			'ordering int not null',
+			'file_ext varchar(10) not null',
+			'title varchar(100) null'
+		];
+		database::createTable('#__customtables_filebox_' . $tablename . '_' . $fieldname, 'fileid', $columns,
+			'File Box', null, 'BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
+
+		return true;
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
+	protected static function getMaxOrdering($tableid): int
+	{
+		$whereClause = new MySQLWhereClause();
+		$whereClause->addCondition('published', 1);
+		$whereClause->addCondition('tableid', (int)$tableid);
+
+		$rows = database::loadObjectList('#__customtables_fields', [['MAX', '#__customtables_fields', 'ordering']], $whereClause, null, null, 1);
+		return (int)$rows[0]->vlu;
+	}
+
+	/**
+	 * @throws Exception
 	 * @since 3.2.3
 	 */
 	protected static function findAndFixFieldOrdering(): void
@@ -1394,6 +1462,10 @@ class Fields
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 * @since 3.2.2
+	 */
 	protected static function findAndFixAutoIncrementFieldRecords(CT $ct, array $data): void
 	{
 		$start_number = 1;
