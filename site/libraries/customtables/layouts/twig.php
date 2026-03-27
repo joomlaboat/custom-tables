@@ -216,7 +216,7 @@ class TwigProcessor
 		} else {
 
 			if ($this->ct->Env->debug) {
-				$result = $this->twig->render($this->pageLayoutName, $this->variables);
+				$result = $this->twig->render($this->pageLayoutName, $this->variables ?? []);
 			} else {
 				try {
 					$result = @$this->twig->render($this->pageLayoutName, $this->variables);
@@ -402,7 +402,7 @@ class fieldObject
 			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html'
 				. DIRECTORY_SEPARATOR . 'value' . DIRECTORY_SEPARATOR . 'image.php');
 
-			$image = Value_image::getImageSRCLayoutView($options, $this->ct->Table->record[$rfn], $this->field->params);
+			$image = Value_image::getImageSRCLayoutView($options, $this->ct->Table->record[$rfn], $this->field->params ?? []);
 
 			if ($image === null)
 				return null;
@@ -575,6 +575,7 @@ class fieldObject
 			return $this->value();
 
 		$args = func_get_args();
+
 
 		if ($this->ct->isEditForm) {
 			$Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);

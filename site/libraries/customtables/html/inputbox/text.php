@@ -39,8 +39,7 @@ class InputBox_text extends BaseInputBox
 		}
 
 		if (defined('_JEXEC')) {
-
-			if (in_array('spellcheck', $this->field->params)) {
+			if (in_array('spellcheck', $this->field->params ?? [])) {
 
 				$file_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'jsc' . DIRECTORY_SEPARATOR . 'include.js';
 
@@ -49,9 +48,6 @@ class InputBox_text extends BaseInputBox
 					$this->ct->LayoutVariables['scripts'][] = URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js';
 					$this->ct->LayoutVariables['script'] .= '$Spelling.SpellCheckAsYouType("' . $this->attributes['id'] . '");';
 					$this->ct->LayoutVariables['script'] .= '$Spelling.DefaultDictionary = "English";';
-					//$this->ct->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js"></script>');
-					//$this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $this->attributes['id'] . '");</script>');
-					//$this->ct->document->addCustomTag('<script>$Spelling.DefaultDictionary = "English";</script>');
 				}
 			}
 

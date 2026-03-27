@@ -251,7 +251,7 @@ class Value
 				$path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'inputbox' . DIRECTORY_SEPARATOR;
 				require_once($path . 'time.php');
 
-				$seconds = InputBox_Time::ticks2Seconds($rowValue, $this->field->params);
+				$seconds = InputBox_Time::ticks2Seconds($rowValue, $this->field->params ?? []);
 				return InputBox_Time::seconds2FormattedTime($seconds, $option_list[0] ?? '');
 
 			case 'changetime':

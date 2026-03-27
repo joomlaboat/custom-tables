@@ -93,7 +93,7 @@ class Value_image extends BaseValue
 	 */
 	function render(): ?string
 	{
-		$image = self::getImageSRCLayoutView($this->option_list, $this->rowValue, $this->field->params);
+		$image = self::getImageSRCLayoutView($this->option_list, $this->rowValue, $this->field->params ?? []);
 		if ($image === null)
 			return null;
 
