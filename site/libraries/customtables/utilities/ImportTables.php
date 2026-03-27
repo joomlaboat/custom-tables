@@ -418,6 +418,9 @@ class ImportTables
 				//Lets create mysql field
 				$PureFieldType = Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
 
+				if ($PureFieldType === null)
+					throw new Exception('Unknown field type "' . $field_new['type'] . '" (' . $field_new['typeparams'] . ').');
+
 				Fields::addField($ct, $ct->Table->realtablename, $fieldPrefix . $fieldName,
 					$PureFieldType, $field_new['fieldtitle'], $field_new);
 			}
