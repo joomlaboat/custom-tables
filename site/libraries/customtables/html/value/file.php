@@ -49,7 +49,7 @@ class Value_file extends BaseValue
 		require_once($path . 'loader.php');
 
 		$params = ComponentHelper::getParams('com_customtables');
-		$loadTwig = $params->get('loadTwig');
+		$loadTwig = $params->get('loadTwig') ?? true;
 
 		CustomTablesLoader(false, true, null, 'com_customtables', $loadTwig);
 

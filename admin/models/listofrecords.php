@@ -129,7 +129,6 @@ class CustomtablesModelListOfRecords extends ListModel
 
 		//Select columns sanitation
 		$selects_sanitized = database::sanitizeSelects($this->ct->Table->selects, $this->ct->Table->realtablename);
-
 		$query = 'SELECT ' . $selects_sanitized . ' FROM ' . $db->quoteName($this->ct->Table->realtablename);
 
 		$wheres_and = [];
