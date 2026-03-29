@@ -99,8 +99,8 @@ class TableHelper
 	 * @since 3.2.2
 	 */
 	public static function createTableIfNotExists(string $dbPrefix, string $tableName, string $tableTitle,
-												  string $complete_table_name = '', string $privateKey = 'id',
-												  string $primaryKeyType = 'int UNSIGNED NOT NULL AUTO_INCREMENT'): bool
+	                                              string $complete_table_name = '', string $privateKey = 'id',
+	                                              string $primaryKeyType = 'int UNSIGNED NOT NULL AUTO_INCREMENT'): bool
 	{
 		if ($complete_table_name == '')
 			$realTableName = $dbPrefix . 'customtables_table_' . $tableName;

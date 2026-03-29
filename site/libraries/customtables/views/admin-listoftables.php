@@ -279,14 +279,6 @@ class ListOfTables
 			}
 
 			// Case: Updating an existing table or creating a new custom table
-
-
-			//echo '$originalTableId:' . $originalTableId . '<br/>';
-			//echo '$old_tablename:' . $old_tablename . '<br/>';
-			//echo '$task:' . $task . '<br/>';
-			//die;
-
-
 		}
 
 		//Add fields if it's a third-party table and no fields added yet.

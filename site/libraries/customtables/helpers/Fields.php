@@ -359,6 +359,11 @@ class Fields
 
 			case 'date':
 				return ['type' => 'date'];
+
+			case 'time':
+				$typeParams = 10;
+				$type = 'string';
+				break;
 		}
 		return ['type' => $type, 'typeparams' => $typeParams];
 	}
@@ -1108,7 +1113,7 @@ class Fields
 	 * @since 3.1.8
 	 */
 	public static function ConvertFieldType(string $realtablename, string $old_realfieldname, string $new_realfieldname, string $ex_type, string $new_type,
-											string $ex_typeparams, string $new_typeparams, array $PureFieldType, string $fieldtitle): bool
+	                                        string $ex_typeparams, string $new_typeparams, array $PureFieldType, string $fieldtitle): bool
 	{
 		try {
 			database::changeColumn($realtablename, $old_realfieldname, $new_realfieldname, $PureFieldType, $fieldtitle);
