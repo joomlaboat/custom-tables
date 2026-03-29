@@ -718,11 +718,11 @@ class Fields
 
 		if (empty($ct->Table->tablerow['customtablename']))//Just to be safe
 			$new_realfieldname = $ct->Table->fieldPrefix . $data['fieldname'];
-		elseif ($ct->Table->tablerow['customtablename'] == $ct->Table->tablerow['tablename'])
+		elseif ($ct->Table->tablerow['customtablename'] == $ct->Table->tablerow['realtablename'])
 			$new_realfieldname = $data['fieldname'];
 
 		if (empty($new_realfieldname))
-			throw new Exception('Update Physical Field: Field name cannot be empty.');
+			throw new Exception('Update Field: Field name cannot be empty.');
 
 		$old_realfieldname = $data_old['realfieldname'];
 		if (!Fields::checkIfFieldExists($realtablename, $old_realfieldname))
@@ -733,7 +733,7 @@ class Fields
 
 		$new_type = $data['type'];
 		if ($new_type === null)
-			throw new Exception('Update Physical Field: New Field Type Cannot be NULL');
+			throw new Exception('Update Field: New Field Type Cannot be NULL');
 
 		$ex_type = $data_old['type'];
 		$ex_typeparams = $data_old['typeparams'];
@@ -757,11 +757,11 @@ class Fields
 		if ($PureFieldType === null)
 			throw new Exception('Unknown field type "' . $new_type . '". Cannot convert.');
 
-		if (!Fields::ConvertFieldType($realtablename, $old_realfieldname, $new_realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldTitle))
+		if (!Fields::ConvertFieldType($realtablename, $old_realfieldname, $new_realfieldname, $ex_type, $new_type, $ex_typeparams ?? '', $new_typeparams, $PureFieldType, $fieldTitle))
 			throw new Exception('Field cannot be converted to new type.');
 
 		if ($ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
-			ctProHelpers::update_physical_field_set_extra_tasks($ex_type, $new_type, $ex_typeparams, $new_typeparams, $fieldId);
+			ctProHelpers::update_physical_field_set_extra_tasks($ex_type, $new_type, $ex_typeparams ?? '', $new_typeparams, $fieldId);
 
 		//Add indexes
 		if ($new_type == 'sqljoin') {

@@ -1009,8 +1009,8 @@ class database
 	 */
 	public static function changeColumn(string $realTableName, string $oldColumnName, string $newColumnName, array $PureFieldType, ?string $comment = null): void
 	{
-		if (!str_contains($realTableName, 'customtables_'))
-			throw new Exception('Only CustomTables tables can be modified.');
+		//if (!str_contains($realTableName, 'customtables_'))
+		//throw new Exception('Only CustomTables tables can be modified.');
 
 		$possibleTypes = ['varchar', 'tinytext', 'text', 'mediumtext', 'longtext', 'tinyblob', 'blob', 'mediumblob',
 			'longblob', 'char', 'int', 'bigint', 'numeric', 'decimal', 'smallint', 'tinyint', 'date', 'TIMESTAMP', 'datetime'];
@@ -1050,13 +1050,14 @@ class database
 			if ($PureFieldType['is_unsigned'] ?? false)
 				$type .= ' UNSIGNED';
 
-			$db->setQuery('ALTER TABLE ' . $db->quoteName($realTableName) . ' CHANGE ' . $db->quoteName($oldColumnName) . ' ' . $db->quoteName($newColumnName)
+			$query = 'ALTER TABLE ' . $db->quoteName($realTableName) . ' CHANGE ' . $db->quoteName($oldColumnName) . ' ' . $db->quoteName($newColumnName)
 				. ' ' . $type
 				. (($PureFieldType['is_nullable'] ?? false) ? ' NULL' : ' NOT NULL')
 				. (($PureFieldType['default'] ?? '') != "" ? ' DEFAULT ' . (is_numeric($PureFieldType['default']) ? $PureFieldType['default'] : $db->quote($PureFieldType['default'])) : '')
 				. (($PureFieldType['autoincrement'] ?? false) ? ' AUTO_INCREMENT' : '')
-				. ' COMMENT ' . $db->quote($comment));
+				. ' COMMENT ' . $db->quote($comment);
 
+			$db->setQuery($query);
 			$db->execute();
 		}
 	}
