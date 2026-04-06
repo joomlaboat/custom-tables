@@ -886,6 +886,8 @@ class Layouts
 					$link .= '&';
 
 				$link .= 'listing_id=' . $record->listing_id;
+			} else {
+				$link = str_replace('$get_listing_id', $record->listing_id, $link);
 			}
 
 			$output['redirect'] = $link;

@@ -398,7 +398,7 @@ class Params
 				} else
 					$this->returnTo = $menu_params['returnto'] ?? null;
 			} else {
-				$this->returnTo = common::curPageURL();
+				$this->returnTo = $menu_params['returnto'] ?? common::curPageURL();
 			}
 		}
 

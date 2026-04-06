@@ -576,7 +576,6 @@ class fieldObject
 
 		$args = func_get_args();
 
-
 		if ($this->ct->isEditForm) {
 			$Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
 			$value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);

@@ -70,7 +70,12 @@ class InputBox_image extends BaseInputBox
 
 		$max_file_size = CTMiscHelper::file_upload_max_size();
 		$fileId = common::generateRandomString();
-		$style = 'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
+
+		if (!empty($this->option_list[0]) and str_contains($this->option_list[0], ':'))
+			$style = $this->option_list[0];
+		else
+			$style = 'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
+
 		$element_id = 'ct_uploadfile_box_' . $this->field->fieldname;
 
 		$urlString = common::UriRoot(true, true) . 'index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname . '_fileid=' . $fileId
@@ -90,7 +95,9 @@ class InputBox_image extends BaseInputBox
 				}
 			}
 
-			$ct_getUploader = 'ct_getUploader(' . $this->field->id . ',"' . $urlString . '",' . $max_file_size . ',"jpg jpeg png gif svg webp","' . $formName . '",false,"ct_fileuploader_'
+			$submitForm = (isset($this->option_list[2]) and $this->option_list[2] == 'reload') ? 'true' : 'false';
+
+			$ct_getUploader = 'ct_getUploader(' . $this->field->id . ',"' . $urlString . '",' . $max_file_size . ',"jpg jpeg png gif svg webp","' . $formName . '",' . $submitForm . ',"ct_fileuploader_'
 				. $this->field->fieldname . '","ct_eventsmessage_' . $this->field->fieldname . '","' . $fileId . '","'
 				. $this->attributes['id'] . '","ct_ubloadedfile_box_' . $this->field->fieldname . '");';
 

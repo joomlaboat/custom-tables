@@ -61,7 +61,7 @@ class record
 
 		$this->ct->Params->listing_id = $listing_id;
 		$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
-		$this->ct->getRecord();
+		$this->ct->getRecord(true);
 
 		if ($this->ct->Table->record === null)
 			throw new Exception(common::translate('COM_CUSTOMTABLES_NOTFOUND'));
@@ -97,7 +97,7 @@ class record
 
 		$this->ct->Params->listing_id = $listing_id;
 		$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
-		$this->ct->getRecord();
+		$this->ct->getRecord(true);
 
 		if ($this->ct->Table->record === null) {
 			if ($status == 1)
@@ -133,7 +133,7 @@ class record
 
 		$this->ct->Params->listing_id = $listing_id;
 		$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
-		$this->ct->getRecord();
+		$this->ct->getRecord(true);
 
 		if ($this->ct->Table->record === null)
 			throw new Exception(common::translate('Records not found'));
@@ -202,7 +202,7 @@ class record
 
 		$this->ct->Params->listing_id = $listing_id;
 		$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
-		$this->ct->getRecord();
+		$this->ct->getRecord(true);
 
 		if ($this->ct->Table->record === null)
 			throw new Exception(common::translate('Records not found'));
@@ -242,7 +242,7 @@ class record
 			$this->listing_id = $listing_id;
 			$this->ct->Params->listing_id = $listing_id;
 			$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
-			$this->ct->getRecord();
+			$this->ct->getRecord(true);
 			$this->row_old = $this->ct->Table->record;
 			if ($this->ct->Table->record !== null)
 				$this->listing_id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
@@ -299,7 +299,7 @@ class record
 			$this->ct->Params->listing_id = $this->listing_id;
 			$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
 
-			if ($this->ct->getRecord()) {
+			if ($this->ct->getRecord(true)) {
 				$this->isItNewRecord = false;
 
 				try {
@@ -323,7 +323,7 @@ class record
 				$this->ct->Params->listing_id = $this->listing_id;
 				$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
 
-				if ($this->ct->getRecord()) {
+				if ($this->ct->getRecord(true)) {
 					$this->row_new = $this->ct->Table->record;
 
 					if ($this->ct->Env->advancedTagProcessor) {
@@ -355,7 +355,7 @@ class record
 			$this->ct->Params->listing_id = $this->listing_id;
 			$this->ct->Params->showPublished = CUSTOMTABLES_SHOWPUBLISHED_ANY;
 
-			if ($this->ct->getRecord()) {
+			if ($this->ct->getRecord(true)) {
 				$this->row_new = $this->ct->Table->record;
 
 				if (defined('_JEXEC')) {

@@ -99,7 +99,7 @@ class CT
 	 * @throws Exception
 	 * @since 3.4.9
 	 */
-	function getRecord(): bool
+	function getRecord(bool $reloadRecord = false): bool
 	{
 		if (is_null($this->Table))
 			return false;
@@ -134,7 +134,7 @@ class CT
 
 		$cache_var = $this->Table->realtablename . '|' . $this->Filter->whereClause . '|' . implode(',', $ordering);
 
-		if (!isset(self::$recordCache[$cache_var])) {
+		if ($reloadRecord or !isset(self::$recordCache[$cache_var])) {
 
 			$records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
 				(count($ordering) > 0 ? implode(',', $ordering) : null), 1, null,
