@@ -531,7 +531,7 @@ class Twig_HTML_Tags
 	 * @throws Exception
 	 * @since 3.2.8
 	 */
-	function search($list_of_fields_string_or_array = null, $class = '', $reload = false, $improved = '', $matchType = "", $stringLength = ""): string
+	function search($list_of_fields_string_or_array = null, $class = '', $reload = false, $improved = '', $matchType = "", $stringLength = "", $filter = ""): string
 	{
 		$fld = null;
 
@@ -669,7 +669,7 @@ class Twig_HTML_Tags
 		try {
 			$vlu = $SearchBox->renderFieldBox($this->ct->Table->fieldInputPrefix . 'search_box_', $objectName, $first_fld,
 				$cssClass, '0',
-				'', '', $onchange, $field_title, $matchType, $stringLength);//action should be a space not empty or
+				'', '', $onchange, $field_title, $matchType, $stringLength, $filter);//action should be a space not empty or
 			//0 because it's not an edit box, and we pass onChange value even " " is the value;
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage());
@@ -1083,7 +1083,7 @@ for (var i = 0; i < ' . $objectName . '_connect.length; i++) {
 	 * @since 3.0.0
 	 */
 	protected function renderButtonHTML($optional_class, string $title, $formName, string $buttonId,
-										string $redirect, bool $checkCaptcha, string $task): string
+	                                    string $redirect, bool $checkCaptcha, string $task): string
 	{
 		if ($this->ct->Env->frmt == 'json')
 			return $title;

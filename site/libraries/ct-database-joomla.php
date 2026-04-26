@@ -429,11 +429,11 @@ class database
 	 * @since 3.1.8
 	 */
 	public static function loadAssocList(string  $table, array $selects, MySQLWhereClause $whereClause,
-										 ?string $order = null, ?string $orderBy = null,
-										 ?int    $limit = null, ?int $limitStart = null,
-										 ?string $groupBy = null, bool $returnQueryString = false)
+	                                     ?string $order = null, ?string $orderBy = null,
+	                                     ?int    $limit = null, ?int $limitStart = null,
+	                                     ?string $groupBy = null, bool $returnQueryString = false, ?string $innerJoin = null)
 	{
-		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'ARRAY_A', $groupBy, $returnQueryString);
+		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'ARRAY_A', $groupBy, $returnQueryString, $innerJoin);
 	}
 
 	/**
@@ -441,10 +441,10 @@ class database
 	 * @since 3.2.0
 	 */
 	public static function loadObjectList(string  $table, array $selectsRaw, MySQLWhereClause $whereClause,
-										  ?string $order = null, ?string $orderBy = null,
-										  ?int    $limit = null, ?int $limitStart = null,
-										  string  $output_type = 'OBJECT', ?string $groupBy = null,
-										  bool    $returnQueryString = false)
+	                                      ?string $order = null, ?string $orderBy = null,
+	                                      ?int    $limit = null, ?int $limitStart = null,
+	                                      string  $output_type = 'OBJECT', ?string $groupBy = null,
+	                                      bool    $returnQueryString = false, ?string $innerJoin = null)
 	{
 		$db = self::getDB();
 		$query = $db->getQuery(true);
@@ -454,6 +454,9 @@ class database
 
 		$query->select($selects_sanitized);
 		$query->from($table);
+
+		if (!empty($innerJoin))
+			$query->innerJoin($innerJoin);
 
 		if ($whereClause->hasConditions())
 			$query->where($whereClause->getWhereClause());
@@ -658,17 +661,17 @@ class database
 	}
 
 	public static function loadRowList(string  $table, array $selects, MySQLWhereClause $whereClause,
-									   ?string $order = null, ?string $orderBy = null,
-									   ?int    $limit = null, ?int $limitStart = null,
-									   ?string $groupBy = null, bool $returnQueryString = false)
+	                                   ?string $order = null, ?string $orderBy = null,
+	                                   ?int    $limit = null, ?int $limitStart = null,
+	                                   ?string $groupBy = null, bool $returnQueryString = false)
 	{
 		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'ROW_LIST', $groupBy, $returnQueryString);
 	}
 
 	public static function loadColumn(string  $table, array $selects, MySQLWhereClause $whereClause,
-									  ?string $order = null, ?string $orderBy = null,
-									  ?int    $limit = null, ?int $limitStart = null,
-									  ?string $groupBy = null, bool $returnQueryString = false)
+	                                  ?string $order = null, ?string $orderBy = null,
+	                                  ?int    $limit = null, ?int $limitStart = null,
+	                                  ?string $groupBy = null, bool $returnQueryString = false)
 	{
 		return self::loadObjectList($table, $selects, $whereClause, $order, $orderBy, $limit, $limitStart, 'COLUMN', $groupBy, $returnQueryString);
 	}
@@ -918,7 +921,7 @@ class database
 	}
 
 	public static function addColumn(string  $realTableName, string $columnName, string $type, ?bool $nullable = null, ?string $extra = null,
-									 ?string $comment = null): void
+	                                 ?string $comment = null): void
 	{
 		$db = self::getDB();
 
@@ -930,7 +933,7 @@ class database
 	}
 
 	public static function createTable(string $realTableName, string $privateKey, array $columns, string $comment,
-									   ?array $keys = null, string $primaryKeyType = 'int UNSIGNED NOT NULL AUTO_INCREMENT'): void
+	                                   ?array $keys = null, string $primaryKeyType = 'int UNSIGNED NOT NULL AUTO_INCREMENT'): void
 	{
 		$db = self::getDB();
 

@@ -296,18 +296,32 @@ class CT
 
 		if ($this->Table->recordcount > 0) {
 
+			$from = $this->Table->realtablename;
+			$innerJoin = null;
+
+			if (!empty($this->Filter->innerJoinRealTableName)) {
+				$innerJoin = '' . $this->Filter->innerJoinRealTableName . ' ON '
+					. $this->Filter->innerJoinRealTableName . '.' . $this->Filter->innerJoinRealFieldName . '=' . $this->Table->realtablename . '.' . $this->Table->realidfieldname;
+
+				if (!empty($this->Filter->innerJoinWhere))
+					$innerJoin .= ' AND (' . $this->Filter->innerJoinWhere . ')';
+
+				$this->GroupBy = $this->Table->realidfieldname;
+			}
+
 			if ($limit > 0) {
 				//orderBy parameter is NULL because order direction is already included in $ordering
-				$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-					(count($ordering) > 0 ? implode(',', $ordering) : null), null, $limit, null, $this->GroupBy);
+
+				$this->Records = database::loadAssocList($from, $selects, $this->Filter->whereClause,
+					(count($ordering) > 0 ? implode(',', $ordering) : null), null, $limit, null, $this->GroupBy, false, $innerJoin);
 				$this->Limit = $limit;
 			} else {
 				$the_limit = $this->Limit;
 
 				if ($all) {
 					//orderBy parameter is NULL because order direction is already included in $ordering
-					$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-						(count($ordering) > 0 ? implode(',', $ordering) : null), null, 20000, null, $this->GroupBy);
+					$this->Records = database::loadAssocList($from, $selects, $this->Filter->whereClause,
+						(count($ordering) > 0 ? implode(',', $ordering) : null), null, 20000, null, $this->GroupBy, false, $innerJoin);
 				} else {
 					if ($the_limit > 20000)
 						$the_limit = 20000;
@@ -320,8 +334,8 @@ class CT
 
 					try {
 						//orderBy parameter is NULL because order direction is already included in $ordering
-						$this->Records = database::loadAssocList($this->Table->realtablename, $selects, $this->Filter->whereClause,
-							(count($ordering) > 0 ? implode(',', $ordering) : null), null, $the_limit, $this->LimitStart, $this->GroupBy);
+						$this->Records = database::loadAssocList($from, $selects, $this->Filter->whereClause,
+							(count($ordering) > 0 ? implode(',', $ordering) : null), null, $the_limit, $this->LimitStart, $this->GroupBy, false, $innerJoin);
 					} catch (Exception $e) {
 						throw new Exception($e->getMessage());
 					}

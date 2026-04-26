@@ -18,56 +18,34 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 class Search_tablejoin extends BaseSearch
 {
+	var ?MySQLWhereClause $additionalWhere;
+	var ?string $innerJoinField;
+
 	function __construct(CT &$ct, Field $field, string $moduleName, array $attributes, int $index, string $where, string $whereList, string $objectName)
 	{
+		$this->additionalWhere = null;
+		$this->innerJoinField = null;
+
 		parent::__construct($ct, $field, $moduleName, $attributes, $index, $where, $whereList, $objectName);
 		BaseInputBox::selectBoxAddCSSClass($this->attributes);
 	}
 
-	/*
-	protected static function processValue($field, &$ct, $row)
+	function setAdditionalFilter(string $filter, CT $ct, string $realfieldname)
 	{
-		$p = strpos($field, '->');
-		if (!($p === false)) {
-			$field = substr($field, 0, $p);
-		}
+		//if (!empty($filter))
+		//$this->additionalFilter = $filter;
 
-		//get options
-		$options = '';
-		$p = strpos($field, '(');
+		$this->innerJoinField = $realfieldname;
 
-		if ($p !== false) {
-			$e = strpos($field, '(', $p);
-			if ($e === false)
-				return 'syntax error';
+		//$whereClause = new MySQLWhereClause();
+		//$whereClause->addCondition($filter);
 
-			$options = substr($field, $p + 1, $e - $p - 1);
-			$field = substr($field, 0, $p);
-		}
+		$FilterParser = new Filtering($ct);
+		$FilterParser->addWhereExpression($filter);
 
-		//getting filed row (we need field typeparams, to render formatted value)
-		if ($field == '_id' or $field == '_published') {
-			$htmlresult = $row[str_replace('_', '', $field)];
-		} else {
-			$fieldrow = Fields::FieldRowByName($field, $ct->Table->fields);
-			if (!is_null($fieldrow)) {
-
-				$options_list = explode(',', $options);
-
-				$v = tagProcessor_Value::getValueByType($ct,
-					$fieldrow,
-					$row,
-					$options_list,
-				);
-
-				$htmlresult = $v;
-			} else {
-				$htmlresult = 'Field "' . $field . '" not found.';
-			}
-		}
-		return $htmlresult;
+		$this->additionalWhere = $FilterParser->whereClause;
+		//echo '$FilterParser->whereClause=' . $FilterParser->whereClause . '<br/>';
 	}
-	*/
 
 	/**
 	 * @throws Exception
@@ -110,6 +88,7 @@ class Search_tablejoin extends BaseSearch
 
 		$value_field = $typeParams[1] ?? '';
 		$filter = $typeParams[2] ?? '';
+
 		$dynamic_filter = $typeParams[3] ?? '';
 		$order_by_field = $typeParams[4] ?? '';
 
@@ -141,7 +120,7 @@ class Search_tablejoin extends BaseSearch
 	 * @throws Exception
 	 * @since 3.2.0
 	 */
-	static protected function getSearchResult(CT $ct, $filter, $tableName, $order_by_field, $allowUnpublished): bool
+	protected function getSearchResult(CT $ct, $filter, $tableName, $order_by_field, $allowUnpublished): bool
 	{
 		$paramsArray = array();
 
@@ -172,6 +151,7 @@ class Search_tablejoin extends BaseSearch
 
 		// --------------------- Filter
 		$ct->setFilter($ct->Params->filter, $ct->Params->showPublished);
+		$ct->Filter->setInnerJoin($this->ct->Table->realtablename, $this->innerJoinField, $this->additionalWhere);
 
 		// --------------------- Sorting
 		$ct->Ordering->parseOrderByParam();

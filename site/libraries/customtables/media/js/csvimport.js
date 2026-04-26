@@ -12,7 +12,7 @@ class CustomTablesCSVImport {
 
 
 	constructor(canvasElementId, img, horizontalLines = null, verticalLines = null,
-				horizontalEditBox = "comes_horizontal_lines", verticalEditBox = "comes_vertical_lines") {
+	            horizontalEditBox = "comes_horizontal_lines", verticalEditBox = "comes_vertical_lines") {
 
 		if (!img)
 			return;
@@ -24,7 +24,6 @@ class CustomTablesCSVImport {
 		this.verticalLines = verticalLines;
 
 		this.canvas = document.getElementById(canvasElementId);
-
 		this.MIN_LINE_SPACING = 2; // pixels
 		this.ctx = this.canvas.getContext("2d");
 		this.draggingHLineIndex = -1;
@@ -49,51 +48,48 @@ class CustomTablesCSVImport {
 
 		this.HORIZONTAL = 1;
 		this.VERTICAL = 2;
+		this.img = img;
 	}
 
 	drawCanvas() {
 
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.ctx.drawImage(img, 0, 0);
+		const ctx = this.ctx;
+		ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		ctx.drawImage(this.img, 0, 0);
 
-		this.ctx.lineWidth = 2;
-		//ctx.strokeStyle = "yellow";
-		this.ctx.setLineDash([10, 6]);
-		this.ctx.strokeStyle = "white";
-		this.ctx.globalCompositeOperation = "difference";
+		ctx.lineWidth = 2;
+		ctx.setLineDash([10, 6]);
+		ctx.strokeStyle = "white";
+		ctx.globalCompositeOperation = "source-over";
+		ctx.strokeStyle = "rgba(252,5,161,1)";
 
-		this.horizontalLines.forEach(line => {
+		ctx.beginPath();
 
-			/*
-			if (this.hoveringHLine && this.hoveringHLine === line[0][1]) {
-				this.ctx.lineWidth = 5;
-			} else {
-				this.ctx.lineWidth = 3;
-			}*/
+// Horizontal lines
+		for (let i = 0; i < this.horizontalLines.length; i++) {
+			const line = this.horizontalLines[i];
 
-			this.ctx.beginPath();
-			this.ctx.moveTo(line[0][0], line[0][1]);
+			ctx.moveTo(line[0][0], line[0][1]);
 
-			line.slice(1).forEach(([x, y]) => this.ctx.lineTo(x, y));
+			for (let j = 1; j < line.length; j++) {
+				ctx.lineTo(line[j][0], line[j][1]);
+			}
+		}
 
-			this.ctx.stroke();
+// Vertical lines
+		for (let i = 0; i < this.verticalLines.length; i++) {
+			const line = this.verticalLines[i];
 
-		});
+			ctx.moveTo(line[0][0], line[0][1]);
 
-		this.verticalLines.forEach(line => {
+			for (let j = 1; j < line.length; j++) {
+				ctx.lineTo(line[j][0], line[j][1]);
+			}
+		}
 
-			this.ctx.beginPath();
-			this.ctx.moveTo(line[0][0], line[0][1]);
-
-			line.slice(1).forEach(([x, y]) => this.ctx.lineTo(x, y));
-
-			this.ctx.stroke();
-
-		});
-
+		ctx.stroke();
 
 	}
-
 
 	findHLineAtPosition(mouseX, mouseY) {
 
@@ -169,11 +165,13 @@ class CustomTablesCSVImport {
 	defineEvents() {
 
 
-		this.canvas.addEventListener("mousedown", e => {
-
+		this.canvas.addEventListener("pointerdown", e => {
 			const rect = this.canvas.getBoundingClientRect();
 			const mouseX = e.clientX - rect.left;
 			const mouseY = e.clientY - rect.top;
+
+			// Prevent scrolling on mobile
+			e.preventDefault();
 
 			let line = this.findHLineAtPosition(mouseX, mouseY);
 			if (line) {
@@ -189,6 +187,7 @@ class CustomTablesCSVImport {
 				this.draggingVLineIndex = line[0];
 			}
 
+			// ADD LINE
 			if (this.addLineCandidate) {
 
 				if (this.addLineCandidate.type === this.HORIZONTAL) {
@@ -200,6 +199,7 @@ class CustomTablesCSVImport {
 				}
 			}
 
+			// DELETE LINE
 			if (this.deleteLineCandidate) {
 				if (mouseX < 30 && this.deleteLineCandidate.type === this.HORIZONTAL) {
 					if (this.deleteLineCandidate.index === this.horizontalLines.length - 1)
@@ -221,9 +221,9 @@ class CustomTablesCSVImport {
 				this.deleteLineCandidate = null;
 				this.drawCanvas();
 			}
-		});
+		}, {passive: false});
 
-		this.canvas.addEventListener("mousemove", e => {
+		this.canvas.addEventListener("pointermove", e => {
 
 			const rect = this.canvas.getBoundingClientRect();
 			const mouseX = e.clientX - rect.left;
@@ -342,19 +342,19 @@ class CustomTablesCSVImport {
 
 			if (!this.checkIfMouseIsOnHorizontalLines(mouseX, mouseY))
 				this.checkIfMouseIsOnVerticalLines(mouseX, mouseY);
-		});
+		}, {passive: false});
 
-		canvas.addEventListener("mouseup", () => {
+		canvas.addEventListener("pointerup", () => {
 
 			this.finishDragging();
 			this.canvas.style.cursor = "grabbing";
-		});
+		}, {passive: false});
 
 		canvas.addEventListener("mouseleave", () => {
 
 			this.finishDragging();
 			canvas.style.cursor = "default";
-		});
+		}, {passive: false});
 
 
 	}
@@ -791,5 +791,3 @@ class CustomTablesCSVImport {
 		obj.value = JSON.stringify(this.verticalLines);
 	}
 }
-
-//}

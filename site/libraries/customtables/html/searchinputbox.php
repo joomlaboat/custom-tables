@@ -32,7 +32,7 @@ class SearchInputBox
 	 * @since 3.2.1
 	 */
 	function renderFieldBox(string  $prefix, string $objName, array $fieldRow, string $cssClass, $index, string $where, string $whereList,
-							?string $onchange, ?string $field_title = null, string $matchType = "", string $stringLength = ""): string
+	                        ?string $onchange, ?string $field_title = null, string $matchType = "", string $stringLength = "", string $filter = ""): string
 	{
 		$this->field = new Field($this->ct, $fieldRow);
 		$place_holder = $this->field->title;
@@ -127,6 +127,10 @@ class SearchInputBox
 			require_once($additionalFile);
 			$className = '\CustomTables\Search_' . $fieldTypeShort;
 			$searchBoxRenderer = new $className($this->ct, $this->field, $this->moduleName, $attributes, $index, $where, $whereList, $objName_);
+
+			if ($fieldTypeShort == 'tablejoin' and !empty($filter))
+				$searchBoxRenderer->setAdditionalFilter($filter, $this->ct, $this->field->realfieldname);
+
 			return $searchBoxRenderer->render($value);
 		}
 

@@ -21,6 +21,11 @@ class Filtering
 	var array $PathValue;
 	var MySQLWhereClause $whereClause;
 	var int $showPublished;
+	var ?string $innerJoinRealTableName;
+	var ?string $innerJoinRealFieldName;
+	var ?string $innerJoinWhere;
+
+	//var ?MySQLWhereClause $innerJoinWhereClause;
 
 	function __construct(CT $ct, int $showPublished = CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY)
 	{
@@ -28,6 +33,9 @@ class Filtering
 		$this->PathValue = [];
 		$this->whereClause = new MySQLWhereClause();
 		$this->showPublished = $showPublished;
+		$this->innerJoinRealTableName = null;
+		$this->innerJoinRealFieldName = null;
+		$this->innerJoinWhere = null;
 
 		if ($this->ct->Table !== null and $this->ct->Table->published_field_found) {
 
@@ -51,6 +59,13 @@ class Filtering
 				$this->whereClause->addCondition($this->ct->Table->realtablename . '.published', -2);
 			}
 		}
+	}
+
+	function setInnerJoin($realtablename, $realfieldname, string $where)
+	{
+		$this->innerJoinRealTableName = $realtablename;
+		$this->innerJoinRealFieldName = $realfieldname;
+		$this->innerJoinWhere = $where;
 	}
 
 	/**
