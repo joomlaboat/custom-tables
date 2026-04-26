@@ -127,7 +127,7 @@ class CustomtablesControllerTables extends FormController
 			$redirect .= '&view=tables&task=tables.edit&id=' . $tableId;
 		} elseif ($this->task == 'save2new') {
 			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_TABLE_SAVED'), 'success');
-			$redirect .= '&view=tables&task=tables.edit&id=' . $tableId;
+			$redirect .= '&view=tables&task=tables.edit';
 		} else {
 			Factory::getApplication()->enqueueMessage(common::translate('COM_CUSTOMTABLES_TABLE_SAVED'), 'success');
 			$redirect .= '&view=Listoftables';
