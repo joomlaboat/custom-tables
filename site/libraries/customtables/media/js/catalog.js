@@ -313,7 +313,23 @@ function ctSearchBoxDo() {
 			if (objValue !== "" && (objValue !== "0" || obj.dataset.type === 'int' || obj.dataset.type === 'float' || obj.dataset.type === 'checkbox')) {
 				if (n[2] === "") {
 					if (objValue.indexOf("-to-") !== -1) {
-						if (objValue !== "-to-") w.push(n[1] + "_r_=" + objValue);
+
+						if (objValue !== "-to-") {
+							if (obj.dataset.min && obj.dataset.max) {
+								let pair = objValue.split("-to-");
+								let valMin = parseFloat(pair[0]);
+								let valMax = parseFloat(pair[1]);
+
+								let defaultMin = parseFloat(obj.dataset.min);
+								let defaultMax = parseFloat(obj.dataset.max);
+
+								if (valMin != defaultMin && valMax == defaultMax)
+									w.push(n[1] + "_r_=" + objValue);
+
+							} else {
+								w.push(n[1] + "_r_=" + objValue);
+							}
+						}
 					} else {
 						//string search
 						if (obj.dataset.match === 'exact')

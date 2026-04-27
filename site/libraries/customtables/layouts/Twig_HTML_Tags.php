@@ -786,10 +786,12 @@ class Twig_HTML_Tags
 			throw new Exception('{{ html.searchrange("' . $field . '",' . $min . ',' . $max . ',' . $step . ',"' . $handlers . '") }}: Unknown handler type: .');
 		}
 
+		echo $objectName;
+
 		$vlu = '
 <style>' . $style . '</style>
 <div class="' . $class . '" style="padding:10px;"><div id="' . $objectName . '_slider" style="margin-top:40px;"></div></div>
-<input type="hidden" name="' . $objectName . '" id="' . $objectName . '" value="-to-">
+<input type="hidden" name="' . $objectName . '" id="' . $objectName . '" value="-to-" data-min="' . $min . '" data-max="' . $max . '">
 <input type="hidden" ctsearchboxfield="' . $objectName . ':' . $field . ':">
 
 <script>
