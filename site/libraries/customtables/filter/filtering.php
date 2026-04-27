@@ -25,8 +25,6 @@ class Filtering
 	var ?string $innerJoinRealFieldName;
 	var ?string $innerJoinWhere;
 
-	//var ?MySQLWhereClause $innerJoinWhereClause;
-
 	function __construct(CT $ct, int $showPublished = CUSTOMTABLES_SHOWPUBLISHED_PUBLISHED_ONLY)
 	{
 		$this->ct = $ct;
@@ -61,10 +59,22 @@ class Filtering
 		}
 	}
 
-	function setInnerJoin($realtablename, $realfieldname, string $where)
+	/**
+	 * @throws Exception
+	 * @since 3.7.4
+	 */
+	function setInnerJoin(string $realtablename, string $realfieldname, ?string $where)
 	{
+		if (empty($realtablename))
+			throw new Exception('Search Table Join field: Table Name cannot be empty.');
+
 		$this->innerJoinRealTableName = $realtablename;
+
+		if (empty($realfieldname))
+			throw new Exception('Search Table Join field: Field Name cannot be empty.');
+
 		$this->innerJoinRealFieldName = $realfieldname;
+
 		$this->innerJoinWhere = $where;
 	}
 
@@ -80,7 +90,6 @@ class Filtering
 		if (common::inputGetString('where')) {
 			$decodedURL = common::inputGetString('where', '');
 			$filter_string = urldecode($decodedURL);
-			//$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));
 
 			if ($filter_string != '')
 				$this->addWhereExpression($filter_string);
@@ -89,7 +98,6 @@ class Filtering
 		if (common::inputGetString('filter')) {
 			$decodedURL = common::inputGetString('filter', '');
 			$filter_string = urldecode($decodedURL);
-			//$filter_string = $this->sanitizeAndParseFilter(urldecode($decodedURL));
 
 			if ($filter_string != '')
 				$this->addWhereExpression($filter_string);

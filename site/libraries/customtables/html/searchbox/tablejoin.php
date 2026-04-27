@@ -32,19 +32,14 @@ class Search_tablejoin extends BaseSearch
 
 	function setAdditionalFilter(string $filter, CT $ct, string $realfieldname)
 	{
-		//if (!empty($filter))
-		//$this->additionalFilter = $filter;
-
-		$this->innerJoinField = $realfieldname;
-
-		//$whereClause = new MySQLWhereClause();
-		//$whereClause->addCondition($filter);
-
 		$FilterParser = new Filtering($ct);
 		$FilterParser->addWhereExpression($filter);
 
+		if (empty($realfieldname))
+			throw new Exception('Search Table Join field (setAdditionalFilter): Field Name cannot be empty.');
+
+		$this->innerJoinField = $realfieldname;
 		$this->additionalWhere = $FilterParser->whereClause;
-		//echo '$FilterParser->whereClause=' . $FilterParser->whereClause . '<br/>';
 	}
 
 	/**

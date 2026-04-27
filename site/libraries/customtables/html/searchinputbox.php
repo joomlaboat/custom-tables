@@ -128,7 +128,7 @@ class SearchInputBox
 			$className = '\CustomTables\Search_' . $fieldTypeShort;
 			$searchBoxRenderer = new $className($this->ct, $this->field, $this->moduleName, $attributes, $index, $where, $whereList, $objName_);
 
-			if ($fieldTypeShort == 'tablejoin' and !empty($filter))
+			if ($fieldTypeShort == 'tablejoin')
 				$searchBoxRenderer->setAdditionalFilter($filter, $this->ct, $this->field->realfieldname);
 
 			return $searchBoxRenderer->render($value);
