@@ -323,7 +323,7 @@ function ctSearchBoxDo() {
 								let defaultMin = parseFloat(obj.dataset.min);
 								let defaultMax = parseFloat(obj.dataset.max);
 
-								if (valMin != defaultMin && valMax == defaultMax)
+								if (valMin != defaultMin || valMax != defaultMax)
 									w.push(n[1] + "_r_=" + objValue);
 
 							} else {

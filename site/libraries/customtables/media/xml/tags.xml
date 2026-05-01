@@ -151,8 +151,10 @@
 				<param type="number" name="length" label="Min Search String Length"
 				       description="Minimum number of characters required in the search term. Searches with fewer characters will not be executed."/>
 
-				<param name="filter" label="Filter" type="string"
-				       description="Optional filter, ie. fieldname=some value."/>
+				<param name="lookup_filter" label="Lookup Filter" type="string"
+				       description="Optional condition applied to Table Join (Lookup Table) fields only.
+       Limits both the dropdown options and the resulting records to matching values.
+       Example: price>100 AND stock>0. The condition is safely parsed and added to the SQL JOIN clause."/>
 			</params>
 		</tag>
 

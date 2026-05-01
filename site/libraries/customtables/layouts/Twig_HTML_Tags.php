@@ -786,8 +786,6 @@ class Twig_HTML_Tags
 			throw new Exception('{{ html.searchrange("' . $field . '",' . $min . ',' . $max . ',' . $step . ',"' . $handlers . '") }}: Unknown handler type: .');
 		}
 
-		echo $objectName;
-
 		$vlu = '
 <style>' . $style . '</style>
 <div class="' . $class . '" style="padding:10px;"><div id="' . $objectName . '_slider" style="margin-top:40px;"></div></div>
@@ -820,7 +818,8 @@ noUiSlider.create(' . $objectName . '_slider, {
 const ' . $objectName . ' = document.getElementById("' . $objectName . '");
 
 ' . $objectName . '_slider.noUiSlider.on("update", (values) => {
-  ' . $objectName . '.value = Math.round(values[0]) + "-to-" + Math.round(values[1]);
+  ' . $objectName . '.value = values[0] + "-to-" + values[1];
+  
 });
 
 ' . $objectName . '_slider.noUiSlider.on("change", (values) => {
@@ -835,7 +834,7 @@ for (var i = 0; i < ' . $objectName . '_connect.length; i++) {
     ' . $objectName . '_connect[i].style.backgroundColor="' . $color . '";
 }
 </script>';
-
+//' . $objectName . '.value = Math.round(values[0]) + "-to-" + Math.round(values[1]);
 		return $vlu;
 	}
 

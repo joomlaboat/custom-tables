@@ -48,7 +48,6 @@ class Search_tablejoin extends BaseSearch
 	 */
 	function render($value): string
 	{
-		//if (str_contains($this->attributes['onchange'] ?? '', 'onkeypress='))
 		$this->attributes['onkeypress'] = 'es_SearchBoxKeyPress(event)';
 
 		if (is_array($value))
