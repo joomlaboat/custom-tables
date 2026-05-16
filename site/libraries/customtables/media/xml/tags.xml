@@ -142,10 +142,12 @@
 				       example="exact"
 				       options="|Contains,exact|Exact Match">
 
-					<option value="" label="Contains - Match if field contains the search term"/>
-					<option value="exact" label="Exact Match - Field must match the search term precisely"/>
-					<option value="startwith" label="Start With - Field must begin with the search term"/>
-					<option value="endwith" label="End With - Field must end with the search term"/>
+					<option value="" label="Contains - Match if field contains the search term" wordpress="true"/>
+					<option value="exact" label="Exact Match - Field must match the search term precisely"
+					        wordpress="true"/>
+					<option value="startwith" label="Start With - Field must begin with the search term"
+					        wordpress="true"/>
+					<option value="endwith" label="End With - Field must end with the search term" wordpress="true"/>
 				</param>
 
 				<param type="number" name="length" label="Min Search String Length"

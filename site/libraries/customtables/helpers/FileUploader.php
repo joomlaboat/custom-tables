@@ -283,7 +283,7 @@ class FileUploader
 			if ($oldFile != '.' and $oldFile != '..') {
 				$filename = CUSTOMTABLES_TEMP_PATH . $oldFile;
 
-				if (!str_contains($oldFile, '.htm') and file_exists($filename)) {
+				if (!in_array($oldFile, ['index.htm', 'index.html']) and file_exists($filename)) {
 					$parts = explode('_', $oldFile);
 					if ($parts[0] == 'ct' and count($parts) >= 4) {
 						$t = (int)$parts[1];

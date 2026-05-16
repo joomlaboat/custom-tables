@@ -667,6 +667,9 @@ class Twig_HTML_Tags
 			return 'Unsupported field type or field not found.';
 
 		try {
+
+			$filter = str_replace('****quote****', '"', $filter);
+
 			$vlu = $SearchBox->renderFieldBox($this->ct->Table->fieldInputPrefix . 'search_box_', $objectName, $first_fld,
 				$cssClass, '0',
 				'', '', $onchange, $field_title, $matchType, $stringLength, $filter);//action should be a space not empty or

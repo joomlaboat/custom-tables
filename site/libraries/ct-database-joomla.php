@@ -601,6 +601,14 @@ class database
 					$selects [] = 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) ELSE extract(epoch FROM modified) AS modified_timestamp';
 				else
 					$selects [] = 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS modified_timestamp';
+				/*
+							} elseif ($select == 'REAL_FIELD_NAME') {
+								if ($serverType == 'postgresql')
+									$selects[] = 'CASE WHEN customfieldname!="" THEN customfieldname ELSE CONCAT("es_",fieldname) END AS realfieldname';//fix it
+								else
+									$selects[] = 'IF(customfieldname!="", customfieldname, CONCAT("es_",fieldname)) AS realfieldname';//fix it
+				*/
+
 			} elseif ($select == 'REAL_TABLE_NAME') {
 				if ($serverType == 'postgresql') {
 					$selects[] = 'CASE WHEN customtablename!="" THEN customtablename ELSE CONCAT("#__customtables_table_", tablename) END AS realtablename';
