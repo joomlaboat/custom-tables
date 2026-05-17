@@ -14,6 +14,7 @@ defined('_JEXEC') or die();
 use CustomTables\common;
 use CustomTables\FileUploader;
 use Joomla\CMS\MVC\View\HtmlView;
+use CustomTables\CT;
 
 // Import Joomla! libraries
 jimport('joomla.application.component.view');
@@ -25,6 +26,40 @@ class CustomTablesViewFileUploader extends HtmlView
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
 
 		if (ob_get_contents()) ob_end_clean();
+
+		//Token parameter value must be sent using JS - not implemented yet
+		//if (!Session::checkToken()) {
+		//	echo common::ctJsonEncode(['error' => 'Invalid Token']);
+		//	exit;
+		//}
+
+		//Authorization Check
+		$ct = new CT(null, false);
+		$ct->Params->constructJoomlaParams();
+
+		try {
+			if (!empty($ct->Params->tableName)) {
+				$ct->getTable($ct->Params->tableName);
+			} else {
+				echo common::ctJsonEncode(['error' => common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'),
+					'success' => false, 'message' => common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'), 'short' => 'error']);
+
+				exit;
+			}
+
+			$a = $ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT);
+
+			if (!$a) {
+				echo common::ctJsonEncode(['error' => common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'),
+					'success' => false, 'message' => common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'short' => 'error']);
+				exit;
+			}
+		} catch (Exception $e) {
+			echo common::ctJsonEncode(['error' => 'Runtime error',
+				'success' => false, 'message' => $e->getMessage(), 'short' => 'error']);
+			exit;
+		}
+
 
 		$fieldname = common::inputGetCmd('fieldname', '');
 		$fileid = common::inputGetCmd($fieldname . '_fileid', '');
@@ -43,6 +78,6 @@ class CustomTablesViewFileUploader extends HtmlView
 		} else
 			echo FileUploader::uploadFile($fileid);
 
-		die; //to stop rendering template and staff
+		exit; //to stop rendering template and staff
 	}
 }

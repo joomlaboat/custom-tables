@@ -36,11 +36,12 @@ class FileUploader
 	 */
 	public static function uploadFile($fileId, $filetypes_str_argument = ""): string
 	{
-		$filetypes_str = self::getAcceptedFileTypes($filetypes_str_argument);
-
-		$accepted_types = self::getAcceptableMimeTypes($filetypes_str);
-
 		self::deleteOldFiles();
+
+		//if (!Session::checkToken()) return common::ctJsonEncode(['error' => 'Invalid Token']); //implement something similar for Wordpress
+
+		$filetypes_str = self::getAcceptedFileTypes($filetypes_str_argument);
+		$accepted_types = self::getAcceptableMimeTypes($filetypes_str);
 
 		$t = time();
 		$file = self::getFileSafeMIME($fileId);
@@ -108,6 +109,29 @@ class FileUploader
 			return common::ctJsonEncode($ret);
 		} else
 			return common::ctJsonEncode(['error' => common::translate('COM_CUSTOMTABLES_FILE_IS_EMPTY')]);
+	}
+
+	protected static function deleteOldFiles(): void
+	{
+		$oldFiles = scandir(CUSTOMTABLES_TEMP_PATH);
+
+		foreach ($oldFiles as $oldFile) {
+			if ($oldFile != '.' and $oldFile != '..') {
+				$filename = CUSTOMTABLES_TEMP_PATH . $oldFile;
+
+				if (!in_array($oldFile, ['index.htm', 'index.html']) and file_exists($filename)) {
+					$parts = explode('_', $oldFile);
+					if ($parts[0] == 'ct' and count($parts) >= 4) {
+						$t = (int)$parts[1];
+
+						$now = time();
+						$o = $now - $t;
+						if ($o > 3600)//delete files uploaded more than an hour ago.
+							unlink($filename);
+					}
+				}
+			}
+		}
 	}
 
 	public static function getAcceptedFileTypes($fileExtensions): string
@@ -273,29 +297,6 @@ class FileUploader
 		);
 
 		return $mimeType[$filename_extension] ?? 'application/octet-stream';
-	}
-
-	protected static function deleteOldFiles(): void
-	{
-		$oldFiles = scandir(CUSTOMTABLES_TEMP_PATH);
-
-		foreach ($oldFiles as $oldFile) {
-			if ($oldFile != '.' and $oldFile != '..') {
-				$filename = CUSTOMTABLES_TEMP_PATH . $oldFile;
-
-				if (!in_array($oldFile, ['index.htm', 'index.html']) and file_exists($filename)) {
-					$parts = explode('_', $oldFile);
-					if ($parts[0] == 'ct' and count($parts) >= 4) {
-						$t = (int)$parts[1];
-
-						$now = time();
-						$o = $now - $t;
-						if ($o > 3600)//delete files uploaded more than an hour ago.
-							unlink($filename);
-					}
-				}
-			}
-		}
 	}
 
 	/**
