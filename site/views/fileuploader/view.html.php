@@ -38,18 +38,29 @@ class CustomTablesViewFileUploader extends HtmlView
 		$ct->Params->constructJoomlaParams();
 
 		try {
-			if (!empty($ct->Params->tableName)) {
-				$ct->getTable($ct->Params->tableName);
+
+			if (empty($ct->Params->tableName)) {
+				$tableId = common::inputGetInt('tableid');
+				if (empty($tableId)) {
+					echo common::ctJsonEncode(['error' => 'Unknown endpoint',
+						'success' => false, 'message' => 'Unknown endpoint', 'short' => 'error']);
+
+					exit;
+				} else {
+					$ct->getTable($tableId);
+				}
 			} else {
+				$ct->getTable($ct->Params->tableName);
+			}
+
+			if (!$ct->Table) {
 				echo common::ctJsonEncode(['error' => common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'),
 					'success' => false, 'message' => common::translate('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'), 'short' => 'error']);
 
 				exit;
 			}
 
-			$a = $ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT);
-
-			if (!$a) {
+			if (!$ct->CheckAuthorization(CUSTOMTABLES_ACTION_EDIT)) {
 				echo common::ctJsonEncode(['error' => common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'),
 					'success' => false, 'message' => common::translate('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'short' => 'error']);
 				exit;
@@ -59,7 +70,6 @@ class CustomTablesViewFileUploader extends HtmlView
 				'success' => false, 'message' => $e->getMessage(), 'short' => 'error']);
 			exit;
 		}
-
 
 		$fieldname = common::inputGetCmd('fieldname', '');
 		$fileid = common::inputGetCmd($fieldname . '_fileid', '');

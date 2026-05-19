@@ -9,14 +9,14 @@
  **/
 
 // no direct access
-use CustomTables\common;
-use CustomTables\FileUploader;
-use Joomla\CMS\MVC\View\HtmlView;
-
 defined('_JEXEC') or die();
 
 // Import Joomla! libraries
 jimport('joomla.application.component.view');
+
+use CustomTables\common;
+use CustomTables\FileUploader;
+use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewFileUploader extends HtmlView
 {
@@ -26,9 +26,15 @@ class CustomTablesViewFileUploader extends HtmlView
 
 		if (ob_get_contents()) ob_end_clean();
 
-		$fileid = common::inputGetCmd('fileid', '');
-		echo FileUploader::uploadFile($fileid, 'txt html csv');
+		$fieldname = common::inputGetCmd('fieldname');
+		if (!empty($fieldname)) {
+			$fileid = common::inputGetCmd($fieldname . '_fileid', '');
+			echo FileUploader::uploadFile($fileid);
+		} else {
+			$fileid = common::inputGetCmd('fileid', '');
+			echo FileUploader::uploadFile($fileid, 'txt html csv');
+		}
 
-		die; //to stop rendering template and staff
+		exit; //to stop rendering template and staff
 	}
 }

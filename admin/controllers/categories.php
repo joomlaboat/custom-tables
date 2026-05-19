@@ -16,6 +16,7 @@ use CustomTables\CTUser;
 
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 /**
  * Categories Controller
@@ -50,7 +51,7 @@ class CustomtablesControllerCategories extends FormController
 	 */
 	public function batch($model = null)
 	{
-		JSession::checkToken() or jexit(common::translate('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(common::translate('JINVALID_TOKEN'));
 
 		// Set the model
 		$model = $this->getModel('Categories', '', array());

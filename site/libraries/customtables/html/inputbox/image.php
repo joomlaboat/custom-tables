@@ -78,10 +78,22 @@ class InputBox_image extends BaseInputBox
 
 		$element_id = 'ct_uploadfile_box_' . $this->field->fieldname;
 
-		$urlString = common::UriRoot(true, true) . 'index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname . '_fileid=' . $fileId
-			. '&Itemid=' . $this->field->ct->Params->ItemId
-			//. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
+		$urlString = common::UriRoot(true, true);
+
+		if (common::clientAdministrator())
+			$urlString .= 'administrator/';
+
+		$urlString .= 'index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname . '_fileid=' . $fileId
 			. '&fieldname=' . $this->field->fieldname;
+		//. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
+
+		if (!empty($this->field->ct->Params->ItemId) and $this->field->ct->Params->ItemId != 0) {
+			$urlString .= '&Itemid=' . $this->field->ct->Params->ItemId;
+		} else {
+			$tableId = common::inputGetInt('tableid');
+			if (!empty($tableId))
+				$urlString .= '&tableid=' . $tableId;
+		}
 
 		if (defined('_JEXEC')) {
 			if (common::clientAdministrator())   //since   3.2

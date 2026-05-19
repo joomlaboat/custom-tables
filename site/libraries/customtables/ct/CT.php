@@ -743,6 +743,10 @@ class CT
 				$action = CUSTOMTABLES_ACTION_ADD; //add new
 		}
 
+		if ($this->Env->user->isUserAdministrator) {
+			//Super Users have access to everything
+			return true;
+		}
 
 		//check is authorized or not
 		if ($action == CUSTOMTABLES_ACTION_EDIT)
@@ -758,10 +762,6 @@ class CT
 		else
 			$userGroups = [];
 
-		if ($this->Env->user->isUserAdministrator) {
-			//Super Users have access to everything
-			return true;
-		}
 
 		if ($this->Env->user->checkUserGroupAccess($userGroups)) {
 

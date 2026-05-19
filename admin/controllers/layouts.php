@@ -18,6 +18,7 @@ use CustomTables\database;
 use CustomTables\MySQLWhereClause;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 /**
  * Layouts Controller
@@ -50,7 +51,7 @@ class CustomtablesControllerLayouts extends FormController
 	 */
 	public function batch($model = null)
 	{
-		JSession::checkToken() or jexit(common::translate('COM_CUSTOMTABLES_JINVALID_TOKEN'));
+		Session::checkToken() or jexit(common::translate('COM_CUSTOMTABLES_JINVALID_TOKEN'));
 
 		// Set the model
 		$model = $this->getModel('Layouts', '', array());
