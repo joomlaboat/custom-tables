@@ -86,7 +86,6 @@ class InputBox_image extends BaseInputBox
 
 		$urlString .= 'index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname . '_fileid=' . $fileId
 			. '&fieldname=' . $this->field->fieldname;
-		//. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
 
 		if (!empty($this->field->ct->Params->ItemId) and $this->field->ct->Params->ItemId != 0) {
 			$urlString .= '&Itemid=' . $this->field->ct->Params->ItemId;
@@ -97,6 +96,8 @@ class InputBox_image extends BaseInputBox
 		}
 
 		if (defined('_JEXEC')) {
+
+			//. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
 
 			$urlString .= '&' . Session::getFormToken() . '=1';
 

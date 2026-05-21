@@ -15,6 +15,7 @@ defined('_JEXEC') or die();
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Session\Session;
 
 class InputBox_file extends BaseInputBox
 {
@@ -149,13 +150,30 @@ class InputBox_file extends BaseInputBox
 		$max_file_size = CTMiscHelper::file_upload_max_size($custom_max_size);
 
 		$file_id = common::generateRandomString();
-		$URLString = common::UriRoot(true, true) . 'index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname
+
+		$urlString = common::UriRoot(true, true);
+
+		if (common::clientAdministrator())
+			$urlString .= 'administrator/';
+
+		$urlString .= 'index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $this->field->fieldname
 			. '_fileid=' . $file_id
-			. '&Itemid=' . $this->field->ct->Params->ItemId
-			//. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
 			. '&fieldname=' . $this->field->fieldname;
 
+		if (!empty($this->field->ct->Params->ItemId) and $this->field->ct->Params->ItemId != 0) {
+			$urlString .= '&Itemid=' . $this->field->ct->Params->ItemId;
+		} else {
+			$tableId = common::inputGetInt('tableid');
+			if (!empty($tableId))
+				$urlString .= '&tableid=' . $tableId;
+		}
+
 		if (defined('_JEXEC')) {
+
+			//. (is_null($this->field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->field->ct->Params->ModuleId)
+
+			$urlString .= '&' . Session::getFormToken() . '=1';
+
 			if (common::clientAdministrator())   //since   3.2
 				$formName = 'adminForm';
 			else {
@@ -169,7 +187,7 @@ class InputBox_file extends BaseInputBox
 
 			$scriptParams = [
 				$this->field->id,
-				'"' . $URLString . '"',
+				'"' . $urlString . '"',
 				$max_file_size,
 				'"' . $accepted_file_types . '"',
 				'"' . $formName . '"',
