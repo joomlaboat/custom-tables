@@ -15,6 +15,7 @@ defined('_JEXEC') or die();
 
 use CustomTablesImageMethods;
 use Exception;
+use Joomla\CMS\Session\Session;
 
 class InputBox_image extends BaseInputBox
 {
@@ -96,6 +97,9 @@ class InputBox_image extends BaseInputBox
 		}
 
 		if (defined('_JEXEC')) {
+
+			$urlString .= '&' . Session::getFormToken() . '=1';
+
 			if (common::clientAdministrator())   //since   3.2
 				$formName = 'adminForm';
 			else {

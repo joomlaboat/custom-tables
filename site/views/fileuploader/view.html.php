@@ -11,13 +11,15 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
-use CustomTables\FileUploader;
-use Joomla\CMS\MVC\View\HtmlView;
-use CustomTables\CT;
-
 // Import Joomla! libraries
 jimport('joomla.application.component.view');
+
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Session\Session;
+
+use CustomTables\common;
+use CustomTables\FileUploader;
+use CustomTables\CT;
 
 class CustomTablesViewFileUploader extends HtmlView
 {
@@ -27,11 +29,10 @@ class CustomTablesViewFileUploader extends HtmlView
 
 		if (ob_get_contents()) ob_end_clean();
 
-		//Token parameter value must be sent using JS - not implemented yet
-		//if (!Session::checkToken()) {
-		//	echo common::ctJsonEncode(['error' => 'Invalid Token']);
-		//	exit;
-		//}
+		if (!Session::checkToken('get')) {
+			echo common::ctJsonEncode(['error' => 'Invalid Token']);
+			exit;
+		}
 
 		//Authorization Check
 		$ct = new CT(null, false);
