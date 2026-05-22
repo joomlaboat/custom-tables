@@ -14,9 +14,11 @@ defined('_JEXEC') or die();
 // Import Joomla! libraries
 jimport('joomla.application.component.view');
 
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Session\Session;
+
 use CustomTables\common;
 use CustomTables\FileUploader;
-use Joomla\CMS\MVC\View\HtmlView;
 
 class CustomTablesViewFileUploader extends HtmlView
 {
@@ -25,6 +27,11 @@ class CustomTablesViewFileUploader extends HtmlView
 		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
 
 		if (ob_get_contents()) ob_end_clean();
+
+		if (!Session::checkToken('get')) {
+			echo common::ctJsonEncode(['error' => 'Invalid Token']);
+			exit;
+		}
 
 		$fieldname = common::inputGetCmd('fieldname');
 		if (!empty($fieldname)) {

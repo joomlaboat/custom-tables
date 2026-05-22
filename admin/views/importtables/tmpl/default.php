@@ -11,10 +11,11 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use CustomTables\common;
-use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Session\Session;
+use CustomTables\common;
+use CustomTables\CTMiscHelper;
 
 // load tooltip behavior
 if (!CUSTOMTABLES_JOOMLA_MIN_4) {
@@ -41,7 +42,10 @@ echo '<form method="post" action="" id="esFileUploaderForm_Tables">';
 echo '<h2>' . common::translate('COM_CUSTOMTABLES_DASHBOARD_IMPORTTABLES') . '</h2>';
 echo '<p>' . common::translate('COM_CUSTOMTABLES_IMPORTTABLES_DESCRIPTION') . '</p>';
 
-$urlString = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileId;
+$urlString = common::UriRoot(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component';
+$urlString .= '&fileid=' . $fileId;
+$urlString .= '&' . Session::getFormToken() . '=1';
+
 echo '
 
     

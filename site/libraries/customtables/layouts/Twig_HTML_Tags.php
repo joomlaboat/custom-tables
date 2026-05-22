@@ -18,6 +18,7 @@ use JESPagination;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
 
 class Twig_HTML_Tags
 {
@@ -151,13 +152,14 @@ class Twig_HTML_Tags
 
 		HTMLHelper::_('behavior.formvalidator');
 
-		$url_string = Route::_('index.php?option=com_customtables&amp;view=fileuploader&amp;tmpl=component'
-			. '&amp;tableid=' . $this->ct->Table->tableid
-			. '&amp;task=importcsv'
-			. '&amp;' . $objectName . '_fileid=' . $fileid
-			. '&amp;Itemid=' . $this->ct->Params->ItemId
-			. (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId)
-			. '&amp;fieldname=' . $objectName);
+		$urlString = Route::_('index.php?option=com_customtables&amp;view=fileuploader&amp;tmpl=component'
+				. '&amp;tableid=' . $this->ct->Table->tableid
+				. '&amp;task=importcsv'
+				. '&amp;' . $objectName . '_fileid=' . $fileid
+				. '&amp;Itemid=' . $this->ct->Params->ItemId
+				. (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId)
+				. '&amp;fieldname=' . $objectName)
+			. '&amp;' . Session::getFormToken() . '=1';
 
 		return '<div>
                     <div id="ct_fileuploader_' . $objectName . '"></div>
@@ -165,7 +167,7 @@ class Twig_HTML_Tags
                     <form action="" name="ctUploadCSVForm" id="ctUploadCSVForm">
                 	<script>
                         //UploadFileCount=1;
-                    	ct_getUploader(' . $fieldid . ',"' . $url_string . '",' . $max_file_size . ',"csv","ctUploadCSVForm",true,"ct_fileuploader_' . $objectName . '","ct_eventsmessage_' . $objectName . '","' . $fileid . '","'
+                    	ct_getUploader(' . $fieldid . ',"' . $urlString . '",' . $max_file_size . ',"csv","ctUploadCSVForm",true,"ct_fileuploader_' . $objectName . '","ct_eventsmessage_' . $objectName . '","' . $fileid . '","'
 			. $this->ct->Table->fieldInputPrefix . $objectName . '","ct_uploadedfile_box_' . $objectName . '")
                     </script>
                     <input type="hidden" name="' . $this->ct->Table->fieldInputPrefix . $objectName . '" id="' . $this->ct->Table->fieldInputPrefix . $objectName . '" value="" />
