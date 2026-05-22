@@ -1,3 +1,48 @@
+# 3.26.0 (2026-05-20)
+
+ * Document that the sandbox doesn't protect against resource exhaustion
+ * Document `template_from_string` caveats when used in a sandboxed environment
+ * Add docs on `Markup` about the goal of this class in the context of a sandbox
+ * Pre-escape HTML input on the `spaceless` filter
+ * Pre-escape HTML input on `inline_css` and `inky_to_html` filters
+ * Fix XSS by adjusting `is_safe` annotation on HTML-emitting filters
+ * [Profiler] Escape template and profile names in `HtmlDumper`
+ * Fix unbounded memoisation of `IntlDateFormatter` / `NumberFormatter`
+ * Fix sandbox bypass in the "column" filter
+ * Fix sandbox bypass in the `{% sandbox %}` tag when including a preloaded template
+ * Fix sandbox bypass: PHP code injection via `{% use %}` template name
+ * Fix sandbox bypass: PHP code injection via `_self` / import macro reference
+ * Fix sandbox bypass in object destructuring assignment
+ * Fix sandbox bypass: propagate `Source` to `checkArrow` for source-policy sandboxing
+ * Encode single quotes as `\x27` in `Compiler::string()` as a defense-in-depth measure
+ * Fix sandbox `__toString` bypasses
+ * Add `Twig\Node\CoercesChildrenToStringInterface` to let nodes declare which of their child nodes will be string-coerced at runtime so the sandbox wraps them with a `__toString` check
+
+# 3.25.0 (2026-05-17)
+
+ * Add a `needs_is_sandboxed` option for filters, functions, and tests
+ * Use deterministic suffixes for generated embed classes
+ * Lazy-load `EscaperRuntime` in `EscaperExtension`
+
+# 3.24.0 (2026-03-17)
+
+ * Deprecate not implementing the `getOperatorTokens()` method in `ExpressionParserInterface` implementations
+ * Deprecate passing a non-`AbstractExpression` node to `Twig\Node\Expression\Binary\MatchesBinary` constructor
+ * Deprecate passing a non-`AbstractExpression` node to `Parser::setParent()`
+ * Add support for renaming variables in object destructuring (`{name: userName} = user`)
+ * Add `html_attr_relaxed` escaping strategy that preserves :, @, [, and ] for front-end framework attribute names
+ * Add support for short-circuiting in null-safe operator chains
+ * Add the `html_attr` function and `html_attr_merge` as well as `html_attr_type` filters
+
+# 3.23.0 (2026-01-23)
+
+ * Add `=` assignment operator (allows to set variables in expression or to replace the short-form of the set tag)
+ * Add sequence, mapping, and object destructuring
+ * Add `?.` null-safe operator
+ * Add `===` and `!==` operators (equivalent to the `same as` and `not same as` tests)
+ * Fix opcache preload warning for unlinked anonymous class
+ * Fix spread operator behavior
+
 # 3.22.2 (2025-12-14)
 
  * Fix "cycle" with non-countable ArrayAccess + Traversable objects
@@ -66,6 +111,7 @@
 
 # 3.18.0 (2024-12-29)
 
+ * Support for invoking closures
  * Fix unary operator precedence change
  * Ignore `SyntaxError` exceptions from undefined handlers when using the `guard` tag
  * Add a way to stream template rendering (`TemplateWrapper::stream()` and `TemplateWrapper::streamBlock()`)
@@ -74,7 +120,6 @@
 
  * Fix the null coalescing operator when the test returns null
  * Fix the Elvis operator when used as '? :' instead of '?:'
- * Support for invoking closures
 
 # 3.17.0 (2024-12-10)
 

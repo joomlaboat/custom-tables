@@ -54,6 +54,7 @@ class Parser
     private $importedSymbols;
     private $traits;
     private $embeddedTemplates = [];
+    private int $lastEmbedIndex = 0;
     private $varNameSalt = 0;
     private $ignoreUnknownTwigCallables = false;
     private ExpressionParsers $parsers;
@@ -81,8 +82,13 @@ class Parser
      */
     public function parse(TokenStream $stream, $test = null, bool $dropNeedle = false): ModuleNode
     {
+        // reset on root parse() calls only, so the counter spans nested/reentrant parses
+        if (!$this->stack) {
+            $this->lastEmbedIndex = 0;
+        }
+
         $vars = get_object_vars($this);
-        unset($vars['stack'], $vars['env'], $vars['handlers'], $vars['visitors'], $vars['expressionParser'], $vars['reservedMacroNames'], $vars['varNameSalt']);
+        unset($vars['stack'], $vars['env'], $vars['handlers'], $vars['visitors'], $vars['expressionParser'], $vars['reservedMacroNames'], $vars['lastEmbedIndex'], $vars['varNameSalt']);
         $this->stack[] = $vars;
 
         // node visitors
@@ -319,7 +325,7 @@ class Parser
      */
     public function embedTemplate(ModuleNode $template)
     {
-        $template->setIndex(mt_rand());
+        $template->setIndex(++$this->lastEmbedIndex);
 
         $this->embeddedTemplates[] = $template;
     }
@@ -416,6 +422,10 @@ class Parser
             trigger_deprecation('twig/twig', '3.12', 'Passing "null" to "%s()" is deprecated.', __METHOD__);
         }
 
+        if (null !== $parent && !$parent instanceof AbstractExpression) {
+            trigger_deprecation('twig/twig', '3.24', 'Passing a "%s" instance to "%s()" is deprecated, pass an "AbstractExpression" instance instead.', $parent::class, __METHOD__);
+        }
+
         if (null !== $this->parent) {
             throw new SyntaxError('Multiple extends tags are forbidden.', $parent->getTemplateLine(), $parent->getSourceContext());
         }
@@ -447,7 +457,7 @@ class Parser
 
         if (!$function) {
             if ($this->shouldIgnoreUnknownTwigCallables()) {
-                return new TwigFunction($name, fn () => '');
+                return new TwigFunction($name, static fn () => '');
             }
             $e = new SyntaxError(\sprintf('Unknown "%s" function.', $name), $line, $this->stream->getSourceContext());
             $e->addSuggestions($name, array_keys($this->env->getFunctions()));
@@ -476,7 +486,7 @@ class Parser
         }
         if (!$filter) {
             if ($this->shouldIgnoreUnknownTwigCallables()) {
-                return new TwigFilter($name, fn () => '');
+                return new TwigFilter($name, static fn () => '');
             }
             $e = new SyntaxError(\sprintf('Unknown "%s" filter.', $name), $line, $this->stream->getSourceContext());
             $e->addSuggestions($name, array_keys($this->env->getFilters()));
@@ -524,7 +534,7 @@ class Parser
 
         if (!$test) {
             if ($this->shouldIgnoreUnknownTwigCallables()) {
-                return new TwigTest($name, fn () => '');
+                return new TwigTest($name, static fn () => '');
             }
             $e = new SyntaxError(\sprintf('Unknown "%s" test.', $name), $line, $this->stream->getSourceContext());
             $e->addSuggestions($name, array_keys($this->env->getTests()));
