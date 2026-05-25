@@ -126,7 +126,8 @@ class InputBox_file extends BaseInputBox
 		else
 			return false;
 
-		require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
+		if (!class_exists('CustomTables\FileUploader'))
+			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
 
 		$accepted_file_types = FileUploader::getAcceptedFileTypes($fileExtensions);
 

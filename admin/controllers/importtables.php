@@ -24,7 +24,9 @@ class CustomTablesControllerImportTables extends FormController
 		$task = common::inputGetCmd('task', '');
 
 		if ($task == 'importtables') {
-			require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
+
+			if (!class_exists('CustomTables\FileUploader'))
+				require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'FileUploader.php');
 
 			$link = 'index.php?option=com_customtables&view=importtables';
 
