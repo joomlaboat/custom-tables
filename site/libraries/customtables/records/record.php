@@ -326,13 +326,14 @@ class record
 				if ($this->ct->getRecord(true)) {
 					$this->row_new = $this->ct->Table->record;
 
+					/* This functionality has been removed
 					if ($this->ct->Env->advancedTagProcessor) {
 						if ($phpOnAddFound)
 							CustomPHP::doPHPonAdd($this->ct, $this->row_new);
 
 						if ($phpOnChangeFound)
 							CustomPHP::doPHPonChange($this->ct, $this->row_new);
-					}
+					}*/
 
 					try {
 						$this->ct->Table->saveLog($this->listing_id, 1);
@@ -361,12 +362,14 @@ class record
 				if (defined('_JEXEC')) {
 					common::inputSet("listing_id", $this->ct->Table->record[$this->ct->Table->realidfieldname]);
 
+					/* This functionality has been removed
 					if ($this->ct->Env->advancedTagProcessor) {
 						if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
 							CustomPHP::doPHPonChange($this->ct, $this->ct->Table->record);
 						if ($phpOnAddFound and $isCopy)
 							CustomPHP::doPHPonAdd($this->ct, $this->ct->Table->record);
 					}
+					*/
 				}
 			} else {
 				throw new Exception('Could not read the record #' . $this->listing_id);

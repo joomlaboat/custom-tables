@@ -812,20 +812,43 @@ class SaveFieldQuerySet
 			$this->ct->getRecord();
 		}
 
+		if (!str_contains($condition, '{')) {
+			$fields = ['_id', '_published'];
+			foreach ($this->ct->Table->fields as $field)
+				$fields[] = $field['fieldname'];
+
+			$items = CTMiscHelper::ExplodeSmartParamsArray($condition);
+
+			$condition = '{{';
+			$index = 0;
+			foreach ($items as $item) {
+				if (!in_array($item['field'], $fields)) {
+					throw new Exception("Unknown field: " . $item['field']);
+				}
+
+				if ($item['comparison'] == '=')
+					$item['comparison'] = '==';
+
+				if ($item['field'] == '_id')
+					$condition .= ' record.id ' . $item['comparison'] . $item['value'];
+				elseif ($item['field'] == '_published')
+					$condition .= ' record.published("number")' . $item['comparison'] . $item['value'];
+				else
+					$condition .= ' ' . $item['field'] . $item['comparison'] . $item['value'];
+
+
+				if ($index < count($items) - 1)
+					$condition .= ' ' . $item['logic'];
+
+				$index += 1;
+			}
+			$condition .= ' }}';
+		}
+
 		$Layouts = new Layouts($this->ct);
 		$parsed_condition = $Layouts->parseRawLayoutContent($condition);
-		$parsed_condition = '(' . $parsed_condition . ' ? 1 : 0)';
 
-		$error = '';
-		if ($this->ct->Env->advancedTagProcessor)
-			$value = CustomPHP::execute($parsed_condition, $error);
-		else
-			$value = $parsed_condition;
-
-		if ($error != '')
-			throw new Exception($error);
-
-		if ((int)$value == 1)
+		if ((int)$parsed_condition == 1)
 			return true;
 
 		return false;

@@ -648,8 +648,10 @@ class CT
 		//End of Apply default values
 		//common::inputSet("listing_id", $listing_id);
 
+		/* This functionality has been removed
 		if ($this->Env->advancedTagProcessor)
 			CustomPHP::doPHPonChange($this, $row);
+		*/
 
 		//update MD5s
 		$this->updateMD5($listing_id);
@@ -696,6 +698,7 @@ class CT
 	 */
 	protected function updateMD5(string $listing_id): void
 	{
+
 		//TODO: Use savefield
 		foreach ($this->Table->fields as $fieldRow) {
 			if ($fieldRow['type'] == 'md5') {
@@ -713,8 +716,9 @@ class CT
 				if (count($fields) > 1) {
 
 					$data = [
-						$fieldRow['realfieldname'] => ['MD5(CONCAT_WS(' . implode(',', $fields) . '))', 'sanitized']
+						$fieldRow['realfieldname'] => ['MD5(CONCAT(' . implode(',', $fields) . '))', 'sanitized']
 					];
+
 					$whereClauseUpdate = new MySQLWhereClause();
 					$whereClauseUpdate->addCondition($this->Table->realidfieldname, $listing_id);
 					database::update($this->Table->realtablename, $data, $whereClauseUpdate);
