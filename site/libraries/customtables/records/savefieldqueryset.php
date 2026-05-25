@@ -834,8 +834,7 @@ class SaveFieldQuerySet
 				elseif ($item['field'] == '_published')
 					$condition .= ' record.published("number")' . $item['comparison'] . $item['value'];
 				else
-					$condition .= ' ' . $item['field'] . $item['comparison'] . $item['value'];
-
+					$condition .= ' ' . $item['field'] . '.value' . $item['comparison'] . $item['value'];
 
 				if ($index < count($items) - 1)
 					$condition .= ' ' . $item['logic'];
