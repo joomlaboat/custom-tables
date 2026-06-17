@@ -634,7 +634,8 @@ function FillLayout() {
 	result += '<option value="410">- Details (REST API)</option>';
 	result += '<option value="700"' + (layoutType === 7 ? ' selected="selected"' : '') + '>Email Message</option>';
 	result += '<option value="800"' + (layoutType === 8 ? ' selected="selected"' : '') + '>XML File</option>';
-	result += '<option value="900"' + (layoutType === 9 ? ' selected="selected"' : '') + '>CSV File</option>';
+	result += '<option value="900"' + (layoutType === 9 ? ' selected="selected"' : '') + '>CSV File (comma separated)</option>'
+	result += '<option value="901"' + (layoutType === 9 ? ' selected="selected"' : '') + '>CSV File (semicolon separated)</option>';
 	result += '<option value="1000"' + (layoutType === 10 ? ' selected="selected"' : '') + '>JSON File</option>';
 	result += '</select><div id="layoutWizardModalGuide" style="background-color:#eeeeee;width:100%;min-height:200px;max-height:300px;overflow-y: auto;"></div>';
 	result += '<button class="btn btn-primary button button-primary" onclick="layoutWizardGenerateLayout(event);">Generate</button>';
@@ -925,7 +926,11 @@ function layoutWizardGenerateLayout(event) {
 			break;
 
 		case 900:
-			layout_obj.value = getLayout_CSV();
+			layout_obj.value = getLayout_CSV(',');
+			break;
+
+		case 901:
+			layout_obj.value = getLayout_CSV(';');
 			break;
 
 		case 1000:
@@ -1699,12 +1704,12 @@ function getLayout_Email() {
 	return result;
 }
 
-function getLayout_CSV() {
+function getLayout_CSV(separator) {
 	let result = "";
 	let l = wizardFields.length;
 
 	let fieldtypes_to_skip = ['log', 'filebox', 'dummy', 'ordering'];
-	let fieldtypes_to_purevalue = ['image', 'filebox', 'file'];
+	let fieldtypes_to_purevalue = ['image', 'imagegallery', 'filebox', 'file'];
 	let fields_to_skip = getFieldsToSkip();
 
 	for (let index = 0; index < l; index++) {
@@ -1712,7 +1717,7 @@ function getLayout_CSV() {
 
 		if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
 			if (result !== '')
-				result += ',';
+				result += separator;
 
 			result += '"{{ ' + field.fieldname + '.title }}"';
 		}
@@ -1726,7 +1731,7 @@ function getLayout_CSV() {
 
 		if (field.type !== 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1 && fields_to_skip.indexOf(field.fieldname) === -1) {
 			if (!firstField)
-				result += ',';
+				result += separator;
 
 			if (fieldtypes_to_purevalue.indexOf(field.type) === -1)
 				result += '"{{ ' + field.fieldname + ' }}"';

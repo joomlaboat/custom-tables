@@ -16,7 +16,7 @@ function createLayout_CSV(array $fields): string
 	$result = '';
 
 	$fieldTypes_to_skip = ['log', 'filebox', 'dummy', 'ordering'];
-	$fieldTypes_to_pureValue = ['image', 'filebox', 'file'];
+	$fieldTypes_to_pureValue = ['image', 'imagegallery', 'filebox', 'file'];
 
 	foreach ($fields as $field) {
 		if (!in_array($field['type'], $fieldTypes_to_skip) and (int)$field['published'] === 1) {

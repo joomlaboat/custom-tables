@@ -558,7 +558,7 @@ class Fields
 			$data_old = $ct->Table->getFieldById($fieldId);
 
 			//Check if convertable
-			$unconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'log');
+			$unconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'log');//, 'records'
 			if ($data_old['type'] !== $data['type'] and (in_array($data['type'], $unconvertible_types) or in_array($data_old['type'], $unconvertible_types))) {
 
 				//Checkout
@@ -744,7 +744,7 @@ class Fields
 		$ex_typeparams = $data_old['typeparams'];
 
 		//Check convert ability
-		$unconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'log');
+		$unconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'log');//, 'records'
 
 		if ($ex_type !== $new_type and (in_array($new_type, $unconvertible_types) or in_array($ex_type, $unconvertible_types)))
 			throw new Exception('Cannot convert "' . $ex_type . '" to "' . $new_type . '"');

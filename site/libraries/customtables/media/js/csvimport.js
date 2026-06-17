@@ -413,9 +413,16 @@ class CustomTablesCSVImport {
 		let lineRight = null;
 
 		if (this.addLineCandidate.index === -1) {
-			lineRight = this.verticalLines[this.addLineCandidate.index + 1];
-			lineLeft = this.verticalLines[this.addLineCandidate.index + 1].map(p => [...p]);
-			lineLeft.forEach(p => p[0] = 0);
+
+			if (this.verticalLines.length > 0) {
+				lineRight = this.verticalLines[this.addLineCandidate.index + 1];
+				lineLeft = this.verticalLines[this.addLineCandidate.index + 1].map(p => [...p]);
+				lineLeft.forEach(p => p[0] = 0);
+			} else {
+				lineRight = this.verticalLines[this.addLineCandidate.index + 1];
+				lineLeft = this.verticalLines[this.addLineCandidate.index + 1].map(p => [...p]);
+				lineLeft.forEach(p => p[0] = 0);
+			}
 		} else if (this.addLineCandidate.index === this.verticalLines.length - 1) {
 			lineLeft = this.verticalLines[this.addLineCandidate.index];
 			lineRight = this.verticalLines[this.addLineCandidate.index].map(p => [...p]);
@@ -620,7 +627,13 @@ class CustomTablesCSVImport {
 			}
 
 			let i = this.verticalLines.length - 1;
-			let x1 = this.verticalLines[i][0][0];
+			let x1;
+
+			if (this.verticalLines.length >= i - 1 && this.verticalLines[i])
+				x1 = this.verticalLines[i][0][0];
+			else
+				x1 = 0;
+
 			let x2 = this.canvas.width;
 
 			if (mouseX > x1 - this.BETWEEN_TOLERANCE) {

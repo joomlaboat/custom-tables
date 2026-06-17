@@ -27,6 +27,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'edititem.php');
 
+//TODO: Dark mode, select Table Join value background is white - nothing visible
 class CustomtablesViewRecords extends HtmlView
 {
 	var CT $ct;

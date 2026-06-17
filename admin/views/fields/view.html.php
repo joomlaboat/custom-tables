@@ -25,6 +25,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  *
  * @since 3.0.0
  */
+//TODO: Save as copy doesnt work
 class CustomtablesViewFields extends HtmlView
 {
 	/**
