@@ -26,6 +26,8 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  * @since 3.0.0
  */
 //TODO: Save as copy doesnt work
+//TODO: Table Join field type. Sort by field is wrong when selecting new table
+
 class CustomtablesViewFields extends HtmlView
 {
 	/**

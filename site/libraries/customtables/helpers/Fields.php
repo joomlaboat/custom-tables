@@ -729,12 +729,19 @@ class Fields
 		if (empty($new_realfieldname))
 			throw new Exception('Update Field: Field name cannot be empty.');
 
-		$old_realfieldname = $data_old['realfieldname'];
-		if (!Fields::checkIfFieldExists($realtablename, $old_realfieldname))
-			throw new Exception('Original field "' . $old_realfieldname . '" not found');
+		if (self::isVirtualField($data_old)) {
+			$old_realfieldname = null;
 
-		if (strtolower($old_realfieldname) !== strtolower($new_realfieldname) and Fields::checkIfFieldExists($realtablename, $new_realfieldname))
-			throw new Exception('Field "' . $new_realfieldname . '" already exists.');
+			if (Fields::checkIfFieldExists($realtablename, $new_realfieldname))
+				throw new Exception('Field "' . $new_realfieldname . '" already exists.');
+		} else {
+			$old_realfieldname = $data_old['realfieldname'];
+			if (!Fields::checkIfFieldExists($realtablename, $old_realfieldname))
+				throw new Exception('Original field "' . $old_realfieldname . '" not found');
+
+			if (strtolower($old_realfieldname) !== strtolower($new_realfieldname) and Fields::checkIfFieldExists($realtablename, $new_realfieldname))
+				throw new Exception('Field "' . $new_realfieldname . '" already exists.');
+		}
 
 		$new_type = $data['type'];
 		if ($new_type === null)
@@ -762,8 +769,10 @@ class Fields
 		if ($PureFieldType === null)
 			throw new Exception('Unknown field type "' . $new_type . '". Cannot convert.');
 
-		if (!Fields::ConvertFieldType($realtablename, $old_realfieldname, $new_realfieldname, $ex_type, $new_type, $ex_typeparams ?? '', $new_typeparams, $PureFieldType, $fieldTitle))
-			throw new Exception('Field cannot be converted to new type.');
+		if ($old_realfieldname !== null) {
+			if (!Fields::ConvertFieldType($realtablename, $old_realfieldname, $new_realfieldname, $ex_type, $new_type, $ex_typeparams ?? '', $new_typeparams, $PureFieldType, $fieldTitle))
+				throw new Exception('Field cannot be converted to new type.');
+		}
 
 		if ($ct->Env->advancedTagProcessor and class_exists('CustomTables\ctProHelpers'))
 			ctProHelpers::update_physical_field_set_extra_tasks($ex_type, $new_type, $ex_typeparams ?? '', $new_typeparams, $fieldId);
@@ -1270,10 +1279,12 @@ class Fields
 		if ($PureFieldType === null)
 			throw new Exception('Unknown field type "' . $new_type . '". Cannot convert.');
 
-		try {
-			Fields::addField($ct, $realtablename, $new_realfieldname, $PureFieldType, $fieldTitle, $data);
-		} catch (Exception $e) {
-			echo $e->getMessage();
+		if (count($PureFieldType) > 0) {
+			try {
+				Fields::addField($ct, $realtablename, $new_realfieldname, $PureFieldType, $fieldTitle, $data);
+			} catch (Exception $e) {
+				echo $e->getMessage();
+			}
 		}
 
 		//Add indexes
