@@ -647,7 +647,7 @@ function FillLayout() {
 
 function getFieldSelector(id, searchByField) {
 	let fieldCount = wizardFields.length;
-	let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
+	let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy', 'virtual'];
 
 	let result = '<select id="' + id + '"';
 	result += ' class="form-select list_class required valid form-control-success" required=""">';
@@ -680,7 +680,7 @@ function getFieldOptions() {
 	let resultOption = '<p><span title="To reorder fields, navigate to Table - Fields and drag fields using the three-dot (⋮)">Fields:</span><br/>';
 	resultOption += '<select class="form-select list" id="wizardGuide_fields" MULTIPLE style="width: 100%;">';
 
-	let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
+	let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy', 'virtual'];
 
 	for (let index = 0; index < fieldCount; index++) {
 		let field = wizardFields[index];
@@ -1601,7 +1601,7 @@ function getLayout_Edit() {
 
 	result += '<div class="form-horizontal">\r\n\r\n';
 
-	let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy'];
+	let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'filebox', 'dummy', 'virtual'];
 	let fields_to_skip = getFieldsToSkip();
 
 	for (let index = 0; index < l; index++) {
