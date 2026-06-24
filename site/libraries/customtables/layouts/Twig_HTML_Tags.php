@@ -1108,12 +1108,20 @@ for (var i = 0; i < ' . $objectName . '_connect.length; i++) {
 		$isModal = ($this->ct->Env->isModal ? 'true' : 'false');
 		$parentField = common::inputGetCmd('parentfield');
 
-		if ($parentField === null)
-			$onclick = 'setTask(event, "' . $task . '","' . $redirect . '",true,"' . $formName . '",' . $isModal . ',null,' . ($this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId) . ',"' . $this->ct->Table->fieldInputPrefix . '");';
-		else
-			$onclick = 'setTask(event, "' . $task . '","' . $redirect . '",true,"' . $formName . '",' . $isModal . ',"' . $parentField . '",' . ($this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId) . ',"' . $this->ct->Table->fieldInputPrefix . '");';
+		if ($isModal and $parentField !== '')
+			$redirect = '';
 
-		return '<input id="' . $buttonId . '" type="submit" class="' . common::convertClassString($the_class) . '"' . $attribute . ' onClick=\'' . $onclick . '\' value="' . $title . '">';
+		if ($parentField === null) {
+			$onclick = "setTask(event, '" . $task . "','" . $redirect . "',true,'" . $formName . "'," . $isModal
+				. ",null,"
+				. ($this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId) . ",'" . $this->ct->Table->fieldInputPrefix . "');";
+		} else {
+			$onclick = "setTask(event, '" . $task . "','" . $redirect . "',true,'" . $formName . "'," . $isModal
+				. ",'" . $parentField . "',"
+				. ($this->ct->Params->ModuleId === null ? 'null' : $this->ct->Params->ModuleId) . ",'" . $this->ct->Table->fieldInputPrefix . "');";
+		}
+
+		return '<input id="' . $buttonId . '" type="submit" class="' . common::convertClassString($the_class) . '"' . $attribute . ' onClick="' . $onclick . '" value="' . $title . '">';
 	}
 
 	/**

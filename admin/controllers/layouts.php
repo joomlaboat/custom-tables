@@ -22,7 +22,9 @@ use Joomla\CMS\Session\Session;
 
 /**
  * Layouts Controller
+ * @since 2.0.0
  */
+//Fixed: edit tags like this {{ field.edit }} not clickable, but {{ field.edit() }} is clickable - fix it.
 class CustomtablesControllerLayouts extends FormController
 {
 	/**

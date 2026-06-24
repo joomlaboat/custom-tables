@@ -116,6 +116,10 @@ class CustomtablesControllerFields extends FormController
 		$this->refid = common::inputGet('refid', 0, 'int');
 
 		try {
+
+			if ($this->task == 'save2copy')
+				$fieldId = null;
+
 			$fieldId = Fields::saveField($tableId, $fieldId);
 		} catch (Exception $e) {
 			$redirect = 'index.php?option=' . $this->option;

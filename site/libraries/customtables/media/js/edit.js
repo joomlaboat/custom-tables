@@ -887,7 +887,7 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
 		if (TaskObject)
 			TaskObject.value = task;
 		else {
-			alert('Task Element "' + 'task' + ModuleId + '"not found.');
+			alert('Task Element "' + 'task' + ModuleId + '" not found.');
 			return;
 		}
 
@@ -1028,8 +1028,8 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 						let parts = modalFormParentField.split('.');
 						let parentField = parts[1];
 						let parentFieldInputPrefix = parts[2];
-						location.reload();
-						//refreshTableJoinField(parentField, response, parentFieldInputPrefix);
+						//location.reload();
+						refreshTableJoinField(parentField, response, parentFieldInputPrefix);
 					}
 
 					if (hideModelOnSave)
@@ -1465,19 +1465,28 @@ function ctTableJoinAddRecordModalForm(control_name, sub_index) {
 
 	let wrapper = document.getElementById(control_name + "Wrapper");
 
-	let query = CTEditHelper.websiteRoot + 'index.php' + (wrapper.dataset.addrecordmenualias.indexOf('/') === -1 ? '/' : '') + wrapper.dataset.addrecordmenualias;
+	let query = CTEditHelper.websiteRoot + 'index.php' + (wrapper.dataset.addrecordmenualias.indexOf('/') === -1 ? '/' : '');
+
+	if (isNaN(wrapper.dataset.addrecordmenualias))
+		query += wrapper.dataset.addrecordmenualias;
+
 	if (wrapper.dataset.addrecordmenualias.indexOf('?') === -1)
 		query += '?';
 	else
 		query += '&';
 
-	query += 'view=edititem';
+	query += 'view=edititem&tmpl=component';
+
+	if (!isNaN(wrapper.dataset.addrecordmenualias))
+		query += '&Itemid=' + wrapper.dataset.addrecordmenualias;
 
 	let parentObjectValue = null;
 	let sub_indexObject = document.getElementById(control_name + sub_index);
 	if (sub_indexObject) {
 		parentObjectValue = sub_indexObject.value;
-		query += '&es_' + sub_indexObject.dataset.childtablefield + '=' + parentObjectValue;
+
+		if (sub_indexObject.dataset.childtablefield !== '')
+			query += '&es_' + sub_indexObject.dataset.childtablefield + '=' + parentObjectValue;
 	}
 	ctEditModal(query, wrapper.dataset.formname + '.' + wrapper.dataset.fieldname + '.' + ctFieldInputPrefix)
 }

@@ -134,20 +134,15 @@ class EditController
 		}
 
 		$layoutName = common::inputGetCmd('layout');
-		echo '$layoutName:' . $layoutName . '<br/>';
+
 		if (empty($layoutName)) {
-			$Itemid = Factory::getApplication()->input->get('Itemid');
+			//$Itemid = Factory::getApplication()->input->get('Itemid');
 			$ct->Params->constructJoomlaParams();
 			$ct->getTable($ct->Params->tableName);
-			print_r($ct->Table->fields);
-
 
 			//echo 'Itemid:' . $Itemid . '<br/>';
-
-
 			//echo '$ct->Params->tableName:' . $ct->Params->tableName . '<br/>';
 			//echo '$ct->Params->editLayout:' . $ct->Params->editLayout . '<br/>';
-
 			//die;
 		} else {
 			$ct->Params->editLayout = $layoutName;
