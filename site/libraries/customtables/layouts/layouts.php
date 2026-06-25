@@ -259,7 +259,7 @@ class Layouts
 			CUSTOMTABLES_LAYOUT_TYPE_JSON
 		])) {
 
-			$output['content'] = $this->renderCatalog();
+			$output['content'] = $this->renderCatalog($this->layoutType);
 		} elseif ($this->layoutType == CUSTOMTABLES_LAYOUT_TYPE_EDIT_FORM) {
 
 			if ($task == 'new') {
@@ -1010,7 +1010,7 @@ class Layouts
 	 * @throws Exception
 	 * @since 3.2.2
 	 */
-	protected function renderCatalog(): string
+	protected function renderCatalog(string $layoutType): string
 	{
 		// -------------------- Table
 		if ($this->ct->Table === null) {
@@ -1055,10 +1055,17 @@ class Layouts
 		$this->ct->Ordering->parseOrderByParam();
 
 		// --------------------- Limit
-		if (!empty($this->ct->Params->listing_id))
-			$this->ct->applyLimits(1);
-		else
-			$this->ct->applyLimits();
+
+		if (!in_array($layoutType, [
+			CUSTOMTABLES_LAYOUT_TYPE_XML,
+			CUSTOMTABLES_LAYOUT_TYPE_CSV,
+			CUSTOMTABLES_LAYOUT_TYPE_JSON
+		])) {
+			if (!empty($this->ct->Params->listing_id))
+				$this->ct->applyLimits(1);
+			else
+				$this->ct->applyLimits();
+		}
 
 		$this->ct->LayoutVariables['layout_type'] = $this->layoutType;
 

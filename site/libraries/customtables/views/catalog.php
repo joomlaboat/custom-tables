@@ -106,10 +106,16 @@ class Catalog
 		$this->ct->Ordering->parseOrderByParam();
 
 		// --------------------- Limit
-		if (!empty($this->ct->Params->listing_id))
-			$this->ct->applyLimits(1);
-		else
-			$this->ct->applyLimits($limit);
+		if (!in_array($Layouts->layoutType, [
+			CUSTOMTABLES_LAYOUT_TYPE_XML,
+			CUSTOMTABLES_LAYOUT_TYPE_CSV,
+			CUSTOMTABLES_LAYOUT_TYPE_JSON
+		])) {
+			if (!empty($this->ct->Params->listing_id))
+				$this->ct->applyLimits(1);
+			else
+				$this->ct->applyLimits($limit);
+		}
 
 		// --------------------- Layouts
 
