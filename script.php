@@ -81,7 +81,7 @@ class com_customtablesInstallerScript
 			if (count($tables) > 0) {
 				echo '<div class="alert alert-info" style="margin-bottom: 20px;">
                 <h4>To delete all CustomTables database tables, run these SQL queries:</h4>
-                <pre style="background:#f5f5f5; padding:10px; margin-top:10px; overflow:auto;">';
+                <pre style="padding:10px; margin-top:10px; overflow:auto;">';
 
 				foreach ($tables as $table) {
 					echo 'DROP TABLE IF EXISTS ' . $db->quoteName($table) . ";\n";

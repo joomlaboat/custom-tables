@@ -56,8 +56,10 @@ class Inputbox
 		$this->field = new Field($this->ct, $fieldRow);
 
 		//Set CSS classes
-		if ($this->field->type != "records" and $this->field->type != "radio")
-			BaseInputBox::addCSSClass($this->attributes, (CUSTOMTABLES_JOOMLA_MIN_4 ? 'form-control' : 'inputbox'));
+		if (!common::clientAdministrator()) {
+			if ($this->field->type != "records" and $this->field->type != "radio")
+				BaseInputBox::addCSSClass($this->attributes, (CUSTOMTABLES_JOOMLA_MIN_4 ? 'form-control' : 'inputbox'));
+		}
 
 		//Add attributes
 		$this->option_list = $option_list;
