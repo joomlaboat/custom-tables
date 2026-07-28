@@ -16,6 +16,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
 use Joomla\CMS\User\UserHelper;
+use CustomTables\database;
 
 class RegisterController
 {
@@ -49,7 +50,7 @@ class RegisterController
 		}
 
 		try {
-			$db = Factory::getDbo();
+			$db = database::getDB();
 
 			// Check if username exists
 			$query = $db->getQuery(true)

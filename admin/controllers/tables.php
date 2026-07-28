@@ -20,6 +20,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use CustomTables\database;
 
 /**
  * Tables Controller
@@ -83,8 +84,9 @@ class CustomtablesControllerTables extends FormController
 	{
 		$app = Factory::getApplication();
 		$input = $app->input;
-		$user = Factory::getUser(); // Get current user ID
-		$db = Factory::getDbo();
+		$user = new CTUser();
+
+		$db = database::getDB();
 
 		require_once CUSTOMTABLES_LIBRARIES_PATH . '/customtables/views/admin-listoftables.php';
 

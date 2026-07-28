@@ -16,6 +16,7 @@ use Joomla\CMS\Authentication\Authentication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
 use Joomla\CMS\User\UserHelper;
+use CustomTables\database;
 
 class LoginController
 {
@@ -51,7 +52,7 @@ class LoginController
 		if ($response->status === Authentication::STATUS_SUCCESS) {
 
 			// Get user details
-			$db = Factory::getDbo();
+			$db = database::getDB();
 			$query = $db->getQuery(true)
 				->select('id, name, username, email')
 				->from($db->quoteName('#__users'))

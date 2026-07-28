@@ -12,14 +12,14 @@
 defined('_JEXEC') or die();
 
 use CustomTables\CTMiscHelper;
-use Joomla\CMS\Factory;
+use CustomTables\database;
 
 class LoginController
 {
 	function execute()
 	{
 		// Get list of tables
-		$db = Factory::getDbo();
+		$db = database::getDB();
 		$query = $db->getQuery(true)
 			->select('tablename')
 			->from($db->quoteName('#__customtables_tables'));

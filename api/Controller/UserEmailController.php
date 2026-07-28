@@ -13,6 +13,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
+use CustomTables\database;
 
 class UserEmailController
 {
@@ -30,7 +31,7 @@ class UserEmailController
 		if (!$userId)
 			die;
 
-		$db = Factory::getDbo();
+		$db = database::getDB();
 		$query = $db->getQuery(true)
 			->select(['email'])
 			->from($db->quoteName('#__users'))

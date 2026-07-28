@@ -66,12 +66,12 @@ class com_customtablesInstallerScript
 				define('CUSTOMTABLES_JOOMLA_MIN_4', false);
 		}
 
-		if ($type == 'uninstall') {
+		if (!CUSTOMTABLES_JOOMLA_MIN_4)
+			$db = Factory::getDbo();
+		else
+			$db = Factory::getContainer()->get(DatabaseInterface::class);
 
-			if (!CUSTOMTABLES_JOOMLA_MIN_4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get(DatabaseInterface::class);
+		if ($type == 'uninstall') {
 
 			$prefix = $db->getPrefix();
 
@@ -100,10 +100,6 @@ class com_customtablesInstallerScript
 			}
 
 			//Temporary change component_id of custom back-end menu items
-			if (!CUSTOMTABLES_JOOMLA_MIN_4)
-				$db = Factory::getDbo();
-			else
-				$db = Factory::getContainer()->get(DatabaseInterface::class);
 		}
 		$this->updateMenuItems($db);
 		return true;

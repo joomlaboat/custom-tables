@@ -13,9 +13,8 @@ defined('_JEXEC') or die();
 
 use CustomTables\common;
 use CustomTables\CT;
-use Joomla\CMS\Factory;
+use CustomTables\database;
 use Joomla\CMS\MVC\Model\ListModel;
-use Joomla\Database\DatabaseInterface;
 
 /**
  * ListOfRecords Model
@@ -53,10 +52,7 @@ class CustomtablesModelListOfActions extends ListModel
 
 	protected function getListQuery(): string
 	{
-		if (!CUSTOMTABLES_JOOMLA_MIN_4)
-			$db = Factory::getDbo();
-		else
-			$db = Factory::getContainer()->get(DatabaseInterface::class);
+		$db = database::getDB();
 
 		$search = $this->getState('filter.search');
 		$tableid = $this->getState('filter.tableid');

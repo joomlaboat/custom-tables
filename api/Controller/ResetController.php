@@ -16,6 +16,7 @@ use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
 use Joomla\CMS\User\UserHelper;
+use CustomTables\database;
 
 class ResetController
 {
@@ -36,11 +37,10 @@ class ResetController
 
 		if (empty($token) || empty($password)) {
 			CTMiscHelper::fireError(400, 'Token and new password are required', 'Invalid request');
-			return;
 		}
 
 		// Verify token
-		$db = Factory::getDbo();
+		$db = database::getDB();
 		$query = $db->getQuery(true)
 			->select('*')
 			->from($db->quoteName('#__user_keys'))
@@ -53,21 +53,18 @@ class ResetController
 
 		if (empty($resetInfo)) {
 			CTMiscHelper::fireError(400, 'Invalid or expired reset token', 'Invalid token');
-			return;
 		}
 
 		// Check if token is expired (24 hours)
 		$tokenTime = Factory::getDate($resetInfo->time)->toUnix();
 		if ((time() - $tokenTime) > 24 * 3600) {
 			CTMiscHelper::fireError(400, 'Reset token has expired', 'Token expired');
-			return;
 		}
 
 		// Get user
 		$user = User::getInstance($resetInfo->user_id);
 		if (empty($user->id)) {
 			CTMiscHelper::fireError(404, 'User not found', 'Invalid user');
-			return;
 		}
 
 		// Update password
@@ -79,7 +76,6 @@ class ResetController
 
 		if (!$user->save(true)) {
 			CTMiscHelper::fireError(500, 'Could not update password', 'Save error');
-			return;
 		}
 
 		// Invalidate reset token
@@ -110,11 +106,10 @@ class ResetController
 
 		if (empty($email)) {
 			CTMiscHelper::fireError(400, 'Email is required', 'Invalid request');
-			return;
 		}
 
 		// Find user by email
-		$db = Factory::getDbo();
+		$db = database::getDB();
 		$query = $db->getQuery(true)
 			->select('*')
 			->from($db->quoteName('#__users'))
@@ -125,7 +120,6 @@ class ResetController
 
 		if (empty($user)) {
 			CTMiscHelper::fireError(404, 'User not found', 'Invalid email');
-			return;
 		}
 
 		// Generate reset token
@@ -133,7 +127,7 @@ class ResetController
 		$salt = UserHelper::genRandomPassword(32);
 
 		// Get token expiry time from configuration (24 hours default)
-		$expires = Factory::getDate()->toUnix() + 24 * 3600;
+		//$expires = Factory::getDate()->toUnix() + 24 * 3600;
 
 		// Store reset token
 		$query = $db->getQuery(true)
@@ -145,7 +139,6 @@ class ResetController
 			@$db->setQuery($query)->execute();
 		} catch (Throwable $e) {
 			CTMiscHelper::fireError(500, $e->getMessage(), 'Database error');
-			return;
 		}
 
 		$data = (object)[
@@ -162,7 +155,6 @@ class ResetController
 			$db->insertObject('#__user_keys', $data);
 		} catch (Exception $e) {
 			CTMiscHelper::fireError(500, 'Could not save reset token', 'Database error');
-			return;
 		}
 
 		// Send reset email
@@ -192,17 +184,14 @@ class ResetController
 			$mailer->isHTML(true);
 		} catch (Exception $e) {
 			CTMiscHelper::fireError(500, $e->getMessage(), 'Could not instantiate mail function.');
-			return;
 		}
 
 		try {
 			if (!$mailer->Send()) {
 				CTMiscHelper::fireError(500, 'Could not send reset email', 'Mail error');
-				return;
 			}
 		} catch (Exception $e) {
 			CTMiscHelper::fireError(500, $e->getMessage(), 'Could not send reset email.');
-			return;
 		}
 
 		CTMiscHelper::fireSuccess(null, [

@@ -13,6 +13,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
+use CustomTables\database;
 
 class LogoutController
 {
@@ -36,7 +37,7 @@ class LogoutController
 				CTMiscHelper::fireError(401, 'User not found', 'Invalid user');
 
 			// Get database connection
-			$db = Factory::getDbo();
+			$db = database::getDB();
 
 			// Delete the token from user_keys table
 			$query = $db->getQuery(true)

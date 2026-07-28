@@ -135,7 +135,7 @@ class Languages
 
 	function getDefaultLanguage()
 	{
-		$db = Factory::getDBO();
+		$db = database::getDB();
 		$query = 'SELECT params FROM #__extensions WHERE ' . $db->quoteName('name') . '="com_languages" LIMIT 1';
 		$db->setQuery($query);
 		$rows = $db->loadObjectList();

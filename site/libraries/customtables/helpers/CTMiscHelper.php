@@ -1066,7 +1066,7 @@ class CTMiscHelper
 
 	public static function updateSessionData($sessionId, $key, $value)
 	{
-		$db = Factory::getDbo();
+		$db = database::getDB();
 
 		// First get existing data
 		$query = $db->getQuery(true)
@@ -1111,7 +1111,7 @@ class CTMiscHelper
 
 	static public function getSessionData($sessionId, $key)
 	{
-		$db = Factory::getDbo();
+		$db = database::getDB();
 
 		// Get session data
 		$query = $db->getQuery(true)

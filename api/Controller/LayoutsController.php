@@ -12,14 +12,15 @@
 defined('_JEXEC') or die();
 
 use CustomTables\CTMiscHelper;
-use Joomla\CMS\Factory;
+use CustomTables\database;
 
 class LoginController
 {
 	function execute()
 	{
 		// Get list of layouts
-		$db = Factory::getDbo();
+		$db = database::getDB();
+
 		$query = $db->getQuery(true)
 			->select('layoutname')
 			->from($db->quoteName('#__customtables_layouts'));

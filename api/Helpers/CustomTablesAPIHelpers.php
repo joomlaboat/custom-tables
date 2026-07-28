@@ -13,6 +13,7 @@ defined('_JEXEC') or die();
 
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Factory;
+use CustomTables\database;
 
 class CustomTablesAPIHelpers
 {
@@ -23,7 +24,7 @@ class CustomTablesAPIHelpers
 	static public function checkToken(): int
 	{
 		$app = Factory::getApplication();
-		$db = Factory::getDbo();
+		$db = database::getDB();
 
 		// Get token from Authorization header
 		$headers = getallheaders();

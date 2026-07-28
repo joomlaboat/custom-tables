@@ -174,10 +174,7 @@ class MySQLWhereClause
 
 	protected function getWhereClauseMergeConditions($conditions, $logicalOperator = 'AND'): string
 	{
-		if (!CUSTOMTABLES_JOOMLA_MIN_4)
-			$db = Factory::getDbo();
-		else
-			$db = Factory::getContainer()->get('DatabaseDriver');
+		$db = database::getDB();
 
 		$where = [];
 
