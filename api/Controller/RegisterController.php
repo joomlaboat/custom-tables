@@ -14,7 +14,7 @@ defined('_JEXEC') or die();
 use CustomTables\CTMiscHelper;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\User\User;
+use CustomTables\CTUser;
 use Joomla\CMS\User\UserHelper;
 use CustomTables\database;
 
@@ -73,7 +73,7 @@ class RegisterController
 			}
 
 			// Create user object
-			$user = new User;
+			$user = new CTUser();
 			$user->name = $data->name;
 			$user->username = $data->username;
 			$user->email = $data->email;

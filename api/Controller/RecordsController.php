@@ -48,19 +48,15 @@ class RecordsController
 
 		$catalog = new Catalog($ct);
 
-		$result = '';
-
 		try {
 			$result = $catalog->render($layoutName);
-		} catch
-		(Exception $e) {
+		} catch (Exception $e) {
 			CTMiscHelper::fireError(500, 'Server Error');
 		}
 
 		try {
 			$resultArray = json_decode($result, true);
-		} catch
-		(Exception $e) {
+		} catch (Exception $e) {
 			CTMiscHelper::fireError(500, 'Server Error');
 		}
 
