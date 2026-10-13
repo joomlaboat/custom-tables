@@ -40,72 +40,141 @@ class FileUploader
 
 		//if (!Session::checkToken()) return common::ctJsonEncode(['error' => 'Invalid Token']); //implement something similar for Wordpress
 
-		$filetypes_str = self::getAcceptedFileTypes($filetypes_str_argument);
-		$accepted_types = self::getAcceptableMimeTypes($filetypes_str);
+		$filetypes_str = self::getAcceptedFileTypes($filetypes_str_argument); // returns a string of extensions separated by space
+		if ($filetypes_str == '') {
+			return common::ctJsonEncode([
+				'error' => 'Unable to upload the file.'
+			]);
+		}
+
+		$filetypes_str_array = explode(' ', $filetypes_str);
+
+		$blockedExtensions = [
+			// PHP
+			'php', 'php3', 'php4', 'php5', 'php7', 'php8',
+			'phtml', 'pht', 'phar', 'phps',
+
+			// Server Side Includes (SSI)
+			'shtml', 'shtm', 'stm',
+
+			// CGI and server-side scripts
+			'cgi', 'pl', 'py', 'rb', 'asp', 'aspx',
+			'ashx', 'asmx', 'jsp', 'jspx', 'cfm', 'cfc',
+
+			// Web server and template scripts
+			'htaccess', 'htpasswd',
+		];
 
 		$t = time();
 		$file = self::getFileSafeMIME($fileId);
-
-		$accepted_types = self::getAcceptableMimeTypes($filetypes_str);
+		$ret = [];
 
 		if (isset($file['name'])) {
-			$ret = array();
-			$parts = explode('.', $file['name']);
-			$fileExtension = end($parts);
-
-			//	This is for custom errors;
-
-			$error = $file["error"];
 
 			//You need to handle  both cases
 			//If Any browser does not support serializing of multiple files using FormData()
-			if (!is_array($file['name'])) //single file
-			{
-				$mime = mime_content_type($file["tmp_name"]);
-
-				if ($mime == 'application/zip' and $fileExtension != 'zip') {
-					//could be docx, xlsx, pptx
-					$mime = self::checkZIP_File_X($file["tmp_name"], $fileExtension);
-				}
-
-				if (in_array($mime, $accepted_types)) {
-
-					$fileName = self::normalizeString($file['name']);
-					$newFileName = CUSTOMTABLES_TEMP_PATH . 'ct_' . $t . '_' . $fileId . '_' . $fileName;
-
-					if (common::inputGetCmd('task') == 'importcsv') {
-						require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
-							. 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
-
-						move_uploaded_file($file["tmp_name"], $newFileName);
-
-						try {
-							ImportCSV::importCSVFile($newFileName, common::inputGetInt('tableid', 0));
-
-							$ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileId . '_' . $fileName
-								, 'originalfilename' => $file['name']];
-						} catch (Exception $e) {
-							$ret = ['error' => $e->getMessage()];
-						}
-
-						unlink($newFileName);
-
-					} else {
-						if (move_uploaded_file($file["tmp_name"], $newFileName))
-							$ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileId . '_' . $fileName
-								, 'originalfilename' => $file['name']];
-						else
-							$ret = ['error' => 'Unable to upload the file.'];
-					}
-				} else {
-					unlink($file["tmp_name"]);
-					$message = 'File type (' . $mime . ') not permitted.';
-					if ($filetypes_str != '')
-						$message .= ' ' . common::translate('COM_CUSTOMTABLES_PERMITTED_TYPES') . ' ' . $filetypes_str . ' (' . $filetypes_str_argument . ')';//implode(', ', $accepted_types);
-
-					$ret = ['error' => $message];
-				}
+			if (is_array($file['name'])) {
+				$ret = ['error' => 'Unable to upload multiple files.'];
+				return common::ctJsonEncode($ret);
 			}
+
+			if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
+				return common::ctJsonEncode([
+					'error' => 'Unable to upload the file.'
+				]);
+			}
+
+			// Single-file upload.
+			$fileExtension = strtolower(
+				pathinfo($file['name'], PATHINFO_EXTENSION)
+			);
+
+			if ($fileExtension === '' || in_array($fileExtension, $blockedExtensions, true)) {
+				return common::ctJsonEncode([
+					'error' => 'Unable to upload the file.'
+				]);
+			}
+
+
+			if (!in_array($fileExtension, $filetypes_str_array, true)) {
+				return common::ctJsonEncode([
+					'error' => 'Unable to upload the file.'
+				]);
+			}
+
+			//	This is for custom errors;
+
+			//$error = $file["error"];
+
+			if (
+				!isset($file['tmp_name']) ||
+				!is_uploaded_file($file['tmp_name'])
+			) {
+				return common::ctJsonEncode([
+					'error' => 'Unable to upload the file.'
+				]);
+			}
+
+			$mime = mime_content_type($file["tmp_name"]);
+
+			if ($mime === false) {
+				return common::ctJsonEncode([
+					'error' => 'Unable to determine file type.'
+				]);
+			}
+
+			if ($mime === 'application/zip' and $fileExtension !== 'zip') {
+				//could be docx, xlsx, pptx
+				//ensure checkZIP_File_X() verifies the actual archive structure and expected document format rather than trusting the extension alone.
+				$mime = self::checkZIP_File_X($file["tmp_name"], $fileExtension);
+			}
+
+			$accepted_mime_type_for_extension = self::getAcceptableMimeTypes($fileExtension);
+
+			if (in_array($mime, $accepted_mime_type_for_extension, true)) {
+
+				$fileName = self::normalizeString($file['name']);
+				$newFileName = CUSTOMTABLES_TEMP_PATH . 'ct_' . $t . '_' . $fileId . '_' . $fileName;
+
+				if (common::inputGetCmd('task') == 'importcsv') {
+					require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+						. 'helpers' . DIRECTORY_SEPARATOR . 'ImportCSV.php');
+
+					if (!move_uploaded_file($file["tmp_name"], $newFileName)) {
+						return common::ctJsonEncode([
+							'error' => 'Unable to upload the file.'
+						]);
+					}
+
+					try {
+						ImportCSV::importCSVFile($newFileName, common::inputGetInt('tableid', 0));
+
+						$ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileId . '_' . $fileName
+							, 'originalfilename' => $file['name']];
+					} catch (\Throwable $e) {
+						// Log the exception server-side if appropriate.
+						$ret = ['error' => 'Unable to import the CSV file.'];
+					} finally {
+						if (is_file($newFileName)) {
+							unlink($newFileName);
+						}
+					}
+
+				} else {
+					if (move_uploaded_file($file["tmp_name"], $newFileName))
+						$ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileId . '_' . $fileName
+							, 'originalfilename' => $file['name']];
+					else
+						$ret = ['error' => 'Unable to upload the file.'];
+				}
+			} else {
+				unlink($file["tmp_name"]);
+				$message = 'File type (' . $mime . ') not permitted.';
+				$message .= ' ' . common::translate('COM_CUSTOMTABLES_PERMITTED_TYPES') . ' ' . $filetypes_str . ' (' . $filetypes_str_argument . ')';
+
+				$ret = ['error' => $message];
+			}
+
 			return common::ctJsonEncode($ret);
 		} else
 			return common::ctJsonEncode(['error' => common::translate('COM_CUSTOMTABLES_FILE_IS_EMPTY')]);
@@ -134,169 +203,37 @@ class FileUploader
 		}
 	}
 
-	public static function getAcceptedFileTypes($fileExtensions): string
+	public static function getAcceptedFileTypes(string $fileExtensions): string
 	{
 		$allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx odg odp ods odt pages'
-			. ' xcf ai txt avi csv accdb htm html'
-			. ' jpg bmp ico jpeg png webp gif svg ai'//Images
-			. ' zip'//Archive
-			. ' aac flac mp3 wav ogg'//Audio
-			. ' mp4 m4a m4p m4b m4r m4v wma flv mpg 3gp wmv mov';//Video
+			. ' xcf ai avi csv accdb' // not permitted: htm html
+			. ' jpg bmp ico jpeg png webp gif' // not permitted: svg
+			. ' zip'
+			. ' aac flac mp3 wav ogg'
+			. ' mp4 m4a m4p m4b m4r m4v wma flv mpg 3gp wmv mov';
 
 		$allowedExtensionsArray = explode(' ', $allowedExtensions);
-		$file_formats = array();
 
-		if ($fileExtensions != '') {
-			$file_formats_ = explode(' ', $fileExtensions);
-			foreach ($file_formats_ as $f) {
-				if (in_array($f, $allowedExtensionsArray))
-					$file_formats[] = $f;
-			}
-		} else
-			$file_formats = $allowedExtensionsArray;
-
-		return implode(' ', $file_formats);
-	}
-
-	/**
-	 * @throws Exception
-	 * @since 3.2.7
-	 */
-	protected static function getAcceptableMimeTypes($filetypes_str = ""): array
-	{
-		if ($filetypes_str == '') {
-			$fieldname = common::inputGetCmd('fieldname', '');
-			$tableName = self::getTableRawByItemid();
-
-			$ct = new CT([], true);
-			$ct->getTable($tableName);
-			if ($ct->Table === null)
-				return [];
-
-			$fieldRow = $ct->Table->getFieldByName($fieldname);
-			if ($fieldRow === null)
-				return [];
-
-			if ($fieldRow['type'] == 'image')
-				return array('image/gif', 'image/png', 'image/jpeg', 'image/svg+xml', 'image/webp');
-
-			$fieldParams = $fieldRow['typeparams'];
-			$parts = CTMiscHelper::csv_explode(',', $fieldParams);
-
-			if (!isset($parts[2]))
-				return [];
-
-			$filetypes_str = $parts[2];
-		}
-		$filetypes = explode(' ', $filetypes_str);
-
-		$accepted_filetypes = array();
-
-		foreach ($filetypes as $filetype) {
-			$mime = self::get_mime_type('1.' . $filetype);
-			$accepted_filetypes[] = $mime;
-
-			if ($filetype == 'docx')
-				$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-			elseif ($filetype == 'xlsx')
-				$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-			elseif ($filetype == 'pptx')
-				$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-			elseif ($filetype == 'csv') {
-				$accepted_filetypes[] = 'application/csv';
-				$accepted_filetypes[] = 'text/plain';
-			}
+		if ($fileExtensions === '') {
+			return $allowedExtensions;
 		}
 
-		return $accepted_filetypes;
-	}
-
-	public static function get_mime_type($filename): string
-	{
-		$filename_parts = explode('.', $filename);
-		$filename_extension = strtolower(end($filename_parts));
-
-		$mimeType = array(
-			'txt' => 'text/plain',
-			'csv' => 'text/csv',
-			'htm' => 'text/html',
-			'html' => 'text/html',
-			'php' => 'text/html',
-			'css' => 'text/css',
-			'js' => 'application/javascript',
-			'json' => 'application/json',
-			'xml' => 'application/xml',
-			'swf' => 'application/x-shockwave-flash',
-
-			// images
-			'png' => 'image/png',
-			'webp' => 'image/webp',
-			'jpe' => 'image/jpeg',
-			'jpeg' => 'image/jpeg',
-			'jpg' => 'image/jpeg',
-			'gif' => 'image/gif',
-			'bmp' => 'image/bmp',
-			'ico' => 'image/vnd.microsoft.icon',
-			'tiff' => 'image/tiff',
-			'tif' => 'image/tiff',
-			'svg' => 'image/svg+xml',
-			'svgz' => 'image/svg+xml',
-
-			// archives
-			'zip' => 'application/zip',
-			'rar' => 'application/x-rar-compressed', //not allowed
-			'exe' => 'application/x-msdownload', //not allowed
-			'msi' => 'application/x-msdownload', //not allowed
-			'cab' => 'application/vnd.ms-cab-compressed', //not allowed
-
-			// audio
-			'mp3' => 'audio/mpeg',
-			'flac' => 'audio/flac',
-			'aac' => 'audio/aac',
-			'wav' => 'audio/wav',
-			'ogg' => 'audio/ogg',
-
-			// video
-			'mp4' => 'video/mp4',
-			'm4a' => 'video/mp4',
-			'm4p' => 'video/mp4',
-			'm4b' => 'video/mp4',
-			'm4r' => 'video/mp4',
-			'm4v' => 'video/mp4',
-			'flv' => 'video/x-flv',
-			'qt' => 'video/quicktime',
-			'mov' => 'video/quicktime',
-			'3gp' => 'video/3gpp',
-			'avi' => 'video/x-msvideo',
-			'mpg' => 'video/mpeg',
-			'wmv' => 'video/x-ms-wmv',
-
-			// adobe
-			'pdf' => 'application/pdf',
-			'psd' => 'image/vnd.adobe.photoshop',
-			'ai' => 'application/postscript',
-			'eps' => 'application/postscript',
-			'ps' => 'application/postscript',
-
-			// MS Office
-			'doc' => 'application/msword',
-			'rtf' => 'text/rtf',
-			'xls' => 'application/vnd.ms-excel',
-			'ppt' => 'application/vnd.ms-powerpoint',
-			'docx' => 'application/msword',
-			'xlsx' => 'application/vnd.ms-excel',
-			'pptx' => 'application/vnd.ms-powerpoint',
-
-
-			// open office
-			'odt' => 'application/vnd.oasis.opendocument.text',
-			'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-
-			// apple
-			'pages' => 'application/vnd.apple.pages'
+		$requestedExtensions = preg_split(
+			'/\s+/',
+			strtolower(trim($fileExtensions)),
+			-1,
+			PREG_SPLIT_NO_EMPTY
 		);
 
-		return $mimeType[$filename_extension] ?? 'application/octet-stream';
+		$fileFormats = [];
+
+		foreach ($requestedExtensions as $extension) {
+			if (in_array($extension, $allowedExtensionsArray, true)) {
+				$fileFormats[] = $extension;
+			}
+		}
+
+		return implode(' ', array_unique($fileFormats));
 	}
 
 	/**
@@ -398,6 +335,148 @@ class FileUploader
 		}
 
 		return 'application/zip';
+	}
+
+	/**
+	 * @throws Exception
+	 * @since 3.2.7
+	 */
+	protected static function getAcceptableMimeTypes($filetypes_str = ""): array
+	{
+		if ($filetypes_str == '') {
+			$fieldname = common::inputGetCmd('fieldname', '');
+			$tableName = self::getTableRawByItemid();
+
+			$ct = new CT([], true);
+			$ct->getTable($tableName);
+			if ($ct->Table === null)
+				return [];
+
+			$fieldRow = $ct->Table->getFieldByName($fieldname);
+			if ($fieldRow === null)
+				return [];
+
+			if ($fieldRow['type'] == 'image')
+				return array('image/gif', 'image/png', 'image/jpeg', 'image/svg+xml', 'image/webp');
+
+			$fieldParams = $fieldRow['typeparams'];
+			$parts = CTMiscHelper::csv_explode(',', $fieldParams);
+
+			if (!isset($parts[2]))
+				return [];
+
+			$filetypes_str = $parts[2];
+		}
+		$filetypes = explode(' ', $filetypes_str);
+
+		$accepted_filetypes = array();
+
+		foreach ($filetypes as $filetype) {
+			$mime = self::get_mime_type('1.' . $filetype);
+
+			$accepted_filetypes[] = $mime;
+
+			if ($filetype == 'docx')
+				$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+			elseif ($filetype == 'xlsx')
+				$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+			elseif ($filetype == 'pptx')
+				$accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+			elseif ($filetype == 'csv') {
+				$accepted_filetypes[] = 'application/csv';
+				$accepted_filetypes[] = 'text/plain';
+			}
+		}
+
+		return array_values(array_unique($accepted_filetypes));
+	}
+
+	public static function get_mime_type($filename): string
+	{
+		$filename_parts = explode('.', $filename);
+		$filename_extension = strtolower(end($filename_parts));
+
+		$mimeType = array(
+			'txt' => 'text/plain',
+			'csv' => 'text/csv',
+			'htm' => 'text/html',
+			'html' => 'text/html',
+			'php' => 'text/html',
+			'css' => 'text/css',
+			'js' => 'application/javascript',
+			'json' => 'application/json',
+			'xml' => 'application/xml',
+			'swf' => 'application/x-shockwave-flash',
+
+			// images
+			'png' => 'image/png',
+			'webp' => 'image/webp',
+			'jpe' => 'image/jpeg',
+			'jpeg' => 'image/jpeg',
+			'jpg' => 'image/jpeg',
+			'gif' => 'image/gif',
+			'bmp' => 'image/bmp',
+			'ico' => 'image/vnd.microsoft.icon',
+			'tiff' => 'image/tiff',
+			'tif' => 'image/tiff',
+			'svg' => 'image/svg+xml',
+			'svgz' => 'image/svg+xml',
+
+			// archives
+			'zip' => 'application/zip',
+			'rar' => 'application/x-rar-compressed', //not allowed
+			'exe' => 'application/x-msdownload', //not allowed
+			'msi' => 'application/x-msdownload', //not allowed
+			'cab' => 'application/vnd.ms-cab-compressed', //not allowed
+
+			// audio
+			'mp3' => 'audio/mpeg',
+			'flac' => 'audio/flac',
+			'aac' => 'audio/aac',
+			'wav' => 'audio/wav',
+			'ogg' => 'audio/ogg',
+
+			// video
+			'mp4' => 'video/mp4',
+			'm4a' => 'video/mp4',
+			'm4p' => 'video/mp4',
+			'm4b' => 'video/mp4',
+			'm4r' => 'video/mp4',
+			'm4v' => 'video/mp4',
+			'flv' => 'video/x-flv',
+			'qt' => 'video/quicktime',
+			'mov' => 'video/quicktime',
+			'3gp' => 'video/3gpp',
+			'avi' => 'video/x-msvideo',
+			'mpg' => 'video/mpeg',
+			'wmv' => 'video/x-ms-wmv',
+
+			// adobe
+			'pdf' => 'application/pdf',
+			'psd' => 'image/vnd.adobe.photoshop',
+			'ai' => 'application/postscript',
+			'eps' => 'application/postscript',
+			'ps' => 'application/postscript',
+
+			// MS Office
+			'doc' => 'application/msword',
+			'rtf' => 'text/rtf',
+			'xls' => 'application/vnd.ms-excel',
+			'ppt' => 'application/vnd.ms-powerpoint',
+			'docx' => 'application/msword',
+			'xlsx' => 'application/vnd.ms-excel',
+			'pptx' => 'application/vnd.ms-powerpoint',
+
+
+			// open office
+			'odt' => 'application/vnd.oasis.opendocument.text',
+			'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+
+			// apple
+			'pages' => 'application/vnd.apple.pages'
+		);
+
+		return $mimeType[$filename_extension] ?? 'application/octet-stream';
 	}
 
 	public static function normalizeString($str = ''): string

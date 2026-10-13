@@ -33,6 +33,7 @@ class CustomTablesController extends BaseController
 				$fileOutput->process_file_link($file);
 				$fileOutput->display();
 			} catch (Exception $e) {
+				echo $e->getMessage();
 				common::enqueueMessage($e->getMessage());
 			}
 		}
