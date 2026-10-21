@@ -343,7 +343,7 @@ class Save_file
 		if (function_exists("transliterator_transliterate"))
 			$rawFileName = transliterator_transliterate("Any-Latin; Latin-ASCII;", $rawFileName);
 
-		$rawFileName = preg_replace("/[^\p{L}\d._]/u", "", $rawFileName);
+		$rawFileName = preg_replace("/[^\p{L}\d._-]/u", "", $rawFileName);
 
 		$fileNameParts = explode('.', $rawFileName);
 		$fileExtension = end($fileNameParts);
