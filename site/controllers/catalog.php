@@ -53,10 +53,10 @@ if (in_array($task, $updatedTask)) {
 	$PermissionIndexes = ['setorderby' => 0, 'clear' => 3, 'delete' => 3, 'copy' => 4, 'copycontent' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];
 	$PermissionIndex = 0;
 
-	if (array_key_exists($task, $PermissionIndexes))
-		$PermissionIndex = $PermissionIndexes[$task];
+	if (!empty($task) and $task != '') {
 
-	if ($task != '') {
+		if (array_key_exists($task, $PermissionIndexes))
+			$PermissionIndex = $PermissionIndexes[$task];
 
 		$ct = new CT(null, false);
 		$ct->Params->constructJoomlaParams();

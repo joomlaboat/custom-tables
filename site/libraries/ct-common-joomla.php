@@ -684,28 +684,6 @@ if (typeof window.CTEditHelper === "undefined") {
 		$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar-locales/date/gregorian/date-helper.min.js" defer></script>');
 		$document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar.min.js" defer></script>');
 
-		/*
-		$modal = common::inputGetInt('modal', 0);
-		if ($modal === 0) {
-			Text::script('COM_CUSTOMTABLES_JS_SELECT_RECORDS');
-			Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1');
-			Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
-			Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
-			Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
-			Text::script('COM_CUSTOMTABLES_SELECT');
-			Text::script('COM_CUSTOMTABLES_SELECT_NOTHING');
-			Text::script('COM_CUSTOMTABLES_ADD');
-			Text::script('COM_CUSTOMTABLES_REQUIRED');
-			Text::script('COM_CUSTOMTABLES_NOT_SELECTED');
-			Text::script('COM_CUSTOMTABLES_JS_EMAIL_INVALID');
-			Text::script('COM_CUSTOMTABLES_JS_URL_INVALID');
-			Text::script('COM_CUSTOMTABLES_JS_SECURE_URL_INVALID');
-			Text::script('COM_CUSTOMTABLES_JS_SIGNATURE_REQUIRED');
-			Text::script('COM_CUSTOMTABLES_JS_HOSTNAME_INVALID');
-			Text::script('COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH');
-		}
-		*/
-
 		if ($env->toolbarIcons == 'font-awesome-4' or $env->toolbarIcons == 'font-awesome-5' or $env->toolbarIcons == 'font-awesome-6') {
 
 			if (CUSTOMTABLES_JOOMLA_MIN_4) {
@@ -797,7 +775,8 @@ if (typeof window.CTEditHelper === "undefined") {
 			'COM_CUSTOMTABLES_ALLOWED_MAX_SIZE' => self::translate('COM_CUSTOMTABLES_ALLOWED_MAX_SIZE'),
 			'COM_CUSTOMTABLES_UPLOAD_NOT_ALLOWED' => self::translate('COM_CUSTOMTABLES_UPLOAD_NOT_ALLOWED'),
 			'COM_CUSTOMTABLES_MAX_ALLOWED_FILES' => self::translate('COM_CUSTOMTABLES_MAX_ALLOWED_FILES'),
-			'COM_CUSTOMTABLES_DOWNLOAD' => self::translate('COM_CUSTOMTABLES_DOWNLOAD')
+			'COM_CUSTOMTABLES_DOWNLOAD' => self::translate('COM_CUSTOMTABLES_DOWNLOAD'),
+			'COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH' => self::translate('COM_CUSTOMTABLES_SEARCH_ALERT_MINLENGTH')
 		];
 	}
 
