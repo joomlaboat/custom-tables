@@ -279,11 +279,28 @@ class Save_file
 				return null;
 
 			$mime = mime_content_type($CompletePathToFile);
-			$parts = explode('.', $fileName);
-			$fileExtension = end($parts);
-			if ($mime == 'application/zip' and $fileExtension != 'zip') {
+
+			$originalExtension = strtolower(
+				pathinfo($CompletePathToFile, PATHINFO_EXTENSION)// this is already uploaded and moved to tmp folder file with proper extension
+			);
+
+			$destinationExtension = strtolower(
+				pathinfo($fileName, PATHINFO_EXTENSION)
+			);
+
+			if ($destinationExtension !== $originalExtension) {
+
+				if (is_file($CompletePathToFile)) {
+					unlink($CompletePathToFile);
+				}
+
+				echo 'File extension mismatch';
+				return null;
+			}
+
+			if ($mime == 'application/zip' and $destinationExtension != 'zip') {
 				//could be docx, xlsx, pptx
-				$mime = FileUploader::checkZIP_File_X($CompletePathToFile, $fileExtension);
+				$mime = FileUploader::checkZIP_File_X($CompletePathToFile, $destinationExtension);
 			}
 
 			if (in_array($mime, $accepted_filetypes)) {

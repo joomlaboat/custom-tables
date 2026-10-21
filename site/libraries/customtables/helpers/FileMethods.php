@@ -20,11 +20,13 @@ class FileMethods
 {
 	static public function FileExtension($src, $allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx png jpg jpeg gif webp mp3 pages'): string
 	{
-		$name = explode(".", strtolower($src));
-		if (count($name) < 2)
+		$file_ext = strtolower(
+			pathinfo($src, PATHINFO_EXTENSION)
+		);
+
+		if ($file_ext == '')
 			return ''; //not allowed
 
-		$file_ext = $name[count($name) - 1];
 		$extensions = explode(" ", $allowedExtensions);
 
 		if (!in_array($file_ext, $extensions))

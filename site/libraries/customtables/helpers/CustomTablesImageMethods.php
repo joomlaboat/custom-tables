@@ -485,8 +485,9 @@ class CustomTablesImageMethods
 
 	function FileExtension($src): string
 	{
-		$ext_list = explode('.', strtolower($src));
-		$ext = end($ext_list);
+		$ext = strtolower(
+			pathinfo($src, PATHINFO_EXTENSION)
+		);
 
 		if (in_array($ext, CustomTablesImageMethods::allowedExtensions))
 			return $ext;
