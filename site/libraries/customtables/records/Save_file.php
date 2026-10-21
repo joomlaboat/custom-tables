@@ -66,7 +66,6 @@ class Save_file
 					$CompletePathToFile = CUSTOMTABLES_TEMP_PATH . $temporaryFile;
 
 				$fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
-
 				$fileName = str_replace(['/', '\\'], '', $fileName);
 				$fileName = str_replace('..', '', $fileName);
 
