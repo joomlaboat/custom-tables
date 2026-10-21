@@ -58,10 +58,18 @@ class Save_file
 		} else {
 			if (defined('_JEXEC')) {
 				$temporaryFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+
+				$temporaryFile = str_replace(['/', '\\'], '', $temporaryFile);
+				$temporaryFile = str_replace('..', '', $temporaryFile);
+
 				if (!empty($temporaryFile))
 					$CompletePathToFile = CUSTOMTABLES_TEMP_PATH . $temporaryFile;
 
 				$fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
+
+				$fileName = str_replace(['/', '\\'], '', $fileName);
+				$fileName = str_replace('..', '', $fileName);
+
 			} elseif (defined('WPINC')) {
 				//Get new image
 				if (isset($_FILES[$this->field->comesfieldname])) {
@@ -259,7 +267,9 @@ class Save_file
 
 				if (defined('_JEXEC')) {
 					$file = common::inputPostString($this->field->comesfieldname, '');
-					$dst = CUSTOMTABLES_TEMP_PATH . 'decoded_' . basename($file['name']);
+					$file_name = 'decoded_' . basename($file['name']);
+
+					$dst = CUSTOMTABLES_TEMP_PATH . $file_name;
 					common::base64file_decode($CompletePathToFile, $dst);
 					$CompletePathToFile = $dst;
 				} else {

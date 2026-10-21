@@ -42,7 +42,6 @@ class Save_blob
 
 		$to_delete = common::inputPostCmd($this->field->comesfieldname . '_delete', null, 'create-edit-record');
 
-
 		//Get File Data
 		//Get new file
 		$CompletePathToFile = null;
@@ -54,7 +53,11 @@ class Save_blob
 				return null;
 
 			$CompletePathToFile = CUSTOMTABLES_TEMP_PATH . $temporaryFile;
+
 			$fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
+			$fileName = str_replace(['/', '\\'], '', $fileName);
+			$fileName = str_replace('..', '', $fileName);
+
 		} elseif (defined('WPINC')) {
 			//Get new image
 			if (isset($_FILES[$this->field->comesfieldname])) {
@@ -118,8 +121,14 @@ class Save_blob
 
 		if (defined('_JEXEC')) {
 			$temporaryFile = common::inputPostString($this->field->comesfieldname, null, 'create-edit-record');
+			$temporaryFile = str_replace(['/', '\\'], '', $temporaryFile);
+			$temporaryFile = str_replace('..', '', $temporaryFile);
 			$CompletePathToFile = CUSTOMTABLES_TEMP_PATH . $temporaryFile;
+
 			$fileName = common::inputPostString('com' . $this->field->realfieldname . '_filename', '', 'create-edit-record');
+			$fileName = str_replace(['/', '\\'], '', $fileName);
+			$fileName = str_replace('..', '', $fileName);
+
 		} elseif (defined('WPINC')) {
 			//Get new image
 			if (isset($_FILES[$this->field->comesfieldname])) {
