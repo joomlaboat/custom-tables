@@ -155,7 +155,9 @@ function runTheTask(task, tableid, recordId, responses, last, reload, ModuleId) 
 
 				} else {
 					console.log("URL: ", url);
+					alert(data.message);
 					console.warn(data.message);
+					CTEditHelper.ctLinkLoading = false;
 				}
 			}
 		}

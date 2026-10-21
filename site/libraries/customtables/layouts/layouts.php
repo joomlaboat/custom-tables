@@ -644,7 +644,8 @@ class Layouts
 					$record->delete($listing_id);
 					$count += 1;
 				} catch (Exception $e) {
-					return ['success' => false, 'message' => 'Delete records: ' . $e->getMessage(), 'short' => 'error', 'id' => $listing_id];
+					//return ['success' => false, 'message' => 'Delete records: ' . $e->getMessage(), 'short' => 'error', 'id' => $listing_id];
+					return ['success' => false, 'message' => 'Can not delete record(s)', 'short' => 'error', 'id' => $listing_id];
 				}
 			}
 
