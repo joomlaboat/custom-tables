@@ -23,7 +23,7 @@
 			   description="Select Record Details Layout. This parameter is available on Record Details and Records menu item type pages."/>
 
 		<field type="text" name="filter" filter="raw" default="" label="Search Parameter"
-			   description="Field to search in = (or &#60; or &#60;= or &#62; or &#62;= or != and == 'exact match') value (or Twig tag as {{ user.id }} for example ) to have more then one condition use 'and', 'or' to get a value from the URL query parameter use {{ url.getint('param_name') }} tag or equivalent. Example 'color={{ url.getstring('string') }}' this will read value 'color' from the url query. To get the current date use {{ 'now'|date('m/d/Y') }} or {{ 'now'|date('Y') }} for the year or {{ 'now'|date('m') }} for the month. Also you can format the date using MySql date_format() format specifiers, example 1: {now:%m}. Example 2: 'birthdate:%m%d' to get the month and the day of the field value."/>
+			   description="Field to search in = (or &#60; or &#60;= or &#62; or &#62;= or != and == 'exact match') value (or Twig tag as {{ user.id }} for example ) to have more than one condition use 'and', 'or' to get a value from the URL query parameter use {{ url.getint('param_name') }} tag or equivalent. Example 'color={{ url.getstring('string') }}' this will read value 'color' from the url query. To get the current date use {{ 'now'|date('m/d/Y') }} or {{ 'now'|date('Y') }} for the year or {{ 'now'|date('m') }} for the month. Also you can format the date using MySql date_format() format specifiers, example 1: {now:%m}. Example 2: 'birthdate:%m%d' to get the month and the day of the field value."/>
 		<field type="list" name="showpublished" default="0" label="Show published records"
 			   description="Additional filter to show published or unpublished records.">
 			<option value="0">Show Published Only</option>
@@ -58,7 +58,7 @@ In this case, there will be two checks: first, it will check if the record belon
 		<field type="text" name="sortby" default="" label="Default sort by field"
 			   description="Enter the field name to sort by and select ascending or descending order. Example 1: 'title desc' where 'title' is the field name and 'desc' is the keyword to set the descending order (z-a) Example 2: `title asc`. Note that the keyword `asc` is not necessary. Example 3: `title`. This can be overridden in the font-end using the Order By select box - {{ html.orderby }} tag."/>
 		<field type="text" name="forcesortby" default="" label="Forced sort by field"
-			   description="Same as Sort By but cannot be overridden in the font-end."/>
+			   description="Same as Sort By but cannot be overridden in the front-end."/>
 
 		<field type="list" name="guestcanaddnew" default="0" label="Guest can add new records"
 			   description="Public user group, logged out or unregistered users can add new records. This is useful for contact forms. Use {{ html.captcha }} tag to stop the spam.">
