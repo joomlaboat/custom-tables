@@ -70,7 +70,7 @@ In this case, there will be two checks: first, it will check if the record belon
 		<fieldset name="SORTBY" label="Sort By (Order By)"
 				  description="Sort By parameter is used to sort the result-set in ascending or descending order. The ORDER BY keyword sorts the records in ascending order by default. To sort the records in descending order, use the `desc` keyword.">
 			<field type="text" name="sortby" default="" label="Default sort by field"
-				   description="Enter the field name to sort by and select ascending or descending order. Example 1: 'title desc' where 'title' is the field name and 'desc' is the keyword to set the descending order (z-a) Example 2: `title asc`. Note that the keyword `asc` is not necessary. Example 3: `title`. This can be overridden in the font-end using the Order By select box - {{ html.orderby }} tag."/>
+				   description="Enter the field name to sort by and select ascending or descending order. Example 1: 'title desc' where 'title' is the field name and 'desc' is the keyword to set the descending order (z-a) Example 2: `title asc`. Note that the keyword `asc` is not necessary. Example 3: `title`. This can be overridden in the front-end using the Order By select box - {{ html.orderby }} tag."/>
 			<field type="text" name="forcesortby" default="" label="Forced sort by field"
 				   description="Same as Sort By but cannot be overridden in the front-end."/>
 		</fieldset>
