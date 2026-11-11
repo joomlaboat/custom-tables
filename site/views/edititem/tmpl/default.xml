@@ -154,7 +154,7 @@ In this case, there will be two checks: the first one will check if the record b
 "/>
 
 			<field type="text" name="sendemailcondition" default="" size="50" label="Conditions for Sending Email"
-				   description="Specify conditions for triggering the 'Record Saved' event. For example (using PHP syntax): 'approved=1 OR name=='Mark'"/>
+				   description="Specify conditions for triggering the 'Record Saved' event. For example: {{ approved.value == 1 or name.value == 'Mark' }}"/>
 
 			<field type="string" name="emailsentstatusfield" default="" label="Field for Email Sent Status"
 				   description="Designate a field to track the status of email sending. This field should be of type 'integer' or 'checkbox'. '1' represents sent, '0' represents not sent."/>
